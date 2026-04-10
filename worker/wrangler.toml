@@ -1,0 +1,10 @@
+name = "quiz-worker"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "PREFS"
+id = "b728bdcfabf64578a19d9af087714af9"
+
+[vars]
+AUTH_TOKEN = "quiz_token_2026"

@@ -1,0 +1,4367 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>经营管理学派全览</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Helvetica Neue", sans-serif;
+  background: #eef0f5;
+  color: #1d1d1f;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* 细格线纹理 */
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* ---- HEADER ---- */
+.header {
+  padding: 0 48px;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(0,0,0,0.09);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+  min-height: 58px;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.header h1 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d1d1f;
+  letter-spacing: -0.02em;
+}
+.header p { font-size: 11px; color: #aeaeb2; margin-top: 2px; font-weight: 400; }
+
+/* ---- TABS ---- */
+.tab-nav {
+  display: flex;
+  gap: 0;
+  background: rgba(0,0,0,0.07);
+  padding: 3px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.06);
+  position: relative;
+}
+.tab-slider {
+  position: absolute; top: 3px; left: 3px; height: calc(100% - 6px);
+  background: #ffffff; border-radius: 999px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.12);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none; z-index: 0;
+}
+.tab-btn {
+  padding: 5px 14px;
+  font-size: 12px;
+  color: rgba(0,0,0,0.42);
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.25s cubic-bezier(0.4,0,0.2,1);
+  font-family: inherit;
+  font-weight: 500;
+  white-space: nowrap;
+  position: relative; z-index: 1;
+}
+.tab-btn:hover:not(.active) { color: rgba(0,0,0,0.65); }
+.tab-btn.active { color: #1d1d1f; }
+.panel { display: none; }
+.panel.active { display: block; animation: panelFadeIn 0.3s cubic-bezier(0.4,0,0.2,1); }
+@keyframes panelFadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+/* 导航栏角标（用于学派/学者数量显示） */
+.tab-count {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  opacity: 0.6;
+  margin-left: 2px;
+}
+
+/* ---- VIEWS ---- */
+.view {
+  position: relative;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding-bottom: 80px;
+  min-height: 0;
+}
+.view.active { display: block; }
+/* iOS 安全区域适配 */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  #view-list, #view-detail {
+    padding-bottom: max(80px, calc(56px + env(safe-area-inset-bottom)));
+  }
+}
+.view::-webkit-scrollbar { width: 4px; }
+.view::-webkit-scrollbar-thumb { background: #d8d4cc; border-radius: 2px; }
+
+/* ---- LIST VIEW ---- */
+#view-list { padding: 28px 48px 80px; background: transparent; }
+
+.section-label {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #1d1d1f;
+  margin: 32px 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.section-label:first-child { margin-top: 0; }
+.section-label .fold-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.04);
+  transition: background 0.2s, transform 0.3s;
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+.section-label .fold-arrow svg {
+  width: 12px; height: 12px;
+  fill: none; stroke: #aeaeb2; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.section-label:hover .fold-arrow { background: rgba(0,0,0,0.08); }
+.section-label.collapsed .fold-arrow { transform: rotate(-90deg); }
+.cards-grid, .cn-items-list {
+  transition: max-height 0.35s ease, opacity 0.25s ease;
+  overflow: visible;
+}
+.cards-grid.folded, .cn-items-list.folded {
+  max-height: 0 !important;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.card {
+  padding: 44px 18px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.9);
+  cursor: pointer;
+  background: rgba(255,255,255,0.72);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
+  transition: transform 0.28s cubic-bezier(0.4,0,0.2,1), box-shadow 0.28s, background 0.28s;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  left: 18px; top: 18px;
+  width: 28px; height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+  opacity: 1;
+}
+.card:hover {
+  transform: translateY(-4px);
+  background: rgba(255,255,255,0.88);
+  box-shadow: 0 14px 36px rgba(0,0,0,0.10), 0 0 0 1px var(--accent), inset 0 1px 0 rgba(255,255,255,1);
+}
+.card-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-bottom: 3px;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+.card-sub { font-size: 11px; color: #6e6e73; line-height: 1.45; font-weight: 400; }
+.card-era { font-size: 10px; color: #aeaeb2; margin-top: 5px; font-weight: 400; }
+.card-star {
+  position: absolute; right: 10px; top: 10px; width: 28px; height: 28px;
+  border: none; background: none; cursor: pointer; padding: 0; z-index: 2;
+  color: #ccc; font-size: 18px; line-height: 28px; text-align: center;
+  border-radius: 50%; transition: color .2s, background .2s;
+}
+.card-star:hover { color: #f5a623; background: rgba(245,166,35,0.08); }
+.card.mastered { pointer-events: auto; }
+.card.mastered .card-title,
+.card.mastered .card-sub,
+.card.mastered .card-era,
+.card.mastered .card-flag,
+.card.mastered::before { opacity: 0.25; }
+.card.mastered::after {
+  content: '已会'; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%); font-size: 22px; font-weight: 700;
+  color: rgba(0,0,0,0.12); letter-spacing: 6px; pointer-events: none;
+}
+.card.mastered .card-star { color: #f5a623; opacity: 1; }
+
+/* ---- DETAIL VIEW ---- */
+#view-detail { padding: 0; background: transparent; }
+
+.detail-back {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 48px;
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+  cursor: pointer;
+  color: #8a8a8e;
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.15s;
+  background: rgba(238,240,245,0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.detail-back:hover { color: #1d1d1f; }
+.back-arrow {
+  width: 26px; height: 26px; border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.7);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.detail-back:hover .back-arrow {
+  border-color: rgba(0,0,0,0.18);
+  background: rgba(255,255,255,0.95);
+}
+
+.detail-body {
+  padding: 36px 48px 64px;
+  max-width: 740px;
+  background: transparent;
+}
+
+.era-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 20px;
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(255,255,255,0.9);
+  font-size: 11px; color: #8a8a8e;
+  margin-bottom: 12px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.era-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1.5px solid;
+  margin-bottom: 10px;
+  background: transparent;
+}
+
+.d-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1d1d1f;
+  margin-bottom: 5px;
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+}
+.d-en { font-size: 12px; color: #b8b0a4; margin-bottom: 4px; font-weight: 400; letter-spacing: 0.01em; }
+.d-ja { font-size: 13.5px; color: #6a6460; margin-bottom: 0; font-weight: 500; letter-spacing: 0.02em; }
+
+.school-hero {
+  position: relative;
+  margin-bottom: 24px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 6%, #fff), #fff 60%);
+  border: 1px solid color-mix(in srgb, var(--accent) 12%, #e8e4e0);
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.school-hero-accent {
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 30%, transparent));
+}
+.school-hero-body {
+  position: relative;
+  padding: 20px 24px 18px;
+}
+.school-hero .d-title { margin-bottom: 6px; }
+.school-hero .d-ja { margin-bottom: 0; }
+.hero-quiz-wrap {
+  display: flex; gap: 8px; margin-top: 12px;
+}
+.hero-quiz-wrap .hq-btn {
+  border: none; border-radius: 8px; cursor: pointer;
+  font-size: 12px; font-weight: 500; letter-spacing: .01em;
+  padding: 6px 16px;
+  transition: transform .18s, opacity .18s;
+}
+.hero-quiz-wrap .hq-btn:active { transform: scale(0.96); }
+.hero-quiz-wrap .hq-primary {
+  background: var(--accent); color: #fff;
+}
+.hero-quiz-wrap .hq-secondary {
+  background: rgba(0,0,0,0.05); color: #555;
+}
+.hero-quiz-wrap .hq-secondary:hover { background: rgba(0,0,0,0.08); }
+
+.divider {
+  border: none;
+  border-top: 1px solid rgba(0,0,0,0.07);
+  margin: 22px 0;
+}
+
+.sec-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b8b0a4;
+  margin-bottom: 10px;
+}
+
+.summary {
+  font-size: 13.5px;
+  line-height: 1.95;
+  font-weight: 400;
+  color: #3a3a3c;
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  padding: 5px 13px;
+  border-radius: 20px;
+  font-size: 12px;
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(255,255,255,0.9);
+  color: #6e6e73;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.chip-link {
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04);
+  transition: box-shadow 0.15s, background 0.15s, color 0.15s;
+}
+.chip-link:hover {
+  background: #f0ede6;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.13), 0 0 0 1px rgba(0,0,0,0.06);
+  color: #2a2825;
+}
+
+.concepts { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.concepts li {
+  font-size: 13px;
+  color: #5a5650;
+  line-height: 1.75;
+  border-radius: 8px;
+}
+.concepts li::before { display: none; }
+.concepts li strong {
+  color: #2a2825;
+  font-weight: 600;
+}
+.cn-title .tag-b { display: inline-block; font-size: 11px; color: #8a7e70; background: #f0ede6; border-radius: 10px; padding: 2px 8px; white-space: nowrap; line-height: 1.4; font-weight: 400; margin-left: 5px; vertical-align: middle; }
+.cn-title .year-b { font-size: 10px; color: #c0b8b0; margin-left: 2px; font-weight: 400; }
+.cn-title .en-sub { display: block; font-size: 12px; color: #b0a898; margin-top: 3px; font-weight: 400; letter-spacing: 0.2px; }
+
+.influence {
+  font-size: 13px;
+  line-height: 1.85;
+  color: #6a6460;
+}
+
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  background: rgba(255,255,255,0.65);
+  border: 1px solid rgba(255,255,255,0.85);
+  color: #6e6e73;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.tag-link {
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.03);
+  transition: box-shadow 0.15s, background 0.15s, color 0.15s;
+}
+.tag-link:hover {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.13), 0 0 0 1px rgba(0,0,0,0.06);
+  color: #2a2825;
+}
+
+
+
+.card-ja {
+  font-size: 10px;
+  color: #b8b0a4;
+  margin-top: 2px;
+  line-height: 1.3;
+}
+.card-flag {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 15px;
+  line-height: 1;
+  pointer-events: none;
+}
+.paradigm-link {
+  color: var(--accent, #378ADD);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgba(0,0,0,0.15);
+  text-underline-offset: 2px;
+  transition: color 0.15s;
+}
+.paradigm-link:hover { opacity: 0.75; }
+.stage-link {
+  color: #1d1d1f;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s;
+  display: inline-flex;
+  align-items: center;
+}
+.stage-link::after {
+  content: "\203A";
+  color: #c7c7cc;
+  font-size: 14px;
+  margin-left: 4px;
+  font-weight: 300;
+}
+.stage-link:hover { opacity: 0.5; }
+.pc-toggle {
+  display: inline-block;
+  font-size: 11px;
+  color: #b8b0a4;
+  cursor: pointer;
+  padding: 2px 0;
+  transition: color 0.15s;
+}
+.pc-toggle:hover { color: #6a6460; }
+.paradigm-cell { border: 1px solid transparent; transition: border-color 0.15s; }
+.paradigm-cell:hover { border-color: #e4e0d8; }
+
+/* ---- QUIZ PANEL ---- */
+#panel-quiz .qz-loading {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 4rem 2rem; gap: 1rem; text-align: center;
+}
+#panel-quiz .qz-spinner {
+  width: 32px; height: 32px; border: 3px solid #e4e0d8;
+  border-top-color: #4a3728; border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+#panel-quiz .qz-loading-txt { font-size: 13px; color: #9a9288; }
+
+#panel-quiz .qz-err {
+  background: #fdf0f0; border: 1px solid #e8908a; border-radius: 12px;
+  padding: 2rem; text-align: center; max-width: 520px; margin: 2rem auto;
+}
+#panel-quiz .qz-err-title {
+  font-size: 16px; font-weight: 600; color: #8b1f1f; margin-bottom: .6rem;
+}
+#panel-quiz .qz-err-msg {
+  font-size: 12px; color: #8b1f1f; background: rgba(0,0,0,.04);
+  border-radius: 6px; padding: 8px 12px; margin-bottom: .75rem;
+  font-family: monospace; text-align: left; line-height: 1.7;
+}
+#panel-quiz .qz-err-sub { font-size: 12px; color: #6b6560; line-height: 1.7; }
+
+#panel-quiz .qz-wrap { max-width: 660px; margin: 0 auto; }
+#panel-quiz .qz-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+#panel-quiz .qz-ctr { font-size: 12px; color: #9a9288; }
+#panel-quiz .qz-ctr b { color: #2a2825; font-weight: 600; }
+#panel-quiz .qz-prog-wrap { background: #e8e4dc; border-radius: 99px; height: 3px; flex: 1; margin: 0 12px; }
+#panel-quiz .qz-prog-fill {
+  height: 3px; background: #4a3728; border-radius: 99px;
+  transition: width .5s cubic-bezier(.4,0,.2,1);
+}
+
+#panel-quiz .qz-qcard {
+  background: #ffffff; border: 1px solid #e4e0d8; border-radius: 12px;
+  padding: 1.75rem 1.5rem; margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+}
+#panel-quiz .qz-meta { display: flex; align-items: center; gap: 8px; margin-bottom: .75rem; flex-wrap: wrap; }
+#panel-quiz .qz-num {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em;
+  color: #b8b0a4; text-transform: uppercase;
+}
+#panel-quiz .qz-tag {
+  font-size: 11px; padding: 2px 9px; border-radius: 99px;
+  border: 1px solid #e4e0d8; color: #9a9288; background: #f5f4f0;
+}
+#panel-quiz .qz-qtx {
+  font-size: 14.5px; line-height: 1.85; color: #1a1815;
+  font-family: inherit;
+}
+
+#panel-quiz .qz-opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+#panel-quiz .qz-opt {
+  background: #ffffff; border: 1.5px solid #e4e0d8; border-radius: 10px;
+  padding: .9rem 1.2rem; display: flex; align-items: flex-start; gap: 12px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, transform .1s;
+  -webkit-tap-highlight-color: transparent; user-select: none;
+}
+#panel-quiz .qz-opt:hover:not(.lk) { border-color: #7a5c45; background: #fdf9f6; transform: translateY(-1px); }
+#panel-quiz .qz-opt:active:not(.lk) { transform: scale(.99); }
+#panel-quiz .qz-okey {
+  width: 26px; height: 26px; min-width: 26px; border-radius: 50%;
+  border: 1.5px solid #c8c4bc;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; color: #9a9288; flex-shrink: 0;
+  margin-top: 1px; transition: all .15s;
+}
+#panel-quiz .qz-otx { font-size: 13.5px; line-height: 1.7; color: #2a2825; }
+#panel-quiz .qz-opt.cor { background: #eef6e8; border-color: #8bbf6a; }
+#panel-quiz .qz-opt.cor .qz-okey { background: #5a9e35; border-color: #5a9e35; color: #fff; }
+#panel-quiz .qz-opt.wrg { background: #fdf0f0; border-color: #e8908a; }
+#panel-quiz .qz-opt.wrg .qz-okey { background: #c94040; border-color: #c94040; color: #fff; }
+#panel-quiz .qz-opt.dim { opacity: .32; cursor: default; transform: none; }
+#panel-quiz .qz-opt.lk { cursor: default; }
+
+#panel-quiz .qz-rp {
+  border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem;
+  animation: qz-up .25s ease;
+}
+@keyframes qz-up { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+#panel-quiz .qz-rp.g { background: #eef6e8; border: 1px solid #8bbf6a; }
+#panel-quiz .qz-rp.r { background: #fdf0f0; border: 1px solid #e8908a; }
+#panel-quiz .qz-rv { font-size: 17px; font-weight: 700; margin-bottom: .6rem; }
+#panel-quiz .qz-rp.g .qz-rv { color: #2d5a1b; }
+#panel-quiz .qz-rp.r .qz-rv { color: #8b1f1f; }
+#panel-quiz .qz-re { font-size: 13px; line-height: 1.75; color: #6a6460; margin-bottom: 1rem; }
+#panel-quiz .qz-re strong { color: #2a2825; font-weight: 600; }
+
+#panel-quiz .qz-pb {
+  background: #fdf5e6; border: 1px solid #d4a84b; border-radius: 8px;
+  padding: 10px 14px; font-size: 12px; line-height: 1.7; color: #7a4f0a;
+  margin-bottom: 1rem;
+}
+#panel-quiz .qz-pb strong { font-weight: 600; }
+
+#panel-quiz .qz-atitle {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em;
+  color: #b8b0a4; text-transform: uppercase; margin-bottom: .6rem;
+}
+#panel-quiz .qz-atb {
+  width: 100%; border-collapse: collapse; background: #ffffff;
+  border-radius: 8px; overflow: hidden; border: 1px solid #e4e0d8;
+  font-size: 12.5px; margin-bottom: 1rem;
+}
+#panel-quiz .qz-atb th {
+  text-align: left; padding: 8px 12px; background: #f5f4f0;
+  color: #b8b0a4; font-weight: 600; border-bottom: 1px solid #e4e0d8; font-size: 11px;
+}
+#panel-quiz .qz-atb td {
+  padding: 9px 12px; border-bottom: 1px solid #e8e4dc;
+  vertical-align: top; line-height: 1.6; color: #2a2825;
+}
+#panel-quiz .qz-atb tr:last-child td { border-bottom: none; }
+#panel-quiz .qz-tg {
+  display: inline-block; font-size: 10px; padding: 2px 8px;
+  border-radius: 99px; font-weight: 600; white-space: nowrap;
+}
+#panel-quiz .qz-tg.y { background: #c8e8a8; color: #1d4a0a; }
+#panel-quiz .qz-tg.n { background: #f5c0c0; color: #7a1515; }
+
+#panel-quiz .qz-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 12px 20px;
+  background: #4a3728; color: #fff; border: none; border-radius: 9px;
+  font-family: inherit; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: background .15s, transform .1s;
+}
+#panel-quiz .qz-btn:hover { background: #7a5c45; }
+#panel-quiz .qz-btn:active { transform: scale(.98); }
+
+/* Final card */
+#panel-quiz .qz-fc {
+  background: #ffffff; border: 1px solid #e4e0d8; border-radius: 14px;
+  padding: 2.5rem 2rem; text-align: center; max-width: 480px; margin: 0 auto;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+#panel-quiz .qz-fscore { font-size: 60px; font-weight: 700; color: #4a3728; line-height: 1; }
+#panel-quiz .qz-fdenom { font-size: 18px; color: #b8b0a4; margin-left: 4px; }
+#panel-quiz .qz-flabel { font-size: 12px; color: #b8b0a4; margin-top: 5px; margin-bottom: 1.25rem; }
+#panel-quiz .qz-ftitle { font-size: 18px; font-weight: 700; color: #1a1815; margin-bottom: .5rem; }
+#panel-quiz .qz-fsub { font-size: 13px; line-height: 1.75; color: #6a6460; margin-bottom: 1.5rem; }
+#panel-quiz .qz-rl { text-align: left; margin-bottom: 1.5rem; }
+#panel-quiz .qz-rlt {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em;
+  color: #b8b0a4; text-transform: uppercase; margin-bottom: .6rem;
+}
+#panel-quiz .qz-ri {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0; border-bottom: 1px solid #e8e4dc; font-size: 12.5px;
+}
+#panel-quiz .qz-ri:last-child { border-bottom: none; }
+#panel-quiz .qz-rd { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+#panel-quiz .qz-rd.g { background: #5a9e35; } #panel-quiz .qz-rd.r { background: #c94040; }
+#panel-quiz .qz-rq { flex: 1; color: #6a6460; line-height: 1.4; }
+#panel-quiz .qz-ra { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
+#panel-quiz .qz-ra.g { background: #c8e8a8; color: #1d4a0a; }
+#panel-quiz .qz-ra.r { background: #f5c0c0; color: #7a1515; }
+
+/* ── 中等宽度 601–960px ── */
+@media (max-width: 960px) and (min-width: 601px) {
+  .header { padding: 10px 24px; gap: 8px; }
+  .header h1 { font-size: 14px; }
+  .tab-nav { overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap; }
+  .tab-nav::-webkit-scrollbar { display: none; }
+  .tab-btn { padding: 5px 11px; font-size: 11.5px; }
+  #view-list { padding: 20px 24px 72px; }
+  #view-detail .detail-back { padding: 12px 24px; }
+  #view-detail .detail-body { padding: 24px 24px 56px; }
+  .cards-grid { gap: 8px; }
+}
+
+@media (max-width: 600px) {
+  #panel-quiz { padding: 16px 12px 48px; }
+  #panel-quiz .qz-qcard { padding: 1rem; }
+  #panel-quiz .qz-qtx { font-size: 13.5px; }
+  #panel-quiz .qz-opt { padding: .75rem .9rem; }
+  #panel-quiz .qz-otx { font-size: 13px; }
+  #panel-quiz .qz-fc { padding: 1.75rem 1.25rem; }
+  #panel-quiz .qz-fscore { font-size: 48px; }
+}
+
+@media (max-width: 600px) {
+  /* ── Header ── */
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    padding: 12px 16px 0;
+  }
+  .header h1 { font-size: 17px; }
+  .header p { display: none; }
+
+  /* ── 导航栏：单行横向滚动，不换行 ── */
+  .tab-nav {
+    width: calc(100% + 32px);
+    margin-left: -16px;
+    flex-wrap: nowrap;
+    gap: 0;
+    background: transparent;
+    padding: 0 16px;
+    border-radius: 0;
+    border-bottom: 1px solid #e8e4dc;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tab-nav::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex: none;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #9a9288;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    margin-bottom: -1px;
+  }
+  .tab-btn:hover { color: #3a3830; background: transparent; }
+  .tab-btn.active {
+    color: #1a1815;
+    background: transparent;
+    border-bottom: 2px solid #3a3830;
+    box-shadow: none;
+    font-weight: 600;
+  }
+  .tab-count {
+    font-size: 9.5px;
+    opacity: 0.5;
+    margin-left: 2px;
+  }
+
+  /* ── List view ── */
+  #view-list { padding: 16px 12px 72px; }
+  .section-label { margin: 18px 0 10px; font-size: 12px; padding-bottom: 7px; }
+  .cards-grid { grid-template-columns: 1fr 1fr; gap: 7px; }
+  .card { padding: 38px 12px 12px 12px; }
+  .card::before { left: 12px; top: 12px; width: 22px; height: 2.5px; }
+  .card-title { font-size: 12px; }
+  .card-sub { font-size: 10px; }
+  .card-era { font-size: 9px; margin-top: 3px; }
+  .card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.88); box-shadow: 0 8px 20px rgba(0,0,0,0.08), 0 0 0 1px var(--accent); }
+
+  /* ── Detail view ── */
+  .detail-back { padding: 10px 14px; }
+  .detail-body { padding: 16px 16px 52px; max-width: 100%; }
+  .d-title { font-size: 20px; letter-spacing: -0.02em; }
+  .d-en { font-size: 11px; }
+  .d-ja { font-size: 12.5px; }
+  .summary { font-size: 13px; }
+  .concepts li { font-size: 12.5px; }
+  .influence { font-size: 12.5px; }
+  .chip { font-size: 11px; padding: 4px 10px; }
+
+  /* ── 理论框架页：横向滑动，紧凑布局 ── */
+  #panel-paradigm > div { padding: 12px 0 36px; }
+
+  /* 框架说明文字框 */
+  .paradigm-framework-box {
+    margin: 0 12px 12px !important;
+    padding: 12px 14px !important;
+    font-size: 12px !important;
+  }
+
+  /* 滚动容器：贴边，极小内边距 */
+  .paradigm-grid-wrapper {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 0 0 10px !important;
+    margin: 0 12px !important;
+  }
+
+  /* 四象限网格：宽度撑满容器 */
+  .paradigm-grid {
+    width: 100% !important;
+    min-width: 0 !important;
+    grid-template-columns: 34px 1fr 1fr !important;
+  }
+
+  /* 列标题 */
+  .paradigm-col-header { padding: 8px 8px !important; }
+  .paradigm-col-header > div:first-child { font-size: 11.5px !important; margin-bottom: 2px !important; }
+  .paradigm-col-header > div:nth-child(2) { display: none !important; }
+  .paradigm-col-header > div:nth-child(3) { font-size: 9.5px !important; }
+
+  /* 纵轴标签 */
+  .paradigm-axis-row { min-width: 34px !important; padding: 6px 3px !important; }
+  .paradigm-axis-row > div { font-size: 9.5px !important; letter-spacing: 0.04em !important; }
+
+  /* 象限格子 */
+  .paradigm-cell { padding: 10px 10px !important; }
+  .paradigm-cell > div:first-child { margin-bottom: 6px !important; gap: 6px !important; }
+
+  /* 象限内：数字圆圈缩小 */
+  .paradigm-cell span[style*="width:22px"] {
+    width: 18px !important; height: 18px !important;
+    font-size: 10px !important; line-height: 18px !important;
+  }
+  /* 象限名称 */
+  .paradigm-cell > div:first-child > div > div:first-child { font-size: 12px !important; }
+  .paradigm-cell > div:first-child > div > div:nth-child(2) { font-size: 10px !important; }
+
+  /* 因果方向框 */
+  .paradigm-cell > div:nth-child(2) { padding: 6px 8px !important; font-size: 10.5px !important; margin-bottom: 8px !important; }
+  .paradigm-cell > div:nth-child(2) > div:last-child { font-size: 9.5px !important; }
+
+  /* 理论链接列表 */
+  .paradigm-cell > div:nth-child(3) { font-size: 10.5px !important; line-height: 1.7 !important; }
+
+  /* 底部标注 */
+  .paradigm-cell > div:last-child { font-size: 9.5px !important; padding-top: 7px !important; }
+
+  /* 图例 */
+  .paradigm-legend-wrapper { padding: 0 12px !important; }
+  .paradigm-legend { flex-direction: column !important; }
+  .paradigm-legend > div { min-width: 0 !important; }
+}
+
+/* ---- SCHOLAR SEARCH ---- */
+.scholar-search-wrap {
+  margin-bottom: 18px;
+}
+.scholar-search-box {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.75);
+  border: 1px solid rgba(255,255,255,0.9);
+  border-radius: 999px; padding: 11px 18px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.9);
+  transition: box-shadow .2s, border-color .2s;
+}
+.scholar-search-box:focus-within {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.09), 0 0 0 3px rgba(29,29,31,0.08);
+  border-color: rgba(0,0,0,0.15);
+}
+.scholar-search-icon { color: #aeaeb2; font-size: 14px; flex-shrink: 0; }
+.scholar-search-input {
+  flex: 1; border: none; outline: none; background: transparent;
+  font-family: inherit; font-size: 13.5px; color: #1d1d1f;
+}
+.scholar-search-input::placeholder { color: #c7c7cc; }
+.scholar-search-clear {
+  display: none; background: none; border: none; cursor: pointer;
+  color: #b8b0a4; font-size: 18px; padding: 0; line-height: 1;
+  transition: color .12s;
+}
+.scholar-search-clear:hover { color: #2a2825; }
+.scholar-search-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 7px; min-height: 16px;
+}
+.scholar-search-count { font-size: 11.5px; color: #9a9288; }
+.scholar-no-result {
+  display: none; text-align: center;
+  padding: 3.5rem 1rem; color: #b8b0a4; font-size: 13px;
+}
+.scholar-no-result strong { display: block; font-size: 15px; color: #c8c4bc; margin-bottom: 6px; }
+mark.sh {
+  background: #fde68a; color: #1a1815;
+  border-radius: 2px; padding: 0 1px; font-style: normal;
+}
+@media (max-width: 600px) {
+  .scholar-search-input { font-size: 13px; }
+}
+
+/* ---- QUIZ ROUND CARD ---- */
+#panel-quiz .qz-rnlabel {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  background: #4a3728; color: #fff; border-radius: 99px;
+  padding: 1px 8px; margin-left: 6px; vertical-align: middle;
+}
+#panel-quiz .qz-rc {
+  background: #ffffff; border: 1px solid #e4e0d8; border-radius: 14px;
+  padding: 2rem 2rem 1.5rem; max-width: 480px; margin: 0 auto;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+#panel-quiz .qz-rch {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em;
+  color: #b8b0a4; text-transform: uppercase; margin-bottom: 1rem;
+}
+#panel-quiz .qz-rcscore { line-height: 1; margin-bottom: 4px; }
+#panel-quiz .qz-rcsn { font-size: 56px; font-weight: 700; color: #4a3728; }
+#panel-quiz .qz-rcd  { font-size: 18px; color: #b8b0a4; margin-left: 4px; }
+#panel-quiz .qz-rctitle {
+  font-size: 17px; font-weight: 700; color: #1a1815; margin-bottom: .75rem;
+}
+#panel-quiz .qz-rcwarn {
+  background: #fdf5e6; border: 1px solid #d4a84b; border-radius: 8px;
+  padding: 9px 12px; font-size: 12px; color: #7a4f0a; line-height: 1.6;
+  margin-bottom: .5rem;
+}
+#panel-quiz .qz-wt {
+  display: inline-block; background: #ffe8b8; color: #7a4f0a;
+  border-radius: 99px; padding: 1px 8px; font-size: 11px;
+  font-weight: 600; margin: 1px 2px;
+}
+#panel-quiz .qz-btn-ghost {
+  background: transparent; color: #4a3728;
+  border: 1.5px solid #c8c4bc; flex: 1;
+}
+#panel-quiz .qz-btn-ghost:hover { background: #f0ede6; }
+#panel-quiz .qz-btn:not(.qz-btn-ghost) { flex: 2; }
+
+#panel-quiz .qz-fb-wrap {
+  margin-top: 14px; padding: 14px 16px; background: #faf8f5; border: 1px solid #e8e4dc;
+  border-radius: 12px;
+}
+#panel-quiz .qz-fb-title { font-size: 11px; color: #9a9288; margin-bottom: 8px; }
+#panel-quiz .qz-fb-btns { display: flex; gap: 8px; margin-bottom: 8px; }
+#panel-quiz .qz-fb-b {
+  padding: 6px 14px; font-size: 12px; border: 1px solid #e0dbd4; border-radius: 99px;
+  background: #fff; cursor: pointer; transition: all .2s; font-family: inherit;
+}
+#panel-quiz .qz-fb-b:hover { border-color: #c0b8ae; }
+#panel-quiz .qz-fb-b.sel-good { background: #eef6e8; border-color: #8bbf6a; color: #2d5a1b; }
+#panel-quiz .qz-fb-b.sel-bad { background: #fdf0f0; border-color: #e8908a; color: #8b1f1f; }
+#panel-quiz .qz-fb-reasons {
+  display: none; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;
+}
+#panel-quiz .qz-fb-reasons.show { display: flex; }
+#panel-quiz .qz-fb-r {
+  padding: 4px 10px; font-size: 11px; border: 1px solid #e0dbd4; border-radius: 99px;
+  background: #fff; cursor: pointer; transition: all .2s; font-family: inherit;
+}
+#panel-quiz .qz-fb-r:hover { background: #f0ede6; }
+#panel-quiz .qz-fb-r.sel { background: #fdf0f0; border-color: #e8908a; color: #8b1f1f; }
+#panel-quiz .qz-fb-done {
+  font-size: 11px; color: #5a9e35; font-weight: 600; display: none; margin-top: 4px;
+}
+#panel-quiz .qz-fb-done.show { display: block; }
+#panel-quiz .qz-stats-badge {
+  display: inline-flex; align-items: center; gap: 4px; font-size: 10px; color: #b8b0a4;
+  margin-left: 8px;
+}
+#panel-quiz .qz-stats-badge .sb-g { color: #5a9e35; font-weight: 600; }
+#panel-quiz .qz-stats-badge .sb-r { color: #c94040; font-weight: 600; }
+
+/* ---- CONCEPTS PANEL ---- */
+/* 筛选器：1行按钮 + popover浮层 */
+/* Segmented Control 筛选器 */
+.cat-filter { margin-bottom:14px; background:#fff; border-radius:12px; padding:6px; border:1px solid rgba(0,0,0,0.06); }
+.seg-ctrl {
+  display:flex; background:#e5e5ea; border-radius:9px; padding:2px; margin-bottom:0;
+}
+.seg-item {
+  flex:1; text-align:center; padding:7px 0; font-size:13px; font-weight:500;
+  border-radius:7px; cursor:pointer; color:#1d1d1f; transition:all 0.2s;
+  user-select:none; font-family:inherit; border:none; background:none;
+}
+.seg-item.active {
+  background:#fff; box-shadow:0 1px 4px rgba(0,0,0,0.08), 0 0.5px 1px rgba(0,0,0,0.04);
+  font-weight:600;
+}
+.seg-item .seg-dot {
+  display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:4px;
+  vertical-align:middle; position:relative; top:-0.5px;
+}
+/* 子分类区域 */
+.seg-subs {
+  padding:12px 0 0; display:none;
+}
+.seg-subs.open { display:block; }
+.seg-sub-label {
+  font-size:10px; font-weight:600; color:#aeaeb2; letter-spacing:0.04em;
+  margin-top:10px; margin-bottom:5px; text-transform:uppercase;
+}
+.seg-sub-label:first-child { margin-top:0; }
+.seg-sub-row { display:flex; gap:6px; flex-wrap:wrap; }
+.seg-sub-pill {
+  padding:5px 12px; border-radius:8px; font-size:12px; font-weight:500;
+  background:#f2f2f7; color:#6e6e73; cursor:pointer; transition:all 0.18s;
+  border:none; font-family:inherit; user-select:none;
+}
+.seg-sub-pill:hover:not(.active) { background:#e5e5ea; color:#1d1d1f; }
+.seg-sub-pill.active { color:#fff; }
+/* 选中计数角标 */
+.seg-sel-count {
+  display:inline-block; font-size:10px; font-weight:600; color:#fff;
+  background:#aeaeb2; border-radius:8px; padding:0 5px; margin-left:4px;
+  min-width:16px; text-align:center; line-height:16px; vertical-align:middle;
+}
+.cn-items-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px; }
+/* 左滑隐藏：外层容器 */
+.cn-swipe-wrap {
+  position:relative; overflow:hidden; border-radius:14px;
+}
+/* 隐藏消失动画：立即淡出 + 高度快速收缩 */
+.cn-swipe-wrap.hiding {
+  pointer-events:none;
+  opacity:0;
+  transform:scale(0.95);
+  transition:opacity 0.1s ease, transform 0.1s ease;
+}
+/* 隐藏按钮：气泡浮起动画 */
+.cn-hide-btn {
+  position:absolute; right:8px; top:50%;
+  transform:translateY(-30%) scale(0.7);
+  width:44px; height:44px; border-radius:12px;
+  background:rgba(255,59,48,0.12); color:#FF3B30; border:none;
+  font-size:11px; font-weight:600; font-family:inherit; letter-spacing:0.02em;
+  cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+  z-index:3;
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  box-shadow:0 2px 8px rgba(255,59,48,0.1);
+  opacity:0;
+  transition:opacity 0.25s cubic-bezier(0.34,1.56,0.64,1),
+             transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
+             box-shadow 0.25s ease;
+}
+/* 气泡浮起：从下方小 → 上方大+阴影 */
+/* 注意：swiping时不再用CSS控制opacity/transform，改由JS实时跟踪滑动位置 */
+.cn-swipe-wrap.swiping .cn-hide-btn {
+  box-shadow:0 4px 16px rgba(255,59,48,0.18);
+}
+.cn-hide-btn:hover {
+  background:rgba(255,59,48,0.2);
+  box-shadow:0 6px 20px rgba(255,59,48,0.25);
+  transform:translateY(-50%) scale(1.08);
+}
+.cn-hide-btn:active { transform:translateY(-50%) scale(0.92); }
+.cn-swipe-inner {
+  position:relative; z-index:2;
+  transition: transform 0.2s ease;
+}
+.cn-swipe-inner .cn-item { margin:0; }
+/* 恢复隐藏链接（header小字） */
+.restore-hidden-link {
+  font-size:11px; color:#999; cursor:pointer; white-space:nowrap;
+  transition:color 0.15s; user-select:none; flex-shrink:0;
+}
+.restore-hidden-link:hover { color:#FF3B30; }
+.cn-item {
+  background: rgba(255,255,255,0.65);
+  border: 1px solid rgba(255,255,255,0.9);
+  border-left: 3px solid var(--accent, #1D9E75);
+  border-radius: 14px; overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.85);
+  transition: background 0.25s, box-shadow 0.25s,
+              transform 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.cn-item:not(.open):hover {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08),
+              0 0 0 1px var(--accent, #1D9E75),
+              inset 0 1px 0 rgba(255,255,255,0.95);
+}
+.cn-item.open {
+  background: rgba(255,255,255,0.88);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.09), inset 0 1px 0 #fff;
+}
+.cn-header {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 13px 16px 13px 14px;
+  cursor: pointer; user-select: none; -webkit-user-select: none;
+  transition: background 0.15s;
+}
+.cn-header:hover { background: rgba(0,0,0,0.02); }
+.cn-arrow {
+  flex-shrink: 0; font-size: 9px; color: #c7c7cc;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+.cn-item.open .cn-arrow { transform: rotate(90deg); color: #8a8a8e; }
+.cn-title {
+  flex: 1; font-size: 13px; font-weight: 600; color: #1d1d1f; line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+.cn-school {
+  font-size: 10px; padding: 3px 10px; border-radius: 999px;
+  border: 1px solid var(--accent); color: var(--accent);
+  font-weight: 500; flex-shrink: 0; margin-left: 4px;
+  cursor: pointer; transition: opacity .15s; white-space: nowrap;
+}
+.cn-school:hover { opacity: .7; }
+.cn-body {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 16px;
+  font-size: 12.5px; color: #6e6e73; line-height: 1.85;
+  border-top: 0px solid rgba(0,0,0,0.05);
+  opacity: 0;
+  transition: max-height 0.32s cubic-bezier(0.4,0,0.2,1),
+              padding 0.32s cubic-bezier(0.4,0,0.2,1),
+              opacity 0.22s ease,
+              border-top-width 0.32s;
+}
+.cn-item.open .cn-body {
+  max-height: 4000px;
+  padding: 12px 16px 14px 16px;
+  border-top-width: 1px;
+  opacity: 1;
+}
+/* Style-D: 两级排版 */
+.body-lead {
+  font-size: 12.5px; font-weight: 600; color: #3a3632;
+  line-height: 1.65; margin-bottom: 12px; padding-bottom: 8px;
+  border-bottom: 1px dashed #e0dcd4;
+}
+.body-items { display: flex; flex-direction: column; gap: 0; }
+.body-card {
+  background: transparent; border: none; border-radius: 0;
+  padding: 10px 0; display: flex; gap: 14px; align-items: flex-start;
+  border-bottom: 1px solid #f0ece6;
+}
+.body-card:last-child { border-bottom: none; }
+/* 分组折叠 — Apple-style disclosure */
+.body-group { margin-top: 0; }
+.body-group + .body-group { border-top: .5px solid rgba(0,0,0,.06); }
+.body-group-title {
+  font-size: 12px; font-weight: 600; letter-spacing: .02em;
+  color: #86868b;
+  padding: 11px 0; margin-bottom: 0; border-radius: 0;
+  display: flex; align-items: center; gap: 8px;
+  background: none !important;
+  cursor: pointer; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .15s;
+}
+.body-group-title:active { opacity: 0.5; }
+.body-group-title::before {
+  content: ''; display: inline-block; flex-shrink: 0;
+  width: 5.5px; height: 5.5px;
+  border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg); margin-top: -1px;
+  opacity: 0.4; transition: transform .25s cubic-bezier(.25,.1,.25,1.4), opacity .2s;
+}
+.body-group.open .body-group-title::before {
+  transform: rotate(45deg); opacity: 0.55;
+}
+.body-group-items { padding-left: 6px; border-left: 2px solid; margin-left: 2px; max-height: 0; overflow: hidden; opacity: 0; transition: max-height .35s ease, opacity .2s ease; }
+.body-group.open .body-group-items { max-height: 2000px; opacity: 1; transition: max-height .45s ease, opacity .25s ease .05s; }
+.body-group-items .body-card { padding: 8px 0 8px 8px; }
+.body-group-items .body-card:last-child { border-bottom: none; }
+.body-num {
+  min-width: 24px; height: 24px; border-radius: 12px;
+  padding: 0 5px; box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+  border: none;
+}
+.body-card-content { flex: 1; min-width: 0; }
+.body-item-name { font-size: 13px; font-weight: 700; color: #2a2825; line-height: 1.5; margin-bottom: 4px; }
+.body-item-desc { font-size: 12px; color: #7a7470; line-height: 1.65; }
+.jp-line { font-size: 10.5px; opacity: 0.7; margin-bottom: 6px; letter-spacing: .02em; }
+/* 胶囊按钮组件 */
+.pill-btn { padding: 4px 14px; border-radius: 999px; border: 1px solid var(--accent, #7a5c45); background: transparent; color: var(--accent, #7a5c45); font-size: 11px; font-weight: 600; cursor: pointer; transition: background .2s, color .2s, opacity .2s; letter-spacing: .02em; white-space: nowrap; }
+.pill-btn:hover { background: var(--accent, #7a5c45); color: #fff; }
+.pill-btn.pill-sm { padding: 3px 12px; font-size: 9.5px; letter-spacing: .03em; }
+.pill-btn.pill-filled { background: var(--accent, #7a5c45); color: #fff; }
+/* 日语切换按钮（基于pill-btn） */
+.ja-toggle { flex-shrink: 0; margin-left: auto; opacity: 0; pointer-events: none; transition: background .2s, color .2s, opacity .25s; }
+.cn-item.open .ja-toggle { opacity: 0.45; pointer-events: auto; }
+.cn-item.open .ja-toggle:hover { opacity: 0.8; }
+.ja-toggle.active { background: var(--accent); color: #fff !important; border-color: var(--accent); }
+.cn-item.open .ja-toggle.active { opacity: 1; }
+@media (max-width: 600px) {
+  .cat-filter { margin-bottom: 10px; }
+  .seg-item { font-size:12px; padding:6px 0; }
+  .seg-sub-pill { font-size:11px; padding:4px 10px; }
+  .cn-title { font-size: 12.5px; }
+  .cn-school { font-size: 10px; }
+  .cn-body { font-size: 12px; padding-left: 36px; }
+}
+
+/* Quiz 2.0 - AI Generated Questions */
+#panel-quiz .qz2-loading {
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 20px;text-align:center;
+}
+#panel-quiz .qz2-loading .qz-spinner {
+  width:28px;height:28px;border:3px solid #e8e4dc;border-top-color:#7a5c45;
+  border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:12px;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+/* University carousel */
+.uni-carousel {
+  position:relative;width:100%;height:120px;margin:20px 0 8px;overflow:hidden;
+}
+.uni-slide {
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;transform:translateY(12px);
+  transition:opacity 0.5s ease,transform 0.5s ease;
+}
+.uni-slide.active {
+  opacity:1;transform:translateY(0);
+}
+.uni-logo {
+  width:60px;height:60px;margin-bottom:10px;
+  object-fit:contain;
+}
+.uni-name-jp {
+  font-size:14px;font-weight:600;color:#3a3a3a;letter-spacing:1px;
+}
+.uni-name-en {
+  font-size:11px;color:#999;margin-top:2px;letter-spacing:0.5px;
+}
+#panel-quiz .qz2-concept-tag {
+  display:inline-block;padding:4px 12px;border-radius:999px;font-size:11px;
+  font-weight:600;color:#fff;margin-bottom:16px;
+}
+#panel-quiz .qz2-question {
+  font-size:15px;font-weight:600;line-height:1.8;color:#1d1d1f;
+  margin-bottom:20px;padding:0 4px;
+}
+#panel-quiz .qz2-opts { display:flex;flex-direction:column;gap:8px;margin-bottom:20px; }
+#panel-quiz .qz2-opt {
+  display:flex;align-items:flex-start;gap:10px;padding:12px 14px;
+  border-radius:12px;border:1.5px solid #e8e4dc;background:#fff;
+  cursor:pointer;transition:all .2s;
+}
+#panel-quiz .qz2-opt:hover:not(.locked) {
+  border-color:#7a5c45;background:#fdf9f6;transform:translateY(-1px);
+}
+#panel-quiz .qz2-opt.locked { cursor:default; }
+#panel-quiz .qz2-opt .qz2-key {
+  width:24px;height:24px;border-radius:50%;border:1.5px solid #ccc;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:#999;flex-shrink:0;transition:all .2s;
+}
+#panel-quiz .qz2-opt .qz2-text { font-size:13.5px;line-height:1.7;color:#2a2825;flex:1; }
+#panel-quiz .qz2-opt.correct { background:#eef6e8;border-color:#8bbf6a; }
+#panel-quiz .qz2-opt.correct .qz2-key { background:#5a9e35;border-color:#5a9e35;color:#fff; }
+#panel-quiz .qz2-opt.wrong { background:#fdf0f0;border-color:#e8908a; }
+#panel-quiz .qz2-opt.wrong .qz2-key { background:#c94040;border-color:#c94040;color:#fff; }
+#panel-quiz .qz2-opt.dim { opacity:.35; }
+#panel-quiz .qz2-explain {
+  background:#f7f5f2;border-radius:14px;padding:16px;margin-bottom:16px;
+}
+#panel-quiz .qz2-explain-title {
+  font-size:12px;font-weight:700;color:#7a5c45;margin-bottom:10px;
+}
+#panel-quiz .qz2-explain-item {
+  font-size:12.5px;line-height:1.7;color:#6a6460;margin-bottom:8px;
+}
+#panel-quiz .qz2-explain-item strong { color:#2a2825;font-weight:600; }
+#panel-quiz .qz2-explain-item:last-child { margin-bottom:0; }
+#panel-quiz .qz2-actions {
+  display:flex;gap:8px;margin-top:16px;
+}
+#panel-quiz .qz2-btn-next {
+  flex:1;padding:10px;border-radius:12px;border:none;
+  background:#7a5c45;color:#fff;font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .15s;
+}
+#panel-quiz .qz2-btn-next:hover { background:#5a3f2a; }
+#panel-quiz .qz2-btn-back {
+  padding:10px 16px;border-radius:12px;border:1px solid #e0dcd6;
+  background:#fff;font-size:13px;cursor:pointer;color:#666;
+}
+#panel-quiz .qz2-btn-back:hover { background:#f0ede6; }
+#panel-quiz .qz2-empty {
+  text-align:center;padding:60px 20px;color:#999;font-size:13px;
+}
+#panel-quiz .qz2-wrap {
+  max-width:660px;margin:0 auto;padding:24px 16px 60px;
+}
+#panel-quiz .qz2-error {
+  text-align:center;padding:40px 20px;
+}
+#panel-quiz .qz2-error-msg { font-size:13px;color:#c94040;margin-bottom:12px; }
+#panel-quiz .qz2-retry-btn {
+  padding:8px 20px;border-radius:999px;border:1px solid #e0dcd6;
+  background:#fff;font-size:12px;cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+
+<div class="header">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div>
+      <h1>经营管理学派全览</h1>
+      <p>点击任意学派卡片查看详细内容</p>
+    </div>
+    <span class="restore-hidden-link" id="btn-restore-hidden" style="display:none" onclick="restoreAllHidden()">恢复隐藏(<span id="hidden-count"></span>)</span>
+  </div>
+  <div class="tab-nav" id="tab-nav">
+    <div class="tab-slider" id="tab-slider"></div>
+    <button class="tab-btn active" onclick="switchTab('theme', this)">学派全览<span class="tab-count" id="cnt-theme">30</span></button>
+    <button class="tab-btn" onclick="switchTab('scholar', this)">学者目录<span class="tab-count" id="cnt-scholar">107</span></button>
+    <button class="tab-btn" onclick="switchTab('concepts', this)">知识点<span class="tab-count" id="cnt-concepts"></span></button>
+    <button class="tab-btn" onclick="switchTab('paradigm', this)">理论框架</button>
+    <button class="tab-btn" onclick="switchTab('quiz', this)">练习</button>
+  </div>
+</div>
+
+<!-- LIST VIEW -->
+<div id="view-list" class="view active">
+
+  <!-- THEME PANEL -->
+  <div class="panel active" id="panel-theme">
+  </div>
+
+  <!-- PARADIGM PANEL -->
+  <div class="panel" id="panel-paradigm">
+    <div style="padding:24px 40px 48px">
+
+      <!-- ========== 框架一：组织论六段阶发展框架（折叠式） ========== -->
+      <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:14px;overflow:hidden;margin-bottom:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:18px 22px" onclick="var b=this.nextElementSibling;var a=this.querySelector('.pf-arrow');if(b.style.display==='none'){b.style.display='block';a.textContent='▾'}else{b.style.display='none';a.textContent='▸'}">
+          <div>
+            <div style="font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.02em">框架一：组织论六段阶发展框架</div>
+            <div style="font-size:11px;color:#aeaeb2;margin-top:2px;letter-spacing:0.02em">組織論の発展 · 6つの段階 · 時系列整理</div>
+          </div>
+          <span class="pf-arrow" style="font-size:11px;color:#aeaeb2;flex-shrink:0;margin-left:12px;width:24px;height:24px;background:#f2f2f7;border-radius:50%;display:flex;align-items:center;justify-content:center">▸</span>
+        </div>
+        <div style="display:none;padding:0 22px 22px">
+
+          <!-- 说明 -->
+          <div style="font-size:13px;color:#6e6e73;line-height:1.9;margin-bottom:20px;padding:14px 18px;background:#f9f9fb;border-radius:12px;border:1px solid rgba(0,0,0,0.04)">
+            按时代演进将组织论划分为六阶段，每阶段对应一种核心追求。适合用于<strong style="color:#1d1d1f">「組織論の発展について論ぜよ」</strong>类论述题的答题框架。点击学派名可跳转到对应知识卡片。
+          </div>
+
+          <!-- 六段阶列表 -->
+          <div style="display:flex;flex-direction:column;gap:1px;background:#e5e5ea;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.06)">
+
+            <div style="display:flex;background:#fff;padding:18px 22px;gap:0;align-items:center">
+              <div style="min-width:140px;flex-shrink:0">
+                <div style="font-size:14px;font-weight:600;color:#1d1d1f">古典組織論</div>
+                <div style="font-size:11.5px;color:#aeaeb2;margin-top:3px">合理性の追求</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('scientific')">科学管理学派</span></div>
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('bureaucracy')">官僚制理论</span></div>
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('process')">管理过程学派</span></div>
+              </div>
+            </div>
+
+            <div style="display:flex;background:#fff;padding:18px 22px;gap:0;align-items:center">
+              <div style="min-width:140px;flex-shrink:0">
+                <div style="font-size:14px;font-weight:600;color:#1d1d1f">新古典組織論</div>
+                <div style="font-size:11.5px;color:#aeaeb2;margin-top:3px">人間性の追求</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('humanrel')">人际关系学派</span></div>
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#34C759;flex-shrink:0"></span><span class="stage-link" onclick="show('behavioral')">行为科学学派</span></div>
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#34C759;flex-shrink:0"></span><span class="stage-link" onclick="show('ob')">组织行为学派</span></div>
+              </div>
+            </div>
+
+            <div style="display:flex;background:#fff;padding:18px 22px;gap:0;align-items:center">
+              <div style="min-width:140px;flex-shrink:0">
+                <div style="font-size:14px;font-weight:600;color:#1d1d1f">近代組織論</div>
+                <div style="font-size:11.5px;color:#aeaeb2;margin-top:3px">システム性の追求</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('systems')">系统管理学派</span></div>
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#34C759;flex-shrink:0"></span><span class="stage-link" onclick="show('carnegie')">卡内基学派</span></div>
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('equilibrium')">均衡学派</span></div>
+              </div>
+            </div>
+
+            <div style="display:flex;background:#fff;padding:18px 22px;gap:0;align-items:center">
+              <div style="min-width:140px;flex-shrink:0">
+                <div style="font-size:14px;font-weight:600;color:#1d1d1f">適応組織論</div>
+                <div style="font-size:11.5px;color:#aeaeb2;margin-top:3px">条件適応性の追求</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('contingency')">权变理论学派</span></div>
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('evolution_process')">进化过程学派</span></div>
+              </div>
+            </div>
+
+            <div style="display:flex;background:#fff;padding:18px 22px;gap:0;align-items:center">
+              <div style="min-width:140px;flex-shrink:0">
+                <div style="font-size:14px;font-weight:600;color:#1d1d1f">戦略組織論</div>
+                <div style="font-size:11.5px;color:#aeaeb2;margin-top:3px">戦略性の追求</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#007AFF;flex-shrink:0"></span><span class="stage-link" onclick="show('stratplanning')">战略规划学派</span></div>
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#007AFF;flex-shrink:0"></span><span class="stage-link" onclick="show('io')">产业组织学派</span></div>
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#007AFF;flex-shrink:0"></span><span class="stage-link" onclick="show('rbv')">资源基础观</span></div>
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#007AFF;flex-shrink:0"></span><span class="stage-link" onclick="show('dynamic')">动态能力学派</span></div>
+              </div>
+            </div>
+
+            <div style="display:flex;background:#fff;padding:18px 22px;gap:0;align-items:center">
+              <div style="min-width:140px;flex-shrink:0">
+                <div style="font-size:14px;font-weight:600;color:#1d1d1f">社会組織論</div>
+                <div style="font-size:11.5px;color:#aeaeb2;margin-top:3px">社会性の追求</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#007AFF;flex-shrink:0"></span><span class="stage-link" onclick="show('institutional')">制度理论学派</span></div>
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#007AFF;flex-shrink:0"></span><span class="stage-link" onclick="show('csr')">CSR·可持续管理</span></div>
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('social_network')">社会网络理论</span></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 演进主线提示 -->
+          <div style="margin-top:14px;padding:12px 16px;background:#f2f2f7;border-radius:10px;font-size:12px;color:#6e6e73;line-height:1.8">
+            <strong style="color:#1d1d1f">演进主线：</strong>効率 → 人間性 → システム → 適応 → 戦略 → 社会性。论述题可沿此线展开，每阶段点出代表学者与核心论点即可。
+          </div>
+
+        </div><!-- /six-stage collapsible body -->
+      </div><!-- /six-stage framework -->
+
+      <!-- ========== 框架二：斯科特三视角框架（折叠式） ========== -->
+      <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:14px;overflow:hidden;margin-bottom:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:18px 22px" onclick="var b=this.nextElementSibling;var a=this.querySelector('.pf-arrow');if(b.style.display==='none'){b.style.display='block';a.textContent='▾'}else{b.style.display='none';a.textContent='▸'}">
+          <div>
+            <div style="font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.02em">框架二：斯科特三视角框架</div>
+            <div style="font-size:11px;color:#aeaeb2;margin-top:2px;letter-spacing:0.02em">W.R. Scott · Organizations: Rational, Natural, and Open Systems · 1981</div>
+          </div>
+          <span class="pf-arrow" style="font-size:11px;color:#aeaeb2;flex-shrink:0;margin-left:12px;width:24px;height:24px;background:#f2f2f7;border-radius:50%;display:flex;align-items:center;justify-content:center">▸</span>
+        </div>
+        <div style="display:none;padding:0 22px 22px">
+
+          <!-- 说明 -->
+          <div style="font-size:13px;color:#6e6e73;line-height:1.9;margin-bottom:18px;padding:14px 18px;background:#f9f9fb;border-radius:12px;border:1px solid rgba(0,0,0,0.04)">
+            斯科特用<strong style="color:#1d1d1f">三种视角</strong>来理解组织的本质，每种视角关注组织的不同侧面。不是时代更替，而是观察同一组织的<strong style="color:#1d1d1f">三副眼镜</strong>——理性视角看结构设计，自然视角看内部政治，开放视角看环境适应。
+          </div>
+
+          <!-- 三视角卡片 -->
+          <div style="display:flex;flex-direction:column;gap:1px;background:#e5e5ea;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.06)">
+
+            <!-- 理性系统 -->
+            <div style="background:#fff;padding:18px 22px">
+              <div style="margin-bottom:10px">
+                <div style="font-size:14px;font-weight:600;color:#1d1d1f">理性系统</div>
+                <div style="font-size:10.5px;color:#aeaeb2;margin-top:2px">Rational System — 组织是追求目标的理性工具</div>
+              </div>
+              <div style="font-size:12.5px;color:#6e6e73;line-height:1.8;margin-bottom:12px">
+                目标明确、结构形式化、行为可规划。规则、层级、分工都是为效率服务的理性手段。
+              </div>
+              <div style="display:flex;flex-direction:column;gap:5px;font-size:12.5px">
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('scientific')">科学管理学派（泰勒）</span></div>
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('process')">管理过程学派（法约尔）</span></div>
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('bureaucracy')">官僚制理论（韦伯）</span></div>
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#34C759;flex-shrink:0"></span><span class="stage-link" onclick="show('decision_theory')">意思決定論（西蒙）</span></div>
+              </div>
+            </div>
+
+            <!-- 自然系统 -->
+            <div style="background:#fff;padding:18px 22px">
+              <div style="margin-bottom:10px">
+                <div style="font-size:14px;font-weight:600;color:#1d1d1f">自然系统</div>
+                <div style="font-size:10.5px;color:#aeaeb2;margin-top:2px">Natural System — 组织是参与者构成的有机共同体</div>
+              </div>
+              <div style="font-size:12.5px;color:#6e6e73;line-height:1.8;margin-bottom:12px">
+                正式目标只是表面，真正驱动行为的是非正式结构、人际关系和组织生存本能。
+              </div>
+              <div style="display:flex;flex-direction:column;gap:5px;font-size:12.5px">
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('humanrel')">人际关系学派（梅奥）</span></div>
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('equilibrium')">均衡学派（巴纳德）</span></div>
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#34C759;flex-shrink:0"></span><span class="stage-link" onclick="show('behavioral')">行为科学学派（马斯洛/麦格雷戈）</span></div>
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#007AFF;flex-shrink:0"></span><span class="stage-link" onclick="showScholar('selznick')">制度化理论（塞尔兹尼克）</span></div>
+              </div>
+            </div>
+
+            <!-- 开放系统 -->
+            <div style="background:#fff;padding:18px 22px">
+              <div style="margin-bottom:10px">
+                <div style="font-size:14px;font-weight:600;color:#1d1d1f">开放系统</div>
+                <div style="font-size:10.5px;color:#aeaeb2;margin-top:2px">Open System — 组织是嵌入环境的松散耦合系统</div>
+              </div>
+              <div style="font-size:12.5px;color:#6e6e73;line-height:1.8;margin-bottom:12px">
+                与环境持续交换资源、信息和合法性，边界模糊可渗透，结构和行为由环境压力塑造。
+              </div>
+              <div style="display:flex;flex-direction:column;gap:5px;font-size:12.5px">
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('systems')">系统管理学派（卡斯特/贝塔朗菲）</span></div>
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('contingency')">权变理论学派（劳伦斯&洛施）</span></div>
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="showScholar('thompson_jd')">组织行动论（汤普森）</span></div>
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('evolution_process')">进化过程学派（韦克/明茨伯格）</span></div>
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#007AFF;flex-shrink:0"></span><span class="stage-link" onclick="show('institutional')">制度理论学派（迪马乔&鲍威尔）</span></div>
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#34C759;flex-shrink:0"></span><span class="stage-link" onclick="showScholar('weick')">组织化理论（韦克）</span></div>
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#34C759;flex-shrink:0"></span><span class="stage-link" onclick="showScholar('march')">垃圾桶模型（马奇&科恩）</span></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 图例 -->
+          <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:16px;font-size:11.5px;color:#86868b;padding:0 4px">
+            <div style="display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:#FF9500"></span>OT 组织论</div>
+            <div style="display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:#34C759"></span>OB 组织行为</div>
+            <div style="display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:#007AFF"></span>SM 战略管理</div>
+            <div style="display:flex;align-items:center;gap:5px"><span style="color:#c7c7cc;font-size:13px">›</span>可点击跳转</div>
+          </div>
+
+        </div>
+      </div><!-- /scott-original framework -->
+
+      <!-- ========== 框架三：日本版四象限框架（折叠式） ========== -->
+      <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:14px;overflow:hidden;margin-bottom:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:18px 22px" onclick="var b=this.nextElementSibling;var a=this.querySelector('.pf-arrow');if(b.style.display==='none'){b.style.display='block';a.textContent='▾'}else{b.style.display='none';a.textContent='▸'}">
+          <div>
+            <div style="font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.02em">框架三：日本版四象限框架</div>
+            <div style="font-size:11px;color:#aeaeb2;margin-top:2px;letter-spacing:0.02em">日本経営学界の整理 · 合理性×自然 · 封闭×開放 · 考试标准版</div>
+          </div>
+          <span class="pf-arrow" style="font-size:11px;color:#aeaeb2;flex-shrink:0;margin-left:12px;width:24px;height:24px;background:#f2f2f7;border-radius:50%;display:flex;align-items:center;justify-content:center">▸</span>
+        </div>
+        <div style="display:none;padding:0 22px 22px">
+
+          <!-- 说明 -->
+          <div style="font-size:13px;color:#6e6e73;line-height:1.9;margin-bottom:18px;padding:14px 18px;background:#f9f9fb;border-radius:12px;border:1px solid rgba(0,0,0,0.04)">
+            日本经营学界将斯科特的三视角简化为<strong style="color:#1d1d1f">两轴交叉的四象限</strong>：横轴「合理性 vs 自然系统」区分组织本质，纵轴「封闭 vs 开放」区分与环境的关系。这是日本大学院入试的<strong style="color:#1d1d1f">标准答题框架</strong>。
+          </div>
+
+      <!-- 四象限网格 -->
+      <div class="paradigm-grid-wrapper">
+      <div class="paradigm-grid" style="display:grid;grid-template-columns:44px 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:1px;background:#e5e5ea;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.06)">
+
+        <!-- 左上角 -->
+        <div class="paradigm-axis-row" style="background:#f2f2f7;padding:10px 4px;display:flex;align-items:center;justify-content:center">
+          <div style="font-size:9px;color:#c7c7cc;text-align:center;line-height:1.5;letter-spacing:0.04em">因果<br>方向</div>
+        </div>
+
+        <!-- 横轴标题：合理性模型 -->
+        <div class="paradigm-col-header" style="background:color-mix(in srgb, #FF9500 4%, #fff);padding:14px 20px;text-align:center">
+          <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:3px">
+            <span style="width:6px;height:6px;border-radius:50%;background:#FF9500"></span>
+            <span style="font-size:13px;font-weight:600;color:#1d1d1f">合理性模型</span>
+          </div>
+          <div style="font-size:10px;color:#aeaeb2;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:3px">Rational Model</div>
+          <div style="font-size:11px;color:#86868b">设计与控制 · 追求最优解</div>
+        </div>
+
+        <!-- 横轴标题：自然系统模型 -->
+        <div class="paradigm-col-header" style="background:color-mix(in srgb, #34C759 4%, #fff);padding:14px 20px;text-align:center">
+          <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:3px">
+            <span style="width:6px;height:6px;border-radius:50%;background:#34C759"></span>
+            <span style="font-size:13px;font-weight:600;color:#1d1d1f">自然系统模型</span>
+          </div>
+          <div style="font-size:10px;color:#aeaeb2;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:3px">Natural System Model</div>
+          <div style="font-size:11px;color:#86868b">适应与生存 · 内部均衡</div>
+        </div>
+
+        <!-- 纵轴：封闭系统 -->
+        <div class="paradigm-axis-row" style="background:#f2f2f7;padding:8px 4px;display:flex;align-items:center;justify-content:center">
+          <div style="writing-mode:vertical-lr;font-size:11px;font-weight:600;color:#6e6e73;letter-spacing:0.06em;text-align:center;line-height:1.4">
+            封闭系统<br><span style="font-size:9px;font-weight:400;color:#c7c7cc;letter-spacing:0.03em">Closed</span>
+          </div>
+        </div>
+
+        <!-- 象限①：静态结构学派 -->
+        <div class="paradigm-cell" style="background:#fff;padding:18px 20px">
+          <div style="margin-bottom:10px;padding-left:10px;border-left:3px solid #FF9500">
+            <div style="font-size:13.5px;font-weight:600;color:#1d1d1f">静态结构学派</div>
+            <div style="font-size:10px;color:#aeaeb2;margin-top:2px">封闭 × 合理</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;font-size:12.5px;margin-bottom:10px">
+            <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('scientific')">科学管理学派（泰勒）</span></div>
+            <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('process')">管理过程学派（法约尔）</span></div>
+            <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('bureaucracy')">官僚制理论（韦伯）</span></div>
+          </div>
+          <div class="pc-toggle" onclick="var d=this.nextElementSibling;if(d.style.display==='none'){d.style.display='block';this.textContent='收起 ▴'}else{d.style.display='none';this.textContent='详细 ▾'}">详细 ▾</div>
+          <div style="display:none">
+            <div style="font-size:12px;color:#6e6e73;padding:10px 14px;background:#f9f9fb;border-radius:10px;line-height:1.75">
+              <div style="margin-bottom:4px;font-weight:500;color:#1d1d1f">环境 → 组织 → 人</div>
+              <div style="font-size:11px;color:#86868b">环境稳定，组织设计决定人的工作方式。人是被动执行者。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 象限②：均衡学派 -->
+        <div class="paradigm-cell" style="background:#fff;padding:18px 20px">
+          <div style="margin-bottom:10px;padding-left:10px;border-left:3px solid #34C759">
+            <div style="font-size:13.5px;font-weight:600;color:#1d1d1f">均衡学派</div>
+            <div style="font-size:10px;color:#aeaeb2;margin-top:2px">封闭 × 自然</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;font-size:12.5px;margin-bottom:10px">
+            <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#34C759;flex-shrink:0"></span><span class="stage-link" onclick="showScholar('mayo')">人际关系学派（梅奥）</span></div>
+            <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#34C759;flex-shrink:0"></span><span class="stage-link" onclick="show('equilibrium')">均衡学派（巴纳德）</span></div>
+            <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#34C759;flex-shrink:0"></span><span class="stage-link" onclick="showScholar('selznick')">制度理论（塞尔兹尼克）</span></div>
+          </div>
+          <div class="pc-toggle" onclick="var d=this.nextElementSibling;if(d.style.display==='none'){d.style.display='block';this.textContent='收起 ▴'}else{d.style.display='none';this.textContent='详细 ▾'}">详细 ▾</div>
+          <div style="display:none">
+            <div style="font-size:12px;color:#6e6e73;padding:10px 14px;background:#f9f9fb;border-radius:10px;line-height:1.75">
+              <div style="margin-bottom:4px;font-weight:500;color:#1d1d1f">环境 → 组织 ← 人</div>
+              <div style="font-size:11px;color:#86868b">人的需求与环境压力共同作用于组织，组织在两者间维持均衡。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 纵轴：开放系统 -->
+        <div class="paradigm-axis-row" style="background:#f2f2f7;padding:8px 4px;display:flex;align-items:center;justify-content:center">
+          <div style="writing-mode:vertical-lr;font-size:11px;font-weight:600;color:#6e6e73;letter-spacing:0.06em;text-align:center;line-height:1.4">
+            开放系统<br><span style="font-size:9px;font-weight:400;color:#c7c7cc;letter-spacing:0.03em">Open</span>
+          </div>
+        </div>
+
+        <!-- 象限③：适应性设计学派 -->
+        <div class="paradigm-cell" style="background:#fff;padding:18px 20px">
+          <div style="margin-bottom:10px;padding-left:10px;border-left:3px solid #FF9500">
+            <div style="font-size:13.5px;font-weight:600;color:#1d1d1f">适应性设计学派</div>
+            <div style="font-size:10px;color:#aeaeb2;margin-top:2px">开放 × 合理</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;font-size:12.5px;margin-bottom:10px">
+            <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="showScholar('thompson_jd')">技术-结构论（伍德沃德/汤普森）</span></div>
+            <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="show('adaptive_design')">适应性设计学派（汤普森）</span></div>
+            <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#FF9500;flex-shrink:0"></span><span class="stage-link" onclick="showScholar('lawrence')">任务环境-组织论（劳伦斯&洛施）</span></div>
+          </div>
+          <div class="pc-toggle" onclick="var d=this.nextElementSibling;if(d.style.display==='none'){d.style.display='block';this.textContent='收起 ▴'}else{d.style.display='none';this.textContent='详细 ▾'}">详细 ▾</div>
+          <div style="display:none">
+            <div style="font-size:12px;color:#6e6e73;padding:10px 14px;background:#f9f9fb;border-radius:10px;line-height:1.75">
+              <div style="margin-bottom:4px;font-weight:500;color:#1d1d1f">环境 → 组织 → 人</div>
+              <div style="font-size:11px;color:#86868b">与①同方向，但环境不再稳定。不同环境决定不同结构 — 这就是「权变」。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 象限④：进化过程学派 -->
+        <div class="paradigm-cell" style="background:#fff;padding:18px 20px">
+          <div style="margin-bottom:10px;padding-left:10px;border-left:3px solid #34C759">
+            <div style="font-size:13.5px;font-weight:600;color:#1d1d1f">进化过程学派</div>
+            <div style="font-size:10px;color:#aeaeb2;margin-top:2px">开放 × 自然</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;font-size:12.5px;margin-bottom:10px">
+            <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#34C759;flex-shrink:0"></span><span class="stage-link" onclick="showScholar('march')">垃圾桶决策模型（马奇）</span></div>
+            <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#34C759;flex-shrink:0"></span><span class="stage-link" onclick="showScholar('weick')">组织化进化模型（韦克）</span></div>
+            <div style="display:flex;align-items:center;gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:#34C759;flex-shrink:0"></span><span class="stage-link" onclick="showScholar('mintzberg')">创发性战略论（明茨伯格）</span></div>
+          </div>
+          <div class="pc-toggle" onclick="var d=this.nextElementSibling;if(d.style.display==='none'){d.style.display='block';this.textContent='收起 ▴'}else{d.style.display='none';this.textContent='详细 ▾'}">详细 ▾</div>
+          <div style="display:none">
+            <div style="font-size:12px;color:#6e6e73;padding:10px 14px;background:#f9f9fb;border-radius:10px;line-height:1.75">
+              <div style="margin-bottom:4px;font-weight:500;color:#1d1d1f">环境 ← 组织 ← 人</div>
+              <div style="font-size:11px;color:#86868b">箭头反转：人的解释塑造组织，组织反过来建构「环境」。战略是事后涌现的，非预先规划。</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      </div><!-- /paradigm-grid-wrapper -->
+
+      <!-- 图例 -->
+      <div class="paradigm-legend-wrapper">
+      <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:16px;font-size:11.5px;color:#86868b;padding:0 4px">
+        <div style="display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:#FF9500"></span>OT 组织论</div>
+        <div style="display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:#34C759"></span>OB 组织行为</div>
+        <div style="display:flex;align-items:center;gap:5px"><span style="color:#c7c7cc;font-size:13px">›</span>可点击跳转</div>
+        <div>①→②→③→④ 历史演进</div>
+      </div>
+
+      </div><!-- /paradigm-legend-wrapper -->
+
+        </div>
+      </div><!-- /japan-quadrant framework -->
+
+
+
+    </div>
+
+  </div><!-- /panel-paradigm -->
+
+  <!-- SCHOLAR PANEL -->
+  <div class="panel" id="panel-scholar">
+
+    <div class="scholar-search-wrap">
+      <div class="scholar-search-box">
+        <span class="scholar-search-icon">&#9906;</span>
+        <input class="scholar-search-input" id="scholar-search-input" type="text"
+          placeholder="搜索学者姓名（中文 · English · 日本語）"
+          oninput="scholarSearch(this.value)"
+          autocomplete="off" spellcheck="false">
+        <button class="scholar-search-clear" id="scholar-search-clear"
+          onclick="scholarSearchClear()" title="清除">&#x2715;</button>
+      </div>
+    </div>
+    <div class="cat-filter" id="scholar-filter">
+      <div style="display:flex;align-items:center;gap:10px">
+      <div class="seg-ctrl" style="flex:1">
+        <button class="seg-item active" data-l1="all" onclick="scholarSegSelect('all')">全部</button>
+        <button class="seg-item" data-l1="SM" onclick="scholarSegSelect('SM')"><span class="seg-dot" style="background:#007AFF"></span>SM</button>
+        <button class="seg-item" data-l1="OB" onclick="scholarSegSelect('OB')"><span class="seg-dot" style="background:#34C759"></span>OB</button>
+        <button class="seg-item" data-l1="OT" onclick="scholarSegSelect('OT')"><span class="seg-dot" style="background:#FF9500"></span>OT</button>
+      </div>
+      <span class="scholar-search-count" id="scholar-search-count" style="white-space:nowrap"></span>
+      </div>
+      <div class="seg-subs" id="scholar-subs"></div>
+    </div>
+    <div class="scholar-no-result" id="scholar-no-result">
+      <strong>未找到匹配的学者</strong>请尝试其他关键词或检查拼写
+    </div>
+
+    <div id="scholar-cards-container"></div>
+
+  </div>
+
+  <!-- CONCEPTS PANEL -->
+  <div class="panel" id="panel-concepts">
+    <div class="scholar-search-wrap">
+      <div class="scholar-search-box">
+        <span class="scholar-search-icon">&#9906;</span>
+        <input class="scholar-search-input" id="concept-search-input" type="text"
+          placeholder="搜索知识点（中文 · English · 日本語）"
+          oninput="conceptSearch(this.value)"
+          autocomplete="off" spellcheck="false">
+        <button class="scholar-search-clear" id="concept-search-clear"
+          onclick="conceptSearchClear()" title="清除">&#x2715;</button>
+      </div>
+    </div>
+    <div class="cat-filter" id="cat-filter">
+      <div style="display:flex;align-items:center;gap:10px">
+      <div class="seg-ctrl" style="flex:1">
+        <button class="seg-item active" data-l1="all" onclick="segSelect('all')">全部</button>
+        <button class="seg-item" data-l1="SM" onclick="segSelect('SM')"><span class="seg-dot" style="background:#007AFF"></span>SM</button>
+        <button class="seg-item" data-l1="OB" onclick="segSelect('OB')"><span class="seg-dot" style="background:#34C759"></span>OB</button>
+        <button class="seg-item" data-l1="OT" onclick="segSelect('OT')"><span class="seg-dot" style="background:#FF9500"></span>OT</button>
+      </div>
+      <span class="scholar-search-count" id="concept-count" style="white-space:nowrap"></span>
+      </div>
+      <div class="seg-subs" id="seg-subs-SM">
+        <div class="seg-sub-label">戦略基礎</div>
+        <div class="seg-sub-row">
+          <button class="seg-sub-pill" data-cat="戦略の概念" onclick="toggleCatPill(this)">戦略の概念</button>
+          <button class="seg-sub-pill" data-cat="戦略形成学派" onclick="toggleCatPill(this)">戦略形成学派</button>
+        </div>
+        <div class="seg-sub-label">競争・企業</div>
+        <div class="seg-sub-row">
+          <button class="seg-sub-pill" data-cat="競争戦略" onclick="toggleCatPill(this)">競争戦略</button>
+          <button class="seg-sub-pill" data-cat="企業戦略" onclick="toggleCatPill(this)">企業戦略</button>
+        </div>
+        <div class="seg-sub-label">機能・国際</div>
+        <div class="seg-sub-row">
+          <button class="seg-sub-pill" data-cat="イノベーション戦略" onclick="toggleCatPill(this)">イノベーション</button>
+          <button class="seg-sub-pill" data-cat="生産戦略" onclick="toggleCatPill(this)">生産戦略</button>
+          <button class="seg-sub-pill" data-cat="国際戦略" onclick="toggleCatPill(this)">国際戦略</button>
+          <button class="seg-sub-pill" data-cat="ガバナンス・CSR" onclick="toggleCatPill(this)">ガバナンス</button>
+        </div>
+      </div>
+      <div class="seg-subs" id="seg-subs-OB">
+        <div class="seg-sub-label">個体</div>
+        <div class="seg-sub-row">
+          <button class="seg-sub-pill" data-cat="人格・知覚" onclick="toggleCatPill(this)">人格・知覚</button>
+          <button class="seg-sub-pill" data-cat="態度・情緒" onclick="toggleCatPill(this)">態度・情緒</button>
+          <button class="seg-sub-pill" data-cat="モチベーション・学習" onclick="toggleCatPill(this)">動機づけ・学習</button>
+        </div>
+        <div class="seg-sub-label">集団</div>
+        <div class="seg-sub-row">
+          <button class="seg-sub-pill" data-cat="リーダーシップ" onclick="toggleCatPill(this)">リーダーシップ</button>
+          <button class="seg-sub-pill" data-cat="集団・チーム" onclick="toggleCatPill(this)">集団・チーム</button>
+          <button class="seg-sub-pill" data-cat="コンフリクト" onclick="toggleCatPill(this)">コンフリクト</button>
+        </div>
+        <div class="seg-sub-label">組織</div>
+        <div class="seg-sub-row">
+          <button class="seg-sub-pill" data-cat="組織文化・変革" onclick="toggleCatPill(this)">文化・変革</button>
+          <button class="seg-sub-pill" data-cat="組織学習" onclick="toggleCatPill(this)">組織学習</button>
+        </div>
+        <div class="seg-sub-label">HRM</div>
+        <div class="seg-sub-row">
+          <button class="seg-sub-pill" data-cat="人的資源管理" onclick="toggleCatPill(this)">人的資源管理</button>
+          <button class="seg-sub-pill" data-cat="日本的経営" onclick="toggleCatPill(this)">日本的経営</button>
+        </div>
+      </div>
+      <div class="seg-subs" id="seg-subs-OT">
+        <div class="seg-sub-label">経営基礎</div>
+        <div class="seg-sub-row">
+          <button class="seg-sub-pill" data-cat="経営史" onclick="toggleCatPill(this)">経営史</button>
+          <button class="seg-sub-pill" data-cat="意思決定論" onclick="toggleCatPill(this)">意思決定論</button>
+        </div>
+        <div class="seg-sub-label">組織設計・制度</div>
+        <div class="seg-sub-row">
+          <button class="seg-sub-pill" data-cat="組織構造・設計" onclick="toggleCatPill(this)">組織構造・設計</button>
+          <button class="seg-sub-pill" data-cat="制度理論" onclick="toggleCatPill(this)">制度理論</button>
+          <button class="seg-sub-pill" data-cat="取引コスト" onclick="toggleCatPill(this)">取引コスト</button>
+        </div>
+        <div class="seg-sub-label">現代</div>
+        <div class="seg-sub-row">
+          <button class="seg-sub-pill" data-cat="ソーシャル・ネットワーク" onclick="toggleCatPill(this)">ネットワーク</button>
+          <button class="seg-sub-pill" data-cat="現代経営手法" onclick="toggleCatPill(this)">現代経営手法</button>
+        </div>
+      </div>
+    </div>
+    <div class="scholar-no-result" id="concept-no-result">
+      <strong>未找到匹配的知识点</strong>请尝试其他关键词或检查拼写
+    </div>
+    <div id="concept-list"></div>
+  </div>
+
+  <!-- QUIZ PANEL -->
+  <div class="panel" id="panel-quiz">
+    <div id="quiz-mount"></div>
+  </div>
+
+</div>
+
+<!-- DETAIL VIEW -->
+<div id="view-detail" class="view">
+  <div class="detail-back" onclick="goBack()">
+    <div class="back-arrow">←</div>
+    <span>返回列表</span>
+  </div>
+  <div class="detail-body" id="detail-body"></div>
+</div>
+
+<script src="data.js?v=9"></script>
+<script src="data_ja.js"></script>
+<script src="questions.js"></script>
+<script src="school_quiz.js?v=2"></script>
+<script>
+
+var _navStack = [];
+var _listState = null; // 从列表跳到详情时保存列表滚动位置
+
+function _pushNav() {
+  var dv = document.getElementById("view-detail");
+  if (dv.classList.contains("active")) {
+    _navStack.push({
+      html: document.getElementById("detail-body").innerHTML,
+      scrollTop: dv.scrollTop
+    });
+  } else {
+    // 从列表页（view-list）跳到详情，保存列表状态
+    var vl = document.getElementById("view-list");
+    _listState = { scrollTop: vl.scrollTop };
+  }
+}
+
+/* 从学者的 schools 数组推导 accent 颜色，避免手动维护 */
+function _scholarAccent(s) {
+  if (s.schools && s.schools.length) {
+    for (var i = 0; i < s.schools.length; i++) {
+      var sk = NAME_TO_KEY[s.schools[i]];
+      if (sk && DATA[sk]) return DATA[sk].accent;
+    }
+  }
+  return s.accent;
+}
+
+function showScholar(key) {
+  var s = SCHOLARS[key];
+  if (!s) return;
+  _pushNav();
+
+  // 从 KNOWLEDGE 派生学者的学派归属（知识点是原子，学派由知识点tag决定）
+  var _scholarSchoolSet = {};
+  KNOWLEDGE.forEach(function(kn) {
+    if (_knScholars(kn).indexOf(key) >= 0) {
+      (kn.schools || []).forEach(function(sKey) {
+        if (DATA[sKey] && !_scholarSchoolSet[sKey]) {
+          _scholarSchoolSet[sKey] = DATA[sKey].title;
+        }
+      });
+    }
+  });
+  var schools = Object.keys(_scholarSchoolSet).map(function(sKey) {
+    return '<span class="tag tag-link" onclick="show(\'' + sKey + '\')">' + _scholarSchoolSet[sKey] + '</span>';
+  }).join("");
+
+  var ac = _scholarAccent(s);
+  var accentBg = ac + "14";
+  var html =
+    '<div style="display:flex;align-items:stretch;gap:0;margin-bottom:24px;background:#fff;border:1px solid #e4e0d8;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05)">'
+    + '<div style="width:5px;flex-shrink:0;background:' + ac + '"></div>'
+    + '<div style="padding:20px 22px;flex:1">'
+    +   '<div class="badge" style="border-color:' + ac + ';color:' + ac + ';background:' + accentBg + '">' + s.field + '</div>'
+    +   '<div class="d-title">' + s.name + '</div>'
+    +   '<div class="d-en">' + s.en + '</div>'
+    +   (s.ja ? '<div class="d-ja">' + s.ja + '</div>' : '')
+    + '</div>'
+    + '</div>'
+    + '<div class="sec-title">基本信息</div>'
+    + '<table style="width:100%;border-collapse:collapse;margin-bottom:22px;font-size:13px">'
+    + '<tr><td style="padding:8px 0;color:#b8b0a4;width:80px;vertical-align:top">生卒年</td><td style="padding:8px 0;color:#3a3830;line-height:1.6">' + s.born + (s.died ? ' — ' + s.died : '') + '</td></tr>'
+    + '<tr style="border-top:1px solid #f0ede6"><td style="padding:8px 0;color:#b8b0a4;vertical-align:top">国籍</td><td style="padding:8px 0;color:#3a3830">' + (s.flag ? s.flag + '\u2002' : '') + s.nationality + '</td></tr>'
+    + '<tr style="border-top:1px solid #f0ede6"><td style="padding:8px 0;color:#b8b0a4;vertical-align:top">出身/籍贯</td><td style="padding:8px 0;color:#3a3830">' + s.origin + '</td></tr>'
+    + (s.nobel ? '<tr style="border-top:1px solid #f0ede6"><td style="padding:8px 0;color:#b8b0a4;vertical-align:top">获奖</td><td style="padding:8px 0;color:#b07d20;font-weight:500">' + s.nobel + '</td></tr>' : '')
+    + '<tr style="border-top:1px solid #f0ede6"><td style="padding:8px 0;color:#b8b0a4;vertical-align:top">主要任职</td><td style="padding:8px 0;color:#3a3830;line-height:1.6">' + s.affiliation + '</td></tr>'
+    + '</table>'
+    + (function(){
+        var knForScholar = KNOWLEDGE.filter(function(kn) { return _knScholars(kn).indexOf(key) >= 0; });
+        if (!knForScholar.length) return '';
+        return '<div class="sec-title">代表理论</div><ul class="concepts" style="margin-bottom:20px">'
+          + knForScholar.map(function(kn, idx) {
+              return renderKnowledgeItem({
+                title: _knFullTitle(kn),
+                body: kn.body,
+                accent: ac || '#8a7a6a',
+                id: 'th-' + Date.now() + '-' + idx,
+                wrapper: 'li'
+              });
+            }).join('') + '</ul><hr class="divider">';
+      })()
+    + '<div class="sec-title">学术贡献</div>'
+    + '<p class="summary" style="margin-bottom:22px">' + s.contribution + '</p>'
+    + (s.nobel_detail ? '<div class="sec-title" style="color:#b07d20">诺贝尔奖</div><div style="background:#fdf8ee;border:1px solid #e8d99a;border-radius:8px;padding:14px 16px;margin-bottom:22px;font-size:13px;line-height:1.85;color:#7a5c10">' + s.nobel_detail + '</div>' : '')
+    + '<hr class="divider">'
+    + '<div class="sec-title">所属学派</div>'
+    + '<div class="tags">' + schools + '</div>';
+
+  document.getElementById("detail-body").innerHTML = html;
+  document.getElementById("view-list").classList.remove("active");
+  document.getElementById("view-detail").classList.add("active");
+  document.getElementById("view-detail").scrollTop = 0;
+}
+
+function _moveTabSlider(btn) {
+  var slider = document.getElementById('tab-slider');
+  var nav = document.getElementById('tab-nav');
+  if (!slider || !nav) return;
+  var navRect = nav.getBoundingClientRect();
+  var btnRect = btn.getBoundingClientRect();
+  slider.style.width = btnRect.width + 'px';
+  slider.style.transform = 'translateX(' + (btnRect.left - navRect.left - 3) + 'px)';
+}
+function switchTab(tab, btn) {
+  document.querySelectorAll(".tab-btn").forEach(function(b) { b.classList.remove("active"); });
+  btn.classList.add("active");
+  _moveTabSlider(btn);
+  document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("active"); });
+  if (document.getElementById("panel-" + tab)) document.getElementById("panel-" + tab).classList.add("active");
+  document.getElementById("view-detail").classList.remove("active");
+  document.getElementById("view-list").classList.add("active");
+  document.getElementById("view-list").scrollTop = 0;
+  _navStack = [];
+  _listState = null;
+  if (tab === 'quiz' && !_quizConcept && !_sbActive) {
+    QZ.mount();
+  } else if (tab !== 'quiz') {
+    _quizConcept = '';
+  }
+  if (tab === 'concepts') renderConcepts();
+  if (tab === 'theme') renderHomeGrid();
+}
+// Initialize slider position on load
+document.addEventListener('DOMContentLoaded', function() {
+  var activeBtn = document.querySelector('.tab-btn.active');
+  if (activeBtn) {
+    var slider = document.getElementById('tab-slider');
+    if (slider) slider.style.transition = 'none';
+    _moveTabSlider(activeBtn);
+    if (slider) setTimeout(function() { slider.style.transition = ''; }, 50);
+  }
+});
+
+
+
+function findKey(label) {
+  var clean = label.replace(/（.*?）/g, "").replace(/\(.*?\)/g, "").trim();
+  if (NAME_TO_KEY[clean]) return NAME_TO_KEY[clean];
+  for (var name in NAME_TO_KEY) {
+    if (clean.indexOf(name) !== -1 || name.indexOf(clean) !== -1) return NAME_TO_KEY[name];
+  }
+  return null;
+}
+
+
+function _isNameSeg(seg) {
+  if (!seg) return false;
+  if (/^\d{4}(?:\s*[\/\-]\s*\d{4})?$/.test(seg)) return true;
+  if (!/[A-Za-z]/.test(seg)) return false;
+  if (/[\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff]/.test(seg)) return false;
+  if (/^[A-Z][A-Z0-9]{0,5}$/.test(seg.replace(/\s/g, ''))) return false;
+  if (/\bet al\.?\b/i.test(seg)) return true;
+  // Multi-name pattern: "Fayol & Deming", "Fayol / Deming" — each part is a short capitalized word
+  if (/[&\/]/.test(seg)) {
+    var nameParts = seg.split(/\s*[&\/]\s*/);
+    if (nameParts.length >= 2 && nameParts.every(function(p) { return /^[A-Z][a-z]{1,15}$/.test(p.trim()); })) return true;
+  }
+  var BAD = /(tion|ment|ness|ity|ism|ance|ence|ive|ical|ory|ous|ful|ics|ogy|ure|ery|ship|less|ward|hood|ing|ent|ect|ial|lar|ble|sis|acy|nal|tic|nce)$/i;
+  var STOP = {Model:1,Theory:1,Effect:1,Bias:1,Method:1,Type:1,Process:1,Approach:1,
+    Value:1,Asset:1,Role:1,Norm:1,Goal:1,Task:1,Work:1,Group:1,Team:1,
+    School:1,Chart:1,Loop:1,Cycle:1,Rule:1,Field:1,Level:1,Stage:1,Phase:1,Score:1,
+    Style:1,Code:1,Game:1,Matrix:1,Force:1,Hand:1,Open:1,High:1,
+    Dark:1,Lead:1,Joint:1,Loose:1,Free:1,System:1,Paradox:1,Problem:1,
+    Concept:1,Curve:1,Market:1,Capital:1,Chain:1,Platform:1,Network:1,
+    Resource:1,Firm:1,Form:1,Mode:1,Jungle:1,Locus:1,Self:1,
+    Triad:1,Control:1,Stakeholder:1,Structural:1,Stress:1,
+    Cognitive:1,Emotional:1,Networks:1,Barriers:1,Dynamics:1,Structure:1,
+    Decision:1,Behavior:1,Innovation:1,Strategy:1,Capability:1,Revolution:1,
+    Ocean:1,Perspective:1,Properties:1,Legitimacy:1,Groups:1,Inertia:1,
+    View:1,Analysis:1,Framework:1,Indicator:1,
+    Theorem:1,Trap:1,Contract:1,Bottom:1,Line:1,Anchor:1,Schema:1,Paradigm:1,
+    Knowledge:1,Master:1,Routine:1,Waste:1,Leap:1,Dilemma:1,Synergy:1,
+    Franchise:1,Enterprise:1,Price:1,Archetype:1,Quantum:1,Career:1,
+    Startup:1,Groupthink:1,Keiretsu:1,Think:1,Change:1,Power:1,
+    Cost:1,Profit:1,Design:1,Plan:1,Test:1,Fit:1,Slack:1,Span:1,
+    Lean:1,Flat:1,Tall:1,Core:1,Base:1,Flow:1,Lock:1,Rent:1,Gap:1,
+    Scan:1,Hedge:1,Niche:1,Scope:1,Spin:1,Swap:1,Yield:1,Stock:1,
+    Craft:1,Drift:1,Shift:1,Split:1,Bet:1,Bid:1,Fit:1,Hub:1,Web:1,
+    Grid:1,Myth:1,Norm:1,Path:1,Peak:1,Pit:1,Push:1,Pull:1,Risk:1,
+    Seed:1,Wage:1,Zone:1,Audit:1,Batch:1,Blend:1,Brand:1,Brief:1,
+    Claim:1,Clash:1,Climb:1,Coach:1,Crowd:1,Doubt:1,Dream:1,
+    Equity:1,Goods:1,Index:1,Input:1,Issue:1,Label:1,Layer:1,
+    Limit:1,Margin:1,Merit:1,Morale:1,Order:1,Output:1,Panel:1,
+    Pitch:1,Pledge:1,Quota:1,Range:1,Ratio:1,Reach:1,Right:1,
+    Sector:1,Setup:1,Share:1,Signal:1,Skill:1,Space:1,Stake:1,
+    Supply:1,Demand:1,Target:1,Tenure:1,Trade:1,Trend:1,Trust:1,
+    Turnover:1,Venture:1,Virtue:1,Vision:1,Voice:1,Exit:1,
+    Surplus:1,Deficit:1,Ladder:1,Bonus:1,Halo:1,Anchor:1,Silo:1};
+  var parts = seg.split(/\s*[&]\s*/);
+  for (var i = 0; i < parts.length; i++) {
+    var p = parts[i].trim();
+    if (!p) continue;
+    var words = p.split(/\s+/);
+    if (words.length > 3) return false;
+    for (var j = 0; j < words.length; j++) {
+      var w = words[j];
+      if (/^(the|a|an|of|in|on|for|and|or|vs|to|by|with|from|as|at|is|are|not|no|all)$/i.test(w)) return false;
+      if (STOP[w]) return false;
+      if (w.length > 2 && /s$/i.test(w) && STOP[w.slice(0,-1)]) return false;
+      if (w.length > 3 && /ies$/i.test(w) && STOP[w.slice(0,-3)+'y']) return false;
+      if (/^(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|First|Second|Third)$/i.test(w)) return false;
+      if (BAD.test(w) && w.length > 4) return false;
+    }
+  }
+  return true;
+}
+
+function _jpLookup(title) {
+  var v = JP_MAP[title];
+  if (v) return v;
+  var cn = title.replace(/[（(][^）)]+[）)][\s]*$/, '').trim();
+  if (cn !== title) v = JP_MAP[cn];
+  return v || '';
+}
+
+function _splitTitleForUI(title) {
+  var m = title.match(/^(.+?)（([^）]+)）\s*$/);
+  if (!m) return { cn: title, en: '', sub: '', name: '', year: '' };
+  var cn = m[1].trim();
+  var paren = m[2].trim();
+  var parts = paren.split(/[，,；;]/).map(function(p) { return p.trim(); }).filter(Boolean);
+
+  // Fixed 3-segment rule: （EnglishName，Scholar，Year）
+  // If last segment is a year, and there are 2-3 segments total, use fixed assignment
+  var yearRe = /^\d{4}(?:\s*[\/\-]\s*\d{2,4}s?)?$/;
+  if (parts.length === 3 && yearRe.test(parts[2])) {
+    return { cn: cn, en: parts[0], sub: parts[1] + '，' + parts[2], name: parts[1], year: parts[2] };
+  }
+  if (parts.length === 2 && yearRe.test(parts[1])) {
+    if (_isNameSeg(parts[0])) {
+      return { cn: cn, en: '', sub: paren, name: parts[0], year: parts[1] };
+    }
+    return { cn: cn, en: parts[0], sub: parts[1], name: '', year: parts[1] };
+  }
+  if (parts.length === 2 && !yearRe.test(parts[1]) && _isNameSeg(parts[1])) {
+    return { cn: cn, en: parts[0], sub: parts[1], name: parts[1], year: '' };
+  }
+
+  // Fallback: heuristic scan from right
+  var subParts = [];
+  var i = parts.length - 1;
+  while (i >= 0 && _isNameSeg(parts[i])) { subParts.unshift(parts[i]); i--; }
+  var enParts = [];
+  for (var j = 0; j <= i; j++) enParts.push(parts[j]);
+  var year = '', nameParts = [];
+  for (var k = 0; k < subParts.length; k++) {
+    if (yearRe.test(subParts[k])) { year = subParts[k]; }
+    else { nameParts.push(subParts[k]); }
+  }
+  return { cn: cn, en: enParts.join('，'), sub: subParts.join('，'), name: nameParts.join(' & '), year: year };
+}
+
+function _titleHtml(title, accent, defaultSub, scholarName) {
+  var s = _splitTitleForUI(title);
+  var html = s.cn;
+  var name = s.name;
+  var year = s.year;
+  if (!name && defaultSub) {
+    name = defaultSub.replace(/[，,]\s*\d{4}(?:\s*[\/\-]\s*\d{4})?\s*$/, '').trim();
+    var ym = defaultSub.match(/(\d{4}(?:\s*[\/\-]\s*\d{4})?)\s*$/);
+    if (ym) year = ym[1];
+  }
+  if (!name && scholarName) {
+    name = scholarName;
+  }
+  if (!name && scholarName === null) {
+    html += ' <span class="tag-b" style="opacity:.6">常识</span>';
+  }
+  if (name) {
+    var sk = findScholarKey(name.split(/\s*[&，]\s*/)[0]);
+    if (sk) {
+      html += ' <span class="tag-b clickable" style="cursor:pointer" onclick="event.stopPropagation();showScholar(\'' + sk + '\')">' + name + '</span>';
+    } else {
+      html += ' <span class="tag-b">' + name + '</span>';
+    }
+    if (year) {
+      var shortYear = year.replace(/\d{4}/g, function(y) { return '\'' + y.slice(-2); });
+      html += '<span class="year-b">' + shortYear + '</span>';
+    }
+  }
+  if (s.en) {
+    html += '<span class="en-sub">' + s.en + '</span>';
+  }
+  return html;
+}
+
+function toggleItem(id, e) {
+  if (e && e.target && e.target.closest && e.target.closest('.ja-toggle')) return;
+  var el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
+// ---- 日语/中文切换 ----
+var _jaSwapCache = {};
+function toggleJaLang(id, btn) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var cnKey = el.getAttribute('data-cn-key');
+  if (!cnKey || typeof DATA_JA === 'undefined' || !DATA_JA[cnKey]) return;
+  var body = el.querySelector('.cn-body');
+  var titleEl = el.querySelector('.cn-title');
+  if (!body || !titleEl) return;
+  var accent = el.style.getPropertyValue('--accent') || '#8a7a6a';
+
+  // 记录当前手风琴展开状态（按序号）
+  var openGroups = [];
+  body.querySelectorAll('.body-group').forEach(function(g, i) {
+    if (g.classList.contains('open')) openGroups.push(i);
+  });
+
+  if (_jaSwapCache[id]) {
+    // 恢复中文
+    titleEl.innerHTML = _jaSwapCache[id].title;
+    body.innerHTML = _jaSwapCache[id].body;
+    delete _jaSwapCache[id];
+    btn.classList.remove('active');
+    btn.querySelector('span').textContent = '日本語';
+  } else {
+    // 缓存中文原始内容
+    _jaSwapCache[id] = { title: titleEl.innerHTML, body: body.innerHTML };
+    // 解析日语概念字符串
+    var jaStr = DATA_JA[cnKey];
+    var sm = jaStr.match(/^<strong>([\s\S]*?)<\/strong>([\s\S]*)/);
+    if (!sm) return;
+    var jaTitle = sm[1];
+    var jaBody = sm[2].replace(/^——/, '').replace(/^—/, '').trim();
+    // 渲染日语标题
+    titleEl.innerHTML = _titleHtml(jaTitle, accent);
+    // 渲染日语正文（去掉jp-line，保留练习按钮）
+    var jaBodyHtml = _formatBody(jaBody, accent);
+    var quizBtn = body.querySelector('div[style*="text-align:right"]');
+    var quizHtml = quizBtn ? quizBtn.outerHTML : '';
+    body.innerHTML = jaBodyHtml + quizHtml;
+    // 按钮状态（按钮在header里，不受body替换影响）
+    btn.classList.add('active');
+    btn.querySelector('span').textContent = '中文';
+  }
+
+  // 恢复手风琴展开状态
+  body.querySelectorAll('.body-group').forEach(function(g, i) {
+    if (openGroups.indexOf(i) >= 0) g.classList.add('open');
+  });
+}
+
+
+
+var SCHOLAR_NAME_MAP = {
+  "泰勒": "taylor", "Taylor": "taylor", "Frederick W. Taylor": "taylor",
+  "法约尔": "fayol", "Fayol": "fayol", "Henri Fayol": "fayol",
+  "韦伯": "weber", "Weber": "weber", "Max Weber": "weber",
+  "吉尔布雷思": "gilbreth", "Gilbreth": "gilbreth",
+  "梅奥": "mayo", "Mayo": "mayo", "Elton Mayo": "mayo",
+  "马斯洛": "maslow", "Maslow": "maslow", "Abraham Maslow": "maslow",
+  "麦格雷戈": "mcgregor", "McGregor": "mcgregor", "Douglas McGregor": "mcgregor",
+  "赫茨伯格": "herzberg", "Herzberg": "herzberg", "Frederick Herzberg": "herzberg",
+  "弗鲁姆": "vroom", "Vroom": "vroom", "Victor Vroom": "vroom",
+  "巴纳德": "barnard", "Barnard": "barnard", "Chester Barnard": "barnard",
+  "李克特": "likert", "Likert": "likert", "Rensis Likert": "likert",
+  "西蒙": "simon", "Simon": "simon", "Herbert Simon": "simon",
+  "马奇": "march", "March": "march", "James March": "march",
+  "赛厄特": "cyert", "Richard Cyert": "cyert", "理查德·赛厄特": "cyert", "Cyert": "cyert",
+  "安索夫": "ansoff", "Ansoff": "ansoff", "Igor Ansoff": "ansoff",
+  "钱德勒": "chandler", "Chandler": "chandler", "Alfred Chandler": "chandler",
+  "波特": "porter", "Porter": "porter", "Michael Porter": "porter",
+  "巴尼": "barney", "Barney": "barney", "Jay Barney": "barney",
+  "蒂斯": "teece", "Teece": "teece", "David Teece": "teece",
+  "彭罗斯": "penrose", "Penrose": "penrose", "Edith Penrose": "penrose",
+  "威廉姆森": "williamson", "Williamson": "williamson", "Oliver Williamson": "williamson",
+  "科斯": "coase", "Coase": "coase", "Ronald Coase": "coase",
+  "迪马吉奥": "dimaggio", "DiMaggio": "dimaggio", "Paul DiMaggio": "dimaggio",
+  "鲍威尔": "powell", "Powell": "powell", "Walter Powell": "powell",
+  "詹森": "jensen", "Jensen": "jensen", "Michael Jensen": "jensen",
+  "劳伦斯": "lawrence", "Lawrence": "lawrence", "Paul Lawrence": "lawrence",
+  "斯托格迪尔": "stogdill", "Stogdill": "stogdill",
+  "菲德勒": "fiedler", "Fiedler": "fiedler", "Fred Fiedler": "fiedler",
+  "赫塞": "hersey", "Hersey": "hersey", "Paul Hersey": "hersey",
+  "科特": "kotter", "Kotter": "kotter", "John Kotter": "kotter",
+  "野中郁次郎": "nonaka", "Nonaka": "nonaka", "Ikujiro Nonaka": "nonaka",
+  "竹内弘高": "takeuchi", "Takeuchi": "takeuchi", "Hirotaka Takeuchi": "takeuchi",
+  "克里斯坦森": "christensen", "Christensen": "christensen", "Clayton Christensen": "christensen",
+  "熊彼特": "schumpeter", "Schumpeter": "schumpeter", "Joseph Schumpeter": "schumpeter",
+  "弗里曼": "freeman", "Freeman": "freeman", "R. Edward Freeman": "freeman",
+  "勒温": "lewin", "Lewin": "lewin", "Kurt Lewin": "lewin",
+  "特里斯特": "trist", "Trist": "trist", "Eric Trist": "trist",
+  "洛施": "lorsch", "Lorsch": "lorsch", "Jay Lorsch": "lorsch", "杰·洛施": "lorsch",
+  "伍德沃德": "woodward", "Woodward": "woodward", "Joan Woodward": "woodward", "琼·伍德沃德": "woodward",
+  "弗里德曼": "friedman", "Friedman": "friedman", "Milton Friedman": "friedman", "米尔顿·弗里德曼": "friedman",
+  "法马": "fama", "Fama": "fama", "Eugene Fama": "fama", "尤金·法马": "fama",
+  "麦克林": "meckling", "Meckling": "meckling", "William Meckling": "meckling", "威廉·麦克林": "meckling",
+  "斯金纳": "skinner", "Skinner": "skinner", "B.F. Skinner": "skinner",
+  "亚当斯": "adams", "Adams": "adams", "Stacy Adams": "adams", "斯塔西·亚当斯": "adams",
+  "布兰查德": "blanchard", "Blanchard": "blanchard", "Ken Blanchard": "blanchard", "肯·布兰查德": "blanchard",
+  "切萨布鲁": "chesbrough", "Chesbrough": "chesbrough", "Henry Chesbrough": "chesbrough",
+  "哈默尔": "hamel", "Hamel": "hamel", "Gary Hamel": "hamel", "盖瑞·汉默尔": "hamel",
+  "沙因": "schein", "Schein": "schein", "Edgar Schein": "schein", "埃德加·沙因": "schein",
+  "约翰·W·迈耶": "meyer", "John W. Meyer": "meyer", "J.W. Meyer": "meyer",
+  "约翰·P·迈耶": "allen_meyer", "John P. Meyer": "allen_meyer",
+  "汉南": "hannan", "Hannan": "hannan", "Michael Hannan": "hannan", "迈克尔·汉南": "hannan",
+  "普伊": "pugh", "Pugh": "pugh", "Derek Pugh": "pugh", "德雷克·普伊": "pugh",
+  "罗恩": "rowan", "Rowan": "rowan", "Brian Rowan": "rowan", "布赖恩·罗恩": "rowan",
+  "甘特": "gantt", "Gantt": "gantt", "Henry Gantt": "gantt", "亨利·甘特": "gantt",
+  "厄威克": "urwick", "Urwick": "urwick", "Lyndall Urwick": "urwick", "林道尔·厄威克": "urwick",
+  "古利克": "gulick", "Gulick": "gulick", "Luther Gulick": "gulick", "路德·古利克": "gulick",
+  "孔茨": "koontz", "Koontz": "koontz", "Harold Koontz": "koontz", "哈罗德·孔茨": "koontz",
+  "福莱特": "follett", "Follett": "follett", "Mary Parker Follett": "follett", "玛丽·帕克·福莱特": "follett",
+  "罗特利斯伯格": "roethlisberger", "Roethlisberger": "roethlisberger", "弗里茨·罗特利斯伯格": "roethlisberger",
+  "豪斯": "house", "House": "house", "Robert House": "house", "罗伯特·豪斯": "house",
+  "班杜拉": "bandura", "Bandura": "bandura", "Albert Bandura": "bandura", "阿尔伯特·班杜拉": "bandura",
+  "贝塔朗菲": "bertalanffy", "Bertalanffy": "bertalanffy", "Von Bertalanffy": "bertalanffy", "路德维希·冯·贝塔朗菲": "bertalanffy",
+  "安德鲁斯": "andrews", "Andrews": "andrews", "Kenneth Andrews": "andrews", "肯尼斯·安德鲁斯": "andrews",
+  "沃纳费尔特": "wernerfelt", "Wernerfelt": "wernerfelt", "Birger Wernerfelt": "wernerfelt", "伯格·沃纳费尔特": "wernerfelt",
+  "皮萨诺": "pisano", "Pisano": "pisano", "Gary Pisano": "pisano", "加里·皮萨诺": "pisano",
+  "波兰尼": "polanyi", "Polanyi": "polanyi", "Michael Polanyi": "polanyi", "迈克尔·波兰尼": "polanyi",
+  "帕克": "parker", "Parker": "parker", "Geoffrey Parker": "parker", "杰弗里·帕克": "parker",
+  "布林约尔松": "brynjolfsson", "Brynjolfsson": "brynjolfsson", "Erik Brynjolfsson": "brynjolfsson", "埃里克·布林约尔松": "brynjolfsson",
+  "麦卡菲": "mcafee", "McAfee": "mcafee", "Andrew McAfee": "mcafee", "安德鲁·麦卡菲": "mcafee",
+  "斯蒂格勒": "stigler", "Stigler": "stigler", "George Stigler": "stigler", "乔治·斯蒂格勒": "stigler",
+  "弗莱什曼": "fleishman", "Fleishman": "fleishman", "Edwin Fleishman": "fleishman", "爱德温·弗莱什曼": "fleishman",
+  "卡茨": "katz_d", "Daniel Katz": "katz_d", "丹尼尔·卡茨": "katz_d",
+  "班福斯": "bamforth", "Bamforth": "bamforth", "Ken Bamforth": "bamforth", "肯·班福斯": "bamforth",
+  "艾默里": "emery", "Emery": "emery", "Fred Emery": "emery", "弗雷德·艾默里": "emery",
+  "希克森": "hickson", "Hickson": "hickson", "David Hickson": "hickson", "大卫·希克森": "hickson",
+  "西里尔·奥唐奈": "koontz",
+  "埃德温·洛克": "locke_e", "Locke": "locke_e", "Edwin Locke": "locke_e", "洛克": "locke_e",
+  "亨宁斯": "hinings", "Hinings": "hinings", "Chris Hinings": "hinings", "克里斯·亨宁斯": "hinings",
+  "沼上幹": "numagami", "Numagami": "numagami", "沼上": "numagami",
+  "罗歇": "rochet", "Rochet": "rochet", "Jean-Charles Rochet": "rochet", "罗卡比利": "rochet",
+  "赖施": "raisch", "Raisch": "raisch", "Sebastian Raisch": "raisch",
+
+  "ワイク": "weick", "Weick": "weick", "Karl Weick": "weick", "卡尔·韦克": "weick",
+  "ミンツバーグ": "mintzberg", "Mintzberg": "mintzberg", "Henry Mintzberg": "mintzberg", "亨利·明茨伯格": "mintzberg",
+  "トンプソン": "thompson_jd", "Thompson": "thompson_jd", "James Thompson": "thompson_jd", "詹姆斯·汤普森": "thompson_jd",
+  "セルズニック": "selznick", "Selznick": "selznick", "Philip Selznick": "selznick", "菲利普·塞尔兹尼克": "selznick",
+
+  "哈特": "hart", "Hart": "hart", "Oliver Hart": "hart", "奥利弗·哈特": "hart",
+  "伯利": "berle", "Berle": "berle", "Adolf Berle": "berle", "阿道夫·伯利": "berle",
+  "明斯": "means", "Means": "means", "Gardiner Means": "means", "加德纳·明斯": "means",
+  "比尔": "beer_m", "Beer": "beer_m", "Michael Beer": "beer_m", "迈克尔·比尔": "beer_m",
+  "格罗斯曼": "hart", "Grossman": "hart", "Sanford Grossman": "hart",
+  "莫尔": "moore_jh", "John Moore": "moore_jh", "约翰·莫尔": "moore_jh",
+  "沃尔顿": "walton_r", "Walton": "walton_r", "Richard Walton": "walton_r",
+  "冯布伦": "fombrun", "Fombrun": "fombrun", "Charles Fombrun": "fombrun",
+
+  "艾米·苏恩": "shuen", "Amy Shuen": "shuen",
+  "悉尼·温特": "winter_s", "Sidney Winter": "winter_s", "Winter": "winter_s",
+  "埃里克·冯·希佩尔": "vonhippel", "Eric von Hippel": "vonhippel", "冯·希佩尔": "vonhippel",
+  "马歇尔·范·阿尔斯泰因": "van_alstyne", "Marshall Van Alstyne": "van_alstyne",
+  "罗莎贝斯·莫斯·坎特": "kanter", "Rosabeth Moss Kanter": "kanter", "坎特": "kanter",
+  "罗伯特·卡恩": "kahn_r", "Robert Kahn": "kahn_r",
+
+  "戈尔曼": "goleman", "Goleman": "goleman", "Daniel Goleman": "goleman", "丹尼尔·戈尔曼": "goleman",
+  "霍兰德": "holland", "Holland": "holland", "John Holland": "holland", "约翰·霍兰德": "holland",
+  "哈克曼": "hackman", "Hackman": "hackman", "Richard Hackman": "hackman",
+  "罗特": "rotter", "Rotter": "rotter", "Julian Rotter": "rotter", "朱利安·罗特": "rotter",
+  "费斯廷格": "festinger", "Festinger": "festinger", "Leon Festinger": "festinger", "利昂·费斯廷格": "festinger",
+  "凯利": "kelley", "Kelley": "kelley", "Harold Kelley": "kelley", "哈罗德·凯利": "kelley",
+  "塔克曼": "tuckman", "Tuckman": "tuckman", "Bruce Tuckman": "tuckman", "布鲁斯·塔克曼": "tuckman",
+  "Latham": "locke_e",
+
+  "基尼": "keeney", "Keeney": "keeney", "Ralph Keeney": "keeney", "拉尔夫·基尼": "keeney",
+  "雷法": "raiffa", "Raiffa": "raiffa", "Howard Raiffa": "raiffa", "霍华德·雷法": "raiffa",
+  "奥尔波特": "allport", "Allport": "allport", "G. Allport": "allport", "Gordon Allport": "allport",
+  "科斯塔": "costa_mccrae", "Costa": "costa_mccrae", "McCrae": "costa_mccrae",
+  "阿吉里斯": "argyris", "Argyris": "argyris", "Chris Argyris": "argyris",
+  "阿尔德弗": "alderfer", "Alderfer": "alderfer", "Clayton Alderfer": "alderfer",
+  "麦克莱兰": "mcclelland", "McClelland": "mcclelland", "David McClelland": "mcclelland",
+  "莱曼·波特": "porter_lw", "Lyman Porter": "porter_lw",
+};
+
+function findScholarKey(label) {
+  var best = null, bestLen = 0;
+  for (var name in SCHOLAR_NAME_MAP) {
+    if (label.indexOf(name) !== -1 && name.length > bestLen) {
+      best = SCHOLAR_NAME_MAP[name];
+      bestLen = name.length;
+    }
+  }
+  return best;
+}
+
+function show(key, accentOverride) {
+  var d = DATA[key];
+  if (!d) return;
+  var accent = accentOverride || d.accent;
+  _pushNav();
+
+  // 从 KNOWLEDGE 派生代表人物（该学派下有知识点的学者）
+  var whoKeys = {};
+  KNOWLEDGE.forEach(function(kn) {
+    if ((kn.schools || []).indexOf(key) >= 0 && kn.scholar) {
+      _knScholars(kn).forEach(function(sk) { if (SCHOLARS[sk]) whoKeys[sk] = true; });
+    }
+  });
+  // 合并 data.js 中手动列出的 who（保留顺序和无知识点的学者）
+  var whoList = (d.who || []).slice();
+  Object.keys(whoKeys).forEach(function(sk) {
+    var already = whoList.some(function(w) { return findScholarKey(w) === sk; });
+    if (!already) {
+      var s = SCHOLARS[sk];
+      whoList.push(s.name + (s.en ? ' ' + s.en : ''));
+    }
+  });
+  var who = whoList.map(function(p) {
+    var k = findScholarKey(p);
+    if (k) return '<span class="chip chip-link" onclick="showScholar(\'' + k + '\')">' + p + '</span>';
+    return '<span class="chip">' + p + '</span>';
+  }).join("");
+  // 从 KNOWLEDGE 直接筛选该学派的知识点
+  var knForSchool = KNOWLEDGE.filter(function(kn) {
+    return (kn.schools || []).indexOf(key) >= 0;
+  });
+  if (d.concepts && d.concepts.length) {
+    var cOrder = d.concepts;
+    knForSchool.sort(function(a, b) {
+      var ai = cOrder.indexOf(a.id), bi = cOrder.indexOf(b.id);
+      return (ai < 0 ? 9999 : ai) - (bi < 0 ? 9999 : bi);
+    });
+  }
+  var concepts = knForSchool.map(function(kn, idx) {
+    return renderKnowledgeItem({
+      title: _knFullTitle(kn),
+      body: kn.body,
+      accent: accent,
+      id: 'ci-' + Date.now() + '-' + idx,
+      wrapper: 'li',
+      scholar: _knScholarLastName(kn)
+    });
+  }).join("");
+  // 从 KNOWLEDGE 派生关联学派：该学派知识点的其他学派tag
+  var _relSchoolSet = {};
+  knForSchool.forEach(function(kn) {
+    (kn.schools || []).forEach(function(sKey) {
+      if (sKey !== key && DATA[sKey] && !_relSchoolSet[sKey]) {
+        _relSchoolSet[sKey] = DATA[sKey].title;
+      }
+    });
+  });
+  var related = Object.keys(_relSchoolSet).map(function(sKey) {
+    return '<span class="tag tag-link" onclick="show(\'' + sKey + '\')">' + _relSchoolSet[sKey] + '</span>';
+  }).join("");
+
+  var accentBg = accent + "14";
+  var badgeCategory = d.badge.split('·')[0].trim();
+  var mergedEra = badgeCategory + ' · ' + d.era;
+  var html =
+    '<div class="school-hero" style="--accent:' + accent + '">'
+    +   '<div class="school-hero-accent"></div>'
+    +   '<div class="school-hero-body">'
+    +     '<div class="era-pill" style="margin-bottom:12px"><div class="era-dot" style="background:' + accent + '"></div>' + mergedEra + '</div>'
+    +     '<div class="d-title">' + d.title + '</div>'
+    +     '<div class="d-en">' + d.en + '</div>'
+    +     '<div class="d-ja">' + d.ja + '</div>'
+    +     '<div class="hero-quiz-wrap" style="--accent:' + accent + '">'
+    +       '<button class="hq-btn hq-secondary" onclick="goSchoolQuiz(\'' + key + '\',\'' + accent + '\')">在线答题</button>'
+    +       (typeof SCHOOL_QUIZ!=='undefined'&&SCHOOL_QUIZ[key] ? '<button class="hq-btn hq-primary" onclick="startSchoolBank(\'' + key + '\',\'' + accent + '\')">题库答题</button>' : '')
+    +     '</div>'
+    +     _schoolBankProgress(key)
+    +   '</div>'
+    + '</div>'
+    + '<div class="sec-title">概述</div>'
+    + '<p class="summary" style="margin-bottom:22px">' + d.summary + '</p>'
+    + '<hr class="divider">'
+    + '<div class="sec-title">代表人物</div>'
+    + '<div class="chips" style="margin-bottom:20px">' + who + '</div>'
+    + '<div class="sec-title">核心概念</div>'
+    + '<ul class="concepts" style="margin-bottom:20px">' + concepts + '</ul>'
+    + (d.context ? '<hr class="divider"><div class="sec-title">理论背景与局限性</div><p class="influence" style="margin-bottom:20px">' + d.context + '</p>' : '')
+    + '<hr class="divider">'
+    + '<div class="sec-title">历史影响</div>'
+    + '<p class="influence" style="margin-bottom:20px">' + d.influence + '</p>'
+    + '<div class="sec-title">关联学派</div>'
+    + '<div class="tags">' + related + '</div>';
+
+  document.getElementById("detail-body").innerHTML = html;
+
+  document.getElementById("view-list").classList.remove("active");
+  document.getElementById("view-detail").classList.add("active");
+  document.getElementById("view-detail").scrollTop = 0;
+}
+
+function goBack() {
+  if (_navStack.length > 0) {
+    var prev = _navStack.pop();
+    document.getElementById("detail-body").innerHTML = prev.html;
+    document.getElementById("view-detail").scrollTop = prev.scrollTop;
+  } else {
+    _navStack = [];
+    document.getElementById("view-detail").classList.remove("active");
+    var vl = document.getElementById("view-list");
+    vl.classList.add("active");
+    // 恢复列表滚动位置（如果是从列表跳过来的）
+    if (_listState) {
+      vl.scrollTop = _listState.scrollTop;
+      _listState = null;
+    } else {
+      vl.scrollTop = 0;
+    }
+  }
+}
+
+// ===== Quiz 2.0: AI-powered practice =====
+
+var QUIZ_WORKER_URL = 'https://quiz-worker.husuli0623.workers.dev';
+var QUIZ_AUTH_TOKEN = 'quiz_token_2026';
+var _quizConcept = '';
+var _quizSchool = '';
+var _quizAccent = '#7a5c45';
+var _quizData = null;
+var _quizAnswered = false;
+var _quizUniTimer = null;
+var _quizConcepts = null; // multi-concept mode (school quiz)
+var _quizDetails = null;  // detailed content for deep school quiz
+
+function goQuiz(concept, school, accent) {
+  _quizConcept = concept;
+  _quizSchool = school;
+  _quizAccent = accent || '#7a5c45';
+  _quizConcepts = null; // single concept mode
+  _quizDetails = null;
+  // Switch to quiz tab
+  var quizBtn = document.querySelectorAll('.tab-btn');
+  for (var i = 0; i < quizBtn.length; i++) {
+    if (quizBtn[i].textContent.indexOf('练习') >= 0) {
+      switchTab('quiz', quizBtn[i]);
+      break;
+    }
+  }
+  // Start loading
+  _loadQuizQuestion();
+}
+
+function goSchoolQuiz(schoolKey, accent) {
+  var d = DATA[schoolKey];
+  if (!d) return;
+  // 从 KNOWLEDGE 收集该学派的知识点标题和内容
+  var titles = [];
+  var details = [];
+  KNOWLEDGE.forEach(function(kn) {
+    if ((kn.schools || []).indexOf(schoolKey) < 0) return;
+    titles.push(kn.title);
+    var text = (_knFullTitle(kn) + '——' + kn.body).replace(/<[^>]+>/g, '').replace(/◆/g, '\n◆');
+    details.push(text);
+  });
+  if (!titles.length) return;
+  _quizConcept = d.title;  // School name as display label
+  _quizSchool = d.badge || '';
+  _quizAccent = accent || '#7a5c45';
+  _quizConcepts = titles;  // Store concept list for multi-concept mode
+  _quizDetails = details;  // Store detailed content for deep questions
+  var quizBtn = document.querySelectorAll('.tab-btn');
+  for (var i = 0; i < quizBtn.length; i++) {
+    if (quizBtn[i].textContent.indexOf('练习') >= 0) {
+      switchTab('quiz', quizBtn[i]);
+      break;
+    }
+  }
+  _loadQuizQuestion();
+}
+
+// =====================================================
+//  SCHOOL BANK QUIZ — 学派专属题库答题
+// =====================================================
+var _sbStorageKey = 'school_bank_progress';
+var _sbActive = false;
+
+function _sbLoadAll() {
+  try { return JSON.parse(localStorage.getItem(_sbStorageKey) || '{}'); } catch(e) { return {}; }
+}
+function _sbLoad(key) {
+  var p = _sbLoadAll()[key] || { done: {}, completions: 0 };
+  if (!p.feedback) p.feedback = {};
+  return p;
+}
+function _sbSave(key, data) {
+  var all = _sbLoadAll();
+  all[key] = data;
+  localStorage.setItem(_sbStorageKey, JSON.stringify(all));
+}
+
+function _schoolBankProgress(key) {
+  if (typeof SCHOOL_QUIZ === 'undefined' || !SCHOOL_QUIZ[key]) return '';
+  var prog = _sbLoad(key);
+  var badCount = 0;
+  SCHOOL_QUIZ[key].forEach(function(q) { if (prog.feedback[q.id] && prog.feedback[q.id].rating === 'bad') badCount++; });
+  var total = SCHOOL_QUIZ[key].length - badCount;
+  if (total <= 0) total = 1;
+  var done = Object.keys(prog.done).length;
+  var pct = Math.round(done / total * 100);
+  if (done === 0 && prog.completions === 0) return '';
+  return '<div style="display:flex;align-items:center;gap:8px;margin-top:10px">'
+    + '<div style="flex:1;height:3px;background:rgba(255,255,255,0.2);border-radius:2px;overflow:hidden"><div style="height:100%;background:rgba(255,255,255,0.6);border-radius:2px;width:' + pct + '%"></div></div>'
+    + '<span style="font-size:10px;color:rgba(255,255,255,0.6)">' + done + '/' + total
+    + (prog.completions > 0 ? ' · 通关' + prog.completions : '') + '</span>'
+    + '</div>';
+}
+
+function _schoolCardProgress(key) {
+  if (typeof SCHOOL_QUIZ === 'undefined' || !SCHOOL_QUIZ[key]) return '';
+  var prog = _sbLoad(key);
+  var badCount = 0;
+  SCHOOL_QUIZ[key].forEach(function(q) { if (prog.feedback[q.id] && prog.feedback[q.id].rating === 'bad') badCount++; });
+  var total = SCHOOL_QUIZ[key].length - badCount;
+  if (total <= 0) total = 1;
+  var done = Object.keys(prog.done).length;
+  if (done === 0 && prog.completions === 0) return '';
+  var pct = Math.round(done / total * 100);
+  return '<div class="card-bank-prog" style="position:absolute;bottom:0;left:0;right:0;height:2px;background:rgba(0,0,0,0.04);border-radius:0 0 14px 14px;overflow:hidden">'
+    + '<div style="height:100%;width:' + pct + '%;background:var(--accent);opacity:0.35;border-radius:0 0 0 14px"></div>'
+    + '</div>';
+}
+
+function startSchoolBank(key, accent) {
+  var bank = (typeof SCHOOL_QUIZ !== 'undefined') ? SCHOOL_QUIZ[key] : null;
+  if (!bank || !bank.length) return;
+  var prog = _sbLoad(key);
+
+  // Build queue: undone first (shuffled), then done (shuffled); skip bad-feedback questions
+  var undone = [], done = [], skipped = 0;
+  bank.forEach(function(q, i) {
+    var fb = prog.feedback[q.id];
+    if (fb && fb.rating === 'bad') { skipped++; return; }
+    if (prog.done[q.id]) done.push(i); else undone.push(i);
+  });
+  var total = bank.length - skipped;  // effective total (excluding bad questions)
+  if (total <= 0) { alert('所有题目都已被标记为问题题，请重置反馈后再试'); return; }
+  _shufArr(undone); _shufArr(done);
+  var queue = undone.concat(done);
+  if (undone.length === 0 && done.length === total) {
+    // All done — show completion
+    prog.completions++;
+    prog.done = {};
+    _sbSave(key, prog);
+    // Auto-mastered
+    if (!_masteredKeys[key]) {
+      _masteredKeys[key] = 1;
+      localStorage.setItem('mastered', JSON.stringify(_masteredKeys));
+      var card = document.querySelector('.card[onclick*="' + key + '"]');
+      if (card) { card.classList.add('mastered'); var star = card.querySelector('.card-star'); if (star) star.textContent = '\u2605'; }
+    }
+    queue = done.slice();
+    _shufArr(queue);
+  }
+
+  // Switch to quiz tab (skip QZ.mount by setting flag)
+  _sbActive = true;
+  var quizBtn = document.querySelectorAll('.tab-btn');
+  for (var i = 0; i < quizBtn.length; i++) {
+    if (quizBtn[i].textContent.indexOf('练习') >= 0) { switchTab('quiz', quizBtn[i]); break; }
+  }
+  _sbActive = false;
+
+  _sbRenderQuestion(key, accent, bank, queue, 0, prog);
+}
+
+function _shufArr(a) {
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+}
+
+function _sbRenderQuestion(key, accent, bank, queue, pos, prog) {
+  var el = document.getElementById('quiz-mount');
+  if (!el) return;
+  var qIdx = queue[pos];
+  var q = bank[qIdx];
+  var badCount = 0;
+  bank.forEach(function(qq) { if (prog.feedback[qq.id] && prog.feedback[qq.id].rating === 'bad') badCount++; });
+  var total = bank.length - badCount;
+  var doneCount = Object.keys(prog.done).length;
+  var d = DATA[key];
+  var title = d ? d.title : key;
+
+  // Shuffle options
+  var optMap = ['A','B','C','D'].slice();
+  _shufArr(optMap);
+  var displayLabels = ['A','B','C','D'];
+
+  el.innerHTML =
+    '<div class="qz-wrap">'
+    + '<div class="qz-top">'
+    +   '<span class="qz-ctr">' + title + ' · 已做 <b>' + doneCount + '</b> / 共 <b>' + total + '</b>'
+    +   (prog.completions > 0 ? '<span class="qz-rnlabel">通关 ' + prog.completions + ' 次</span>' : '') + '</span>'
+    +   '<div class="qz-prog-wrap"><div class="qz-prog-fill" id="qz-pf" style="width:' + (doneCount/total*100) + '%;background:' + accent + '"></div></div>'
+    + '</div>'
+    + '<div class="qz-qcard">'
+    +   '<div class="qz-meta"><span class="qz-num">Q' + (doneCount + 1) + '</span></div>'
+    +   '<p class="qz-qtx" id="qz-qtx"></p>'
+    + '</div>'
+    + '<div class="qz-opts" id="qz-opts"></div>'
+    + '<div id="qz-ra"></div>'
+    + '</div>';
+
+  document.getElementById('qz-qtx').textContent = q.question;
+  var optsEl = document.getElementById('qz-opts');
+  displayLabels.forEach(function(dk, i) {
+    var origKey = optMap[i];
+    var div = document.createElement('div');
+    div.className = 'qz-opt';
+    div.id = 'qz-o' + dk;
+    div.innerHTML = '<span class="qz-okey">' + dk + '</span><span class="qz-otx"></span>';
+    div.querySelector('.qz-otx').textContent = q.options[displayLabels.indexOf(origKey)].replace(/^[A-D]\.\s*/, '');
+    div.addEventListener('click', function() {
+      _sbPickAnswer(key, accent, bank, queue, pos, prog, dk, optMap, displayLabels);
+    });
+    optsEl.appendChild(div);
+  });
+  el.scrollTop = 0;
+}
+
+function _sbPickAnswer(key, accent, bank, queue, pos, prog, displayKey, optMap, displayLabels) {
+  var qIdx = queue[pos];
+  var q = bank[qIdx];
+  var pickedOrigKey = optMap[displayLabels.indexOf(displayKey)];
+  var correctDisplayKey = displayLabels[optMap.indexOf(q.answer)];
+  var good = pickedOrigKey === q.answer;
+
+  // Set feedback context
+  _fbCtx = { type: 'school', key: key, qid: q.id };
+
+  // Mark done
+  prog.done[q.id] = true;
+  _sbSave(key, prog);
+
+  var doneCount = Object.keys(prog.done).length;
+  var badCount = 0;
+  bank.forEach(function(qq) { if (prog.feedback[qq.id] && prog.feedback[qq.id].rating === 'bad') badCount++; });
+  var total = bank.length - badCount;
+  var isComplete = doneCount >= total;
+
+  // Lock options
+  displayLabels.forEach(function(dk) {
+    var el = document.getElementById('qz-o' + dk);
+    el.classList.add('lk');
+    el.replaceWith(el.cloneNode(true));
+    el = document.getElementById('qz-o' + dk);
+    if (dk === correctDisplayKey) el.classList.add('cor');
+    else if (dk === displayKey) el.classList.add('wrg');
+    else el.classList.add('dim');
+  });
+
+  // Update progress
+  document.getElementById('qz-pf').style.width = (doneCount/total*100) + '%';
+  var ctrEl = document.querySelector('.qz-ctr');
+  if (ctrEl) {
+    var d = DATA[key];
+    ctrEl.innerHTML = (d?d.title:key) + ' · 已做 <b>' + doneCount + '</b> / 共 <b>' + total + '</b>'
+      + (prog.completions > 0 ? '<span class="qz-rnlabel">通关 ' + prog.completions + ' 次</span>' : '');
+  }
+
+  // Explanation table
+  var rows = displayLabels.map(function(dk, i) {
+    var origK = optMap[i];
+    var isAns = origK === q.answer;
+    return '<tr><td><strong>' + dk + '</strong></td>'
+      + '<td><span class="qz-tg ' + (isAns?'y':'n') + '">' + (isAns?'正解':'誤り') + '</span></td>'
+      + '<td>' + (q.explanations[origK] || '') + '</td></tr>';
+  }).join('');
+
+  var nextLabel = isComplete ? '通关！查看结果 →' : '次の問題 →';
+  var raEl = document.getElementById('qz-ra');
+  raEl.innerHTML =
+    '<div class="qz-rp ' + (good?'g':'r') + '">'
+    + '<div class="qz-rv">' + (good ? '正解 ✓' : '不正解 — 正解は ' + correctDisplayKey + ' です') + '</div>'
+    + '<div class="qz-re">' + (q.explanations[pickedOrigKey] || '') + '</div>'
+    + '<div class="qz-atitle">全選択肢の解析</div>'
+    + '<table class="qz-atb"><thead><tr>'
+    + '<th style="width:48px">選択肢</th><th style="width:60px">判定</th><th>解説</th>'
+    + '</tr></thead><tbody>' + rows + '</tbody></table>'
+    + _renderFbHTML('sb')
+    + '<button class="qz-btn" id="qz-nextbtn">' + nextLabel + '</button>'
+    + '</div>';
+
+  document.getElementById('qz-nextbtn').addEventListener('click', function() {
+    if (isComplete) {
+      prog.completions++;
+      prog.done = {};
+      _sbSave(key, prog);
+      // Auto-mastered
+      if (!_masteredKeys[key]) {
+        _masteredKeys[key] = 1;
+        localStorage.setItem('mastered', JSON.stringify(_masteredKeys));
+        var card = document.querySelector('.card[onclick*="' + key + '"]');
+        if (card) { card.classList.add('mastered'); var star = card.querySelector('.card-star'); if (star) star.textContent = '\u2605'; }
+      }
+      _sbShowComplete(key, accent, bank, prog);
+    } else {
+      var nextPos = pos + 1;
+      if (nextPos >= queue.length) {
+        // Rebuild queue for remaining (exclude bad-feedback)
+        var remaining = [];
+        prog = _sbLoad(key); // re-read in case feedback was just added
+        bank.forEach(function(qq, i) {
+          var fb = prog.feedback[qq.id];
+          if (fb && fb.rating === 'bad') return;
+          if (!prog.done[qq.id]) remaining.push(i);
+        });
+        _shufArr(remaining);
+        queue = remaining;
+        nextPos = 0;
+      }
+      _sbRenderQuestion(key, accent, bank, queue, nextPos, prog);
+    }
+  });
+  setTimeout(function() { raEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 80);
+}
+
+function _sbShowComplete(key, accent, bank, prog) {
+  var el = document.getElementById('quiz-mount');
+  var d = DATA[key];
+  el.innerHTML =
+    '<div class="qz-wrap"><div class="qz-fc">'
+    + '<div style="font-size:40px;margin-bottom:8px">&#127881;</div>'
+    + '<div class="qz-ftitle">通关！</div>'
+    + '<div class="qz-fsub">' + (d?d.title:key) + ' 全部 ' + bank.length + ' 道题已完成</div>'
+    + '<div style="margin:16px 0;padding:14px 20px;background:#f5f3ef;border-radius:12px">'
+    +   '<div style="font-size:24px;font-weight:700;color:' + accent + '">' + prog.completions + ' <span style="font-size:14px;font-weight:400">次通关</span></div>'
+    +   '<div style="font-size:12px;color:#9a9288;margin-top:4px">已自动标记为「已会」</div>'
+    + '</div>'
+    + '<div style="display:flex;gap:10px;margin-top:1rem">'
+    +   '<button class="qz-btn qz-btn-ghost" onclick="show(\'' + key + '\')">← 返回学派</button>'
+    +   '<button class="qz-btn" id="sb-retry">再来一轮</button>'
+    + '</div>'
+    + '</div></div>';
+  document.getElementById('sb-retry').addEventListener('click', function() {
+    startSchoolBank(key, accent);
+  });
+  el.scrollTop = 0;
+}
+
+// =====================================================
+//  统一反馈系统 — 3套练习共用
+// =====================================================
+// _fbCtx: { type: 'school'|'bank'|'ai', key, qid, question }
+var _fbCtx = null;
+
+function _renderFbHTML(uid) {
+  return '<div class="qz-fb-wrap" id="qz-fb-' + uid + '">'
+    + '<div class="qz-fb-title">这道题的质量如何？</div>'
+    + '<div class="qz-fb-btns">'
+    +   '<button class="qz-fb-b" onclick="_fbRate(this,\'good\',\'' + uid + '\')">好题</button>'
+    +   '<button class="qz-fb-b" onclick="_fbRate(this,\'bad\',\'' + uid + '\')">有问题</button>'
+    + '</div>'
+    + '<div class="qz-fb-reasons" id="qz-fbr-' + uid + '">'
+    +   '<button class="qz-fb-r" onclick="_fbReason(this,\'' + uid + '\')">答案有误</button>'
+    +   '<button class="qz-fb-r" onclick="_fbReason(this,\'' + uid + '\')">选项区分度不够</button>'
+    +   '<button class="qz-fb-r" onclick="_fbReason(this,\'' + uid + '\')">太简单</button>'
+    +   '<button class="qz-fb-r" onclick="_fbReason(this,\'' + uid + '\')">太难</button>'
+    + '</div>'
+    + '<div class="qz-fb-done" id="qz-fbd-' + uid + '">✓ 已记录，感谢反馈</div>'
+    + '</div>';
+}
+
+function _fbRate(btn, rating, uid) {
+  var btns = btn.parentElement.querySelectorAll('.qz-fb-b');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('sel-good', 'sel-bad');
+  btn.classList.add(rating === 'good' ? 'sel-good' : 'sel-bad');
+  var reasonsEl = document.getElementById('qz-fbr-' + uid);
+  if (rating === 'bad') {
+    reasonsEl.classList.add('show');
+  } else {
+    reasonsEl.classList.remove('show');
+    document.getElementById('qz-fbd-' + uid).classList.add('show');
+  }
+  _fbPersist(rating, []);
+}
+
+function _fbReason(btn, uid) {
+  btn.classList.toggle('sel');
+  document.getElementById('qz-fbd-' + uid).classList.add('show');
+  var reasons = [];
+  var rBtns = document.getElementById('qz-fbr-' + uid).querySelectorAll('.qz-fb-r.sel');
+  for (var i = 0; i < rBtns.length; i++) reasons.push(rBtns[i].textContent);
+  _fbPersist('bad', reasons);
+}
+
+function _fbPersist(rating, reasons) {
+  if (!_fbCtx) return;
+  var ctx = _fbCtx;
+  if (ctx.type === 'school') {
+    // School Bank → localStorage
+    var prog = _sbLoad(ctx.key);
+    prog.feedback[ctx.qid] = { rating: rating, reasons: reasons };
+    _sbSave(ctx.key, prog);
+  } else if (ctx.type === 'bank') {
+    // QZ Bank → Worker KV
+    QZ.saveRecord(ctx.qid, null, ctx.question, { rating: rating, reason: reasons.join(', ') });
+  } else if (ctx.type === 'ai') {
+    // AI Quiz → Worker /feedback
+    if (QUIZ_WORKER_URL) {
+      fetch(QUIZ_WORKER_URL + '/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + QUIZ_AUTH_TOKEN },
+        body: JSON.stringify({ concept: ctx.concept || '', rating: rating, reasons: reasons, question: ctx.question || '' })
+      }).catch(function() {});
+    }
+  }
+}
+
+function _loadQuizQuestion() {
+  _quizData = null;
+  _quizAnswered = false;
+
+  var mount = document.getElementById('quiz-mount');
+  var _unis = [
+    {logo:'logos/todai.svg',jp:'東京大学',en:'The University of Tokyo'},
+    {logo:'logos/kyodai.svg',jp:'京都大学',en:'Kyoto University'},
+    {logo:'logos/handai.svg',jp:'大阪大学',en:'Osaka University'},
+    {logo:'logos/hitotsubashi.svg',jp:'一橋大学',en:'Hitotsubashi University'},
+    {logo:'logos/waseda.svg',jp:'早稲田大学',en:'Waseda University'},
+    {logo:'logos/kobe.svg',jp:'神戸大学',en:'Kobe University'},
+    {logo:'logos/keio.svg',jp:'慶應義塾大学',en:'Keio University'}
+  ];
+  var slides = '';
+  for (var i = 0; i < _unis.length; i++) {
+    var u = _unis[i];
+    slides += '<div class="uni-slide' + (i===0?' active':'') + '" data-uni="'+i+'">'
+      + '<img class="uni-logo" src="'+u.logo+'" alt="'+u.jp+'">'
+      + '<div class="uni-name-jp">'+u.jp+'</div>'
+      + '<div class="uni-name-en">'+u.en+'</div>'
+      + '</div>';
+  }
+  mount.innerHTML = '<div class="qz2-wrap"><div class="qz2-loading">'
+    + '<div class="qz-spinner"></div>'
+    + '<div style="font-size:13px;color:#9a9288">正在为「' + (_quizConcepts ? _quizConcept + '（综合）' : _quizConcept.split('（')[0]) + '」出题...</div>'
+    + '<div class="uni-carousel">' + slides + '</div>'
+    + '<div style="font-size:11px;color:#bbb">AI 正在根据教材和偏好生成题目</div>'
+    + '</div></div>';
+  var _uniIdx = 0;
+  _quizUniTimer = setInterval(function() {
+    var all = mount.querySelectorAll('.uni-slide');
+    if (!all.length) { clearInterval(_quizUniTimer); return; }
+    all[_uniIdx].classList.remove('active');
+    _uniIdx = (_uniIdx + 1) % _unis.length;
+    all[_uniIdx].classList.add('active');
+  }, 2000);
+
+  // Find related concepts for distractors
+  var related = _findRelatedConcepts(_quizConcept, 5);
+
+
+  fetch(QUIZ_WORKER_URL + '/generate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + QUIZ_AUTH_TOKEN
+    },
+    body: JSON.stringify(_quizConcepts
+      ? { concept: _quizConcept, category: _quizSchool, concepts: _quizConcepts, details: _quizDetails || [] }
+      : { concept: _quizConcept, category: _quizSchool, relatedConcepts: related }
+    )
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.error) throw new Error(data.error);
+    _quizData = data;
+    _renderQuiz(data);
+  })
+  .catch(function(err) {
+    if (_quizUniTimer) { clearInterval(_quizUniTimer); _quizUniTimer = null; }
+    var mount = document.getElementById('quiz-mount');
+    mount.innerHTML = '<div class="qz2-wrap"><div class="qz2-error">'
+      + '<div style="font-size:28px;margin-bottom:12px">⚠️</div>'
+      + '<div class="qz2-error-msg">' + (err.message || '出题失败') + '</div>'
+      + '<button class="qz2-retry-btn" onclick="_loadQuizQuestion()">重试</button>'
+      + '</div></div>';
+  });
+}
+
+function _findRelatedConcepts(concept, count) {
+  var list = _buildConceptsIndex();
+  var result = [];
+  var conceptBase = concept.split('（')[0].trim();
+  for (var i = 0; i < list.length && result.length < count; i++) {
+    var t = list[i].title.split('（')[0].trim();
+    if (t !== conceptBase) result.push(list[i].title);
+  }
+  // Shuffle and take count
+  for (var j = result.length - 1; j > 0; j--) {
+    var k = Math.floor(Math.random() * (j + 1));
+    var tmp = result[j]; result[j] = result[k]; result[k] = tmp;
+  }
+  return result.slice(0, count);
+}
+
+function _renderQuiz(data) {
+  if (_quizUniTimer) { clearInterval(_quizUniTimer); _quizUniTimer = null; }
+  var mount = document.getElementById('quiz-mount');
+  var html = '<div class="qz2-wrap">';
+
+  // Concept tag
+  html += '<div class="qz2-concept-tag" style="background:' + _quizAccent + '">'
+    + (_quizConcepts ? _quizConcept + '（综合）' : _quizConcept.split('（')[0]) + '</div>';
+
+  // Question
+  html += '<div class="qz2-question">' + data.question + '</div>';
+
+  // Options
+  html += '<div class="qz2-opts" id="qz2-opts">';
+  var keys = ['A', 'B', 'C', 'D'];
+  for (var i = 0; i < data.options.length; i++) {
+    var optText = data.options[i].replace(/^[A-D][\.\s、．]+/, '');
+    html += '<div class="qz2-opt" data-key="' + keys[i] + '" onclick="_selectAnswer(this, \'' + keys[i] + '\')">'
+      + '<span class="qz2-key">' + keys[i] + '</span>'
+      + '<span class="qz2-text">' + optText + '</span>'
+      + '</div>';
+  }
+  html += '</div>';
+
+  // Explanation area (hidden initially)
+  html += '<div id="qz2-explain" style="display:none"></div>';
+
+  // Feedback area (hidden initially)
+  html += '<div id="qz2-feedback" style="display:none"></div>';
+
+  // Actions (hidden initially)
+  html += '<div id="qz2-actions" style="display:none"></div>';
+
+  html += '</div>';
+  mount.innerHTML = html;
+}
+
+function _selectAnswer(el, key) {
+  if (_quizAnswered) return;
+  _quizAnswered = true;
+
+  var correct = _quizData.answer;
+
+  // 保存到KV（Gemini出题用 ai_ 前缀 + 题目hash）
+  var _aiQid = 'ai_' + (_quizData.question || '').slice(0, 40).replace(/[^a-zA-Z0-9\u3000-\u9fff]/g, '').slice(0, 20);
+  QZ.saveRecord(_aiQid, key === correct, _quizData.question);
+  var opts = document.querySelectorAll('#qz2-opts .qz2-opt');
+
+  for (var i = 0; i < opts.length; i++) {
+    opts[i].classList.add('locked');
+    var k = opts[i].getAttribute('data-key');
+    if (k === correct) {
+      opts[i].classList.add('correct');
+    } else if (k === key && k !== correct) {
+      opts[i].classList.add('wrong');
+    } else {
+      opts[i].classList.add('dim');
+    }
+  }
+
+  // Show explanations
+  var expEl = document.getElementById('qz2-explain');
+  var expHtml = '<div class="qz2-explain"><div class="qz2-explain-title">📝 各选项解析</div>';
+  var keys = ['A', 'B', 'C', 'D'];
+  for (var j = 0; j < keys.length; j++) {
+    var k = keys[j];
+    var exp = _quizData.explanations ? (_quizData.explanations[k] || '') : '';
+    var isCorrect = k === correct;
+    expHtml += '<div class="qz2-explain-item"><strong>' + k + (isCorrect ? ' ✅' : ' ❌') + '：</strong>' + exp + '</div>';
+  }
+  expHtml += '</div>';
+  expEl.innerHTML = expHtml;
+  expEl.style.display = 'block';
+
+  // Set feedback context for AI quiz
+  _fbCtx = { type: 'ai', concept: _quizConcept, question: _quizData ? _quizData.question : '' };
+
+  // Show feedback (unified)
+  var fbEl = document.getElementById('qz2-feedback');
+  fbEl.innerHTML = _renderFbHTML('ai');
+  fbEl.style.display = 'block';
+
+  // Show actions
+  var actEl = document.getElementById('qz2-actions');
+  actEl.innerHTML = '<div class="qz2-actions">'
+    + '<button class="qz2-btn-back" onclick="_backToConcepts()">返回知识点</button>'
+    + '<button class="qz2-btn-next" onclick="_loadQuizQuestion()">下一题 →</button>'
+    + '</div>';
+  actEl.style.display = 'block';
+}
+
+function _backToConcepts() {
+  // Switch to concepts tab
+  var tabs = document.querySelectorAll('.tab-btn');
+  for (var i = 0; i < tabs.length; i++) {
+    if (tabs[i].textContent.indexOf('知识点') >= 0) {
+      switchTab('concepts', tabs[i]);
+      break;
+    }
+  }
+}
+
+
+// =====================================================
+//  QUIZ — 连续模式 + 进度持久化 + 通关计数
+// =====================================================
+var QZ = {
+  qs: [],
+  loaded: false,
+  selectedTopics: [],
+  kvRecords: {},
+  kvLoaded: false,
+
+  // Session state
+  queue: [],
+  queuePos: 0,
+  sessionDone: {},
+  completions: 0,
+  topicKey: '',
+  curOptMap: [],
+
+  _kvURL: QUIZ_WORKER_URL,
+  _kvToken: QUIZ_AUTH_TOKEN,
+
+  // === KV 通信 ===
+  loadStats: function(cb) {
+    var self = this;
+    if (this.kvLoaded) { if (cb) cb(); return; }
+    fetch(this._kvURL + '/bank/stats', {
+      headers: { 'Authorization': 'Bearer ' + this._kvToken }
+    }).then(function(r) { return r.json(); })
+      .then(function(d) {
+        self.kvRecords = d.records || {};
+        self.kvLoaded = true;
+        if (cb) cb();
+      }).catch(function() {
+        self.kvLoaded = true;
+        if (cb) cb();
+      });
+  },
+
+  saveRecord: function(qid, correct, question, feedback) {
+    var body = { qid: qid, correct: correct, source: 'bank', question: question };
+    if (feedback) body.feedback = feedback;
+    fetch(this._kvURL + '/bank/record', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this._kvToken
+      },
+      body: JSON.stringify(body)
+    }).then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.record) QZ.kvRecords[qid] = d.record;
+      }).catch(function() {});
+  },
+
+  _storageKey: 'quiz_sessions',
+
+  // === Session persistence — per-topic localStorage ===
+  _loadSession: function() {
+    try {
+      var all = JSON.parse(localStorage.getItem(this._storageKey) || '{}');
+      var data = all[this.topicKey];
+      if (data) {
+        this.sessionDone = data.sessionDone || {};
+        this.completions = data.completions || 0;
+        return true;
+      }
+    } catch(e) {}
+    this.sessionDone = {};
+    this.completions = 0;
+    return false;
+  },
+
+  _saveSession: function() {
+    var all = {};
+    try { all = JSON.parse(localStorage.getItem(this._storageKey) || '{}'); } catch(e) {}
+    all[this.topicKey] = {
+      sessionDone: this.sessionDone,
+      completions: this.completions
+    };
+    localStorage.setItem(this._storageKey, JSON.stringify(all));
+  },
+
+  _getAllSessions: function() {
+    try { return JSON.parse(localStorage.getItem(this._storageKey) || '{}'); } catch(e) { return {}; }
+  },
+
+  // === 挂载入口 ===
+  mount: function() {
+    var el = document.getElementById('quiz-mount');
+    if (!el) return;
+    if (typeof QUIZ_BANK !== 'undefined' && QUIZ_BANK.length) {
+      if (!this.loaded) {
+        this.allBank = QUIZ_BANK;
+        this.loaded = true;
+      }
+      var self = this;
+      if (!this.kvLoaded) {
+        el.innerHTML = '<div class="qz-loading"><div class="qz-spinner"></div><div class="qz-loading-txt">加载练习记录...</div></div>';
+        this.loadStats(function() { self.showTopicSelect(); });
+      } else {
+        this.showTopicSelect();
+      }
+      return;
+    }
+    el.innerHTML = '<div class="qz-err">'
+      + '<div class="qz-err-title">题库未加载</div>'
+      + '<div class="qz-err-msg">未找到 QUIZ_BANK 数据</div>'
+      + '<div class="qz-err-sub">请确认 <code>questions.js</code> 与 <code>index.html</code> 在同一目录。</div>'
+      + '</div>';
+  },
+
+  // === 选题界面（单选，每个主题独立进度） ===
+  showTopicSelect: function() {
+    var el = document.getElementById('quiz-mount');
+    if (!el) return;
+    var self = this;
+    var topics = [];
+    var topicCount = {};
+    var topicQids = {};
+    this.allBank.forEach(function(q) {
+      if (!topicCount[q.topic]) { topicCount[q.topic] = 0; topics.push(q.topic); topicQids[q.topic] = []; }
+      topicCount[q.topic]++;
+      topicQids[q.topic].push('bank_' + q.id);
+    });
+
+    var sessions = this._getAllSessions();
+
+    var html = '<div class="qz-wrap" style="padding-top:24px">'
+      + '<div style="text-align:center;margin-bottom:24px">'
+      + '<div style="font-size:17px;font-weight:700;color:#2a2825;margin-bottom:6px">题库练习</div>'
+      + '<div style="font-size:12px;color:#9a9288">共 ' + this.allBank.length + ' 道题 · 选择一个主题开始</div>'
+      + '</div>'
+      + '<div id="qz-topic-list" style="display:flex;flex-direction:column;gap:8px">';
+
+    topics.forEach(function(t) {
+      var total = topicCount[t];
+      var sess = sessions[t] || {};
+      var doneCnt = Object.keys(sess.sessionDone || {}).length;
+      var completions = sess.completions || 0;
+      var pct = Math.round(doneCnt / total * 100);
+      var everDone = 0;
+      topicQids[t].forEach(function(qid) { if (self.kvRecords[qid]) everDone++; });
+
+      var statusHtml = '';
+      if (completions > 0) {
+        statusHtml = '<span style="font-size:10px;color:#7a5c45;background:#f5f3ef;padding:2px 7px;border-radius:99px">通关 ' + completions + ' 次</span>';
+      }
+
+      html += '<div class="qz-topic-card" data-topic="' + t + '" style="padding:14px 18px;background:#fff;border:1px solid #e8e4dc;border-radius:12px;cursor:pointer;transition:all .2s">'
+        + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+        +   '<span style="font-size:14px;font-weight:600;color:#2a2825">' + t + '</span>'
+        +   '<span style="font-size:11px;color:#b8b0a4">' + total + '题</span>'
+        + '</div>'
+        + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">'
+        +   '<div style="flex:1;height:5px;background:#f0ece6;border-radius:3px;overflow:hidden"><div style="height:100%;background:' + (pct >= 100 ? '#5a9e35' : '#7a5c45') + ';border-radius:3px;width:' + pct + '%;transition:width .3s"></div></div>'
+        +   '<span style="font-size:11px;color:#7a5c45;font-weight:500;min-width:36px;text-align:right">' + doneCnt + '/' + total + '</span>'
+        + '</div>'
+        + '<div style="display:flex;align-items:center;justify-content:space-between">'
+        +   '<span style="font-size:10.5px;color:#b8b0a4">' + (everDone > 0 ? '做过 ' + everDone + '/' + total + ' 道' : '尚未开始') + '</span>'
+        +   statusHtml
+        + '</div>'
+        + '</div>';
+    });
+
+    html += '</div></div>';
+    el.innerHTML = html;
+
+    document.querySelectorAll('.qz-topic-card').forEach(function(card) {
+      card.addEventListener('click', function() {
+        self.selectedTopics = [card.getAttribute('data-topic')];
+        self.loadFiltered();
+      });
+    });
+  },
+
+  // === 加载筛选后的题目 ===
+  loadFiltered: function() {
+    var self = this;
+    var filtered = this.allBank.filter(function(q) {
+      return self.selectedTopics.indexOf(q.topic) >= 0;
+    });
+    this.qs = filtered.map(function(q) {
+      return {
+        qid: 'bank_' + q.id,
+        tag: q.topic + (q.source ? '·' + q.source : ''),
+        tx: q.question,
+        op: { A: q.options[0].replace(/^[A-D]\.\s*/, ''), B: q.options[1].replace(/^[A-D]\.\s*/, ''), C: q.options[2].replace(/^[A-D]\.\s*/, ''), D: q.options[3].replace(/^[A-D]\.\s*/, '') },
+        ans: q.answer,
+        ex: q.explanations || {},
+        pt: ''
+      };
+    });
+    this.startQuiz();
+  },
+
+  shuf: function(a) {
+    var b = a.slice();
+    for (var i = b.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = b[i]; b[i] = b[j]; b[j] = t;
+    }
+    return b;
+  },
+
+  // === 构建做题队列：未做过的题优先，然后是做过的题 ===
+  buildQueue: function() {
+    var self = this;
+    var unseen = [];  // 从未做过（无 kvRecord）
+    var seen = [];    // 做过但本轮未完成
+    this.qs.forEach(function(q, i) {
+      if (self.sessionDone[q.qid]) return; // 本轮已做，跳过
+      var rec = self.kvRecords[q.qid];
+      if (!rec || (rec.c + rec.w === 0)) {
+        unseen.push(i);
+      } else {
+        seen.push(i);
+      }
+    });
+    this.queue = this.shuf(unseen).concat(this.shuf(seen));
+    this.queuePos = 0;
+  },
+
+  startQuiz: function() {
+    this.topicKey = this.selectedTopics[0];
+    this._loadSession();
+    this.buildQueue();
+    if (this.queue.length === 0 && Object.keys(this.sessionDone).length >= this.qs.length) {
+      this._showComplete();
+    } else if (this.queue.length > 0) {
+      this.render();
+    } else {
+      this.showTopicSelect();
+    }
+  },
+
+  // === 渲染题目 ===
+  render: function() {
+    var qIdx = this.queue[this.queuePos];
+    var q = this.qs[qIdx];
+    var doneCount = Object.keys(this.sessionDone).length;
+    var totalCount = this.qs.length;
+
+    this.curOptMap = this.shuf(['A','B','C','D']);
+    var displayLabels = ['A','B','C','D'];
+    var el = document.getElementById('quiz-mount');
+    var rec = this.kvRecords[q.qid];
+    var statsBadge = rec ? '<span class="qz-stats-badge"><span class="sb-g">' + rec.c + '✓</span><span class="sb-r">' + rec.w + '✗</span></span>' : '';
+    el.innerHTML =
+      '<div class="qz-wrap">'
+      + '<div class="qz-top">'
+      +   '<span class="qz-ctr">已做 <b>' + doneCount + '</b> / 共 <b>' + totalCount + '</b>'
+      +   (this.completions > 0 ? '<span class="qz-rnlabel">通关 ' + this.completions + ' 次</span>' : '') + '</span>'
+      +   '<div class="qz-prog-wrap"><div class="qz-prog-fill" id="qz-pf" style="width:' + (doneCount/totalCount*100) + '%"></div></div>'
+      + '</div>'
+      + '<div class="qz-qcard">'
+      +   '<div class="qz-meta"><span class="qz-num">Q' + (doneCount + 1) + '</span><span class="qz-tag">' + q.tag + '</span>' + statsBadge + '</div>'
+      +   '<p class="qz-qtx" id="qz-qtx"></p>'
+      + '</div>'
+      + '<div class="qz-opts" id="qz-opts"></div>'
+      + '<div id="qz-ra"></div>'
+      + '</div>';
+    document.getElementById('qz-qtx').textContent = q.tx;
+    var self = this;
+    var optsEl = document.getElementById('qz-opts');
+    displayLabels.forEach(function(dk, i) {
+      var origKey = self.curOptMap[i];
+      var d = document.createElement('div');
+      d.className = 'qz-opt';
+      d.id = 'qz-o' + dk;
+      d.innerHTML = '<span class="qz-okey">' + dk + '</span><span class="qz-otx"></span>';
+      d.querySelector('.qz-otx').textContent = q.op[origKey];
+      d.addEventListener('click', function() { self.pick(dk); });
+      optsEl.appendChild(d);
+    });
+  },
+
+  // === 选择答案 ===
+  pick: function(displayKey) {
+    var qIdx = this.queue[this.queuePos];
+    var q = this.qs[qIdx];
+    var self = this;
+    var displayLabels = ['A','B','C','D'];
+    var pickedOrigKey = this.curOptMap[displayLabels.indexOf(displayKey)];
+    var correctDisplayKey = displayLabels[this.curOptMap.indexOf(q.ans)];
+    var good = pickedOrigKey === q.ans;
+
+    // Set feedback context
+    _fbCtx = { type: 'bank', qid: q.qid, question: q.tx };
+
+    // 保存到 KV
+    this.saveRecord(q.qid, good, q.tx);
+
+    // 标记本轮已做 + 持久化
+    this.sessionDone[q.qid] = true;
+    this._saveSession();
+
+    // 锁定选项
+    displayLabels.forEach(function(dk) {
+      var el = document.getElementById('qz-o' + dk);
+      el.classList.add('lk');
+      el.replaceWith(el.cloneNode(true));
+      el = document.getElementById('qz-o' + dk);
+      if (dk === correctDisplayKey)  el.classList.add('cor');
+      else if (dk === displayKey)    el.classList.add('wrg');
+      else                           el.classList.add('dim');
+    });
+
+    var doneCount = Object.keys(this.sessionDone).length;
+    var totalCount = this.qs.length;
+    var isComplete = doneCount >= totalCount;
+
+    // 更新进度条和计数
+    document.getElementById('qz-pf').style.width = (doneCount/totalCount*100) + '%';
+    var ctrEl = document.querySelector('.qz-ctr');
+    if (ctrEl) ctrEl.innerHTML = '已做 <b>' + doneCount + '</b> / 共 <b>' + totalCount + '</b>'
+      + (this.completions > 0 ? '<span class="qz-rnlabel">通关 ' + this.completions + ' 次</span>' : '');
+
+    // 解析表
+    var rows = displayLabels.map(function(dk, i) {
+      var origK = self.curOptMap[i];
+      var isAns = origK === q.ans;
+      return '<tr><td><strong>' + dk + '</strong></td>'
+        + '<td><span class="qz-tg ' + (isAns?'y':'n') + '">' + (isAns?'正解':'誤り') + '</span></td>'
+        + '<td>' + (q.ex[origK] || '—') + '</td></tr>';
+    }).join('');
+
+    var nextLabel = isComplete ? '通关！查看结果 →' : '次の問題 →';
+
+    var raEl = document.getElementById('qz-ra');
+    raEl.innerHTML =
+      '<div class="qz-rp ' + (good?'g':'r') + '">'
+      + '<div class="qz-rv">' + (good ? '正解 ✓' : '不正解 — 正解は ' + correctDisplayKey + ' です') + '</div>'
+      + '<div class="qz-re">' + (q.ex[pickedOrigKey] || (good ? '正解です。' : '不正解です。')) + '</div>'
+      + (q.pt ? '<div class="qz-pb"><strong>ポイント：</strong>' + q.pt + '</div>' : '')
+      + '<div class="qz-atitle">全選択肢の解析</div>'
+      + '<table class="qz-atb"><thead><tr>'
+      + '<th style="width:48px">選択肢</th><th style="width:60px">判定</th><th>解説</th>'
+      + '</tr></thead><tbody>' + rows + '</tbody></table>'
+      + _renderFbHTML('bk' + qIdx)
+      + '<button class="qz-btn" id="qz-nextbtn">' + nextLabel + '</button>'
+      + '</div>';
+
+    document.getElementById('qz-nextbtn').addEventListener('click', function() {
+      if (isComplete) {
+        self.completions++;
+        self.sessionDone = {};
+        self._saveSession();
+        self._showComplete();
+      } else {
+        self.queuePos++;
+        self.render();
+        var el = document.getElementById('quiz-mount');
+        if (el) el.scrollTop = 0;
+      }
+    });
+    setTimeout(function() { raEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 80);
+  },
+
+  // === 通关画面 ===
+  _showComplete: function() {
+    var self = this;
+    var el = document.getElementById('quiz-mount');
+    var totalC = 0, totalW = 0;
+    this.qs.forEach(function(q) {
+      var rec = self.kvRecords[q.qid];
+      if (rec) { totalC += rec.c; totalW += rec.w; }
+    });
+    var totalAttempts = totalC + totalW;
+    var rate = totalAttempts > 0 ? Math.round(totalC / totalAttempts * 100) : 0;
+
+    el.innerHTML =
+      '<div class="qz-wrap">'
+      + '<div class="qz-fc">'
+      +   '<div style="font-size:40px;margin-bottom:8px">&#127881;</div>'
+      +   '<div class="qz-ftitle">通关！</div>'
+      +   '<div class="qz-fsub">已完成本范围全部 ' + this.qs.length + ' 道题</div>'
+      +   '<div style="margin:16px 0;padding:14px 20px;background:#f5f3ef;border-radius:12px">'
+      +     '<div style="font-size:24px;font-weight:700;color:#7a5c45">' + this.completions + ' <span style="font-size:14px;font-weight:400">次通关</span></div>'
+      +     '<div style="font-size:12px;color:#9a9288;margin-top:4px">累计正确率 ' + rate + '%</div>'
+      +   '</div>'
+      +   '<div style="display:flex;gap:10px;margin-top:1rem">'
+      +     '<button class="qz-btn qz-btn-ghost" id="qz-back-topics">← 重新选题</button>'
+      +     '<button class="qz-btn" id="qz-retry">再来一轮</button>'
+      +   '</div>'
+      + '</div></div>';
+    document.getElementById('qz-retry').addEventListener('click', function() {
+      self.buildQueue();
+      if (self.queue.length > 0) {
+        self.render();
+      } else {
+        self.showTopicSelect();
+      }
+    });
+    document.getElementById('qz-back-topics').addEventListener('click', function() { self.showTopicSelect(); });
+    if (el) el.scrollTop = 0;
+  }
+};
+
+
+// =====================================================
+//  SCHOLAR SEARCH
+// =====================================================
+function _hlEscape(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function _hlText(text, q) {
+  if (!q) return text;
+  return text.replace(new RegExp('(' + _hlEscape(q) + ')', 'gi'),
+    '<mark class="sh">$1</mark>');
+}
+
+function _scholarEra(s) {
+  var m = s.born ? s.born.match(/(\d{4})/) : null;
+  var b = m ? m[1] : '';
+  if (!b) return '';
+  var m2 = s.died ? s.died.match(/(\d{4})/) : null;
+  var d = m2 ? m2[1] : '';
+  return b + '–' + d;
+}
+
+var _foldArrowSVG = '<span class="fold-arrow"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></span>';
+
+function toggleSection(labelEl) {
+  var grid = labelEl.nextElementSibling;
+  if (!grid) return;
+  labelEl.classList.toggle('collapsed');
+  grid.classList.toggle('folded');
+}
+
+function renderScholarCards() {
+  var ct = document.getElementById('scholar-cards-container');
+  if (!ct || typeof SCHOLAR_ORDER === 'undefined') return;
+  var html = '';
+  SCHOLAR_ORDER.forEach(function(sec) {
+    var secColor = sec.color || '#86868b';
+    var secLabel = '<span style="border-left:2px solid ' + secColor + ';padding-left:10px">' + sec.label
+      + '<span style="color:#aeaeb2;font-weight:400;margin-left:6px">' + sec.keys.length + '</span>'
+      + (sec.en ? '<span style="color:#aeaeb2;font-weight:400;margin-left:8px;font-size:10px;letter-spacing:0.04em;text-transform:uppercase">' + sec.en + '</span>' : '')
+      + '</span>';
+    html += '<div class="section-label" onclick="toggleSection(this)">' + secLabel + _foldArrowSVG + '</div><div class="cards-grid">';
+    sec.keys.forEach(function(key) {
+      var s = SCHOLARS[key];
+      if (!s) return;
+      var era = _scholarEra(s);
+      html += '<div class="card" style="--accent:' + _scholarAccent(s) + '" onclick="showScholar(\'' + key + '\')">'
+        + '<span class="card-flag">' + s.flag + '</span>'
+        + '<div class="card-title">' + s.name + '</div>'
+        + '<div class="card-sub">' + s.en + '</div>'
+        + '<div class="card-ja">' + s.ja + '</div>'
+        + '<div class="card-era">' + era + '</div></div>';
+    });
+    html += '</div>';
+  });
+  ct.innerHTML = html;
+}
+renderScholarCards();
+
+function scholarSearch(q) {
+  var clearBtn = document.getElementById('scholar-search-clear');
+  clearBtn.style.display = q ? 'block' : 'none';
+  // 不再重置筛选，让搜索和筛选同时生效
+  _applyScholarFilter();
+}
+
+function scholarSearchClear() {
+  var input = document.getElementById('scholar-search-input');
+  input.value = '';
+  scholarSearch('');
+  input.focus();
+}
+
+// Scholar L1 color → key mapping
+var _scholarL1Colors = { SM: '#007AFF', OB: '#34C759', OT: '#FF9500' };
+var _scholarL1 = 'all';
+var _scholarSubLabels = [];
+
+function scholarSegSelect(l1) {
+  _scholarL1 = l1;
+  _scholarSubLabels = [];
+  // Update seg-item active
+  var filter = document.getElementById('scholar-filter');
+  filter.querySelectorAll('.seg-item').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.l1 === l1);
+  });
+  // Build sub-category pills
+  var subsEl = document.getElementById('scholar-subs');
+  if (l1 === 'all') {
+    subsEl.classList.remove('open');
+    subsEl.innerHTML = '';
+  } else {
+    var color = _scholarL1Colors[l1];
+    var pills = '';
+    SCHOLAR_ORDER.forEach(function(sec) {
+      if (sec.color === color) {
+        pills += '<button class="seg-sub-pill" data-label="' + sec.label + '" onclick="scholarToggleSub(this)">' + sec.label + '</button> ';
+      }
+    });
+    subsEl.innerHTML = '<div class="seg-sub-row" style="margin-top:0">' + pills + '</div>';
+    subsEl.classList.add('open');
+  }
+  // 不再清除搜索框，让搜索和筛选同时生效
+  _applyScholarFilter();
+}
+
+function scholarToggleSub(btn) {
+  var label = btn.dataset.label;
+  btn.classList.toggle('active');
+  var color = _scholarL1Colors[_scholarL1] || '#1d1d1f';
+  btn.style.background = btn.classList.contains('active') ? color : '';
+  // Collect active sub-labels
+  _scholarSubLabels = [];
+  document.querySelectorAll('#scholar-subs .seg-sub-pill.active').forEach(function(p) {
+    _scholarSubLabels.push(p.dataset.label);
+  });
+  _applyScholarFilter();
+}
+
+function _applyScholarFilter() {
+  var labels = document.querySelectorAll('#panel-scholar #scholar-cards-container > .section-label');
+  var color = _scholarL1Colors[_scholarL1];
+  var totalVisible = 0;
+  var noResult = document.getElementById('scholar-no-result');
+
+  // 获取搜索关键词
+  var inp = document.getElementById('scholar-search-input');
+  var q = inp ? inp.value.trim().toLowerCase() : '';
+
+  // 首次调用时保存原始 innerHTML
+  var allCards = document.querySelectorAll('#panel-scholar .card');
+  allCards.forEach(function(card) {
+    ['card-title', 'card-sub', 'card-ja'].forEach(function(cls) {
+      var el = card.querySelector('.' + cls);
+      if (el && el._orig === undefined) el._orig = el.innerHTML;
+    });
+  });
+
+  labels.forEach(function(labelEl) {
+    var grid = labelEl.nextElementSibling;
+    if (!grid) return;
+    var secIdx = Array.from(labelEl.parentNode.querySelectorAll('.section-label')).indexOf(labelEl);
+    var sec = SCHOLAR_ORDER[secIdx];
+    if (!sec) return;
+
+    // 先按 L1 / 子分类筛选整个 section
+    var secShow = true;
+    if (_scholarL1 !== 'all') {
+      if (sec.color !== color) {
+        secShow = false;
+      } else if (_scholarSubLabels.length > 0 && _scholarSubLabels.indexOf(sec.label) < 0) {
+        secShow = false;
+      }
+    }
+
+    if (!secShow) {
+      labelEl.style.display = 'none';
+      grid.style.display = 'none';
+      return;
+    }
+
+    // Section 通过筛选，再对卡片应用搜索
+    grid.style.display = '';
+    var cards = grid.querySelectorAll('.card');
+    var secVisible = 0;
+
+    cards.forEach(function(card) {
+      var fields = ['card-title', 'card-sub', 'card-ja'].map(function(cls) {
+        return card.querySelector('.' + cls);
+      });
+      if (!q) {
+        // 无搜索词：显示全部，恢复原始文本
+        card.style.display = '';
+        secVisible++;
+        fields.forEach(function(el) { if (el && el._orig) el.innerHTML = el._orig; });
+      } else {
+        var texts = fields.map(function(el) { return el ? (el._orig || '').toLowerCase() : ''; });
+        var matched = texts.some(function(t) { return t.indexOf(q) !== -1; });
+        if (matched) {
+          card.style.display = '';
+          secVisible++;
+          fields.forEach(function(el) { if (el) el.innerHTML = _hlText(el._orig, q); });
+        } else {
+          card.style.display = 'none';
+          fields.forEach(function(el) { if (el && el._orig) el.innerHTML = el._orig; });
+        }
+      }
+    });
+
+    labelEl.style.display = secVisible > 0 ? '' : 'none';
+    if (secVisible === 0) grid.style.display = 'none';
+    totalVisible += secVisible;
+  });
+
+  var countEl = document.getElementById('scholar-search-count');
+  if (countEl) countEl.textContent = totalVisible > 0 ? (q ? '找到 ' + totalVisible + ' 位学者' : totalVisible + ' 位学者') : '';
+  if (noResult) noResult.style.display = totalVisible === 0 ? 'block' : 'none';
+}
+
+// =====================================================
+//  CONCEPTS TAB
+// =====================================================
+var CONCEPTS_INDEX = null;
+var _cnCat = 'all';    // 'all' or L1 name
+var _cnCats = [];      // multi-select sub-categories
+
+// 对应 PDF 思维导图文件名的分类体系
+var TOPIC_MAP = {
+  // === SM 戦略理論 ===
+  io:'競争戦略', rbv:'競争戦略', dynamic:'競争戦略', harvard:'競争戦略',
+  // === SM 戦略形成学派 ===
+  design_s:'戦略形成学派', planning_s:'戦略形成学派', positioning_s:'戦略形成学派',
+  entrepreneur_s:'戦略形成学派', cognitive_s:'戦略形成学派', learning_s:'戦略形成学派',
+  power_s:'戦略形成学派', culture_s:'戦略形成学派', environment_s:'戦略形成学派',
+  configuration_s:'戦略形成学派',
+  // === SM イノベーション・知識 ===
+  innovation:'イノベーション戦略', platform:'イノベーション戦略', km:'イノベーション戦略',
+  // === SM 国際経営 ===
+  international_strategy:'国際戦略',
+  // === SM ガバナンス・CSR ===
+  csr:'ガバナンス・CSR', agency:'ガバナンス・CSR', tce:'ガバナンス・CSR',
+  // === OB 個体 ===
+  personality:'人格・知覚',
+  attitude_emotion:'態度・情緒',
+  behavioral:'モチベーション・学習', ob:'モチベーション・学習', beh_econ:'モチベーション・学習',
+  // === OB 集団 ===
+  ohio:'リーダーシップ', michigan:'リーダーシップ', situational:'リーダーシップ',
+  leadership_theory:'リーダーシップ',
+  group_team:'集団・チーム',
+  conflict:'コンフリクト',
+  // === OB 組織 ===
+  change:'組織文化・変革',
+  km:'組織学習', stanford:'組織学習', org_learning:'組織学習',
+  // === OB HRM ===
+  shrm:'人的資源管理', hrm_practice:'人的資源管理',
+  hitotsubashi:'日本的経営', japanese_mgmt:'日本的経営',
+  // === OT 経営基礎 ===
+  scientific:'経営史', bureaucracy:'経営史', process:'経営史', humanrel:'経営史',
+  carnegie:'意思決定論', equilibrium:'意思決定論', evolution_process:'意思決定論',
+  decision_theory:'意思決定論',
+  // === OT 組織設計 ===
+  contingency:'組織構造・設計', systems:'組織構造・設計',
+  tavistock:'組織構造・設計', aston:'組織構造・設計', org_types:'組織構造・設計',
+  // === OT 制度・生態 ===
+  institutional:'制度理論',
+  // === OT ネットワーク ===
+  social_network:'ソーシャル・ネットワーク', chicago:'ソーシャル・ネットワーク'
+};
+var TOPIC_ORDER = [
+  // SM
+  '競争戦略','戦略形成学派','イノベーション戦略','国際戦略','ガバナンス・CSR',
+  // OB
+  '人格・知覚','態度・情緒','モチベーション・学習','リーダーシップ','集団・チーム','コンフリクト','組織文化・変革','組織学習','人的資源管理','日本的経営',
+  // OT
+  '経営史','意思決定論','組織構造・設計','制度理論','ソーシャル・ネットワーク'
+];
+
+// 解析scholar字段（支持逗号分隔多人）
+function _knScholars(k) {
+  if (!k.scholar) return [];
+  return k.scholar.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+}
+// 从 KNOWLEDGE 条目提取学者姓氏用于显示
+function _knScholarLastName(k) {
+  var keys = _knScholars(k);
+  if (!keys.length) return null;
+  return keys.map(function(key) {
+    var s = SCHOLARS[key];
+    if (!s) return key;
+    var parts = (s.en || '').replace(/\s+(Sr\.|Jr\.|III|II|IV)$/i, '').split(' ');
+    return parts.length ? parts.pop() : s.name;
+  }).join(' · ');
+}
+// 从 KNOWLEDGE 条目构建展示标题（如 "钻石模型（Diamond Model，Porter，1990）"）
+function _knFullTitle(k) {
+  var paren = [];
+  if (k.en) paren.push(k.en);
+  var keys = _knScholars(k);
+  keys.forEach(function(key) {
+    var s = SCHOLARS[key];
+    if (s) {
+      var parts = (s.en || '').replace(/\s+(Sr\.|Jr\.|III|II|IV)$/i, '').split(' ');
+      if (parts.length) paren.push(parts.pop());
+    } else { paren.push(key); }
+  });
+  if (k.year) paren.push(k.year);
+  return paren.length ? k.title + '（' + paren.join('，') + '）' : k.title;
+}
+
+function _buildConceptsIndex() {
+  if (CONCEPTS_INDEX) return CONCEPTS_INDEX;
+  var list = [];
+  KNOWLEDGE.forEach(function(k) {
+    // 收集所属学派信息
+    var schoolInfos = [];
+    var cats = [];
+    (k.schools || []).forEach(function(sKey) {
+      var d = DATA[sKey];
+      if (!d) return;
+      var cat = TOPIC_MAP[sKey] || (d.badge ? d.badge.split('·')[0].trim() : 'その他');
+      schoolInfos.push({ name: d.title, key: sKey, accent: d.accent });
+      if (cats.indexOf(cat) < 0) cats.push(cat);
+    });
+    if (!schoolInfos.length) return; // 无对应学派则跳过
+    // 构建日文搜索文本（如果有）
+    var cnKey = k.title.replace(/([（(][^）)]+[）)][\s]*)+$/, '').trim();
+    var jaText = (typeof DATA_JA !== 'undefined' && DATA_JA[cnKey]) ? DATA_JA[cnKey] : '';
+    list.push({
+      title: _knFullTitle(k),
+      body: k.body,
+      en: k.en || '',
+      ja: jaText,
+      schools: schoolInfos,
+      cats: cats,
+      accent: schoolInfos[0].accent,
+      school: schoolInfos[0].name,
+      key: schoolInfos[0].key,
+      cat: cats[0],
+      scholar: _knScholarLastName(k)
+    });
+  });
+  list.sort(function(a, b) {
+    var ai = TOPIC_ORDER.indexOf(a.cat), bi = TOPIC_ORDER.indexOf(b.cat);
+    if (ai < 0) ai = 99; if (bi < 0) bi = 99;
+    if (ai !== bi) return ai - bi;
+    return a.school < b.school ? -1 : a.school > b.school ? 1 : 0;
+  });
+  CONCEPTS_INDEX = list;
+  return list;
+}
+
+function _extractJP(body) {
+  // Extract leading （日语/English）—— from body, return {jp, rest}
+  var m = body.match(/^[\s]*[（(]([^）)]*[\/／][^）)]*)[）)]\s*[——]*/);
+  if (m) return { jp: m[1].trim(), rest: body.slice(m[0].length).trim() };
+  return null;
+}
+function _jpLineHtml(text, accent, title) {
+  if (title) {
+    // Remove parenthetical from JP text if content already in title
+    text = text.replace(/[（(][^）)]+[）)]/g, function(m) {
+      var inner = m.slice(1, -1).trim();
+      // Check if any substantial part of the parenthetical appears in the title
+      if (title.indexOf(inner) >= 0) return '';
+      // Check individual parts split by comma/space
+      var parts = inner.split(/[,，\s]+/);
+      if (parts.length && parts.every(function(p) { return p.length < 2 || title.indexOf(p) >= 0; })) return '';
+      return m;
+    }).replace(/\s{2,}/g, ' ').trim();
+  }
+  if (!text) return '';
+  return '<div class="jp-line" style="color:' + accent + '">' + text + '</div>';
+}
+function _hexRgb(hex) {
+  return parseInt(hex.slice(1,3),16)+','+parseInt(hex.slice(3,5),16)+','+parseInt(hex.slice(5,7),16);
+}
+function _formatBody(body, accent) {
+  var items = [], lead = '';
+  if (body.includes('<br>')) {
+    var parts = body.split('<br>');
+    lead = parts[0];
+    items = parts.slice(1).filter(function(p){ return p.trim(); });
+    if (!items.length || !/^[①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮【]|^S[1-4]/.test(items[0].trim())) return body;
+  } else if (/◆/.test(body)) {
+    // Diamond bullet items: split on ◆
+    var splitParts = body.split(/◆\s*/);
+    lead = splitParts[0].replace(/[：:；，,]\s*$/, '');
+    items = splitParts.slice(1).filter(function(p){ return p.trim(); });
+    if (items.length < 2) return body;
+    // Prefix each item with circled number for rendering
+    var circled = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫','⑬','⑭','⑮'];
+    items = items.map(function(it, idx){ return circled[idx % circled.length] + it.replace(/[；;]\s*$/, ''); });
+  } else if (/[①②③]/.test(body)) {
+    // Inline numbered items: split on circled numbers
+    var splitParts = body.split(/(?=[①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮])/);
+    lead = splitParts[0].replace(/[：:；]\s*$/, '');
+    items = splitParts.slice(1).filter(function(p){ return p.trim(); });
+    if (items.length < 2) return body;
+    // Clean trailing summary sentence from last item (after 。followed by non-①text)
+    var lastItem = items[items.length - 1];
+    var lastPeriod = lastItem.lastIndexOf('。');
+    if (lastPeriod > 0 && lastPeriod < lastItem.length - 1) {
+      items[items.length - 1] = lastItem.slice(0, lastPeriod + 1);
+    }
+  } else {
+    return body;
+  }
+  var rgb = _hexRgb(accent || '#8a7a6a');
+  var numMap = {'①':'1','②':'2','③':'3','④':'4','⑤':'5','⑥':'6','⑦':'7','⑧':'8','⑨':'9','⑩':'10','⑪':'11','⑫':'12','⑬':'13','⑭':'14','⑮':'15'};
+  // Check if grouped mode (contains【】section headers)
+  var hasGroups = items.some(function(it){ return /^【/.test(it.trim()); });
+  if (hasGroups) return _formatGroupedBody(lead, items, accent, rgb, numMap);
+  var html = '<div class="body-lead">' + lead + '</div><div class="body-items">';
+  items.forEach(function(item) {
+    html += _renderBodyCard(item, accent, rgb, numMap);
+  });
+  html += '</div>';
+  return html;
+}
+function _renderBodyCard(item, accent, rgb, numMap) {
+    item = item.trim().replace(/[；;]\s*$/, '');
+    var m = item.match(/^([①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮]|S[1-4])([\s\S]*)/);
+    if (!m) return '<div style="font-size:12px;color:#6a6460;line-height:1.65">' + item + '</div>';
+    var num = m[1];
+    var displayNum = numMap[num] || num;
+    var rest = m[2].trim();
+    var di = rest.indexOf('——');
+    if (di < 0) {
+      var cm = rest.match(/^([^：]+(?:）|》|\)))\s*：\s*/);
+      if (cm) di = cm[0].length - 1;
+    }
+    var name, desc;
+    if (di >= 0 && rest.indexOf('——') === di) {
+      name = rest.slice(0, di).trim();
+      desc = rest.slice(di + 2).trim();
+    } else if (di >= 0) {
+      var cm2 = rest.match(/^([^：]+(?:）|》|\)))\s*：\s*/);
+      name = cm2[1].trim();
+      desc = rest.slice(cm2[0].length).trim();
+    } else {
+      name = rest;
+      desc = '';
+    }
+    return '<div class="body-card" style="--accent:' + accent + '">'
+      + '<span class="body-num" style="background:rgba('+rgb+',.1);border-color:rgba('+rgb+',.25);color:'+accent+'">' + displayNum + '</span>'
+      + '<div class="body-card-content">'
+      + '<div class="body-item-name">' + name + '</div>'
+      + (desc ? '<div class="body-item-desc">' + desc + '</div>' : '')
+      + '</div></div>';
+}
+function _formatGroupedBody(lead, items, accent, rgb, numMap) {
+  var html = '<div class="body-lead">' + lead + '</div><div class="body-items">';
+  var inGroup = false;
+  items.forEach(function(item) {
+    item = item.trim();
+    var gm = item.match(/^【(.+?)】$/);
+    if (gm) {
+      if (inGroup) html += '</div></div>';
+      html += '<div class="body-group">'
+        + '<div class="body-group-title" onclick="this.parentElement.classList.toggle(\'open\')">' + gm[1] + '</div>'
+        + '<div class="body-group-items" style="border-color:rgba('+rgb+',.15)">';
+      inGroup = true;
+    } else if (inGroup) {
+      html += _renderBodyCard(item, accent, rgb, numMap);
+    } else {
+      html += _renderBodyCard(item, accent, rgb, numMap);
+    }
+  });
+  if (inGroup) html += '</div></div>';
+  html += '</div>';
+  return html;
+}
+
+function renderKnowledgeItem(opts) {
+  var title = opts.title;
+  var body  = opts.body;
+  var accent = opts.accent || '#8a7a6a';
+  var id = opts.id;
+  var q  = opts.query || '';
+
+  // 日文行
+  var jpLine = '';
+  var jpVal = _jpLookup(title);
+  if (jpVal) {
+    jpLine = _jpLineHtml(jpVal.split('——')[0].trim(), accent, title);
+    var _ex = _extractJP(body); if (_ex) body = _ex.rest;
+  } else {
+    var _ex2 = _extractJP(body);
+    if (_ex2) { jpLine = _jpLineHtml(_ex2.jp, accent, title); body = _ex2.rest; }
+  }
+
+  // 搜索高亮
+  var _sn = opts.scholar || null;
+  var titleDisplay = q ? _titleHtml(_hlText(title, q), accent, null, _sn) : _titleHtml(title, accent, null, _sn);
+  var bodyHtml = q ? _formatBody(_hlText(body, q), accent) : _formatBody(body, accent);
+
+  // 学派标签（支持多学派）
+  var schoolHtml = '';
+  if (opts.schools && opts.schools.length > 0) {
+    opts.schools.forEach(function(s) {
+      var schDisplay = q ? _hlText(s.name, q) : s.name;
+      schoolHtml += '<span class="cn-school" style="border-color:' + s.accent + ';color:' + s.accent + '"'
+        + ' onclick="event.stopPropagation();show(\'' + s.key + '\')" title="前往学派详情"'
+        + '>' + schDisplay + '</span>';
+    });
+  } else if (opts.school) {
+    var schDisplay = q ? _hlText(opts.school, q) : opts.school;
+    schoolHtml = '<span class="cn-school" style="border-color:' + accent + ';color:' + accent + '"'
+      + (opts.schoolKey ? ' onclick="event.stopPropagation();show(\'' + opts.schoolKey + '\')" title="前往学派详情"' : '')
+      + '>' + schDisplay + '</span>';
+  }
+
+  // 去练习按钮（可选）
+  var quizHtml = '';
+  if (opts.quizable) {
+    var safeT = title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    var safeSch = (opts.school || '').replace(/'/g, "\\\\'");
+    quizHtml = '<div style="margin-top:12px;text-align:right"><button class="pill-btn" onclick="event.stopPropagation();goQuiz(\'' + safeT + '\',\'' + safeSch + '\',\'' + accent + '\')">去练习 →</button></div>';
+  }
+
+  // 日语切换按钮（仅当 DATA_JA 有对应翻译时显示）
+  var cnKey = title.replace(/([（(][^）)]+[）)][\s]*)+$/, '').trim();
+  var jaToggleHtml = '';
+  if (typeof DATA_JA !== 'undefined' && DATA_JA[cnKey]) {
+    jaToggleHtml = '<button class="pill-btn pill-sm ja-toggle" onclick="event.stopPropagation();toggleJaLang(\'' + id + '\',this)" title="切换日语/中文"><span>日本語</span></button>';
+  }
+
+  // 核心卡片
+  var card = '<div class="cn-item" id="' + id + '" style="--accent:' + accent + '" data-cn-key="' + cnKey.replace(/"/g, '&quot;') + '">'
+    + '<div class="cn-header" onclick="toggleItem(\'' + id + '\',event)">'
+    + '<span class="cn-arrow">▶</span>'
+    + '<span class="cn-title">' + titleDisplay + '</span>'
+    + schoolHtml
+    + jaToggleHtml
+    + '</div>'
+    + '<div class="cn-body">' + jpLine + bodyHtml + quizHtml + '</div>'
+    + '</div>';
+
+  // 左滑隐藏外层（可选）
+  if (opts.swipeable) {
+    var safeTitleAttr = title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    card = '<div class="cn-swipe-wrap" data-cn-title="' + safeTitleAttr + '">'
+      + '<button class="cn-hide-btn" onclick="hideConcept(this)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M8 2v12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" transform="rotate(45 8 8)"/></svg><span style="font-size:9px;opacity:.7">隐藏</span></button>'
+      + '<div class="cn-swipe-inner">' + card + '</div></div>';
+  }
+
+  // 外层包裹（可选li）
+  if (opts.wrapper === 'li') {
+    card = '<li>' + card + '</li>';
+  }
+  return card;
+}
+
+function _renderCnItem(c, id, q) {
+  return renderKnowledgeItem({
+    title: c.title, body: c.body, accent: c.accent, id: id,
+    school: c.school, schoolKey: c.key, scholar: c.scholar,
+    schools: c.schools,
+    swipeable: true, quizable: true, query: q
+  });
+}
+
+function renderConcepts() {
+  var list   = _buildConceptsIndex();
+  var inp    = document.getElementById('concept-search-input');
+  var q      = inp ? inp.value.trim().toLowerCase() : '';
+  var filtered = list;
+  // 过滤隐藏的知识点
+  if (_hiddenCount > 0) {
+    filtered = filtered.filter(function(c) { return !_hiddenConcepts[c.title]; });
+  }
+  // 筛选：L1 大类 + 子分类（兼容 cats 数组）
+  if (_cnCats.length > 0) {
+    filtered = filtered.filter(function(c) {
+      return c.cats.some(function(ct) { return _cnCats.indexOf(ct) >= 0; });
+    });
+  } else if (_cnCat !== 'all') {
+    var l1Cats = _L1_CATS[_cnCat] || [];
+    filtered = filtered.filter(function(c) {
+      return c.cats.some(function(ct) { return l1Cats.indexOf(ct) >= 0; });
+    });
+  }
+  // 搜索：在筛选结果中进一步过滤（搜所有学派名）
+  if (q) {
+    filtered = filtered.filter(function(c) {
+      var schoolNames = c.schools ? c.schools.map(function(s) { return s.name; }).join(' ') : c.school;
+      var baseMatch = (c.title + ' ' + c.body + ' ' + (c.en || '') + ' ' + schoolNames).toLowerCase().indexOf(q) >= 0;
+      var jaMatch = (c.ja || '').toLowerCase().indexOf(q) >= 0;
+      c._showJa = !baseMatch && jaMatch;
+      return baseMatch || jaMatch;
+    });
+  }
+  var countEl  = document.getElementById('concept-count');
+  var noResult = document.getElementById('concept-no-result');
+  var listEl   = document.getElementById('concept-list');
+  if (countEl) countEl.textContent = filtered.length ? filtered.length + ' 个知识点' : '';
+  if (!filtered.length) {
+    if (noResult) noResult.style.display = 'block';
+    if (listEl) listEl.innerHTML = '';
+    return;
+  }
+  if (noResult) noResult.style.display = 'none';
+  var html = '';
+  if (q) {
+    var rows = '';
+    filtered.forEach(function(c, i) { rows += _renderCnItem(c, 'cnq-' + i, q); });
+    html = '<div class="cn-items-list">' + rows + '</div>';
+  } else {
+    var cats = []; var groups = {};
+    filtered.forEach(function(c) {
+      if (!groups[c.cat]) { groups[c.cat] = []; cats.push(c.cat); }
+      groups[c.cat].push(c);
+    });
+    var _cnIdx = 0;
+    cats.forEach(function(cat) {
+      var rows = '';
+      groups[cat].forEach(function(c, i) {
+        rows += _renderCnItem(c, 'cng-' + (_cnIdx++), '');
+      });
+      html += '<div class="section-label" onclick="toggleSection(this)"><span>' + cat
+        + ' <span style="opacity:.5;font-weight:400;letter-spacing:0">' + groups[cat].length + '</span></span>'
+        + _foldArrowSVG + '</div>'
+        + '<div class="cn-items-list">' + rows + '</div>';
+    });
+  }
+  if (listEl) {
+    listEl.innerHTML = html;
+    _initSwipe(listEl);
+    // 日文匹配的项：自动展开并切换到日语版
+    if (q) {
+      filtered.forEach(function(c, i) {
+        if (c._showJa) {
+          var el = document.getElementById('cnq-' + i);
+          if (el) {
+            el.classList.add('open');
+            var btn = el.querySelector('.ja-toggle');
+            if (btn) btn.click();
+          }
+        }
+      });
+    }
+  }
+}
+
+// L1 → 子分类映射
+var _L1_CATS = {
+  SM: ['競争戦略','戦略形成学派','イノベーション戦略','国際戦略','ガバナンス・CSR'],
+  OB: ['人格・知覚','態度・情緒','モチベーション・学習','リーダーシップ','集団・チーム','コンフリクト','組織文化・変革','組織学習','人的資源管理','日本的経営'],
+  OT: ['経営史','意思決定論','組織構造・設計','制度理論','ソーシャル・ネットワーク']
+};
+var _l1Colors = { SM:'#007AFF', OB:'#34C759', OT:'#FF9500' };
+
+// Segmented Control 切换
+function segSelect(l1) {
+  _cnCat = l1;
+  _cnCats = [];
+  // 更新 seg-item active（只更新知识点面板的 seg-item）
+  document.querySelectorAll('#cat-filter .seg-item').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.l1 === l1);
+  });
+  // 显示/隐藏子分类面板
+  document.querySelectorAll('.seg-subs').forEach(function(p) { p.classList.remove('open'); });
+  if (l1 !== 'all') {
+    var panel = document.getElementById('seg-subs-' + l1);
+    if (panel) {
+      panel.classList.add('open');
+      panel.querySelectorAll('.seg-sub-pill').forEach(function(p) { p.classList.remove('active'); });
+    }
+  }
+  // 不再清除搜索框，让搜索和筛选同时生效
+  renderConcepts();
+}
+
+// 子分类多选 toggle
+function toggleCatPill(btn) {
+  var cat = btn.dataset.cat;
+  btn.classList.toggle('active');
+  var color = _l1Colors[_cnCat] || '#1d1d1f';
+  if (btn.classList.contains('active')) {
+    btn.style.background = color;
+  } else {
+    btn.style.background = '';
+  }
+  // 收集当前所有 active 子分类
+  var panel = document.getElementById('seg-subs-' + _cnCat);
+  _cnCats = [];
+  if (panel) {
+    panel.querySelectorAll('.seg-sub-pill.active').forEach(function(p) {
+      _cnCats.push(p.dataset.cat);
+    });
+  }
+  renderConcepts();
+}
+
+function conceptSearch(val) {
+  var cb = document.getElementById('concept-search-clear');
+  if (cb) cb.style.display = val ? 'block' : 'none';
+  renderConcepts();
+}
+
+function conceptSearchClear() {
+  var inp = document.getElementById('concept-search-input');
+  if (inp) { inp.value = ''; inp.focus(); }
+  conceptSearch('');
+}
+
+// ===== 知识点隐藏功能 =====
+var _hiddenConcepts = {};
+var _hiddenCount = 0;
+
+function hideConcept(btn) {
+  var wrap = btn.closest('.cn-swipe-wrap');
+  if (!wrap) return;
+  var title = wrap.getAttribute('data-cn-title');
+  if (title) _hiddenConcepts[title] = true;
+  _hiddenCount++;
+  // 第1步：立即淡出+缩小（0.1s）
+  var h = wrap.offsetHeight;
+  wrap.classList.add('hiding');
+  // 第2步：淡出后快速收缩高度，让下方内容上移
+  setTimeout(function() {
+    wrap.style.height = h + 'px';
+    wrap.style.overflow = 'hidden';
+    wrap.offsetHeight; // force reflow
+    wrap.style.transition = 'height 0.15s cubic-bezier(0.4,0,1,1), margin 0.15s ease, padding 0.15s ease';
+    wrap.style.height = '0px';
+    wrap.style.marginBottom = '-8px';
+    wrap.style.paddingTop = '0';
+    wrap.style.paddingBottom = '0';
+    setTimeout(function() {
+      wrap.style.display = 'none';
+    }, 160);
+  }, 100);
+  _updateHiddenUI();
+}
+
+function _updateHiddenUI() {
+  var btn = document.getElementById('btn-restore-hidden');
+  var cnt = document.getElementById('hidden-count');
+  if (btn) btn.style.display = _hiddenCount > 0 ? '' : 'none';
+  if (cnt) cnt.textContent = '(' + _hiddenCount + ')';
+  // 更新知识点计数
+  var countEl = document.getElementById('concept-count');
+  if (countEl) {
+    var vis = document.querySelectorAll('.cn-swipe-wrap:not([style*="display: none"])').length;
+    countEl.textContent = vis ? vis + ' 个知识点' : '';
+  }
+}
+
+function restoreAllHidden() {
+  _hiddenConcepts = {};
+  _hiddenCount = 0;
+  _updateHiddenUI();
+  renderConcepts();
+}
+
+// 左滑手势（触摸 + 鼠标）
+function _initSwipe(container) {
+  var wraps = container.querySelectorAll('.cn-swipe-wrap');
+  wraps.forEach(function(wrap) {
+    var inner = wrap.querySelector('.cn-swipe-inner');
+    var hideBtn = wrap.querySelector('.cn-hide-btn');
+    if (!inner || inner._swipeInit) return;
+    inner._swipeInit = true;
+    var sx = 0, cx = 0, swiping = false, opened = false;
+    // 按钮样式跟随滑动位置（0~60）实时变化
+    function _updateBtn(pos) {
+      if (!hideBtn) return;
+      var ratio = Math.min(pos / 30, 1); // 0~30px区间完成出现
+      var sc = 0.7 + 0.3 * ratio; // scale: 0.7 → 1.0
+      var ty = -30 + (-20) * ratio; // translateY: -30% → -50%
+      hideBtn.style.opacity = ratio;
+      hideBtn.style.transform = 'translateY(' + ty + '%) scale(' + sc + ')';
+      hideBtn.style.pointerEvents = ratio > 0.5 ? 'auto' : 'none';
+    }
+    function onStart(x) { sx = x; cx = 0; swiping = true; wrap.classList.add('swiping'); }
+    function onMove(x) {
+      if (!swiping) return;
+      cx = x - sx;
+      if (cx > 0) cx = 0;
+      if (cx < -60) cx = -60;
+      inner.style.transition = 'none';
+      inner.style.transform = 'translateX(' + cx + 'px)';
+      _updateBtn(Math.abs(cx));
+    }
+    function onEnd() {
+      swiping = false;
+      inner.style.transition = 'transform 0.2s ease';
+      if (cx < -28) {
+        inner.style.transform = 'translateX(-60px)';
+        opened = true;
+        _updateBtn(60);
+      } else {
+        _dismissSmooth(wrap, inner);
+      }
+    }
+    function resetSwipe() {
+      _dismissSmooth(wrap, inner);
+    }
+    function _dismissSmooth(w, inn) {
+      // 按钮立即开始缩小消失
+      if (hideBtn) {
+        hideBtn.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
+        hideBtn.style.opacity = '0';
+        hideBtn.style.transform = 'translateY(-30%) scale(0.5)';
+        hideBtn.style.pointerEvents = 'none';
+      }
+      inn.style.transition = 'transform 0.2s ease';
+      inn.style.transform = 'translateX(0)';
+      opened = false;
+      setTimeout(function() {
+        w.classList.remove('swiping');
+        if (hideBtn) hideBtn.style.transition = '';
+      }, 200);
+    }
+    // 触摸事件
+    inner.addEventListener('touchstart', function(e) {
+      onStart(e.touches[0].clientX);
+    }, { passive: true });
+    inner.addEventListener('touchmove', function(e) {
+      onMove(e.touches[0].clientX);
+    }, { passive: true });
+    inner.addEventListener('touchend', onEnd);
+    // 鼠标事件
+    inner.addEventListener('mousedown', function(e) {
+      if (e.target.closest('.cn-school')) return;
+      onStart(e.clientX);
+      function mm(ev) { onMove(ev.clientX); }
+      function mu() { onEnd(); document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); }
+      document.addEventListener('mousemove', mm);
+      document.addEventListener('mouseup', mu);
+    });
+    // trackpad二指水平滑动（wheel事件）
+    // trackpad二指水平滑动（wheel事件）
+    // deltaX>0 = 内容向右推 = 露出右侧隐藏按钮
+    var wPos = 0, wheelTimer = null, wStarted = false;
+    wrap.addEventListener('wheel', function(e) {
+      // 只响应水平分量较大的滑动
+      if (Math.abs(e.deltaX) < Math.abs(e.deltaY) * 1.2) return;
+      e.preventDefault();
+      e.stopPropagation();
+      // 同步当前状态
+      if (!wStarted) { wPos = opened ? 60 : 0; wStarted = true; }
+      wPos += e.deltaX * 0.6;
+      if (wPos < 0) wPos = 0;
+      if (wPos > 60) wPos = 60;
+      if (wPos > 2) wrap.classList.add('swiping');
+      inner.style.transition = 'none';
+      inner.style.transform = 'translateX(' + (-wPos) + 'px)';
+      if (hideBtn) hideBtn.style.transition = 'none';
+      _updateBtn(wPos);
+      clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(function() {
+        wStarted = false;
+        inner.style.transition = 'transform 0.2s ease';
+        if (wPos > 25) {
+          inner.style.transform = 'translateX(-60px)';
+          wPos = 60; opened = true;
+          _updateBtn(60);
+        } else {
+          _dismissSmooth(wrap, inner);
+          wPos = 0;
+        }
+      }, 120);
+    }, { passive: false });
+    // 点击其他地方收回
+    document.addEventListener('click', function(e) {
+      if (opened && !wrap.contains(e.target)) resetSwipe();
+    });
+  });
+}
+
+// ===== 动态渲染：学派卡片 + Tab计数 =====
+
+function _surname(w) {
+  var cn = w.split(' ')[0]; // e.g. "弗雷德里克·泰勒"
+  var idx = cn.lastIndexOf('\u00B7'); // middle dot ·
+  return idx >= 0 ? cn.slice(idx + 1) : cn;
+}
+
+function _cardSub(who) {
+  return who.slice(0, 3).map(_surname).join(' · ');
+}
+
+var _masteredKeys = JSON.parse(localStorage.getItem('mastered') || '{}');
+
+function _isMastered(key) { return !!_masteredKeys[key]; }
+
+function toggleMastered(key, btn) {
+  event.stopPropagation();
+  var card = btn.closest('.card');
+  if (_masteredKeys[key]) {
+    delete _masteredKeys[key];
+    card.classList.remove('mastered');
+    btn.textContent = '\u2606'; // ☆
+    // Reset bank progress (keep completions)
+    if (typeof _sbLoad === 'function') {
+      var sbp = _sbLoad(key);
+      sbp.done = {};
+      _sbSave(key, sbp);
+    }
+  } else {
+    _masteredKeys[key] = 1;
+    card.classList.add('mastered');
+    btn.textContent = '\u2605'; // ★
+  }
+  localStorage.setItem('mastered', JSON.stringify(_masteredKeys));
+}
+
+function _starBtn(key) {
+  return '<button class="card-star" onclick="toggleMastered(\'' + key + '\',this)">'
+    + (_isMastered(key) ? '\u2605' : '\u2606') + '</button>';
+}
+
+function _makeCard(key, color) {
+  var d = DATA[key];
+  if (!d) return null;
+  var datePart = (d.badge || '').split('\u00B7')[1] || '';
+  datePart = datePart.trim();
+  var eraStr = datePart + (datePart && d.en ? ' · ' + d.en : (d.en || ''));
+  var card = document.createElement('div');
+  card.className = 'card' + (_isMastered(key) ? ' mastered' : '');
+  var cardColor = d.accent || color;
+  card.setAttribute('style', '--accent:' + cardColor);
+  card.setAttribute('onclick', "show('" + key + "')");
+  card.innerHTML = _starBtn(key) +
+    '<div class="card-title">' + d.title + '</div>' +
+    '<div class="card-sub">' + _cardSub(d.who) + '</div>' +
+    '<div class="card-era">' + eraStr + '</div>' +
+    _schoolCardProgress(key);
+  return card;
+}
+
+function _appendSection(panel, labelText, color, keys) {
+  var lbl = document.createElement('div');
+  lbl.className = 'section-label';
+  lbl.innerHTML = labelText + _foldArrowSVG;
+  lbl.onclick = function() { toggleSection(lbl); };
+  panel.appendChild(lbl);
+  var grid = document.createElement('div');
+  grid.className = 'cards-grid';
+  keys.forEach(function(key) {
+    var card = _makeCard(key, color);
+    if (card) grid.appendChild(card);
+  });
+  panel.appendChild(grid);
+}
+
+function renderHomeGrid() {
+  var themePanel = document.getElementById('panel-theme');
+  if (themePanel) {
+    themePanel.innerHTML = '';
+    THEME_ORDER.forEach(function(sec) {
+      var keys = Object.keys(DATA).filter(function(k) {
+        return sec.themes.some(function(t) {
+          return (DATA[k].badge || '').indexOf(t) === 0;
+        });
+      });
+      if (!keys.length) return;
+      var cnName = sec.label.replace(/^OT · |^OB · |^SM · /, '');
+      var label = '<div style="border-left:2px solid ' + sec.color + ';padding-left:10px">' +
+                  '<span>' + cnName + '<span style="color:#aeaeb2;font-weight:400;margin-left:6px">' + keys.length + '</span></span>' +
+                  (sec.desc ? '<div style="color:#aeaeb2;font-weight:400;font-size:10px;margin-top:2px;line-height:1.4">' + sec.desc + '</div>' : '') +
+                  '</div>';
+      _appendSection(themePanel, label, sec.color, keys);
+    });
+  }
+
+}
+
+function updateTabCounts() {
+  var themeKeyCount = Object.keys(DATA).filter(function(k) {
+    return THEME_ORDER.some(function(sec) {
+      return sec.themes.some(function(t) {
+        return (DATA[k].badge || '').indexOf(t) === 0;
+      });
+    });
+  }).length;
+  var themeCnt = document.getElementById('cnt-theme');
+  if (themeCnt) themeCnt.textContent = themeKeyCount;
+
+  var scholarCnt = document.getElementById('cnt-scholar');
+  if (scholarCnt) scholarCnt.textContent = Object.keys(SCHOLARS).length;
+
+  var cnCnt = document.getElementById('cnt-concepts');
+  if (cnCnt) cnCnt.textContent = _buildConceptsIndex().length;
+}
+
+renderHomeGrid();
+updateTabCounts();
+</script>
+
+</body>
+</html>
