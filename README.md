@@ -1,0 +1,48 @@
+# 経営管理学派全览
+
+日本大学院経営学研究科入试备考用知识库与练习系统。
+
+## 功能
+
+- **学派全览**（56个学派卡片） — 按ミクロ(OB)/マクロ(OT)/戦略(SM)分类，含斯科特四象限、明茨伯格十大战略学派、院校学派
+- **学者目录**（162位学者） — 生卒年、所属学派、代表理论、学术贡献
+- **知识点**（487个） — 中日双语body，手风琴分组展开，支持中文/English/日本語三语搜索
+- **理论框架** — 人间模型四阶段演变、斯科特四象限等可视化框架图
+- **在线练习** — Gemini 2.5 Flash驱动的AI出题，按学派/知识点定向练习
+
+## 技术栈
+
+| 组件 | 技术 |
+|------|------|
+| 前端 | 纯HTML/CSS/JS单文件（index.html） |
+| 数据 | data.js（学派/学者/知识点）+ data_ja.js（日文翻译） |
+| 练习API | Cloudflare Worker + Gemini 2.5 Flash |
+| 题库缓存 | Cloudflare KV |
+| 部署 | Netlify（静态站点） |
+
+## 文件结构
+
+```
+index.html        — 主页面（全部UI逻辑）
+data.js           — 学派、学者、知识点数据
+data_ja.js        — 知识点日文翻译（DATA_JA）
+questions.js      — 练习题数据
+school_quiz.js    — 练习功能逻辑
+logos/             — 大学校徽SVG
+worker/
+  index.js         — Cloudflare Worker（练习API）
+  knowledge_base.js — Worker用知识库
+  wrangler.toml    — Worker配置
+```
+
+## 部署
+
+**静态站点（Netlify）：**
+```bash
+npx netlify deploy --prod --dir=.
+```
+
+**练习API（Cloudflare Worker）：**
+```bash
+cd worker && npx wrangler deploy
+```
