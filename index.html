@@ -3891,7 +3891,7 @@ function _formatCompareCards(lead, data, accent) {
   var cols = data.split('||').map(function(c){ return c.trim(); }).filter(Boolean);
   var html = '';
   if (lead) html += '<div class="body-lead">' + lead + '</div>';
-  html += '<div class="compare-grid">';
+  html += '<div class="compare-grid" style="grid-template-columns:repeat(' + cols.length + ',1fr)">';
   cols.forEach(function(col, i) {
     var f = col.split('|').map(function(s){ return s.trim(); });
     var title = f[0] || '';
@@ -4133,14 +4133,24 @@ function _renderBodyCard(item, accent, rgb, numMap) {
       name = rest;
       desc = '';
     }
+    // 语义标签替代序号
+    var _labelWords = {意义:1,局限:1,企业例:1,例子:1,应对:1,应用:1,比喻:1,例:1};
+    var labelName = name.replace(/[（(].*/,'').replace(/[：:].*/,'').trim();
+    if (_labelWords[labelName]) {
+      displayNum = labelName;
+      // 去掉名字里的标签前缀，只留内容
+      var cleanName = name.replace(/^[^：:——]*[：:]\s*/, '').trim();
+      if (cleanName) { desc = cleanName + (desc ? '。' + desc : ''); name = ''; }
+    }
     return '<div class="body-card" style="--accent:' + accent + '">'
-      + '<span class="body-num" style="background:rgba('+rgb+',.1);border-color:rgba('+rgb+',.25);color:'+accent+'">' + displayNum + '</span>'
+      + '<span class="body-num" style="background:rgba('+rgb+',.1);border-color:rgba('+rgb+',.25);color:'+accent+';' + (_labelWords[labelName] ? 'font-size:9px;min-width:28px;padding:0 4px' : '') + '">' + displayNum + '</span>'
       + '<div class="body-card-content">'
       + '<div class="body-item-name">' + name + '</div>'
       + (desc ? '<div class="body-item-desc">' + desc + '</div>' : '')
       + '</div></div>';
 }
 function _formatGroupedBody(lead, items, accent, rgb, numMap) {
+  var _evalWords = {意义:1,局限:1,企业例:1,应对:1,应用:1,比喻:1,例子:1,例:1};
   var html = '<div class="body-lead">' + lead + '</div><div class="body-items">';
   var inGroup = false;
   items.forEach(function(item) {
@@ -4152,9 +4162,14 @@ function _formatGroupedBody(lead, items, accent, rgb, numMap) {
         + '<div class="body-group-title" onclick="this.parentElement.classList.toggle(\'open\')">' + gm[1] + '</div>'
         + '<div class="body-group-items" style="border-color:rgba('+rgb+',.15)">';
       inGroup = true;
-    } else if (inGroup) {
-      html += _renderBodyCard(item, accent, rgb, numMap);
     } else {
+      // 检测是否为评价性语义标签项（意义/局限等）→ 跳出折叠组
+      var em = item.match(/^[①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮]\s*([^：:——]+)/);
+      var evalName = em ? em[1].replace(/[（(].*/,'').trim() : '';
+      if (inGroup && _evalWords[evalName]) {
+        html += '</div></div>';
+        inGroup = false;
+      }
       html += _renderBodyCard(item, accent, rgb, numMap);
     }
   });
