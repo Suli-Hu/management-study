@@ -3837,6 +3837,7 @@ function _buildConceptsIndex() {
     var cnKey = k.title.replace(/([（(][^）)]+[）)][\s]*)+$/, '').trim();
     var jaText = (typeof DATA_JA !== 'undefined' && DATA_JA[cnKey]) ? DATA_JA[cnKey] : '';
     list.push({
+      id: k.id,
       title: _knFullTitle(k),
       body: k.body,
       en: k.en || '',
@@ -4275,7 +4276,7 @@ function renderConcepts() {
   if (q) {
     filtered = filtered.filter(function(c) {
       var schoolNames = c.schools ? c.schools.map(function(s) { return s.name; }).join(' ') : c.school;
-      var baseMatch = (c.title + ' ' + c.body + ' ' + (c.en || '') + ' ' + schoolNames).toLowerCase().indexOf(q) >= 0;
+      var baseMatch = ((c.id || '') + ' ' + c.title + ' ' + c.body + ' ' + (c.en || '') + ' ' + schoolNames).toLowerCase().indexOf(q) >= 0;
       var jaMatch = (c.ja || '').toLowerCase().indexOf(q) >= 0;
       c._showJa = !baseMatch && jaMatch;
       return baseMatch || jaMatch;
