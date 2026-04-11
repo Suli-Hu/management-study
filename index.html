@@ -1082,11 +1082,12 @@ mark.sh {
   cursor: pointer; transition: opacity .15s; white-space: nowrap;
 }
 .cn-school:hover { opacity: .7; text-decoration: underline; }
+.cn-body strong { color: #1d1d1f; font-weight: 600; }
 .cn-body {
   max-height: 0;
   overflow: hidden;
   padding: 0 16px;
-  font-size: 12.5px; color: #6e6e73; line-height: 1.85;
+  font-size: 12.5px; color: #6e6e73; line-height: 1.85; font-weight: 300;
   border-top: 0px solid rgba(0,0,0,0.05);
   opacity: 0;
   transition: max-height 0.32s cubic-bezier(0.4,0,0.2,1),
@@ -1102,8 +1103,8 @@ mark.sh {
 }
 /* Style-D: 两级排版 */
 .body-lead {
-  font-size: 12.5px; font-weight: 600; color: #3a3632;
-  line-height: 1.65; margin-bottom: 12px; padding-bottom: 8px;
+  font-size: 13px; font-weight: 400; color: #3a3632;
+  line-height: 1.8; margin-bottom: 12px; padding-bottom: 8px;
   border-bottom: 1px dashed #e0dcd4;
 }
 .body-items { display: flex; flex-direction: column; gap: 0; }
@@ -4134,23 +4135,22 @@ function _renderBodyCard(item, accent, rgb, numMap) {
       desc = '';
     }
     // 语义标签替代序号
-    var _labelWords = {意义:1,局限:1,企业例:1,例子:1,应对:1,应用:1,比喻:1,例:1};
+    var _labelWords = {意义:1,局限:1,企业例:1,例子:1,应对:1,应用:1,比喻:1,例:1,意義:1,限界:1,局限:1};
     var labelName = name.replace(/[（(].*/,'').replace(/[：:].*/,'').trim();
+    var _labelShort = {意义:'义',局限:'限',企业例:'例',例子:'例',应对:'应',应用:'用',比喻:'喻',例:'例',意義:'義',限界:'限'};
     if (_labelWords[labelName]) {
-      displayNum = labelName;
-      // 去掉名字里的标签前缀，只留内容
-      var cleanName = name.replace(/^[^：:——]*[：:]\s*/, '').trim();
-      if (cleanName) { desc = cleanName + (desc ? '。' + desc : ''); name = ''; }
+      displayNum = _labelShort[labelName] || labelName;
+      name = ''; // badge已显示标签，不需要重复显示name
     }
     return '<div class="body-card" style="--accent:' + accent + '">'
       + '<span class="body-num" style="background:rgba('+rgb+',.1);border-color:rgba('+rgb+',.25);color:'+accent+';' + (_labelWords[labelName] ? 'font-size:9px;min-width:28px;padding:0 4px' : '') + '">' + displayNum + '</span>'
       + '<div class="body-card-content">'
       + '<div class="body-item-name">' + name + '</div>'
-      + (desc ? '<div class="body-item-desc">' + desc + '</div>' : '')
+      + (desc ? '<div class="body-item-desc"' + (_labelWords[labelName] ? ' style="color:#3a3632;font-weight:400"' : '') + '>' + desc + '</div>' : '')
       + '</div></div>';
 }
 function _formatGroupedBody(lead, items, accent, rgb, numMap) {
-  var _evalWords = {意义:1,局限:1,企业例:1,应对:1,应用:1,比喻:1,例子:1,例:1};
+  var _evalWords = {意义:1,局限:1,企业例:1,应对:1,应用:1,比喻:1,例子:1,例:1,意義:1,限界:1};
   var html = '<div class="body-lead">' + lead + '</div><div class="body-items">';
   var inGroup = false;
   items.forEach(function(item) {
