@@ -9,9 +9,9 @@
 :root {
   /* 文字色（5级灰度） */
   --text-primary:    #1d1d1f;
-  --text-secondary:  #48484a;
-  --text-tertiary:   #86868b;
-  --text-quaternary: #aeaeb2;
+  --text-secondary:  #2c2c2e;
+  --text-tertiary:   #48484a;
+  --text-quaternary: #86868b;
   --text-on-accent:  #ffffff;
 
   /* 背景色 */
@@ -1125,7 +1125,7 @@ mark.sh {
   max-height: 0;
   overflow: hidden;
   padding: 0 16px;
-  font-size: 12.5px; color: var(--text-tertiary); line-height: 1.85; font-weight: var(--weight-light);
+  font-size: 12.5px; color: var(--text-secondary); line-height: 1.85; font-weight: var(--weight-regular);
   border-top: 0px solid rgba(0,0,0,0.05);
   opacity: 0;
   transition: max-height 0.32s cubic-bezier(0.4,0,0.2,1),
@@ -1186,7 +1186,11 @@ mark.sh {
 }
 .compare-col {
   perspective: 800px; cursor: pointer; min-height: 220px;
+  border-radius: 14px;
+  transition: transform .2s ease, box-shadow .2s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.03);
 }
+.compare-col:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.1); }
 .compare-col-inner {
   position: relative; width: 100%; height: 100%;
   transition: transform .5s cubic-bezier(.4,0,.2,1);
@@ -1195,7 +1199,7 @@ mark.sh {
 .compare-col.flipped .compare-col-inner { transform: rotateY(180deg); }
 .compare-front, .compare-back {
   backface-visibility: hidden; -webkit-backface-visibility: hidden;
-  background: var(--bg-secondary); border-radius: 14px; padding: 20px 16px;
+  background: var(--bg-primary); border-radius: 14px; padding: 20px 16px;
   display: flex; flex-direction: column; gap: 8px;
 }
 .compare-front { position: relative; }
@@ -1208,11 +1212,7 @@ mark.sh {
 .compare-back-title {
   font-size: 12px; font-weight: var(--weight-semibold); color: #1d1d1f; margin-bottom: 4px;
 }
-.compare-back-text { font-size: 11.5px; color: var(--text-tertiary); line-height: 1.75; }
-.compare-flip-hint {
-  position: absolute; bottom: 8px; right: 12px;
-  font-size: 9px; color: var(--text-quaternary); letter-spacing: .02em;
-}
+.compare-back-text { font-size: 11.5px; color: var(--text-secondary); line-height: 1.75; }
 .compare-num {
   font-size: 28px; font-weight: 900; line-height: 1; opacity: .1; font-family: -apple-system, system-ui, sans-serif;
 }
@@ -1221,21 +1221,18 @@ mark.sh {
 }
 .compare-keyword {
   font-size: 18px; font-weight: 800; line-height: 1.2; letter-spacing: -.02em;
+  color: var(--accent, var(--text-primary));
 }
 .compare-desc {
-  font-size: 11px; color: var(--text-tertiary); line-height: 1.5; margin-top: -2px;
-}
-.compare-type {
-  font-size: 10.5px; font-weight: var(--weight-semibold); display: inline-block; padding: 3px 10px; border-radius: 6px;
-  margin-top: 2px; align-self: flex-start;
+  font-size: 11px; color: var(--text-secondary); line-height: 1.5; margin-top: -2px;
 }
 .compare-theories {
-  font-size: 11px; color: var(--text-secondary); line-height: 1.7; margin-top: auto; padding-top: 6px;
-  border-top: 1px solid rgba(0,0,0,.04);
+  font-size: 11px; color: var(--text-primary); line-height: 1.7; margin-top: auto; padding-top: 6px;
+  border-top: 1px solid rgba(0,0,0,.06);
 }
 .compare-theories span { display: block; }
 .compare-theories .cmp-link {
-  color: var(--text-quaternary); cursor: pointer; text-decoration: none;
+  color: var(--text-secondary); cursor: pointer; text-decoration: none;
   transition: opacity .15s;
 }
 .compare-theories .cmp-link:hover { opacity: .7; text-decoration: underline; }
@@ -1277,7 +1274,6 @@ mark.sh {
   z-index: 2; position: relative;
   border-radius: 10px;
 }
-.quad-cell:hover .quad-front { background: var(--bg-primary); }
 .quad-cell:active { transform: scale(.98); }
 .quad-cell-inner {
   position: relative; width: 100%; height: 100%;
@@ -1288,24 +1284,21 @@ mark.sh {
 .quad-front, .quad-back {
   backface-visibility: hidden; -webkit-backface-visibility: hidden;
   padding: 12px 10px; display: flex; flex-direction: column; gap: 2px;
-  background: var(--bg-secondary);
+  background: var(--bg-primary);
+  box-shadow: 0 1px 4px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.03);
 }
 .quad-front { position: relative; height: 100%; }
 .quad-back {
   position: absolute; top: 0; left: 0; right: 0; bottom: 0;
   transform: rotateY(180deg);
   overflow-y: auto; justify-content: flex-start;
-  background: var(--bg-secondary);
+  background: var(--bg-primary);
 }
 .quad-back-title { font-size: 11px; font-weight: var(--weight-semibold); color: #1d1d1f; margin-bottom: 2px; }
-.quad-back-text { font-size: 10.5px; color: var(--text-tertiary); line-height: 1.7; }
+.quad-back-text { font-size: 10.5px; color: var(--text-secondary); line-height: 1.7; }
 .quad-emoji { font-size: 18px; line-height: 1; }
 .quad-name { font-size: 13px; font-weight: 800; color: #1d1d1f; }
-.quad-sub { font-size: 9.5px; color: var(--text-quaternary); }
-.quad-flip-hint {
-  position: absolute; bottom: 4px; right: 8px;
-  font-size: 8px; color: var(--text-quaternary);
-}
+.quad-sub { font-size: 9.5px; color: var(--text-secondary); }
 @media (max-width: 600px) {
   .quad-cell { min-height: 90px; }
   .quad-front, .quad-back { padding: 10px 8px; }
@@ -1321,7 +1314,6 @@ mark.sh {
 .body-card-content { flex: 1; min-width: 0; }
 .body-item-name { font-size: 13px; font-weight: var(--weight-semibold); color: var(--text-primary); line-height: 1.5; margin-bottom: 4px; }
 .body-item-desc { font-size: 12px; color: var(--text-tertiary); line-height: 1.65; }
-.jp-line { font-size: 10.5px; opacity: 0.7; margin-bottom: 6px; letter-spacing: .02em; }
 /* 胶囊按钮组件 */
 .pill-btn { padding: 4px 14px; border-radius: 999px; border: 1px solid var(--accent, #7a5c45); background: transparent; color: var(--accent, #7a5c45); font-size: 11px; font-weight: var(--weight-semibold); cursor: pointer; transition: background .2s, color .2s, opacity .2s; letter-spacing: .02em; white-space: nowrap; }
 .pill-btn:hover { background: var(--accent, #7a5c45); color: #fff; }
@@ -2227,7 +2219,7 @@ function _splitTitleForUI(title) {
   return { cn: cn, en: enParts.join('，'), sub: subParts.join('，'), name: nameParts.join(' & '), year: year };
 }
 
-function _titleHtml(title, accent, defaultSub, scholarName) {
+function _titleHtml(title, accent, defaultSub, scholarName, jpName) {
   var s = _splitTitleForUI(title);
   var html = s.cn;
   var name = s.name;
@@ -2261,8 +2253,11 @@ function _titleHtml(title, accent, defaultSub, scholarName) {
       html += '<span class="year-b">' + shortYear + '</span>';
     }
   }
-  if (s.en) {
-    html += '<span class="en-sub">' + s.en + '</span>';
+  if (s.en || jpName) {
+    var subParts = [];
+    if (s.en) subParts.push(s.en);
+    if (jpName) subParts.push(jpName);
+    html += '<span class="en-sub">' + subParts.join(' / ') + '</span>';
   }
   return html;
 }
@@ -2523,8 +2518,15 @@ function show(key, accentOverride) {
   }).join("");
 
   var accentBg = accent + "14";
-  var badgeCategory = d.badge.split('·')[0].trim();
-  var mergedEra = badgeCategory + ' · ' + d.era;
+  var groupLabel = '';
+  var g = d.group;
+  for (var ti = 0; ti < THEME_ORDER.length; ti++) {
+    var sec = THEME_ORDER[ti];
+    if (Array.isArray(g) ? g.some(function(x){ return sec.groups.indexOf(x) >= 0; }) : sec.groups.indexOf(g) >= 0) {
+      groupLabel = sec.label; break;
+    }
+  }
+  var mergedEra = groupLabel;
   var html =
     '<div class="school-hero" style="--accent:' + accent + '">'
     +   '<div class="school-hero-accent"></div>'
@@ -3920,17 +3922,90 @@ function _jpLineHtml(text, accent, title) {
     }).replace(/\s{2,}/g, ' ').trim();
   }
   if (!text) return '';
-  return '<div class="jp-line" style="color:' + accent + '">' + text + '</div>';
+  return '<div class="jp-line">' + text + '</div>';
 }
 function _hexRgb(hex) {
   return parseInt(hex.slice(1,3),16)+','+parseInt(hex.slice(3,5),16)+','+parseInt(hex.slice(5,7),16);
+}
+// theories文本中智能识别可跳转关键词，只给匹配的词加链接
+function _linkifyTheories(text) {
+  if (!text) return '';
+  // 收集所有可跳转的名称（学者名、学派名、KP标题）
+  var names = [];
+  if (typeof SCHOLARS !== 'undefined') {
+    Object.keys(SCHOLARS).forEach(function(k) {
+      var s = SCHOLARS[k];
+      if (s.name) names.push(s.name);
+      if (s.en) names.push(s.en);
+    });
+  }
+  if (typeof DATA !== 'undefined') {
+    Object.keys(DATA).forEach(function(k) { if (DATA[k].name) names.push(DATA[k].name); });
+  }
+  if (typeof KNOWLEDGE !== 'undefined') {
+    KNOWLEDGE.forEach(function(k) {
+      if (k.title) names.push(k.title);
+      if (k.en) names.push(k.en);
+    });
+  }
+  // 按长度降序排列，优先匹配长名称
+  names = names.filter(function(n) { return n && n.length >= 2; });
+  names.sort(function(a, b) { return b.length - a.length; });
+  // 逗号分割的纯列表（如 "Maslow '43, Herzberg '59"）——每项都是短名称
+  var parts = text.split(/[,，]/);
+  var isNameList = parts.length > 1 && parts.every(function(p) {
+    var t = p.trim();
+    return t.length > 0 && t.length < 20 && !/[。、：；的与和在从为]/.test(t);
+  });
+  if (isNameList) {
+    return parts.map(function(p) {
+      p = p.trim();
+      if (!p) return '';
+      var clean = p.replace(/\s*'\d{2}$/,'').trim();
+      if (_canLink(clean)) {
+        return '<span><a class="cmp-link" onclick="event.stopPropagation();_cmpSearch(\'' + p.replace(/'/g, "\\'") + '\')">' + p + '</a></span>';
+      }
+      return '<span>' + p + '</span>';
+    }).join('');
+  }
+  // 长文本/句子：在文中精确匹配可跳转关键词，仅给关键词加链接
+  var result = text;
+  var used = [];
+  names.forEach(function(name) {
+    if (used.indexOf(name) >= 0) return;
+    var idx = result.indexOf(name);
+    if (idx < 0) return;
+    // 确保不在已插入的标签内
+    var before = result.slice(0, idx);
+    var openTags = (before.match(/<a /g) || []).length;
+    var closeTags = (before.match(/<\/a>/g) || []).length;
+    if (openTags === closeTags) {
+      result = before + '<a class="cmp-link" onclick="event.stopPropagation();_cmpSearch(\'' + name.replace(/'/g, "\\'") + '\')">' + name + '</a>' + result.slice(idx + name.length);
+      used.push(name);
+    }
+  });
+  return '<span>' + result + '</span>';
+}
+function _canLink(name) {
+  if (!!findScholarKey(name)) return true;
+  if (typeof NAME_TO_KEY !== 'undefined' && NAME_TO_KEY[name] && DATA[NAME_TO_KEY[name]]) return true;
+  if (typeof KNOWLEDGE !== 'undefined') {
+    for (var j = 0; j < KNOWLEDGE.length; j++) {
+      var k = KNOWLEDGE[j];
+      if (k.title === name || k.en === name) return true;
+      // 前缀匹配：短名称（如"ERG"）匹配"ERG理论"等
+      if (name.length >= 2 && (k.title.indexOf(name) === 0 || (k.en && k.en.indexOf(name) === 0))) return true;
+    }
+  }
+  return false;
 }
 function _formatCompareCards(lead, data, accent) {
   var rgb = _hexRgb(accent || '#8a7a6a');
   var cols = data.split('||').map(function(c){ return c.trim(); }).filter(Boolean);
   var html = '';
   if (lead) html += '<div class="body-lead">' + lead + '</div>';
-  html += '<div class="compare-grid" style="grid-template-columns:repeat(' + cols.length + ',1fr)">';
+  // 用CSS变量传递学派主题色，所有子元素通过var(--accent)和var(--accent-bg)引用
+  html += '<div class="compare-grid" style="grid-template-columns:repeat(' + cols.length + ',1fr);--accent:' + accent + ';--accent-bg:rgba(' + rgb + ',.08)">';
   cols.forEach(function(col, i) {
     var f = col.split('|').map(function(s){ return s.trim(); });
     var title = f[0] || '';
@@ -3939,33 +4014,15 @@ function _formatCompareCards(lead, data, accent) {
     var type = f[3] || '';
     var theories = f[4] || '';
     var detail = f[5] || '';
-    // 理论名：可跳转的显示为链接，不可跳转的显示为纯文本
-    var theoriesHtml = theories.split(',').map(function(t) {
-      t = t.trim();
-      if (!t) return '';
-      var clean = t.replace(/\s*'\d{2}$/,'').trim();
-      var canLink = !!findScholarKey(clean);
-      if (!canLink && typeof NAME_TO_KEY !== 'undefined') canLink = !!(NAME_TO_KEY[clean] && DATA[NAME_TO_KEY[clean]]);
-      if (!canLink && typeof KNOWLEDGE !== 'undefined') {
-        for (var j = 0; j < KNOWLEDGE.length; j++) {
-          if (KNOWLEDGE[j].title === clean || KNOWLEDGE[j].title.indexOf(clean) === 0 || KNOWLEDGE[j].en === clean) { canLink = true; break; }
-        }
-      }
-      if (canLink) {
-        return '<span><a class="cmp-link" onclick="event.stopPropagation();_cmpSearch(\'' + t.replace(/'/g, "\\'") + '\')">' + t + '</a></span>';
-      }
-      return '<span style="color:#aeaeb2">' + t + '</span>';
-    }).join('');
+    var theoriesHtml = _linkifyTheories(theories);
     html += '<div class="compare-col" onclick="this.classList.toggle(\'flipped\')">'
       + '<div class="compare-col-inner">'
       + '<div class="compare-front">'
       +   '<div class="compare-num">' + (i + 1) + '</div>'
       +   '<div class="compare-title">' + title + '</div>'
-      +   '<div class="compare-keyword" style="color:' + accent + '">' + keyword + '</div>'
+      +   '<div class="compare-keyword">' + keyword + '</div>'
       +   '<div class="compare-desc">' + desc + '</div>'
-      +   '<div class="compare-type" style="background:rgba(' + rgb + ',.08);color:' + accent + '">' + type + '</div>'
       +   '<div class="compare-theories">' + theoriesHtml + '</div>'
-      +   (detail ? '<div class="compare-flip-hint">点击翻面 →</div>' : '')
       + '</div>'
       + (detail ? '<div class="compare-back">'
         + '<div class="compare-back-title">' + title + ' · ' + type + '</div>'
@@ -3987,15 +4044,33 @@ function _cmpSearch(q) {
     var schoolKey = NAME_TO_KEY[clean];
     if (schoolKey && DATA[schoolKey]) { show(schoolKey); return; }
   }
-  // 3. 尝试匹配知识点标题
+  // 3. 尝试匹配知识点标题 → 切换tab+搜索+展开+滚动
   if (typeof KNOWLEDGE !== 'undefined') {
     for (var i = 0; i < KNOWLEDGE.length; i++) {
       var kn = KNOWLEDGE[i];
       if (kn.title === clean || kn.title.indexOf(clean) === 0 || kn.en === clean) {
-        // 跳到知识点搜索并展开
-        var inp = document.getElementById('concept-search-input');
-        if (inp) { inp.value = clean; inp.dispatchEvent(new Event('input', {bubbles: true})); }
-        document.querySelector('.view.active').scrollTop = 0;
+        // 先切换到知识点tab
+        var tabs = document.querySelectorAll('.tab-btn, button');
+        for (var t = 0; t < tabs.length; t++) {
+          if (tabs[t].textContent.indexOf('知识点') >= 0) { tabs[t].click(); break; }
+        }
+        var knTitle = kn.title;
+        setTimeout(function() {
+          var inp = document.getElementById('concept-search-input');
+          if (inp) { inp.value = knTitle; inp.dispatchEvent(new Event('input', {bubbles: true})); }
+          setTimeout(function() {
+            // 按标题文本匹配DOM元素（搜索结果id为cnq-N，不是KP id）
+            var items = document.querySelectorAll('.cn-item');
+            for (var x = 0; x < items.length; x++) {
+              var t = items[x].querySelector('.cn-title');
+              if (t && t.textContent.indexOf(knTitle) >= 0) {
+                if (!items[x].classList.contains('open')) items[x].classList.add('open');
+                items[x].scrollIntoView({block: 'start', behavior: 'smooth'});
+                break;
+              }
+            }
+          }, 150);
+        }, 50);
         return;
       }
     }
@@ -4066,7 +4141,7 @@ function _formatQuadChart(lead, data, accent) {
         +   '<div class="quad-emoji">' + c.emoji + '</div>'
         +   '<div class="quad-name">' + c.name + '</div>'
         +   '<div class="quad-sub">' + c.sub + '</div>'
-        +   (c.detail ? '<div class="quad-flip-hint">→</div>' : '')
+        +   ''
         + '</div>'
         + (c.detail ? '<div class="quad-back">'
           + '<div class="quad-back-title">' + c.name + '</div>'
@@ -4234,20 +4309,22 @@ function renderKnowledgeItem(opts) {
   var id = opts.id;
   var q  = opts.query || '';
 
-  // 日文行
-  var jpLine = '';
+  // 日文名提取（显示在副标题区，不在正文中）
+  var jpName = '';
   var jpVal = _jpLookup(title);
   if (jpVal) {
-    jpLine = _jpLineHtml(jpVal.split('——')[0].trim(), accent, title);
+    var _jpRaw = jpVal.split('——')[0].trim();
+    // 去掉<strong>标签和括号内容，只取纯日文名
+    jpName = _jpRaw.replace(/<\/?strong>/g, '').replace(/[（(][^）)]*[）)]/g, '').trim();
     var _ex = _extractJP(body); if (_ex) body = _ex.rest;
   } else {
     var _ex2 = _extractJP(body);
-    if (_ex2) { jpLine = _jpLineHtml(_ex2.jp, accent, title); body = _ex2.rest; }
+    if (_ex2) { jpName = _ex2.jp.replace(/[（(][^）)]*[）)]/g, '').trim(); body = _ex2.rest; }
   }
 
   // 搜索高亮
   var _sn = opts.scholar || null;
-  var titleDisplay = q ? _titleHtml(_hlText(title, q), accent, null, _sn) : _titleHtml(title, accent, null, _sn);
+  var titleDisplay = q ? _titleHtml(_hlText(title, q), accent, null, _sn, jpName) : _titleHtml(title, accent, null, _sn, jpName);
   var bodyHtml = q ? _formatBody(_hlText(body, q), accent) : _formatBody(body, accent);
 
   // 学派标签（支持多学派）
@@ -4289,7 +4366,7 @@ function renderKnowledgeItem(opts) {
     + schoolHtml
     + jaToggleHtml
     + '</div>'
-    + '<div class="cn-body">' + jpLine + bodyHtml + quizHtml + '</div>'
+    + '<div class="cn-body">' + bodyHtml + quizHtml + '</div>'
     + '</div>';
 
   // 左滑隐藏外层（可选）
@@ -4707,15 +4784,19 @@ function renderHomeGrid() {
   if (themePanel) {
     themePanel.innerHTML = '';
     THEME_ORDER.forEach(function(sec) {
-      var keys = Object.keys(DATA).filter(function(k) {
-        return sec.themes.some(function(t) {
-          return (DATA[k].badge || '').indexOf(t) === 0;
+      var keys;
+      if (sec.order) {
+        keys = sec.order.filter(function(k) { return !!DATA[k]; });
+      } else {
+        keys = Object.keys(DATA).filter(function(k) {
+          var g = DATA[k].group;
+          return Array.isArray(g) ? g.some(function(x){ return sec.groups.indexOf(x) >= 0; }) : sec.groups.indexOf(g) >= 0;
         });
-      });
+      }
       if (!keys.length) return;
-      var cnName = sec.label.replace(/^OT · |^OB · |^SM · /, '');
+      var numTag = sec.num ? '<span style="color:#aeaeb2;font-weight:400;margin-right:6px;font-size:11px">' + sec.num + '</span>' : '';
       var label = '<div style="border-left:2px solid ' + sec.color + ';padding-left:10px">' +
-                  '<span>' + cnName + '<span style="color:#aeaeb2;font-weight:400;margin-left:6px">' + keys.length + '</span></span>' +
+                  '<span>' + numTag + sec.label + '<span style="color:#aeaeb2;font-weight:400;margin-left:6px">' + keys.length + '</span></span>' +
                   (sec.desc ? '<div style="color:#aeaeb2;font-weight:400;font-size:10px;margin-top:2px;line-height:1.4">' + sec.desc + '</div>' : '') +
                   '</div>';
       _appendSection(themePanel, label, sec.color, keys);
@@ -4727,9 +4808,8 @@ function renderHomeGrid() {
 function updateTabCounts() {
   var themeKeyCount = Object.keys(DATA).filter(function(k) {
     return THEME_ORDER.some(function(sec) {
-      return sec.themes.some(function(t) {
-        return (DATA[k].badge || '').indexOf(t) === 0;
-      });
+      var g = DATA[k].group;
+      return Array.isArray(g) ? g.some(function(x){ return sec.groups.indexOf(x) >= 0; }) : sec.groups.indexOf(g) >= 0;
     });
   }).length;
   var themeCnt = document.getElementById('cnt-theme');

@@ -10,6 +10,7 @@ var DATA = {
   /* ===== THEME: CLASSICAL ===== */
   scientific: {
     accent: "#FF9500", badge: "マクロ · 古典管理 · 1900s",
+    group: 3,
     title: "科学管理学派", en: "Scientific Management School", ja: "科学的管理論（かがくてきかんりろん）",
     era: "1900s 工业革命时代",
     who: ["弗雷德里克·泰勒 Frederick W. Taylor", "弗兰克·吉尔布雷思 Frank Gilbreth", "亨利·甘特 Henry Gantt"],
@@ -22,6 +23,7 @@ var DATA = {
 
   bureaucracy: {
     accent: "#FF9500", badge: "マクロ · 古典管理 · 1920s",
+    group: 3,
     title: "官僚制理论", en: "Bureaucracy Theory", ja: "官僚制論（かんりょうせいろん）",
     era: "1920s 社会学视角",
     who: ["马克斯·韦伯 Max Weber"],
@@ -34,9 +36,10 @@ var DATA = {
 
   process: {
     accent: "#FF9500", badge: "マクロ · 古典管理 · 1910s–1960s",
+    group: 3,
     title: "管理过程学派", en: "Management Process School", ja: "管理過程論（かんりかていろん）",
     era: "1910s–1960s",
-    who: ["亨利·法约尔 Henri Fayol", "林道尔·厄威克 Lyndall Urwick", "路德·古利克 Luther Gulick", "哈罗德·孔茨 Harold Koontz"],
+    who: ["亨利·法约尔 Henri Fayol", "林道尔·厄威克 Lyndall Urwick", "哈罗德·孔茨 Harold Koontz"],
     summary: "如果说泰勒从车间工人的视角回答了「工作怎么做」，法约尔则从企业经营者的视角回答了「管理是什么」——他首次将管理从具体业务中抽象出来，定义为一项独立的、可教授的职能，并归纳出计划·组织·指挥·协调·控制（POCCC）五大管理职能和14条管理原则。厄威克和古利克将其扩展为POSDCORB体系并推向国际，使法约尔的法国经验获得了全球影响力。1950年代管理学研究百花齐放却缺乏统一框架，孔茨将这一状态批评为「管理理论丛林」，主张以管理过程为核心加以整合——这一努力直接奠定了今天管理学教科书以计划-组织-领导-控制为骨架的标准结构。法约尔与泰勒共同构成了古典管理理论的双柱，前者自上而下、后者自下而上，互为补充。",
     concepts: ["k005", "k006", "k007", "k008", "k009", "k010", "k011", "k012", "k013", "k014"],
     influence: "确立了管理学的学科地位，14条原则至今仍是管理学教材基础内容。法约尔的五职能框架经孔茨整合后，奠定了现代管理学教科书以计划-组织-领导-控制为骨架的基本结构。",
@@ -47,6 +50,7 @@ var DATA = {
   /* ===== THEME: BEHAVIORAL ===== */
   humanrel: {
     accent: "#34C759", badge: "ミクロ · 人际关系 · 1930s",
+    group: 2,
     title: "人际关系学派", en: "Human Relations School", ja: "人間関係論（にんげんかんけいろん）",
     era: "1930s 霍桑实验时代",
     who: ["乔治·梅奥 Elton Mayo", "弗里茨·罗特利斯伯格 Fritz Roethlisberger"],
@@ -59,6 +63,7 @@ var DATA = {
 
   behavioral: {
     accent: "#34C759", badge: "ミクロ · 行为科学 · 1940s–1960s",
+    group: 1,
     title: "行为科学学派", en: "Behavioral Science School", ja: "行動科学学派（こうどうかがくがくは）",
     era: "1940s–1960s 动机内容研究时代",
     who: ["亚伯拉罕·马斯洛 Abraham Maslow", "道格拉斯·麦格雷戈 Douglas McGregor", "弗雷德里克·赫茨伯格 Frederick Herzberg", "克里斯·阿吉里斯 Chris Argyris", "爱德加·沙因 Edgar Schein", "克莱顿·阿尔德弗 Clayton Alderfer", "大卫·麦克莱兰 David McClelland", "玛丽·帕克·福莱特 Mary Parker Follett"],
@@ -71,6 +76,7 @@ var DATA = {
 
   ob: {
     accent: "#34C759", badge: "ミクロ · 行为科学 · 1960s–",
+    group: 1,
     title: "组织行为学派", en: "Organizational Behavior (OB)", ja: "組織行動論（そしきこうどうろん）",
     era: "1960s– 行为科学的发展与体系化",
     who: ["维克托·弗鲁姆 Victor Vroom", "斯塔西·亚当斯 Stacy Adams", "埃德温·洛克 Edwin Locke", "斯金纳 B.F. Skinner", "阿尔伯特·班杜拉 Albert Bandura"],
@@ -83,6 +89,7 @@ var DATA = {
 
   beh_econ: {
     accent: "#34C759", badge: "ミクロ · 行为科学 · 1970s–",
+    group: 1,
     title: "行为经济学派", en: "Behavioral Economics", ja: "行動経済学（こうどうけいざいがく）",
     era: "1970s– 决策偏误与有限理性研究",
     who: ["丹尼尔·卡尼曼 Daniel Kahneman", "阿莫斯·特沃斯基 Amos Tversky", "理查德·塞勒 Richard Thaler"],
@@ -95,6 +102,7 @@ var DATA = {
 
   contingency: {
     accent: "#FF9500", badge: "マクロ · 系统权变 · 1960s",
+    group: 8,
     title: "权变理论学派", en: "Contingency Theory", ja: "コンティンジェンシー理論",
     era: "1960s–1970s",
     who: ["保罗·劳伦斯 Paul Lawrence", "杰·洛施 Jay Lorsch", "弗雷德·菲德勒 Fred Fiedler", "琼·伍德沃德 Joan Woodward"],
@@ -107,6 +115,7 @@ var DATA = {
 
   systems: {
     accent: "#FF9500", badge: "マクロ · 系统权变 · 1950s",
+    group: 4,
     title: "系统管理学派", en: "Systems Theory / Management", ja: "システム理論（システムりろん）",
     era: "1950s–1960s",
     who: ["切斯特·巴纳德 Chester Barnard", "赫伯特·西蒙 Herbert Simon", "路德维希·冯·贝塔朗菲 Von Bertalanffy"],
@@ -121,6 +130,7 @@ var DATA = {
 
   io: {
     accent: "#007AFF", badge: "战略内容 · 竞争定位 · 1980s",
+    group: 7,
     title: "竞争定位学派", en: "Industrial Organization / Positioning School", ja: "ポジショニング理論",
     era: "1980s 波特革命",
     who: ["迈克尔·波特 Michael Porter（哈佛大学）"],
@@ -133,6 +143,7 @@ var DATA = {
 
   rbv: {
     accent: "#007AFF", badge: "战略内容 · 资源基础 · 1991",
+    group: 6,
     title: "资源基础理论", en: "Resource-Based View (RBV)", ja: "資源ベース理論（しげんベースりろん）",
     era: "1990s 内部视角兴起",
     who: ["杰·巴尼 Jay Barney（1991年奠基论文）", "彭罗斯 Edith Penrose（早期先驱）", "伯格·沃纳费尔特 Birger Wernerfelt"],
@@ -145,6 +156,7 @@ var DATA = {
 
   dynamic: {
     accent: "#007AFF", badge: "战略内容 · 动态能力 · 1997–",
+    group: 6,
     title: "动态能力学派", en: "Dynamic Capabilities", ja: "ダイナミック・ケイパビリティ論",
     era: "1997– 快速变化时代",
     who: ["大卫·蒂斯 David Teece", "加里·皮萨诺 Gary Pisano", "艾米·苏恩 Amy Shuen", "悉尼·温特 Sidney Winter"],
@@ -157,6 +169,7 @@ var DATA = {
 
   tce: {
     accent: "#007AFF", badge: "战略内容 · 制度经济 · 1975",
+    group: 7,
     title: "制度经济学派", en: "Transaction Cost Economics (TCE)", ja: "取引コスト理論（とりひきコストりろん）",
     era: "1975 新制度经济学",
     who: ["奥利弗·威廉姆森 Oliver Williamson", "罗纳德·科斯 Ronald Coase"],
@@ -169,6 +182,7 @@ var DATA = {
 
   institutional: {
     accent: "#007AFF", badge: "マクロ · 制度理论 · 1983",
+    group: 8,
     title: "制度理论学派", en: "Institutional Theory", ja: "制度論（せいどろん）",
     era: "1983– 新制度主义",
     who: ["保罗·迪马吉奥 Paul DiMaggio", "沃尔特·鲍威尔 Walter Powell", "约翰·W·迈耶 John W. Meyer", "布赖恩·罗恩 Brian Rowan"],
@@ -181,6 +195,7 @@ var DATA = {
 
   agency: {
     accent: "#007AFF", badge: "战略内容 · 企业治理 · 1976",
+    group: 6,
     title: "企业治理学派", en: "Agency Theory", ja: "エージェンシー理論",
     era: "1976 公司治理基础",
     who: ["迈克尔·詹森 Michael Jensen", "威廉·麦克林 William Meckling", "尤金·法马 Eugene Fama（芝加哥）"],
@@ -194,6 +209,7 @@ var DATA = {
   /* ===== THEME: CONTEMPORARY ===== */
   km: {
     accent: "#007AFF", badge: "战略内容 · 知识经营 · 1990s",
+    group: 6,
     title: "知识经营学派", en: "Knowledge Management", ja: "知識経営論（ちしきけいえいろん）",
     era: "1990s 知识经济时代",
     who: ["野中郁次郎 Ikujiro Nonaka（一桥大学）", "竹内弘高 Hirotaka Takeuchi", "迈克尔·波兰尼 Michael Polanyi（隐性知识先驱）", "克里斯·阿吉里斯 Chris Argyris（哈佛）"],
@@ -206,6 +222,7 @@ var DATA = {
 
   innovation: {
     accent: "#007AFF", badge: "战略内容 · 创新理论 · 1990s–",
+    group: 6,
     title: "创新理论", en: "Innovation Management", ja: "イノベーション経営論",
     era: "1990s– 技术颠覆时代",
     who: ["约瑟夫·熊彼特 Joseph Schumpeter（先驱）", "克莱顿·克里斯坦森 Clayton Christensen（哈佛）", "亨利·切萨布鲁 Henry Chesbrough", "埃里克·冯·希佩尔 Eric von Hippel", "威廉·阿伯内西 William Abernathy（A-U模型）"],
@@ -218,6 +235,7 @@ var DATA = {
 
   platform: {
     accent: "#007AFF", badge: "战略内容 · 平台经济 · 2000s",
+    group: 7,
     title: "平台·网络经济学", en: "Network & Platform Strategy", ja: "プラットフォーム戦略論",
     era: "2000s– 数字经济时代",
     who: ["杰弗里·帕克 Geoffrey Parker", "马歇尔·范·阿尔斯泰因 Marshall Van Alstyne", "让·夏尔·罗歇 Jean-Charles Rochet"],
@@ -230,6 +248,7 @@ var DATA = {
 
   csr: {
     accent: "#007AFF", badge: "战略内容 · CSR · 1984–",
+    group: 7,
     title: "利益相关者·CSR理论", en: "Corporate Social Responsibility & Sustainability", ja: "CSR・サステナビリティ経営",
     era: "1984– 利益相关者时代",
     who: ["爱德华·弗里曼 R. Edward Freeman", "迈克尔·波特 Porter（共享价值）", "米尔顿·弗里德曼 Friedman（对立视角）"],
@@ -242,6 +261,7 @@ var DATA = {
 
   change: {
     accent: "#FF9500", badge: "マクロ · 组织变革 · 1990s–",
+    group: 4,
     title: "敏捷 · 组织变革", en: "Change Management & Agile Organization", ja: "変革マネジメント・アジャイル組織",
     era: "1990s– 变革加速时代",
     who: ["约翰·科特 John Kotter（哈佛）", "库尔特·勒温 Kurt Lewin", "埃德加·沙因 Edgar Schein", "迈克尔·哈默 Michael Hammer"],
@@ -256,6 +276,7 @@ var DATA = {
   /* ===== SCHOOL ===== */
   harvard: {
     accent: "#007AFF", badge: "院校学派 · 美国",
+    group: 12,
     title: "哈佛学派", en: "Harvard Business School (HBS)", ja: "ハーバード学派",
     era: "1908年创立 · 持续至今",
     who: ["迈克尔·波特 Michael Porter（竞争战略）", "约翰·科特 John Kotter（变革领导力）", "克莱顿·克里斯坦森 Clayton Christensen（颠覆性创新）", "罗莎贝斯·莫斯·坎特 Rosabeth Moss Kanter"],
@@ -268,6 +289,7 @@ var DATA = {
 
   chicago: {
     accent: "#007AFF", badge: "院校学派 · 美国",
+    group: 12,
     title: "芝加哥学派", en: "University of Chicago (Booth School)", ja: "シカゴ学派",
     era: "20世纪初至今 · 经济学重镇",
     who: ["罗纳德·科斯 Ronald Coase", "米尔顿·弗里德曼 Milton Friedman", "尤金·法马 Eugene Fama", "乔治·斯蒂格勒 George Stigler"],
@@ -280,6 +302,7 @@ var DATA = {
 
   carnegie: {
     accent: "#34C759", badge: "院校学派 · 美国",
+    group: 12,
     title: "卡内基学派", en: "Carnegie Mellon University (Tepper School)", ja: "カーネギー学派",
     era: "1950s–1970s 黄金时代",
     who: ["赫伯特·西蒙 Herbert Simon", "詹姆斯·马奇 James March", "理查德·赛厄特 Richard Cyert"],
@@ -292,6 +315,7 @@ var DATA = {
 
   ohio: {
     accent: "#34C759", badge: "院校学派 · 美国",
+    group: 12,
     title: "俄亥俄学派", en: "Ohio State University Leadership Studies", ja: "オハイオ州立大学リーダーシップ研究",
     era: "1945–1960s 领导力行为研究",
     who: ["拉尔夫·斯托格迪尔 Ralph Stogdill", "爱德温·弗莱什曼 Edwin Fleishman"],
@@ -304,6 +328,7 @@ var DATA = {
 
   michigan: {
     accent: "#34C759", badge: "院校学派 · 美国",
+    group: 12,
     title: "密歇根学派", en: "University of Michigan / Institute for Social Research", ja: "ミシガン学派",
     era: "1947– 参与式管理研究",
     who: ["伦西斯·李克特 Rensis Likert", "丹尼尔·卡茨 Daniel Katz", "罗伯特·卡恩 Robert Kahn"],
@@ -316,6 +341,7 @@ var DATA = {
 
   situational: {
     accent: "#34C759", badge: "院校学派 · 领导力",
+    group: 12,
     title: "情境领导学派", en: "Situational Leadership Theory", ja: "状況対応型リーダーシップ論",
     era: "1969– 应用导向",
     who: ["保罗·赫塞 Paul Hersey", "肯·布兰查德 Ken Blanchard"],
@@ -328,6 +354,7 @@ var DATA = {
 
   tavistock: {
     accent: "#FF9500", badge: "院校学派 · 英国",
+    group: 12,
     title: "塔维斯托克学派", en: "Tavistock Institute of Human Relations (London)", ja: "タビストック学派",
     era: "1946– 战后英国",
     who: ["埃里克·特里斯特 Eric Trist", "肯·班福斯 Ken Bamforth", "弗雷德·艾默里 Fred Emery"],
@@ -340,6 +367,7 @@ var DATA = {
 
   aston: {
     accent: "#FF9500", badge: "院校学派 · 英国",
+    group: 12,
     title: "阿斯顿学派", en: "Aston University / Aston Studies (Birmingham, UK)", ja: "アストン学派",
     era: "1960s 组织结构实证研究",
     who: ["德雷克·普伊 Derek Pugh", "大卫·希克森 David Hickson", "克里斯·亨宁斯 Chris Hinings"],
@@ -352,6 +380,7 @@ var DATA = {
 
   stanford: {
     accent: "#FF9500", badge: "院校学派 · 美国",
+    group: 12,
     title: "斯坦福学派", en: "Stanford University (GSB & Sociology Dept.)", ja: "スタンフォード学派",
     era: "1970s– 制度理论与组织生态",
     who: ["约翰·W·迈耶 John W. Meyer", "布赖恩·罗恩 Brian Rowan", "迈克尔·汉南 Michael Hannan", "约翰·弗里曼 John Freeman", "詹姆斯·马奇 James March（后期在斯坦福）"],
@@ -364,6 +393,7 @@ var DATA = {
 
   hitotsubashi: {
     accent: "#007AFF", badge: "院校学派 · 日本",
+    group: 12,
     title: "一桥学派", en: "Hitotsubashi University (ICS)", ja: "一橋学派（いっきょうがくは）",
     era: "1990s– 知识创造研究",
     who: ["野中郁次郎 Ikujiro Nonaka", "竹内弘高 Hirotaka Takeuchi", "沼上幹 Mitsuru Numagami"],
@@ -376,6 +406,7 @@ var DATA = {
 
   hrm: {
     accent: "#FF9500", badge: "マクロ · HRM · 1984–",
+    group: 5,
     title: "人力资源管理", en: "Human Resource Management (HRM)", ja: "人的資源管理（じんてきしげんかんり）",
     era: "1984– 战略与人力资源整合时代",
     who: ["迈克尔·比尔 Michael Beer（哈佛模型）", "查尔斯·冯布伦 Charles Fombrun（密歇根模型）", "理查德·沃尔顿 Richard Walton（高承诺工作系统）"],
@@ -391,6 +422,7 @@ var DATA = {
 
   static_structure: {
     accent: "#FF9500", badge: "OT · 斯科特四象限 · 封闭×合理",
+    group: 11,
     title: "静态结构学派", en: "Static Structure School", ja: "静態構造学派（せいたいこうぞうがくは）",
     era: "1900s–1930s クローズド×合理性モデル",
     who: ["弗雷德里克·泰勒 Frederick W. Taylor", "马克斯·韦伯 Max Weber", "亨利·法约尔 Henri Fayol"],
@@ -403,6 +435,7 @@ var DATA = {
 
   adaptive_design: {
     accent: "#FF9500", badge: "OT · 斯科特四象限 · 开放×合理",
+    group: 11,
     title: "适应性设计学派", en: "Adaptive Design School", ja: "適応性設計学派（てきおうせいせっけいがくは）",
     era: "1960s–1970s オープン×合理性モデル",
     who: ["保罗·劳伦斯 Paul Lawrence", "詹姆斯·D·汤普森 James D. Thompson", "杰·洛施 Jay Lorsch", "琼·伍德沃德 Joan Woodward"],
@@ -415,6 +448,7 @@ var DATA = {
 
   evolution_process: {
     accent: "#FF9500", badge: "OT · 斯科特四象限 · 开放×自然",
+    group: [8, 11],
     title: "进化过程学派", en: "Evolutionary Process School", ja: "进化过程学派（しんかプロセスがくは）",
     era: "1970s– 开放×自然体系模型",
     who: ["卡尔·韦克 Karl E. Weick", "亨利·明茨伯格 Henry Mintzberg", "詹姆斯·马奇 James March"],
@@ -427,6 +461,7 @@ var DATA = {
 
   equilibrium: {
     accent: "#FF9500", badge: "OT · 斯科特四象限 · 封闭×自然",
+    group: 11,
     title: "均衡学派", en: "Equilibrium School", ja: "均衡学派（きんこうがくは）",
     era: "1930s–1950s クローズド×自然体系モデル",
     who: ["切斯特·巴纳德 Chester Barnard", "乔治·梅奥 Elton Mayo", "菲利普·塞尔兹尼克 Philip Selznick"],
@@ -440,19 +475,21 @@ var DATA = {
   /* ===== NEW: CONFLICT MANAGEMENT ===== */
   conflict: {
     accent: "#34C759", badge: "ミクロ · 集団行動 · 1970s–",
+    group: 2,
     title: "冲突管理论", en: "Conflict Management", ja: "コンフリクト・マネジメント論",
-    era: "1970s–1980s 组织行为学扩展期",
-    who: ["路易斯·庞迪 Louis Pondy", "肯尼斯·托马斯 Kenneth Thomas", "斯蒂芬·罗宾斯 Stephen Robbins"],
-    summary: "管理学对冲突的认识经历了根本性转变。传统观点（1930s–1970s）将冲突视为纯粹有害的组织病理现象，应当尽一切手段消除。庞迪（1967）率先提出冲突是组织运作的固有属性而非偶发异常，罗宾斯进一步将冲突观的演进归纳为传统观→人际关系观→互动观三个阶段——互动观的核心主张是适度的冲突不仅不可避免，而且对组织是有益的，完全无冲突的组织反而容易陷入群体思维和决策质量退化。但这里有一个关键区分：有益的是针对任务和认知的「建设性冲突」，有害的是针对个人关系的「破坏性冲突」。托马斯的TKI模型则将冲突处理策略归纳为竞争、协作、妥协、回避和迁就五种方式，强调没有普遍最优的策略，选择取决于情境。",
-    concepts: ["k193", "k194", "k195", "k196", "k197", "k198", "k199"],
-    influence: "TKI模型是全球使用最广的冲突评估工具之一；冲突管理被纳入经营学大学院OB核心课程；在谈判学、组织设计和团队管理中均有广泛应用。",
-    context: "1960年代以前，主流管理学视冲突为纯粹负面、应当消除的现象。1970年代行为科学学派开始系统研究冲突的类型和功能，逐渐形成「适度冲突有益」的现代观点。这一转变与同期对群体决策质量研究（群体思维、社会惰性）形成呼应，成为组织行为学的重要研究方向。主要局限在于：理论对跨文化情境的适用性有限，不同文化背景对冲突的接受程度差异显著；五种处理风格的分类是描述性的，对在特定情境下选哪种风格的规范性指导相对不足。",
+    era: "1920s Follett → 1960s–1970s Pondy·Thomas → 1980s Fisher → 1990s Jehn",
+    who: ["玛丽·福列特 Mary P. Follett", "路易斯·庞迪 Louis Pondy", "肯尼斯·托马斯 Kenneth Thomas", "斯蒂芬·罗宾斯 Stephen Robbins", "卡伦·詹恩 Karen Jehn", "罗杰·费舍尔 Roger Fisher", "威廉·尤里 William Ury", "理查德·沃尔顿 Richard Walton", "莫顿·多伊奇 Morton Deutsch"],
+    summary: "冲突是两个或两个以上的个人或集团之间产生的对立或敌对关系。冲突管理指的是对组织内发生的冲突进行适当管理与引导，使其服务于组织目标达成与有效性提升的过程。有益的冲突应被促进，有害的冲突应被化解——这是现代冲突管理的基本立场。",
+    concepts: ["k587","k588","k589","k590","k591","k592","k593","k594","k595","k596","k597","k598","k599","k600","k601","k602"],
+    influence: "TKI模型是全球使用最广的冲突评估工具之一；Fisher & Ury的原则式谈判影响了商业、外交、法律实务；冲突管理被纳入经营学大学院OB核心课程。冲突管理理论处于社会心理学、组织行为学、决策论学派、协商理论的交叉位置。",
+    context: "冲突管理理论的思想前提来自Barnard的协作系统观和Cyert & March的「多元冲突目标」——组织内部存在多元利益主体是冲突的根本来源。1960年代以前视冲突为纯粹负面，1970年代行为科学学派开始系统研究冲突的类型和功能，逐渐形成「适度冲突有益」的现代观点。",
     related: ["组织行为学派", "行为科学学派", "卡内基学派"]
   },
 
   /* ===== NEW: INTERNATIONAL STRATEGY ===== */
   international_strategy: {
     accent: "#007AFF", badge: "战略内容 · 国际経営 · 1976–",
+    group: 7,
     title: "国际経営学派", en: "International Strategy Theory", ja: "国際戦略論（こくさいせんりゃくろん）",
     era: "1976– 全球化战略研究",
     who: ["约翰·邓宁 John Dunning", "斯曼特拉·戈沙尔 Sumantra Ghoshal", "斯蒂芬·海默 Stephen Hymer", "巴克利 & 卡森 Buckley & Casson"],
@@ -466,6 +503,7 @@ var DATA = {
   /* ===== MINTZBERG: 10 STRATEGY FORMATION SCHOOLS ===== */
   design_s: {
     accent: "#007AFF", badge: "SM · 十学派 · 1960s",
+    group: 10,
     title: "设计学派", en: "Design School", ja: "デザイン・スクール",
     era: "1960s 战略学科奠基期",
     who: ["肯尼斯·安德鲁斯 Kenneth Andrews", "菲利普·塞尔兹尼克 Philip Selznick", "阿尔弗雷德·钱德勒 Alfred Chandler"],
@@ -478,6 +516,7 @@ var DATA = {
 
   planning_s: {
     accent: "#007AFF", badge: "SM · 十学派 · 1965",
+    group: 10,
     title: "计划学派", en: "Planning School", ja: "プランニング・スクール",
     era: "1965 战略计划形式化",
     who: ["伊戈尔·安索夫 Igor Ansoff", "皮埃尔·瓦克 Pierre Wack（情境规划）", "迈克尔·古尔德 & 安德鲁·坎贝尔 Michael Goold & Andrew Campbell（战略控制）"],
@@ -490,6 +529,7 @@ var DATA = {
 
   positioning_s: {
     accent: "#007AFF", badge: "SM · 十学派 · 1980",
+    group: 10,
     title: "定位学派", en: "Positioning School", ja: "ポジショニング・スクール",
     era: "1980 波特革命与BCG工具",
     who: ["迈克尔·波特 Michael Porter（哈佛）", "BCG波士顿咨询（经验曲线·产品组合管理）", "孙子（兵法先驱）", "卡尔·冯·克劳塞维茨 Carl von Clausewitz（战争论先驱）"],
@@ -502,6 +542,7 @@ var DATA = {
 
   entrepreneur_s: {
     accent: "#007AFF", badge: "SM · 十学派 · 1950s",
+    group: 10,
     title: "企业家学派", en: "Entrepreneurial School", ja: "アントレプレナー・スクール",
     era: "1950s– 愿景与创业精神",
     who: ["约瑟夫·熊彼特 Joseph Schumpeter（理论先驱）", "沃伦·本尼斯 Warren Bennis & 伯特·纳纳斯 Burt Nanus（愿景领导力）", "O·柯林斯 & D·G·摩尔（企业家人格研究）"],
@@ -514,6 +555,7 @@ var DATA = {
 
   cognitive_s: {
     accent: "#007AFF", badge: "SM · 十学派 · 1947",
+    group: 10,
     title: "认知学派", en: "Cognitive School", ja: "コグニティブ・スクール",
     era: "1947– 心智与战略构想",
     who: ["赫伯特·西蒙 Herbert Simon（客观主义认知）", "格雷戈里·贝特森 Gregory Bateson（主观主义·社会建构论）"],
@@ -526,6 +568,7 @@ var DATA = {
 
   learning_s: {
     accent: "#007AFF", badge: "SM · 十学派 · 1959",
+    group: 10,
     title: "学习学派", en: "Learning School", ja: "ラーニング・スクール",
     era: "1959– 战略的涌现与学习",
     who: ["查尔斯·林德布洛姆 Charles Lindblom（非连结渐进主义）", "詹姆斯·布莱恩·奎因 James Brian Quinn（论理的渐进主义）", "R·R·纳尔逊 & S·G·温特（进化理论）", "罗伯特·伯格尔曼 Robert Burgelman（战略性创业）", "亨利·明茨伯格 Henry Mintzberg（创发性战略）", "卡尔·维克 Karl Weick（回顾性意义建构）", "野中郁次郎（知识螺旋）", "加里·哈默尔 & C·K·普拉哈拉德（核心竞争力）", "彼得·圣吉 Peter Senge（学习型组织）"],
@@ -538,6 +581,7 @@ var DATA = {
 
   power_s: {
     accent: "#007AFF", badge: "SM · 十学派 · 1971",
+    group: 10,
     title: "权力学派", en: "Power School", ja: "パワー・スクール",
     era: "1971– 政治与战略博弈",
     who: ["格雷厄姆·阿利森 Graham Allison（政府内部政治模型）", "M·N·扎尔德 & M·A·伯格（政治游戏）", "杰弗里·费弗 & G·R·萨朗西克 Jeffrey Pfeffer & G.R.Salancik（资源依赖）", "爱德华·弗里曼 R.E.Freeman（利益相关者）", "格雷厄姆·阿斯特利 Graham Astley（集合战略）", "布兰登伯格 & 纳勒巴夫 Brandenburger & Nalebuff（协同竞争）"],
@@ -550,6 +594,7 @@ var DATA = {
 
   culture_s: {
     accent: "#007AFF", badge: "SM · 十学派 · 1965",
+    group: 10,
     title: "文化学派", en: "Culture School", ja: "カルチャー・スクール",
     era: "1965– 战略与组织文化",
     who: ["埃里克·兰德曼 Eric Rhenman & 理查德·诺曼 Richard Normann（SIAR·瑞典学派）", "杰·巴尼 Jay Barney（资源基础论·文化与模仿壁垒）"],
@@ -562,6 +607,7 @@ var DATA = {
 
   environment_s: {
     accent: "#007AFF", badge: "SM · 十学派 · 1967",
+    group: 10,
     title: "环境学派", en: "Environment School", ja: "エンバイロメント・スクール",
     era: "1967– 环境决定战略",
     who: ["D·S·普 D.S.Pugh（条件适应理论）", "迈克尔·汉南 & 约翰·弗里曼 Michael Hannan & John Freeman（组织生态学）", "约翰·W·迈耶 & 布赖恩·罗恩 John W. Meyer & Brian Rowan（制度理论）"],
@@ -574,6 +620,7 @@ var DATA = {
 
   configuration_s: {
     accent: "#007AFF", badge: "SM · 十学派 · 1962",
+    group: 10,
     title: "结构学派", en: "Configuration School", ja: "コンフィギュレーション・スクール",
     era: "1962– 战略形态与变革管理",
     who: ["阿尔弗雷德·钱德勒 Alfred Chandler（组织进化四阶段）", "亨利·明茨伯格 Henry Mintzberg（组织构型）", "丹尼·米勒 Danny Miller（原型与量子跃迁）", "雷蒙德·迈尔斯 & 查尔斯·斯诺 Raymond Miles & Charles Snow（四种竞争姿态）", "约翰·科特 John Kotter（8步变革）", "N·M·蒂奇 & S·谢尔曼（三幕剧变革）"],
@@ -587,6 +634,7 @@ var DATA = {
   /* ===== THEME: LEADERSHIP THEORY ===== */
   leadership_theory: {
     accent: "#34C759", badge: "ミクロ · リーダーシップ · 1940s–",
+    group: 2,
     title: "领导力理论体系", en: "Leadership Theory", ja: "リーダーシップ論（りーだーしっぷろん）",
     era: "1940s– 从特质论到新型领导",
     who: ["库尔特·勒温 Kurt Lewin", "罗伯特·布莱克 Robert Blake", "简·穆顿 Jane Mouton", "詹姆斯·伯恩斯 James MacGregor Burns", "伯纳德·巴斯 Bernard Bass", "罗伯特·格林利夫 Robert Greenleaf", "乔治·格兰 George Graen", "三隅二不二 Jyuji Misumi"],
@@ -600,6 +648,7 @@ var DATA = {
   /* ===== THEME: JAPANESE MANAGEMENT ===== */
   japanese_mgmt: {
     accent: "#FF9500", badge: "マクロ · 日本的経営 · 1958–",
+    group: 5,
     title: "日本的经营", en: "Japanese Management System", ja: "日本的経営（にほんてきけいえい）",
     era: "1958– 日本企业独特经营体系",
     who: ["詹姆斯·阿贝格伦 James Abegglen", "野中郁次郎 Ikujiro Nonaka"],
@@ -619,6 +668,7 @@ var DATA = {
   /* ===== THEME: ORG DESIGN TYPES ===== */
   org_types: {
     accent: "#FF9500", badge: "マクロ · 组织设计 · 组织形态",
+    group: 3,
     title: "组织形态论", en: "Organizational Forms", ja: "組織形態論（そしきけいたいろん）",
     era: "1900s– 组织形态的演化",
     who: ["汤姆·伯恩斯 Tom Burns", "乔治·斯托克 G.M. Stalker", "弗雷德里克·拉卢 Frederic Laloux"],
@@ -634,6 +684,7 @@ var DATA = {
   // ===== 第二批新增：意思決定論 =====
   decision_theory: {
     accent: "#FF9500", badge: "マクロ · 意思決定 · 1940s–",
+    group: 4,
     title: "决策组织理论", en: "Decision Theory", ja: "意思決定論",
     era: "1940s– Simon → March → Kahneman",
     who: ["赫伯特·西蒙 Herbert Simon", "詹姆斯·马奇 James March", "理查德·塞尔特 Richard Cyert", "伊戈尔·安索夫 Igor Ansoff"],
@@ -647,6 +698,7 @@ var DATA = {
   // ===== 第二批新增：組織学習 =====
   org_learning: {
     accent: "#FF9500", badge: "マクロ · 组织变革 · 1970s–",
+    group: 4,
     title: "组织学习", en: "Organizational Learning", ja: "組織学習",
     era: "1970s– Argyris → March → Senge",
     who: ["克里斯·阿吉里斯 Chris Argyris", "詹姆斯·马奇 James March", "彼得·圣吉 Peter Senge", "野中郁次郎 Ikujiro Nonaka", "大卫·蒂斯 David Teece"],
@@ -668,6 +720,7 @@ var DATA = {
   // ===== 第二批新增：ソーシャル・ネットワーク理論 =====
   social_network: {
     accent: "#FF9500", badge: "マクロ · 社会网络 · 社会网络",
+    group: 8,
     title: "社会网络理论", en: "Social Network Theory", ja: "ソーシャル・ネットワーク理論",
     era: "1970s– Granovetter → Burt",
     who: ["马克·格兰诺维特 M. Granovetter", "罗纳德·伯特 R. Burt"],
@@ -683,6 +736,7 @@ var DATA = {
   // ===== 第二批补充：OB個体レベル =====
   personality: {
     accent: "#34C759", badge: "ミクロ · 個体行動 · 人格",
+    group: 1,
     title: "人格与知觉", en: "Personality & Perception", ja: "人格と知覚",
     era: "1930s– Allport → Costa & McCrae → Kahneman",
     who: ["戈登·奥尔波特 G. Allport", "科斯塔 & 麦克雷 Costa & McCrae"],
@@ -694,6 +748,7 @@ var DATA = {
   },
   attitude_emotion: {
     accent: "#34C759", badge: "ミクロ · 個体行動 · 態度",
+    group: 1,
     title: "态度与情绪", en: "Attitude & Emotion", ja: "態度と情緒",
     era: "1950s– Festinger → Goleman → AET",
     who: ["利昂·费斯汀格 L. Festinger", "丹尼尔·戈尔曼 D. Goleman"],
@@ -705,6 +760,7 @@ var DATA = {
   },
   group_team: {
     accent: "#34C759", badge: "ミクロ · 集団行動 · チーム",
+    group: 2,
     title: "集团与团队", en: "Group & Team Dynamics", ja: "集団とチーム",
     era: "1930s– Lewin → Tuckman → Hackman",
     who: ["库尔特·勒温 K. Lewin", "布鲁斯·塔克曼 B. Tuckman", "理查德·哈克曼 J.R. Hackman"],
@@ -1325,17 +1381,6 @@ var SCHOLARS = {
     theories: ["k010", "k009"],
     contribution: "厄威克是将法约尔行政管理理论系统化、国际化传播的最重要推动者。他整合了法约尔、泰勒、福莱特等人的理论，提出了管理的八项原则，并在1937年与古利克共同主编《管理科学论文集》，系统阐述了POSDCORB模型（计划、组织、人员配置、指挥、协调、报告、预算），成为公共行政和企业管理教育的经典框架。他还积极推动管理学职业化，是英国管理学会的创始人之一。"
   },
-  gulick: {
-    name: "路德·古利克", en: "Luther Halsey Gulick",
-    ja: "ルーサー・ギューリック",
-    born: "1892年1月17日", died: "1993年1月10日",
-    nationality: "美国", flag: "🇺🇸", origin: "大阪（出生，传教士家庭）",
-    affiliation: "纽约市政府 / 国家行政管理研究所",
-    accent: "#FF9500", field: "公共行政 · 管理过程",
-    schools: ["管理过程学派"],
-    theories: ["k052"],
-    contribution: "古利克是公共行政学和管理过程理论的重要奠基人。1937年与厄威克共同主编《管理科学论文集》，提出POSDCORB框架（Planning组织计划、Organizing组织、Staffing人员配置、Directing指挥、Coordinating协调、Reporting报告、Budgeting预算），系统扩展了法约尔的五职能模型，成为公共管理和政府行政改革的理论基础。他还长期担任纽约市政府管理顾问，是将管理理论直接应用于政府改革实践的先驱。"
-  },
   follett: {
     name: "玛丽·帕克·福莱特", en: "Mary Parker Follett",
     ja: "メアリー・パーカー・フォレット",
@@ -1343,8 +1388,8 @@ var SCHOLARS = {
     nationality: "美国", flag: "🇺🇸", origin: "马萨诸塞州昆西",
     affiliation: "社会活动家 · 经营管理コンサルタント（独立研究者，未任教于大学）",
     accent: "#FF9500", field: "组织管理 · 领导力 · 人际关系",
-    schools: ["行为科学学派"],
-    theories: ["k445", "k446", "k447"],
+    schools: ["行为科学学派", "冲突管理论"],
+    theories: ["k445", "k446", "k447", "k595"],
     contribution: "福莱特是管理思想史上被严重低估的先驱者，被德鲁克赞誉为「管理学的先知」（Prophet of Management）。她在1920年代就提出了许多远超时代的管理理念：建设性冲突（Integration）、状况法则（Law of the Situation）、Power-with（共存型权力）等概念，预见了后来半个世纪才逐步主流化的参与式管理、团队合作、授权赋能和权变理论等思想。她主张组织应是群体经验的网络而非层级的指挥链，管理的本质在于协调而非控制。由于当时的性别偏见和她非学术界出身的背景，其思想在生前未获应有重视，但在1990年代以后被重新发掘，被视为人本管理和后现代组织理论的思想源流。"
   },
   koontz: {
@@ -1740,9 +1785,9 @@ var SCHOLARS = {
     affiliation: "哈佛商学院（长期任教）",
     accent: "#34C759",
     field: "战略性人力资源管理 · 组织变革",
-    schools: ["战略性人力资源管理学派"],
-    theories: ["k169", "k486"],
-    contribution: "沃尔顿是战略性人力资源管理领域的重要先驱，他1985年在《哈佛商业评论》发表的论文《从控制到承诺》是SHRM领域被引用最多的文章之一。他系统提出从控制型HRM向承诺型HRM转型的主张，为后来高绩效工作系统（HPWS）研究奠定了概念基础。他还对劳资谈判和劳动关系研究有重要贡献，是哈佛商学院组织行为学领域的重要学者。"
+    schools: ["战略性人力资源管理学派", "冲突管理论"],
+    theories: ["k169", "k486", "k599"],
+    contribution: "沃尔顿是战略性人力资源管理领域的重要先驱，他1985年在《哈佛商业评论》发表的论文《从控制到承诺》是SHRM领域被引用最多的文章之一。他系统提出从控制型HRM向承诺型HRM转型的主张，为后来高绩效工作系统（HPWS）研究奠定了概念基础。他还对劳资谈判和劳动关系研究有重要贡献，与McKersie合著《A Behavioral Theory of Labor Negotiations》提出分配型vs整合型谈判的基本区分，是哈佛商学院组织行为学领域的重要学者。"
   },
   fombrun: {
     name: "查尔斯·冯布伦",
@@ -2737,8 +2782,8 @@ var SCHOLARS = {
     flag: "🇺🇸", origin: "",
     affiliation: "伊利诺伊大学",
     accent: "#34C759", field: "组织理论 · 冲突管理",
-    schools: ["行为科学学派"],
-    theories: ["k102"],
+    schools: ["行为科学学派", "冲突管理论"],
+    theories: ["k102", "k596"],
     contribution: "庞迪是组织冲突研究的先驱，其1967年论文系统化了冲突分析的过程模型，成为后续组织行为学冲突研究的基础参考。"
   },
   kim_m: {
@@ -2820,6 +2865,74 @@ var SCHOLARS = {
     schools: ["组织学习"],
     theories: ["k568", "k570"],
     contribution: "莱文索尔与科恩合作提出吸收能力理论（1990），与马奇合作提出组织学习近视症（1993），揭示了组织学习的三种系统性偏差（时间/空间/失败近视）。其研究持续关注组织适应、学习与演化的交叉领域。"
+  },
+
+  /* ===== 冲突管理学派 ===== */
+  robbins_s: {
+    name: "斯蒂芬·罗宾斯", en: "Stephen P. Robbins",
+    ja: "スティーブン・ロビンズ",
+    born: "1943年", died: "",
+    nationality: "美国", flag: "🇺🇸", origin: "美国",
+    affiliation: "圣迭戈州立大学",
+    accent: "#34C759", field: "组织行为学",
+    schools: ["冲突管理论"],
+    theories: ["k588", "k594", "k597"],
+    contribution: "组织行为学教科书权威，冲突观三阶段演进、功能性vs失调性冲突的体系化"
+  },
+  thomas_k: {
+    name: "肯尼斯·托马斯", en: "Kenneth W. Thomas",
+    ja: "ケネス・トーマス",
+    born: "1943年", died: "",
+    nationality: "美国", flag: "🇺🇸", origin: "美国",
+    affiliation: "海军研究生院",
+    accent: "#34C759", field: "组织行为学 · 冲突管理",
+    schools: ["冲突管理论"],
+    theories: ["k598"],
+    contribution: "与Kilmann共同开发TKI（Thomas-Kilmann Conflict Mode Instrument），全球使用最广的冲突评估工具"
+  },
+  jehn: {
+    name: "卡伦·詹恩", en: "Karen A. Jehn",
+    ja: "カレン・ジェーン",
+    born: "1962年", died: "",
+    nationality: "美国", flag: "🇺🇸", origin: "美国",
+    affiliation: "墨尔本大学",
+    accent: "#34C759", field: "组织行为学",
+    schools: ["冲突管理论"],
+    theories: ["k593"],
+    contribution: "提出任务冲突vs关系冲突vs过程冲突的三分法（1995），为冲突的功能性研究提供了实证基础"
+  },
+  fisher_r: {
+    name: "罗杰·费舍尔", en: "Roger Fisher",
+    ja: "ロジャー・フィッシャー",
+    born: "1922年", died: "2012年",
+    nationality: "美国", flag: "🇺🇸", origin: "美国",
+    affiliation: "哈佛大学法学院",
+    accent: "#34C759", field: "谈判学",
+    schools: ["冲突管理论"],
+    theories: ["k600"],
+    contribution: "哈佛谈判项目创始人，与Ury合著《Getting to Yes》提出原则式谈判和BATNA概念"
+  },
+  ury: {
+    name: "威廉·尤里", en: "William Ury",
+    ja: "ウィリアム・ユーリー",
+    born: "1953年", died: "",
+    nationality: "美国", flag: "🇺🇸", origin: "美国",
+    affiliation: "哈佛大学",
+    accent: "#34C759", field: "谈判学 · 人类学",
+    schools: ["冲突管理论"],
+    theories: ["k600"],
+    contribution: "与Fisher合著《Getting to Yes》，后独著《Getting Past No》扩展困难谈判方法论"
+  },
+  deutsch: {
+    name: "莫顿·多伊奇", en: "Morton Deutsch",
+    ja: "モートン・ドイッチ",
+    born: "1920年", died: "2017年",
+    nationality: "美国", flag: "🇺🇸", origin: "美国",
+    affiliation: "哥伦比亚大学",
+    accent: "#34C759", field: "社会心理学",
+    schools: ["冲突管理论"],
+    theories: [],
+    contribution: "合作—竞争理论和建设性冲突vs破坏性冲突的先驱研究者"
   }
 
 };
@@ -4447,7 +4560,7 @@ var KNOWLEDGE = [
   {id:"k049", title:"团队类型与有效团队要素", en:"Team Types & Effectiveness", scholar:null, year:"", schools:["ob"], body:"工作团队（Work Team）相比一般群体具有协同效应（Synergy，团队绩效>个体绩效之和），与群体的核心差异在于协作性（集体责任vs个人责任）与技能互补（Complementary vs Similar/Different）。四种团队类型：<br>①问题解决团队（Problem-Solving Team）——提出建议，无单方决策权；<br>②自我管理型团队（Self-Managed Work Team）——承担传统主管职责（排班/评估/一线决策）；<br>③跨职能团队（Cross-Functional Team）——层级相近、来自不同工作领域，适合跨部门复杂问题；<br>④虚拟团队（Virtual Team）——电子协作工具连接分散成员，面临社会关系缺乏与孤立感挑战。有效团队三类要素：外界条件（充足资源、领导结构、信任氛围）；团队构成（能力与人格匹配、规模5-9人为佳、技能互补）；过程变量（共同目标细化为具体目标、高团队效能、任务冲突适度、减少社会惰化）"},
   {id:"k050", title:"组织沟通网络与障碍", en:"Organizational Communication Networks & Barriers", scholar:null, year:"", schools:["ob","group_team"], body:"沟通方向分为下行、上行、横向、斜向四种。<strong>四种网络</strong>：轮式（Wheel，中心化、速度快但满意度低）、链式（Chain，逐级传递、易失真）、环式（Circle，平等参与）、全通道式（All-Channel，去中心化、士气高、适合复杂任务）<br><strong>八大障碍</strong>：过滤（Filtering）、选择性知觉、情绪、信息超载、语言歧义、沉默、沟通恐惧、撒谎<br><strong>克服方法</strong>：积极倾听（Active Listening）、调整信息流、利用反馈回路、简化用语、控制情绪"},
   {id:"k051", title:"工作特征模型与工作再设计", en:"Job Characteristics Model", scholar:"hackman", year:"1976", schools:["ob"], body:"五个核心工作维度→三种关键心理状态→工作内在动机与满意度。五维度：技能多样性（Skill Variety）、任务完整性（Task Identity）、任务重要性（Task Significance）三者共同产生工作意义感（Meaningfulness of Work）；工作自主性（Autonomy）产生对工作结果的责任感；反馈（Feedback）提供工作绩效的知识。激励潜力分数（Motivating Potential Score，MPS）=（多样性+完整性+重要性）÷3×自主性×反馈，用于量化评估工作的激励潜力。三种工作再设计方式：工作丰富化（Job Enrichment，纵向扩展计划/控制/评价自主权，源自Herzberg）；工作扩大化（Job Enlargement，横向增加任务数量）；工作轮换（Job Rotation，定期更换岗位，提升多能性）"},
-  {id:"k052", title:"有限理性与启发式的框架", en:"Bounded Rationality & Heuristics", scholar:"gulick", year:"", schools:["beh_econ"], body:"西蒙（1947）提出有限理性：决策者因认知能力、时间和信息的三重限制无法穷举最优解，转而寻找「足够好」的满意解。卡尼曼和特沃斯基进一步揭示：为减轻认知负荷，人类大量依赖启发式（Heuristics，认知捷径）进行快速判断；启发式在多数情境下有效，但在特定条件下会系统性地产生可预测的判断偏误（Bias）。行为经济学的核心研究议程：识别、分类并解释这些偏误的成因与规律"},
+  {id:"k052", title:"有限理性与启发式的框架", en:"Bounded Rationality & Heuristics", scholar:"simon", year:"1947", schools:["beh_econ"], body:"西蒙（1947）提出有限理性：决策者因认知能力、时间和信息的三重限制无法穷举最优解，转而寻找「足够好」的满意解。卡尼曼和特沃斯基进一步揭示：为减轻认知负荷，人类大量依赖启发式（Heuristics，认知捷径）进行快速判断；启发式在多数情境下有效，但在特定条件下会系统性地产生可预测的判断偏误（Bias）。行为经济学的核心研究议程：识别、分类并解释这些偏误的成因与规律"},
   {id:"k053", title:"三大启发式", en:"Three Heuristics", scholar:"kahn_r", year:"1974", schools:["beh_econ"], body:"卡尼曼与特沃斯基（1974）识别了人类判断中最普遍的三类认知捷径：<br>①代表性启发（Representativeness）——根据事物与典型原型的相似程度来判断概率，忽视基础概率（Base Rate）；例如看到某人「像工程师」就高估其是工程师的概率；<br>②可得性启发（Availability）——以记忆中案例被提取的难易程度来估计频率或概率；近期发生、情感冲击强的事件被高估，反之被低估；如飞机失事后人们短期内高估空难概率；<br>③锚定与调整启发（Anchoring & Adjustment）——判断从初始值（锚点）出发进行调整，但调整往往严重不足；初始锚点无论是否相关都对最终判断产生显著影响"},
   {id:"k054", title:"前景理论", en:"Prospect Theory", scholar:"kahn_r", year:"1979", schools:["beh_econ"], body:"对传统期望效用理论的根本性修正。卡尼曼因此获2002年诺贝尔经济学奖。五个核心概念：<br>①参照依赖（Reference Dependence）——效用评估基于相对于参照点的变化量，而非绝对财富水平；同一结果因参照点不同而被感知为收益或损失；<br>②损失厌恶（Loss Aversion）——人对损失的痛苦约为同量收益快乐的2~2.5倍，是前景理论最核心的发现；<br>③确定效应（Certainty Effect）——在收益情境下，人们偏好确定的较小收益而非期望值更高的不确定收益（风险回避）；<br>④反射效应（Reflection Effect）——在损失情境下，偏好反转：人们倾向于选择不确定的赌博而非确定的损失（风险寻求），与确定效应形成镜像关系；<br>⑤概率加权（Probability Weighting）——人对概率的主观感知非线性：系统性高估小概率事件（如买彩票、恐惧空难）、低估中高概率事件"},
   {id:"k055", title:"双过程理论", en:"Dual-Process Theory", scholar:"kahn_r", year:"2011", schools:["beh_econ"], body:"卡尼曼（2011，《思考，快与慢》）将人类认知区分为两种模式：<br>①System 1（快思考）——自动、快速、无意识、情感驱动，依赖直觉与启发式，消耗认知资源少，是日常判断的主导模式，但容易产生系统性偏误；<br>②System 2（慢思考）——慎重、缓慢、有意识、需要逻辑推理，能识别并修正System 1的错误，但需大量认知资源，人类倾向于尽量避免启动。大多数偏误源于System 1主导而System 2未及时校正"},
@@ -4562,13 +4675,6 @@ var KNOWLEDGE = [
   {id:"k190", title:"制度化理论", en:"Institutionalization", scholar:"selznick", year:"", schools:["equilibrium"], body:"塞尔兹尼克认为，组织在与环境和内部群体的互动中逐渐被注入价值观，从工具性的结构转变为拥有自身使命感的制度（Institution）。制度化后的组织不再仅仅是手段，而成为本身体现目的性价值的存在。这一概念是后来新制度派组织理论的直接先驱"},
   {id:"k191", title:"价值注入", en:"Value Infusion", scholar:"selznick", year:"", schools:["equilibrium"], body:"在塞尔兹尼克看来，领导者的核心职能是向组织注入独特的价值使命，使组织从可替代的工具升华为不可替代的制度。通过价值注入，组织超越了单纯的效率追求，获得了独特的身份认同和社会意义。制度性领导力的本质就在于这一价值注入"},
   {id:"k192", title:"组织特质", en:"Distinctive Competence", scholar:"selznick", year:"1957", schools:["equilibrium"], body:"通过制度化过程形成的组织独特能力和性格。塞尔兹尼克在《TVA and the Grass Roots》（1949）和《Leadership in Administration》（1957）中论述了组织通过历史经验和价值注入而获得的固有能力。这一概念是后来资源基础理论（RBV）中「核心能力」概念的思想先驱"},
-  {id:"k193", title:"冲突的三种类型", en:"Robbins分类", scholar:null, year:"", schools:["conflict"], body:"罗宾斯的分类：◆ 任务冲突（Task Conflict）——围绕工作内容产生的意见分歧，适度的任务冲突有助于提升决策质量◆ 关系冲突（Relationship Conflict）——人际间的情感对立，研究表明几乎总是有害的◆ 过程冲突（Process Conflict）——围绕工作方式和流程产生的分歧，在适度范围内可能具有建设性影响"},
-  {id:"k194", title:"冲突发生的四层级", en:"Four Levels of Conflict", scholar:null, year:"", schools:["conflict"], body:"◆ 个人内冲突（Intrapersonal Conflict）——个人内部目标之间的矛盾◆ 个人间冲突（Interpersonal Conflict）——因价值观或利益分歧引发的个人之间的对立◆ 组织内冲突（Intraorganizational Conflict）——部门间的资源争夺和目标不一致◆ 组织间冲突（Interorganizational Conflict）——市场竞争或合作关系中的摩擦"},
-  {id:"k195", title:"冲突的源泉", en:"Sources of Conflict", scholar:null, year:"", schools:["conflict"], body:"引发冲突的三类要因：◆ 个人特性（Personal Factors）——价值观差异、人格类型不匹配◆ 情境因素（Situational Factors）——沟通障碍、相互依存性的存在◆ 组织因素（Organizational Factors）——资源稀缺性、目标不明确、部门化的组织结构"},
-  {id:"k196", title:"托马斯-基尔曼冲突处理五风格", en:"TKI模型", scholar:null, year:"", schools:["conflict"], body:"以「维护自身利益程度」（Assertiveness）与「关注对方需求程度」（Cooperativeness）为两轴，划分五种冲突处理风格：◆ 竞争（Competing，高主张·低合作）——坚持己方立场，适用于紧急决策或须推行不受欢迎的举措时◆ 协作（Collaborating，高主张·高合作）——整合双方利益追求双赢，适用于重要议题且需要双方承诺时◆ 妥协（Compromising，中主张·中合作）——双方各做让步，适用于时间紧迫或需要临时性解决方案时◆ 回避（Avoiding，低主张·低合作）——从冲突中撤退，适用于琐碎问题或需要冷却期时◆ 迁就（Accommodating，低主张·高合作）——接受对方要求，适用于自己有错或维护和谐关系优先时"},
-  {id:"k197", title:"冲突的功能性与逆功能性", en:"Functional vs Dysfunctional Conflict", scholar:null, year:"", schools:["conflict"], body:"冲突观的历史演变：◆ 传统观点（Traditional View）——一切冲突均有害，应当消除◆ 行为科学观（Behavioral View）——冲突不可避免◆ 现代互动观（Interactionist View）——适度的冲突能刺激创新和批判性思维，过度无冲突的组织容易陷入群体思维（Groupthink）。功能性冲突（Functional Conflict）促进组织目标达成，逆功能性冲突（Dysfunctional Conflict）则阻碍组织绩效"},
-  {id:"k198", title:"冲突过程五阶段", en:"Pondy's Five-Stage Conflict Model", scholar:"pondy", year:"", schools:["conflict"], body:"庞迪提出的冲突展开过程：◆ 潜在冲突（Latent Conflict）——冲突条件已经具备的阶段◆ 知觉冲突（Perceived Conflict）——一方认识到冲突存在的阶段◆ 感知冲突（Felt Conflict）——在情感上感受到紧张或敌意的阶段◆ 显在冲突（Manifest Conflict）——行为层面出现对抗的阶段◆ 冲突余波（Conflict Aftermath）——影响后续关系并成为新冲突种子的阶段。五阶段循环往复"},
-  {id:"k199", title:"分配型交涉与统合型交涉", en:"Distributive vs Integrative Negotiation", scholar:null, year:"", schools:["conflict"], body:"冲突解决中的两种交涉方式：◆ 分配型交涉（Distributive Negotiation）——零和博弈，一方之得即另一方之失，固定总量的分配竞争，典型如价格谈判和资源分配◆ 统合型交涉（Integrative Negotiation）——双赢（Win-Win），双方合作扩大价值总量，关键在于信息共享、创造性方案开发、探究利益背后的真实需求。冲突管理的目标是尽可能将分配型交涉转化为统合型交涉"},
   {id:"k200", title:"OLI折衷范式", en:"", scholar:"dunning", year:"1976", schools:["international_strategy"], body:"从三种优势统合解释企业对外直接投资（FDI）发生条件与动因的国际经营基础理论：◆ 所有权优势（Ownership Advantage）——企业拥有的技术、品牌、管理能力、专利等企业特有优势，是克服东道国企业主场优势的基础◆ 区位优势（Location Advantage）——目标国的要素禀赋、市场规模、制度环境、基础设施等提供投资动因◆ 内部化优势（Internalization Advantage）——企业内部转移比市场交易（许可证等）更高效时产生的优势，信息不对称和机会主义风险推动内部化。三者缺一不发生FDI：仅有所有权优势则选择许可授权，所有权+区位优势则选择出口"},
   {id:"k201", title:"全球整合-本地响应框架", en:"I-R矩阵", scholar:null, year:"", schools:["international_strategy"], body:"以跨国企业面临的两种对立压力——全球整合（规模经济、效率追求）与本地响应（消费者偏好、法规差异的应对）——为两轴，导出四种组织战略类型：◆ 多国型（低整合/高响应）——各国子公司自主适应本地市场◆ 全球型（高整合/低响应）——总部主导标准化战略追求规模经济◆ 国际型（低整合/低响应）——将母国开发的知识与能力转移至海外◆ 跨国型（高整合/高响应）——同时追求整合与适应的最复杂组织形态。巴特利特与戈沙尔的I-R矩阵成为跨国企业组织设计与总部-子公司关系分析的标准工具"},
   {id:"k202", title:"跨国型企业模式", en:"Transnational", scholar:"ghoshal", year:"1989", schools:["international_strategy"], body:"超越多国型/全球型/国际型三种传统模式，在全球整合与本地响应两个维度上同时实现高水平的组织形态：◆ 网络型组织——非总部与子公司的层级关系，而是各据点承担专业角色的一体化网络◆ 知识双向流动——知识不是从总部到子公司的单向传递，而是各子公司间双向流通，实现全球能力共创◆ 分散且相互依赖的资源配置——各据点持有特定战略资源与能力，通过相互依赖关系兼顾系统效率与灵活性。跨国型是理念型，实践中极难实现，但作为全球经营的终极目标被广泛参照"},
@@ -4878,19 +4984,35 @@ var KNOWLEDGE = [
   {id:"k572", title:"学习的简化与专业化机制", en:"Simplification & Specialization", scholar:"march", year:"", schools:["org_learning"], body:"马奇对「组织学习为什么能高效进行」的回答，同时也是「学习为什么带来系统性偏差」的解释。组织学习依赖两个基本机制：<strong>简化</strong>——把复杂环境简化为可认知、可处理的模式，通过分类、抽象、建立心智模型将混沌的外部世界转化为可应对的结构；<strong>专业化</strong>——组织内各部门在各自领域深入学习，通过分工使学习效率最大化。然而这两个机制是<strong>双刃剑</strong>：没有简化就无法形成可复用的经验，没有专业化就无法积累深度专长——两者是组织学习的必要条件；但简化会丢失关键信息导致对环境复杂性的误判，专业化会导致部门只看局部忽视全局（引出<strong>空间近视</strong>），以及在既有专长上陷得越深越难转向（引出<strong>能力陷阱</strong>）：◆意义——揭示了组织学习的内在悖论：让学习有效的机制本身，同时也是让学习失败的机制◆局限——对如何在获得简化与专业化的好处的同时避免其副作用，理论本身只提出警示而没有给出系统性解决方案"},
   {id:"k573", title:"有限理性", en:"Bounded Rationality", scholar:"simon", year:"1947", schools:["decision_theory","carnegie"], body:"决策论学派的<strong>理论基石</strong>。西蒙在《管理行为》（1947）中提出，人在决策时既无法收集所有相关信息，也无法完整处理掌握的信息——理性受到<strong>信息获取能力和认知处理能力</strong>的双重限制。古典经济学假设的「经济人」（完全理性、追求最优）在现实中不存在，现实中的决策者是「<strong>管理人（Administrative Man）</strong>」——在有限理性约束下寻求满意解。决策不是瞬时的最优计算，而是一个搜索、评价、筛选的过程。1978年西蒙因此获诺贝尔经济学奖：◆意义——把决策研究从「应该怎么决策」的规范性问题转向「人实际上怎么决策」的实证性问题，为行为经济学、组织学习论奠定了共同前提◆局限——有限的程度在个人和情境之间差异巨大，难以一律规定，理论的可操作化存在困难"},
   {id:"k574", title:"满意化原理", en:"Satisficing", scholar:"simon", year:"1947", schools:["decision_theory","carnegie"], body:"有限理性的<strong>具体运作机制</strong>。在有限理性约束下，决策者不追求最优解，而是设定一个<strong>满意水平（aspiration level）</strong>，一旦找到达到这个水平的方案就停止搜索并采用。过程为：识别问题→设定满意水平→搜索备选方案→评价→找到超过满意水平的方案时停止。与最优化的关键区别在于：<strong>最优化</strong>需要穷尽所有方案并全面比较，<strong>满意化</strong>只要找到「够好」的就停止。应用例：求职（工资达到期待就接受）、采购（找到够用的供应商就下单）：◆意义——用简洁的概念解释了为什么现实中的决策看起来「不够理性」却是合理的◆局限——满意水平本身是主观设定的，如何设定和调整理论没有系统回答；满意化在环境剧变时容易错过优质方案"},
-  {id:"k575", title:"决策过程模型", en:"IDC Model", scholar:"simon", year:"1960", schools:["decision_theory"], body:"决策论中最经典的决策过程分解模型。西蒙把决策过程分解为<strong>四个相互影响的阶段</strong>循环进行：<strong>情报活动</strong>（Intelligence）——识别需要决策的情境，搜集信息，对应「发现问题」；<strong>设计活动</strong>（Design）——构想、开发可行的备选方案，对应「制造选项」；<strong>选择活动</strong>（Choice）——从备选方案中选出一个，对应「做出决定」；<strong>再检讨活动</strong>（Review）——评价过去决策结果，必要时引发新循环。前三阶段合称<strong>IDC模型</strong>。现实中四阶段并非严格依次进行，而是相互影响、循环往复：◆意义——把抽象的决策分解为可研究、可管理的具体环节，对决策支持系统（DSS）设计有直接影响◆局限——把决策简化为线性理性搜索过程，难以解释「问题还没清晰就已决定」的情境，后来被垃圾桶模型补充"},
+  {id:"k575", title:"决策过程模型", en:"IDC Model", scholar:"simon", year:"1960", schools:["decision_theory"], body:"西蒙把决策过程分解为<strong>四个相互影响的阶段</strong>，循环进行而非严格线性。前三阶段合称<strong>IDC模型</strong>：<compare>情报活动|I|发现问题|Intelligence|识别需要决策的情境，搜集环境信息，发现偏差和机会|决策的起点——没有问题意识就不会启动决策||设计活动|D|制造选项|Design|构想、开发可行的备选方案，分析各方案的可行性和后果|创造性环节——方案质量决定决策上限||选择活动|C|做出决定|Choice|评估备选方案并从中选出一个，包括优化和满意化两种策略|经典决策论最关注的环节，但西蒙认为前两步更重要||再检讨活动|R|评价反馈|Review|评价过去决策结果，必要时引发新的IDC循环|使决策成为持续学习过程而非一次性行为</compare>◆意义——把抽象的决策分解为可研究、可管理的具体环节，对决策支持系统（DSS）设计有直接影响◆局限——把决策简化为线性理性搜索过程，难以解释「问题还没清晰就已决定」的情境，后来被垃圾桶模型补充"},
   {id:"k576", title:"规范决策论与行动决策论", en:"Normative vs Behavioral Decision Theory", scholar:null, year:"", schools:["decision_theory"], body:"决策论研究的<strong>两大方法论路径</strong>，理解一切决策理论的基本坐标。<strong>规范决策论</strong>基于完全理性假设，以经济人为模型，用演绎和数学建模追求最优解，关注「应该如何决策」（如期望效用理论、多属性效用理论）。<strong>行动决策论</strong>基于有限理性假设，以管理人为模型，用归纳和实证研究追求满意解，关注「实际如何决策」（如满意化、垃圾桶模型）。规范决策论的四个前提：①所有备选方案可被掌握②所有后果可被预测③存在明确评价标准④能选出最优方案。两者<strong>不是对立而是互补</strong>——规范论提供理想基准，行动论描述现实行为：◆意义——确立了决策研究的两个基本坐标，后续所有决策理论都可按此定位◆局限——现实理论往往兼有两种倾向，严格区分反而遮蔽混合型理论"},
   {id:"k577", title:"程序化决策与非程序化决策", en:"Programmed vs Non-Programmed Decisions", scholar:"simon,ansoff", year:"", schools:["decision_theory"], body:"按<strong>决策问题的性质</strong>分类的经典框架。<strong>程序化决策</strong>（定型决策）针对反复出现的例行问题，用既定的规则、惯例、标准流程处理，传统技术为习惯和组织结构，现代技术为运筹学和计算机。<strong>非程序化决策</strong>（非定型决策）针对全新的非结构化问题，需要创造性判断、直觉和经验，传统技术为判断力和想象力，现代技术为启发式问题解决法。组织层级越高，决策越倾向于非程序化；层级越低，越倾向于程序化：◆意义——为不同类型的决策匹配不同支持工具提供了理论依据◆局限——二分法过于简化，大量决策处于灰色地带；随AI发展，原本非程序化的决策正在逐步程序化"},
-  {id:"k578", title:"安索夫的三层决策分类", en:"Ansoff's Three-Level Decision Classification", scholar:"ansoff", year:"1965", schools:["decision_theory","planning_s"], body:"安索夫在《Corporate Strategy》（1965）中提出，按内容将组织决策分为三个相互依存的类别。安索夫按<strong>决策内容</strong>划分，西蒙按<strong>决策性质</strong>划分，两者可组合为二维矩阵：<compare>战略决策|トップ|非構造的・非定型|高层管理者|资源配置与产品—市场定位，后来发展为安索夫矩阵|安索夫从卡内基学派分化出「战略决策」这一独立研究对象，直接开启了现代战略管理学科||管理决策|ミドル|半構造的|中层管理者|权限职责关系、工作流程、资源调配。将战略转化为具体的组织安排|介于定型与非定型之间，程序化与非程序化兼有||业务决策|ロワー|構造的・定型|基层员工|日常运营活动、预算执行。按既定规则和程序处理|程序化决策为主，可用信息系统支持</compare>◆意义——连接决策论与战略管理，安索夫因此被公认为「战略管理之父」◆局限——三层边界在扁平化组织中日益模糊；安索夫自己也承认容易导致「分析麻痹」"},
+  {id:"k578", title:"安索夫的三层决策分类", en:"Ansoff's Three-Level Decision Classification", scholar:"ansoff", year:"1965", schools:["decision_theory","planning_s"], body:"安索夫在《Corporate Strategy》（1965）中提出，按内容将组织决策分为三个相互依存的类别。安索夫按<strong>决策内容</strong>划分，西蒙按<strong>决策性质</strong>划分，两者可组合为二维矩阵：<compare>战略决策|高层|非结构化·非定型|高层管理者|资源配置与产品—市场定位，后来发展为安索夫矩阵|安索夫从卡内基学派分化出「战略决策」这一独立研究对象，直接开启了现代战略管理学科||管理决策|中层|半结构化|中层管理者|权限职责关系、工作流程、资源调配。将战略转化为具体的组织安排|介于定型与非定型之间，程序化与非程序化兼有||业务决策|基层|结构化·定型|基层员工|日常运营活动、预算执行。按既定规则和程序处理|程序化决策为主，可用信息系统支持</compare>◆意义——连接决策论与战略管理，安索夫因此被公认为「战略管理之父」◆局限——三层边界在扁平化组织中日益模糊；安索夫自己也承认容易导致「分析麻痹」"},
   {id:"k579", title:"个人决策与群体决策", en:"Individual vs Group Decision Making", scholar:null, year:"", schools:["decision_theory"], body:"按<strong>决策主体</strong>划分的基本分类。个人决策有四种形态：<strong>单独决定型</strong>（基于个人知识经验）、<strong>咨询活用型</strong>（接受建议后自己决定）、<strong>权限委让型</strong>（把决策权委托给他人）、<strong>事后承认型</strong>（先决定后向上级报备）。个人决策速度快、责任明确但信息有限；群体决策信息丰富、接受度高但速度慢、责任模糊且容易极端化：◆意义——揭示了决策形态选择本身就是一个策略性问题◆局限——简单二分忽略了混合形态，也没有给出明确的情境判断标准"},
   {id:"k580", title:"集团凝集性", en:"Group Cohesiveness", scholar:null, year:"", schools:["decision_theory","group_team"], body:"研究群体决策质量的核心概念，是理解集团浅虑的前提。定义为<strong>把群体成员留在群体中的力量的强度</strong>——凝集性越高，成员越愿意留在群体、越容易与群体保持一致。凝集性升高的条件包括：目标吸引力大、加入带来社会评价提升、规模较小、民主型领导、难以转移到其他群体、存在外部威胁。凝集性高的群体有利也有弊——利在团结协作高效行动，弊在<strong>同调压力升高</strong>导致个人不敢说真话，若群体目标与组织整体不一致则损害绩效，容易陷入<strong>集团浅虑</strong>：◆意义——把群体心理学变量引入决策论，揭示了团结在决策层面可能是双刃剑◆局限——凝集性的测量困难，任务凝集性vs社会凝集性对决策影响不同"},
   {id:"k581", title:"同调倾向", en:"Conformity Tendency", scholar:null, year:"", schools:["decision_theory","group_team"], body:"群体心理学中影响决策质量的核心机制。定义为<strong>个人把自己的态度和行为向其他成员靠拢的倾向</strong>，群体凝集性越高同调压力越强。三种类型：<strong>对规范的同调</strong>——向共同规则靠拢；<strong>对多数派的同调</strong>——向多数人意见靠拢（阿什实验证明即使多数派明显错误少数人也难以坚持）；<strong>对权威的同调</strong>——向权威人物靠拢。防止同调负面影响的机制包括鼓励批评者角色、引入外部专家、活用<strong>恶魔代言人（Devil's Advocacy）</strong>、创造自由发言的氛围：◆意义——解释了为什么群体决策常常失败——不是信息不足而是心理压力让真实意见无法浮现◆局限——同调倾向受文化影响巨大，东方集体主义与西方个人主义下模式不同"},
   {id:"k582", title:"集团浅虑", en:"Groupthink", scholar:"janis", year:"1972", schools:["decision_theory","group_team"], body:"贾尼斯（1972）通过分析美国政府五次重大决策失败（猪湾入侵、珍珠港、朝鲜战争、越战升级、水门事件）提出。在凝集性过高的群体中，成员过度追求内部一致与和谐，导致决策被<strong>系统性地扭曲向非理性方向</strong>。发生条件：①群体凝集性高②存在结构性问题（领导权威、信息孤立）③面临强烈情境压力。七个征兆：备选方案精查不足、目标精查不足、风险评估缺失、已否决方案再评估缺失、信息搜集不足、信息筛选偏见、缺乏应急预案。防止措施包括鼓励批评者角色、设立独立评价小组、邀请外部专家异议、最终决策前充分讨论：◆意义——为「群体决策一定比个人好」的常见直觉提供了强有力的反例◆局限——原始研究基于少数历史案例，样本小，后续实证不完全支持所有命题"},
   {id:"k583", title:"企业行为理论", en:"A Behavioral Theory of the Firm", scholar:"cyert,march", year:"1963", schools:["decision_theory","carnegie","org_learning"], body:"塞尔特与马奇在《企业行为理论》（1963）中提出，把决策论从<strong>个人层面扩展到组织层面</strong>的奠基之作。企业不是古典经济学假设的理性利润最大化机器，而是由不同利益主体构成的<strong>联盟</strong>，在有限理性约束下通过内部协商与经验反馈做出决策。四个核心概念：<strong>利益相关者联盟</strong>——企业目标是联盟成员讨价还价与妥协的产物；<strong>多元冲突目标</strong>——组织内部同时存在相互矛盾的目标，各自满意化而非整体最优；<strong>组织松弛</strong>（Organizational Slack）——未被充分利用的资源作为缓冲器，顺境积累逆境消耗；<strong>准决策规则</strong>（SOPs）——经验固化的惯例和规则，既是效率来源也是学习载体：◆意义——第一次系统地把企业作为决策系统而非生产函数来研究◆局限——理论过于描述性，对联盟何时破裂、松弛应维持多大缺乏规范性指引"},
-  {id:"k584", title:"垃圾桶模型", en:"Garbage Can Model", scholar:"march", year:"1972", schools:["decision_theory","evolution_process","carnegie"], body:"Cohen, March & Olsen（1972）提出。描述<strong>组织化无序</strong>（organized anarchy）状态下的决策形态。在某些组织中决策并非按「问题→解决方案」的逻辑进行，而是<strong>选择机会、问题、解决方案、决策者</strong>四种要素在偶然时机相遇时发生——如同扔进垃圾桶里碰到一起就形成决策。组织化无序的三个特征：<strong>偏好问题</strong>（目标不清晰）、<strong>技术不明确</strong>（不清楚什么方法有效）、<strong>流动性参与</strong>（谁参与决策不固定）。经典例：3M便利贴的发明——研究人员本想做超强力胶水却意外做出「粘得住但粘不牢」的物质，多年后才被用于解决乐谱书签问题：◆意义——对「决策是理性搜索过程」的根本颠覆，揭示了创新往往来自偶然的元素相遇◆局限——低估经营者有意图的战略作用、实证不足、难推导规范性建议"},
+  {id:"k584", title:"垃圾桶模型", en:"Garbage Can Model", scholar:"march", year:"1972", schools:["decision_theory","evolution_process","carnegie"], body:"Cohen, March & Olsen（1972）提出。描述<strong>组织化无序</strong>（organized anarchy）状态下的决策形态。决策并非按「问题→解决方案」的逻辑进行，而是<strong>四个独立的「流」在偶然时点相遇</strong>形成决策——如同扔进垃圾桶里碰到一起。<br>【四个独立的流】<br>①<strong>选择机会</strong>——组织中预定会做决策的场合，例如例行董事会、预算审议会、人事评审会。这些场合会自动发生，即使没有具体要决策的事项<br>②<strong>问题</strong>——组织内外等待被处理的议题，例如员工流失率上升、某条产品线亏损、客户投诉堆积。问题在组织中游荡，寻找能处理它的场合<br>③<strong>解决方案</strong>——早就存在但还没找到用武之地的方案，例如某个技术专利、某套管理方法、某个一直想推行的组织改革。解决方案也在组织中游荡，等待被问题「认领」<br>④<strong>决策者</strong>——有权做决策的人，例如高管、委员会成员、部门负责人。但他们不是随时都在场——今天开会的人和下周开会的人可能完全不同<br>【三大前提：组织化无序】<br>①<strong>有问题的偏好</strong>（Problematic Preferences）——组织目标模糊、不一致，成员各自理解不同<br>②<strong>不明确的技术</strong>（Unclear Technology）——不清楚什么方法能有效解决问题，靠试错和经验<br>③<strong>流动性参与</strong>（Fluid Participation）——谁参与哪个决策不固定，取决于时间和精力分配◆意义——对「决策是理性搜索过程」的根本颠覆，揭示了创新往往来自偶然的元素相遇（经典例：3M便利贴——原本想做超强力胶水却意外做出「粘得住但粘不牢」的物质，多年后才用于解决乐谱书签问题）◆局限——低估经营者有意图的战略作用、实证不足（基于计算机模拟而非实地调查）、难以推导规范性建议"},
   {id:"k585", title:"忽视型决策与回避型决策", en:"Decision by Oversight & Flight", scholar:"march", year:"1972", schools:["decision_theory"], body:"垃圾桶模型的延伸概念。模拟研究发现在组织化无序中大多数决策不真正解决问题，而以两种形态出现：<strong>忽视型决策</strong>（見過ごし）——问题还没被清晰认识或尚未浮现时决策已被做出，重要问题被漏掉（例：董事会议程被琐事占满，战略问题被草草带过）。<strong>回避型决策</strong>（やり過ごし）——问题堆积但决策者选择等待期待问题自行消失，然后在问题消失的时机做决策（例：面对多方投诉选择不处理，等投诉者自行放弃）。回避型决策具有<strong>双重性</strong>：消极面是拖延和效率损失，积极面是有意识诱发回避可训练下属优先级判断力：◆意义——揭示了组织中大量决策是空转的——发生了决策行为但没有解决问题◆局限——对什么情况下回避是建设性的缺乏明确标准"},
   {id:"k586", title:"多属性效用理论", en:"Multi-Attribute Utility Theory", scholar:null, year:"", schools:["decision_theory"], body:"<strong>规范决策论</strong>的典型代表，用数学方法解决复杂多目标决策问题。当从多个备选方案中选择时，把每个方案的结果用表示主观期望程度的<strong>效用值</strong>来量化，然后通过<strong>效用加算规则</strong>汇总得到综合效用，选择最高的方案。步骤：①识别属性②量化效用值③加总计算④选择最优。效用值计算有三种方法：整体论方法（直接评分）、效用函数法（从客观数值换算）、属性分解法（分解下位属性再汇总）。前提条件：各属性之间必须具有<strong>独立性</strong>——即一个属性的效用不受其他属性取值影响：◆意义——为复杂多目标决策提供了体系化数学框架，是决策支持系统和管理科学的理论基础◆局限——属性独立性前提在现实中很难满足；主观效用值赋值高度依赖决策者个人；与实际决策行为存在巨大差距"},
-  {id:"k552", title:"战后日本经济史", en:"Postwar Japanese Economic History", scholar:null, year:"1945", schools:["japanese_mgmt"], body:"理解日本的经营体系必须把握其背后的宏观经济阶段变迁：<br>【战后复兴期 1945–1954】<br>①战后混乱——败战后经济崩溃、恶性通胀、物资极度匮乏<br>②战后改革——GHQ主导三大民主化改革：财阀解体、农地改革、劳动改革（工会合法化）<br>③朝鲜特需（1950–1953）——朝鲜战争爆发，美军大量采购刺激日本工业复苏，成为经济起飞的契机<br>【高度经济成长期 1954–1973】<br>①神武景气（1954–1957）——战后首次大型景气扩张，重化工业化起步<br>②岩户景气（1958–1961）——「国民所得倍增计划」启动，制造业出口急速扩大<br>③奥运景气（1962–1964）——东京奥运基础设施投资带动，新干线开通<br>④伊奘诺景气（1965–1970）——战后最长景气（57个月），日本GDP超越西德成为世界第二<br>⑤终身雇用·年功序列·企业别工会等日本经营「三种神器」在此时期确立并发挥最大效能<br>【安定成长期 1973–1991】<br>①石油危机（1973/1979）——高速成长终结，日本企业通过精益生产和节能技术成功适应<br>②日本制造业竞争力顶峰——从重化工业转向汽车·电子·半导体等高附加值产业，Vogel（1979）以「Japan as Number One」评价这一时代<br>③泡沫经济（1986–1991）——日银超低金利政策下股价·地价暴涨，实体经济与资产价格严重背离<br>【冷战后经济停滞 1991–至今】<br>①泡沫崩坏（1991）——股价·地价暴跌，银行不良债权膨胀，企业资产负债表衰退<br>②失去的30年（失われた30年）——长期通缩·低增长，终身雇用和年功序列面临改革压力<br>③非正规雇用扩大·成果主义导入·企业治理改革——日本经营体系从全面适用转向选择性·混合型适用"}
+  {id:"k552", title:"战后日本经济史", en:"Postwar Japanese Economic History", scholar:null, year:"1945", schools:["japanese_mgmt"], body:"理解日本的经营体系必须把握其背后的宏观经济阶段变迁：<br>【战后复兴期 1945–1954】<br>①战后混乱——败战后经济崩溃、恶性通胀、物资极度匮乏<br>②战后改革——GHQ主导三大民主化改革：财阀解体、农地改革、劳动改革（工会合法化）<br>③朝鲜特需（1950–1953）——朝鲜战争爆发，美军大量采购刺激日本工业复苏，成为经济起飞的契机<br>【高度经济成长期 1954–1973】<br>①神武景气（1954–1957）——战后首次大型景气扩张，重化工业化起步<br>②岩户景气（1958–1961）——「国民所得倍增计划」启动，制造业出口急速扩大<br>③奥运景气（1962–1964）——东京奥运基础设施投资带动，新干线开通<br>④伊奘诺景气（1965–1970）——战后最长景气（57个月），日本GDP超越西德成为世界第二<br>⑤终身雇用·年功序列·企业别工会等日本经营「三种神器」在此时期确立并发挥最大效能<br>【安定成长期 1973–1991】<br>①石油危机（1973/1979）——高速成长终结，日本企业通过精益生产和节能技术成功适应<br>②日本制造业竞争力顶峰——从重化工业转向汽车·电子·半导体等高附加值产业，Vogel（1979）以「Japan as Number One」评价这一时代<br>③泡沫经济（1986–1991）——日银超低金利政策下股价·地价暴涨，实体经济与资产价格严重背离<br>【冷战后经济停滞 1991–至今】<br>①泡沫崩坏（1991）——股价·地价暴跌，银行不良债权膨胀，企业资产负债表衰退<br>②失去的30年（失われた30年）——长期通缩·低增长，终身雇用和年功序列面临改革压力<br>③非正规雇用扩大·成果主义导入·企业治理改革——日本经营体系从全面适用转向选择性·混合型适用"},
+  {id:"k587", title:"冲突的定义与基本性质", en:"Definition and Nature of Conflict", scholar:null, year:"", schools:["conflict"], body:"冲突是两个或两个以上的个人或集团之间产生的<strong>对立或敌对关系</strong>。冲突既包括已经表面化的对立，也包括尚未显现的潜在对立。冲突的发生基于三个相互关联的要素：<strong>对立</strong>（Opposition）——存在不相容的利害或目标；<strong>稀缺</strong>（Scarcity）——资源、注意力、机会有限；<strong>妨碍</strong>（Blocking）——一方的行动妨碍了另一方。冲突并非单纯的负面现象——现代组织行为学一致认为冲突是组织内<strong>不可避免的客观现象</strong>，既可能是破坏性的也可能是建设性的。关键不在于消除冲突，而在于<strong>识别与引导</strong>冲突：◆意义——把「冲突」确立为组织研究的正式对象，使冲突不再被视为道德问题而是可分析的组织现象◆局限——简单定义难以区分「健康的意见分歧」与「破坏性的对立」，两者的边界在实务中常常模糊"},
+  {id:"k588", title:"冲突观的三阶段演进", en:"Three Stages of Conflict Views", scholar:"robbins_s", year:"", schools:["conflict"], body:"把冲突研究的历史发展整理为三种相继出现的观点，是理解为什么今天主张「适度冲突是好事」的历史背景：<compare>传统理论|Traditional|冲突=破坏|19世纪末—1940年代|把冲突视为组织机能失调的表现。组织以官僚制为主，强调上下级的命令系统，冲突被视为应该通过严格的规则、程序、权威来抑制的对象|冲突是破坏性的、应被完全排除||行为科学理论|Human Relations|冲突=不可避免|1940年代—|也称人际关系论。承认冲突是组织中不可避免的现象，但行为科学家的努力大多仍集中在「如何化解冲突」上，只是把冲突的存在合理化了|冲突不可避免、应被接受，其存在对组织目标有用||相互作用理论|Interactionist|冲突=应被利用|1970年代—|现代主流观点。不仅接受冲突，还主动识别和促进有益的冲突——过于平静和协调的组织容易僵化、缺乏创新，适度的冲突能激发活力和新观点|管理者的任务不是消除冲突，而是维持最佳的冲突水平</compare>◆意义——用一条清晰的历史脉络解释了为什么现代组织行为学主张「有益的冲突应被促进」——这不是一个常识，而是经历了半个多世纪才形成的共识◆局限——三阶段的划分是为教学方便做的简化，现实中各种观点并存，「传统理论」的做法在今天很多组织依然盛行"},
+  {id:"k589", title:"冲突的源泉", en:"Sources of Conflict", scholar:null, year:"", schools:["conflict"], body:"日本教材标准内容，从<strong>发生原因</strong>的角度分析冲突，是诊断和预防冲突的基础工具。冲突的源泉指的是组织内对立与葛藤产生的根本原因或要因。理解源泉是进行有效冲突管理的前提——只有找到根本原因，才能设计合适的对策。<br>【个人要因（个人特性）】<br>①价值观、信念、人格等个人内在因素<br>②不同的工作风格、沟通偏好<br>③认知偏差、情绪稳定性<br>④例：保守型管理者与激进型创新者在同一团队中的摩擦<br>【状况要因】<br>①沟通问题（信息不充分、误解、沟通渠道不畅）<br>②<strong>相互依存性</strong>（工作彼此依赖时冲突更易发生）<br>③合意与协作的必要性<br>④地位意识（status consciousness）<br>⑤例：生产部门依赖研发部门提供规格说明时，两部门间的紧张<br>【组织要因】<br>①经营资源的稀缺（预算、人手、设备有限）<br>②经营理念、目的、战略的模糊不清<br>③部门化（功能分工带来的目标分化）<br>④手册化、规则体系的缺失或不完善<br>⑤例：销售部追求收入最大化与生产部追求成本最小化之间的结构性矛盾◆意义——把抽象的「为什么会有冲突」分解为可操作的三类原因，便于管理者定位问题◆局限——三分法过于宽泛，实际应用时仍然需要进一步细化；另外文化差异也是重要的冲突源泉，这一分类中没有明确包含"},
+  {id:"k590", title:"冲突的分类A——按发生条件", en:"Conflict Classification by Conditions", scholar:null, year:"", schools:["conflict"], body:"日本教材的标准分类方式，从<strong>冲突在哪个层面发生</strong>的角度对冲突进行细分。组织内部的冲突可以根据发生的条件划分为四种类型——这四种类型在现实中往往<strong>复合出现</strong>，并不互斥：◆<strong>目标冲突</strong>（Goal Conflict）——不同主体追求不同目标时产生的冲突，是最常见也最根本的类型。例：销售部希望扩大市场份额，财务部希望控制成本◆<strong>认知冲突</strong>（Cognitive Conflict）——对同一问题有不同认识、理解、意见时产生的冲突。这类冲突往往是建设性的，因为它能带来多元视角◆<strong>感情冲突</strong>（Affective Conflict）——因情感上的不一致、个人好恶、人格摩擦产生的冲突。最容易破坏团队关系，也最难处理◆<strong>行动冲突</strong>（Behavioral Conflict）——一方的行为方式让另一方难以接受时产生的冲突。例：一位员工开会总迟到，让其他成员觉得不被尊重◆意义——提供了比「任务 vs 关系」二分法更细致的分类工具，对冲突诊断尤其有用◆局限——四类之间的边界在现实中并不清晰——一个表面上的「行动冲突」背后可能是目标冲突或情感冲突的投射"},
+  {id:"k591", title:"冲突的分类B——按发生层次", en:"Conflict Classification by Level", scholar:null, year:"", schools:["conflict"], body:"日本教材的标准分类，从<strong>冲突发生在什么主体之间</strong>的角度对冲突进行划分。层次越低的冲突越偏向心理和人际层面，越高的冲突越偏向结构和制度层面——<strong>处理方式必须与冲突层次匹配</strong>。<br>【个人内冲突（Intrapersonal Conflict）】<br>一个人内部的目标或欲求之间的对立。<br>例：员工同时想接受晋升机会（需要外派）和陪伴家人（需要留在本地），在一个人内部产生矛盾。<br>处理方式：主要靠个人的心理调整、价值排序、咨询支持。<br>【个人间冲突（Interpersonal Conflict）】<br>两人及以上个体之间因意见分歧产生的对立。表面上看起来像集体冲突的情况，实际上往往是个人间的恩怨。<br>例：两位经理之间因历史纠葛而长期对立。<br>处理方式：直接沟通、第三方调停、人员调整。<br>【组织内冲突（Intraorganizational Conflict）】<br>同一组织内部的部门或群体之间，因资源分配、目标设定产生的对立。开发部门与销售部门的摩擦是最典型的例子。<br>例：研发部希望慢工出细活追求产品品质，销售部希望快速推出产品抓住市场窗口。<br>处理方式：高层协调、跨部门委员会、资源重新分配、结构性调整。<br>【组织间冲突（Interorganizational Conflict）】<br>不同组织之间因利害关系产生的对立。<br>例：同行业竞争对手之间的市场竞争；买方和供应商之间的价格谈判；合资伙伴之间的控制权争夺。<br>处理方式：谈判、合同、仲裁、诉讼。◆意义——提醒管理者不要把所有冲突都当作同一种现象来处理，必须先识别层次再选择对策◆局限——层次之间的边界有时模糊——表面上的组织内冲突可能根源在个人间恩怨，表面上的组织间冲突可能因个人关系而激化"},
+  {id:"k592", title:"显性冲突与潜在冲突", en:"Manifest vs Latent Conflict", scholar:null, year:"", schools:["conflict"], body:"日本教材的标准分类，从<strong>冲突的可见性</strong>角度划分。潜在冲突如果被长期放任，会导致成员离职、职场环境恶化、突发性冲突爆发等严重后果。优秀的管理者必须<strong>同时关注显性冲突与潜在冲突</strong>：<compare>显性冲突|顕在的|外部可识别|相对容易解决|已经表面化、从外部能够观察到的对立或冲突。典型例子：部门间的权限争夺、资源分配争议|处理方式相对容易，但真正危险的是那些表面和谐、暗流汹涌的潜在冲突||潜在冲突|潜在的|难以察觉|容易被忽视|尚未表面化但暗中存在的冲突，通常源于价值观或思维方式的深层差异。典型例子：部门之间的方针差异、成员之间的性格不合|许多看似「突然」爆发的组织危机，实际上是长期积累的潜在冲突达到临界点后的结果</compare>◆意义——把「冰山之下」的冲突纳入管理视野，纠正了「没有表面冲突 = 团队和谐」的错觉◆局限——潜在冲突本身难以测量，管理者也难以判断哪些潜在冲突会演化为显性冲突、哪些会自行消解"},
+  {id:"k593", title:"任务冲突与关系冲突与过程冲突", en:"Task, Relationship, and Process Conflict", scholar:"jehn", year:"1995", schools:["conflict"], body:"Karen Jehn（1995）提出。从<strong>冲突内容</strong>的角度，组织冲突可以分为三种类型，这三种类型对组织绩效的影响截然不同：◆<strong>任务冲突</strong>（Task Conflict）——围绕工作内容本身的意见不一致——对目标、策略、方法的看法有分歧。在<strong>适度水平</strong>下对决策质量、创新、组织学习有<strong>正面影响</strong>◆<strong>关系冲突</strong>（Relationship Conflict）——基于人际关系和情感的对立——个性不合、互相不喜欢、情绪性对抗。几乎总是<strong>负面的</strong>——损害团队信任、降低工作满意度、增加离职率◆<strong>过程冲突</strong>（Process Conflict）——围绕如何执行任务的分歧——谁负责什么、资源如何分配、时间如何安排。少量时可能有益，持续过多时负面◆<strong>最关键的实务洞察</strong>——<strong>任务冲突容易演变为关系冲突</strong>——起初大家只是对工作方法有分歧，但如果处理不好，会逐渐积累为人际间的不满和敌意。防止这种转化是冲突管理的核心任务之一◆意义——为「什么样的冲突是好的」提供了实证基础的答案——要促进的是任务冲突，要避免的是关系冲突◆局限——三种冲突在现实中常常混合出现、相互转化，不同文化下三种冲突的影响也不完全相同"},
+  {id:"k594", title:"功能性冲突与失调性冲突", en:"Functional vs Dysfunctional Conflict", scholar:"robbins_s", year:"", schools:["conflict"], body:"罗宾斯的分类框架，现代冲突管理的<strong>规范性分类</strong>——不是描述冲突的类型，而是判断冲突对组织是好是坏。<strong>功能性冲突</strong>（Functional Conflict）：支持组织目标、提高组织绩效的建设性冲突。<strong>失调性冲突</strong>（Dysfunctional Conflict）：妨碍组织目标、降低组织绩效的破坏性冲突。判断标准：同一个冲突是功能性还是失调性，不取决于冲突的形式，而取决于<strong>对组织绩效的实际影响</strong>。冲突的<strong>强度</strong>与<strong>功能性</strong>之间存在<strong>倒U型关系</strong>——冲突太少组织会僵化，冲突太多组织会瘫痪，中等水平的冲突最能激发组织绩效。管理启示：如果组织过于平静、缺乏创新→主动引入冲突（例如指定恶魔代言人、鼓励异见）；如果组织陷入激烈内斗→化解冲突。目标不是「零冲突」，而是「<strong>最佳冲突水平</strong>」：◆意义——为管理者判断何时促进冲突、何时化解冲突提供了明确的标准◆局限——「最佳冲突水平」在实务中难以精确测量，管理者的主观判断常常是唯一标准；而且「功能性 vs 失调性」的判断往往只能事后进行，事前难以准确预测"},
+  {id:"k595", title:"福列特的建设性冲突与三种处理方式", en:"Follett's Constructive Conflict", scholar:"follett", year:"1920", schools:["conflict"], body:"Mary Parker Follett（1920年代）提出。冲突管理理论的<strong>思想先驱</strong>。冲突本身不是坏事——关键不是消除冲突，而是用建设性的方式处理冲突，把对立的能量转化为创造性的解决方案。三种处理方式：◆<strong>支配</strong>（Domination）——一方完全获胜，另一方完全让步。从短期看最简单，但从长期看最糟糕——被支配的一方会留下怨恨，冲突并没有真正解决，只是被压制下去，将来会以更激烈的形式爆发◆<strong>妥协</strong>（Compromise）——双方各让一步，找到中间方案。表面上看起来公平，但福列特认为妥协其实是双方都有损失——没有人真正得到想要的东西，只是暂时接受了次优方案◆<strong>整合</strong>（Integration）——福列特认为这是唯一真正建设性的方式。整合不是让一方胜利，也不是让双方都让步，而是<strong>挖掘双方真正的需求</strong>，找到一个让双方都能完全满足的新方案。经典例：图书馆里一人想开窗（空气闷），一人想关窗（怕风吹文件）。支配=一人胜一人败；妥协=开一半（两人都不舒服）；整合=打开隔壁房间的窗户，让空气流通但风不吹到文件◆意义——第一次明确提出冲突可以是建设性的，把冲突管理的视角从「如何压制」转向了「如何转化」。福列特的「整合」思想是60年后费舍尔和尤里《谈判力》的直接思想源头◆局限——整合方案并非总是存在——有些冲突确实是零和的；而且找到整合方案需要双方都愿意坦诚沟通各自的真实需求"},
+  {id:"k596", title:"庞迪的冲突过程五阶段模型", en:"Pondy's Five-Stage Conflict Model", scholar:"pondy", year:"1967", schools:["conflict"], body:"Louis Pondy（1967）提出。组织冲突过程分析的<strong>经典模型</strong>。核心主张是把冲突看作一个<strong>动态的连续过程</strong>，而不是一次性的事件。组织中的冲突并非突然发生又突然结束，而是一个五阶段的连续过程，每一阶段都会影响后续阶段，并为下一次冲突埋下伏笔。<br>【① 潜在冲突（Latent Conflict）】<br>冲突的根源已经存在，但当事人尚未意识到。例如部门之间的资源竞争、目标分歧、角色模糊等结构性条件都已具备，但还没有具体的冲突事件发生。<br>【② 知觉冲突（Perceived Conflict）】<br>一方或双方开始<strong>认识到</strong>冲突的存在——意识到「我们之间有矛盾」。但这个阶段还没有强烈的情感卷入。<br>【③ 感受冲突（Felt Conflict）】<br>冲突开始带来<strong>情感反应</strong>——焦虑、紧张、愤怒、敌意。这是知觉向情感转化的关键节点，冲突从「理性认识」变成了「切身感受」。<br>【④ 显在化冲突（Manifest Conflict）】<br>冲突表现为<strong>具体行为</strong>——争论、对抗、回避、拒绝合作、破坏。外部观察者能够清楚看到冲突。<br>【⑤ 冲突的余波（Conflict Aftermath）】<br>冲突平息后，留下的影响与后果。如果处理得好，可能强化关系、带来学习；如果处理不好，会积累怨恨，成为下一次冲突的<strong>潜在根源</strong>——进入新一轮循环。◆意义——第一次把冲突作为动态过程而非静态状态来研究，为冲突管理提供了时间轴上的分析框架。第五阶段「余波」最深刻——本次冲突的结束不是真正的结束，而是下一次冲突的起点◆局限——五个阶段在现实中并非总是按顺序发生——有些冲突会跳过某些阶段，有些阶段会来回反复"},
+  {id:"k597", title:"罗宾斯的冲突过程四阶段模型", en:"Robbins' Four-Stage Conflict Model", scholar:"robbins_s", year:"", schools:["conflict"], body:"Stephen Robbins提出。对庞迪五阶段模型的简化版本，在现代组织行为学教材中广泛使用。四个阶段：<strong>①不满</strong>（潜在不满）——冲突的萌芽，不满、葛藤已经产生，但仍是潜在状态；<strong>②概念化</strong>——不满浮现，被识别为问题，对立点变得明确。当事人开始思考冲突的本质和双方立场；<strong>③行动</strong>——采取具体的解决行动，此时会使用五种处理方式之一（Thomas-Kilmann五模式）；<strong>④结果</strong>——评价行动的结果，如果满意则冲突解决，如果不满意则返回「不满」阶段进入新一轮循环：◆意义——通过更简洁的框架把冲突过程分析与具体处理方式（五模式）直接连接，更方便教学和实务应用◆局限——简化为四阶段后丢失了庞迪模型中「知觉 vs 感受」的重要区分——在实务中这两个阶段的干预策略是不同的"},
+  {id:"k598", title:"托马斯—基尔曼的冲突处理五模式", en:"Thomas-Kilmann Conflict Mode Instrument (TKI)", scholar:"thomas_k", year:"1974", schools:["conflict"], body:"Kenneth Thomas & Ralph Kilmann（1974）提出。冲突管理领域<strong>被引用最多、最广泛使用</strong>的模型。用两个维度划分冲突处理方式：横轴<strong>关心他人</strong>（Cooperativeness），纵轴<strong>关心自己</strong>（Assertiveness）。<strong>没有任何一种模式是普遍最优的</strong>——每种模式都有它合适的情境：<br>【竞争（Competing）——高关心自己·低关心他人】<br>我赢你输。适用于：需要快速决断的紧急情况、涉及原则问题、对方会利用软弱时。例：重大危机、需要执行不受欢迎但必要的改革。<br>【协作（Collaborating）——高关心自己·高关心他人】<br>双赢。适用于：双方的关注都很重要、需要创新的解决方案、需要长期合作关系时。这是费舍尔—尤里「原则式谈判」和福列特「整合」对应的方式。<br>【妥协（Compromising）——中关心自己·中关心他人】<br>各让一步。适用于：双方力量均衡、时间紧迫、协作方式不可行时。例：劳资谈判、达成临时协议。<br>【回避（Avoiding）——低关心自己·低关心他人】<br>不处理。适用于：问题琐碎、没有胜算、等待更好时机、让情绪冷却时。回避不总是坏的——在某些情况下它是理性的选择。<br>【迁就（Accommodating）——低关心自己·高关心他人】<br>我让你赢。适用于：意识到自己错了、问题对对方更重要、维护和谐比胜利更重要时。◆意义——提供了一个简洁、直观、可操作的冲突处理诊断工具，使冲突处理从感性经验变成了可分析的管理行为◆局限——二维模型忽视了文化背景、权力关系等重要因素；五种模式的选择常常不是理性计算的结果而是个人习惯性风格"},
+  {id:"k599", title:"谈判总论与两种类型", en:"Negotiation: Distributive vs Integrative", scholar:"walton_r", year:"1965", schools:["conflict"], body:"Richard Walton & Robert McKersie（1965）提出分配型与整合型的基本区分。谈判是利害关系人之间调整对立的意见和要求，寻找双方都能接受的解决方案的过程。即使是看起来纯粹分配型的谈判，也<strong>应尽可能引入整合型的元素</strong>：<compare>分配型谈判|零和博弈|蛋糕是固定的|Distributive|隐藏底线、极端立场开局、控制信息、小步骤让步。典型例：汽车议价——卖家的让步就是买家的得利|风险：谈判时间拖长、关系紧张、容易决裂||整合型谈判|正和博弈|把蛋糕做大|Integrative|坦诚沟通需求、多维度寻找交换、把人与问题分开、寻找第三方案。典型例：汽车购买后还可谈售后服务、配件赠送、保养方案|要求：双方都需要有建设性的态度和长期合作的意愿</compare>◆意义——区分分配型与整合型让管理者意识到「谈判未必是零和」——通过改变思考方式就能把很多看似对立的谈判变成共赢的机会◆局限——整合型谈判的前提条件（双方都有建设性态度、存在多维交换空间）在现实中并非总能满足"},
+  {id:"k600", title:"费舍尔与尤里的原则式谈判", en:"Fisher & Ury's Principled Negotiation", scholar:"fisher_r", year:"1981", schools:["conflict"], body:"Roger Fisher & William Ury（1981《Getting to Yes》/《谈判力》）提出。现代谈判学的<strong>代表性著作</strong>，哈佛谈判项目的核心成果。原则式谈判是一种超越「强硬 vs 软弱」二分法的第三条路——<strong>针对问题强硬，对人温和</strong>：<br>【① 把人与问题分开】<br>谈判者是人，有情感、有自尊、有偏见。把对人际关系的处理和对问题本身的处理分开来——对方不是敌人，而是共同解决问题的伙伴。常见错误：把对问题的争论升级为对人的攻击。<br>【② 关注利益而非立场（核心原则）】<br>直接继承自福列特的整合思想。立场（Position）是表面的要求——「我要涨薪20%」；利益（Interest）是立场背后的真实需求——「我需要养家」「我希望自己的贡献被认可」。挖掘对方的利益而不是争论立场，往往能发现多个满足利益的路径。<br>【③ 创造互利的选项】<br>在做出决定之前，先尽可能多地产生备选方案。关键是把「创造方案」和「评估方案」在时间上分开——先头脑风暴尽可能多的可能性，再评估哪些是可行的。<br>【④ 坚持使用客观标准】<br>不要陷入意志力的比拼，而是诉诸双方都能认同的客观标准——市场价格、法律条文、专业意见、科学数据等。<br>【BATNA与ZOPA】<br><strong>BATNA</strong>（Best Alternative To a Negotiated Agreement）——谈判破裂时的最佳替代选择。判断一个协议是否值得接受的底线标准。谈判前花时间提升自己的BATNA，BATNA越强谈判力越强。<strong>ZOPA</strong>（Zone of Possible Agreement）——双方都能接受的协议区间。只有存在ZOPA时谈判才有可能达成协议。◆意义——把谈判从「技巧比拼」提升为「基于原则的合作问题解决」，BATNA和ZOPA成为谈判分析的标准术语◆局限——方法假设双方都愿意遵循原则；「客观标准」本身常有争议；在关系主导的文化（日本、中国）中「把人与问题分开」行不通"},
+  {id:"k601", title:"冲突管理的过程与第三方介入", en:"Conflict Management Process & Third-Party Intervention", scholar:null, year:"", schools:["conflict"], body:"把冲突管理的概念整合为一个可操作的实务流程，同时补充第三方介入的几种形态。冲突管理不是一次性的行动，而是一个包含识别、评估、选择对策、执行、评价的<strong>连续过程</strong>：<br>【五个步骤】<br>①<strong>冲突的认识与评估</strong>——识别冲突是否存在、处于什么阶段、属于什么类型。错误的诊断会带来错误的处理<br>②<strong>对应方针的决定</strong>——根据诊断结果选择处理方式——是促进、化解、还是暂时回避<br>③<strong>冲突的预防</strong>——通过结构调整、沟通改善、角色澄清等手段减少冲突发生的可能性<br>④<strong>冲突的化解</strong>——对已经发生且有害的冲突进行化解——直接沟通、第三方调停、结构性调整<br>⑤<strong>冲突的活用</strong>——对有益的冲突进行促进和引导——让建设性冲突为组织决策质量和创新服务<br>【第三方介入的四种形态】<br>①<strong>调解</strong>（Conciliation）——建立双方沟通渠道，权力最低，适用于关系已破裂需恢复对话<br>②<strong>咨询</strong>（Consultation）——帮助当事人改善沟通技巧，权力低，适用于人际关系问题<br>③<strong>调停</strong>（Mediation）——提出建议但无决定权，权力中等，适用于商业纠纷、劳资争议<br>④<strong>仲裁</strong>（Arbitration）——有决定权，结果有约束力，权力最高，适用于法律纠纷、无法自行解决的对立◆意义——把冲突管理从零散的技巧整合为一个系统的过程，同时明确了当事人无法自行解决时第三方介入的不同形式◆局限——流程是理想化的描述，现实中冲突的紧急性、当事人的情绪、政治因素都会让流程被打乱"},
+  {id:"k602", title:"日本式冲突预防——根回し与事前调整", en:"Nemawashi & Prior Adjustment", scholar:null, year:"", schools:["conflict"], body:"日本教材的<strong>本土化特色内容</strong>。<strong>根回し</strong>（Nemawashi）原本是园艺用语，指移植树木前先处理好根部，后来被借用为组织用语，指在正式决策之前，通过非正式的事前沟通与协商取得相关人员的共识，从而避免正式场合出现冲突和对立。核心机制：决策者在正式会议之前单独或小范围地与各利害关系人沟通，了解各方的立场、担忧、底线，根据反馈调整方案，在正式会议上所有人已经达成非正式共识，会议只是走形式程序：<compare>西方冲突管理|公开处理|冲突发生后|Western|冲突不可避免应在正式场合公开讨论。正式、公开、系统的沟通方式。鼓励公开表达异见。决策快但执行慢（执行时才发现阻力）|在正式谈判中协作，个人主义文化假设||日本根回し|事前预防|冲突发生前|Japanese|冲突应在正式场合之前被化解。非正式、私下、分散的沟通方式。在私下空间表达异见。决策慢但执行快（共识已形成）。保全面子、适应集团主义|相关机制：稟議制（ringi system）——提案从基层逐级向上传递，到达决策者时已获广泛支持</compare>◆意义——展示了冲突管理的文化多样性——西方的理论主要建立在个人主义、公开沟通、直接对抗的文化假设之上，而日本的根回し提供了一种基于集团主义、间接沟通、事前预防的替代路径◆局限——根回し是日本特定文化下的产物，难以直接移植到其他文化环境；在日本企业国际化过程中根回し与国际化的冲突正在变得越来越突出"}
 ];
 
 // Fast lookup: KNOWLEDGE_MAP[id] -> knowledge object
@@ -4901,12 +5023,25 @@ KNOWLEDGE.forEach(function(k) { KNOWLEDGE_MAP[k.id] = k; });
 // 不再依赖 DATA[].concepts 和 SCHOLARS[].theories 的 HTML 展开。
 
 var THEME_ORDER = [
-  { label: "ミクロ組織論（OB）",    num: "",  desc: "个人·集团层面：动机·领导力·集团行动等组织行为研究", color: "#34C759", themes: ["ミクロ"] },
-  { label: "マクロ組織論（OT）",    num: "",  desc: "组织层面：古典管理·系统权变·制度·组织设计·HRM·日本的経営等组织理论",     color: "#FF9500", themes: ["マクロ"] },
-  { label: "战略内容理论（WHAT）", num: "",  desc: "研究战略的实质内容：竞争优势从何而来、企业边界如何划定", color: "#007AFF", themes: ["战略内容"] },
-  { label: "战略形成过程（HOW）",  num: "",  desc: "明茨伯格将战略形成归纳为十种学派，反映战略是理性设计的还是涌现学习的", color: "#007AFF", themes: ["SM · 十学派"] },
-  { label: "斯科特四象限",         num: "",  desc: "封闭/开放 × 合理/自然 的2×2组织理论分类框架",    color: "#FF9500", themes: ["OT · 斯科特四象限"] },
-  { label: "院校学派",             num: "",  desc: "以大学为核心形成的学术传统与研究群体",            color: "#007AFF", themes: ["院校学派"] }
+  { label: "个体的世界：人是怎么想和感受的", desc: "人格→态度→动机(内容→过程)→判断偏误", color: "#34C759", groups: [1],
+    order: ["personality","attitude_emotion","behavioral","ob","beh_econ"] },
+  { label: "人与人之间：群体这种现象", desc: "非正式组织→集团动力学→领导力→冲突管理", color: "#34C759", groups: [2],
+    order: ["humanrel","group_team","leadership_theory","conflict"] },
+  { label: "古典组织论：组织作为机器", desc: "作业层→管理职能→整体结构→形态分类", color: "#FF9500", groups: [3],
+    order: ["scientific","process","bureaucracy","org_types"] },
+  { label: "近代组织论：组织作为生命体", desc: "协作系统→决策系统→学习主体→变革主体", color: "#FF9500", groups: [4],
+    order: ["systems","decision_theory","org_learning","change"] },
+  { label: "人材与雇用：组织如何管理人", desc: "英美HRM↔日本式经营的对照", color: "#FF9500", groups: [5],
+    order: ["hrm","japanese_mgmt"] },
+  { label: "战略论 内部视点：竞争优势从企业内部来", desc: "治理→资源(RBV)→动态能力→知识→创新", color: "#007AFF", groups: [6],
+    order: ["agency","rbv","dynamic","km","innovation"] },
+  { label: "战略论 外部视点：竞争优势从市场结构与边界中来", desc: "竞争定位→平台→CSR→交易费用→国际经营", color: "#007AFF", groups: [7],
+    order: ["io","platform","csr","tce","international_strategy"] },
+  { label: "组织与环境：超越组织的世界", desc: "权变→生态学→制度论→社会网络", color: "#FF9500", groups: [8],
+    order: ["contingency","evolution_process","institutional","social_network"] },
+  { label: "战略形成过程（HOW）", desc: "明茨伯格将战略形成归纳为十种学派，反映战略是理性设计的还是涌现学习的", color: "#007AFF", groups: [10] },
+  { label: "斯科特四象限", desc: "封闭/开放 × 合理/自然 的2×2组织理论分类框架", color: "#FF9500", groups: [11] },
+  { label: "院校学派", desc: "以大学为核心形成的学术传统与研究群体", color: "#007AFF", groups: [12] }
 ];
 
 // ===== 学者面板配置（分区 + key列表） =====
@@ -4935,13 +5070,15 @@ var SCHOLAR_ORDER = [
     keys: ["likert","stogdill","fleishman","fiedler","hersey","blanchard","kotter","kanter","goleman","house","burns_jm","bass","greenleaf","blake","misumi","graen","bennis"] },
   { label: "集団・チーム", en: "Groups & Teams", color: "#34C759",
     keys: ["hackman","tuckman","kelley","janis","pondy","keeney","raiffa"] },
+  { label: "コンフリクト・マネジメント", en: "Conflict Management", color: "#34C759",
+    keys: ["follett","pondy","robbins_s","thomas_k","jehn","fisher_r","ury","walton_r","deutsch"] },
   { label: "組織文化・変革・学習", en: "Culture, Change & Learning", color: "#34C759",
     keys: ["schein","argyris","senge","deal","peters_t","lewin"] },
   { label: "HRM・日本的経営", en: "HRM & Japanese Management", color: "#34C759",
     keys: ["beer_m","walton_r","fombrun","organ","allen_meyer","atkinson_j","abegglen","nonaka","takeuchi","numagami"] },
   // ===== OT 組織理論 =====
   { label: "古典管理", en: "Classical Management", color: "#FF9500",
-    keys: ["taylor","fayol","weber","gilbreth","gantt","urwick","gulick","koontz"] },
+    keys: ["taylor","fayol","weber","gilbreth","gantt","urwick","koontz"] },
   { label: "意思決定・システム", en: "Decision & Systems", color: "#FF9500",
     keys: ["simon","march","cyert","barnard","bertalanffy"] },
   { label: "組織構造・権変", en: "Structure & Contingency", color: "#FF9500",
