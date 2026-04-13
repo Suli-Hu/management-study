@@ -113,7 +113,7 @@ key命名规则：英文小写姓氏（如 `porter`），同姓加首字母（�
 如果学者不存在，需要先通过学者目录页的"+"按钮新增学者。
 
 ### 学派key查找方法
-
+https://github.com/Suli-Hu/management-study/blob/main/data.js
 学派key定义在 `data.js` 的 `DATA` 对象中（搜索 `var DATA = {` 即可定位）。格式为：
 ```javascript
 DATA = {
