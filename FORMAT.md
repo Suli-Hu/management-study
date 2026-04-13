@@ -99,23 +99,31 @@ en: Value Chain Analysis
 
 ### 学者key查找方法
 
-学者key是英文小写，通常是姓氏：
-- 波特 → `porter`
-- 西蒙 → `simon`
-- 马奇 → `march`
-- 野中郁次郎 → `nonaka`
-- 多人 → `cyert,march`（逗号分隔）
+学者key定义在 `data.js` 的 `SCHOLARS` 对象中（搜索 `var SCHOLARS = {` 即可定位）。格式为：
+```javascript
+SCHOLARS = {
+  porter: { name: "迈克尔·波特", en: "Michael E. Porter", ... },
+  simon: { name: "赫伯特·西蒙", en: "Herbert Simon", ... },
+  ...
+}
+```
+
+key命名规则：英文小写姓氏（如 `porter`），同姓加首字母（如 `fisher_r`），日本学者用罗马音（如 `nonaka`）。多学者用逗号分隔：`cyert,march`。
 
 如果学者不存在，需要先通过学者目录页的"+"按钮新增学者。
 
 ### 学派key查找方法
 
-学派key是英文小写缩写：
-- 科学管理学派 → `scientific`
-- 竞争定位学派 → `io`
-- 冲突管理论 → `conflict`
-- 决策组织理论 → `decision_theory`
-- 组织学习 → `org_learning`
+学派key定义在 `data.js` 的 `DATA` 对象中（搜索 `var DATA = {` 即可定位）。格式为：
+```javascript
+DATA = {
+  scientific: { title: "科学管理学派", en: "Scientific Management School", group: 3, ... },
+  conflict:   { title: "冲突管理论", en: "Conflict Management", group: 2, ... },
+  ...
+}
+```
+
+每个学派的 `group` 字段决定它在全览页的分段位置（1-12，具体分组见本文档第3节的group分组编号表）。
 
 如果学派不存在，需要先通过学派全览页的"+"按钮新增学派。
 
@@ -159,6 +167,8 @@ en: Michael E. Porter
 | 同姓不同人 | 姓氏_名首字母 | `fisher_r`（Roger Fisher）、`cohen_w`（Wesley Cohen） |
 | 日本学者 | 姓氏罗马音 | `nonaka`、`takeuchi` |
 | 有连字符的姓 | 保持连字符 | `von_hippel` |
+
+**查重**：新增前先在 `data.js` 的 `SCHOLARS` 对象中搜索确认该key不存在，避免重复创建。
 
 ---
 
