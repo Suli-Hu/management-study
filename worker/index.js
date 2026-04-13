@@ -63,6 +63,14 @@ export default {
       return handleBankRecord(request, env);
     }
 
+    // ===== Delta CRUD API =====
+    if (request.method === 'GET' && url.pathname === '/delta') {
+      return handleDeltaGet(env);
+    }
+    if (request.method === 'POST' && url.pathname.startsWith('/delta/')) {
+      return handleDeltaMutate(request, env, url.pathname);
+    }
+
     return jsonResponse({ error: 'Not Found' }, 404);
   }
 };
@@ -453,6 +461,124 @@ async function handleBankRecord(request, env) {
     }
 
     return jsonResponse({ success: true, record: records[qid] });
+  } catch (err) {
+    return jsonResponse({ error: err.message }, 500);
+  }
+}
+
+// ===== Delta CRUD: KP / Scholar / School 增删 =====
+
+const EMPTY_DELTA = {
+  kp:      { nextId: 603, added: [], deleted: [] },
+  scholar: { added: {}, deleted: [] },
+  school:  { added: {}, deleted: [] }
+};
+
+async function getDelta(env) {
+  const raw = await env.PREFS.get('delta', 'json');
+  if (!raw) return JSON.parse(JSON.stringify(EMPTY_DELTA));
+  // 兼容旧结构
+  if (!raw.kp) raw.kp = EMPTY_DELTA.kp;
+  if (!raw.scholar) raw.scholar = EMPTY_DELTA.scholar;
+  if (!raw.school) raw.school = EMPTY_DELTA.school;
+  return raw;
+}
+
+async function saveDelta(env, delta) {
+  await env.PREFS.put('delta', JSON.stringify(delta));
+}
+
+async function handleDeltaGet(env) {
+  const delta = await getDelta(env);
+  return jsonResponse(delta);
+}
+
+async function handleDeltaMutate(request, env, pathname) {
+  try {
+    const body = await request.json();
+    const delta = await getDelta(env);
+
+    // POST /delta/kp/add
+    if (pathname === '/delta/kp/add') {
+      if (!body.title || !body.schools || !body.schools.length || !body.body) {
+        return jsonResponse({ error: '标题、学派、正文为必填' }, 400);
+      }
+      const id = 'k' + delta.kp.nextId;
+      const entry = {
+        id, title: body.title, en: body.en || '', scholar: body.scholar || null,
+        year: body.year || '', schools: body.schools, body: body.body,
+        createdAt: new Date().toISOString()
+      };
+      delta.kp.added.push(entry);
+      delta.kp.nextId++;
+      await saveDelta(env, delta);
+      return jsonResponse({ success: true, entry });
+    }
+
+    // POST /delta/kp/delete
+    if (pathname === '/delta/kp/delete') {
+      if (!body.id) return jsonResponse({ error: 'id is required' }, 400);
+      // 增量KP：从added中移除
+      const idx = delta.kp.added.findIndex(e => e.id === body.id);
+      if (idx >= 0) {
+        delta.kp.added.splice(idx, 1);
+      } else {
+        // 基础KP：加入deleted列表
+        if (!delta.kp.deleted.includes(body.id)) delta.kp.deleted.push(body.id);
+      }
+      await saveDelta(env, delta);
+      return jsonResponse({ success: true });
+    }
+
+    // POST /delta/scholar/add
+    if (pathname === '/delta/scholar/add') {
+      if (!body.key || !body.name) return jsonResponse({ error: 'key和name为必填' }, 400);
+      delta.scholar.added[body.key] = {
+        name: body.name, en: body.en || '', nationality: body.nationality || '',
+        affiliation: body.affiliation || '', field: body.field || '',
+        schools: body.schools || [], contribution: body.contribution || ''
+      };
+      await saveDelta(env, delta);
+      return jsonResponse({ success: true, key: body.key });
+    }
+
+    // POST /delta/scholar/delete
+    if (pathname === '/delta/scholar/delete') {
+      if (!body.key) return jsonResponse({ error: 'key is required' }, 400);
+      if (delta.scholar.added[body.key]) {
+        delete delta.scholar.added[body.key];
+      } else {
+        if (!delta.scholar.deleted.includes(body.key)) delta.scholar.deleted.push(body.key);
+      }
+      await saveDelta(env, delta);
+      return jsonResponse({ success: true });
+    }
+
+    // POST /delta/school/add
+    if (pathname === '/delta/school/add') {
+      if (!body.key || !body.title) return jsonResponse({ error: 'key和title为必填' }, 400);
+      delta.school.added[body.key] = {
+        title: body.title, en: body.en || '', accent: body.accent || '#007AFF',
+        group: body.group || 1, summary: body.summary || '',
+        ja: body.ja || '', concepts: [], who: []
+      };
+      await saveDelta(env, delta);
+      return jsonResponse({ success: true, key: body.key });
+    }
+
+    // POST /delta/school/delete
+    if (pathname === '/delta/school/delete') {
+      if (!body.key) return jsonResponse({ error: 'key is required' }, 400);
+      if (delta.school.added[body.key]) {
+        delete delta.school.added[body.key];
+      } else {
+        if (!delta.school.deleted.includes(body.key)) delta.school.deleted.push(body.key);
+      }
+      await saveDelta(env, delta);
+      return jsonResponse({ success: true });
+    }
+
+    return jsonResponse({ error: 'Unknown delta endpoint' }, 404);
   } catch (err) {
     return jsonResponse({ error: err.message }, 500);
   }
