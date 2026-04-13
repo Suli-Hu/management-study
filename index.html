@@ -5221,14 +5221,19 @@ function submitDelta(type) {
 }
 
 function deltaDeleteKP(id, title) {
-  // 校验是否被引用
+  // 校验是否被引用（排除KP自身的归属关系）
   var refs = [];
+  var kp = KNOWLEDGE_MAP[id];
+  var ownSchools = kp ? (kp.schools || []) : [];
+  var ownScholars = kp ? (kp.scholar || '').split(/[,，]/).map(function(s){return s.trim();}).filter(Boolean) : [];
   Object.keys(DATA).forEach(function(k) {
+    if (ownSchools.indexOf(k) >= 0) return; // 排除自身所属学派
     if (DATA[k].concepts && DATA[k].concepts.indexOf(id) >= 0) {
       refs.push('学派「' + DATA[k].title + '」的concepts数组');
     }
   });
   Object.keys(SCHOLARS).forEach(function(k) {
+    if (ownScholars.indexOf(k) >= 0) return; // 排除自身学者
     if (SCHOLARS[k].theories && SCHOLARS[k].theories.indexOf(id) >= 0) {
       refs.push('学者「' + SCHOLARS[k].name + '」的theories数组');
     }
