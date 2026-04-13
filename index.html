@@ -1066,6 +1066,17 @@ mark.sh {
   transition: transform 0.2s ease;
 }
 .cn-swipe-inner .cn-item { margin:0; }
+/* 长按拖拽排序 */
+.drag-ghost {
+  position: fixed; z-index: 1001; pointer-events: none;
+  box-shadow: 0 12px 40px rgba(0,0,0,.15);
+  transform: scale(1.02); opacity: .9;
+  border-radius: 14px; background: var(--bg-primary);
+}
+.drag-placeholder { opacity: 0.2; transition: opacity .15s; }
+.drag-target-above { transform: translateY(8px); transition: transform .2s ease; }
+.drag-target-below { transform: translateY(-8px); transition: transform .2s ease; }
+body.dragging-active { user-select: none; -webkit-user-select: none; }
 /* 恢复隐藏链接（header小字） */
 .restore-hidden-link {
   font-size:11px; color:#999; cursor:pointer; white-space:nowrap;
@@ -1499,7 +1510,6 @@ mark.sh {
       <h1>经营管理学派全览</h1>
       <p>点击任意学派卡片查看详细内容</p>
     </div>
-    <span class="restore-hidden-link" id="btn-restore-hidden" style="display:none" onclick="restoreAllHidden()">恢复隐藏(<span id="hidden-count"></span>)</span>
   </div>
   <div class="tab-nav" id="tab-nav">
     <div class="tab-slider" id="tab-slider"></div>
@@ -1894,6 +1904,7 @@ mark.sh {
         <button class="seg-item" data-l1="OT" onclick="scholarSegSelect('OT')"><span class="seg-dot" style="background:#FF9500"></span>OT</button>
       </div>
       <span class="scholar-search-count" id="scholar-search-count" style="white-space:nowrap"></span>
+      <button class="kp-add-btn" onclick="openAddModal('scholar',{})" title="新增学者">+</button>
       </div>
       <div class="seg-subs" id="scholar-subs"></div>
     </div>
@@ -2539,8 +2550,9 @@ function show(key, accentOverride) {
   var knForSchool = KNOWLEDGE.filter(function(kn) {
     return (kn.schools || []).indexOf(key) >= 0;
   });
-  if (d.concepts && d.concepts.length) {
-    var cOrder = d.concepts;
+  var customOrder = window._deltaOrder && window._deltaOrder['school:' + key];
+  var cOrder = customOrder || (d.concepts && d.concepts.length ? d.concepts : null);
+  if (cOrder) {
     knForSchool.sort(function(a, b) {
       var ai = cOrder.indexOf(a.id), bi = cOrder.indexOf(b.id);
       return (ai < 0 ? 9999 : ai) - (bi < 0 ? 9999 : bi);
@@ -2553,6 +2565,7 @@ function show(key, accentOverride) {
       accent: accent,
       id: 'ci-' + Date.now() + '-' + idx,
       wrapper: 'li',
+      kpId: kn.id,
       scholar: _knScholarLastName(kn)
     });
   }).join("");
@@ -2609,6 +2622,10 @@ function show(key, accentOverride) {
     + '<div class="tags">' + related + '</div>';
 
   document.getElementById("detail-body").innerHTML = html;
+
+  // Init drag reorder on concepts list
+  var conceptsList = document.getElementById("detail-body").querySelector('.concepts');
+  if (conceptsList) _initDragReorder(conceptsList, 'school:' + key);
 
   document.getElementById("view-list").classList.remove("active");
   document.getElementById("view-detail").classList.add("active");
@@ -2678,6 +2695,8 @@ var QUIZ_AUTH_TOKEN = 'quiz_token_2026';
         }
       });
     }
+    // 4. Read custom order
+    if (d.order) window._deltaOrder = d.order;
     window._deltaLoaded = true;
   })
   .catch(function() { window._deltaLoaded = true; /* silent fallback */ });
@@ -4461,22 +4480,22 @@ function renderKnowledgeItem(opts) {
     + '<span class="cn-title">' + titleDisplay + '</span>'
     + schoolHtml
     + jaToggleHtml
-    + '<button class="kp-add-btn" style="font-size:12px;width:22px;height:22px;margin-left:4px;border-color:transparent;color:var(--text-quaternary)" onclick="event.stopPropagation();deltaDeleteKP(\'' + id + '\',\'' + title.replace(/'/g, "\\'") + '\')" title="删除">×</button>'
     + '</div>'
     + '<div class="cn-body">' + bodyHtml + quizHtml + '</div>'
     + '</div>';
 
-  // 左滑隐藏外层（可选）
+  // 左滑删除外层（可选）
   if (opts.swipeable) {
+    var realId = opts.kpId || id;
     var safeTitleAttr = title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-    card = '<div class="cn-swipe-wrap" data-cn-title="' + safeTitleAttr + '">'
-      + '<button class="cn-hide-btn" onclick="hideConcept(this)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M8 2v12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" transform="rotate(45 8 8)"/></svg><span style="font-size:9px;opacity:.7">隐藏</span></button>'
+    card = '<div class="cn-swipe-wrap" data-cn-id="' + realId + '" data-cn-title="' + safeTitleAttr + '">'
+      + '<button class="cn-hide-btn" onclick="deltaDeleteKP(\'' + realId + '\',\'' + safeTitleAttr + '\')"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span style="font-size:9px;opacity:.7">删除</span></button>'
       + '<div class="cn-swipe-inner">' + card + '</div></div>';
   }
 
   // 外层包裹（可选li）
   if (opts.wrapper === 'li') {
-    card = '<li>' + card + '</li>';
+    card = '<li' + (opts.kpId ? ' data-kp-id="' + opts.kpId + '"' : '') + '>' + card + '</li>';
   }
   return card;
 }
@@ -4484,6 +4503,7 @@ function renderKnowledgeItem(opts) {
 function _renderCnItem(c, id, q) {
   return renderKnowledgeItem({
     title: c.title, body: c.body, accent: c.accent, id: id,
+    kpId: c.id,
     school: c.school, schoolKey: c.key, scholar: c.scholar,
     schools: c.schools,
     swipeable: true, quizable: true, query: q
@@ -4495,10 +4515,6 @@ function renderConcepts() {
   var inp    = document.getElementById('concept-search-input');
   var q      = inp ? inp.value.trim().toLowerCase() : '';
   var filtered = list;
-  // 过滤隐藏的知识点
-  if (_hiddenCount > 0) {
-    filtered = filtered.filter(function(c) { return !_hiddenConcepts[c.title]; });
-  }
   // 筛选：L1 大类 + 子分类（兼容 cats 数组）
   if (_cnCats.length > 0) {
     filtered = filtered.filter(function(c) {
@@ -4635,53 +4651,200 @@ function conceptSearchClear() {
 }
 
 // ===== 知识点隐藏功能 =====
-var _hiddenConcepts = {};
-var _hiddenCount = 0;
-
-function hideConcept(btn) {
-  var wrap = btn.closest('.cn-swipe-wrap');
-  if (!wrap) return;
-  var title = wrap.getAttribute('data-cn-title');
-  if (title) _hiddenConcepts[title] = true;
-  _hiddenCount++;
-  // 第1步：立即淡出+缩小（0.1s）
-  var h = wrap.offsetHeight;
-  wrap.classList.add('hiding');
-  // 第2步：淡出后快速收缩高度，让下方内容上移
-  setTimeout(function() {
-    wrap.style.height = h + 'px';
-    wrap.style.overflow = 'hidden';
-    wrap.offsetHeight; // force reflow
-    wrap.style.transition = 'height 0.15s cubic-bezier(0.4,0,1,1), margin 0.15s ease, padding 0.15s ease';
-    wrap.style.height = '0px';
-    wrap.style.marginBottom = '-8px';
-    wrap.style.paddingTop = '0';
-    wrap.style.paddingBottom = '0';
+// 删除KP后的收起动画
+function _collapseSwipeWrap(id) {
+  var wraps = document.querySelectorAll('.cn-swipe-wrap[data-cn-id="' + id + '"]');
+  wraps.forEach(function(wrap) {
+    var h = wrap.offsetHeight;
+    wrap.classList.add('hiding');
     setTimeout(function() {
-      wrap.style.display = 'none';
-    }, 160);
-  }, 100);
-  _updateHiddenUI();
+      wrap.style.height = h + 'px';
+      wrap.style.overflow = 'hidden';
+      wrap.offsetHeight;
+      wrap.style.transition = 'height 0.15s cubic-bezier(0.4,0,1,1), margin 0.15s ease';
+      wrap.style.height = '0px';
+      wrap.style.marginBottom = '-8px';
+      setTimeout(function() { wrap.remove(); }, 160);
+    }, 100);
+  });
 }
 
-function _updateHiddenUI() {
-  var btn = document.getElementById('btn-restore-hidden');
-  var cnt = document.getElementById('hidden-count');
-  if (btn) btn.style.display = _hiddenCount > 0 ? '' : 'none';
-  if (cnt) cnt.textContent = '(' + _hiddenCount + ')';
-  // 更新知识点计数
-  var countEl = document.getElementById('concept-count');
-  if (countEl) {
-    var vis = document.querySelectorAll('.cn-swipe-wrap:not([style*="display: none"])').length;
-    countEl.textContent = vis ? vis + ' 个知识点' : '';
+// ===== Long-press Drag-and-Drop Reorder =====
+var _drag = { state: 'idle', timer: null, ghost: null, placeholder: null, startY: 0, startX: 0, offsetY: 0, items: [], currentIdx: -1, origIdx: -1, container: null, orderKey: null };
+
+function _initDragReorder(container, orderKey) {
+  // orderKey: e.g. 'school:conflict'
+  var children = Array.from(container.children);
+  children.forEach(function(child) {
+    if (child._dragInit) return;
+    child._dragInit = true;
+
+    function onDown(clientY, clientX, e) {
+      if (_drag.state !== 'idle') return;
+      // Don't start drag if clicking on buttons/links
+      if (e && e.target && e.target.closest && (e.target.closest('button') || e.target.closest('a') || e.target.closest('.cn-school') || e.target.closest('.ja-toggle'))) return;
+
+      _drag.startY = clientY;
+      _drag.startX = clientX;
+      _drag.state = 'pending';
+      _drag.timer = setTimeout(function() {
+        if (_drag.state === 'pending') {
+          _startDrag(child, clientY, container, orderKey);
+        }
+      }, 500);
+    }
+
+    function onMoveEarly(clientY, clientX) {
+      if (_drag.state === 'pending') {
+        // If moved more than 10px before 500ms, cancel (it's a scroll or swipe)
+        var dx = Math.abs(clientX - _drag.startX);
+        var dy = Math.abs(clientY - _drag.startY);
+        if (dx > 10 || dy > 10) {
+          clearTimeout(_drag.timer);
+          _drag.state = 'idle';
+        }
+      } else if (_drag.state === 'dragging') {
+        _moveDrag(clientY);
+      }
+    }
+
+    function onUp() {
+      if (_drag.state === 'pending') {
+        clearTimeout(_drag.timer);
+        _drag.state = 'idle';
+      } else if (_drag.state === 'dragging') {
+        _endDrag();
+      }
+    }
+
+    // Touch events
+    child.addEventListener('touchstart', function(e) {
+      onDown(e.touches[0].clientY, e.touches[0].clientX, e);
+    }, { passive: true });
+    child.addEventListener('touchmove', function(e) {
+      onMoveEarly(e.touches[0].clientY, e.touches[0].clientX);
+      if (_drag.state === 'dragging') e.preventDefault();
+    }, { passive: false });
+    child.addEventListener('touchend', onUp);
+
+    // Mouse events
+    child.addEventListener('mousedown', function(e) {
+      if (e.button !== 0) return;
+      onDown(e.clientY, e.clientX, e);
+      if (_drag.state !== 'idle') {
+        var mm = function(ev) { onMoveEarly(ev.clientY, ev.clientX); };
+        var mu = function() { onUp(); document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); };
+        document.addEventListener('mousemove', mm);
+        document.addEventListener('mouseup', mu);
+      }
+    });
+  });
+}
+
+function _startDrag(child, startY, container, orderKey) {
+  _drag.state = 'dragging';
+  _drag.container = container;
+  _drag.orderKey = orderKey;
+  document.body.classList.add('dragging-active');
+
+  // Vibrate on mobile for haptic feedback
+  if (navigator.vibrate) navigator.vibrate(30);
+
+  // Collect all sibling children
+  _drag.items = Array.from(container.children);
+  _drag.origIdx = _drag.items.indexOf(child);
+  _drag.currentIdx = _drag.origIdx;
+
+  // Create ghost (clone of the card)
+  var rect = child.getBoundingClientRect();
+  _drag.offsetY = startY - rect.top;
+  var ghost = child.cloneNode(true);
+  ghost.className = 'drag-ghost';
+  ghost.style.width = rect.width + 'px';
+  ghost.style.left = rect.left + 'px';
+  ghost.style.top = (startY - _drag.offsetY) + 'px';
+  document.body.appendChild(ghost);
+  _drag.ghost = ghost;
+
+  // Mark original as placeholder
+  child.classList.add('drag-placeholder');
+  _drag.placeholder = child;
+}
+
+function _moveDrag(clientY) {
+  if (!_drag.ghost) return;
+  _drag.ghost.style.top = (clientY - _drag.offsetY) + 'px';
+
+  // Find which item we're hovering over
+  var ghostCenter = clientY;
+  var newIdx = _drag.currentIdx;
+
+  for (var i = 0; i < _drag.items.length; i++) {
+    if (i === _drag.origIdx) continue;
+    var item = _drag.items[i];
+    var r = item.getBoundingClientRect();
+    var itemCenter = r.top + r.height / 2;
+
+    if (i < _drag.origIdx && ghostCenter < itemCenter) {
+      newIdx = i;
+      break;
+    }
+    if (i > _drag.origIdx && ghostCenter > itemCenter) {
+      newIdx = i;
+    }
+  }
+
+  if (newIdx !== _drag.currentIdx) {
+    _drag.currentIdx = newIdx;
+    // Move placeholder in DOM
+    if (newIdx < _drag.origIdx) {
+      _drag.container.insertBefore(_drag.placeholder, _drag.items[newIdx]);
+    } else {
+      var after = _drag.items[newIdx];
+      if (after.nextSibling) {
+        _drag.container.insertBefore(_drag.placeholder, after.nextSibling);
+      } else {
+        _drag.container.appendChild(_drag.placeholder);
+      }
+    }
+    // Refresh items array after DOM change
+    _drag.items = Array.from(_drag.container.children);
+    _drag.origIdx = _drag.items.indexOf(_drag.placeholder);
   }
 }
 
-function restoreAllHidden() {
-  _hiddenConcepts = {};
-  _hiddenCount = 0;
-  _updateHiddenUI();
-  renderConcepts();
+function _endDrag() {
+  if (_drag.ghost) {
+    _drag.ghost.remove();
+    _drag.ghost = null;
+  }
+  if (_drag.placeholder) {
+    _drag.placeholder.classList.remove('drag-placeholder');
+    _drag.placeholder = null;
+  }
+  document.body.classList.remove('dragging-active');
+
+  // Collect new order of IDs
+  var newItems = Array.from(_drag.container.children);
+  var ids = newItems.map(function(w) {
+    var sw = w.querySelector('.cn-swipe-wrap');
+    if (sw) return sw.getAttribute('data-cn-id');
+    return w.getAttribute('data-kp-id');
+  }).filter(Boolean);
+
+  // Save to KV if orderKey is set and order actually changed
+  if (_drag.orderKey && ids.length > 0) {
+    if (!window._deltaOrder) window._deltaOrder = {};
+    window._deltaOrder[_drag.orderKey] = ids;
+    _deltaFetch('/delta/order', { key: _drag.orderKey, ids: ids }).catch(function(err) {
+      console.error('Order save failed:', err);
+    });
+  }
+
+  _drag.state = 'idle';
+  _drag.items = [];
+  _drag.currentIdx = -1;
+  _drag.origIdx = -1;
 }
 
 // 左滑手势（触摸 + 鼠标）
@@ -4898,6 +5061,11 @@ function renderHomeGrid() {
                   '</div>';
       _appendSection(themePanel, label, sec.color, keys);
     });
+    // 新增学派按钮
+    var addBtn = document.createElement('div');
+    addBtn.style.cssText = 'text-align:center;padding:16px 0';
+    addBtn.innerHTML = '<button class="kp-add-btn" style="width:32px;height:32px;font-size:18px" onclick="openAddModal(\'school\',{})" title="新增学派">+</button>';
+    themePanel.appendChild(addBtn);
   }
 
 }
@@ -4984,10 +5152,25 @@ function submitDelta(type) {
     if (!meta['标题'] || !meta['学派'] || !body || body.length < 10) {
       alert('标题、学派、正文（至少10字）为必填'); btn.disabled = false; btn.textContent = '保存'; return;
     }
+    // 校验学派是否存在
+    var schoolKeys = meta['学派'].split(/[,，]/).map(function(s) { return s.trim(); }).filter(Boolean);
+    var unknownSchools = schoolKeys.filter(function(k) { return !DATA[k]; });
+    if (unknownSchools.length) {
+      alert('学派「' + unknownSchools.join('、') + '」不存在，请先在学派全览页新增学派'); btn.disabled = false; btn.textContent = '保存'; return;
+    }
+    // 校验学者是否存在（如果填写了的话）
+    var scholarVal = meta['学者'] || '';
+    if (scholarVal) {
+      var scholarKeys = scholarVal.split(/[,，]/).map(function(s) { return s.trim(); }).filter(Boolean);
+      var unknownScholars = scholarKeys.filter(function(k) { return !SCHOLARS[k]; });
+      if (unknownScholars.length) {
+        alert('学者「' + unknownScholars.join('、') + '」不存在，请先在学者目录页新增学者'); btn.disabled = false; btn.textContent = '保存'; return;
+      }
+    }
     payload = {
-      title: meta['标题'], en: meta['en'] || '', scholar: meta['学者'] || null,
+      title: meta['标题'], en: meta['en'] || '', scholar: scholarVal || null,
       year: meta['年份'] || '',
-      schools: meta['学派'].split(/[,，]/).map(function(s) { return s.trim(); }).filter(Boolean),
+      schools: schoolKeys,
       body: body
     };
     endpoint = '/delta/kp/add';
@@ -5034,12 +5217,34 @@ function submitDelta(type) {
 }
 
 function deltaDeleteKP(id, title) {
-  if (!confirm('确定删除「' + title + '」？')) return;
+  // 校验是否被引用
+  var refs = [];
+  Object.keys(DATA).forEach(function(k) {
+    if (DATA[k].concepts && DATA[k].concepts.indexOf(id) >= 0) {
+      refs.push('学派「' + DATA[k].title + '」的concepts数组');
+    }
+  });
+  Object.keys(SCHOLARS).forEach(function(k) {
+    if (SCHOLARS[k].theories && SCHOLARS[k].theories.indexOf(id) >= 0) {
+      refs.push('学者「' + SCHOLARS[k].name + '」的theories数组');
+    }
+  });
+  KNOWLEDGE.forEach(function(kn) {
+    if (kn.id !== id && kn.body && kn.body.indexOf(title) >= 0) {
+      refs.push('知识点「' + kn.title + '」的正文');
+    }
+  });
+  if (refs.length) {
+    alert('无法在网页端删除：「' + title + '」被以下位置引用，请在Claude Code中操作：\n\n' + refs.join('\n'));
+    return;
+  }
+  if (!confirm('确定删除「' + title + '」？此操作不可撤销。')) return;
   _deltaFetch('/delta/kp/delete', { id: id }).then(function(res) {
     if (res.error) { alert('删除失败: ' + res.error); return; }
     KNOWLEDGE = KNOWLEDGE.filter(function(k) { return k.id !== id; });
     delete KNOWLEDGE_MAP[id];
-    _reRenderAfterDelta();
+    _collapseSwipeWrap(id);
+    updateTabCounts();
   }).catch(function(err) { alert('网络错误: ' + err.message); });
 }
 

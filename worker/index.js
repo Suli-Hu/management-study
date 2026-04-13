@@ -481,6 +481,7 @@ async function getDelta(env) {
   if (!raw.kp) raw.kp = EMPTY_DELTA.kp;
   if (!raw.scholar) raw.scholar = EMPTY_DELTA.scholar;
   if (!raw.school) raw.school = EMPTY_DELTA.school;
+  if (!raw.order) raw.order = {};
   return raw;
 }
 
@@ -574,6 +575,17 @@ async function handleDeltaMutate(request, env, pathname) {
       } else {
         if (!delta.school.deleted.includes(body.key)) delta.school.deleted.push(body.key);
       }
+      await saveDelta(env, delta);
+      return jsonResponse({ success: true });
+    }
+
+    // POST /delta/order — 保存自定义排序
+    if (pathname === '/delta/order') {
+      if (!body.key || !body.ids || !Array.isArray(body.ids)) {
+        return jsonResponse({ error: 'key和ids数组为必填' }, 400);
+      }
+      if (!delta.order) delta.order = {};
+      delta.order[body.key] = body.ids;
       await saveDelta(env, delta);
       return jsonResponse({ success: true });
     }
