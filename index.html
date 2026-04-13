@@ -2566,7 +2566,8 @@ function show(key, accentOverride) {
       id: 'ci-' + Date.now() + '-' + idx,
       wrapper: 'li',
       kpId: kn.id,
-      scholar: _knScholarLastName(kn)
+      scholar: _knScholarLastName(kn),
+      swipeable: true
     });
   }).join("");
   // 从 KNOWLEDGE 派生关联学派：该学派知识点的其他学派tag
@@ -2625,7 +2626,10 @@ function show(key, accentOverride) {
 
   // Init drag reorder on concepts list
   var conceptsList = document.getElementById("detail-body").querySelector('.concepts');
-  if (conceptsList) _initDragReorder(conceptsList, 'school:' + key);
+  if (conceptsList) {
+    _initSwipe(conceptsList);
+    _initDragReorder(conceptsList, 'school:' + key);
+  }
 
   document.getElementById("view-list").classList.remove("active");
   document.getElementById("view-detail").classList.add("active");
