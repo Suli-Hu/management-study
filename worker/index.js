@@ -516,6 +516,30 @@ async function handleDeltaMutate(request, env, pathname) {
       return jsonResponse({ success: true, entry });
     }
 
+    // POST /delta/kp/update
+    if (pathname === '/delta/kp/update') {
+      if (!body.id || !body.title || !body.schools || !body.body) {
+        return jsonResponse({ error: 'id、title、schools、body为必填' }, 400);
+      }
+      const entry = {
+        id: body.id, title: body.title, en: body.en || '', scholar: body.scholar || null,
+        year: body.year || '', schools: body.schools, body: body.body,
+        updatedAt: new Date().toISOString()
+      };
+      // 增量KP：直接更新
+      const idx = delta.kp.added.findIndex(e => e.id === body.id);
+      if (idx >= 0) {
+        delta.kp.added[idx] = { ...delta.kp.added[idx], ...entry };
+      } else {
+        // 基础KP：标记删除 + 新增替换版
+        if (!delta.kp.deleted.includes(body.id)) delta.kp.deleted.push(body.id);
+        entry.createdAt = new Date().toISOString();
+        delta.kp.added.push(entry);
+      }
+      await saveDelta(env, delta);
+      return jsonResponse({ success: true, entry });
+    }
+
     // POST /delta/kp/delete
     if (pathname === '/delta/kp/delete') {
       if (!body.id) return jsonResponse({ error: 'id is required' }, 400);
