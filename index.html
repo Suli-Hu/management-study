@@ -416,20 +416,22 @@ body {
   padding: 5px 13px;
   border-radius: 20px;
   font-size: 12px;
-  background: rgba(255,255,255,0.72);
-  border: 1px solid rgba(255,255,255,0.9);
-  color: var(--text-tertiary);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--text-quaternary);
 }
 .chip-link {
   cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04);
-  transition: box-shadow 0.15s, background 0.15s, color 0.15s;
+  background: rgba(255,255,255,0.85);
+  border: 1px solid rgba(0,0,0,0.06);
+  color: var(--text-secondary);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  transition: box-shadow 0.15s, background 0.15s, transform 0.15s;
 }
 .chip-link:hover {
-  background: var(--bg-secondary);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.13), 0 0 0 1px rgba(0,0,0,0.06);
+  background: var(--bg-primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transform: translateY(-1px);
   color: var(--text-primary);
 }
 
@@ -1135,9 +1137,9 @@ mark.sh {
   transform:scale(0.95);
   transition:opacity 0.1s ease, transform 0.1s ease;
 }
-/* 隐藏按钮：气泡浮起动画 */
+/* 删除按钮：左侧红色气泡（右滑出现） */
 .cn-hide-btn {
-  position:absolute; right:8px; top:50%;
+  position:absolute; left:8px; top:50%;
   transform:translateY(-30%) scale(0.7);
   width:44px; height:44px; border-radius:12px;
   background:rgba(255,59,48,0.12); color:#FF3B30; border:none;
@@ -1162,9 +1164,9 @@ mark.sh {
   transform:translateY(-50%) scale(1.08);
 }
 .cn-hide-btn:active { transform:translateY(-50%) scale(0.92); }
-/* 编辑按钮：左侧黄色气泡 */
+/* 编辑按钮：右侧黄色气泡（左滑出现） */
 .cn-edit-btn {
-  position:absolute; left:8px; top:50%;
+  position:absolute; right:8px; top:50%;
   transform:translateY(-30%) scale(0.7);
   width:44px; height:44px; border-radius:12px;
   background:rgba(255,149,0,0.12); color:#FF9500; border:none;
@@ -1202,26 +1204,21 @@ body.dragging-active { user-select: none; -webkit-user-select: none; }
 }
 .restore-hidden-link:hover { color:#FF3B30; }
 .cn-item {
-  background: rgba(255,255,255,0.65);
-  border: 1px solid rgba(255,255,255,0.9);
-  border-left: 3px solid var(--accent, #1D9E75);
-  border-radius: 14px; overflow: hidden;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 1px 6px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.85);
-  transition: background 0.25s, box-shadow 0.25s,
-              transform 0.25s cubic-bezier(0.4,0,0.2,1);
+  background: white;
+  border: 1px solid rgba(0,0,0,0.04);
+  border-left: 1px solid rgba(0,0,0,0.04);
+  border-radius: 12px; overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s ease;
 }
-.cn-item:not(.open):hover {
-  transform: translateY(-2px);
-  background: rgba(255,255,255,0.85);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.08),
-              0 0 0 1px var(--accent, #1D9E75),
-              inset 0 1px 0 rgba(255,255,255,0.95);
+.cn-item:not(.open):not(.kp-selected):hover {
+  transform: translateY(-1px);
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 .cn-item.open {
-  background: rgba(255,255,255,0.88);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.09), inset 0 1px 0 #fff;
+  background: white;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
 }
 .cn-header {
   display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
@@ -1456,14 +1453,14 @@ body.dragging-active { user-select: none; -webkit-user-select: none; }
 .cn-item.open .ja-toggle.active { opacity: 1; }
 /* Delta CRUD: add/delete buttons & modal */
 .kp-add-btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 26px; height: 26px; border-radius: 50%;
-  border: 1.5px solid var(--text-quaternary); background: transparent;
-  color: var(--text-tertiary); font-size: 16px; font-weight: 300;
-  margin-left: 8px; cursor: pointer; vertical-align: middle;
-  -webkit-tap-highlight-color: transparent; transition: opacity .15s;
+  display: inline; border: none; background: none; padding: 0;
+  color: var(--accent, #007AFF); font-size: 12px; font-weight: var(--weight-regular);
+  margin-left: 8px; cursor: pointer; vertical-align: baseline;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .15s;
 }
-.kp-add-btn:hover { opacity: .7; }
+.kp-add-btn:hover { opacity: .6; text-decoration: underline; }
+.kp-add-btn:active { opacity: .4; }
 .delta-modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
   background: var(--bg-primary); z-index: 1000;
@@ -2153,7 +2150,7 @@ body.dragging-active { user-select: none; -webkit-user-select: none; }
         <button class="seg-item" data-l1="OT" onclick="scholarSegSelect('OT')"><span class="seg-dot" style="background:#FF9500"></span>OT</button>
       </div>
       <span class="scholar-search-count" id="scholar-search-count" style="white-space:nowrap"></span>
-      <button class="kp-add-btn" onclick="openAddModal('scholar',{})" title="新增学者">+</button>
+      <button class="kp-add-btn" onclick="openAddModal('scholar',{})" title="新增学者">· 新增</button>
       </div>
       <div class="seg-subs" id="scholar-subs"></div>
     </div>
@@ -2352,7 +2349,7 @@ function showScholar(key) {
     + (function(){
         var knForScholar = KNOWLEDGE.filter(function(kn) { return _knScholars(kn).indexOf(key) >= 0; });
         if (!knForScholar.length) return '';
-        return '<div class="sec-title">代表理论<button class="kp-add-btn" onclick="openAddModal(\'kp\',{scholar:\'' + key.replace(/'/g, "\\'") + '\'})" title="新增知识点">+</button></div><ul class="concepts" style="margin-bottom:20px">'
+        return '<div class="sec-title">代表理论<button class="kp-add-btn" onclick="openAddModal(\'kp\',{scholar:\'' + key.replace(/'/g, "\\'") + '\'})" title="新增知识点">· 新增</button></div><ul class="concepts" style="margin-bottom:20px">'
           + knForScholar.map(function(kn, idx) {
               return renderKnowledgeItem({
                 title: _knFullTitle(kn),
@@ -2952,7 +2949,7 @@ function show(key, accentOverride) {
     + '<hr class="divider">'
     + '<div class="sec-title">代表人物</div>'
     + '<div class="chips" style="margin-bottom:20px">' + who + '</div>'
-    + '<div class="sec-title">核心概念<button class="kp-add-btn" onclick="openAddModal(\'kp\',{school:\'' + key.replace(/'/g, "\\'") + '\'})" title="新增知识点">+</button></div>'
+    + '<div class="sec-title">核心概念<button class="kp-add-btn" onclick="openAddModal(\'kp\',{school:\'' + key.replace(/'/g, "\\'") + '\'})" title="新增知识点">· 新增</button></div>'
     + '<ul class="concepts" style="margin-bottom:20px">' + concepts + '</ul>'
     + (d.context ? '<hr class="divider"><div class="sec-title">理论背景与局限性</div><p class="influence" style="margin-bottom:20px">' + d.context + '</p>' : '')
     + '<hr class="divider">'
@@ -5276,25 +5273,34 @@ function _initSwipe(container) {
       editBtn.style.transform = 'translateY(' + ty + '%) scale(' + sc + ')';
       editBtn.style.pointerEvents = ratio > 0.5 ? 'auto' : 'none';
     }
-    var sy = 0, dirLocked = false, isVertical = false;
-    function onStart(x, y) { sx = x; sy = y; cx = 0; swiping = true; dirLocked = false; isVertical = false; wrap.classList.add('swiping'); }
+    var sy = 0, dirLocked = false, isVertical = false, openDir = 0; // openDir: -1=left(edit), +1=right(delete)
+    function onStart(x, y) {
+      sx = x; sy = y; cx = 0; swiping = true; dirLocked = false; isVertical = false;
+      wrap.classList.add('swiping');
+    }
     function onMove(x, y) {
       if (!swiping || isVertical) return;
-      // 方向锁定：前15px内判断是水平还是垂直
       if (!dirLocked) {
         var dx = Math.abs(x - sx);
         var dy = Math.abs(y - sy);
-        if (dx < 8 && dy < 8) return; // 还没移动够，不判断
+        if (dx < 8 && dy < 8) return;
         dirLocked = true;
         if (dy > dx) { isVertical = true; swiping = false; wrap.classList.remove('swiping'); return; }
       }
       cx = x - sx;
-      if (cx < -60) cx = -60;
-      if (cx > 60) cx = 60;
+      // 已打开状态下回划：只允许关闭方向，不触发反方向
+      if (opened) {
+        if (openDir < 0) { cx = Math.max(cx, -60); cx = Math.min(cx, 0); } // 左开→只能往右关
+        else if (openDir > 0) { cx = Math.min(cx, 60); cx = Math.max(cx, 0); } // 右开→只能往左关
+      } else {
+        if (cx < -60) cx = -60;
+        if (cx > 60) cx = 60;
+      }
       inner.style.transition = 'none';
       inner.style.transform = 'translateX(' + cx + 'px)';
-      if (cx < 0) { _updateBtn(Math.abs(cx)); _updateEditBtn(0); }
-      else if (cx > 0) { _updateEditBtn(cx); _updateBtn(0); }
+      // 左滑(cx<0)→右侧出现编辑(editBtn)，右滑(cx>0)→左侧出现删除(hideBtn)
+      if (cx < 0) { _updateEditBtn(Math.abs(cx)); _updateBtn(0); }
+      else if (cx > 0) { _updateBtn(cx); _updateEditBtn(0); }
       else { _updateBtn(0); _updateEditBtn(0); }
     }
     function onEnd() {
@@ -5302,14 +5308,15 @@ function _initSwipe(container) {
       inner.style.transition = 'transform 0.2s ease';
       if (cx < -28) {
         inner.style.transform = 'translateX(-60px)';
-        opened = true;
-        _updateBtn(60);
+        opened = true; openDir = -1;
+        _updateEditBtn(60);
       } else if (cx > 28) {
         inner.style.transform = 'translateX(60px)';
-        opened = true;
-        _updateEditBtn(60);
+        opened = true; openDir = 1;
+        _updateBtn(60);
       } else {
         _dismissSmooth(wrap, inner);
+        opened = false; openDir = 0;
       }
     }
     function resetSwipe() {
@@ -5331,7 +5338,7 @@ function _initSwipe(container) {
       }
       inn.style.transition = 'transform 0.2s ease';
       inn.style.transform = 'translateX(0)';
-      opened = false;
+      opened = false; openDir = 0;
       setTimeout(function() {
         w.classList.remove('swiping');
         if (hideBtn) hideBtn.style.transition = '';
@@ -5502,7 +5509,7 @@ function renderHomeGrid() {
     // 新增学派按钮
     var addBtn = document.createElement('div');
     addBtn.style.cssText = 'text-align:center;padding:16px 0';
-    addBtn.innerHTML = '<button class="kp-add-btn" style="width:32px;height:32px;font-size:18px" onclick="openAddModal(\'school\',{})" title="新增学派">+</button>';
+    addBtn.innerHTML = '<button class="kp-add-btn" onclick="openAddModal(\'school\',{})" title="新增学派">· 新增学派</button>';
     themePanel.appendChild(addBtn);
   }
 
