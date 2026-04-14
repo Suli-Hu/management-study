@@ -2933,14 +2933,8 @@ var SCHOLARS = {
     schools: ["冲突管理论"],
     theories: [],
     contribution: "合作—竞争理论和建设性冲突vs破坏性冲突的先驱研究者"
-  }
-
-  robbins: {
-    name: "斯蒂芬·P·罗宾斯", en: "Stephen P. Robbins",
-    nationality: "美国", affiliation: "圣地亚哥州立大学（San Diego State University，名誉教授）",
-    field: "组织行为学、管理学", schools: ["conflict"],
-    theories: [], contribution: "美国组织行为学领域最具影响力的教科书作者之一。其代表作《Organizational Behavior》和《Management》被全球数百所商学院采用，发行量在管理学教材中位居世界第一。在冲突管理领域，Robbins 并非原创理论家，而是理论整合者与系统化者：他把几十年的冲突研究整理成清晰的教学框架，包括冲突观的三阶段演进（传统理论 → 行为科学理论 → 相互作用理论）、功能性 vs 逆功能性冲突的规范性判断、以及冲突过程四阶段模型。他的贡献是让冲突管理从分散的研究变成一门可系统教学的学科，也是日本 MBA 入试备考中无法绕开的人物。"
   },
+
 };
 
 var NAME_TO_KEY = {
