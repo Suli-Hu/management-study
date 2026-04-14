@@ -1580,6 +1580,46 @@ body.dragging-active { user-select: none; -webkit-user-select: none; }
 </head>
 <body>
 
+<!-- 密码锁屏 -->
+<div id="auth-gate" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:var(--bg-primary);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px">
+  <div style="font-size:18px;font-weight:var(--weight-semibold);color:var(--text-primary)">经营管理学派全览</div>
+  <div style="font-size:12px;color:var(--text-quaternary)">请输入密码</div>
+  <input id="auth-pw" type="password" placeholder="密码" autofocus
+    style="width:240px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:14px;text-align:center;color:var(--text-primary);background:var(--bg-primary)"
+    onkeydown="if(event.key==='Enter')_authCheck()">
+  <button onclick="_authCheck()"
+    style="width:240px;padding:10px;border:none;border-radius:10px;background:#34C759;color:white;font-size:14px;font-weight:var(--weight-semibold);cursor:pointer">进入</button>
+  <div id="auth-err" style="font-size:12px;color:#FF3B30;min-height:18px"></div>
+</div>
+<script>
+(function(){
+  var HASH = 'e2ad2e751cb985a879053b3c8966bdaa0dca34f693763719182c90673eae8af0';
+  function _sha256(str) {
+    var encoder = new TextEncoder();
+    return crypto.subtle.digest('SHA-256', encoder.encode(str)).then(function(buf) {
+      return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+    });
+  }
+  // Check localStorage cache
+  if (localStorage.getItem('auth_ok') === '1') {
+    document.getElementById('auth-gate').style.display = 'none';
+  }
+  window._authCheck = function() {
+    var pw = document.getElementById('auth-pw').value;
+    _sha256(pw).then(function(hash) {
+      if (hash === HASH) {
+        localStorage.setItem('auth_ok', '1');
+        document.getElementById('auth-gate').style.display = 'none';
+      } else {
+        document.getElementById('auth-err').textContent = '密码错误';
+        document.getElementById('auth-pw').value = '';
+        document.getElementById('auth-pw').focus();
+      }
+    });
+  };
+})();
+</script>
+
 <div class="bg-grid"></div>
 
 <div class="header">
