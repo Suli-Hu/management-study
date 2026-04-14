@@ -2638,6 +2638,11 @@ function findScholarKey(label) {
 }
 
 function show(key, accentOverride) {
+  // 等待delta加载完成再渲染（避免已删除的KP闪现）
+  if (window._deltaReady && !window._deltaLoaded) {
+    window._deltaReady.then(function() { show(key, accentOverride); });
+    return;
+  }
   var d = DATA[key];
   if (!d) return;
   var accent = accentOverride || d.accent;
@@ -4633,6 +4638,10 @@ function _renderCnItem(c, id, q) {
 }
 
 function renderConcepts() {
+  if (window._deltaReady && !window._deltaLoaded) {
+    window._deltaReady.then(function() { renderConcepts(); });
+    return;
+  }
   var list   = _buildConceptsIndex();
   var inp    = document.getElementById('concept-search-input');
   var q      = inp ? inp.value.trim().toLowerCase() : '';
