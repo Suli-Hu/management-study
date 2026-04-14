@@ -5577,10 +5577,12 @@ function submitDelta(type) {
     if (!titleVal || !schoolKeys.length || !bodyVal || bodyVal.length < 10) {
       alert('标题、学派（至少选一个）、正文（至少10字）为必填'); btn.disabled = false; btn.textContent = '保存'; return;
     }
-    // 意义/局限作为独立评价标签拼接（前面加◆分隔）
+    // 意义/局限：独立◆标签，手风琴/平铺模式下用<br>分隔确保跳出折叠组
     var fullBody = bodyVal;
-    if (meritVal) fullBody += (fullBody.slice(-1) === '>' ? '' : '') + '◆意义——' + meritVal.replace(/\n/g, '');
-    if (limitVal) fullBody += '◆局限——' + limitVal.replace(/\n/g, '');
+    var hasBr = fullBody.indexOf('<br>') >= 0;
+    var sep = hasBr ? '<br>' : '';
+    if (meritVal) fullBody += sep + '◆意义——' + meritVal.replace(/\n/g, '');
+    if (limitVal) fullBody += sep + '◆局限——' + limitVal.replace(/\n/g, '');
 
     payload = {
       title: titleVal, en: enVal.trim(), scholar: scholarVal || null,
