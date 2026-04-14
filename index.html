@@ -4543,9 +4543,18 @@ function _formatGroupedBody(lead, items, accent, rgb, numMap) {
       // 检测是否为评价性语义标签项（意义/局限等）→ 跳出折叠组
       var em = item.match(/^[①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮]\s*([^：:——]+)/);
       var evalName = em ? em[1].replace(/[（(].*/,'').trim() : '';
+      // 也检测◆开头的评价标签（从表单提交的意义/局限）
+      if (!evalName) {
+        var dm = item.match(/^◆\s*([^：:——]+)/);
+        evalName = dm ? dm[1].replace(/[（(].*/,'').trim() : '';
+      }
       if (inGroup && _evalWords[evalName]) {
         html += '</div></div>';
         inGroup = false;
+      }
+      // ◆开头的item转为圆圈数字格式给_renderBodyCard处理
+      if (/^◆/.test(item)) {
+        item = '①' + item.slice(1);
       }
       html += _renderBodyCard(item, accent, rgb, numMap);
     }
