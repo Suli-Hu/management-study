@@ -375,32 +375,6 @@ Three-Component Model of Commitment
 
 ---
 
-## 学派key和学者key查找
-
-### 学派key
-定义在 `data.js` 的 `DATA` 对象中（搜索 `var DATA = {`）。格式：
-```javascript
-DATA = {
-  scientific: { title: "科学管理学派", ... },
-  conflict:   { title: "冲突管理论", ... },
-  ...
-}
-```
-
-### 学者key
-定义在 `data.js` 的 `SCHOLARS` 对象中（搜索 `var SCHOLARS = {`）。格式：
-```javascript
-SCHOLARS = {
-  porter: { name: "迈克尔·波特", en: "Michael E. Porter", ... },
-  simon:  { name: "赫伯特·西蒙", en: "Herbert Simon", ... },
-  ...
-}
-```
-
-如果需要的学者不存在，用户需要先在网页端学者目录页通过"+"按钮新增学者。
-
----
-
 ## 内容质量标准
 
 1. **学术准确**：基于教材和学术文献，不能凭感觉写
