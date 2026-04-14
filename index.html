@@ -2390,7 +2390,7 @@ function _titleHtml(title, accent, defaultSub, scholarName, jpName) {
       }
     });
     if (year) {
-      var shortYear = year.replace(/\d{4}/g, function(y) { return '\'' + y.slice(-2); });
+      var shortYear = year.replace(/\d{4}(s?)/g, function(m, s) { return '\'' + m.slice(2,4) + s; });
       html += '<span class="year-b">' + shortYear + '</span>';
     }
   }
