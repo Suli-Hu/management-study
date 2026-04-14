@@ -759,13 +759,14 @@ body {
     transition: background 0.2s, box-shadow 0.2s;
   }
   .detail-left .cn-item.kp-selected {
-    background: rgba(255,255,255,0.95);
-    box-shadow: 0 0 0 2px var(--accent, #1D9E75), 0 4px 16px rgba(0,0,0,0.08);
+    background: rgba(0,0,0,0.03);
+    box-shadow: inset 4px 0 0 var(--accent, #1D9E75);
+    border-radius: 0 12px 12px 0;
     transform: none;
   }
   .detail-left .cn-item:not(.kp-selected):hover {
     transform: none;
-    background: rgba(255,255,255,0.8);
+    background: rgba(0,0,0,0.02);
   }
   /* 右栏KP详情样式 */
   .kp-panel-header {
@@ -1540,12 +1541,25 @@ body.dragging-active { user-select: none; -webkit-user-select: none; }
 .dm-tab-panel textarea[rows="2"] { min-height: 50px; margin-bottom: 10px; }
 .dm-tab-panel textarea:focus, .dm-tab-panel input:focus { outline: none; border-color: var(--text-quaternary); }
 .dm-item-pair {
-  display: flex; gap: 8px; padding: 8px 0;
+  display: flex; gap: 8px; padding: 8px 0; position: relative;
   border-bottom: 1px solid var(--border-light);
 }
 .dm-item-pair:last-child { border-bottom: none; }
 .dm-item-pair .dm-item-name { flex: 0 0 38%; font-weight: var(--weight-semibold); font-size: 12.5px; }
 .dm-item-pair .dm-item-desc { flex: 1; font-size: 12.5px; }
+.dm-item-del {
+  position: absolute; top: 4px; right: -4px; width: 18px; height: 18px;
+  border-radius: 50%; border: none; background: rgba(255,59,48,.08); color: #FF3B30;
+  font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .15s;
+}
+.dm-item-pair:hover .dm-item-del, .dm-acc-group:hover > .dm-group-del, .dm-cmp-col:hover > .dm-group-del { opacity: 1; }
+.dm-group-del {
+  position: absolute; top: 6px; right: 6px; width: 20px; height: 20px;
+  border-radius: 50%; border: none; background: rgba(255,59,48,.08); color: #FF3B30;
+  font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .15s;
+}
 .dm-add-btn {
   font-size: 11px; color: var(--text-quaternary); background: none; border: 1px dashed var(--border);
   border-radius: 8px; cursor: pointer; padding: 6px 0; width: 100%; margin-top: 6px;
@@ -1554,7 +1568,7 @@ body.dragging-active { user-select: none; -webkit-user-select: none; }
 .dm-add-btn:hover { color: var(--text-tertiary); border-color: var(--text-quaternary); }
 .dm-acc-group, .dm-cmp-col {
   border: 1px solid var(--border); border-radius: 12px; padding: 14px;
-  margin-bottom: 10px; background: var(--bg-secondary);
+  margin-bottom: 10px; background: var(--bg-secondary); position: relative;
 }
 .delta-modal-footer {
   padding: 14px 20px; border-top: 1px solid var(--border);
@@ -5262,9 +5276,18 @@ function _initSwipe(container) {
       editBtn.style.transform = 'translateY(' + ty + '%) scale(' + sc + ')';
       editBtn.style.pointerEvents = ratio > 0.5 ? 'auto' : 'none';
     }
-    function onStart(x) { sx = x; cx = 0; swiping = true; wrap.classList.add('swiping'); }
-    function onMove(x) {
-      if (!swiping) return;
+    var sy = 0, dirLocked = false, isVertical = false;
+    function onStart(x, y) { sx = x; sy = y; cx = 0; swiping = true; dirLocked = false; isVertical = false; wrap.classList.add('swiping'); }
+    function onMove(x, y) {
+      if (!swiping || isVertical) return;
+      // 方向锁定：前15px内判断是水平还是垂直
+      if (!dirLocked) {
+        var dx = Math.abs(x - sx);
+        var dy = Math.abs(y - sy);
+        if (dx < 8 && dy < 8) return; // 还没移动够，不判断
+        dirLocked = true;
+        if (dy > dx) { isVertical = true; swiping = false; wrap.classList.remove('swiping'); return; }
+      }
       cx = x - sx;
       if (cx < -60) cx = -60;
       if (cx > 60) cx = 60;
@@ -5317,17 +5340,17 @@ function _initSwipe(container) {
     }
     // 触摸事件
     inner.addEventListener('touchstart', function(e) {
-      onStart(e.touches[0].clientX);
+      onStart(e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: true });
     inner.addEventListener('touchmove', function(e) {
-      onMove(e.touches[0].clientX);
+      onMove(e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: true });
     inner.addEventListener('touchend', onEnd);
     // 鼠标事件
     inner.addEventListener('mousedown', function(e) {
       if (e.target.closest('.cn-school')) return;
-      onStart(e.clientX);
-      function mm(ev) { onMove(ev.clientX); }
+      onStart(e.clientX, e.clientY);
+      function mm(ev) { onMove(ev.clientX, ev.clientY); }
       function mu() { onEnd(); document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); }
       document.addEventListener('mousemove', mm);
       document.addEventListener('mouseup', mu);
@@ -5531,20 +5554,22 @@ function _switchDmTab(tab) {
   document.getElementById('dm-tab-' + tab).style.display = 'block';
   document.querySelector('.dm-tab[data-tab="' + tab + '"]').classList.add('active');
 }
+var _itemDelBtn = '<button class="dm-item-del" onclick="this.parentElement.remove()" title="删除">×</button>';
+var _groupDelBtn = '<button class="dm-group-del" onclick="this.parentElement.remove()" title="删除组">×</button>';
+
 function _addDmFlatItem() {
   var container = document.getElementById('dm-flat-items');
-  var n = container.querySelectorAll('.dm-item-pair').length + 1;
   var div = document.createElement('div');
   div.className = 'dm-item-pair';
-  div.innerHTML = '<input class="dm-item-name" placeholder="条目名"><input class="dm-item-desc" placeholder="描述">';
+  div.innerHTML = '<input class="dm-item-name" placeholder="条目名"><input class="dm-item-desc" placeholder="描述">' + _itemDelBtn;
   container.appendChild(div);
 }
 function _addDmAccGroup() {
   var container = document.getElementById('dm-acc-groups');
   var div = document.createElement('div');
   div.className = 'dm-acc-group';
-  div.innerHTML = '<input class="dm-acc-title" placeholder="组标题">'
-    + '<div class="dm-acc-items"><div class="dm-item-pair"><input class="dm-item-name" placeholder="①条目名"><input class="dm-item-desc" placeholder="描述"></div></div>'
+  div.innerHTML = _groupDelBtn + '<input class="dm-acc-title" placeholder="组标题">'
+    + '<div class="dm-acc-items"><div class="dm-item-pair"><input class="dm-item-name" placeholder="①条目名"><input class="dm-item-desc" placeholder="描述">' + _itemDelBtn + '</div></div>'
     + '<button type="button" onclick="_addDmAccItem(this)" class="dm-add-btn">+ 条目</button>';
   container.appendChild(div);
 }
@@ -5554,7 +5579,7 @@ function _addDmAccItem(btn) {
   var circled = String.fromCodePoint(0x2460 + n - 1);
   var div = document.createElement('div');
   div.className = 'dm-item-pair';
-  div.innerHTML = '<input class="dm-item-name" placeholder="' + circled + '条目名"><input class="dm-item-desc" placeholder="描述">';
+  div.innerHTML = '<input class="dm-item-name" placeholder="' + circled + '条目名"><input class="dm-item-desc" placeholder="描述">' + _itemDelBtn;
   items.appendChild(div);
 }
 function _addDmCmpCol() {
@@ -5562,7 +5587,7 @@ function _addDmCmpCol() {
   var n = container.querySelectorAll('.dm-cmp-col').length + 1;
   var div = document.createElement('div');
   div.className = 'dm-cmp-col';
-  div.innerHTML = '<div style="font-size:11px;color:var(--text-quaternary);margin-bottom:4px">列 ' + n + '</div>'
+  div.innerHTML = _groupDelBtn + '<div style="font-size:11px;color:var(--text-quaternary);margin-bottom:4px">列 ' + n + '</div>'
     + '<input class="dm-cmp-title" placeholder="标题">'
     + '<input class="dm-cmp-keyword" placeholder="关键词（大字显示）">'
     + '<input class="dm-cmp-desc" placeholder="描述（小字）">'
@@ -5767,6 +5792,17 @@ function openEditKP(id) {
     var h3 = document.querySelector('.delta-modal-header h3');
     if (h3) h3.textContent = '编辑知识点';
 
+    // 注入删除按钮到动态生成的条目/组
+    var modal = document.getElementById('delta-modal');
+    if (modal) {
+      modal.querySelectorAll('.dm-item-pair').forEach(function(p) {
+        if (!p.querySelector('.dm-item-del')) p.insertAdjacentHTML('beforeend', _itemDelBtn);
+      });
+      modal.querySelectorAll('.dm-acc-group, .dm-cmp-col').forEach(function(g) {
+        if (!g.querySelector('.dm-group-del')) g.insertAdjacentHTML('afterbegin', _groupDelBtn);
+      });
+    }
+
   }, 150);
 }
 
@@ -5920,6 +5956,13 @@ function openAddModal(type, prefill) {
       + '</div>'; // end delta-modal
 
     document.body.appendChild(overlay);
+    // 给所有初始条目/组/列注入删除按钮
+    overlay.querySelectorAll('.dm-item-pair').forEach(function(p) {
+      if (!p.querySelector('.dm-item-del')) p.insertAdjacentHTML('beforeend', _itemDelBtn);
+    });
+    overlay.querySelectorAll('.dm-acc-group, .dm-cmp-col').forEach(function(g) {
+      if (!g.querySelector('.dm-group-del')) g.insertAdjacentHTML('afterbegin', _groupDelBtn);
+    });
     setTimeout(function() { var el = document.getElementById('dm-title'); if (el) el.focus(); }, 100);
     return;
   }
