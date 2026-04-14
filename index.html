@@ -2372,7 +2372,7 @@ function _splitTitleForUI(title) {
 
   // Fixed 3-segment rule: （EnglishName，Scholar，Year）
   // If last segment is a year, and there are 2-3 segments total, use fixed assignment
-  var yearRe = /^\d{4}(?:\s*[\/\-]\s*\d{2,4}s?)?$/;
+  var yearRe = /^\d{4}s?(?:\s*[\/\-]\s*\d{0,4}s?)?-?$/;
   if (parts.length === 3 && yearRe.test(parts[2])) {
     return { cn: cn, en: parts[0], sub: parts[1] + '，' + parts[2], name: parts[1], year: parts[2] };
   }
