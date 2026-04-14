@@ -5592,8 +5592,8 @@ function submitDelta(type) {
     var sep = '';
     if (tabType === 'accordion') sep = '<br>';  // 手风琴：用<br>跳出折叠组
     // 叙述/平铺/对比卡片：直接拼◆（渲染引擎按◆分割）
-    if (meritVal) fullBody += sep + '◆意义——' + meritVal.replace(/\n/g, '');
-    if (limitVal) fullBody += sep + '◆局限——' + limitVal.replace(/\n/g, '');
+    if (meritVal) fullBody += sep + '◆意义——' + meritVal.replace(/\n/g, '<br>');
+    if (limitVal) fullBody += sep + '◆局限——' + limitVal.replace(/\n/g, '<br>');
 
     payload = {
       title: titleVal, en: enVal.trim(), scholar: scholarVal || null,
