@@ -2786,6 +2786,13 @@ var QUIZ_AUTH_TOKEN = 'quiz_token_2026';
 
 // Delta merge: fetch KV additions/deletions and merge into memory
 (function() {
+  // Show loading overlay
+  var loadEl = document.createElement('div');
+  loadEl.id = 'delta-loading';
+  loadEl.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:999;background:rgba(0,0,0,.7);color:white;padding:8px 20px;border-radius:20px;font-size:12px;pointer-events:none;transition:opacity .3s';
+  loadEl.textContent = '同步数据中...';
+  document.body.appendChild(loadEl);
+
   window._deltaReady = fetch(QUIZ_WORKER_URL + '/delta', {
     headers: { 'Authorization': 'Bearer ' + QUIZ_AUTH_TOKEN }
   })
@@ -2826,7 +2833,11 @@ var QUIZ_AUTH_TOKEN = 'quiz_token_2026';
     if (d.order) window._deltaOrder = d.order;
     window._deltaLoaded = true;
   })
-  .catch(function() { window._deltaLoaded = true; /* silent fallback */ });
+  .catch(function() { window._deltaLoaded = true; })
+  .finally(function() {
+    var el = document.getElementById('delta-loading');
+    if (el) { el.style.opacity = '0'; setTimeout(function() { el.remove(); }, 300); }
+  });
 })();
 
 var _quizConcept = '';
