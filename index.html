@@ -5514,7 +5514,8 @@ function submitDelta(type) {
     var bodyVal = '';
 
     if (tabType === 'narrative') {
-      bodyVal = _mdBold((document.getElementById('dm-narrative') || {}).value || '').trim().replace(/\n/g, '<br>');
+      // 叙述模式：换行不转<br>（保持纯文字路径），多个换行合并为一个空格
+      bodyVal = _mdBold((document.getElementById('dm-narrative') || {}).value || '').trim().replace(/\n+/g, ' ');
 
     } else if (tabType === 'flat') {
       var flatLead = _mdBold((document.getElementById('dm-flat-lead') || {}).value || '').trim().replace(/\n/g, '<br>');
@@ -5552,7 +5553,7 @@ function submitDelta(type) {
       });
 
     } else if (tabType === 'compare') {
-      var cmpLead = _mdBold((document.getElementById('dm-cmp-lead') || {}).value || '').trim();
+      var cmpLead = _mdBold((document.getElementById('dm-cmp-lead') || {}).value || '').trim().replace(/\n+/g, ' ');
       var cols = [];
       document.querySelectorAll('.dm-cmp-col').forEach(function(col) {
         var ct = (col.querySelector('.dm-cmp-title') || {}).value || '';
@@ -5577,10 +5578,11 @@ function submitDelta(type) {
     if (!titleVal || !schoolKeys.length || !bodyVal || bodyVal.length < 10) {
       alert('标题、学派（至少选一个）、正文（至少10字）为必填'); btn.disabled = false; btn.textContent = '保存'; return;
     }
-    // 意义/局限：独立◆标签，手风琴/平铺模式下用<br>分隔确保跳出折叠组
+    // 意义/局限拼接：不同tab模式用不同分隔符
     var fullBody = bodyVal;
-    var hasBr = fullBody.indexOf('<br>') >= 0;
-    var sep = hasBr ? '<br>' : '';
+    var sep = '';
+    if (tabType === 'accordion') sep = '<br>';  // 手风琴：用<br>跳出折叠组
+    // 叙述/平铺/对比卡片：直接拼◆（渲染引擎按◆分割）
     if (meritVal) fullBody += sep + '◆意义——' + meritVal.replace(/\n/g, '');
     if (limitVal) fullBody += sep + '◆局限——' + limitVal.replace(/\n/g, '');
 
