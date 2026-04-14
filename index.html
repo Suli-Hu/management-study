@@ -2185,67 +2185,7 @@ body.dragging-active { user-select: none; -webkit-user-select: none; }
       </div>
       <span class="scholar-search-count" id="concept-count" style="white-space:nowrap"></span>
       </div>
-      <div class="seg-subs" id="seg-subs-SM">
-        <div class="seg-sub-label">戦略基礎</div>
-        <div class="seg-sub-row">
-          <button class="seg-sub-pill" data-cat="戦略の概念" onclick="toggleCatPill(this)">戦略の概念</button>
-          <button class="seg-sub-pill" data-cat="戦略形成学派" onclick="toggleCatPill(this)">戦略形成学派</button>
-        </div>
-        <div class="seg-sub-label">競争・企業</div>
-        <div class="seg-sub-row">
-          <button class="seg-sub-pill" data-cat="競争戦略" onclick="toggleCatPill(this)">競争戦略</button>
-          <button class="seg-sub-pill" data-cat="企業戦略" onclick="toggleCatPill(this)">企業戦略</button>
-        </div>
-        <div class="seg-sub-label">機能・国際</div>
-        <div class="seg-sub-row">
-          <button class="seg-sub-pill" data-cat="イノベーション戦略" onclick="toggleCatPill(this)">イノベーション</button>
-          <button class="seg-sub-pill" data-cat="生産戦略" onclick="toggleCatPill(this)">生産戦略</button>
-          <button class="seg-sub-pill" data-cat="国際戦略" onclick="toggleCatPill(this)">国際戦略</button>
-          <button class="seg-sub-pill" data-cat="ガバナンス・CSR" onclick="toggleCatPill(this)">ガバナンス</button>
-        </div>
-      </div>
-      <div class="seg-subs" id="seg-subs-OB">
-        <div class="seg-sub-label">個体</div>
-        <div class="seg-sub-row">
-          <button class="seg-sub-pill" data-cat="人格・知覚" onclick="toggleCatPill(this)">人格・知覚</button>
-          <button class="seg-sub-pill" data-cat="態度・情緒" onclick="toggleCatPill(this)">態度・情緒</button>
-          <button class="seg-sub-pill" data-cat="モチベーション・学習" onclick="toggleCatPill(this)">動機づけ・学習</button>
-        </div>
-        <div class="seg-sub-label">集団</div>
-        <div class="seg-sub-row">
-          <button class="seg-sub-pill" data-cat="リーダーシップ" onclick="toggleCatPill(this)">リーダーシップ</button>
-          <button class="seg-sub-pill" data-cat="集団・チーム" onclick="toggleCatPill(this)">集団・チーム</button>
-          <button class="seg-sub-pill" data-cat="コンフリクト" onclick="toggleCatPill(this)">コンフリクト</button>
-        </div>
-        <div class="seg-sub-label">組織</div>
-        <div class="seg-sub-row">
-          <button class="seg-sub-pill" data-cat="組織文化・変革" onclick="toggleCatPill(this)">文化・変革</button>
-          <button class="seg-sub-pill" data-cat="組織学習" onclick="toggleCatPill(this)">組織学習</button>
-        </div>
-        <div class="seg-sub-label">HRM</div>
-        <div class="seg-sub-row">
-          <button class="seg-sub-pill" data-cat="人的資源管理" onclick="toggleCatPill(this)">人的資源管理</button>
-          <button class="seg-sub-pill" data-cat="日本的経営" onclick="toggleCatPill(this)">日本的経営</button>
-        </div>
-      </div>
-      <div class="seg-subs" id="seg-subs-OT">
-        <div class="seg-sub-label">経営基礎</div>
-        <div class="seg-sub-row">
-          <button class="seg-sub-pill" data-cat="経営史" onclick="toggleCatPill(this)">経営史</button>
-          <button class="seg-sub-pill" data-cat="意思決定論" onclick="toggleCatPill(this)">意思決定論</button>
-        </div>
-        <div class="seg-sub-label">組織設計・制度</div>
-        <div class="seg-sub-row">
-          <button class="seg-sub-pill" data-cat="組織構造・設計" onclick="toggleCatPill(this)">組織構造・設計</button>
-          <button class="seg-sub-pill" data-cat="制度理論" onclick="toggleCatPill(this)">制度理論</button>
-          <button class="seg-sub-pill" data-cat="取引コスト" onclick="toggleCatPill(this)">取引コスト</button>
-        </div>
-        <div class="seg-sub-label">現代</div>
-        <div class="seg-sub-row">
-          <button class="seg-sub-pill" data-cat="ソーシャル・ネットワーク" onclick="toggleCatPill(this)">ネットワーク</button>
-          <button class="seg-sub-pill" data-cat="現代経営手法" onclick="toggleCatPill(this)">現代経営手法</button>
-        </div>
-      </div>
+      <div class="seg-subs" id="concept-subs"></div>
     </div>
     <div class="scholar-no-result" id="concept-no-result">
       <strong>未找到匹配的知识点</strong>请尝试其他关键词或检查拼写
@@ -4145,28 +4085,42 @@ function scholarSearchClear() {
 var _scholarL1Colors = { SM: '#007AFF', OB: '#34C759', OT: '#FF9500' };
 var _scholarL1 = 'all';
 var _scholarSubLabels = [];
+var _scholarSchoolFilter = '';
+
+// 根据 L1 类别获取对应学派 key 列表（按 group 排序）
+function _getSchoolsByL1(l1) {
+  var groupMap = { SM: [6,7,10,12], OB: [1,2], OT: [3,4,5,8,11] };
+  var groups = groupMap[l1] || [];
+  return Object.keys(DATA).filter(function(k) {
+    var g = DATA[k].group;
+    if (!g) return false;
+    return Array.isArray(g) ? g.some(function(x){ return groups.indexOf(x) >= 0; }) : groups.indexOf(g) >= 0;
+  }).sort(function(a, b) {
+    var ga = Array.isArray(DATA[a].group) ? DATA[a].group[0] : DATA[a].group;
+    var gb = Array.isArray(DATA[b].group) ? DATA[b].group[0] : DATA[b].group;
+    return ga - gb;
+  });
+}
 
 function scholarSegSelect(l1) {
   _scholarL1 = l1;
   _scholarSubLabels = [];
+  _scholarSchoolFilter = '';
   // Update seg-item active
   var filter = document.getElementById('scholar-filter');
   filter.querySelectorAll('.seg-item').forEach(function(b) {
     b.classList.toggle('active', b.dataset.l1 === l1);
   });
-  // Build sub-category pills
+  // Build school name pills dynamically
   var subsEl = document.getElementById('scholar-subs');
   if (l1 === 'all') {
     subsEl.classList.remove('open');
     subsEl.innerHTML = '';
   } else {
-    var color = _scholarL1Colors[l1];
-    var pills = '';
-    SCHOLAR_ORDER.forEach(function(sec) {
-      if (sec.color === color) {
-        pills += '<button class="seg-sub-pill" data-label="' + sec.label + '" onclick="scholarToggleSub(this)">' + sec.label + '</button> ';
-      }
-    });
+    var schools = _getSchoolsByL1(l1);
+    var pills = schools.map(function(k) {
+      return '<button class="seg-sub-pill" data-school="' + k + '" onclick="scholarFilterBySchool(\'' + k + '\')">' + DATA[k].title + '</button>';
+    }).join(' ');
     subsEl.innerHTML = '<div class="seg-sub-row" style="margin-top:0">' + pills + '</div>';
     subsEl.classList.add('open');
   }
@@ -4174,15 +4128,16 @@ function scholarSegSelect(l1) {
   _applyScholarFilter();
 }
 
-function scholarToggleSub(btn) {
-  var label = btn.dataset.label;
-  btn.classList.toggle('active');
-  var color = _scholarL1Colors[_scholarL1] || '#1d1d1f';
-  btn.style.background = btn.classList.contains('active') ? color : '';
-  // Collect active sub-labels
-  _scholarSubLabels = [];
-  document.querySelectorAll('#scholar-subs .seg-sub-pill.active').forEach(function(p) {
-    _scholarSubLabels.push(p.dataset.label);
+function scholarFilterBySchool(schoolKey) {
+  _scholarSchoolFilter = (_scholarSchoolFilter === schoolKey) ? '' : schoolKey;
+  document.querySelectorAll('#scholar-subs .seg-sub-pill').forEach(function(p) {
+    var isActive = p.dataset.school === _scholarSchoolFilter;
+    p.classList.toggle('active', isActive);
+    if (isActive) {
+      p.style.background = DATA[schoolKey] ? DATA[schoolKey].accent : '';
+    } else {
+      p.style.background = '';
+    }
   });
   _applyScholarFilter();
 }
@@ -4196,6 +4151,32 @@ function _applyScholarFilter() {
   // 获取搜索关键词
   var inp = document.getElementById('scholar-search-input');
   var q = inp ? inp.value.trim().toLowerCase() : '';
+
+  // 构建学派过滤集合（学者 key → 是否属于该学派）
+  var schoolWhoKeys = null;
+  if (_scholarSchoolFilter && DATA[_scholarSchoolFilter]) {
+    schoolWhoKeys = {};
+    // 方法1：通过 KNOWLEDGE 条目的 schools 字段匹配（最可靠）
+    KNOWLEDGE.forEach(function(k) {
+      if (k.scholar && k.schools && k.schools.indexOf(_scholarSchoolFilter) >= 0) {
+        schoolWhoKeys[k.scholar] = true;
+      }
+    });
+    // 方法2：对无KP的学者，用 DATA[school].who 做模糊匹配（兜底）
+    var whoList = DATA[_scholarSchoolFilter].who || [];
+    Object.keys(SCHOLARS).forEach(function(sk) {
+      if (schoolWhoKeys[sk]) return; // 已匹配
+      var s = SCHOLARS[sk];
+      var sName = s.name || '';
+      var sEn = s.en || '';
+      var matched = whoList.some(function(w) {
+        // 双向子串匹配：短名在长名中 或 长名在短名中
+        return w.indexOf(sName) >= 0 || sName.indexOf(w.replace(/\s*[A-Za-z].*$/, '').trim()) >= 0
+          || w.indexOf(sEn) >= 0 || sEn.indexOf(w.replace(/^[^\x00-\x7F\s]+\s*/, '').trim()) >= 0;
+      });
+      if (matched) schoolWhoKeys[sk] = true;
+    });
+  }
 
   // 首次调用时保存原始 innerHTML
   var allCards = document.querySelectorAll('#panel-scholar .card');
@@ -4213,12 +4194,10 @@ function _applyScholarFilter() {
     var sec = SCHOLAR_ORDER[secIdx];
     if (!sec) return;
 
-    // 先按 L1 / 子分类筛选整个 section
+    // 先按 L1 筛选整个 section
     var secShow = true;
     if (_scholarL1 !== 'all') {
       if (sec.color !== color) {
-        secShow = false;
-      } else if (_scholarSubLabels.length > 0 && _scholarSubLabels.indexOf(sec.label) < 0) {
         secShow = false;
       }
     }
@@ -4229,12 +4208,21 @@ function _applyScholarFilter() {
       return;
     }
 
-    // Section 通过筛选，再对卡片应用搜索
+    // Section 通过 L1 筛选，再对卡片应用学派过滤和搜索
     grid.style.display = '';
     var cards = grid.querySelectorAll('.card');
     var secVisible = 0;
 
-    cards.forEach(function(card) {
+    cards.forEach(function(card, cardIdx) {
+      // 获取此卡片对应的 scholar key
+      var scholarKey = sec.keys[cardIdx] || '';
+
+      // 学派过滤
+      if (schoolWhoKeys && !schoolWhoKeys[scholarKey]) {
+        card.style.display = 'none';
+        return;
+      }
+
       var fields = ['card-title', 'card-sub', 'card-ja'].map(function(cls) {
         return card.querySelector('.' + cls);
       });
@@ -4273,6 +4261,7 @@ function _applyScholarFilter() {
 var CONCEPTS_INDEX = null;
 var _cnCat = 'all';    // 'all' or L1 name
 var _cnCats = [];      // multi-select sub-categories
+var _cnSchoolFilter = ''; // filter by specific school key
 
 // 对应 PDF 思维导图文件名的分类体系
 var TOPIC_MAP = {
@@ -4912,8 +4901,13 @@ function renderConcepts() {
   var inp    = document.getElementById('concept-search-input');
   var q      = inp ? inp.value.trim().toLowerCase() : '';
   var filtered = list;
-  // 筛选：L1 大类 + 子分类（兼容 cats 数组）
-  if (_cnCats.length > 0) {
+  // 筛选：学派过滤 > L1 大类 > 子分类
+  if (_cnSchoolFilter) {
+    filtered = filtered.filter(function(c) {
+      if (c.key === _cnSchoolFilter) return true;
+      return c.schools && c.schools.some(function(s) { return s.key === _cnSchoolFilter; });
+    });
+  } else if (_cnCats.length > 0) {
     filtered = filtered.filter(function(c) {
       return c.cats.some(function(ct) { return _cnCats.indexOf(ct) >= 0; });
     });
@@ -4997,25 +4991,49 @@ var _l1Colors = { SM:'#007AFF', OB:'#34C759', OT:'#FF9500' };
 function segSelect(l1) {
   _cnCat = l1;
   _cnCats = [];
+  _cnSchoolFilter = '';
   // 更新 seg-item active（只更新知识点面板的 seg-item）
   document.querySelectorAll('#cat-filter .seg-item').forEach(function(b) {
     b.classList.toggle('active', b.dataset.l1 === l1);
   });
-  // 显示/隐藏子分类面板
-  document.querySelectorAll('.seg-subs').forEach(function(p) { p.classList.remove('open'); });
-  if (l1 !== 'all') {
-    var panel = document.getElementById('seg-subs-' + l1);
-    if (panel) {
-      panel.classList.add('open');
-      panel.querySelectorAll('.seg-sub-pill').forEach(function(p) { p.classList.remove('active'); });
-    }
+  // 动态生成学派 pills
+  var subsEl = document.getElementById('concept-subs');
+  if (l1 === 'all') {
+    subsEl.classList.remove('open');
+    subsEl.innerHTML = '';
+  } else {
+    var schools = _getSchoolsByL1(l1);
+    var pills = schools.map(function(k) {
+      return '<button class="seg-sub-pill" data-school="' + k + '" onclick="conceptFilterBySchool(\'' + k + '\')">' + DATA[k].title + '</button>';
+    }).join(' ');
+    subsEl.innerHTML = '<div class="seg-sub-row">' + pills + '</div>';
+    subsEl.classList.add('open');
   }
   // 不再清除搜索框，让搜索和筛选同时生效
   renderConcepts();
 }
 
-// 子分类多选 toggle
+// 学派过滤 toggle
+function conceptFilterBySchool(key) {
+  _cnSchoolFilter = (_cnSchoolFilter === key) ? '' : key;
+  _cnCats = []; // 清除旧的子分类选择
+  document.querySelectorAll('#concept-subs .seg-sub-pill').forEach(function(p) {
+    var isActive = p.dataset.school === _cnSchoolFilter;
+    p.classList.toggle('active', isActive);
+    if (isActive) {
+      p.style.background = DATA[key] ? DATA[key].accent : '';
+    } else {
+      p.style.background = '';
+    }
+  });
+  renderConcepts();
+}
+
+// 保留旧函数名以防外部引用
 function toggleCatPill(btn) {
+  var school = btn.dataset.school;
+  if (school) { conceptFilterBySchool(school); return; }
+  // 兼容旧逻辑（理论上不再调用）
   var cat = btn.dataset.cat;
   btn.classList.toggle('active');
   var color = _l1Colors[_cnCat] || '#1d1d1f';
@@ -5024,14 +5042,10 @@ function toggleCatPill(btn) {
   } else {
     btn.style.background = '';
   }
-  // 收集当前所有 active 子分类
-  var panel = document.getElementById('seg-subs-' + _cnCat);
   _cnCats = [];
-  if (panel) {
-    panel.querySelectorAll('.seg-sub-pill.active').forEach(function(p) {
-      _cnCats.push(p.dataset.cat);
-    });
-  }
+  document.querySelectorAll('#concept-subs .seg-sub-pill.active').forEach(function(p) {
+    if (p.dataset.cat) _cnCats.push(p.dataset.cat);
+  });
   renderConcepts();
 }
 
