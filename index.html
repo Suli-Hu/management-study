@@ -1348,27 +1348,56 @@ body.dragging-active { user-select: none; -webkit-user-select: none; }
 .kp-add-btn:hover { opacity: .7; }
 .delta-modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,.4); z-index: 1000;
-  display: flex; align-items: center; justify-content: center;
-  padding: 20px;
+  background: var(--bg-primary); z-index: 1000;
+  display: flex; flex-direction: column;
+}
+.delta-modal-overlay.dm-legacy {
+  background: rgba(0,0,0,.35);
+  align-items: flex-start; justify-content: center;
+  padding: 40px 20px 20px; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .delta-modal {
+  width: 100%; max-width: 600px; margin: 0 auto;
+  display: flex; flex-direction: column; height: 100%;
+}
+.dm-legacy .delta-modal {
   background: var(--bg-primary); border-radius: 16px;
-  width: 100%; max-width: 520px; max-height: 90vh;
-  display: flex; flex-direction: column; overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  max-width: 520px; height: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,.18);
+  margin-bottom: 40px;
 }
 .delta-modal-header {
-  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0; position: relative;
 }
-.delta-modal-header h3 { font-size: 15px; font-weight: var(--weight-semibold); }
+.dm-legacy .delta-modal-header {
+  padding: 14px 20px; position: sticky; top: 0;
+  background: var(--bg-primary); border-radius: 16px 16px 0 0; z-index: 1;
+}
+.delta-modal-header h3 {
+  font-size: 15px; font-weight: var(--weight-semibold); margin: 0;
+  position: absolute; left: 50%; transform: translateX(-50%);
+  white-space: nowrap;
+}
+.dm-legacy .delta-modal-header h3 { position: static; transform: none; }
 .delta-modal-close {
-  width: 28px; height: 28px; border-radius: 50%; border: none;
-  background: var(--bg-secondary); color: var(--text-tertiary);
-  font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 50%; border: none;
+  background: transparent; color: var(--text-secondary);
+  font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
 }
-.delta-modal-body { padding: 16px 20px; overflow-y: auto; flex: 1; }
+.delta-modal-close:hover { background: var(--border); }
+.dm-legacy .delta-modal-close {
+  width: 28px; height: 28px; background: var(--bg-secondary);
+  color: var(--text-tertiary); font-size: 16px;
+}
+.delta-modal-body {
+  flex: 1; overflow-y: auto; padding: 16px 20px;
+  -webkit-overflow-scrolling: touch;
+}
+.dm-legacy .delta-modal-body { flex: none; overflow-y: visible; }
 .delta-modal-body textarea {
   width: 100%; min-height: 280px; border: 1px solid var(--border);
   border-radius: 10px; padding: 12px; font-size: 13px;
@@ -1377,17 +1406,66 @@ body.dragging-active { user-select: none; -webkit-user-select: none; }
   background: var(--bg-primary);
 }
 .delta-modal-body textarea:focus { outline: none; border-color: var(--text-quaternary); }
+.dm-tab {
+  padding: 7px 16px; font-size: 12px; border: none; background: none;
+  color: var(--text-quaternary); cursor: pointer; border-bottom: 2px solid transparent;
+  font-weight: var(--weight-regular); transition: color .15s;
+}
+.dm-tab:hover { color: var(--text-tertiary); }
+.dm-tab.active { color: var(--text-primary); border-bottom-color: var(--text-primary); font-weight: var(--weight-semibold); }
+.dm-tab-panel { padding-top: 4px; }
+.dm-tab-panel textarea, .dm-tab-panel input {
+  width: 100%; padding: 9px 10px; border: 1px solid var(--border); border-radius: 8px;
+  font-size: 12.5px; font-family: inherit; line-height: 1.5; color: var(--text-primary);
+  box-sizing: border-box; background: var(--bg-primary);
+}
+.dm-tab-panel textarea { min-height: 120px; resize: vertical; }
+.dm-tab-panel textarea[rows="2"] { min-height: 50px; margin-bottom: 10px; }
+.dm-tab-panel textarea:focus, .dm-tab-panel input:focus { outline: none; border-color: var(--text-quaternary); }
+.dm-item-pair {
+  display: flex; gap: 8px; padding: 8px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.dm-item-pair:last-child { border-bottom: none; }
+.dm-item-pair .dm-item-name { flex: 0 0 38%; font-weight: var(--weight-semibold); font-size: 12.5px; }
+.dm-item-pair .dm-item-desc { flex: 1; font-size: 12.5px; }
+.dm-add-btn {
+  font-size: 11px; color: var(--text-quaternary); background: none; border: 1px dashed var(--border);
+  border-radius: 8px; cursor: pointer; padding: 6px 0; width: 100%; margin-top: 6px;
+  transition: color .15s, border-color .15s;
+}
+.dm-add-btn:hover { color: var(--text-tertiary); border-color: var(--text-quaternary); }
+.dm-acc-group, .dm-cmp-col {
+  border: 1px solid var(--border); border-radius: 12px; padding: 14px;
+  margin-bottom: 10px; background: var(--bg-secondary);
+}
 .delta-modal-footer {
-  padding: 12px 20px; border-top: 1px solid var(--border);
-  display: flex; gap: 8px; justify-content: flex-end;
+  padding: 14px 20px; border-top: 1px solid var(--border);
+  display: none; justify-content: flex-end;
+  flex-shrink: 0; background: var(--bg-primary);
 }
-.delta-modal-footer button {
-  padding: 8px 20px; border-radius: 8px; font-size: 13px;
+.dm-legacy .delta-modal-footer {
+  display: flex; position: sticky; bottom: 0;
+  border-radius: 0 0 16px 16px;
+}
+.delta-btn-save {
+  padding: 7px 20px; border-radius: 8px; font-size: 13px;
   font-weight: var(--weight-semibold); cursor: pointer; border: none;
+  background: #34C759; color: white; transition: opacity .15s;
 }
-.delta-btn-cancel { background: var(--bg-secondary); color: var(--text-secondary); }
-.delta-btn-save { background: #34C759; color: white; }
-.delta-btn-save:disabled { opacity: .5; cursor: not-allowed; }
+.delta-btn-save:hover { opacity: .85; }
+.delta-btn-save:disabled { opacity: .4; cursor: not-allowed; }
+.dm-meta-summary {
+  padding: 10px 20px; border-bottom: 1px solid var(--border);
+  font-size: 12px; color: var(--text-tertiary); cursor: pointer;
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+}
+.dm-meta-summary:hover { background: var(--bg-secondary); }
+.dm-meta-detail {
+  padding: 12px 20px; border-bottom: 1px solid var(--border);
+  display: none; flex-shrink: 0;
+}
+.dm-meta-detail.open { display: block; }
 @media (max-width: 600px) {
   .cat-filter { margin-bottom: 10px; }
   .seg-item { font-size:12px; padding:6px 0; }
@@ -5101,32 +5179,242 @@ function _deltaFetch(path, body) {
   }).then(function(r) { return r.json(); });
 }
 
-function openAddModal(type, prefill) {
-  // type: 'kp', 'scholar', 'school'
-  var templates = {
-    kp: '标题: \nen: \n学者: ' + (prefill.scholar || '') + '\n年份: \n学派: ' + (prefill.school || '') + '\n---\n在此粘贴正文...\n◆意义——\n◆局限——',
-    scholar: 'key: \n名字: \nen: \n国籍: \n所属机构: \n领域: \n学派: ' + (prefill.school || '') + '\n---\n学者贡献简介...',
-    school: 'key: \n标题: \nen: \ngroup: ' + (prefill.group || '1') + '\n颜色: #007AFF\n---\n学派简介...'
-  };
-  var titles = { kp: '新增知识点', scholar: '新增学者', school: '新增学派' };
+function _buildSelectOptions(obj, labelFn, selectedKey) {
+  var html = '<option value="">（不选）</option>';
+  Object.keys(obj).forEach(function(k) {
+    var sel = k === selectedKey ? ' selected' : '';
+    html += '<option value="' + k + '"' + sel + '>' + labelFn(k, obj[k]) + '</option>';
+  });
+  return html;
+}
 
+// — KP modal tab helpers —
+function _mdBold(text) {
+  return text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+}
+function _switchDmTab(tab) {
+  document.querySelectorAll('.dm-tab-panel').forEach(function(p) { p.style.display = 'none'; });
+  document.querySelectorAll('.dm-tab').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('dm-tab-' + tab).style.display = 'block';
+  document.querySelector('.dm-tab[data-tab="' + tab + '"]').classList.add('active');
+}
+function _addDmFlatItem() {
+  var container = document.getElementById('dm-flat-items');
+  var n = container.querySelectorAll('.dm-item-pair').length + 1;
+  var div = document.createElement('div');
+  div.className = 'dm-item-pair';
+  div.innerHTML = '<input class="dm-item-name" placeholder="条目名"><input class="dm-item-desc" placeholder="描述">';
+  container.appendChild(div);
+}
+function _addDmAccGroup() {
+  var container = document.getElementById('dm-acc-groups');
+  var div = document.createElement('div');
+  div.className = 'dm-acc-group';
+  div.innerHTML = '<input class="dm-acc-title" placeholder="组标题">'
+    + '<div class="dm-acc-items"><div class="dm-item-pair"><input class="dm-item-name" placeholder="①条目名"><input class="dm-item-desc" placeholder="描述"></div></div>'
+    + '<button type="button" onclick="_addDmAccItem(this)" class="dm-add-btn">+ 条目</button>';
+  container.appendChild(div);
+}
+function _addDmAccItem(btn) {
+  var items = btn.previousElementSibling; // .dm-acc-items
+  var n = items.querySelectorAll('.dm-item-pair').length + 1;
+  var circled = String.fromCodePoint(0x2460 + n - 1);
+  var div = document.createElement('div');
+  div.className = 'dm-item-pair';
+  div.innerHTML = '<input class="dm-item-name" placeholder="' + circled + '条目名"><input class="dm-item-desc" placeholder="描述">';
+  items.appendChild(div);
+}
+function _addDmCmpCol() {
+  var container = document.getElementById('dm-cmp-cols');
+  var n = container.querySelectorAll('.dm-cmp-col').length + 1;
+  var div = document.createElement('div');
+  div.className = 'dm-cmp-col';
+  div.innerHTML = '<div style="font-size:11px;color:var(--text-quaternary);margin-bottom:4px">列 ' + n + '</div>'
+    + '<input class="dm-cmp-title" placeholder="标题">'
+    + '<input class="dm-cmp-keyword" placeholder="关键词（大字显示）">'
+    + '<input class="dm-cmp-desc" placeholder="描述（小字）">'
+    + '<input class="dm-cmp-bottom" placeholder="底部文字">'
+    + '<textarea class="dm-cmp-detail" spellcheck="false" placeholder="翻面详情（可留空）" rows="2"></textarea>';
+  container.appendChild(div);
+}
+
+function openAddModal(type, prefill) {
+  var titles = { kp: '新增知识点', scholar: '新增学者', school: '新增学派' };
   var overlay = document.createElement('div');
   overlay.className = 'delta-modal-overlay';
   overlay.id = 'delta-modal';
+
+  if (type === 'kp') {
+    // --- Full-screen editor for KP ---
+    var currentSchool = prefill.school || '';
+    var currentSchoolName = (DATA[currentSchool] || {}).title || currentSchool;
+
+    // 学者选项：只显示当前学派下的学者
+    var scholarOpts = '<option value="">\uFF08\u4E0D\u9009 \u00B7 \u5E38\u8BC6\uFF09</option>';
+    KNOWLEDGE.forEach(function(kn) {
+      if ((kn.schools || []).indexOf(currentSchool) < 0) return;
+      if (!kn.scholar) return;
+      kn.scholar.split(/[,，]/).forEach(function(sk) {
+        sk = sk.trim();
+        if (!sk || !SCHOLARS[sk]) return;
+        if (scholarOpts.indexOf('value="' + sk + '"') >= 0) return;
+        scholarOpts += '<option value="' + sk + '">' + SCHOLARS[sk].name + ' (' + (SCHOLARS[sk].en || sk) + ')</option>';
+      });
+    });
+    var whoList = (DATA[currentSchool] || {}).who || [];
+    whoList.forEach(function(w) {
+      Object.keys(SCHOLARS).forEach(function(sk) {
+        if (scholarOpts.indexOf('value="' + sk + '"') >= 0) return;
+        if (w.indexOf(SCHOLARS[sk].name) >= 0 || (SCHOLARS[sk].en && w.indexOf(SCHOLARS[sk].en) >= 0)) {
+          scholarOpts += '<option value="' + sk + '">' + SCHOLARS[sk].name + ' (' + (SCHOLARS[sk].en || sk) + ')</option>';
+        }
+      });
+    });
+
+    // 其他学派选项
+    var otherSchoolOpts = '';
+    Object.keys(DATA).forEach(function(k) {
+      if (k === currentSchool) return;
+      otherSchoolOpts += '<option value="' + k + '">' + DATA[k].title + ' (' + k + ')</option>';
+    });
+
+    overlay.innerHTML =
+      '<div class="delta-modal">'
+      // Header: × left, title center, save right
+      + '<div class="delta-modal-header">'
+      +   '<button class="delta-modal-close" onclick="closeDeltaModal()">\u00D7</button>'
+      +   '<h3>' + titles[type] + '</h3>'
+      +   '<button class="delta-btn-save" id="delta-save-btn" onclick="submitDelta(\'' + type + '\')">\u4FDD\u5B58</button>'
+      + '</div>'
+      // Metadata summary bar
+      + '<div class="dm-meta-summary" onclick="this.nextElementSibling.classList.toggle(\'open\');this.querySelector(\'.dm-meta-arrow\').textContent=this.nextElementSibling.classList.contains(\'open\')?\'\u25BE\':\'\u25B8\'">'
+      +   '<span style="font-weight:var(--weight-semibold);color:var(--text-primary)">' + currentSchoolName + '</span>'
+      +   '<span>\u00B7</span>'
+      +   '<span id="dm-meta-scholar-label">(\u4E0D\u9009)</span>'
+      +   '<span class="dm-meta-arrow" style="margin-left:auto;color:var(--text-quaternary)">\u25B8</span>'
+      + '</div>'
+      // Metadata detail (hidden by default)
+      + '<div class="dm-meta-detail">'
+      +   '<div style="display:flex;flex-direction:column;gap:10px">'
+      // 学派
+      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:42px;font-size:12px;color:var(--text-tertiary)">\u5B66\u6D3E</label>'
+      +     '<span style="font-size:13px;font-weight:600;color:var(--text-primary)">' + currentSchoolName + '</span>'
+      +     '<input type="hidden" id="dm-school-primary" value="' + currentSchool + '">'
+      +     '<button type="button" onclick="var s=document.getElementById(\'dm-school-extra-wrap\');s.style.display=s.style.display===\'none\'?\'block\':\'none\'" style="font-size:11px;color:var(--text-quaternary);background:none;border:1px solid var(--border);border-radius:6px;padding:2px 8px;cursor:pointer;margin-left:auto">+ \u5176\u4ED6\u5B66\u6D3E</button>'
+      +     '</div>'
+      +     '<div id="dm-school-extra-wrap" style="display:none;margin-left:50px"><select id="dm-school-extra" multiple style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;min-height:50px">' + otherSchoolOpts + '</select></div>'
+      // 学者
+      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:42px;font-size:12px;color:var(--text-tertiary)">\u5B66\u8005</label>'
+      +     '<select id="dm-scholar" onchange="var l=document.getElementById(\'dm-meta-scholar-label\');if(l)l.textContent=this.value?this.selectedOptions[0].text:\'(\u4E0D\u9009)\'" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px">' + scholarOpts + '</select></div>'
+      // 年份
+      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:42px;font-size:12px;color:var(--text-tertiary)">\u5E74\u4EFD</label>'
+      +     '<input id="dm-year" type="text" placeholder="\u5982 1985" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px"></div>'
+      +   '</div>'
+      + '</div>'
+      // Body (scrollable)
+      + '<div class="delta-modal-body">'
+      // 标题 + EN
+      + '<div style="display:flex;gap:8px;margin-bottom:8px"><label style="min-width:42px;font-size:12px;color:var(--text-tertiary);padding-top:8px">\u6807\u9898</label>'
+      + '<input id="dm-title" type="text" placeholder="\u4E2D\u6587\u540D\u79F0" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px"></div>'
+      + '<div style="display:flex;gap:8px;margin-bottom:10px"><label style="min-width:42px;font-size:12px;color:var(--text-tertiary);padding-top:8px">EN</label>'
+      + '<input id="dm-en" type="text" placeholder="English Name\uFF08\u53EF\u7559\u7A7A\uFF09" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px"></div>'
+      // 4-tab format selector
+      + '<div style="border-top:1px solid var(--border);padding-top:10px;margin-bottom:8px;display:flex;gap:0">'
+      + '<button class="dm-tab active" data-tab="narrative" onclick="_switchDmTab(\'narrative\')">\u53D9\u8FF0</button>'
+      + '<button class="dm-tab" data-tab="flat" onclick="_switchDmTab(\'flat\')">\u5E73\u94FA</button>'
+      + '<button class="dm-tab" data-tab="accordion" onclick="_switchDmTab(\'accordion\')">\u624B\u98CE\u7434</button>'
+      + '<button class="dm-tab" data-tab="compare" onclick="_switchDmTab(\'compare\')">\u5BF9\u6BD4\u5361\u7247</button>'
+      + '</div>'
+      // Tab 1: 叙述
+      + '<div id="dm-tab-narrative" class="dm-tab-panel">'
+      + '<textarea id="dm-narrative" spellcheck="false" placeholder="\u4E00\u6BB5\u8BDD\u8BF4\u6E05\u695A\uFF0C\u7528 **\u53CC\u661F\u53F7** \u6807\u8BB0\u52A0\u7C97\u5173\u952E\u8BCD&#10;\u4F8B\uFF1A\u897F\u8499\u63D0\u51FA**\u6709\u9650\u7406\u6027**\uFF1A\u51B3\u7B56\u8005\u56E0**\u8BA4\u77E5\u80FD\u529B**\u7684\u9650\u5236..."></textarea>'
+      + '</div>'
+      // Tab 2: 平铺
+      + '<div id="dm-tab-flat" class="dm-tab-panel" style="display:none">'
+      + '<textarea id="dm-flat-lead" spellcheck="false" placeholder="\u5BFC\u8BED\uFF081-2\u53E5\u6982\u8FF0\uFF09" rows="2"></textarea>'
+      + '<div id="dm-flat-items">'
+      + '<div class="dm-item-pair"><input class="dm-item-name" placeholder="\u6761\u76EE\u540D\uFF08\u5982\uFF1A\u60C5\u611F\u627F\u8BFA Affective Commitment\uFF09"><input class="dm-item-desc" placeholder="\u63CF\u8FF0\uFF08\u652F\u6301**\u52A0\u7C97**\u5173\u952E\u8BCD\uFF09"></div>'
+      + '<div class="dm-item-pair"><input class="dm-item-name" placeholder="\u6761\u76EE\u540D"><input class="dm-item-desc" placeholder="\u63CF\u8FF0"></div>'
+      + '<div class="dm-item-pair"><input class="dm-item-name" placeholder="\u6761\u76EE\u540D"><input class="dm-item-desc" placeholder="\u63CF\u8FF0"></div>'
+      + '</div>'
+      + '<button type="button" onclick="_addDmFlatItem()" class="dm-add-btn">+ \u6DFB\u52A0\u6761\u76EE</button>'
+      + '</div>'
+      // Tab 3: 手风琴
+      + '<div id="dm-tab-accordion" class="dm-tab-panel" style="display:none">'
+      + '<textarea id="dm-acc-lead" spellcheck="false" placeholder="\u5BFC\u8BED\uFF081-2\u53E5\u6982\u8FF0\uFF09" rows="2"></textarea>'
+      + '<div id="dm-acc-groups">'
+      + '<div class="dm-acc-group">'
+      + '<input class="dm-acc-title" placeholder="\u7EC4\u6807\u9898\uFF08\u5982\uFF1A\u56DB\u4E2A\u72EC\u7ACB\u7684\u6D41\uFF09">'
+      + '<div class="dm-acc-items">'
+      + '<div class="dm-item-pair"><input class="dm-item-name" placeholder="\u2460\u6761\u76EE\u540D"><input class="dm-item-desc" placeholder="\u63CF\u8FF0"></div>'
+      + '<div class="dm-item-pair"><input class="dm-item-name" placeholder="\u2461\u6761\u76EE\u540D"><input class="dm-item-desc" placeholder="\u63CF\u8FF0"></div>'
+      + '</div>'
+      + '<button type="button" onclick="_addDmAccItem(this)" class="dm-add-btn">+ \u6761\u76EE</button>'
+      + '</div>'
+      + '</div>'
+      + '<button type="button" onclick="_addDmAccGroup()" class="dm-add-btn">+ \u6DFB\u52A0\u7EC4</button>'
+      + '</div>'
+      // Tab 4: 对比卡片
+      + '<div id="dm-tab-compare" class="dm-tab-panel" style="display:none">'
+      + '<textarea id="dm-cmp-lead" spellcheck="false" placeholder="\u5BFC\u8BED\uFF081-2\u53E5\u6982\u8FF0\uFF09" rows="2"></textarea>'
+      + '<div id="dm-cmp-cols">'
+      + '<div class="dm-cmp-col">'
+      + '<div style="font-size:11px;color:var(--text-quaternary);margin-bottom:4px">\u5217 1</div>'
+      + '<input class="dm-cmp-title" placeholder="\u6807\u9898">'
+      + '<input class="dm-cmp-keyword" placeholder="\u5173\u952E\u8BCD\uFF08\u5927\u5B57\u663E\u793A\uFF09">'
+      + '<input class="dm-cmp-desc" placeholder="\u63CF\u8FF0\uFF08\u5C0F\u5B57\uFF09">'
+      + '<input class="dm-cmp-bottom" placeholder="\u5E95\u90E8\u6587\u5B57">'
+      + '<textarea class="dm-cmp-detail" spellcheck="false" placeholder="\u7FFB\u9762\u8BE6\u60C5\uFF08\u53EF\u7559\u7A7A\uFF09" rows="2"></textarea>'
+      + '</div>'
+      + '<div class="dm-cmp-col">'
+      + '<div style="font-size:11px;color:var(--text-quaternary);margin-bottom:4px">\u5217 2</div>'
+      + '<input class="dm-cmp-title" placeholder="\u6807\u9898">'
+      + '<input class="dm-cmp-keyword" placeholder="\u5173\u952E\u8BCD\uFF08\u5927\u5B57\u663E\u793A\uFF09">'
+      + '<input class="dm-cmp-desc" placeholder="\u63CF\u8FF0\uFF08\u5C0F\u5B57\uFF09">'
+      + '<input class="dm-cmp-bottom" placeholder="\u5E95\u90E8\u6587\u5B57">'
+      + '<textarea class="dm-cmp-detail" spellcheck="false" placeholder="\u7FFB\u9762\u8BE6\u60C5\uFF08\u53EF\u7559\u7A7A\uFF09" rows="2"></textarea>'
+      + '</div>'
+      + '</div>'
+      + '<button type="button" onclick="_addDmCmpCol()" class="dm-add-btn">+ \u6DFB\u52A0\u5217</button>'
+      + '</div>'
+      // Merit / Limit
+      + '<div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">'
+      + '<div><div style="font-size:11px;color:var(--text-quaternary);margin-bottom:4px">\u610F\u4E49</div>'
+      + '<textarea id="dm-merit" spellcheck="false" placeholder="\u8FD9\u4E2A\u7406\u8BBA\u7684\u5B66\u672F/\u5B9E\u52A1\u8D21\u732E" style="width:100%;min-height:44px;border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;font-family:inherit;line-height:1.5;resize:vertical;color:var(--text-primary)"></textarea></div>'
+      + '<div><div style="font-size:11px;color:var(--text-quaternary);margin-bottom:4px">\u5C40\u9650</div>'
+      + '<textarea id="dm-limit" spellcheck="false" placeholder="\u4E0D\u8DB3\u6216\u8FB9\u754C\u6761\u4EF6" style="width:100%;min-height:44px;border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;font-family:inherit;line-height:1.5;resize:vertical;color:var(--text-primary)"></textarea></div>'
+      + '</div>'
+      + '</div>' // end delta-modal-body
+      + '</div>'; // end delta-modal
+
+    document.body.appendChild(overlay);
+    setTimeout(function() { var el = document.getElementById('dm-title'); if (el) el.focus(); }, 100);
+    return;
+  }
+
+  // --- Legacy centered modal for scholar / school ---
+  overlay.classList.add('dm-legacy');
   overlay.onclick = function(e) { if (e.target === overlay) closeDeltaModal(); };
+
+  var bodyHtml = '';
+  if (type === 'scholar') {
+    bodyHtml = '<textarea id="delta-input" spellcheck="false" style="width:100%;min-height:280px;border:1px solid var(--border);border-radius:10px;padding:12px;font-size:13px;font-family:inherit;line-height:1.6;resize:vertical;color:var(--text-primary)">'
+      + 'key: \n\u540D\u5B57: \nen: \n\u56FD\u7C4D: \n\u6240\u5C5E\u673A\u6784: \n\u9886\u57DF: \n\u5B66\u6D3E: ' + (prefill.school || '') + '\n---\n\u5B66\u8005\u8D21\u732E\u7B80\u4ECB...</textarea>';
+  } else {
+    bodyHtml = '<textarea id="delta-input" spellcheck="false" style="width:100%;min-height:280px;border:1px solid var(--border);border-radius:10px;padding:12px;font-size:13px;font-family:inherit;line-height:1.6;resize:vertical;color:var(--text-primary)">'
+      + 'key: \n\u6807\u9898: \nen: \ngroup: ' + (prefill.group || '1') + '\n\u989C\u8272: #007AFF\n---\n\u5B66\u6D3E\u7B80\u4ECB...</textarea>';
+  }
+
   overlay.innerHTML =
     '<div class="delta-modal">'
     + '<div class="delta-modal-header"><h3>' + titles[type] + '</h3>'
-    + '<button class="delta-modal-close" onclick="closeDeltaModal()">×</button></div>'
-    + '<div class="delta-modal-body">'
-    + '<textarea id="delta-input" spellcheck="false">' + templates[type] + '</textarea>'
-    + '</div>'
+    + '<button class="delta-modal-close" onclick="closeDeltaModal()">\u00D7</button></div>'
+    + '<div class="delta-modal-body">' + bodyHtml + '</div>'
     + '<div class="delta-modal-footer">'
-    + '<button class="delta-btn-cancel" onclick="closeDeltaModal()">取消</button>'
-    + '<button class="delta-btn-save" id="delta-save-btn" onclick="submitDelta(\'' + type + '\')">保存</button>'
+    + '<button class="delta-btn-save" id="delta-save-btn" onclick="submitDelta(\'' + type + '\')">\u4FDD\u5B58</button>'
     + '</div></div>';
   document.body.appendChild(overlay);
-  setTimeout(function() { document.getElementById('delta-input').focus(); }, 100);
+  setTimeout(function() { var el = document.getElementById('delta-input'); if (el) el.focus(); }, 100);
 }
 
 function closeDeltaModal() {
@@ -5135,71 +5423,148 @@ function closeDeltaModal() {
 }
 
 function submitDelta(type) {
-  var text = document.getElementById('delta-input').value.trim();
-  if (!text) return;
   var btn = document.getElementById('delta-save-btn');
   btn.disabled = true; btn.textContent = '保存中...';
-
-  var parts = text.split(/\n---\n/);
-  if (parts.length < 2) { alert('格式错误：缺少 --- 分隔符'); btn.disabled = false; btn.textContent = '保存'; return; }
-
-  var meta = {};
-  parts[0].split('\n').forEach(function(line) {
-    var m = line.match(/^([^:：]+)[：:]\s*(.*)/);
-    if (m) meta[m[1].trim()] = m[2].trim();
-  });
-  var body = parts.slice(1).join('\n---\n').trim();
 
   var payload, endpoint;
 
   if (type === 'kp') {
-    if (!meta['标题'] || !meta['学派'] || !body || body.length < 10) {
-      alert('标题、学派、正文（至少10字）为必填'); btn.disabled = false; btn.textContent = '保存'; return;
+    // 从结构化表单读取所有字段
+    var titleVal = (document.getElementById('dm-title') || {}).value || '';
+    var enVal = (document.getElementById('dm-en') || {}).value || '';
+    var primarySchool = (document.getElementById('dm-school-primary') || {}).value || '';
+    var extraSelect = document.getElementById('dm-school-extra');
+    var scholarSelect = document.getElementById('dm-scholar');
+    var yearInput = document.getElementById('dm-year');
+    var meritVal = (document.getElementById('dm-merit') || {}).value || '';
+    var limitVal = (document.getElementById('dm-limit') || {}).value || '';
+
+    var schoolKeys = primarySchool ? [primarySchool] : [];
+    if (extraSelect) {
+      Array.from(extraSelect.selectedOptions).forEach(function(o) {
+        if (o.value && schoolKeys.indexOf(o.value) < 0) schoolKeys.push(o.value);
+      });
     }
-    // 校验学派是否存在
-    var schoolKeys = meta['学派'].split(/[,，]/).map(function(s) { return s.trim(); }).filter(Boolean);
-    var unknownSchools = schoolKeys.filter(function(k) { return !DATA[k]; });
-    if (unknownSchools.length) {
-      alert('学派「' + unknownSchools.join('、') + '」不存在，请先在学派全览页新增学派'); btn.disabled = false; btn.textContent = '保存'; return;
+    var scholarVal = scholarSelect ? scholarSelect.value : '';
+    var yearVal = yearInput ? yearInput.value.trim() : '';
+
+    // Detect active tab and build body
+    var activeTab = document.querySelector('.dm-tab.active');
+    var tabType = activeTab ? activeTab.getAttribute('data-tab') : 'narrative';
+    var bodyVal = '';
+
+    if (tabType === 'narrative') {
+      bodyVal = _mdBold((document.getElementById('dm-narrative') || {}).value || '').trim();
+
+    } else if (tabType === 'flat') {
+      var flatLead = _mdBold((document.getElementById('dm-flat-lead') || {}).value || '').trim();
+      bodyVal = flatLead;
+      document.querySelectorAll('#dm-flat-items .dm-item-pair').forEach(function(pair) {
+        var name = (pair.querySelector('.dm-item-name') || {}).value || '';
+        var desc = (pair.querySelector('.dm-item-desc') || {}).value || '';
+        name = name.trim(); desc = desc.trim();
+        if (!name && !desc) return;
+        var item = name ? '<strong>' + name + '</strong>' : '';
+        if (desc) item += (item ? '——' : '') + _mdBold(desc);
+        bodyVal += '◆' + item;
+      });
+
+    } else if (tabType === 'accordion') {
+      var accLead = _mdBold((document.getElementById('dm-acc-lead') || {}).value || '').trim();
+      bodyVal = accLead;
+      document.querySelectorAll('.dm-acc-group').forEach(function(group) {
+        var accTitle = (group.querySelector('.dm-acc-title') || {}).value || '';
+        if (!accTitle.trim()) return;
+        bodyVal += '<br>【' + accTitle.trim() + '】';
+        var pairs = group.querySelectorAll('.dm-item-pair');
+        var n = 1;
+        pairs.forEach(function(pair) {
+          var name = (pair.querySelector('.dm-item-name') || {}).value || '';
+          var desc = (pair.querySelector('.dm-item-desc') || {}).value || '';
+          name = name.trim(); desc = desc.trim();
+          if (!name && !desc) return;
+          var circled = String.fromCodePoint(0x2460 + n - 1);
+          var item = name ? '<strong>' + name + '</strong>' : '';
+          if (desc) item += (item ? '——' : '') + _mdBold(desc);
+          bodyVal += '<br>' + circled + item;
+          n++;
+        });
+      });
+
+    } else if (tabType === 'compare') {
+      var cmpLead = _mdBold((document.getElementById('dm-cmp-lead') || {}).value || '').trim();
+      var cols = [];
+      document.querySelectorAll('.dm-cmp-col').forEach(function(col) {
+        var ct = (col.querySelector('.dm-cmp-title') || {}).value || '';
+        var ckw = (col.querySelector('.dm-cmp-keyword') || {}).value || '';
+        var cdesc = (col.querySelector('.dm-cmp-desc') || {}).value || '';
+        var cbottom = (col.querySelector('.dm-cmp-bottom') || {}).value || '';
+        var cdetail = (col.querySelector('.dm-cmp-detail') || {}).value || '';
+        if (ct.trim() || ckw.trim()) {
+          // format: title|keyword|desc|type|bottom|detail (type = title as fallback)
+          cols.push(ct.trim() + '|' + ckw.trim() + '|' + cdesc.trim() + '|' + ct.trim() + '|' + cbottom.trim() + '|' + cdetail.trim());
+        }
+      });
+      bodyVal = cmpLead;
+      if (cols.length) bodyVal += '<compare>' + cols.join('||') + '</compare>';
     }
-    // 校验学者是否存在（如果填写了的话）
-    var scholarVal = meta['学者'] || '';
-    if (scholarVal) {
-      var scholarKeys = scholarVal.split(/[,，]/).map(function(s) { return s.trim(); }).filter(Boolean);
-      var unknownScholars = scholarKeys.filter(function(k) { return !SCHOLARS[k]; });
-      if (unknownScholars.length) {
-        alert('学者「' + unknownScholars.join('、') + '」不存在，请先在学者目录页新增学者'); btn.disabled = false; btn.textContent = '保存'; return;
-      }
+
+    titleVal = titleVal.trim();
+    bodyVal = bodyVal.trim();
+    meritVal = meritVal.trim();
+    limitVal = limitVal.trim();
+
+    if (!titleVal || !schoolKeys.length || !bodyVal || bodyVal.length < 10) {
+      alert('标题、学派（至少选一个）、正文（至少10字）为必填'); btn.disabled = false; btn.textContent = '保存'; return;
     }
+    // 自动拼接意义/局限到body末尾
+    var fullBody = bodyVal;
+    if (meritVal) fullBody += '◆意义——' + meritVal;
+    if (limitVal) fullBody += '◆局限——' + limitVal;
+
     payload = {
-      title: meta['标题'], en: meta['en'] || '', scholar: scholarVal || null,
-      year: meta['年份'] || '',
+      title: titleVal, en: enVal.trim(), scholar: scholarVal || null,
+      year: yearVal,
       schools: schoolKeys,
-      body: body
+      body: fullBody
     };
     endpoint = '/delta/kp/add';
-  } else if (type === 'scholar') {
-    if (!meta['key'] || !meta['名字']) {
-      alert('key和名字为必填'); btn.disabled = false; btn.textContent = '保存'; return;
+  } else if (type === 'scholar' || type === 'school') {
+    // 学者/学派仍用文本框解析
+    var text = (document.getElementById('delta-input') || {}).value || '';
+    if (!text.trim()) { btn.disabled = false; btn.textContent = '保存'; return; }
+    var parts = text.split(/\n---\n/);
+    if (parts.length < 2) { alert('格式错误：缺少 --- 分隔符'); btn.disabled = false; btn.textContent = '保存'; return; }
+    var meta = {};
+    parts[0].split('\n').forEach(function(line) {
+      var m = line.match(/^([^:：]+)[：:]\s*(.*)/);
+      if (m) meta[m[1].trim()] = m[2].trim();
+    });
+    var body = parts.slice(1).join('\n---\n').trim();
+
+    if (type === 'scholar') {
+      if (!meta['key'] || !meta['名字']) {
+        alert('key和名字为必填'); btn.disabled = false; btn.textContent = '保存'; return;
+      }
+      payload = {
+        key: meta['key'], name: meta['名字'], en: meta['en'] || '',
+        nationality: meta['国籍'] || '', affiliation: meta['所属机构'] || '',
+        field: meta['领域'] || '',
+        schools: (meta['学派'] || '').split(/[,，]/).map(function(s) { return s.trim(); }).filter(Boolean),
+        contribution: body
+      };
+      endpoint = '/delta/scholar/add';
+    } else {
+      if (!meta['key'] || !meta['标题']) {
+        alert('key和标题为必填'); btn.disabled = false; btn.textContent = '保存'; return;
+      }
+      payload = {
+        key: meta['key'], title: meta['标题'], en: meta['en'] || '',
+        group: parseInt(meta['group']) || 1, accent: meta['颜色'] || '#007AFF',
+        summary: body
+      };
+      endpoint = '/delta/school/add';
     }
-    payload = {
-      key: meta['key'], name: meta['名字'], en: meta['en'] || '',
-      nationality: meta['国籍'] || '', affiliation: meta['所属机构'] || '',
-      field: meta['领域'] || '',
-      schools: (meta['学派'] || '').split(/[,，]/).map(function(s) { return s.trim(); }).filter(Boolean),
-      contribution: body
-    };
-    endpoint = '/delta/scholar/add';
-  } else if (type === 'school') {
-    if (!meta['key'] || !meta['标题']) {
-      alert('key和标题为必填'); btn.disabled = false; btn.textContent = '保存'; return;
-    }
-    payload = {
-      key: meta['key'], title: meta['标题'], en: meta['en'] || '',
-      group: parseInt(meta['group']) || 1, accent: meta['颜色'] || '#007AFF',
-      summary: body
-    };
-    endpoint = '/delta/school/add';
   }
 
   _deltaFetch(endpoint, payload).then(function(res) {
