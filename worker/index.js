@@ -466,10 +466,122 @@ async function handleBankRecord(request, env) {
   }
 }
 
+// ===== Claude API: KP 中日翻译 =====
+
+// 翻译的 system prompt — 项目上下文 + 规则 + 示例
+const TRANSLATION_SYSTEM_PROMPT = [
+  '你是专业的中日経営学术语翻译助手，为一个中日双语经営管理学考试学习 app 翻译知识点。',
+  '',
+  '## 核心原则（非常重要）',
+  '',
+  '**在翻译每个概念之前，请先在内部推理：该概念在日本経営学界有没有通用的专业术语？**',
+  '绝对优先使用日本経営学界（尤其是中央経済社・白桃書房・有斐閣・ダイヤモンド社等权威教科书）的标准术语，而不是字面直译。',
+  '',
+  '术语范例（必须按这个风格）：',
+  '- 探索与利用 → **探索と活用**（❌ 探索と利用）',
+  '- 组织公民行为 → **組織市民行動**（❌ 組織公民行為）',
+  '- 科学管理法 → **科学的管理法**（❌ 科学管理方法）',
+  '- 有限理性 → **限定合理性**（❌ 有限理性）',
+  '- 动态能力 → **ダイナミック・ケイパビリティ**（❌ 動的能力）',
+  '- 资源基础理论 → **リソース・ベースト・ビュー** / **資源ベース理論**',
+  '- 交易成本理论 → **取引費用理論**（❌ 交易費用理論）',
+  '- 组织行为学 → **組織行動論**（❌ 組織行為学）',
+  '- 差别计件工资制 → **差別出来高給制度**（❌ 差別計件工資制）',
+  '- 目标管理制度 / MBO → **目標管理制度 / MBO**',
+  '- 群体决策 → **集団意思決定**（❌ 群体決策）',
+  '- 冲突管理 → **コンフリクト・マネジメント** / **紛争管理**',
+  '- 组织文化 → **組織文化**',
+  '- 战略选择 → **戦略選択**',
+  '- 权变理论 → **コンティンジェンシー理論** / **条件適合理論**',
+  '',
+  '如果拿不准术语，请按 "日本経営学专业教科书会怎么写" 的直觉来译。',
+  '',
+  '## 格式规则',
+  '',
+  '1. **必须完整保留所有 HTML 标签**：`<strong>`、`<br>`、`<compare>`、`</compare>` 等',
+  '2. **必须完整保留所有结构符号**：`◆`（语义标签）、`①②③④⑤⑥⑦⑧⑨⑩`（圆圈数字）、`【】`（组标题）、`——`（破折号分隔符）',
+  '3. **学者姓名使用片假名**（括号内保留原英文）：',
+  '   - Taylor → テイラー',
+  '   - Weber → ウェーバー',
+  '   - Drucker → ドラッカー',
+  '   - Simon → サイモン',
+  '   - Porter → ポーター',
+  '   - Barnard → バーナード',
+  '4. **年份保持原样**：1911 → 1911（只把"年"加到后面：1911年）',
+  '5. **语义标签固定翻译**：',
+  '   - ◆意义 → ◆意義',
+  '   - ◆局限 → ◆限界',
+  '   - ◆原理 → ◆原理',
+  '   - ◆背景 → ◆背景',
+  '',
+  '## 输出格式',
+  '',
+  '严格按 JSON 输出，不要任何额外说明文字：',
+  '```',
+  '{"jaTitle": "日文标题", "jaBody": "日文完整 body（含所有 HTML 标签和结构符号）"}',
+  '```',
+  '',
+  '## 示例',
+  '',
+  '输入:',
+  '  中文标题: "探索与利用"',
+  '  中文body: "March（1991）提出的组织学习**双元性困境**：组织需要<br>①**探索**（exploration）——追求新知识、新机会<br>②**利用**（exploitation）——深耕现有能力"',
+  '',
+  '输出:',
+  '  {"jaTitle": "探索と活用", "jaBody": "マーチ（March, 1991）が提唱した組織学習の**両利き（ambidexterity）のジレンマ**：組織は以下の両立が求められる<br>①**探索**（exploration）——新しい知識・機会の追求<br>②**活用**（exploitation）——既存能力の深化"}'
+].join('\n');
+
+// 调用 Claude API 翻译单个 KP
+async function callClaudeTranslate(env, title, body) {
+  if (!env.ANTHROPIC_API_KEY) {
+    return { error: 'ANTHROPIC_API_KEY 未配置' };
+  }
+  const userMsg = '请翻译以下知识点为日文（按 JSON 格式输出）：\n\n'
+    + '中文标题: "' + (title || '').replace(/"/g, '\\"') + '"\n'
+    + '中文body: "' + (body || '').replace(/"/g, '\\"') + '"';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 2048,
+        system: TRANSLATION_SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userMsg }]
+      })
+    });
+    if (!res.ok) {
+      const errTxt = await res.text();
+      return { error: 'Claude API ' + res.status + ': ' + errTxt.slice(0, 200) };
+    }
+    const data = await res.json();
+    // Claude 返回: { content: [{ type: 'text', text: '{"jaTitle":...}' }] }
+    const txt = (data.content && data.content[0] && data.content[0].text) || '';
+    // 尝试解析 JSON（Claude 可能在前后加 ```json ... ```）
+    const jsonMatch = txt.match(/\{[\s\S]*"jaTitle"[\s\S]*"jaBody"[\s\S]*\}/);
+    if (!jsonMatch) return { error: 'Claude 返回格式异常：' + txt.slice(0, 200) };
+    const parsed = JSON.parse(jsonMatch[0]);
+    if (!parsed.jaTitle || !parsed.jaBody) return { error: '翻译结果缺少字段' };
+    return { jaTitle: parsed.jaTitle, jaBody: parsed.jaBody };
+  } catch (err) {
+    return { error: String(err.message || err) };
+  }
+}
+
+// 把翻译结果存入 delta.kp.ja（key = KP 中文标题去掉括号）
+function _kpJaKey(title) {
+  return (title || '').replace(/([（(][^）)]+[）)][\s]*)+$/, '').trim();
+}
+
 // ===== Delta CRUD: KP / Scholar / School 增删 =====
 
 const EMPTY_DELTA = {
-  kp:      { nextId: 603, added: [], deleted: [] },
+  kp:      { nextId: 603, added: [], deleted: [], ja: {} },  // ja: { "KP 中文标题": "<strong>日文标题</strong>日文body" }
   scholar: { added: {}, deleted: [] },
   school:  { added: {}, deleted: [] }
 };
@@ -479,6 +591,7 @@ async function getDelta(env) {
   if (!raw) return JSON.parse(JSON.stringify(EMPTY_DELTA));
   // 兼容旧结构
   if (!raw.kp) raw.kp = EMPTY_DELTA.kp;
+  if (!raw.kp.ja) raw.kp.ja = {};  // 兼容旧 delta 没有 ja 字段
   if (!raw.scholar) raw.scholar = EMPTY_DELTA.scholar;
   if (!raw.school) raw.school = EMPTY_DELTA.school;
   if (!raw.order) raw.order = {};
@@ -553,6 +666,67 @@ async function handleDeltaMutate(request, env, pathname) {
       }
       await saveDelta(env, delta);
       return jsonResponse({ success: true });
+    }
+
+    // POST /delta/kp/translate — 翻译单个 KP 为日文
+    // body: { title, body }（或 { id }，会从 delta 找）
+    if (pathname === '/delta/kp/translate') {
+      if (!body.title || !body.body) {
+        return jsonResponse({ error: 'title 和 body 为必填' }, 400);
+      }
+      const result = await callClaudeTranslate(env, body.title, body.body);
+      if (result.error) return jsonResponse({ error: result.error }, 500);
+      // 保存到 delta.kp.ja（key = 标题去掉括号部分）
+      const jaKey = _kpJaKey(body.title);
+      // 拼接成与 DATA_JA 兼容的格式：<strong>日文标题</strong>日文body
+      const jaFull = '<strong>' + result.jaTitle + '</strong>' + result.jaBody;
+      delta.kp.ja[jaKey] = jaFull;
+      await saveDelta(env, delta);
+      return jsonResponse({
+        success: true,
+        jaKey: jaKey,
+        jaTitle: result.jaTitle,
+        jaBody: result.jaBody,
+        ja: jaFull
+      });
+    }
+
+    // POST /delta/kp/translate-all — 批量翻译（流式进度）
+    // body: { knowledge: [{id, title, body}], skipExisting: true }
+    // 注意：此接口可能超时，前端应分批调用或串行调用 /delta/kp/translate
+    if (pathname === '/delta/kp/translate-all') {
+      if (!Array.isArray(body.knowledge)) {
+        return jsonResponse({ error: 'knowledge 数组必填' }, 400);
+      }
+      const results = [];
+      let translated = 0, skipped = 0, failed = 0;
+      const limit = Math.min(body.knowledge.length, body.limit || 20);  // 单次最多 20 个避免超时
+      for (let i = 0; i < limit; i++) {
+        const kn = body.knowledge[i];
+        if (!kn || !kn.title || !kn.body) { skipped++; continue; }
+        const jaKey = _kpJaKey(kn.title);
+        if (body.skipExisting && delta.kp.ja[jaKey]) { skipped++; continue; }
+        const result = await callClaudeTranslate(env, kn.title, kn.body);
+        if (result.error) {
+          failed++;
+          results.push({ id: kn.id, title: kn.title, error: result.error });
+        } else {
+          const jaFull = '<strong>' + result.jaTitle + '</strong>' + result.jaBody;
+          delta.kp.ja[jaKey] = jaFull;
+          translated++;
+          results.push({ id: kn.id, title: kn.title, jaKey: jaKey, ok: true });
+        }
+      }
+      await saveDelta(env, delta);
+      return jsonResponse({
+        success: true,
+        translated: translated,
+        skipped: skipped,
+        failed: failed,
+        processed: limit,
+        total: body.knowledge.length,
+        results: results
+      });
     }
 
     // POST /delta/scholar/add

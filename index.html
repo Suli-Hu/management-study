@@ -449,6 +449,21 @@ body {
 }
 .cn-title .tag-b { display: inline-block; font-size: 11px; color: var(--text-quaternary); background: var(--bg-secondary); border-radius: 10px; padding: 2px 8px; white-space: nowrap; line-height: 1.4; font-weight: var(--weight-regular); margin-left: 5px; vertical-align: middle; transition: opacity .15s; }
 .cn-title .tag-b.clickable:hover { opacity: .7; text-decoration: underline; }
+/* 学者姓氏融入标题文字（去 pill 化） — 保留点击跳转 */
+.cn-title .scholar-meta {
+  font-size: 11.5px; font-weight: 500;
+  color: var(--text-secondary);
+  margin-left: 6px; vertical-align: baseline;
+  white-space: nowrap;
+  transition: color .15s, text-decoration .15s;
+}
+.cn-title .scholar-meta.clickable {
+  cursor: pointer;
+}
+.cn-title .scholar-meta.clickable:hover {
+  color: #007AFF;
+  text-decoration: underline;
+}
 .cn-title .year-b { font-size: 10px; color: var(--text-quaternary); margin-left: 2px; font-weight: var(--weight-regular); }
 .cn-title .en-sub { display: block; font-size: 12px; color: var(--text-quaternary); margin-top: 3px; font-weight: var(--weight-regular); letter-spacing: 0.2px; }
 
@@ -785,6 +800,16 @@ body {
   .kp-panel-header .kp-panel-meta .tag-b {
     font-size: 11px; padding: 2px 8px; border-radius: 6px;
     background: var(--bg-secondary); color: var(--text-tertiary);
+  }
+  .kp-panel-header .kp-panel-meta .scholar-meta {
+    font-size: 12px; font-weight: 500; color: var(--text-secondary);
+    margin-left: 0;
+  }
+  .kp-panel-header .kp-panel-meta .scholar-meta.clickable {
+    cursor: pointer; transition: color .15s;
+  }
+  .kp-panel-header .kp-panel-meta .scholar-meta.clickable:hover {
+    color: #007AFF; text-decoration: underline;
   }
   .kp-panel-header .kp-panel-meta .year-b {
     font-size: 11px; color: var(--text-quaternary);
@@ -1636,6 +1661,161 @@ body.dragging-active { user-select: none; -webkit-user-select: none; }
 }
 .dm-meta-detail.open { display: block; }
 
+/* ========== Spotlight 全局搜索 ========== */
+.spotlight-overlay {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(0,0,0,0.36);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  display: none;
+  align-items: flex-start; justify-content: center;
+  padding: 12vh 20px 20px;
+  animation: spotlight-fade-in .18s ease;
+}
+.spotlight-overlay.active { display: flex; }
+@keyframes spotlight-fade-in { from { opacity: 0; } to { opacity: 1; } }
+.spotlight-box {
+  width: 100%; max-width: 640px;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(0,0,0,0.06); border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.22);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  max-height: 76vh;
+}
+.spotlight-input-wrap {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px; border-bottom: 1px solid rgba(0,0,0,0.06);
+  flex-shrink: 0;
+}
+.spotlight-icon { font-size: 16px; color: var(--text-quaternary); }
+.spotlight-input {
+  flex: 1; border: none; background: transparent; outline: none;
+  font-size: 17px; font-family: inherit; color: var(--text-primary);
+  font-weight: 400;
+}
+.spotlight-input::placeholder { color: var(--text-quaternary); font-weight: 300; }
+.spotlight-esc-hint {
+  font-size: 10px; color: var(--text-quaternary);
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.spotlight-kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 22px; height: 20px; padding: 0 5px;
+  border: 1px solid var(--border); border-radius: 4px;
+  background: var(--bg-secondary);
+  font-family: inherit; font-size: 10px; color: var(--text-secondary);
+}
+.spotlight-results {
+  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 6px 0 10px;
+}
+.sl-section {
+  padding: 6px 10px 2px;
+}
+.sl-section-header {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 10px 4px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--text-quaternary); text-transform: uppercase;
+}
+.sl-section-count {
+  background: var(--bg-secondary); color: var(--text-tertiary);
+  padding: 1px 6px; border-radius: 8px;
+  font-size: 10px; letter-spacing: 0; font-weight: 600;
+}
+.sl-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border-radius: 8px;
+  cursor: pointer;
+  transition: background .1s;
+}
+.sl-item:hover { background: rgba(0,0,0,0.04); }
+.sl-item.active { background: rgba(0,122,255,0.10); }
+.sl-emoji {
+  font-size: 18px; line-height: 1; flex-shrink: 0;
+  width: 24px; text-align: center;
+}
+.sl-main { flex: 1; min-width: 0; }
+.sl-title {
+  font-size: 13.5px; font-weight: 500; color: var(--text-primary);
+  line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.sl-title mark {
+  background: rgba(255,204,0,0.48); color: inherit;
+  padding: 0 1px; border-radius: 2px;
+}
+.sl-sub {
+  font-size: 11.5px; color: var(--text-tertiary); margin-top: 1px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.sl-sub mark { background: rgba(255,204,0,0.35); color: inherit; padding: 0 1px; border-radius: 2px; }
+.sl-meta {
+  font-size: 11px; color: var(--text-quaternary); flex-shrink: 0; white-space: nowrap;
+}
+.sl-enter-hint { font-size: 10px; color: var(--text-quaternary); display: none; }
+.sl-item.active .sl-enter-hint { display: inline-flex; }
+.spotlight-footer {
+  padding: 8px 16px; border-top: 1px solid rgba(0,0,0,0.06);
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 10px; color: var(--text-quaternary);
+  background: rgba(0,0,0,0.02); flex-shrink: 0;
+}
+.spotlight-footer-left, .spotlight-footer-right { display: flex; gap: 14px; align-items: center; }
+.sl-empty {
+  padding: 40px 20px 30px; text-align: center;
+  color: var(--text-tertiary); font-size: 13px;
+}
+.sl-empty-emoji { font-size: 32px; margin-bottom: 10px; opacity: 0.4; }
+.sl-empty-hint-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  max-width: 380px; margin: 18px auto 0;
+}
+.sl-empty-hint {
+  padding: 7px 11px; background: rgba(0,0,0,0.03); border-radius: 7px;
+  font-size: 11px; color: var(--text-tertiary); text-align: left;
+}
+
+/* 顶栏 🔍 按钮 */
+.tab-spotlight-btn {
+  background: transparent; border: 1px solid var(--border);
+  border-radius: 50%; width: 30px; height: 30px;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 13px; color: var(--text-tertiary);
+  transition: background .15s, color .15s, border-color .15s;
+  margin-left: 10px;
+}
+.tab-spotlight-btn:hover {
+  background: var(--bg-secondary); color: var(--text-secondary);
+  border-color: var(--text-quaternary);
+}
+
+/* 学派新建表单：SM/OB/OT 大类 segmented control（紧凑三选一） */
+.dm-l1-seg {
+  display: inline-flex; gap: 4px;
+  padding: 3px; border-radius: 10px;
+  background: var(--bg-secondary); border: 1px solid var(--border);
+}
+.dm-l1-btn {
+  padding: 5px 14px; border-radius: 7px;
+  background: transparent; border: none;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+  color: var(--text-tertiary); cursor: pointer; font-family: inherit;
+  transition: background .12s, color .12s;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.dm-l1-btn .dm-l1-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: currentColor; opacity: 0.6;
+}
+.dm-l1-btn:hover { color: var(--text-secondary); }
+.dm-l1-btn.active {
+  background: var(--bg-primary);
+  color: var(--l1-color, var(--text-primary));
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.dm-l1-btn.active .dm-l1-dot { opacity: 1; }
+
 /* 学派/学者详情页 hero 编辑按钮 — 方案 3 悬浮显影 · 磨砂玻璃风
    默认完全隐形（不打扰主内容阅读）；
    鼠标悬停到 hero 区域时淡入上滑；
@@ -1733,6 +1913,29 @@ body.dragging-active { user-select: none; -webkit-user-select: none; }
 .dm-pickr-item input[type="checkbox"] { margin: 0; cursor: pointer; accent-color: #007AFF; }
 .dm-pickr-item.hidden { display: none; }
 .dm-pickr-item.selected { color: #007AFF; font-weight: 600; }
+/* 候选 item 前的分类小圆点（学派 SM/OB/OT）*/
+.dm-pickr-item .pickr-cat-dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  margin-right: 2px;
+}
+/* 已选 chip 上的分类色点 */
+.dm-pickr-chip .pickr-cat-dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  margin-right: 1px;
+}
+/* picker 分组 header（SM/OB/OT 三段）*/
+.dm-pickr-group-header {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 8px 4px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  color: var(--text-quaternary);
+  border-top: 1px solid var(--border-light);
+  margin-top: 2px;
+}
+.dm-pickr-group-header:first-child { border-top: none; margin-top: 0; padding-top: 2px; }
+.dm-pickr-group-header .pickr-group-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+}
 .dm-pickr-empty {
   padding: 14px 8px; text-align: center; color: var(--text-quaternary);
   font-size: 12px; display: none;
@@ -1909,6 +2112,7 @@ body.dragging-active { user-select: none; -webkit-user-select: none; }
     <button class="tab-btn" onclick="switchTab('concepts', this)">知识点<span class="tab-count" id="cnt-concepts"></span></button>
     <button class="tab-btn" onclick="switchTab('paradigm', this)">理论框架</button>
     <button class="tab-btn" onclick="switchTab('quiz', this)">练习</button>
+    <button class="tab-spotlight-btn" onclick="openSpotlight()" title="全局搜索 ⌘K">🔍</button>
   </div>
 </div>
 
@@ -2521,11 +2725,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function findKey(label) {
   var clean = label.replace(/（.*?）/g, "").replace(/\(.*?\)/g, "").trim();
-  if (NAME_TO_KEY[clean]) return NAME_TO_KEY[clean];
+  if (!clean) return null;
+  // 第 1 步：硬编码 NAME_TO_KEY（处理别名）— 但只有 DATA[key] 仍存在才算有效
+  if (NAME_TO_KEY[clean] && DATA[NAME_TO_KEY[clean]]) return NAME_TO_KEY[clean];
   for (var name in NAME_TO_KEY) {
+    if (!DATA[NAME_TO_KEY[name]]) continue; // 映射目标已被删除 → 跳过
     if (clean.indexOf(name) !== -1 || name.indexOf(clean) !== -1) return NAME_TO_KEY[name];
   }
-  return null;
+  // 第 2 步：DATA 动态反查（覆盖新增学派 + 改名后的学派，NAME_TO_KEY 里没有）
+  // 多维度：title / en / ja / key，长度优先，避免子串误命中
+  var best = null, bestLen = 0;
+  for (var k in DATA) {
+    var d = DATA[k];
+    if (!d) continue;
+    ['title', 'en', 'ja'].forEach(function(f) {
+      var v = d[f];
+      if (!v) return;
+      if (clean === v && v.length > bestLen) { best = k; bestLen = v.length; return; }
+      if (clean.indexOf(v) !== -1 && v.length >= 2 && v.length > bestLen) { best = k; bestLen = v.length; return; }
+      if (v.indexOf(clean) !== -1 && clean.length >= 2 && clean.length > bestLen) { best = k; bestLen = clean.length; return; }
+    });
+    if (k === clean && k.length > bestLen) { best = k; bestLen = k.length; }
+  }
+  return best;
 }
 
 
@@ -2646,9 +2868,8 @@ function _titleHtml(title, accent, defaultSub, scholarName, jpName) {
   // scholarName 字符串 表示明确的学者
   // scholarName === undefined 表示老调用未提供 → fallback 到 title 解析
   if (scholarName === null) {
-    // 明确无学者：显示"常识"标签，不再走 title 解析（避免把 EN 误判为人名）
+    // 明确无学者（常识类）：方案 1 — 完全不渲染任何标签，保持列表简洁
     name = '';
-    html += ' <span class="tag-b" style="opacity:.6">常识</span>';
   } else if (scholarName) {
     // 明确有学者：直接使用，不解析 title 中的人名
     name = scholarName;
@@ -2662,16 +2883,17 @@ function _titleHtml(title, accent, defaultSub, scholarName, jpName) {
     }
   }
   if (name) {
-    // 多学者分别渲染标签（按 " · " 或 " & " 分割）
+    // 多学者分别渲染（按 " · " 或 " & " 分割）
+    // 方案 1：去 pill 化 — 使用 .scholar-meta class（无胶囊边框，融入标题），保留点击跳转
     var scholars = name.split(/\s*[·&]\s*/);
     scholars.forEach(function(sn) {
       sn = sn.trim();
       if (!sn) return;
       var sk = findScholarKey(sn);
       if (sk) {
-        html += ' <span class="tag-b clickable" style="cursor:pointer" onclick="event.stopPropagation();showScholar(\'' + sk + '\')">' + sn + '</span>';
+        html += ' <span class="scholar-meta clickable" onclick="event.stopPropagation();showScholar(\'' + sk + '\')">' + sn + '</span>';
       } else {
-        html += ' <span class="tag-b">' + sn + '</span>';
+        html += ' <span class="scholar-meta">' + sn + '</span>';
       }
     });
     if (year) {
@@ -2716,10 +2938,21 @@ function toggleJaLang(id, btn) {
     if (g.classList.contains('open')) openGroups.push(i);
   });
 
+  // 右栏分栏场景：panel-cn 是独立的标题元素（kp-panel-header 内），需要单独同步
+  // 左栏/其他场景：panelCn 为 null，跳过
+  var panelCn = null;
+  if (id === 'kp-panel-mirror') {
+    var panelHeader = document.querySelector('#kp-detail-panel .kp-panel-header');
+    if (panelHeader) panelCn = panelHeader.querySelector('.kp-panel-cn');
+  }
+
   if (_jaSwapCache[id]) {
     // 恢复中文
     titleEl.innerHTML = _jaSwapCache[id].title;
     body.innerHTML = _jaSwapCache[id].body;
+    if (panelCn && _jaSwapCache[id].panelCn != null) {
+      panelCn.textContent = _jaSwapCache[id].panelCn;
+    }
     delete _jaSwapCache[id];
     btn.classList.remove('active');
     btn.querySelector('span').textContent = '日本語';
@@ -2728,8 +2961,12 @@ function toggleJaLang(id, btn) {
     btn.style.removeProperty('color');
     btn.style.opacity = '0.65';  // 对应右栏默认半透明
   } else {
-    // 缓存中文原始内容
-    _jaSwapCache[id] = { title: titleEl.innerHTML, body: body.innerHTML };
+    // 缓存中文原始内容（含 panelCn 纯文本）
+    _jaSwapCache[id] = {
+      title: titleEl.innerHTML,
+      body: body.innerHTML,
+      panelCn: panelCn ? panelCn.textContent : null
+    };
     // 解析日语概念字符串
     var jaStr = DATA_JA[cnKey];
     var sm = jaStr.match(/^<strong>([\s\S]*?)<\/strong>([\s\S]*)/);
@@ -2738,6 +2975,11 @@ function toggleJaLang(id, btn) {
     var jaBody = sm[2].replace(/^——/, '').replace(/^—/, '').trim();
     // 渲染日语标题
     titleEl.innerHTML = _titleHtml(jaTitle, accent);
+    // 同步右栏独立标题元素（kp-panel-cn）为日文 —— 提取 jaTitle 的纯文本部分（去掉括号注释）
+    if (panelCn) {
+      var jaParsed = _splitTitleForUI(jaTitle);
+      panelCn.textContent = jaParsed.cn || jaTitle;
+    }
     // 渲染日语正文（去掉jp-line，保留练习按钮）
     var jaBodyHtml = _formatBody(jaBody, accent);
     var quizBtn = body.querySelector('div[style*="text-align:right"]');
@@ -2978,11 +3220,11 @@ function _initSplitPaneHandlers(detailBody, accent) {
         for (var ci = 0; ci < tempDiv.childNodes.length; ci++) {
           var nd = tempDiv.childNodes[ci];
           if (nd.nodeType === 3 && nd.textContent.trim()) { cnName = nd.textContent.trim(); break; }
-          if (nd.nodeType === 1 && !nd.classList.contains('tag-b') && !nd.classList.contains('year-b') && !nd.classList.contains('en-sub')) { cnName = nd.textContent.trim(); break; }
+          if (nd.nodeType === 1 && !nd.classList.contains('tag-b') && !nd.classList.contains('scholar-meta') && !nd.classList.contains('year-b') && !nd.classList.contains('en-sub')) { cnName = nd.textContent.trim(); break; }
         }
-        // 提取学者tags
+        // 提取学者标签（同时兼容旧 tag-b 和新 scholar-meta）+ 年份
         var metaHtml = '';
-        tempDiv.querySelectorAll('.tag-b').forEach(function(t) { metaHtml += t.outerHTML; });
+        tempDiv.querySelectorAll('.tag-b, .scholar-meta').forEach(function(t) { metaHtml += t.outerHTML; });
         var yearEl = tempDiv.querySelector('.year-b');
         if (yearEl) metaHtml += yearEl.outerHTML;
         // 提取EN/JA副标题
@@ -3264,6 +3506,12 @@ var QUIZ_AUTH_TOKEN = 'quiz_token_2026';
           KNOWLEDGE_MAP[entry.id] = entry;
         }
       });
+      // 合并 AI 翻译的日文内容到运行时 DATA_JA（新增 KP 或重新翻译过的 KP）
+      if (d.kp.ja && typeof DATA_JA !== 'undefined') {
+        Object.keys(d.kp.ja).forEach(function(k) {
+          DATA_JA[k] = d.kp.ja[k];
+        });
+      }
     }
     // 4. Read custom order
     if (d.order) window._deltaOrder = d.order;
@@ -5758,6 +6006,7 @@ function renderHomeGrid() {
   var themePanel = document.getElementById('panel-theme');
   if (themePanel) {
     themePanel.innerHTML = '';
+    var assignedKeys = {};  // 已归属到 THEME_ORDER 某 section 的学派
     THEME_ORDER.forEach(function(sec) {
       var keys;
       if (sec.order) {
@@ -5769,6 +6018,7 @@ function renderHomeGrid() {
         });
       }
       if (!keys.length) return;
+      keys.forEach(function(k) { assignedKeys[k] = true; });
       var numTag = sec.num ? '<span style="color:#aeaeb2;font-weight:400;margin-right:6px;font-size:11px">' + sec.num + '</span>' : '';
       var label = '<div style="border-left:2px solid ' + sec.color + ';padding-left:10px">' +
                   '<span>' + numTag + sec.label + '<span style="color:#aeaeb2;font-weight:400;margin-left:6px">' + keys.length + '</span></span>' +
@@ -5776,6 +6026,15 @@ function renderHomeGrid() {
                   '</div>';
       _appendSection(themePanel, label, sec.color, keys);
     });
+    // P2.1 — 捕获无归属学派（group 不在任何 THEME_ORDER section 里），避免隐形
+    var orphanKeys = Object.keys(DATA).filter(function(k) { return !assignedKeys[k]; });
+    if (orphanKeys.length) {
+      var orphanLabel = '<div style="border-left:2px solid #86868b;padding-left:10px">' +
+        '<span>其他<span style="color:#aeaeb2;font-weight:400;margin-left:6px">' + orphanKeys.length + '</span></span>' +
+        '<div style="color:#aeaeb2;font-weight:400;font-size:10px;margin-top:2px;line-height:1.4">尚未归属到任一主题 section 的学派</div>' +
+        '</div>';
+      _appendSection(themePanel, orphanLabel, '#86868b', orphanKeys);
+    }
     // 新增学派按钮
     var addBtn = document.createElement('div');
     addBtn.style.cssText = 'text-align:center;padding:16px 0';
@@ -5810,6 +6069,39 @@ function _deltaFetch(path, body) {
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + QUIZ_AUTH_TOKEN },
     body: body ? JSON.stringify(body) : undefined
   }).then(function(r) { return r.json(); });
+}
+
+// KP 中文标题 → DATA_JA 索引 key（去掉结尾的括号注释）
+function _kpJaKey(title) {
+  return (title || '').replace(/([（(][^）)]+[）)][\s]*)+$/, '').trim();
+}
+
+// 翻译状态跟踪：KP id → 'pending'/'ok'/'fail'
+window._kpTranslationStatus = window._kpTranslationStatus || {};
+
+// KP 保存后异步调用 Worker 翻译 → 成功后合并到 DATA_JA
+function _autoTranslateKp(entry) {
+  if (!entry || !entry.id || !entry.title || !entry.body) return;
+  window._kpTranslationStatus[entry.id] = 'pending';
+  _deltaFetch('/delta/kp/translate', {
+    id: entry.id,
+    title: entry.title,
+    body: entry.body
+  }).then(function(res) {
+    if (res && res.success && res.jaKey && res.ja) {
+      // 合并到运行时 DATA_JA
+      if (typeof DATA_JA !== 'undefined') DATA_JA[res.jaKey] = res.ja;
+      window._kpTranslationStatus[entry.id] = 'ok';
+      // 如果当前在该 KP 的详情页，小提示（可选）
+      console.log('[翻译] ' + entry.title + ' → ' + (res.jaTitle || ''));
+    } else {
+      window._kpTranslationStatus[entry.id] = 'fail';
+      console.warn('[翻译失败] ' + entry.title + ':', res && res.error);
+    }
+  }).catch(function(err) {
+    window._kpTranslationStatus[entry.id] = 'fail';
+    console.warn('[翻译网络错误] ' + entry.title + ':', err);
+  });
 }
 
 function _buildSelectOptions(obj, labelFn, selectedKey) {
@@ -6102,9 +6394,10 @@ function openAddModal(type, prefill) {
 
     // 学派 picker 数据
     var schoolItems = Object.keys(DATA).map(function(k) {
-      return { key: k, text: DATA[k].title };
+      var cat = _schoolToL1(k);
+      return { key: k, text: DATA[k].title, category: cat, dot: _L1_COLOR[cat] };
     });
-    var schoolPickrHtml = _renderPickr('kp-schools', schoolItems, currentSchool ? [currentSchool] : [], '\u641C\u7D22\u5B66\u6D3E...');
+    var schoolPickrHtml = _renderPickr('kp-schools', schoolItems, currentSchool ? [currentSchool] : [], '\u641C\u7D22\u5B66\u6D3E...', _PICKR_SCHOOL_OPTS);
 
     // 学者 picker 数据（按中文名排序）
     var scholarItems = Object.keys(SCHOLARS).sort(function(a, b) {
@@ -6256,9 +6549,10 @@ function openAddModal(type, prefill) {
     var preSchoolName = (DATA[preSchool] || {}).title || '';
     // 学派 picker
     var schSchoolItems = Object.keys(DATA).map(function(k) {
-      return { key: k, text: DATA[k].title };
+      var cat = _schoolToL1(k);
+      return { key: k, text: DATA[k].title, category: cat, dot: _L1_COLOR[cat] };
     });
-    var schSchoolPickrHtml = _renderPickr('sch-schools', schSchoolItems, preSchool ? [preSchool] : [], '\u641C\u7D22\u5B66\u6D3E...');
+    var schSchoolPickrHtml = _renderPickr('sch-schools', schSchoolItems, preSchool ? [preSchool] : [], '\u641C\u7D22\u5B66\u6D3E...', _PICKR_SCHOOL_OPTS);
     overlay.innerHTML =
       '<div class="delta-modal">'
       + '<div class="delta-modal-header">'
@@ -6323,25 +6617,17 @@ function openAddModal(type, prefill) {
   }
 
   if (type === 'school') {
-    // --- 学派：全屏分条表单（与学者表单一致风格）---
-    var defaultGroup = parseInt(prefill.group) || 1;
-    // 用 THEME_ORDER 生成 group 选项（每个 section 一项）
-    var groupOpts = '';
-    if (typeof THEME_ORDER !== 'undefined') {
-      THEME_ORDER.forEach(function(sec) {
-        var g = (sec.groups && sec.groups[0]) || 1;
-        var sel = (g === defaultGroup) ? ' selected' : '';
-        // label 太长，截前 18 字
-        var lbl = sec.label.length > 22 ? sec.label.slice(0, 22) + '\u2026' : sec.label;
-        groupOpts += '<option value="' + g + '" data-color="' + (sec.color || '#007AFF') + '"' + sel + '>' + g + ' \xB7 ' + lbl + '</option>';
-      });
-    } else {
-      // 兜底
-      for (var i = 1; i <= 12; i++) {
-        var sel2 = (i === defaultGroup) ? ' selected' : '';
-        groupOpts += '<option value="' + i + '"' + sel2 + '>group ' + i + '</option>';
-      }
-    }
+    // --- 学派：全屏分条表单 ---
+    var defaultGroup = parseInt(prefill.group) || 3;  // 默认 group 3 (OT 古典组织论)
+    // SM/OB/OT 大类 → groups 映射
+    var L1_GROUPS = { SM: [6,7,10,12], OB: [1,2], OT: [3,4,5,8,11] };
+    var L1_COLORS = { SM: '#007AFF', OB: '#34C759', OT: '#FF9500' };
+    var L1_NAMES  = { SM: '战略管理', OB: '组织行为', OT: '组织理论' };
+    // 根据默认 group 反推默认 L1
+    var defaultL1 = 'OT';
+    Object.keys(L1_GROUPS).forEach(function(k) {
+      if (L1_GROUPS[k].indexOf(defaultGroup) >= 0) defaultL1 = k;
+    });
     overlay.innerHTML =
       '<div class="delta-modal">'
       + '<div class="delta-modal-header">'
@@ -6366,12 +6652,17 @@ function openAddModal(type, prefill) {
       // 日文
       +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:60px;font-size:12px;color:var(--text-tertiary)">JP</label>'
       +     '<input id="dm-sk-ja" type="text" placeholder="\u65E5\u672C\u8A9E\uFF08\u53EF\u7559\u7A7A\uFF09" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px"></div>'
-      // Group 分类
-      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:60px;font-size:12px;color:var(--text-tertiary)">\u5206\u7C7B *</label>'
-      +     '<select id="dm-sk-group" onchange="var o=this.selectedOptions[0];if(o){var c=o.getAttribute(\'data-color\');var inp=document.getElementById(\'dm-sk-accent\');if(inp&&c)inp.value=c}" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px">' + groupOpts + '</select></div>'
-      // 主色
-      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:60px;font-size:12px;color:var(--text-tertiary)">\u4E3B\u8272</label>'
-      +     '<input id="dm-sk-accent" type="text" value="#007AFF" placeholder="\u5982 #007AFF" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:monospace"></div>'
+      // 大类 SM/OB/OT — segmented control（紧凑三选一）
+      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:60px;font-size:12px;color:var(--text-tertiary)">\u5927\u7C7B *</label>'
+      +     '<div class="dm-l1-seg" id="dm-sk-l1" data-value="' + defaultL1 + '">'
+      +       '<button type="button" class="dm-l1-btn' + (defaultL1 === 'SM' ? ' active' : '') + '" data-l1="SM" onclick="_selectSchoolL1(\'SM\')" style="--l1-color:#007AFF"><span class="dm-l1-dot" style="background:#007AFF"></span>SM · 战略管理</button>'
+      +       '<button type="button" class="dm-l1-btn' + (defaultL1 === 'OB' ? ' active' : '') + '" data-l1="OB" onclick="_selectSchoolL1(\'OB\')" style="--l1-color:#34C759"><span class="dm-l1-dot" style="background:#34C759"></span>OB · 组织行为</button>'
+      +       '<button type="button" class="dm-l1-btn' + (defaultL1 === 'OT' ? ' active' : '') + '" data-l1="OT" onclick="_selectSchoolL1(\'OT\')" style="--l1-color:#FF9500"><span class="dm-l1-dot" style="background:#FF9500"></span>OT · 组织理论</button>'
+      +     '</div></div>'
+      // 子分类 — 根据 L1 动态填充
+      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:60px;font-size:12px;color:var(--text-tertiary)">\u5B50\u5206\u7C7B *</label>'
+      +     '<select id="dm-sk-group" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px"></select></div>'
+      +     '<div style="font-size:11px;color:var(--text-quaternary);margin-left:68px;margin-top:-4px">\u989C\u8272\u7531\u5927\u7C7B\u81EA\u52A8\u63A8\u5BFC\uFF0C\u65E0\u9700\u586B\u5199</div>'
       +   '</div>'
       + '</div>'
       // Body: 学派概述 + 历史影响 + 理论背景
@@ -6389,14 +6680,44 @@ function openAddModal(type, prefill) {
       var el = document.getElementById('dm-sk-title');
       if (el) el.focus();
       // 触发一次 group select onchange 同步主色
-      var sel = document.getElementById('dm-sk-group');
-      if (sel) sel.dispatchEvent(new Event('change'));
+      // 初次填充 L2（根据默认 L1）
+      if (typeof _fillSchoolL2 === 'function') _fillSchoolL2(defaultL1, defaultGroup);
     }, 100);
     return;
   }
 
   // --- 兜底：未知 type ---
   alert('未知的添加类型: ' + type);
+}
+
+// 学派表单 — L1 大类切换（SM/OB/OT）+ L2 子分类填充
+window._SCHOOL_L1_GROUPS = { SM: [6,7,10,12], OB: [1,2], OT: [3,4,5,8,11] };
+window._SCHOOL_L1_COLORS = { SM: '#007AFF', OB: '#34C759', OT: '#FF9500' };
+
+function _selectSchoolL1(l1) {
+  var wrap = document.getElementById('dm-sk-l1');
+  if (!wrap) return;
+  wrap.setAttribute('data-value', l1);
+  wrap.querySelectorAll('.dm-l1-btn').forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-l1') === l1);
+  });
+  _fillSchoolL2(l1);
+}
+
+function _fillSchoolL2(l1, preselectGroup) {
+  var sel = document.getElementById('dm-sk-group');
+  if (!sel || typeof THEME_ORDER === 'undefined') return;
+  var targetGroups = window._SCHOOL_L1_GROUPS[l1] || [];
+  var opts = '';
+  THEME_ORDER.forEach(function(sec) {
+    var g = (sec.groups && sec.groups[0]) || 0;
+    if (targetGroups.indexOf(g) < 0) return;
+    // label 太长截断
+    var lbl = sec.label.length > 26 ? sec.label.slice(0, 26) + '\u2026' : sec.label;
+    var selAttr = (preselectGroup && g === preselectGroup) ? ' selected' : '';
+    opts += '<option value="' + g + '"' + selAttr + '>' + lbl + '</option>';
+  });
+  sel.innerHTML = opts;
 }
 
 function closeDeltaModal() {
@@ -6463,10 +6784,17 @@ function openEditSchool(key) {
     setVal('dm-sk-title', d.title);
     setVal('dm-sk-en', d.en);
     setVal('dm-sk-ja', d.ja);
-    setVal('dm-sk-accent', d.accent || '#007AFF');
     setVal('dm-sk-summary', d.summary);
     setVal('dm-sk-influence', d.influence);
     setVal('dm-sk-context', d.context);
+    // L1 大类从 group 反推 + 激活对应 segmented button + 填 L2
+    var EDIT_L1_GROUPS = { SM: [6,7,10,12], OB: [1,2], OT: [3,4,5,8,11] };
+    var editL1 = 'OT';
+    Object.keys(EDIT_L1_GROUPS).forEach(function(k) {
+      if (EDIT_L1_GROUPS[k].indexOf(firstGroup) >= 0) editL1 = k;
+    });
+    if (typeof _selectSchoolL1 === 'function') _selectSchoolL1(editL1);
+    if (typeof _fillSchoolL2 === 'function') _fillSchoolL2(editL1, firstGroup);
     // 同步标题预览标签
     var titleLabel = document.getElementById('dm-sk-title-label');
     if (titleLabel) {
@@ -6547,25 +6875,79 @@ function _simpleHash(str) {
 //   items: [{key, text}]
 //   selectedKeys: 已选 key 数组
 //   placeholder: 搜索框 placeholder
-function _renderPickr(pickrId, items, selectedKeys, placeholder) {
+// 学派 → SM/OB/OT 大类映射 + 配色（给 picker 分组显示用）
+var _L1_GROUPS = { SM: [6,7,10,12], OB: [1,2], OT: [3,4,5,8,11] };
+var _L1_COLOR  = { SM: '#007AFF', OB: '#34C759', OT: '#FF9500' };
+function _schoolToL1(key) {
+  var d = (typeof DATA !== 'undefined') ? DATA[key] : null;
+  if (!d) return 'OT';
+  var g = Array.isArray(d.group) ? d.group[0] : d.group;
+  if (_L1_GROUPS.SM.indexOf(g) >= 0) return 'SM';
+  if (_L1_GROUPS.OB.indexOf(g) >= 0) return 'OB';
+  if (_L1_GROUPS.OT.indexOf(g) >= 0) return 'OT';
+  return 'OT';
+}
+// 学派 picker 的分组配置：按 SM → OB → OT 排序显示
+var _PICKR_SCHOOL_OPTS = {
+  groupBy: 'category',
+  groupOrder: ['SM', 'OB', 'OT'],
+  groupLabels: { SM: 'SM · 战略管理', OB: 'OB · 组织行为', OT: 'OT · 组织理论' },
+  groupColors: _L1_COLOR
+};
+
+function _renderPickr(pickrId, items, selectedKeys, placeholder, opts) {
   selectedKeys = selectedKeys || [];
+  opts = opts || {};
   var selectedSet = {};
   selectedKeys.forEach(function(k) { selectedSet[k] = 1; });
-  // 已选 chips（按 selectedKeys 顺序）
-  var chipsHtml = selectedKeys.map(function(k) {
-    var item = items.find(function(i) { return i.key === k; });
-    if (!item) return '';
-    return '<span class="dm-pickr-chip" data-key="' + k + '"><span>' + item.text + '</span><span class="dm-pickr-chip-rm" onclick="_pickrRemove(\'' + pickrId + '\',\'' + k + '\')" title="\u79FB\u9664">\u00D7</span></span>';
-  }).join('');
-  // 候选 list
-  var itemsHtml = items.map(function(i) {
+  // 单个 item 的 HTML 构造（含可选彩色 dot）
+  var itemTpl = function(i) {
     var sel = selectedSet[i.key] ? ' selected' : '';
     var checked = selectedSet[i.key] ? ' checked' : '';
     var safeText = (i.text || '').replace(/"/g, '&quot;');
-    return '<label class="dm-pickr-item' + sel + '" data-key="' + i.key + '" data-text="' + safeText + '">'
+    var dotAttr = i.dot ? ' data-dot="' + i.dot + '"' : '';
+    var dotHtml = i.dot ? '<span class="pickr-cat-dot" style="background:' + i.dot + '"></span>' : '';
+    return '<label class="dm-pickr-item' + sel + '" data-key="' + i.key + '" data-text="' + safeText + '"' + dotAttr + '>'
       + '<input type="checkbox" onchange="_pickrItemChange(\'' + pickrId + '\',this)"' + checked + '>'
-      + i.text + '</label>';
+      + dotHtml + i.text + '</label>';
+  };
+  // 已选 chips（按 selectedKeys 顺序）
+  var chipTpl = function(item) {
+    var dotHtml = item.dot ? '<span class="pickr-cat-dot" style="background:' + item.dot + '"></span>' : '';
+    return '<span class="dm-pickr-chip" data-key="' + item.key + '"' + (item.dot ? ' data-dot="' + item.dot + '"' : '') + '>'
+      + dotHtml + '<span>' + item.text + '</span>'
+      + '<span class="dm-pickr-chip-rm" onclick="_pickrRemove(\'' + pickrId + '\',\'' + item.key + '\')" title="\u79FB\u9664">\u00D7</span>'
+      + '</span>';
+  };
+  var chipsHtml = selectedKeys.map(function(k) {
+    var item = items.find(function(i) { return i.key === k; });
+    return item ? chipTpl(item) : '';
   }).join('');
+  // 候选 list — 支持按 groupBy 分组显示（每组一个 header）
+  var itemsHtml = '';
+  if (opts.groupBy) {
+    var groups = {};
+    var order = opts.groupOrder || [];
+    items.forEach(function(i) {
+      var g = i[opts.groupBy] || '__other__';
+      if (!groups[g]) {
+        groups[g] = [];
+        if (order.indexOf(g) < 0) order.push(g);
+      }
+      groups[g].push(i);
+    });
+    order.forEach(function(g) {
+      if (!groups[g] || !groups[g].length) return;
+      var gLabel = (opts.groupLabels && opts.groupLabels[g]) || g;
+      var gColor = (opts.groupColors && opts.groupColors[g]) || '#b8b0a4';
+      itemsHtml += '<div class="dm-pickr-group-header" data-group="' + g + '">'
+        + '<span class="pickr-group-dot" style="background:' + gColor + '"></span>'
+        + gLabel + '</div>';
+      groups[g].forEach(function(i) { itemsHtml += itemTpl(i); });
+    });
+  } else {
+    itemsHtml = items.map(itemTpl).join('');
+  }
   return '<div class="dm-pickr" data-pickr-id="' + pickrId + '">'
     + '<div class="dm-pickr-selected" id="dm-pickr-selected-' + pickrId + '">'
     +   chipsHtml
@@ -6646,7 +7028,12 @@ function _pickrSyncSelected(pickrId) {
       var item = cb.closest('.dm-pickr-item');
       var k = item.getAttribute('data-key');
       var t = item.getAttribute('data-text');
-      html += '<span class="dm-pickr-chip" data-key="' + k + '"><span>' + t + '</span><span class="dm-pickr-chip-rm" onclick="_pickrRemove(\'' + pickrId + '\',\'' + k + '\')" title="\u79FB\u9664">\u00D7</span></span>';
+      var dot = item.getAttribute('data-dot');
+      var dotHtml = dot ? '<span class="pickr-cat-dot" style="background:' + dot + '"></span>' : '';
+      html += '<span class="dm-pickr-chip" data-key="' + k + '"' + (dot ? ' data-dot="' + dot + '"' : '') + '>'
+        + dotHtml + '<span>' + t + '</span>'
+        + '<span class="dm-pickr-chip-rm" onclick="_pickrRemove(\'' + pickrId + '\',\'' + k + '\')" title="\u79FB\u9664">\u00D7</span>'
+        + '</span>';
     });
     if (addBtn) addBtn.insertAdjacentHTML('beforebegin', html);
   }
@@ -6888,6 +7275,18 @@ function submitDelta(type) {
     if (!titleVal || !schoolKeys.length || !bodyVal || bodyVal.length < 10) {
       alert('标题、学派（至少选一个）、正文（至少10字）为必填'); btn.disabled = false; btn.textContent = '更新'; return;
     }
+    // P1.1 — 改 title 时扫描其他 KP body 的 compare 引用，避免变成死链
+    var editOldKP = KNOWLEDGE_MAP[editId];
+    var oldTitle = editOldKP ? editOldKP.title : '';
+    if (oldTitle && oldTitle !== titleVal) {
+      var compareRefs = _findCompareRefs(oldTitle, editId);
+      if (compareRefs.length) {
+        var msg = '注意：标题从「' + oldTitle + '」改为「' + titleVal + '」，以下 ' + compareRefs.length + ' 处的对比卡片引用将失效：\n\n'
+          + compareRefs.map(function(kn) { return '• 知识点「' + kn.title + '」'; }).join('\n')
+          + '\n\n建议之后手动修正这些引用。是否仍要更新标题？';
+        if (!confirm(msg)) { btn.disabled = false; btn.textContent = '更新'; return; }
+      }
+    }
 
     var fullBody = bodyVal;
     var sep = '';
@@ -6895,6 +7294,26 @@ function submitDelta(type) {
     if (meritVal) fullBody += sep + '◆意义——' + meritVal.replace(/\n/g, '<br>');
     if (limitVal) fullBody += sep + '◆局限——' + limitVal.replace(/\n/g, '<br>');
 
+    // P2.2 — 关联大幅减少时提示
+    if (editOldKP) {
+      var oldSchools = editOldKP.schools || [];
+      var removedSchools = oldSchools.filter(function(k) { return schoolKeys.indexOf(k) < 0; });
+      var oldScholars = (editOldKP.scholar || '').split(/[,，]/).map(function(s){return s.trim();}).filter(Boolean);
+      var removedScholars = oldScholars.filter(function(k) { return scholarKeys.indexOf(k) < 0; });
+      if (removedSchools.length || removedScholars.length) {
+        var lines = [];
+        removedSchools.forEach(function(k) {
+          var t = (DATA[k] || {}).title || k;
+          lines.push('• 从学派「' + t + '」移除');
+        });
+        removedScholars.forEach(function(k) {
+          var n = (SCHOLARS[k] || {}).name || k;
+          lines.push('• 取消关联学者「' + n + '」');
+        });
+        var warnMsg = '本次修改将使此知识点：\n\n' + lines.join('\n') + '\n\n确认保存？';
+        if (!confirm(warnMsg)) { btn.disabled = false; btn.textContent = '更新'; return; }
+      }
+    }
     payload = {
       id: editId,
       title: titleVal, en: enVal.trim(), scholar: scholarVal || null,
@@ -6951,7 +7370,7 @@ function submitDelta(type) {
     var enVal = (document.getElementById('dm-sk-en') || {}).value || '';
     var jaVal = (document.getElementById('dm-sk-ja') || {}).value || '';
     var groupSelect = document.getElementById('dm-sk-group');
-    var accentVal = (document.getElementById('dm-sk-accent') || {}).value || '#007AFF';
+    var l1Wrap = document.getElementById('dm-sk-l1');
     var summaryVal = (document.getElementById('dm-sk-summary') || {}).value || '';
     var influenceVal = (document.getElementById('dm-sk-influence') || {}).value || '';
     var contextVal = (document.getElementById('dm-sk-context') || {}).value || '';
@@ -6965,7 +7384,11 @@ function submitDelta(type) {
     if (!summaryVal) {
       alert('学派概述为必填'); btn.disabled = false; btn.textContent = '保存'; return;
     }
-    var groupVal = groupSelect ? parseInt(groupSelect.value) || 1 : 1;
+    var groupVal = groupSelect ? parseInt(groupSelect.value) || 3 : 3;
+    // accent 从 L1 大类自动推导（不再让用户填"主色"）
+    var l1Val = l1Wrap ? (l1Wrap.getAttribute('data-value') || 'OT') : 'OT';
+    var L1_COLORS_SUBMIT = { SM: '#007AFF', OB: '#34C759', OT: '#FF9500' };
+    var accentVal = L1_COLORS_SUBMIT[l1Val] || '#FF9500';
     // 编辑模式 vs 新增模式
     var keyVal;
     if (window._editingSchoolKey) {
@@ -6994,13 +7417,21 @@ function submitDelta(type) {
     if (type === 'kp' && res.entry) {
       KNOWLEDGE.push(res.entry);
       KNOWLEDGE_MAP[res.entry.id] = res.entry;
+      // 新建 KP 后异步触发 AI 翻译（不阻塞主流程）
+      _autoTranslateKp(res.entry);
     } else if (type === 'kp_edit' && res.entry) {
       var existing = KNOWLEDGE_MAP[res.entry.id];
+      var oldTitle = existing ? existing.title : '';
+      var oldBody = existing ? existing.body : '';
       if (existing) {
         Object.keys(res.entry).forEach(function(k) { existing[k] = res.entry[k]; });
       } else {
         KNOWLEDGE.push(res.entry);
         KNOWLEDGE_MAP[res.entry.id] = res.entry;
+      }
+      // 编辑后若 title 或 body 实质变化，重新翻译
+      if (oldTitle !== res.entry.title || oldBody !== res.entry.body) {
+        _autoTranslateKp(res.entry);
       }
       window._editingKpId = null;
     } else if (type === 'scholar') {
@@ -7033,22 +7464,68 @@ function submitDelta(type) {
   });
 }
 
-function deltaDeleteKP(id, title) {
-  // 校验：精确检测 compare 卡片链接 — body 中是否有 "<compare>...|||...</compare>"
-  // 块的某一列以 title 开头且后跟 |（compare 列分隔符）。
-  // 这样可避免子串误报（如"理论X"误命中"理论X基础"）。
+// 共用：扫描 SCHOOL_QUIZ 题库里是否含某个关键词（KP 标题或学者姓名）
+// 因为题库是自由文本，只能做"软引用"警告，不能精确判断
+function _scanQuizReferences(keyword) {
   var refs = [];
-  // 转义正则元字符
+  if (!keyword || typeof SCHOOL_QUIZ === 'undefined') return refs;
+  // keyword 至少 2 字符，避免单字误命中
+  if (String(keyword).trim().length < 2) return refs;
+  var kw = keyword;
+  Object.keys(SCHOOL_QUIZ).forEach(function(schoolKey) {
+    var bank = SCHOOL_QUIZ[schoolKey];
+    if (!Array.isArray(bank)) return;
+    bank.forEach(function(q) {
+      if (!q) return;
+      var hit = false;
+      // 题干
+      if (q.question && q.question.indexOf(kw) >= 0) hit = true;
+      // 选项
+      if (!hit && Array.isArray(q.options)) {
+        q.options.forEach(function(o) { if (o && String(o).indexOf(kw) >= 0) hit = true; });
+      }
+      // 解析
+      if (!hit && q.explanations) {
+        Object.values(q.explanations).forEach(function(v) {
+          if (v && String(v).indexOf(kw) >= 0) hit = true;
+        });
+      }
+      if (hit) {
+        var schoolName = (DATA[schoolKey] || {}).title || schoolKey;
+        refs.push(schoolName + ' · 第 ' + q.id + ' 题');
+      }
+    });
+  });
+  return refs;
+}
+
+// 共用：扫描 compare 卡片里对某个 KP title 的引用（精确匹配列开头）
+// 返回引用该 title 的其他 KP 列表（不含 excludeId 自己）
+function _findCompareRefs(title, excludeId) {
+  var refs = [];
+  if (!title) return refs;
   var escTitle = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  // 匹配：<compare> 后任意内容，列开始处出现 title|（即一列的 title 字段）
-  // 列分隔为 ||，列内字段分隔为 |，所以 title 必须出现在 <compare> 紧随后或 || 之后
   var compareRe = new RegExp('<compare>(?:[^<]|<(?!\\/?compare))*?(?:^|\\|\\|)' + escTitle + '\\|', 'i');
   KNOWLEDGE.forEach(function(kn) {
-    if (kn.id === id || !kn.body) return;
+    if (kn.id === excludeId || !kn.body) return;
     if (compareRe.test(kn.body)) {
-      refs.push('知识点「' + kn.title + '」的对比卡片');
+      refs.push(kn);
     }
   });
+  return refs;
+}
+
+function deltaDeleteKP(id, title) {
+  // 校验：精确检测 compare 卡片链接 — body 中是否有 "<compare>...|||...</compare>"
+  // 块的某一列以 title 开头且后跟 |（compare 列分隔符）
+  var refs = _findCompareRefs(title, id).map(function(kn) {
+    return '知识点「' + kn.title + '」的对比卡片';
+  });
+  // P1.3 — 扫描 SCHOOL_QUIZ 题库的软引用
+  var quizRefs = _scanQuizReferences(title);
+  if (quizRefs.length) {
+    quizRefs.forEach(function(r) { refs.push('题库：' + r); });
+  }
   if (refs.length) {
     if (!confirm('注意：「' + title + '」被以下 ' + refs.length + ' 处引用：\n\n' + refs.join('\n') + '\n\n删除后这些位置可能出现失效链接。是否仍要继续？')) return;
   } else {
@@ -7124,7 +7601,21 @@ function deltaDeleteScholar(key, name) {
     alert('无法删除：还有 ' + refs.length + ' 个知识点关联此学者。请先删除所有知识点。');
     return;
   }
-  if (!confirm('确定删除学者「' + name + '」？\n\n该学者将从所有学派的代表人物中消失。\n此操作不可撤销。')) return;
+  // P1.3 — 扫描题库文本里是否提到该学者（中文名 + 英文名）
+  var scholar = SCHOLARS[key] || {};
+  var quizRefs = [];
+  [scholar.name, scholar.en].forEach(function(kw) {
+    if (kw) _scanQuizReferences(kw).forEach(function(r) {
+      if (quizRefs.indexOf(r) < 0) quizRefs.push(r);
+    });
+  });
+  var confirmMsg = '确定删除学者「' + name + '」？\n\n该学者将从所有学派的代表人物中消失。\n此操作不可撤销。';
+  if (quizRefs.length) {
+    confirmMsg = '注意：题库中以下 ' + quizRefs.length + ' 处可能提及此学者：\n\n'
+      + quizRefs.map(function(r) { return '• ' + r; }).join('\n')
+      + '\n\n删除后题目文本仍保留人名，但跳转链接会失效。是否仍要删除「' + name + '」？';
+  }
+  if (!confirm(confirmMsg)) return;
   _deltaFetch('/delta/scholar/delete', { key: key }).then(function(res) {
     if (res.error) { alert('删除失败: ' + res.error); return; }
     delete SCHOLARS[key];
@@ -7165,6 +7656,351 @@ function _reRenderAfterDelta() {
 
 renderHomeGrid();
 updateTabCounts();
+
+// ========== Spotlight 全局搜索 ==========
+(function() {
+  // 注入 modal DOM（一次性）
+  var overlay = document.createElement('div');
+  overlay.className = 'spotlight-overlay';
+  overlay.id = 'spotlight-overlay';
+  overlay.innerHTML =
+    '<div class="spotlight-box" onclick="event.stopPropagation()">' +
+      '<div class="spotlight-input-wrap">' +
+        '<span class="spotlight-icon">🔍</span>' +
+        '<input id="spotlight-input" class="spotlight-input" type="text" placeholder="搜索学派、学者、知识点..." spellcheck="false" autocomplete="off">' +
+        '<span class="spotlight-esc-hint"><span class="spotlight-kbd">esc</span> 关闭</span>' +
+      '</div>' +
+      '<div id="spotlight-results" class="spotlight-results"></div>' +
+      '<div class="spotlight-footer">' +
+        '<div class="spotlight-footer-left">' +
+          '<span><span class="spotlight-kbd">↑</span><span class="spotlight-kbd">↓</span> 选择</span>' +
+          '<span><span class="spotlight-kbd">↵</span> 打开</span>' +
+        '</div>' +
+        '<div class="spotlight-footer-right" id="spotlight-count"></div>' +
+      '</div>' +
+    '</div>';
+  overlay.onclick = function(e) { if (e.target === overlay) closeSpotlight(); };
+  document.body.appendChild(overlay);
+
+  // 当前选中索引（全局序号：跨所有 section）
+  var _slActiveIdx = 0;
+  var _slResults = []; // 扁平列表，存 { type, key, id, title, sub, meta, emoji, onOpen }
+
+  var L1_TO_EMOJI = { SM: '📘', OB: '📗', OT: '📙' };
+
+  // 转义正则元字符
+  function _slEsc(s) { return (s || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  // 高亮 html（安全 escape 再替换）
+  function _slHl(text, q) {
+    if (!text) return '';
+    var esc = String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    if (!q) return esc;
+    try {
+      var re = new RegExp('(' + _slEsc(q) + ')', 'ig');
+      return esc.replace(re, '<mark>$1</mark>');
+    } catch(e) { return esc; }
+  }
+  // 从长文本中摘取含关键词的片段（约 60 字）
+  function _slSnippet(body, q) {
+    if (!body || !q) return '';
+    var plain = String(body).replace(/<[^>]+>/g, '');
+    var i = plain.toLowerCase().indexOf(q.toLowerCase());
+    if (i < 0) return '';
+    var start = Math.max(0, i - 20);
+    var end = Math.min(plain.length, i + q.length + 40);
+    var prefix = start > 0 ? '…' : '';
+    var suffix = end < plain.length ? '…' : '';
+    return prefix + plain.slice(start, end) + suffix;
+  }
+
+  // 核心搜索：返回 { schools, scholars, kps }
+  // 短查询（< 2 字符）只搜关键标识字段（title/name/en），避免长文本误命中
+  function _spotlightSearch(q) {
+    q = (q || '').trim();
+    var qLower = q.toLowerCase();
+    if (!q) return { schools: [], scholars: [], kps: [] };
+
+    // 是否短查询（单字 CJK / ≤2 ASCII）— 避免"五"命中 body 里无数长文本
+    var isShort = q.length < 2 || (/^[\x00-\x7f]+$/.test(q) && q.length < 3);
+    var schoolFields = isShort ? ['title', 'en', 'ja'] : ['title', 'en', 'ja', 'summary', 'influence'];
+    var scholarFields = isShort ? ['name', 'en'] : ['name', 'en', 'nationality', 'affiliation', 'field', 'contribution'];
+    var kpSearchBody = !isShort;
+
+    // 学派
+    var schools = [];
+    if (typeof DATA !== 'undefined') {
+      Object.keys(DATA).forEach(function(k) {
+        var d = DATA[k];
+        if (!d) return;
+        var hit = '';
+        schoolFields.forEach(function(f) {
+          if (!hit && d[f] && String(d[f]).toLowerCase().indexOf(qLower) >= 0) hit = f;
+        });
+        if (!hit) return;
+        schools.push({ key: k, data: d, hitField: hit });
+      });
+    }
+
+    // 学者
+    var scholars = [];
+    if (typeof SCHOLARS !== 'undefined') {
+      Object.keys(SCHOLARS).forEach(function(k) {
+        var s = SCHOLARS[k];
+        if (!s) return;
+        var hit = '';
+        scholarFields.forEach(function(f) {
+          if (!hit && s[f] && String(s[f]).toLowerCase().indexOf(qLower) >= 0) hit = f;
+        });
+        if (!hit) return;
+        scholars.push({ key: k, data: s, hitField: hit });
+      });
+    }
+
+    // KP
+    var kps = [];
+    if (typeof KNOWLEDGE !== 'undefined') {
+      KNOWLEDGE.forEach(function(kn) {
+        if (!kn) return;
+        var hit = '';
+        ['title', 'en'].forEach(function(f) {
+          if (!hit && kn[f] && String(kn[f]).toLowerCase().indexOf(qLower) >= 0) hit = f;
+        });
+        if (!hit && kpSearchBody && kn.body && String(kn.body).toLowerCase().indexOf(qLower) >= 0) hit = 'body';
+        // 日文匹配 — DATA_JA 是完整日文文本（含 body），同样不适合短查询
+        if (!hit && !isShort && typeof DATA_JA !== 'undefined') {
+          var cnKey = kn.title.replace(/([（(][^）)]+[）)][\s]*)+$/, '').trim();
+          if (DATA_JA[cnKey] && DATA_JA[cnKey].toLowerCase().indexOf(qLower) >= 0) hit = 'ja';
+        }
+        if (!hit) return;
+        kps.push({ kn: kn, hitField: hit });
+      });
+    }
+
+    // 排序：标题命中 > 副标题命中 > body
+    function rankSchool(r) { return { title: 0, en: 0, ja: 1, summary: 2, influence: 3 }[r.hitField] || 4; }
+    function rankScholar(r) { return { name: 0, en: 0, nationality: 2, affiliation: 2, field: 2, contribution: 3 }[r.hitField] || 4; }
+    function rankKp(r) { return { title: 0, en: 0, ja: 1, body: 3 }[r.hitField] || 4; }
+    schools.sort(function(a, b) { return rankSchool(a) - rankSchool(b); });
+    scholars.sort(function(a, b) { return rankScholar(a) - rankScholar(b); });
+    kps.sort(function(a, b) { return rankKp(a) - rankKp(b); });
+
+    return {
+      schools: schools.slice(0, 8),
+      scholars: scholars.slice(0, 8),
+      kps: kps.slice(0, 12)
+    };
+  }
+
+  // 渲染结果面板
+  function _spotlightRender(q) {
+    var box = document.getElementById('spotlight-results');
+    var countEl = document.getElementById('spotlight-count');
+    if (!box) return;
+    _slResults = [];
+    if (!q || !q.trim()) {
+      box.innerHTML =
+        '<div class="sl-empty">' +
+          '<div class="sl-empty-emoji">🔍</div>' +
+          '<div>输入关键词搜索学派、学者、知识点</div>' +
+          '<div class="sl-empty-hint-grid">' +
+            '<div class="sl-empty-hint">💡 支持 <b>中文 / 英文 / 日文</b></div>' +
+            '<div class="sl-empty-hint">💡 搜索 <b>标题、作者名、内容</b></div>' +
+            '<div class="sl-empty-hint">⌨️ <b>↑↓</b> 选择 · <b>↵</b> 打开</div>' +
+            '<div class="sl-empty-hint">⌨️ <b>esc</b> 或点击外部关闭</div>' +
+          '</div>' +
+        '</div>';
+      if (countEl) countEl.textContent = '';
+      _slActiveIdx = 0;
+      return;
+    }
+    var r = _spotlightSearch(q);
+    var total = r.schools.length + r.scholars.length + r.kps.length;
+    if (total === 0) {
+      box.innerHTML =
+        '<div class="sl-empty">' +
+          '<div class="sl-empty-emoji">🌾</div>' +
+          '<div>没有匹配 "<strong>' + _slHl(q, null) + '</strong>" 的学派、学者或知识点</div>' +
+          '<div style="font-size:11px;color:var(--text-quaternary);margin-top:8px">试试关键词片段、人名或英文名</div>' +
+        '</div>';
+      if (countEl) countEl.textContent = '';
+      return;
+    }
+    var html = '';
+    // 学派
+    if (r.schools.length) {
+      html += '<div class="sl-section"><div class="sl-section-header">学派 <span class="sl-section-count">' + r.schools.length + '</span></div>';
+      r.schools.forEach(function(it) {
+        var d = it.data;
+        var sub = (d.en || '') + (d.ja ? ' · ' + d.ja : '');
+        var cat = _schoolToL1(it.key);
+        var meta = cat;
+        var idx = _slResults.length;
+        _slResults.push({ type: 'school', key: it.key });
+        html += '<div class="sl-item" data-idx="' + idx + '">' +
+                  '<span class="sl-emoji">🏛</span>' +
+                  '<div class="sl-main">' +
+                    '<div class="sl-title">' + _slHl(d.title, q) + '</div>' +
+                    (sub ? '<div class="sl-sub">' + _slHl(sub, q) + '</div>' : '') +
+                  '</div>' +
+                  '<span class="sl-meta">' + meta + '</span>' +
+                  '<span class="sl-enter-hint"><span class="spotlight-kbd">↵</span></span>' +
+                '</div>';
+      });
+      html += '</div>';
+    }
+    // 学者
+    if (r.scholars.length) {
+      html += '<div class="sl-section"><div class="sl-section-header">学者 <span class="sl-section-count">' + r.scholars.length + '</span></div>';
+      r.scholars.forEach(function(it) {
+        var s = it.data;
+        var subParts = [];
+        if (s.en) subParts.push(s.en);
+        if (s.nationality) subParts.push(s.nationality);
+        if (s.affiliation) subParts.push(String(s.affiliation).split(/[；;·、,，]/)[0]);
+        var sub = subParts.join(' · ');
+        // 学者所属大类：取 schools 第一个推导；若无 schools 则从 KP 反查（昂贵，先简化）
+        var firstSchool = (s.schools && s.schools[0]) || '';
+        var cat = firstSchool ? _schoolToL1(firstSchool) : '';
+        var meta = cat || '';
+        var idx = _slResults.length;
+        _slResults.push({ type: 'scholar', key: it.key });
+        html += '<div class="sl-item" data-idx="' + idx + '">' +
+                  '<span class="sl-emoji">👤</span>' +
+                  '<div class="sl-main">' +
+                    '<div class="sl-title">' + _slHl(s.name, q) + '</div>' +
+                    (sub ? '<div class="sl-sub">' + _slHl(sub, q) + '</div>' : '') +
+                  '</div>' +
+                  (meta ? '<span class="sl-meta">' + meta + '</span>' : '') +
+                  '<span class="sl-enter-hint"><span class="spotlight-kbd">↵</span></span>' +
+                '</div>';
+      });
+      html += '</div>';
+    }
+    // KP
+    if (r.kps.length) {
+      html += '<div class="sl-section"><div class="sl-section-header">知识点 <span class="sl-section-count">' + r.kps.length + '</span></div>';
+      r.kps.forEach(function(it) {
+        var kn = it.kn;
+        var firstSchool = (kn.schools && kn.schools[0]) || '';
+        var cat = firstSchool ? _schoolToL1(firstSchool) : 'OT';
+        var emoji = L1_TO_EMOJI[cat] || '📙';
+        var schoolName = firstSchool && DATA[firstSchool] ? DATA[firstSchool].title : '';
+        var meta = cat + (schoolName ? ' · ' + schoolName : '');
+        // body 片段：如果命中 body，显示上下文
+        var sub = '';
+        if (it.hitField === 'body') {
+          sub = _slSnippet(kn.body, q);
+        } else {
+          sub = kn.en || '';
+        }
+        var idx = _slResults.length;
+        _slResults.push({ type: 'kp', id: kn.id, school: firstSchool });
+        html += '<div class="sl-item" data-idx="' + idx + '">' +
+                  '<span class="sl-emoji">' + emoji + '</span>' +
+                  '<div class="sl-main">' +
+                    '<div class="sl-title">' + _slHl(kn.title, q) + '</div>' +
+                    (sub ? '<div class="sl-sub">' + _slHl(sub, q) + '</div>' : '') +
+                  '</div>' +
+                  '<span class="sl-meta">' + meta + '</span>' +
+                  '<span class="sl-enter-hint"><span class="spotlight-kbd">↵</span></span>' +
+                '</div>';
+      });
+      html += '</div>';
+    }
+    box.innerHTML = html;
+    if (countEl) countEl.textContent = '共 ' + total + ' 个结果';
+    _slActiveIdx = 0;
+    _slUpdateActive();
+    // 绑定点击
+    box.querySelectorAll('.sl-item').forEach(function(el) {
+      el.addEventListener('mouseenter', function() {
+        _slActiveIdx = parseInt(el.getAttribute('data-idx')) || 0;
+        _slUpdateActive();
+      });
+      el.addEventListener('click', function() {
+        _slOpenResult(parseInt(el.getAttribute('data-idx')) || 0);
+      });
+    });
+  }
+
+  function _slUpdateActive() {
+    var items = document.querySelectorAll('#spotlight-results .sl-item');
+    items.forEach(function(el) { el.classList.remove('active'); });
+    var target = document.querySelector('#spotlight-results .sl-item[data-idx="' + _slActiveIdx + '"]');
+    if (target) {
+      target.classList.add('active');
+      // 确保可见
+      var rect = target.getBoundingClientRect();
+      var box = document.getElementById('spotlight-results');
+      var boxRect = box.getBoundingClientRect();
+      if (rect.bottom > boxRect.bottom) target.scrollIntoView({ block: 'nearest' });
+      else if (rect.top < boxRect.top) target.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function _slOpenResult(idx) {
+    var r = _slResults[idx];
+    if (!r) return;
+    closeSpotlight();
+    setTimeout(function() {
+      if (r.type === 'school') {
+        if (typeof show === 'function') show(r.key);
+      } else if (r.type === 'scholar') {
+        if (typeof showScholar === 'function') showScholar(r.key);
+      } else if (r.type === 'kp') {
+        // 跳到所属学派详情页，宽屏分栏模式下会自动选第一个 KP；简化：先跳学派
+        if (r.school && typeof show === 'function') show(r.school);
+        // TODO: 后续可以加"定位到该 KP"的逻辑（scroll + 展开）
+      }
+    }, 50);
+  }
+
+  // 打开/关闭
+  window.openSpotlight = function() {
+    var ov = document.getElementById('spotlight-overlay');
+    var inp = document.getElementById('spotlight-input');
+    if (!ov || !inp) return;
+    ov.classList.add('active');
+    inp.value = '';
+    _spotlightRender('');
+    setTimeout(function() { inp.focus(); }, 50);
+  };
+  window.closeSpotlight = function() {
+    var ov = document.getElementById('spotlight-overlay');
+    if (ov) ov.classList.remove('active');
+  };
+
+  // 输入监听
+  var input = document.getElementById('spotlight-input');
+  input.addEventListener('input', function(e) { _spotlightRender(e.target.value); });
+
+  // 键盘导航
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { closeSpotlight(); return; }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (_slResults.length === 0) return;
+      _slActiveIdx = (_slActiveIdx + 1) % _slResults.length;
+      _slUpdateActive();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (_slResults.length === 0) return;
+      _slActiveIdx = (_slActiveIdx - 1 + _slResults.length) % _slResults.length;
+      _slUpdateActive();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      _slOpenResult(_slActiveIdx);
+    }
+  });
+
+  // 全局快捷键 Cmd+K / Ctrl+K
+  document.addEventListener('keydown', function(e) {
+    if ((e.metaKey || e.ctrlKey) && e.key && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      openSpotlight();
+    }
+  });
+})();
 </script>
 
 </body>
