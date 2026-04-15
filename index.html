@@ -1164,9 +1164,9 @@ mark.sh {
   transform:translateY(-50%) scale(1.08);
 }
 .cn-hide-btn:active { transform:translateY(-50%) scale(0.92); }
-/* 编辑按钮：右侧黄色气泡（左滑出现） */
+/* 编辑按钮：左侧黄色气泡（紧邻删除按钮，与删除按钮一起右滑出现） */
 .cn-edit-btn {
-  position:absolute; right:8px; top:50%;
+  position:absolute; left:60px; top:50%;
   transform:translateY(-30%) scale(0.7);
   width:44px; height:44px; border-radius:12px;
   background:rgba(255,149,0,0.12); color:#FF9500; border:none;
@@ -1181,6 +1181,7 @@ mark.sh {
 }
 .cn-swipe-wrap.swiping .cn-edit-btn { box-shadow:0 4px 16px rgba(255,149,0,0.18); }
 .cn-edit-btn:hover { background:rgba(255,149,0,0.2); transform:translateY(-50%) scale(1.08); }
+.cn-edit-btn:active { transform:translateY(-50%) scale(0.92); }
 .cn-swipe-inner {
   position:relative; z-index:2;
   transition: transform 0.2s ease;
@@ -1449,18 +1450,55 @@ body.dragging-active { user-select: none; -webkit-user-select: none; }
 .ja-toggle { flex-shrink: 0; margin-left: auto; opacity: 0; pointer-events: none; transition: background .2s, color .2s, opacity .25s; }
 .cn-item.open .ja-toggle { opacity: 0.45; pointer-events: auto; }
 .cn-item.open .ja-toggle:hover { opacity: 0.8; }
-.ja-toggle.active { background: var(--accent); color: #fff !important; border-color: var(--accent); }
-.cn-item.open .ja-toggle.active { opacity: 1; }
-/* Delta CRUD: add/delete buttons & modal */
-.kp-add-btn {
-  display: inline; border: none; background: none; padding: 0;
-  color: var(--accent, #007AFF); font-size: 12px; font-weight: var(--weight-regular);
-  margin-left: 8px; cursor: pointer; vertical-align: baseline;
-  -webkit-tap-highlight-color: transparent;
-  transition: opacity .15s;
+/* active 状态：无论在 .cn-item.open 内还是右栏 panel-header 内，都强制完全可见 */
+.ja-toggle.active {
+  background: var(--accent); color: #fff !important; border-color: var(--accent);
+  opacity: 1 !important; pointer-events: auto !important;
 }
-.kp-add-btn:hover { opacity: .6; text-decoration: underline; }
-.kp-add-btn:active { opacity: .4; }
+/* Delta CRUD: add/delete buttons & modal */
+/* 新增按钮 — 方案 2 悬浮显影 · 与 hero 编辑按钮同哲学
+   基础样式：胶囊 + 灰色线框（给列表页场景用，默认可见）
+   .sec-title 内部的变体：默认隐形，hover sec-title 行才显影
+   hover 按钮本身：变 accent 胶囊 */
+.kp-add-btn {
+  display: inline-flex; align-items: center; gap: 2px;
+  padding: 3px 10px 3px 8px; margin-left: 8px;
+  border: 1px solid var(--border); background: transparent;
+  border-radius: 12px;
+  color: var(--text-tertiary);
+  font-size: 11.5px; font-weight: 500; font-family: inherit;
+  letter-spacing: 0;
+  text-transform: none;              /* 取消 sec-title 继承的 uppercase */
+  cursor: pointer;
+  vertical-align: baseline;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .18s ease, transform .18s ease,
+              background .15s, border-color .15s, color .15s;
+}
+/* sec-title 内的 .kp-add-btn：默认隐形，hover sec-title 才显影 */
+.sec-title .kp-add-btn {
+  opacity: 0;
+  transform: translateX(-3px);
+  border-color: transparent;
+  color: var(--text-quaternary);
+}
+.sec-title:hover .kp-add-btn {
+  opacity: 1;
+  transform: translateX(0);
+  border-color: var(--border);
+  color: var(--text-tertiary);
+}
+/* 按钮本身 hover：变 accent 胶囊强调态 */
+.kp-add-btn:hover {
+  background: color-mix(in srgb, var(--accent, #007AFF) 10%, transparent);
+  border-color: color-mix(in srgb, var(--accent, #007AFF) 30%, transparent);
+  color: var(--accent, #007AFF);
+}
+.kp-add-btn:active { transform: scale(0.95); }
+/* 触屏设备无 hover — sec-title 内按钮默认半透明可见，保证可发现 */
+@media (hover: none) {
+  .sec-title .kp-add-btn { opacity: 0.55; transform: none; border-color: var(--border); color: var(--text-tertiary); }
+}
 .delta-modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
   background: var(--bg-primary); z-index: 1000;
@@ -1592,8 +1630,115 @@ body.dragging-active { user-select: none; -webkit-user-select: none; }
 .dm-meta-detail {
   padding: 12px 20px; border-bottom: 1px solid var(--border);
   display: none; flex-shrink: 0;
+  /* 防止内部内容（如未折叠的 picker 候选）撑爆 modal */
+  max-height: 50vh; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .dm-meta-detail.open { display: block; }
+
+/* 学派/学者详情页 hero 编辑按钮 — 方案 3 悬浮显影 · 磨砂玻璃风
+   默认完全隐形（不打扰主内容阅读）；
+   鼠标悬停到 hero 区域时淡入上滑；
+   按钮本身 hover 变蓝色强调态；
+   触屏设备无 hover → 默认半透明可见（保证可发现） */
+.scholar-edit-btn {
+  position: absolute; top: 14px; right: 14px;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transform: translateY(-2px);
+  transition: opacity .2s ease, transform .2s ease, background .15s, color .15s, border-color .15s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  z-index: 2;
+}
+.school-hero:hover .scholar-edit-btn,
+.scholar-hero:hover .scholar-edit-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
+.scholar-edit-btn:hover {
+  background: #fff;
+  color: #007AFF;
+  border-color: rgba(0,122,255,0.35);
+}
+.scholar-edit-btn:active { transform: scale(0.94); }
+/* 触屏设备无 hover 态 — 保持半透明可见，避免"找不到"*/
+@media (hover: none) {
+  .scholar-edit-btn { opacity: 0.55; transform: none; }
+}
+
+/* ===== 通用多选 picker 组件：已选 chip + 搜索下拉 ===== */
+.dm-pickr { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.dm-pickr-selected {
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-height: 28px;
+}
+.dm-pickr-chip {
+  display: inline-flex; align-items: center; gap: 2px;
+  padding: 4px 4px 4px 11px; border-radius: 14px;
+  font-size: 12px; font-weight: 500;
+  background: rgba(0,122,255,0.10); color: #007AFF;
+  border: 1px solid rgba(0,122,255,0.30);
+}
+.dm-pickr-chip-rm {
+  cursor: pointer; margin-left: 2px;
+  width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%; font-size: 11px; color: rgba(0,122,255,0.5);
+  transition: background .12s, color .12s;
+}
+.dm-pickr-chip-rm:hover { background: rgba(0,122,255,0.18); color: #FF3B30; }
+.dm-pickr-add {
+  font-size: 11px; font-family: inherit; padding: 4px 10px; border-radius: 12px;
+  background: transparent; border: 1px dashed var(--border);
+  color: var(--text-quaternary); cursor: pointer;
+  transition: border-color .12s, color .12s, background .12s;
+}
+.dm-pickr-add:hover {
+  border-color: var(--text-tertiary); color: var(--text-secondary);
+  background: var(--bg-secondary);
+}
+.dm-pickr-add.open {
+  background: var(--text-primary); color: var(--bg-primary);
+  border-color: var(--text-primary); border-style: solid;
+}
+.dm-pickr-panel {
+  border: 1px solid var(--border); border-radius: 10px;
+  background: var(--bg-primary);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  padding: 8px; margin-top: 2px;
+}
+.dm-pickr-search {
+  width: 100%; padding: 6px 10px; border: 1px solid var(--border);
+  border-radius: 8px; font-size: 12.5px; font-family: inherit;
+  box-sizing: border-box; margin-bottom: 6px;
+  color: var(--text-primary); background: var(--bg-primary);
+}
+.dm-pickr-search:focus { outline: none; border-color: var(--text-quaternary); }
+.dm-pickr-list {
+  display: flex; flex-direction: column;
+  max-height: 220px; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.dm-pickr-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px; border-radius: 6px;
+  font-size: 12.5px; cursor: pointer; user-select: none;
+  color: var(--text-secondary);
+  transition: background .1s, color .1s;
+}
+.dm-pickr-item:hover { background: var(--bg-secondary); color: var(--text-primary); }
+.dm-pickr-item input[type="checkbox"] { margin: 0; cursor: pointer; accent-color: #007AFF; }
+.dm-pickr-item.hidden { display: none; }
+.dm-pickr-item.selected { color: #007AFF; font-weight: 600; }
+.dm-pickr-empty {
+  padding: 14px 8px; text-align: center; color: var(--text-quaternary);
+  font-size: 12px; display: none;
+}
+.dm-pickr-list:empty + .dm-pickr-empty,
+.dm-pickr-list.all-hidden ~ .dm-pickr-empty { display: block; }
 @media (max-width: 600px) {
   .cat-filter { margin-bottom: 10px; }
   .seg-item { font-size:12px; padding:6px 0; }
@@ -2150,7 +2295,7 @@ body.dragging-active { user-select: none; -webkit-user-select: none; }
         <button class="seg-item" data-l1="OT" onclick="scholarSegSelect('OT')"><span class="seg-dot" style="background:#FF9500"></span>OT</button>
       </div>
       <span class="scholar-search-count" id="scholar-search-count" style="white-space:nowrap"></span>
-      <button class="kp-add-btn" onclick="openAddModal('scholar',{})" title="新增学者">· 新增</button>
+      <button class="kp-add-btn" onclick="openAddModal('scholar',{})" title="新增学者">+ 新增</button>
       </div>
       <div class="seg-subs" id="scholar-subs"></div>
     </div>
@@ -2246,10 +2391,13 @@ function _scholarAccent(s) {
   return s.accent;
 }
 
-function showScholar(key) {
+function showScholar(key, skipPushNav) {
   var s = SCHOLARS[key];
   if (!s) return;
-  _pushNav();
+  // 记录当前所在页面，便于删除 KP 后定向刷新
+  window._curScholarKey = key;
+  window._curSchoolKey = null;
+  if (!skipPushNav) _pushNav();
 
   // 从 KNOWLEDGE 派生学者的学派归属（知识点是原子，学派由知识点tag决定）
   var _scholarSchoolSet = {};
@@ -2269,9 +2417,12 @@ function showScholar(key) {
   var ac = _scholarAccent(s);
   var accentBg = ac + "14";
   var html =
-    '<div style="display:flex;align-items:stretch;gap:0;margin-bottom:24px;background:#fff;border:1px solid #e4e0d8;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05)">'
+    '<div class="scholar-hero" style="display:flex;align-items:stretch;gap:0;margin-bottom:24px;background:#fff;border:1px solid #e4e0d8;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05);position:relative">'
     + '<div style="width:5px;flex-shrink:0;background:' + ac + '"></div>'
-    + '<div style="padding:20px 22px;flex:1">'
+    + '<div style="padding:20px 22px;flex:1;position:relative">'
+    +   '<button class="scholar-edit-btn" onclick="openEditScholar(\'' + key + '\')" title="\u7F16\u8F91\u5B66\u8005">'
+    +     '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M11.5 1.5l3 3-9 9H2.5v-3l9-9z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    +   '</button>'
     +   '<div class="badge" style="border-color:' + ac + ';color:' + ac + ';background:' + accentBg + '">' + s.field + '</div>'
     +   '<div class="d-title">' + s.name + '</div>'
     +   '<div class="d-en">' + s.en + '</div>'
@@ -2290,19 +2441,23 @@ function showScholar(key) {
         var knForScholar = KNOWLEDGE.filter(function(kn) { return _knScholars(kn).indexOf(key) >= 0; });
         if (!knForScholar.length) {
           // 没有知识点时显示删除学者按钮
-          return '<div class="sec-title">代表理论<button class="kp-add-btn" onclick="openAddModal(\'kp\',{scholar:\'' + key.replace(/'/g, "\\'") + '\'})" title="新增知识点">· 新增</button></div>'
+          return '<div class="sec-title">代表理论<button class="kp-add-btn" onclick="openAddModal(\'kp\',{scholar:\'' + key.replace(/'/g, "\\'") + '\'})" title="新增知识点">+ 新增</button></div>'
             + '<div style="padding:20px;text-align:center;color:var(--text-quaternary);font-size:12px;margin-bottom:20px">该学者下没有知识点</div>'
             + '<div style="text-align:center;margin-bottom:20px"><button onclick="deltaDeleteScholar(\'' + key + '\',\'' + (s.name || key).replace(/\'/g, "\\\\\'") + '\')" style="padding:8px 24px;border-radius:8px;border:1px solid #FF3B30;background:transparent;color:#FF3B30;font-size:12px;font-weight:var(--weight-semibold);cursor:pointer;transition:background .15s">删除该学者</button></div>'
             + '<hr class="divider">';
         }
-        return '<div class="sec-title">代表理论<button class="kp-add-btn" onclick="openAddModal(\'kp\',{scholar:\'' + key.replace(/'/g, "\\'") + '\'})" title="新增知识点">· 新增</button></div><ul class="concepts" style="margin-bottom:20px">'
+        return '<div class="sec-title">代表理论<button class="kp-add-btn" onclick="openAddModal(\'kp\',{scholar:\'' + key.replace(/'/g, "\\'") + '\'})" title="新增知识点">+ 新增</button></div><ul class="concepts" id="scholar-theories-list" style="margin-bottom:20px">'
           + knForScholar.map(function(kn, idx) {
               return renderKnowledgeItem({
                 title: _knFullTitle(kn),
                 body: kn.body,
                 accent: ac || '#8a7a6a',
                 id: 'th-' + Date.now() + '-' + idx,
-                wrapper: 'li'
+                wrapper: 'li',
+                kpId: kn.id,
+                scholar: _knScholarLastName(kn),  // 传 scholar 让 _titleHtml 走精确路径而非启发式解析
+                swipeable: true
+                // 不传 contextSchool — openEditKP 会 fallback 到 kp.schools[0]
               });
             }).join('') + '</ul><hr class="divider">';
       })()
@@ -2318,6 +2473,9 @@ function showScholar(key) {
   document.getElementById("view-list").classList.remove("active");
   document.getElementById("view-detail").classList.add("active");
   document.getElementById("view-detail").scrollTop = 0;
+  // 启用 KP 滑动手势（左滑显示 [删除][编辑] 按钮）
+  var theoriesList = document.getElementById("scholar-theories-list");
+  if (theoriesList) _initSwipe(theoriesList);
 }
 
 function _moveTabSlider(btn) {
@@ -2481,18 +2639,27 @@ function _splitTitleForUI(title) {
 function _titleHtml(title, accent, defaultSub, scholarName, jpName) {
   var s = _splitTitleForUI(title);
   var html = s.cn;
-  var name = s.name;
+  var name;
   var year = s.year;
-  if (!name && defaultSub) {
-    name = defaultSub.replace(/[，,]\s*\d{4}(?:\s*[\/\-]\s*\d{4})?\s*$/, '').trim();
-    var ym = defaultSub.match(/(\d{4}(?:\s*[\/\-]\s*\d{4})?)\s*$/);
-    if (ym) year = ym[1];
-  }
-  if (!name && scholarName) {
-    name = scholarName;
-  }
-  if (!name && scholarName === null) {
+  // ⚠️ 优先信任调用方传入的 scholarName（来自 KP 数据本身，比 title 反向解析准确）
+  // scholarName === null 表示明确无学者（常识类）
+  // scholarName 字符串 表示明确的学者
+  // scholarName === undefined 表示老调用未提供 → fallback 到 title 解析
+  if (scholarName === null) {
+    // 明确无学者：显示"常识"标签，不再走 title 解析（避免把 EN 误判为人名）
+    name = '';
     html += ' <span class="tag-b" style="opacity:.6">常识</span>';
+  } else if (scholarName) {
+    // 明确有学者：直接使用，不解析 title 中的人名
+    name = scholarName;
+  } else {
+    // 未提供 scholarName（向后兼容）：用启发式解析 title
+    name = s.name;
+    if (!name && defaultSub) {
+      name = defaultSub.replace(/[，,]\s*\d{4}(?:\s*[\/\-]\s*\d{4})?\s*$/, '').trim();
+      var ym = defaultSub.match(/(\d{4}(?:\s*[\/\-]\s*\d{4})?)\s*$/);
+      if (ym) year = ym[1];
+    }
   }
   if (name) {
     // 多学者分别渲染标签（按 " · " 或 " & " 分割）
@@ -2508,7 +2675,11 @@ function _titleHtml(title, accent, defaultSub, scholarName, jpName) {
       }
     });
     if (year) {
-      var shortYear = year.replace(/\d{4}(s?)/g, function(m, s) { return '\'' + m.slice(2,4) + s; });
+      // 只缩写 19xx 年代（"'97"）；20xx 及以后保持完整（"2003"），避免被误解为 1903
+      var shortYear = year.replace(/(\d{4})(s?)/g, function(m, y, s) {
+        if (y.indexOf('19') === 0) return '\'' + y.slice(2) + s;
+        return y + s;
+      });
       html += '<span class="year-b">' + shortYear + '</span>';
     }
   }
@@ -2552,6 +2723,10 @@ function toggleJaLang(id, btn) {
     delete _jaSwapCache[id];
     btn.classList.remove('active');
     btn.querySelector('span').textContent = '日本語';
+    // 还原 inline style 中的 opacity（避免编辑后视觉不一致）
+    btn.style.removeProperty('background');
+    btn.style.removeProperty('color');
+    btn.style.opacity = '0.65';  // 对应右栏默认半透明
   } else {
     // 缓存中文原始内容
     _jaSwapCache[id] = { title: titleEl.innerHTML, body: body.innerHTML };
@@ -2568,9 +2743,14 @@ function toggleJaLang(id, btn) {
     var quizBtn = body.querySelector('div[style*="text-align:right"]');
     var quizHtml = quizBtn ? quizBtn.outerHTML : '';
     body.innerHTML = jaBodyHtml + quizHtml;
-    // 按钮状态（按钮在header里，不受body替换影响）
+    // 按钮状态（按钮在 header 里，不受 body 替换影响）
     btn.classList.add('active');
     btn.querySelector('span').textContent = '中文';
+    // 直接 inline 设置视觉状态，不依赖 CSS 优先级（彻底兜底，避免任何 inline opacity 锁定问题）
+    btn.style.setProperty('background', accent, 'important');
+    btn.style.setProperty('color', '#fff', 'important');
+    btn.style.setProperty('border-color', accent, 'important');
+    btn.style.setProperty('opacity', '1', 'important');
   }
 
   // 恢复手风琴展开状态
@@ -2705,11 +2885,47 @@ var SCHOLAR_NAME_MAP = {
 };
 
 function findScholarKey(label) {
+  if (!label) return null;
   var best = null, bestLen = 0;
+  // 第 1 步：硬编码 NAME_MAP（处理常用别名/简称，如 "泰勒" → taylor）
   for (var name in SCHOLAR_NAME_MAP) {
     if (label.indexOf(name) !== -1 && name.length > bestLen) {
       best = SCHOLAR_NAME_MAP[name];
       bestLen = name.length;
+    }
+  }
+  if (best) return best;
+  // 第 2 步：兜底从 SCHOLARS 字典反查（多维度 + 长度优先避免子串误命中）
+  for (var k in SCHOLARS) {
+    var s = SCHOLARS[k];
+    if (!s) continue;
+    // 2a. 完整中文名（最长匹配）
+    if (s.name && label.indexOf(s.name) !== -1 && s.name.length > bestLen) {
+      best = k; bestLen = s.name.length;
+    }
+    // 2b. 完整英文名
+    if (s.en && label.indexOf(s.en) !== -1 && s.en.length > bestLen) {
+      best = k; bestLen = s.en.length;
+    }
+    // 2c. 英文姓氏 last name（如 "Drucker" 来自 "Peter F. Drucker"）
+    //     至少 3 字符避免误命中（如 "Lin"/"He"）
+    if (s.en) {
+      var enParts = s.en.replace(/\s+(Sr\.|Jr\.|III|II|IV|Ph\.D\.)$/i, '').split(/\s+/);
+      var lastName = enParts[enParts.length - 1] || '';
+      if (lastName.length >= 3 && label.indexOf(lastName) !== -1 && lastName.length > bestLen) {
+        best = k; bestLen = lastName.length;
+      }
+    }
+    // 2d. 中文姓氏（"·" 后的部分，如 "德鲁克" 来自 "彼得·德鲁克"）
+    //     至少 2 字符避免误命中
+    if (s.name) {
+      var idx = s.name.lastIndexOf('\u00B7'); // ·
+      if (idx >= 0) {
+        var cnLast = s.name.slice(idx + 1);
+        if (cnLast.length >= 2 && label.indexOf(cnLast) !== -1 && cnLast.length > bestLen) {
+          best = k; bestLen = cnLast.length;
+        }
+      }
     }
   }
   return best;
@@ -2749,7 +2965,8 @@ function _initSplitPaneHandlers(detailBody, accent) {
         var itemId = item.id || '';
         var jaBtn = '';
         if (typeof DATA_JA !== 'undefined' && DATA_JA[cnKey]) {
-          jaBtn = '<button class="pill-btn pill-sm ja-toggle" onclick="toggleJaLang(\'kp-panel-mirror\',this)" title="切换日语/中文" style="opacity:0.45;pointer-events:auto"><span>日本語</span></button>';
+          // 注入 --accent 变量：右栏按钮不在 .cn-item 内，需要自己提供 accent 才能让 active 状态显示彩色背景
+          jaBtn = '<button class="pill-btn pill-sm ja-toggle" onclick="toggleJaLang(\'kp-panel-mirror\',this)" title="切换日语/中文" style="--accent:' + accent + ';opacity:0.65;pointer-events:auto"><span>日本語</span></button>';
         }
         // 从cn-title中提取各部分
         var titleHtml = titleEl ? titleEl.innerHTML : '';
@@ -2796,16 +3013,19 @@ function _initSplitPaneHandlers(detailBody, accent) {
   if (firstHeader) firstHeader.click();
 }
 
-function show(key, accentOverride) {
+function show(key, accentOverride, skipPushNav) {
   // 等待delta加载完成再渲染（避免已删除的KP闪现）
   if (window._deltaReady && !window._deltaLoaded) {
-    window._deltaReady.then(function() { show(key, accentOverride); });
+    window._deltaReady.then(function() { show(key, accentOverride, skipPushNav); });
     return;
   }
   var d = DATA[key];
   if (!d) return;
   var accent = accentOverride || d.accent;
-  _pushNav();
+  // 记录当前所在页面，便于删除 KP 后定向刷新
+  window._curSchoolKey = key;
+  window._curScholarKey = null;
+  if (!skipPushNav) _pushNav();
 
   // 从 KNOWLEDGE 派生代表人物（该学派下有知识点的学者）
   var whoKeys = {};
@@ -2814,8 +3034,19 @@ function show(key, accentOverride) {
       _knScholars(kn).forEach(function(sk) { if (SCHOLARS[sk]) whoKeys[sk] = true; });
     }
   });
+  // 也合并：SCHOLARS 中 schools 字段包含此学派 key 的学者（即使没有 KP）
+  // 这样新增学者并选了学派后，即使还没添加 KP 也能在学派代表人物中看到
+  Object.keys(SCHOLARS).forEach(function(sk) {
+    var sSchools = SCHOLARS[sk].schools || [];
+    if (sSchools.indexOf(key) >= 0) whoKeys[sk] = true;
+  });
   // 合并 data.js 中手动列出的 who（保留顺序和无知识点的学者）
-  var whoList = (d.who || []).slice();
+  // 过滤：若 who 能映射到某个 scholar key 但该 key 已被删除（SCHOLARS 中不存在），则跳过
+  var whoList = (d.who || []).slice().filter(function(w) {
+    var sk = findScholarKey(w);
+    if (sk && !SCHOLARS[sk]) return false;  // 学者已删除 → 不显示
+    return true;
+  });
   Object.keys(whoKeys).forEach(function(sk) {
     var already = whoList.some(function(w) { return findScholarKey(w) === sk; });
     if (!already) {
@@ -2849,6 +3080,7 @@ function show(key, accentOverride) {
       wrapper: 'li',
       kpId: kn.id,
       scholar: _knScholarLastName(kn),
+      contextSchool: key,
       swipeable: true
     });
   }).join("");
@@ -2875,10 +3107,22 @@ function show(key, accentOverride) {
     }
   }
   var mergedEra = groupLabel;
+  // 删除学派的条件：没有 KP 且没有"可点击的"代表人物（不在 SCHOLARS 中的字符串名字不算）
+  var clickableWhoCount = whoList.filter(function(p) {
+    return !!findScholarKey(p);
+  }).length;
+  var canDeleteSchool = (knForSchool.length === 0) && (clickableWhoCount === 0);
+  var safeNameAttr = (d.title || key).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  var deleteSchoolBtn = canDeleteSchool
+    ? '<hr class="divider"><div style="text-align:center;margin:24px 0"><button onclick="deltaDeleteSchool(\'' + key + '\',\'' + safeNameAttr + '\')" style="padding:10px 28px;border-radius:8px;border:1px solid #FF3B30;background:transparent;color:#FF3B30;font-size:13px;font-weight:var(--weight-semibold);cursor:pointer;transition:background .15s" onmouseover="this.style.background=\'rgba(255,59,48,0.08)\'" onmouseout="this.style.background=\'transparent\'">\u5220\u9664\u8BE5\u5B66\u6D3E</button><div style="margin-top:8px;font-size:11px;color:var(--text-quaternary)">\u5F53\u524D\u65E0\u77E5\u8BC6\u70B9\u4E14\u65E0\u5173\u8054\u5B66\u8005</div></div>'
+    : '';
   var html =
     '<div class="school-hero" style="--accent:' + accent + '">'
     +   '<div class="school-hero-accent"></div>'
-    +   '<div class="school-hero-body">'
+    +   '<div class="school-hero-body" style="position:relative">'
+    +     '<button class="scholar-edit-btn" onclick="openEditSchool(\'' + key + '\')" title="\u7F16\u8F91\u5B66\u6D3E">'
+    +       '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M11.5 1.5l3 3-9 9H2.5v-3l9-9z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    +     '</button>'
     +     '<div class="era-pill" style="margin-bottom:12px"><div class="era-dot" style="background:' + accent + '"></div>' + mergedEra + '</div>'
     +     '<div class="d-title">' + d.title + '</div>'
     +     '<div class="d-en">' + d.en + '</div>'
@@ -2893,16 +3137,17 @@ function show(key, accentOverride) {
     + '<div class="sec-title">概述</div>'
     + '<p class="summary" style="margin-bottom:22px">' + d.summary + '</p>'
     + '<hr class="divider">'
-    + '<div class="sec-title">代表人物</div>'
+    + '<div class="sec-title">代表人物<button class="kp-add-btn" onclick="openAddModal(\'scholar\',{school:\'' + key.replace(/'/g, "\\'") + '\'})" title="新增学者">+ 新增</button></div>'
     + '<div class="chips" style="margin-bottom:20px">' + who + '</div>'
-    + '<div class="sec-title">核心概念<button class="kp-add-btn" onclick="openAddModal(\'kp\',{school:\'' + key.replace(/'/g, "\\'") + '\'})" title="新增知识点">· 新增</button></div>'
+    + '<div class="sec-title">核心概念<button class="kp-add-btn" onclick="openAddModal(\'kp\',{school:\'' + key.replace(/'/g, "\\'") + '\'})" title="新增知识点">+ 新增</button></div>'
     + '<ul class="concepts" style="margin-bottom:20px">' + concepts + '</ul>'
     + (d.context ? '<hr class="divider"><div class="sec-title">理论背景与局限性</div><p class="influence" style="margin-bottom:20px">' + d.context + '</p>' : '')
     + '<hr class="divider">'
     + '<div class="sec-title">历史影响</div>'
     + '<p class="influence" style="margin-bottom:20px">' + d.influence + '</p>'
     + '<div class="sec-title">关联学派</div>'
-    + '<div class="tags">' + related + '</div>';
+    + '<div class="tags">' + related + '</div>'
+    + deleteSchoolBtn;
 
   var detailBody = document.getElementById("detail-body");
   detailBody.innerHTML = html;
@@ -3023,6 +3268,14 @@ var QUIZ_AUTH_TOKEN = 'quiz_token_2026';
     // 4. Read custom order
     if (d.order) window._deltaOrder = d.order;
     window._deltaLoaded = true;
+    // 5. delta 应用完成 → 重新渲染初始化时已生成的 DOM
+    //    （初始化时 renderHomeGrid/renderScholarCards 是同步执行的，那时 delta 还没加载，
+    //     所以已删除/已新增的实体没反映出来。这里强制重渲染。）
+    if (typeof renderHomeGrid === 'function') renderHomeGrid();
+    if (typeof renderScholarCards === 'function') renderScholarCards();
+    if (typeof updateTabCounts === 'function') updateTabCounts();
+    // 重新应用学者筛选/搜索状态（如果之前有筛选，重渲染后要保持）
+    if (typeof _applyScholarFilter === 'function') _applyScholarFilter();
   })
   .catch(function() { window._deltaLoaded = true; })
   .finally(function() {
@@ -4876,7 +5129,7 @@ function renderKnowledgeItem(opts) {
     var realId = opts.kpId || id;
     var safeTitleAttr = title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
     card = '<div class="cn-swipe-wrap" data-cn-id="' + realId + '" data-cn-title="' + safeTitleAttr + '">'
-      + '<button class="cn-edit-btn" onclick="openEditKP(\'' + realId + '\')"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M11.5 1.5l3 3-9 9H2.5v-3l9-9z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="font-size:9px;opacity:.7">编辑</span></button>'
+      + '<button class="cn-edit-btn" onclick="openEditKP(\'' + realId + '\',\'' + (opts.contextSchool || '') + '\')"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M11.5 1.5l3 3-9 9H2.5v-3l9-9z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="font-size:9px;opacity:.7">编辑</span></button>'
       + '<button class="cn-hide-btn" onclick="deltaDeleteKP(\'' + realId + '\',\'' + safeTitleAttr + '\')"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span style="font-size:9px;opacity:.7">删除</span></button>'
       + '<div class="cn-swipe-inner">' + card + '</div></div>';
   }
@@ -5264,7 +5517,7 @@ function _endDrag() {
   _drag.origIdx = -1;
 }
 
-// 左滑手势（触摸 + 鼠标）
+// 右滑手势（触摸 + 鼠标 + 触控板）：露出左侧两个按钮 [删除][编辑]
 function _initSwipe(container) {
   var wraps = container.querySelectorAll('.cn-swipe-wrap');
   wraps.forEach(function(wrap) {
@@ -5274,10 +5527,11 @@ function _initSwipe(container) {
     if (!inner || inner._swipeInit) return;
     inner._swipeInit = true;
     var sx = 0, cx = 0, swiping = false, opened = false;
-    // 按钮样式跟随滑动位置（0~60）实时变化
+    // 按钮样式跟随滑动位置（0~120）实时变化
+    // 删除按钮在 0~50px 完成出现，编辑按钮在 50~110px 完成出现（错开顺序感）
     function _updateBtn(pos) {
       if (!hideBtn) return;
-      var ratio = Math.min(pos / 30, 1); // 0~30px区间完成出现
+      var ratio = Math.min(pos / 50, 1); // 0~50px区间完成出现
       var sc = 0.7 + 0.3 * ratio; // scale: 0.7 → 1.0
       var ty = -30 + (-20) * ratio; // translateY: -30% → -50%
       hideBtn.style.opacity = ratio;
@@ -5286,14 +5540,16 @@ function _initSwipe(container) {
     }
     function _updateEditBtn(pos) {
       if (!editBtn) return;
-      var ratio = Math.min(pos / 30, 1);
+      // 编辑按钮稍慢出现：50px 才开始可见，110px 完全显现
+      var ratio = Math.max(0, Math.min((pos - 50) / 60, 1));
       var sc = 0.7 + 0.3 * ratio;
       var ty = -30 + (-20) * ratio;
       editBtn.style.opacity = ratio;
       editBtn.style.transform = 'translateY(' + ty + '%) scale(' + sc + ')';
       editBtn.style.pointerEvents = ratio > 0.5 ? 'auto' : 'none';
     }
-    var sy = 0, dirLocked = false, isVertical = false, openDir = 0; // openDir: -1=left(edit), +1=right(delete)
+    var sy = 0, dirLocked = false, isVertical = false;
+    var OPEN_W = 120; // 两按钮总宽度（删除44 + 间隔8 + 编辑44 + 边距*2 ≈ 120）
     function onStart(x, y) {
       sx = x; sy = y; cx = 0; swiping = true; dirLocked = false; isVertical = false;
       wrap.classList.add('swiping');
@@ -5308,35 +5564,26 @@ function _initSwipe(container) {
         if (dy > dx) { isVertical = true; swiping = false; wrap.classList.remove('swiping'); return; }
       }
       cx = x - sx;
-      // 已打开状态下回划：只允许关闭方向，不触发反方向
-      if (opened) {
-        if (openDir < 0) { cx = Math.max(cx, -60); cx = Math.min(cx, 0); } // 左开→只能往右关
-        else if (openDir > 0) { cx = Math.min(cx, 60); cx = Math.max(cx, 0); } // 右开→只能往左关
-      } else {
-        if (cx < -60) cx = -60;
-        if (cx > 60) cx = 60;
-      }
+      // 只支持右滑（cx > 0），左滑直接夹到 0
+      if (cx < 0) cx = 0;
+      if (cx > OPEN_W) cx = OPEN_W;
       inner.style.transition = 'none';
       inner.style.transform = 'translateX(' + cx + 'px)';
-      // 左滑(cx<0)→右侧出现编辑(editBtn)，右滑(cx>0)→左侧出现删除(hideBtn)
-      if (cx < 0) { _updateEditBtn(Math.abs(cx)); _updateBtn(0); }
-      else if (cx > 0) { _updateBtn(cx); _updateEditBtn(0); }
-      else { _updateBtn(0); _updateEditBtn(0); }
+      // 右滑：删除（左）+ 编辑（紧邻右）同时出现
+      _updateBtn(cx);
+      _updateEditBtn(cx);
     }
     function onEnd() {
       swiping = false;
       inner.style.transition = 'transform 0.2s ease';
-      if (cx < -28) {
-        inner.style.transform = 'translateX(-60px)';
-        opened = true; openDir = -1;
-        _updateEditBtn(60);
-      } else if (cx > 28) {
-        inner.style.transform = 'translateX(60px)';
-        opened = true; openDir = 1;
-        _updateBtn(60);
+      if (cx > 40) {
+        inner.style.transform = 'translateX(' + OPEN_W + 'px)';
+        opened = true;
+        _updateBtn(OPEN_W);
+        _updateEditBtn(OPEN_W);
       } else {
         _dismissSmooth(wrap, inner);
-        opened = false; openDir = 0;
+        opened = false;
       }
     }
     function resetSwipe() {
@@ -5358,7 +5605,7 @@ function _initSwipe(container) {
       }
       inn.style.transition = 'transform 0.2s ease';
       inn.style.transform = 'translateX(0)';
-      opened = false; openDir = 0;
+      opened = false;
       setTimeout(function() {
         w.classList.remove('swiping');
         if (hideBtn) hideBtn.style.transition = '';
@@ -5382,8 +5629,8 @@ function _initSwipe(container) {
       document.addEventListener('mousemove', mm);
       document.addEventListener('mouseup', mu);
     });
-    // trackpad二指水平滑动（wheel事件）
-    // deltaX>0 = 左滑露出右侧删除按钮, deltaX<0 = 右滑露出左侧编辑按钮
+    // trackpad二指水平滑动（wheel事件）—— 只支持右滑（露出左侧两按钮）
+    // 用户向右滑动 = 内容向右移动 = 在 Mac trackpad 上对应 deltaX < 0
     var wPos = 0, wheelTimer = null, wStarted = false;
     wrap.addEventListener('wheel', function(e) {
       // 只响应水平分量较大的滑动
@@ -5391,30 +5638,27 @@ function _initSwipe(container) {
       e.preventDefault();
       e.stopPropagation();
       // 同步当前状态
-      if (!wStarted) { wPos = opened ? (cx <= 0 ? 60 : -60) : 0; wStarted = true; }
-      wPos += e.deltaX * 0.6;
-      if (wPos < -60) wPos = -60;
-      if (wPos > 60) wPos = 60;
-      if (Math.abs(wPos) > 2) wrap.classList.add('swiping');
+      if (!wStarted) { wPos = opened ? OPEN_W : 0; wStarted = true; }
+      // deltaX < 0（右滑）增加 wPos；deltaX > 0（左滑）减少 wPos
+      wPos -= e.deltaX * 0.6;
+      if (wPos < 0) wPos = 0;
+      if (wPos > OPEN_W) wPos = OPEN_W;
+      if (wPos > 2) wrap.classList.add('swiping');
       inner.style.transition = 'none';
-      inner.style.transform = 'translateX(' + (-wPos) + 'px)';
+      inner.style.transform = 'translateX(' + wPos + 'px)';
       if (hideBtn) hideBtn.style.transition = 'none';
       if (editBtn) editBtn.style.transition = 'none';
-      if (wPos > 0) { _updateBtn(wPos); _updateEditBtn(0); }
-      else if (wPos < 0) { _updateEditBtn(Math.abs(wPos)); _updateBtn(0); }
-      else { _updateBtn(0); _updateEditBtn(0); }
+      _updateBtn(wPos);
+      _updateEditBtn(wPos);
       clearTimeout(wheelTimer);
       wheelTimer = setTimeout(function() {
         wStarted = false;
         inner.style.transition = 'transform 0.2s ease';
-        if (wPos > 25) {
-          inner.style.transform = 'translateX(-60px)';
-          cx = -60; wPos = 60; opened = true;
-          _updateBtn(60);
-        } else if (wPos < -25) {
-          inner.style.transform = 'translateX(60px)';
-          cx = 60; wPos = -60; opened = true;
-          _updateEditBtn(60);
+        if (wPos > 40) {
+          inner.style.transform = 'translateX(' + OPEN_W + 'px)';
+          cx = OPEN_W; wPos = OPEN_W; opened = true;
+          _updateBtn(OPEN_W);
+          _updateEditBtn(OPEN_W);
         } else {
           _dismissSmooth(wrap, inner);
           wPos = 0;
@@ -5437,7 +5681,13 @@ function _surname(w) {
 }
 
 function _cardSub(who) {
-  return who.slice(0, 3).map(_surname).join(' · ');
+  // 过滤掉已删除的学者（findScholarKey 找得到 key 但 SCHOLARS 中不存在的）
+  var filtered = (who || []).filter(function(w) {
+    var sk = findScholarKey(w);
+    if (sk && !SCHOLARS[sk]) return false;
+    return true;
+  });
+  return filtered.slice(0, 3).map(_surname).join(' · ');
 }
 
 var _masteredKeys = JSON.parse(localStorage.getItem('mastered') || '{}');
@@ -5529,7 +5779,7 @@ function renderHomeGrid() {
     // 新增学派按钮
     var addBtn = document.createElement('div');
     addBtn.style.cssText = 'text-align:center;padding:16px 0';
-    addBtn.innerHTML = '<button class="kp-add-btn" onclick="openAddModal(\'school\',{})" title="新增学派">· 新增学派</button>';
+    addBtn.innerHTML = '<button class="kp-add-btn" onclick="openAddModal(\'school\',{})" title="新增学派">+ 新增学派</button>';
     themePanel.appendChild(addBtn);
   }
 
@@ -5700,38 +5950,42 @@ function _parseBodyForEdit(body) {
   return result;
 }
 
-function openEditKP(id) {
+function openEditKP(id, contextSchool) {
   var kp = KNOWLEDGE_MAP[id];
   if (!kp) { alert('知识点未找到'); return; }
 
-  // Find the school this KP belongs to (first one)
-  var schoolKey = (kp.schools && kp.schools[0]) || '';
+  // 上下文学派（从哪个学派进入编辑）— 用作打开表单时的初始 prefill
+  var schoolKey = contextSchool || (kp.schools && kp.schools[0]) || '';
 
-  // Open the add modal with this school context
-  openAddModal('kp', { school: schoolKey });
+  // 第一个学者作为 prefill（用于打开表单时的显示）
+  var firstScholar = '';
+  if (kp.scholar) {
+    var scs = kp.scholar.split(/[,，]/);
+    if (scs.length) firstScholar = scs[0].trim();
+  }
 
-  // Wait for modal to render, then fill in data
+  // 打开新增表单（带学派 + 学者 prefill）
+  openAddModal('kp', { school: schoolKey, scholar: firstScholar });
+
+  // 等表单渲染完，恢复完整数据
   setTimeout(function() {
-    // Set edit mode flag
+    // 切换为编辑模式
     window._editingKpId = id;
     var saveBtn = document.getElementById('delta-save-btn');
     if (saveBtn) { saveBtn.textContent = '更新'; saveBtn.setAttribute('onclick', "submitDelta('kp_edit')"); }
 
-    // Fill metadata
+    // 填基础字段
     var titleInput = document.getElementById('dm-title');
     var enInput = document.getElementById('dm-en');
-    var scholarSelect = document.getElementById('dm-scholar');
     var yearInput = document.getElementById('dm-year');
-
     if (titleInput) titleInput.value = kp.title || '';
     if (enInput) enInput.value = kp.en || '';
     if (yearInput) yearInput.value = kp.year || '';
-    if (scholarSelect && kp.scholar) {
-      var scholars = (kp.scholar || '').split(/[,，]/);
-      if (scholars[0]) scholarSelect.value = scholars[0].trim();
-      var label = document.getElementById('dm-meta-scholar-label');
-      if (label && scholarSelect.selectedOptions[0]) label.textContent = scholarSelect.selectedOptions[0].text;
-    }
+
+    // 用 picker 批量恢复学派/学者选中（同时会触发 onChange 同步摘要栏）
+    _pickrSetSelected('kp-schools', kp.schools || []);
+    var allScholarKeys = (kp.scholar || '').split(/[,，]/).map(function(s) { return s.trim(); }).filter(Boolean);
+    _pickrSetSelected('kp-scholars', allScholarKeys);
 
     // Parse body and fill content
     var parsed = _parseBodyForEdit(kp.body || '');
@@ -5842,36 +6096,23 @@ function openAddModal(type, prefill) {
   if (type === 'kp') {
     // --- Full-screen editor for KP ---
     var currentSchool = prefill.school || '';
-    var currentSchoolName = (DATA[currentSchool] || {}).title || currentSchool;
+    var currentSchoolName = (DATA[currentSchool] || {}).title || '';
+    var prefillScholarKey = prefill.scholar || '';
+    var prefillScholarName = (SCHOLARS[prefillScholarKey] || {}).name || '';
 
-    // 学者选项：只显示当前学派下的学者
-    var scholarOpts = '<option value="">\uFF08\u4E0D\u9009 \u00B7 \u5E38\u8BC6\uFF09</option>';
-    KNOWLEDGE.forEach(function(kn) {
-      if ((kn.schools || []).indexOf(currentSchool) < 0) return;
-      if (!kn.scholar) return;
-      kn.scholar.split(/[,，]/).forEach(function(sk) {
-        sk = sk.trim();
-        if (!sk || !SCHOLARS[sk]) return;
-        if (scholarOpts.indexOf('value="' + sk + '"') >= 0) return;
-        scholarOpts += '<option value="' + sk + '">' + SCHOLARS[sk].name + ' (' + (SCHOLARS[sk].en || sk) + ')</option>';
-      });
+    // 学派 picker 数据
+    var schoolItems = Object.keys(DATA).map(function(k) {
+      return { key: k, text: DATA[k].title };
     });
-    var whoList = (DATA[currentSchool] || {}).who || [];
-    whoList.forEach(function(w) {
-      Object.keys(SCHOLARS).forEach(function(sk) {
-        if (scholarOpts.indexOf('value="' + sk + '"') >= 0) return;
-        if (w.indexOf(SCHOLARS[sk].name) >= 0 || (SCHOLARS[sk].en && w.indexOf(SCHOLARS[sk].en) >= 0)) {
-          scholarOpts += '<option value="' + sk + '">' + SCHOLARS[sk].name + ' (' + (SCHOLARS[sk].en || sk) + ')</option>';
-        }
-      });
-    });
+    var schoolPickrHtml = _renderPickr('kp-schools', schoolItems, currentSchool ? [currentSchool] : [], '\u641C\u7D22\u5B66\u6D3E...');
 
-    // 其他学派选项
-    var otherSchoolOpts = '';
-    Object.keys(DATA).forEach(function(k) {
-      if (k === currentSchool) return;
-      otherSchoolOpts += '<option value="' + k + '">' + DATA[k].title + ' (' + k + ')</option>';
+    // 学者 picker 数据（按中文名排序）
+    var scholarItems = Object.keys(SCHOLARS).sort(function(a, b) {
+      return (SCHOLARS[a].name || '').localeCompare(SCHOLARS[b].name || '', 'zh');
+    }).map(function(k) {
+      return { key: k, text: SCHOLARS[k].name + (SCHOLARS[k].en ? ' (' + SCHOLARS[k].en + ')' : '') };
     });
+    var scholarPickrHtml = _renderPickr('kp-scholars', scholarItems, prefillScholarKey ? [prefillScholarKey] : [], '\u641C\u7D22\u5B66\u8005...');
 
     overlay.innerHTML =
       '<div class="delta-modal">'
@@ -5881,26 +6122,22 @@ function openAddModal(type, prefill) {
       +   '<h3>' + titles[type] + '</h3>'
       +   '<button class="delta-btn-save" id="delta-save-btn" onclick="submitDelta(\'' + type + '\')">\u4FDD\u5B58</button>'
       + '</div>'
-      // Metadata summary bar
+      // Metadata summary bar (默认展开，含未指定提示)
       + '<div class="dm-meta-summary" onclick="this.nextElementSibling.classList.toggle(\'open\');this.querySelector(\'.dm-meta-arrow\').textContent=this.nextElementSibling.classList.contains(\'open\')?\'\u25BE\':\'\u25B8\'">'
-      +   '<span style="font-weight:var(--weight-semibold);color:var(--text-primary)">' + currentSchoolName + '</span>'
+      +   '<span id="dm-meta-school-label" style="font-weight:var(--weight-semibold);color:' + (currentSchoolName ? 'var(--text-primary)' : 'var(--text-tertiary)') + '">' + (currentSchoolName || '\u672A\u6307\u5B9A\u5B66\u6D3E') + '</span>'
       +   '<span>\u00B7</span>'
-      +   '<span id="dm-meta-scholar-label">(\u4E0D\u9009)</span>'
-      +   '<span class="dm-meta-arrow" style="margin-left:auto;color:var(--text-quaternary)">\u25B8</span>'
+      +   '<span id="dm-meta-scholar-label" style="color:' + (prefillScholarName ? 'var(--text-secondary)' : 'var(--text-quaternary)') + '">' + (prefillScholarName || '(\u4E0D\u9009)') + '</span>'
+      +   '<span class="dm-meta-arrow" style="margin-left:auto;color:var(--text-quaternary)">\u25BE</span>'
       + '</div>'
-      // Metadata detail (hidden by default)
-      + '<div class="dm-meta-detail">'
-      +   '<div style="display:flex;flex-direction:column;gap:10px">'
-      // 学派
-      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:42px;font-size:12px;color:var(--text-tertiary)">\u5B66\u6D3E</label>'
-      +     '<span style="font-size:13px;font-weight:600;color:var(--text-primary)">' + currentSchoolName + '</span>'
-      +     '<input type="hidden" id="dm-school-primary" value="' + currentSchool + '">'
-      +     '<button type="button" onclick="var s=document.getElementById(\'dm-school-extra-wrap\');s.style.display=s.style.display===\'none\'?\'block\':\'none\'" style="font-size:11px;color:var(--text-quaternary);background:none;border:1px solid var(--border);border-radius:6px;padding:2px 8px;cursor:pointer;margin-left:auto">+ \u5176\u4ED6\u5B66\u6D3E</button>'
-      +     '</div>'
-      +     '<div id="dm-school-extra-wrap" style="display:none;margin-left:50px"><select id="dm-school-extra" multiple style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;min-height:50px">' + otherSchoolOpts + '</select></div>'
-      // 学者
-      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:42px;font-size:12px;color:var(--text-tertiary)">\u5B66\u8005</label>'
-      +     '<select id="dm-scholar" onchange="var l=document.getElementById(\'dm-meta-scholar-label\');if(l)l.textContent=this.value?this.selectedOptions[0].text:\'(\u4E0D\u9009)\'" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px">' + scholarOpts + '</select></div>'
+      // Metadata detail (默认展开，含 picker 组件)
+      + '<div class="dm-meta-detail open">'
+      +   '<div style="display:flex;flex-direction:column;gap:12px">'
+      // 学派 picker
+      +     '<div style="display:flex;gap:8px;align-items:flex-start"><label style="min-width:42px;font-size:12px;color:var(--text-tertiary);padding-top:6px">\u5B66\u6D3E *</label>'
+      +     schoolPickrHtml + '</div>'
+      // 学者 picker
+      +     '<div style="display:flex;gap:8px;align-items:flex-start"><label style="min-width:42px;font-size:12px;color:var(--text-tertiary);padding-top:6px">\u5B66\u8005</label>'
+      +     scholarPickrHtml + '</div>'
       // 年份
       +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:42px;font-size:12px;color:var(--text-tertiary)">\u5E74\u4EFD</label>'
       +     '<input id="dm-year" type="text" placeholder="\u5982 1985" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px"></div>'
@@ -5990,39 +6227,480 @@ function openAddModal(type, prefill) {
     overlay.querySelectorAll('.dm-acc-group, .dm-cmp-col').forEach(function(g) {
       if (!g.querySelector('.dm-group-del')) g.insertAdjacentHTML('afterbegin', _groupDelBtn);
     });
+    // 注册 picker onChange 回调：同步摘要栏标签
+    window._pickrOnChange_kp_schools = function() {
+      var keys = _pickrGetSelected('kp-schools');
+      var names = keys.map(function(k) { return (DATA[k] || {}).title || k; });
+      var l = document.getElementById('dm-meta-school-label');
+      if (l) {
+        l.textContent = names.length ? names.join(' / ') : '\u672A\u6307\u5B9A\u5B66\u6D3E';
+        l.style.color = names.length ? 'var(--text-primary)' : 'var(--text-tertiary)';
+      }
+    };
+    window._pickrOnChange_kp_scholars = function() {
+      var keys = _pickrGetSelected('kp-scholars');
+      var names = keys.map(function(k) { return (SCHOLARS[k] || {}).name || k; });
+      var l = document.getElementById('dm-meta-scholar-label');
+      if (l) {
+        l.textContent = names.length ? names.join(' / ') : '(\u4E0D\u9009)';
+        l.style.color = names.length ? 'var(--text-secondary)' : 'var(--text-quaternary)';
+      }
+    };
     setTimeout(function() { var el = document.getElementById('dm-title'); if (el) el.focus(); }, 100);
     return;
   }
 
-  // --- Legacy centered modal for scholar / school ---
-  overlay.classList.add('dm-legacy');
-  overlay.onclick = function(e) { if (e.target === overlay) closeDeltaModal(); };
-
-  var bodyHtml = '';
   if (type === 'scholar') {
-    bodyHtml = '<textarea id="delta-input" spellcheck="false" style="width:100%;min-height:280px;border:1px solid var(--border);border-radius:10px;padding:12px;font-size:13px;font-family:inherit;line-height:1.6;resize:vertical;color:var(--text-primary)">'
-      + 'key: \n\u540D\u5B57: \nen: \n\u56FD\u7C4D: \n\u6240\u5C5E\u673A\u6784: \n\u9886\u57DF: \n\u5B66\u6D3E: ' + (prefill.school || '') + '\n---\n\u5B66\u8005\u8D21\u732E\u7B80\u4ECB...</textarea>';
-  } else {
-    bodyHtml = '<textarea id="delta-input" spellcheck="false" style="width:100%;min-height:280px;border:1px solid var(--border);border-radius:10px;padding:12px;font-size:13px;font-family:inherit;line-height:1.6;resize:vertical;color:var(--text-primary)">'
-      + 'key: \n\u6807\u9898: \nen: \ngroup: ' + (prefill.group || '1') + '\n\u989C\u8272: #007AFF\n---\n\u5B66\u6D3E\u7B80\u4ECB...</textarea>';
+    // --- 学者：全屏分条表单 ---
+    var preSchool = prefill.school || '';
+    var preSchoolName = (DATA[preSchool] || {}).title || '';
+    // 学派 picker
+    var schSchoolItems = Object.keys(DATA).map(function(k) {
+      return { key: k, text: DATA[k].title };
+    });
+    var schSchoolPickrHtml = _renderPickr('sch-schools', schSchoolItems, preSchool ? [preSchool] : [], '\u641C\u7D22\u5B66\u6D3E...');
+    overlay.innerHTML =
+      '<div class="delta-modal">'
+      + '<div class="delta-modal-header">'
+      +   '<button class="delta-modal-close" onclick="closeDeltaModal()">\u00D7</button>'
+      +   '<h3>' + titles[type] + '</h3>'
+      +   '<button class="delta-btn-save" id="delta-save-btn" onclick="submitDelta(\'scholar\')">\u4FDD\u5B58</button>'
+      + '</div>'
+      // Summary bar (key · 名字 预览)
+      + '<div class="dm-meta-summary" onclick="this.nextElementSibling.classList.toggle(\'open\');this.querySelector(\'.dm-meta-arrow\').textContent=this.nextElementSibling.classList.contains(\'open\')?\'\u25BE\':\'\u25B8\'">'
+      +   '<span style="font-weight:var(--weight-semibold);color:var(--text-primary)" id="dm-sch-name-label">(\u672A\u547D\u540D)</span>'
+      +   '<span>\u00B7</span>'
+      +   '<span id="dm-sch-school-label" style="color:var(--text-tertiary)">' + (preSchoolName || '\u672A\u6307\u5B9A\u5B66\u6D3E') + '</span>'
+      +   '<span class="dm-meta-arrow" style="margin-left:auto;color:var(--text-quaternary)">\u25B8</span>'
+      + '</div>'
+      // Metadata detail（默认展开，因为字段比较多）
+      + '<div class="dm-meta-detail open">'
+      +   '<div style="display:flex;flex-direction:column;gap:10px">'
+      // 中文名（key 由后端自动分配，用户无需关心）
+      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:60px;font-size:12px;color:var(--text-tertiary)">\u4E2D\u6587\u540D *</label>'
+      +     '<input id="dm-sch-name" type="text" placeholder="\u5982\uFF1A\u5F17\u96F7\u5FB7\u91CC\u514B\xB7\u6CF0\u52D2" onchange="var l=document.getElementById(\'dm-sch-name-label\');if(l)l.textContent=this.value||\'(\u672A\u547D\u540D)\'" oninput="var l=document.getElementById(\'dm-sch-name-label\');if(l)l.textContent=this.value||\'(\u672A\u547D\u540D)\'" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px"></div>'
+      // 英文名
+      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:60px;font-size:12px;color:var(--text-tertiary)">EN</label>'
+      +     '<input id="dm-sch-en" type="text" placeholder="English Name\uFF08\u53EF\u7559\u7A7A\uFF09" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px"></div>'
+      // 国籍
+      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:60px;font-size:12px;color:var(--text-tertiary)">\u56FD\u7C4D</label>'
+      +     '<input id="dm-sch-nation" type="text" placeholder="\u5982\uFF1A\u7F8E\u56FD" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px"></div>'
+      // 所属机构
+      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:60px;font-size:12px;color:var(--text-tertiary)">\u673A\u6784</label>'
+      +     '<input id="dm-sch-aff" type="text" placeholder="\u5982\uFF1A\u4F2F\u5229\u6052\u94A2\u94C1\u516C\u53F8 / \u54C8\u4F5B\u5546\u5B66\u9662" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px"></div>'
+      // 领域
+      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:60px;font-size:12px;color:var(--text-tertiary)">\u9886\u57DF</label>'
+      +     '<input id="dm-sch-field" type="text" placeholder="\u5982\uFF1A\u79D1\u5B66\u7BA1\u7406 / \u51B3\u7B56\u7406\u8BBA" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px"></div>'
+      // 学派归属（picker 多选）
+      +     '<div style="display:flex;gap:8px;align-items:flex-start"><label style="min-width:60px;font-size:12px;color:var(--text-tertiary);padding-top:6px">\u5B66\u6D3E</label>'
+      +     schSchoolPickrHtml + '</div>'
+      +   '</div>'
+      + '</div>'
+      // Body: 学术贡献
+      + '<div class="delta-modal-body">'
+      + '<div style="font-size:12px;color:var(--text-tertiary);margin-bottom:6px">\u5B66\u672F\u8D21\u732E *</div>'
+      + '<textarea id="dm-sch-contribution" spellcheck="false" placeholder="\u5BF9\u8BE5\u5B66\u8005\u4E3B\u8981\u8D21\u732E\u3001\u4EE3\u8868\u8457\u4F5C\u3001\u601D\u60F3\u6F14\u8FDB\u7684\u63CF\u8FF0\uFF08\u652F\u6301 **\u52A0\u7C97**\uFF09" style="width:100%;min-height:200px;border:1px solid var(--border);border-radius:10px;padding:12px;font-size:13px;font-family:inherit;line-height:1.7;resize:vertical;color:var(--text-primary)"></textarea>'
+      + '</div>'
+      + '</div>';
+    document.body.appendChild(overlay);
+    // 注册学派 picker onChange：同步摘要栏
+    window._pickrOnChange_sch_schools = function() {
+      var keys = _pickrGetSelected('sch-schools');
+      var names = keys.map(function(k) { return (DATA[k] || {}).title || k; });
+      var l = document.getElementById('dm-sch-school-label');
+      if (l) l.textContent = names.length ? names.join(' \xB7 ') : '\u672A\u6307\u5B9A\u5B66\u6D3E';
+    };
+    setTimeout(function() {
+      var el = document.getElementById('dm-sch-name');
+      if (el) el.focus();
+      // 初始化 summary 学派显示（如果有 prefill）
+      if (preSchool) {
+        var l = document.getElementById('dm-sch-school-label');
+        if (l) l.textContent = preSchoolName;
+      }
+    }, 100);
+    return;
   }
 
-  overlay.innerHTML =
-    '<div class="delta-modal">'
-    + '<div class="delta-modal-header"><h3>' + titles[type] + '</h3>'
-    + '<button class="delta-modal-close" onclick="closeDeltaModal()">\u00D7</button></div>'
-    + '<div class="delta-modal-body">' + bodyHtml + '</div>'
-    + '<div class="delta-modal-footer">'
-    + '<button class="delta-btn-save" id="delta-save-btn" onclick="submitDelta(\'' + type + '\')">\u4FDD\u5B58</button>'
-    + '</div></div>';
-  document.body.appendChild(overlay);
-  setTimeout(function() { var el = document.getElementById('delta-input'); if (el) el.focus(); }, 100);
+  if (type === 'school') {
+    // --- 学派：全屏分条表单（与学者表单一致风格）---
+    var defaultGroup = parseInt(prefill.group) || 1;
+    // 用 THEME_ORDER 生成 group 选项（每个 section 一项）
+    var groupOpts = '';
+    if (typeof THEME_ORDER !== 'undefined') {
+      THEME_ORDER.forEach(function(sec) {
+        var g = (sec.groups && sec.groups[0]) || 1;
+        var sel = (g === defaultGroup) ? ' selected' : '';
+        // label 太长，截前 18 字
+        var lbl = sec.label.length > 22 ? sec.label.slice(0, 22) + '\u2026' : sec.label;
+        groupOpts += '<option value="' + g + '" data-color="' + (sec.color || '#007AFF') + '"' + sel + '>' + g + ' \xB7 ' + lbl + '</option>';
+      });
+    } else {
+      // 兜底
+      for (var i = 1; i <= 12; i++) {
+        var sel2 = (i === defaultGroup) ? ' selected' : '';
+        groupOpts += '<option value="' + i + '"' + sel2 + '>group ' + i + '</option>';
+      }
+    }
+    overlay.innerHTML =
+      '<div class="delta-modal">'
+      + '<div class="delta-modal-header">'
+      +   '<button class="delta-modal-close" onclick="closeDeltaModal()">\u00D7</button>'
+      +   '<h3>' + titles[type] + '</h3>'
+      +   '<button class="delta-btn-save" id="delta-save-btn" onclick="submitDelta(\'school\')">\u4FDD\u5B58</button>'
+      + '</div>'
+      // Summary bar
+      + '<div class="dm-meta-summary" onclick="this.nextElementSibling.classList.toggle(\'open\');this.querySelector(\'.dm-meta-arrow\').textContent=this.nextElementSibling.classList.contains(\'open\')?\'\u25BE\':\'\u25B8\'">'
+      +   '<span style="font-weight:var(--weight-semibold);color:var(--text-tertiary)" id="dm-sk-title-label">(\u672A\u547D\u540D)</span>'
+      +   '<span class="dm-meta-arrow" style="margin-left:auto;color:var(--text-quaternary)">\u25BE</span>'
+      + '</div>'
+      // Metadata detail
+      + '<div class="dm-meta-detail open">'
+      +   '<div style="display:flex;flex-direction:column;gap:10px">'
+      // 中文标题
+      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:60px;font-size:12px;color:var(--text-tertiary)">\u4E2D\u6587\u540D *</label>'
+      +     '<input id="dm-sk-title" type="text" placeholder="\u5982\uFF1A\u79D1\u5B66\u7BA1\u7406\u5B66\u6D3E" oninput="var l=document.getElementById(\'dm-sk-title-label\');if(l){l.textContent=this.value||\'(\u672A\u547D\u540D)\';l.style.color=this.value?\'var(--text-primary)\':\'var(--text-tertiary)\'}" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px"></div>'
+      // 英文名
+      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:60px;font-size:12px;color:var(--text-tertiary)">EN</label>'
+      +     '<input id="dm-sk-en" type="text" placeholder="English Name\uFF08\u53EF\u7559\u7A7A\uFF09" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px"></div>'
+      // 日文
+      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:60px;font-size:12px;color:var(--text-tertiary)">JP</label>'
+      +     '<input id="dm-sk-ja" type="text" placeholder="\u65E5\u672C\u8A9E\uFF08\u53EF\u7559\u7A7A\uFF09" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px"></div>'
+      // Group 分类
+      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:60px;font-size:12px;color:var(--text-tertiary)">\u5206\u7C7B *</label>'
+      +     '<select id="dm-sk-group" onchange="var o=this.selectedOptions[0];if(o){var c=o.getAttribute(\'data-color\');var inp=document.getElementById(\'dm-sk-accent\');if(inp&&c)inp.value=c}" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px">' + groupOpts + '</select></div>'
+      // 主色
+      +     '<div style="display:flex;gap:8px;align-items:center"><label style="min-width:60px;font-size:12px;color:var(--text-tertiary)">\u4E3B\u8272</label>'
+      +     '<input id="dm-sk-accent" type="text" value="#007AFF" placeholder="\u5982 #007AFF" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:monospace"></div>'
+      +   '</div>'
+      + '</div>'
+      // Body: 学派概述 + 历史影响 + 理论背景
+      + '<div class="delta-modal-body">'
+      + '<div style="font-size:12px;color:var(--text-tertiary);margin-bottom:6px">\u5B66\u6D3E\u6982\u8FF0 *</div>'
+      + '<textarea id="dm-sk-summary" spellcheck="false" placeholder="\u5BF9\u8BE5\u5B66\u6D3E\u7684\u80CC\u666F\u3001\u6838\u5FC3\u4E3B\u5F20\u3001\u5386\u53F2\u5730\u4F4D\u7684\u63CF\u8FF0\uFF08\u652F\u6301 **\u52A0\u7C97**\uFF09" style="width:100%;min-height:140px;border:1px solid var(--border);border-radius:10px;padding:12px;font-size:13px;font-family:inherit;line-height:1.7;resize:vertical;color:var(--text-primary)"></textarea>'
+      + '<div style="font-size:12px;color:var(--text-tertiary);margin:14px 0 6px">\u5386\u53F2\u5F71\u54CD</div>'
+      + '<textarea id="dm-sk-influence" spellcheck="false" placeholder="\u8BE5\u5B66\u6D3E\u5BF9\u540E\u7EED\u7406\u8BBA\u3001\u4F01\u4E1A\u5B9E\u8DF5\u3001\u5176\u4ED6\u5B66\u79D1\u7684\u5F71\u54CD\uFF08\u53EF\u7559\u7A7A\uFF09" style="width:100%;min-height:120px;border:1px solid var(--border);border-radius:10px;padding:12px;font-size:13px;font-family:inherit;line-height:1.7;resize:vertical;color:var(--text-primary)"></textarea>'
+      + '<div style="font-size:12px;color:var(--text-tertiary);margin:14px 0 6px">\u7406\u8BBA\u80CC\u666F\u4E0E\u5C40\u9650\u6027</div>'
+      + '<textarea id="dm-sk-context" spellcheck="false" placeholder="\u4EA7\u751F\u80CC\u666F\u3001\u9002\u7528\u8FB9\u754C\u3001\u4E0D\u8DB3\u4E0E\u6279\u8BC4\uFF08\u53EF\u7559\u7A7A\uFF09" style="width:100%;min-height:100px;border:1px solid var(--border);border-radius:10px;padding:12px;font-size:13px;font-family:inherit;line-height:1.7;resize:vertical;color:var(--text-primary)"></textarea>'
+      + '</div>'
+      + '</div>';
+    document.body.appendChild(overlay);
+    setTimeout(function() {
+      var el = document.getElementById('dm-sk-title');
+      if (el) el.focus();
+      // 触发一次 group select onchange 同步主色
+      var sel = document.getElementById('dm-sk-group');
+      if (sel) sel.dispatchEvent(new Event('change'));
+    }, 100);
+    return;
+  }
+
+  // --- 兜底：未知 type ---
+  alert('未知的添加类型: ' + type);
 }
 
 function closeDeltaModal() {
   var m = document.getElementById('delta-modal');
   if (m) m.remove();
+  // 清理所有编辑模式标记（避免下次新增表单被误判为编辑）
+  window._editingScholarKey = null;
+  window._editingSchoolKey = null;
+  window._editingKpId = null;
 }
+
+// ===== 学者编辑（方案 A）=====
+// 打开学者表单 + 预填所有字段；submitDelta 通过 _editingScholarKey 判断为编辑模式
+function openEditScholar(key) {
+  var s = SCHOLARS[key];
+  if (!s) { alert('学者未找到'); return; }
+  // 标记编辑模式（submit 时走 update 分支，复用原 key）
+  window._editingScholarKey = key;
+  // 用 schools[0] 作为打开表单时的 prefill（学派 picker 至少一项默认选中）
+  var firstSchool = (s.schools && s.schools[0]) || '';
+  openAddModal('scholar', { school: firstSchool });
+  // 等表单渲染完，回填所有字段
+  setTimeout(function() {
+    // 改标题 + 按钮文字
+    var h3 = document.querySelector('.delta-modal-header h3');
+    if (h3) h3.textContent = '编辑学者';
+    var saveBtn = document.getElementById('delta-save-btn');
+    if (saveBtn) saveBtn.textContent = '更新';
+    // 回填字段
+    var setVal = function(id, val) { var el = document.getElementById(id); if (el) el.value = val || ''; };
+    setVal('dm-sch-name', s.name);
+    setVal('dm-sch-en', s.en);
+    setVal('dm-sch-nation', s.nationality);
+    setVal('dm-sch-aff', s.affiliation);
+    setVal('dm-sch-field', s.field);
+    setVal('dm-sch-contribution', s.contribution);
+    // 学派 picker：恢复全部 schools 选中
+    _pickrSetSelected('sch-schools', s.schools || []);
+    // 同步姓名预览标签
+    var nameLabel = document.getElementById('dm-sch-name-label');
+    if (nameLabel) nameLabel.textContent = s.name || '(\u672A\u547D\u540D)';
+  }, 120);
+}
+
+// ===== 学派编辑（方案 A）=====
+// 与学者编辑同样的模式：复用新增表单 + 预填 + submitDelta 走 update 分支
+function openEditSchool(key) {
+  var d = DATA[key];
+  if (!d) { alert('学派未找到'); return; }
+  // 标记编辑模式（submit 时复用原 key，不重新生成）
+  window._editingSchoolKey = key;
+  // 用当前 group 作为 prefill（让分类下拉默认选中正确项）
+  var firstGroup = Array.isArray(d.group) ? d.group[0] : (d.group || 1);
+  openAddModal('school', { group: firstGroup });
+  // 等表单渲染完，回填所有字段
+  setTimeout(function() {
+    // 改标题 + 按钮文字
+    var h3 = document.querySelector('.delta-modal-header h3');
+    if (h3) h3.textContent = '编辑学派';
+    var saveBtn = document.getElementById('delta-save-btn');
+    if (saveBtn) saveBtn.textContent = '更新';
+    // 回填字段
+    var setVal = function(id, val) { var el = document.getElementById(id); if (el) el.value = val || ''; };
+    setVal('dm-sk-title', d.title);
+    setVal('dm-sk-en', d.en);
+    setVal('dm-sk-ja', d.ja);
+    setVal('dm-sk-accent', d.accent || '#007AFF');
+    setVal('dm-sk-summary', d.summary);
+    setVal('dm-sk-influence', d.influence);
+    setVal('dm-sk-context', d.context);
+    // 同步标题预览标签
+    var titleLabel = document.getElementById('dm-sk-title-label');
+    if (titleLabel) {
+      titleLabel.textContent = d.title || '(\u672A\u547D\u540D)';
+      titleLabel.style.color = d.title ? 'var(--text-primary)' : 'var(--text-tertiary)';
+    }
+  }, 120);
+}
+
+// ===== Key 自动生成 =====
+// 通用：从字符串提取 ASCII 安全的 base，冲突时加数字后缀
+function _slugify(s) {
+  return (s || '').toLowerCase()
+    .replace(/\s+(sr\.|jr\.|iii|ii|iv|ph\.d\.|dr\.)$/i, '') // 去掉学位/辈分后缀
+    .replace(/[^\w]/g, ' ')   // 非 word 字符替换为空格
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+}
+
+function _generateScholarKey(name, en) {
+  var base = '';
+  // 优先从英文名取姓（最后一个单词）
+  var parts = _slugify(en);
+  if (parts.length) {
+    base = parts[parts.length - 1];
+  } else if (name) {
+    // 中文名兜底：用 hash 风格的简短 key
+    base = 'sch_' + Math.abs(_simpleHash(name)).toString(36).slice(0, 6);
+  } else {
+    base = 'sch_' + Date.now().toString(36).slice(-6);
+  }
+  base = base.replace(/[^a-z0-9_]/g, '');
+  if (!base) base = 'sch_' + Date.now().toString(36).slice(-6);
+  // 冲突检查
+  if (!SCHOLARS[base]) return base;
+  for (var i = 2; i < 200; i++) {
+    var k = base + '_' + i;
+    if (!SCHOLARS[k]) return k;
+  }
+  return base + '_' + Math.random().toString(36).slice(2, 6);
+}
+
+function _generateSchoolKey(title, en) {
+  var base = '';
+  var parts = _slugify(en);
+  if (parts.length === 1) base = parts[0];
+  else if (parts.length === 2) base = parts.join('_');
+  else if (parts.length >= 3) base = parts[0]; // 多词时只取首词，避免太长
+  else if (title) {
+    base = 'school_' + Math.abs(_simpleHash(title)).toString(36).slice(0, 6);
+  } else {
+    base = 'school_' + Date.now().toString(36).slice(-6);
+  }
+  base = base.replace(/[^a-z0-9_]/g, '');
+  if (!base) base = 'school_' + Date.now().toString(36).slice(-6);
+  if (!DATA[base]) return base;
+  for (var i = 2; i < 200; i++) {
+    var k = base + '_' + i;
+    if (!DATA[k]) return k;
+  }
+  return base + '_' + Math.random().toString(36).slice(2, 6);
+}
+
+// 简单 hash（djb2 变体）— 仅用于 key 生成，不需要密码学强度
+function _simpleHash(str) {
+  var h = 5381;
+  for (var i = 0; i < str.length; i++) {
+    h = ((h << 5) + h) + str.charCodeAt(i);
+    h = h & h; // 转 32-bit int
+  }
+  return h;
+}
+
+// ===== 通用多选 picker 组件 =====
+// 渲染：返回 HTML 字符串
+//   pickrId: 唯一标识（如 'kp-schools'）
+//   items: [{key, text}]
+//   selectedKeys: 已选 key 数组
+//   placeholder: 搜索框 placeholder
+function _renderPickr(pickrId, items, selectedKeys, placeholder) {
+  selectedKeys = selectedKeys || [];
+  var selectedSet = {};
+  selectedKeys.forEach(function(k) { selectedSet[k] = 1; });
+  // 已选 chips（按 selectedKeys 顺序）
+  var chipsHtml = selectedKeys.map(function(k) {
+    var item = items.find(function(i) { return i.key === k; });
+    if (!item) return '';
+    return '<span class="dm-pickr-chip" data-key="' + k + '"><span>' + item.text + '</span><span class="dm-pickr-chip-rm" onclick="_pickrRemove(\'' + pickrId + '\',\'' + k + '\')" title="\u79FB\u9664">\u00D7</span></span>';
+  }).join('');
+  // 候选 list
+  var itemsHtml = items.map(function(i) {
+    var sel = selectedSet[i.key] ? ' selected' : '';
+    var checked = selectedSet[i.key] ? ' checked' : '';
+    var safeText = (i.text || '').replace(/"/g, '&quot;');
+    return '<label class="dm-pickr-item' + sel + '" data-key="' + i.key + '" data-text="' + safeText + '">'
+      + '<input type="checkbox" onchange="_pickrItemChange(\'' + pickrId + '\',this)"' + checked + '>'
+      + i.text + '</label>';
+  }).join('');
+  return '<div class="dm-pickr" data-pickr-id="' + pickrId + '">'
+    + '<div class="dm-pickr-selected" id="dm-pickr-selected-' + pickrId + '">'
+    +   chipsHtml
+    +   '<button type="button" class="dm-pickr-add" id="dm-pickr-add-' + pickrId + '" onclick="_pickrToggle(\'' + pickrId + '\')">+ \u6DFB\u52A0</button>'
+    + '</div>'
+    + '<div class="dm-pickr-panel" id="dm-pickr-panel-' + pickrId + '" style="display:none">'
+    +   '<input class="dm-pickr-search" placeholder="' + (placeholder || '\u641C\u7D22...') + '" oninput="_pickrFilter(\'' + pickrId + '\',this.value)">'
+    +   '<div class="dm-pickr-list" id="dm-pickr-list-' + pickrId + '">' + itemsHtml + '</div>'
+    +   '<div class="dm-pickr-empty">\u65E0\u5339\u914D\u9879</div>'
+    + '</div>'
+    + '</div>';
+}
+
+// 切换面板显示
+function _pickrToggle(pickrId) {
+  var panel = document.getElementById('dm-pickr-panel-' + pickrId);
+  var addBtn = document.getElementById('dm-pickr-add-' + pickrId);
+  if (!panel) return;
+  var willShow = panel.style.display === 'none';
+  panel.style.display = willShow ? 'block' : 'none';
+  if (addBtn) addBtn.classList.toggle('open', willShow);
+  if (willShow) {
+    var search = panel.querySelector('.dm-pickr-search');
+    if (search) { search.value = ''; _pickrFilter(pickrId, ''); search.focus(); }
+  }
+}
+
+// 搜索过滤
+function _pickrFilter(pickrId, q) {
+  q = (q || '').toLowerCase().trim();
+  var list = document.getElementById('dm-pickr-list-' + pickrId);
+  if (!list) return;
+  var anyVisible = false;
+  list.querySelectorAll('.dm-pickr-item').forEach(function(it) {
+    var text = (it.getAttribute('data-text') || '').toLowerCase();
+    var key = (it.getAttribute('data-key') || '').toLowerCase();
+    if (!q || text.indexOf(q) >= 0 || key.indexOf(q) >= 0) {
+      it.classList.remove('hidden');
+      anyVisible = true;
+    } else {
+      it.classList.add('hidden');
+    }
+  });
+  list.classList.toggle('all-hidden', !anyVisible);
+}
+
+// 候选 item 的 checkbox 改变事件
+function _pickrItemChange(pickrId, cb) {
+  var item = cb.closest('.dm-pickr-item');
+  if (!item) return;
+  item.classList.toggle('selected', cb.checked);
+  _pickrSyncSelected(pickrId);
+}
+
+// 移除某 key（点 chip 上的 ✕）
+function _pickrRemove(pickrId, key) {
+  var item = document.querySelector('#dm-pickr-list-' + pickrId + ' [data-key="' + key + '"]');
+  if (item) {
+    var cb = item.querySelector('input[type="checkbox"]');
+    if (cb) cb.checked = false;
+    item.classList.remove('selected');
+  }
+  _pickrSyncSelected(pickrId);
+}
+
+// 重新渲染已选 chips 区
+function _pickrSyncSelected(pickrId) {
+  var sel = document.getElementById('dm-pickr-selected-' + pickrId);
+  if (!sel) return;
+  var addBtn = document.getElementById('dm-pickr-add-' + pickrId);
+  // 清除现有 chips
+  sel.querySelectorAll('.dm-pickr-chip').forEach(function(c) { c.remove(); });
+  // 按候选 list 中的 checked 顺序重建
+  var list = document.getElementById('dm-pickr-list-' + pickrId);
+  if (list) {
+    var html = '';
+    list.querySelectorAll('.dm-pickr-item input:checked').forEach(function(cb) {
+      var item = cb.closest('.dm-pickr-item');
+      var k = item.getAttribute('data-key');
+      var t = item.getAttribute('data-text');
+      html += '<span class="dm-pickr-chip" data-key="' + k + '"><span>' + t + '</span><span class="dm-pickr-chip-rm" onclick="_pickrRemove(\'' + pickrId + '\',\'' + k + '\')" title="\u79FB\u9664">\u00D7</span></span>';
+    });
+    if (addBtn) addBtn.insertAdjacentHTML('beforebegin', html);
+  }
+  // 触发回调（如果定义了，用于同步摘要标签等）
+  var cb = window['_pickrOnChange_' + pickrId.replace(/-/g, '_')];
+  if (typeof cb === 'function') cb();
+}
+
+// 获取当前选中的 keys
+function _pickrGetSelected(pickrId) {
+  var keys = [];
+  var list = document.getElementById('dm-pickr-list-' + pickrId);
+  if (!list) return keys;
+  list.querySelectorAll('.dm-pickr-item input:checked').forEach(function(cb) {
+    var item = cb.closest('.dm-pickr-item');
+    var k = item.getAttribute('data-key');
+    if (k) keys.push(k);
+  });
+  return keys;
+}
+
+// 编辑模式下：批量设置已选 keys（清除原有 + 选中新的）
+function _pickrSetSelected(pickrId, keys) {
+  var keySet = {};
+  (keys || []).forEach(function(k) { keySet[k] = 1; });
+  var list = document.getElementById('dm-pickr-list-' + pickrId);
+  if (!list) return;
+  list.querySelectorAll('.dm-pickr-item').forEach(function(it) {
+    var k = it.getAttribute('data-key');
+    var cb = it.querySelector('input[type="checkbox"]');
+    if (keySet[k]) {
+      if (cb) cb.checked = true;
+      it.classList.add('selected');
+    } else {
+      if (cb) cb.checked = false;
+      it.classList.remove('selected');
+    }
+  });
+  _pickrSyncSelected(pickrId);
+}
+
+// 全局点击：点 picker 之外区域时关闭面板
+document.addEventListener('click', function(e) {
+  var openPanels = document.querySelectorAll('.dm-pickr-panel[style*="display: block"], .dm-pickr-panel[style*="display:block"]');
+  openPanels.forEach(function(panel) {
+    var pickr = panel.closest('.dm-pickr');
+    if (pickr && !pickr.contains(e.target)) {
+      panel.style.display = 'none';
+      var pickrId = pickr.getAttribute('data-pickr-id');
+      var addBtn = document.getElementById('dm-pickr-add-' + pickrId);
+      if (addBtn) addBtn.classList.remove('open');
+    }
+  });
+});
 
 function submitDelta(type) {
   var btn = document.getElementById('delta-save-btn');
@@ -6034,20 +6712,14 @@ function submitDelta(type) {
     // 从结构化表单读取所有字段
     var titleVal = (document.getElementById('dm-title') || {}).value || '';
     var enVal = (document.getElementById('dm-en') || {}).value || '';
-    var primarySchool = (document.getElementById('dm-school-primary') || {}).value || '';
-    var extraSelect = document.getElementById('dm-school-extra');
-    var scholarSelect = document.getElementById('dm-scholar');
     var yearInput = document.getElementById('dm-year');
     var meritVal = (document.getElementById('dm-merit') || {}).value || '';
     var limitVal = (document.getElementById('dm-limit') || {}).value || '';
 
-    var schoolKeys = primarySchool ? [primarySchool] : [];
-    if (extraSelect) {
-      Array.from(extraSelect.selectedOptions).forEach(function(o) {
-        if (o.value && schoolKeys.indexOf(o.value) < 0) schoolKeys.push(o.value);
-      });
-    }
-    var scholarVal = scholarSelect ? scholarSelect.value : '';
+    // 学派/学者：从 picker 读取
+    var schoolKeys = _pickrGetSelected('kp-schools');
+    var scholarKeys = _pickrGetSelected('kp-scholars');
+    var scholarVal = scholarKeys.join(',');
     var yearVal = yearInput ? yearInput.value.trim() : '';
 
     // Detect active tab and build body
@@ -6137,23 +6809,17 @@ function submitDelta(type) {
     endpoint = '/delta/kp/add';
 
   } else if (type === 'kp_edit') {
-    // 编辑模式：复用与kp相同的字段读取逻辑
+    // 编辑模式：复用与 kp 相同的字段读取逻辑（picker）
     var titleVal = (document.getElementById('dm-title') || {}).value || '';
     var enVal = (document.getElementById('dm-en') || {}).value || '';
-    var primarySchool = (document.getElementById('dm-school-primary') || {}).value || '';
-    var extraSelect = document.getElementById('dm-school-extra');
-    var scholarSelect = document.getElementById('dm-scholar');
     var yearInput = document.getElementById('dm-year');
     var meritVal = (document.getElementById('dm-merit') || {}).value || '';
     var limitVal = (document.getElementById('dm-limit') || {}).value || '';
 
-    var schoolKeys = primarySchool ? [primarySchool] : [];
-    if (extraSelect) {
-      Array.from(extraSelect.selectedOptions).forEach(function(o) {
-        if (o.value && schoolKeys.indexOf(o.value) < 0) schoolKeys.push(o.value);
-      });
-    }
-    var scholarVal = scholarSelect ? scholarSelect.value : '';
+    // 学派/学者：从 picker 读取
+    var schoolKeys = _pickrGetSelected('kp-schools');
+    var scholarKeys = _pickrGetSelected('kp-scholars');
+    var scholarVal = scholarKeys.join(',');
     var yearVal = yearInput ? yearInput.value.trim() : '';
 
     var activeTab = document.querySelector('.dm-tab.active');
@@ -6238,42 +6904,87 @@ function submitDelta(type) {
     };
     endpoint = '/delta/kp/update';
 
-  } else if (type === 'scholar' || type === 'school') {
-    // 学者/学派仍用文本框解析
-    var text = (document.getElementById('delta-input') || {}).value || '';
-    if (!text.trim()) { btn.disabled = false; btn.textContent = '保存'; return; }
-    var parts = text.split(/\n---\n/);
-    if (parts.length < 2) { alert('格式错误：缺少 --- 分隔符'); btn.disabled = false; btn.textContent = '保存'; return; }
-    var meta = {};
-    parts[0].split('\n').forEach(function(line) {
-      var m = line.match(/^([^:：]+)[：:]\s*(.*)/);
-      if (m) meta[m[1].trim()] = m[2].trim();
-    });
-    var body = parts.slice(1).join('\n---\n').trim();
+  } else if (type === 'scholar') {
+    // 学者：从结构化字段读取（key 由前端自动生成）
+    var nameVal = (document.getElementById('dm-sch-name') || {}).value || '';
+    var enVal = (document.getElementById('dm-sch-en') || {}).value || '';
+    var nationVal = (document.getElementById('dm-sch-nation') || {}).value || '';
+    var affVal = (document.getElementById('dm-sch-aff') || {}).value || '';
+    var fieldVal = (document.getElementById('dm-sch-field') || {}).value || '';
+    var contribVal = (document.getElementById('dm-sch-contribution') || {}).value || '';
 
-    if (type === 'scholar') {
-      if (!meta['key'] || !meta['名字']) {
-        alert('key和名字为必填'); btn.disabled = false; btn.textContent = '保存'; return;
-      }
-      payload = {
-        key: meta['key'], name: meta['名字'], en: meta['en'] || '',
-        nationality: meta['国籍'] || '', affiliation: meta['所属机构'] || '',
-        field: meta['领域'] || '',
-        schools: (meta['学派'] || '').split(/[,，]/).map(function(s) { return s.trim(); }).filter(Boolean),
-        contribution: body
-      };
-      endpoint = '/delta/scholar/add';
-    } else {
-      if (!meta['key'] || !meta['标题']) {
-        alert('key和标题为必填'); btn.disabled = false; btn.textContent = '保存'; return;
-      }
-      payload = {
-        key: meta['key'], title: meta['标题'], en: meta['en'] || '',
-        group: parseInt(meta['group']) || 1, accent: meta['颜色'] || '#007AFF',
-        summary: body
-      };
-      endpoint = '/delta/school/add';
+    nameVal = nameVal.trim();
+    contribVal = contribVal.trim();
+
+    if (!nameVal) {
+      alert('中文名为必填'); btn.disabled = false; btn.textContent = '保存'; return;
     }
+    if (!contribVal) {
+      alert('学术贡献为必填'); btn.disabled = false; btn.textContent = '保存'; return;
+    }
+    // 编辑模式 vs 新增模式
+    var keyVal;
+    if (window._editingScholarKey) {
+      // 编辑：用原 key（不重新生成，避免 key 漂移）
+      keyVal = window._editingScholarKey;
+    } else {
+      // 新增：基于英文名姓氏自动生成；无 en 时用中文名 hash
+      keyVal = _generateScholarKey(nameVal, enVal);
+    }
+    // 学派多选：从 picker 读取
+    var schoolsArr = _pickrGetSelected('sch-schools');
+    payload = {
+      key: keyVal,
+      name: nameVal,
+      en: enVal.trim(),
+      nationality: nationVal.trim(),
+      affiliation: affVal.trim(),
+      field: fieldVal.trim(),
+      schools: schoolsArr,
+      contribution: contribVal
+    };
+    endpoint = '/delta/scholar/add';  // worker 端 add 直接覆盖（upsert）
+
+  } else if (type === 'school') {
+    // 学派：从结构化字段读取（key 编辑时复用，新增时自动生成）
+    var titleVal = (document.getElementById('dm-sk-title') || {}).value || '';
+    var enVal = (document.getElementById('dm-sk-en') || {}).value || '';
+    var jaVal = (document.getElementById('dm-sk-ja') || {}).value || '';
+    var groupSelect = document.getElementById('dm-sk-group');
+    var accentVal = (document.getElementById('dm-sk-accent') || {}).value || '#007AFF';
+    var summaryVal = (document.getElementById('dm-sk-summary') || {}).value || '';
+    var influenceVal = (document.getElementById('dm-sk-influence') || {}).value || '';
+    var contextVal = (document.getElementById('dm-sk-context') || {}).value || '';
+
+    titleVal = titleVal.trim();
+    summaryVal = summaryVal.trim();
+
+    if (!titleVal) {
+      alert('中文名为必填'); btn.disabled = false; btn.textContent = '保存'; return;
+    }
+    if (!summaryVal) {
+      alert('学派概述为必填'); btn.disabled = false; btn.textContent = '保存'; return;
+    }
+    var groupVal = groupSelect ? parseInt(groupSelect.value) || 1 : 1;
+    // 编辑模式 vs 新增模式
+    var keyVal;
+    if (window._editingSchoolKey) {
+      keyVal = window._editingSchoolKey;  // 编辑：复用原 key
+    } else {
+      keyVal = _generateSchoolKey(titleVal, enVal);  // 新增：自动生成
+    }
+    payload = {
+      key: keyVal,
+      title: titleVal,
+      en: enVal.trim(),
+      ja: jaVal.trim(),
+      group: groupVal,
+      accent: accentVal.trim() || '#007AFF',
+      summary: summaryVal,
+      influence: influenceVal.trim(),
+      context: contextVal.trim()
+    };
+    endpoint = '/delta/school/add';  // worker 端 add 直接覆盖（upsert）
   }
 
   var btnLabel = (type === 'kp_edit') ? '更新' : '保存';
@@ -6294,8 +7005,26 @@ function submitDelta(type) {
       window._editingKpId = null;
     } else if (type === 'scholar') {
       SCHOLARS[payload.key] = payload;
+      // 编辑模式：原地刷新当前学者详情页（如果在）
+      if (window._editingScholarKey) {
+        window._editingScholarKey = null;
+        var dv = document.getElementById('view-detail');
+        if (dv && dv.classList.contains('active') && window._curScholarKey === payload.key) {
+          // 重新渲染该学者详情（skipPushNav=true 不污染 nav 栈）
+          showScholar(payload.key, true);
+        }
+      }
     } else if (type === 'school') {
       DATA[payload.key] = payload;
+      // 编辑模式：原地刷新当前学派详情页 + 首页学派卡片
+      if (window._editingSchoolKey) {
+        window._editingSchoolKey = null;
+        if (typeof renderHomeGrid === 'function') renderHomeGrid();
+        var dv = document.getElementById('view-detail');
+        if (dv && dv.classList.contains('active') && window._curSchoolKey === payload.key) {
+          show(payload.key, undefined, true);  // skipPushNav 不污染 nav 栈
+        }
+      }
     }
     closeDeltaModal();
     _reRenderAfterDelta();
@@ -6305,39 +7034,86 @@ function submitDelta(type) {
 }
 
 function deltaDeleteKP(id, title) {
-  // 校验是否被引用（排除KP自身的归属关系）
+  // 校验：精确检测 compare 卡片链接 — body 中是否有 "<compare>...|||...</compare>"
+  // 块的某一列以 title 开头且后跟 |（compare 列分隔符）。
+  // 这样可避免子串误报（如"理论X"误命中"理论X基础"）。
   var refs = [];
-  var kp = KNOWLEDGE_MAP[id];
-  var ownSchools = kp ? (kp.schools || []) : [];
-  var ownScholars = kp ? (kp.scholar || '').split(/[,，]/).map(function(s){return s.trim();}).filter(Boolean) : [];
-  Object.keys(DATA).forEach(function(k) {
-    if (ownSchools.indexOf(k) >= 0) return; // 排除自身所属学派
-    if (DATA[k].concepts && DATA[k].concepts.indexOf(id) >= 0) {
-      refs.push('学派「' + DATA[k].title + '」的concepts数组');
-    }
-  });
-  Object.keys(SCHOLARS).forEach(function(k) {
-    if (ownScholars.indexOf(k) >= 0) return; // 排除自身学者
-    if (SCHOLARS[k].theories && SCHOLARS[k].theories.indexOf(id) >= 0) {
-      refs.push('学者「' + SCHOLARS[k].name + '」的theories数组');
-    }
-  });
+  // 转义正则元字符
+  var escTitle = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // 匹配：<compare> 后任意内容，列开始处出现 title|（即一列的 title 字段）
+  // 列分隔为 ||，列内字段分隔为 |，所以 title 必须出现在 <compare> 紧随后或 || 之后
+  var compareRe = new RegExp('<compare>(?:[^<]|<(?!\\/?compare))*?(?:^|\\|\\|)' + escTitle + '\\|', 'i');
   KNOWLEDGE.forEach(function(kn) {
-    if (kn.id !== id && kn.body && kn.body.indexOf(title) >= 0) {
-      refs.push('知识点「' + kn.title + '」的正文');
+    if (kn.id === id || !kn.body) return;
+    if (compareRe.test(kn.body)) {
+      refs.push('知识点「' + kn.title + '」的对比卡片');
     }
   });
   if (refs.length) {
-    alert('无法在网页端删除：「' + title + '」被以下位置引用，请在Claude Code中操作：\n\n' + refs.join('\n'));
-    return;
+    if (!confirm('注意：「' + title + '」被以下 ' + refs.length + ' 处引用：\n\n' + refs.join('\n') + '\n\n删除后这些位置可能出现失效链接。是否仍要继续？')) return;
+  } else {
+    if (!confirm('确定删除「' + title + '」？\n\n该知识点将从所有学派、学者中消失。\n此操作不可撤销。')) return;
   }
-  if (!confirm('确定删除「' + title + '」？此操作不可撤销。')) return;
   _deltaFetch('/delta/kp/delete', { id: id }).then(function(res) {
     if (res.error) { alert('删除失败: ' + res.error); return; }
+    // 1. 从内存数据移除
     KNOWLEDGE = KNOWLEDGE.filter(function(k) { return k.id !== id; });
     delete KNOWLEDGE_MAP[id];
+    // 2. 折叠当前列表中的 KP DOM
     _collapseSwipeWrap(id);
+    // 3. 刷新 tab 计数
     updateTabCounts();
+    // 4. 智能刷新当前所在页面，确保所有视图反映删除
+    setTimeout(function() {
+      var dv = document.getElementById('view-detail');
+      if (dv && dv.classList.contains('active')) {
+        // 当前在某个详情页（学派/学者）→ 原地重渲染（skipPushNav=true 不动 nav 栈）
+        if (window._curSchoolKey && DATA[window._curSchoolKey]) {
+          show(window._curSchoolKey, undefined, true);
+        } else if (window._curScholarKey && SCHOLARS[window._curScholarKey]) {
+          showScholar(window._curScholarKey, true);
+        }
+      } else {
+        // 其他页面：通用刷新（home/学者列表/搜索 tab）
+        if (typeof renderHomeGrid === 'function') renderHomeGrid();
+        _reRenderAfterDelta();
+      }
+    }, 200); // 等折叠动画完成
+  }).catch(function(err) { alert('网络错误: ' + err.message); });
+}
+
+// (已废弃 _removeKpFromSchool — 学派改为统一 pill 多选，点击 pill 即可切换归属)
+
+function deltaDeleteSchool(key, name) {
+  // 校验：必须没有 KP 关联此学派，且没有"可点击"的学者
+  var kpRefs = KNOWLEDGE.filter(function(kn) { return (kn.schools || []).indexOf(key) >= 0; });
+  if (kpRefs.length) {
+    alert('无法删除：还有 ' + kpRefs.length + ' 个知识点归属此学派。请先删除所有知识点。');
+    return;
+  }
+  var d = DATA[key];
+  var whoListLocal = (d && d.who || []).slice();
+  var clickableWho = whoListLocal.filter(function(p) { return !!findScholarKey(p); });
+  if (clickableWho.length) {
+    alert('无法删除：还有 ' + clickableWho.length + ' 位关联学者。请先删除或转移这些学者。');
+    return;
+  }
+  if (!confirm('确定删除学派「' + name + '」？\n\n该学派将从首页和所有相关引用中消失。\n此操作不可撤销。')) return;
+  _deltaFetch('/delta/school/delete', { key: key }).then(function(res) {
+    if (res.error) { alert('删除失败: ' + res.error); return; }
+    delete DATA[key];
+    window._curSchoolKey = null;
+    // 刷新首页学派卡片 + tab 计数
+    if (typeof renderHomeGrid === 'function') renderHomeGrid();
+    if (typeof updateTabCounts === 'function') updateTabCounts();
+    // 跳回首页（清空 nav 栈）
+    _navStack = [];
+    document.getElementById('view-detail').classList.remove('active');
+    var vl = document.getElementById('view-list');
+    if (vl) vl.classList.add('active');
+    // 切到学派 tab（如果不在）
+    var b = document.querySelector('.tab-btn[onclick*="theme"]');
+    if (b) b.click();
   }).catch(function(err) { alert('网络错误: ' + err.message); });
 }
 
@@ -6348,13 +7124,23 @@ function deltaDeleteScholar(key, name) {
     alert('无法删除：还有 ' + refs.length + ' 个知识点关联此学者。请先删除所有知识点。');
     return;
   }
-  if (!confirm('确定删除学者「' + name + '」？此操作不可撤销。')) return;
+  if (!confirm('确定删除学者「' + name + '」？\n\n该学者将从所有学派的代表人物中消失。\n此操作不可撤销。')) return;
   _deltaFetch('/delta/scholar/delete', { key: key }).then(function(res) {
     if (res.error) { alert('删除失败: ' + res.error); return; }
     delete SCHOLARS[key];
-    // 返回学者列表
-    if (typeof goBack === 'function') goBack();
-    else { var b = document.querySelector('.tab-btn[onclick*="scholar"]'); if (b) b.click(); }
+    window._curScholarKey = null;
+    // 全面刷新：首页学派卡片 + tab 计数 + 学者卡片列表
+    if (typeof renderHomeGrid === 'function') renderHomeGrid();
+    if (typeof updateTabCounts === 'function') updateTabCounts();
+    if (typeof renderScholarCards === 'function') renderScholarCards();
+    if (typeof _applyScholarFilter === 'function') _applyScholarFilter();
+    // 跳回学者列表（清空 nav 栈，避免 goBack 还原缓存的旧 HTML）
+    _navStack = [];
+    document.getElementById('view-detail').classList.remove('active');
+    var vl = document.getElementById('view-list');
+    if (vl) vl.classList.add('active');
+    var b = document.querySelector('.tab-btn[onclick*="scholar"]');
+    if (b) b.click();
   }).catch(function(err) { alert('网络错误: ' + err.message); });
 }
 
@@ -6366,11 +7152,10 @@ function _reRenderAfterDelta() {
     renderHomeGrid();
     updateTabCounts();
   } else if (activeId === 'panel-scholar') {
-    var backBtn = activePanel.querySelector('.back-btn');
-    if (backBtn) {
-      var scholarPanel = document.getElementById('panel-scholar');
-      if (scholarPanel) renderScholarPanel();
-    }
+    // 重新渲染学者卡片列表（删除/编辑学者后必须刷新）
+    if (typeof renderScholarCards === 'function') renderScholarCards();
+    // 同步重新应用筛选/搜索状态
+    if (typeof _applyScholarFilter === 'function') _applyScholarFilter();
   } else if (activeId === 'panel-knowledge') {
     var inp = document.getElementById('concept-search-input');
     if (inp && inp.value) inp.dispatchEvent(new Event('input', {bubbles: true}));

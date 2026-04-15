@@ -2,6 +2,7 @@
 .netlify/
 .claude/
 *.bak
+*.backup*
 *.txt
 /private/
 .wrangler/

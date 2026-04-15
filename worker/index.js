@@ -558,6 +558,10 @@ async function handleDeltaMutate(request, env, pathname) {
     // POST /delta/scholar/add
     if (pathname === '/delta/scholar/add') {
       if (!body.key || !body.name) return jsonResponse({ error: 'key和name为必填' }, 400);
+      // 若该 key 之前在 deleted 列表中（曾删除过），先从黑名单移除以使新增生效
+      if (delta.scholar.deleted && delta.scholar.deleted.includes(body.key)) {
+        delta.scholar.deleted = delta.scholar.deleted.filter(k => k !== body.key);
+      }
       delta.scholar.added[body.key] = {
         name: body.name, en: body.en || '', nationality: body.nationality || '',
         affiliation: body.affiliation || '', field: body.field || '',
@@ -582,10 +586,20 @@ async function handleDeltaMutate(request, env, pathname) {
     // POST /delta/school/add
     if (pathname === '/delta/school/add') {
       if (!body.key || !body.title) return jsonResponse({ error: 'key和title为必填' }, 400);
+      // 若该 key 之前在 deleted 列表中（曾删除过），先从黑名单移除
+      if (delta.school.deleted && delta.school.deleted.includes(body.key)) {
+        delta.school.deleted = delta.school.deleted.filter(k => k !== body.key);
+      }
+      // 编辑模式（覆盖现有）：保留原 concepts/who 数组，避免被空数组覆盖
+      const existing = delta.school.added[body.key] || {};
       delta.school.added[body.key] = {
         title: body.title, en: body.en || '', accent: body.accent || '#007AFF',
         group: body.group || 1, summary: body.summary || '',
-        ja: body.ja || '', concepts: [], who: []
+        ja: body.ja || '',
+        influence: body.influence || '',
+        context: body.context || '',
+        concepts: existing.concepts || [],
+        who: existing.who || []
       };
       await saveDelta(env, delta);
       return jsonResponse({ success: true, key: body.key });
