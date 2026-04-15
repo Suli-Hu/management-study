@@ -2288,7 +2288,13 @@ function showScholar(key) {
     + '</table>'
     + (function(){
         var knForScholar = KNOWLEDGE.filter(function(kn) { return _knScholars(kn).indexOf(key) >= 0; });
-        if (!knForScholar.length) return '';
+        if (!knForScholar.length) {
+          // 没有知识点时显示删除学者按钮
+          return '<div class="sec-title">代表理论<button class="kp-add-btn" onclick="openAddModal(\'kp\',{scholar:\'' + key.replace(/'/g, "\\'") + '\'})" title="新增知识点">· 新增</button></div>'
+            + '<div style="padding:20px;text-align:center;color:var(--text-quaternary);font-size:12px;margin-bottom:20px">该学者下没有知识点</div>'
+            + '<div style="text-align:center;margin-bottom:20px"><button onclick="deltaDeleteScholar(\'' + key + '\',\'' + (s.name || key).replace(/\'/g, "\\\\\'") + '\')" style="padding:8px 24px;border-radius:8px;border:1px solid #FF3B30;background:transparent;color:#FF3B30;font-size:12px;font-weight:var(--weight-semibold);cursor:pointer;transition:background .15s">删除该学者</button></div>'
+            + '<hr class="divider">';
+        }
         return '<div class="sec-title">代表理论<button class="kp-add-btn" onclick="openAddModal(\'kp\',{scholar:\'' + key.replace(/'/g, "\\'") + '\'})" title="新增知识点">· 新增</button></div><ul class="concepts" style="margin-bottom:20px">'
           + knForScholar.map(function(kn, idx) {
               return renderKnowledgeItem({
@@ -6332,6 +6338,23 @@ function deltaDeleteKP(id, title) {
     delete KNOWLEDGE_MAP[id];
     _collapseSwipeWrap(id);
     updateTabCounts();
+  }).catch(function(err) { alert('网络错误: ' + err.message); });
+}
+
+function deltaDeleteScholar(key, name) {
+  // 校验：必须没有任何KP引用该学者
+  var refs = KNOWLEDGE.filter(function(kn) { return _knScholars(kn).indexOf(key) >= 0; });
+  if (refs.length) {
+    alert('无法删除：还有 ' + refs.length + ' 个知识点关联此学者。请先删除所有知识点。');
+    return;
+  }
+  if (!confirm('确定删除学者「' + name + '」？此操作不可撤销。')) return;
+  _deltaFetch('/delta/scholar/delete', { key: key }).then(function(res) {
+    if (res.error) { alert('删除失败: ' + res.error); return; }
+    delete SCHOLARS[key];
+    // 返回学者列表
+    if (typeof goBack === 'function') goBack();
+    else { var b = document.querySelector('.tab-btn[onclick*="scholar"]'); if (b) b.click(); }
   }).catch(function(err) { alert('网络错误: ' + err.message); });
 }
 
