@@ -739,12 +739,17 @@ body {
   }
   .split-back {
     display: flex; align-items: center; gap: 6px;
-    padding: 10px 0 14px;
+    padding: 10px 0 10px 10px;
+    margin: -20px -24px 12px;
+    width: calc(100% + 48px);
     cursor: pointer; color: var(--text-tertiary);
     font-size: 12px; font-weight: var(--weight-semibold);
     transition: color 0.15s;
     border-bottom: 1px solid var(--border-light);
-    margin-bottom: 12px;
+    border-left: 3px solid var(--accent, #8a7a6a);
+    position: sticky; top: -20px; z-index: 5;
+    background: var(--bg-primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   }
   .split-back:hover { color: var(--text-primary); text-decoration: underline; }
   #detail-body.split-pane {
@@ -3468,7 +3473,7 @@ function show(key, accentOverride, skipPushNav) {
   if (_isSplitPane) {
     detailBody.classList.add('split-pane');
     var existingContent = detailBody.innerHTML;
-    detailBody.innerHTML = '<div class="detail-left"><div class="split-back" onclick="goBack()">← 返回列表</div>' + existingContent + '</div>'
+    detailBody.innerHTML = '<div class="detail-left"><div class="split-back" onclick="goBack()" style="--accent:' + accent + '">← ' + d.title + '</div>' + existingContent + '</div>'
       + '<div class="detail-right" id="kp-detail-panel">'
       + '<div class="kp-panel-placeholder">点击左侧知识点查看详情</div>'
       + '</div>';
