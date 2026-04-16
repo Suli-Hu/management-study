@@ -8371,42 +8371,46 @@ updateTabCounts();
 })();
 
 // ===== 横屏分栏：左栏左边缘右滑返回 =====
+// 在 document 级别监听 touch，避免被 .detail-left 的 overflow 滚动吞掉事件
 (function() {
-  var EDGE = 30, THRESHOLD = 0.3;
-  var gsx = 0, gsy = 0, gActive = false, gDist = 0, gLeft = null;
+  var EDGE = 20, THRESHOLD = 0.25;
+  var gsx = 0, gsy = 0, gActive = false, gDist = 0;
 
-  // 用事件委托在 view-detail 上监听，因为 .detail-left 是动态创建的
-  var view = document.getElementById('view-detail');
-
-  view.addEventListener('touchstart', function(e) {
-    // 仅分栏模式
-    gLeft = document.querySelector('.detail-left');
-    if (!gLeft) return;
+  document.addEventListener('touchstart', function(e) {
+    var left = document.querySelector('.detail-left');
+    if (!left) return;
     var t = e.touches[0];
-    // 触摸点必须在左栏的左边缘内
-    var leftRect = gLeft.getBoundingClientRect();
-    if (t.clientX > leftRect.left + EDGE || t.clientX < leftRect.left) return;
+    // 触摸起点必须在屏幕最左边 EDGE 像素内
+    if (t.clientX > EDGE) return;
     gsx = t.clientX; gsy = t.clientY;
     gActive = false; gDist = 0;
   }, { passive: true });
 
-  view.addEventListener('touchmove', function(e) {
-    if (!gsx || !gLeft) return;
+  document.addEventListener('touchmove', function(e) {
+    if (!gsx) return;
     var t = e.touches[0];
     var dx = t.clientX - gsx;
     var dy = Math.abs(t.clientY - gsy);
-    if (!gActive && dx > 10 && dx > dy * 1.5) {
-      gActive = true;
-      view.style.transition = 'none';
+    if (!gActive) {
+      // 方向判定：右滑且水平分量大于垂直
+      if (dx > 12 && dx > dy * 1.5) {
+        gActive = true;
+      } else if (dy > 12 || dx < -5) {
+        // 垂直滚动或左滑 → 放弃
+        gsx = 0; return;
+      }
+      return;
     }
-    if (!gActive) return;
     gDist = Math.max(0, dx);
+    var view = document.getElementById('view-detail');
+    view.style.transition = 'none';
     view.style.transform = 'translateX(' + gDist + 'px)';
     view.style.opacity = 1 - gDist / window.innerWidth * 0.3;
   }, { passive: true });
 
-  view.addEventListener('touchend', function() {
-    if (!gActive) { gsx = 0; gLeft = null; return; }
+  document.addEventListener('touchend', function() {
+    if (!gActive) { gsx = 0; return; }
+    var view = document.getElementById('view-detail');
     var w = window.innerWidth;
     if (gDist > w * THRESHOLD) {
       view.style.transition = 'transform 0.25s ease-out, opacity 0.25s ease-out';
@@ -8423,7 +8427,7 @@ updateTabCounts();
       view.style.transform = '';
       view.style.opacity = '';
     }
-    gsx = 0; gActive = false; gDist = 0; gLeft = null;
+    gsx = 0; gActive = false; gDist = 0;
   });
 })();
 </script>
