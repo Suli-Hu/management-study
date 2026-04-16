@@ -75,7 +75,7 @@ body {
 
 /* ---- HEADER ---- */
 .header {
-  padding: 0 48px;
+  padding: 6px 48px;
   background: rgba(255,255,255,0.88);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -86,11 +86,9 @@ body {
   flex-shrink: 0;
   position: relative;
   z-index: 10;
-  min-height: 58px;
+  min-height: 44px;
   flex-wrap: wrap;
   gap: 8px;
-  padding-top: 10px;
-  padding-bottom: 10px;
 }
 .header h1 {
   font-size: 15px;
@@ -157,12 +155,7 @@ body {
   min-height: 0;
 }
 .view.active { display: block; }
-/* iOS 安全区域适配：仅保留最小安全距离 */
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  #view-list, #view-detail {
-    padding-bottom: env(safe-area-inset-bottom, 20px);
-  }
-}
+/* iOS 安全区域：不额外加 padding，内容自然滚到底 */
 .view::-webkit-scrollbar { width: 4px; }
 .view::-webkit-scrollbar-thumb { background: #d8d4cc; border-radius: 2px; }
 
@@ -721,7 +714,7 @@ body {
 
 /* ── 中等宽度 601–960px ── */
 @media (max-width: 960px) and (min-width: 601px) {
-  .header { padding: 10px 24px; gap: 8px; }
+  .header { padding: 6px 24px; gap: 8px; }
   .header h1 { font-size: 14px; }
   .tab-nav { overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap; }
   .tab-nav::-webkit-scrollbar { display: none; }
