@@ -1667,6 +1667,18 @@ body.dragging-active * { cursor: grabbing !important; }
   transition: color .15s, border-color .15s;
 }
 .dm-add-btn:hover { color: var(--text-tertiary); border-color: var(--text-quaternary); }
+/* 四象限编辑器 */
+.qe-axes { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.qe-axis-row { display: flex; align-items: center; gap: 8px; }
+.qe-axis-row label { font-size: 12px; color: var(--text-tertiary); min-width: 28px; font-weight: var(--weight-semibold); }
+.qe-axis-row input { flex: 1; padding: 6px 8px; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; font-family: inherit; }
+.qe-axis-hint { font-size: 10px; color: var(--text-quaternary); min-width: 42px; text-align: center; }
+.qe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.qe-cell-edit { border: 1px solid var(--border); border-radius: 10px; padding: 10px; background: var(--bg-secondary); display: flex; flex-direction: column; gap: 4px; }
+.qe-cell-label { font-size: 10px; color: var(--text-quaternary); font-weight: var(--weight-semibold); margin-bottom: 2px; }
+.qe-cell-edit input, .qe-cell-edit textarea { width: 100%; padding: 5px 7px; border: 1px solid var(--border); border-radius: 6px; font-size: 11px; font-family: inherit; line-height: 1.5; }
+.qe-cell-edit textarea { resize: vertical; min-height: 36px; }
+.qe-cell-edit input:focus, .qe-cell-edit textarea:focus { outline: none; border-color: var(--text-quaternary); }
 .dm-acc-group, .dm-cmp-col {
   border: 1px solid var(--border); border-radius: 12px; padding: 14px;
   margin-bottom: 10px; background: var(--bg-secondary); position: relative;
@@ -6302,11 +6314,89 @@ function _mdBold(text) {
   return text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 }
 function _switchDmTab(tab) {
-  document.querySelectorAll('.dm-tab-panel').forEach(function(p) { p.style.display = 'none'; });
-  document.querySelectorAll('.dm-tab').forEach(function(b) { b.classList.remove('active'); });
-  document.getElementById('dm-tab-' + tab).style.display = 'block';
-  document.querySelector('.dm-tab[data-tab="' + tab + '"]').classList.add('active');
+  // Scope to the last (topmost) overlay to avoid conflicts with stale modals
+  var overlays = document.querySelectorAll('.delta-overlay');
+  var scope = overlays.length ? overlays[overlays.length - 1] : document;
+  scope.querySelectorAll('.dm-tab-panel').forEach(function(p) { p.style.display = 'none'; });
+  scope.querySelectorAll('.dm-tab').forEach(function(b) { b.classList.remove('active'); });
+  var panel = scope.querySelector('#dm-tab-' + tab);
+  if (panel) panel.style.display = 'block';
+  var btn = scope.querySelector('.dm-tab[data-tab="' + tab + '"]');
+  if (btn) btn.classList.add('active');
 }
+// 四象限编辑器：轴类型提示 + 实时预览
+function _qeScope() {
+  var overlays = document.querySelectorAll('.delta-overlay');
+  return overlays.length ? overlays[overlays.length - 1] : document;
+}
+function _updateAxisHints() {
+  var s = _qeScope();
+  var y = (s.querySelector('#qe-yaxis') || {}).value || '';
+  var x = (s.querySelector('#qe-xaxis') || {}).value || '';
+  var yh = s.querySelector('#qe-yhint');
+  var xh = s.querySelector('#qe-xhint');
+  if (yh) yh.textContent = y.indexOf('→') >= 0 ? '连续' : '二分类';
+  if (xh) xh.textContent = x.indexOf('→') >= 0 ? '连续' : '二分类';
+  var cells = s.querySelectorAll('.qe-cell-edit');
+  if (cells.length === 4) {
+    var yLabels = y.indexOf('/') >= 0 ? y.split('/') : ['上', '下'];
+    var xLabels = x.indexOf('/') >= 0 ? x.split('/') : ['左', '右'];
+    cells[0].querySelector('.qe-cell-label').textContent = yLabels[0] + ' × ' + xLabels[0];
+    cells[1].querySelector('.qe-cell-label').textContent = yLabels[0] + ' × ' + xLabels[1];
+    cells[2].querySelector('.qe-cell-label').textContent = (yLabels[1]||yLabels[0]) + ' × ' + xLabels[0];
+    cells[3].querySelector('.qe-cell-label').textContent = (yLabels[1]||yLabels[0]) + ' × ' + xLabels[1];
+  }
+}
+function _updateQuadPreview() {
+  var s = _qeScope();
+  var pv = s.querySelector('#qe-preview');
+  if (!pv) return;
+  var y = (s.querySelector('#qe-yaxis') || {}).value || '';
+  var x = (s.querySelector('#qe-xaxis') || {}).value || '';
+  if (!y && !x) { pv.innerHTML = '<div style="color:var(--text-quaternary);font-size:11px;text-align:center">填写轴标签后显示预览</div>'; return; }
+  var cells = s.querySelectorAll('.qe-cell-edit');
+  var parts = [y + ',' + x];
+  cells.forEach(function(c) {
+    var n = c.querySelector('.qe-name').value;
+    var e = c.querySelector('.qe-emoji').value;
+    var s = c.querySelector('.qe-sub').value;
+    var d = c.querySelector('.qe-detail').value;
+    parts.push(n + '|' + e + '|' + s + '|' + d);
+  });
+  var quadStr = parts.join('||');
+  var lead = (s.querySelector('#qe-lead') || {}).value || '';
+  pv.innerHTML = _formatQuadChart(lead, quadStr, 'var(--accent, #007AFF)');
+}
+function _buildQuadBody() {
+  var s = _qeScope();
+  var qLead = _mdBold((s.querySelector('#qe-lead') || {}).value || '').trim().replace(/\n+/g, ' ');
+  var qy = (s.querySelector('#qe-yaxis') || {}).value || '';
+  var qx = (s.querySelector('#qe-xaxis') || {}).value || '';
+  var qCells = [];
+  s.querySelectorAll('.qe-cell-edit').forEach(function(c) {
+    var n = (c.querySelector('.qe-name') || {}).value || '';
+    var e = (c.querySelector('.qe-emoji') || {}).value || '';
+    var s = (c.querySelector('.qe-sub') || {}).value || '';
+    var d = (c.querySelector('.qe-detail') || {}).value || '';
+    qCells.push(n.trim() + '|' + e.trim() + '|' + s.trim() + '|' + d.trim());
+  });
+  var body = qLead;
+  if (qy.trim() || qx.trim()) body += '<quad>' + qy.trim() + ',' + qx.trim() + '||' + qCells.join('||') + '</quad>';
+  return body;
+}
+function _initQuadEditorEvents() {
+  var s = _qeScope();
+  var yEl = s.querySelector('#qe-yaxis');
+  var xEl = s.querySelector('#qe-xaxis');
+  if (yEl) yEl.addEventListener('input', function() { _updateAxisHints(); _updateQuadPreview(); });
+  if (xEl) xEl.addEventListener('input', function() { _updateAxisHints(); _updateQuadPreview(); });
+  var leadEl = s.querySelector('#qe-lead');
+  if (leadEl) leadEl.addEventListener('input', _updateQuadPreview);
+  s.querySelectorAll('.qe-cell-edit input, .qe-cell-edit textarea').forEach(function(el) {
+    el.addEventListener('input', _updateQuadPreview);
+  });
+}
+
 var _itemDelBtn = '<button class="dm-item-del" onclick="this.parentElement.remove()" title="删除">×</button>';
 var _groupDelBtn = '<button class="dm-group-del" onclick="this.parentElement.remove()" title="删除组">×</button>';
 
@@ -6365,10 +6455,23 @@ function _parseBodyForEdit(body) {
   var cleanBody = body.replace(/(?:<br>)?◆意义——[\s\S]*$/, '').replace(/(?:<br>)?◆局限——[\s\S]*$/, '').trim();
 
   // 2. Detect format
-  // 四象限(<quad>)不拆解，直接用叙述模式编辑原始内容
+  // 四象限(<quad>)解析为结构化数据
   if (cleanBody.includes('<quad>')) {
-    result.tab = 'narrative';
-    result.narrative = cleanBody.replace(/<strong>/g, '**').replace(/<\/strong>/g, '**');
+    result.tab = 'quad';
+    var qm = cleanBody.match(/^([\s\S]*?)<quad>([\s\S]+)<\/quad>/);
+    if (qm) {
+      result.quadLead = qm[1].replace(/<strong>/g, '**').replace(/<\/strong>/g, '**').trim();
+      var qparts = qm[2].split('||');
+      var axes = (qparts[0] || '').split(',');
+      result.quadYAxis = (axes[0] || '').trim();
+      result.quadXAxis = (axes[1] || '').trim();
+      result.quadCells = [];
+      for (var qi = 1; qi < qparts.length && qi <= 4; qi++) {
+        var cf = qparts[qi].split('|');
+        result.quadCells.push({ name: cf[0]||'', emoji: cf[1]||'', sub: cf[2]||'', detail: cf[3]||'' });
+      }
+      while (result.quadCells.length < 4) result.quadCells.push({ name:'', emoji:'', sub:'', detail:'' });
+    }
     return result;
   }
   if (cleanBody.includes('<compare>')) {
@@ -6537,6 +6640,25 @@ function openEditKP(id, contextSchool) {
           colsContainer.appendChild(div);
         });
       }
+    } else if (parsed.tab === 'quad') {
+      var qyEl = document.getElementById('qe-yaxis');
+      var qxEl = document.getElementById('qe-xaxis');
+      var qlEl = document.getElementById('qe-lead');
+      if (qyEl) qyEl.value = parsed.quadYAxis || '';
+      if (qxEl) qxEl.value = parsed.quadXAxis || '';
+      if (qlEl) qlEl.value = parsed.quadLead || '';
+      _updateAxisHints();
+      if (parsed.quadCells) {
+        var cells = document.querySelectorAll('.qe-cell-edit');
+        parsed.quadCells.forEach(function(c, i) {
+          if (!cells[i]) return;
+          cells[i].querySelector('.qe-name').value = c.name;
+          cells[i].querySelector('.qe-emoji').value = c.emoji;
+          cells[i].querySelector('.qe-sub').value = c.sub;
+          cells[i].querySelector('.qe-detail').value = c.detail;
+        });
+      }
+      _updateQuadPreview();
     }
 
     // Fill merit/limit
@@ -6633,6 +6755,7 @@ function openAddModal(type, prefill) {
       + '<button class="dm-tab" data-tab="flat" onclick="_switchDmTab(\'flat\')">\u5E73\u94FA</button>'
       + '<button class="dm-tab" data-tab="accordion" onclick="_switchDmTab(\'accordion\')">\u624B\u98CE\u7434</button>'
       + '<button class="dm-tab" data-tab="compare" onclick="_switchDmTab(\'compare\')">\u5BF9\u6BD4\u5361\u7247</button>'
+      + '<button class="dm-tab" data-tab="quad" onclick="_switchDmTab(\'quad\')">四象限</button>'
       + '</div>'
       // Tab 1: 叙述
       + '<div id="dm-tab-narrative" class="dm-tab-panel">'
@@ -6686,6 +6809,21 @@ function openAddModal(type, prefill) {
       + '</div>'
       + '<button type="button" onclick="_addDmCmpCol()" class="dm-add-btn">+ \u6DFB\u52A0\u5217</button>'
       + '</div>'
+      // Tab 5: 四象限
+      + '<div id="dm-tab-quad" class="dm-tab-panel" style="display:none">'
+      + '<div class="qe-axes">'
+      + '<div class="qe-axis-row"><label>Y轴</label><input id="qe-yaxis" placeholder="例: 优势/劣势 或 市場成長率 低→高"><span class="qe-axis-hint" id="qe-yhint">二分类</span></div>'
+      + '<div class="qe-axis-row"><label>X轴</label><input id="qe-xaxis" placeholder="例: 威胁/机会 或 相対市場占有率 低→高"><span class="qe-axis-hint" id="qe-xhint">二分类</span></div>'
+      + '</div>'
+      + '<textarea id="qe-lead" spellcheck="false" placeholder="导语（1-2句概述，可留空）" rows="2" style="width:100%;margin-bottom:8px;border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;font-family:inherit;resize:vertical"></textarea>'
+      + '<div class="qe-grid">'
+      + '<div class="qe-cell-edit" data-idx="0"><div class="qe-cell-label">左上</div><input class="qe-name" placeholder="名称（如ST战略）"><input class="qe-emoji" placeholder="Emoji（可留空）" style="width:60px"><input class="qe-sub" placeholder="副标题/英文名"><textarea class="qe-detail" placeholder="详情描述" rows="2"></textarea></div>'
+      + '<div class="qe-cell-edit" data-idx="1"><div class="qe-cell-label">右上</div><input class="qe-name" placeholder="名称"><input class="qe-emoji" placeholder="Emoji" style="width:60px"><input class="qe-sub" placeholder="副标题/英文名"><textarea class="qe-detail" placeholder="详情描述" rows="2"></textarea></div>'
+      + '<div class="qe-cell-edit" data-idx="2"><div class="qe-cell-label">左下</div><input class="qe-name" placeholder="名称"><input class="qe-emoji" placeholder="Emoji" style="width:60px"><input class="qe-sub" placeholder="副标题/英文名"><textarea class="qe-detail" placeholder="详情描述" rows="2"></textarea></div>'
+      + '<div class="qe-cell-edit" data-idx="3"><div class="qe-cell-label">右下</div><input class="qe-name" placeholder="名称"><input class="qe-emoji" placeholder="Emoji" style="width:60px"><input class="qe-sub" placeholder="副标题/英文名"><textarea class="qe-detail" placeholder="详情描述" rows="2"></textarea></div>'
+      + '</div>'
+      + '<div id="qe-preview" style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px"></div>'
+      + '</div>'
       // Merit / Limit
       + '<div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">'
       + '<div><div style="font-size:11px;color:var(--text-quaternary);margin-bottom:4px">\u610F\u4E49</div>'
@@ -6697,6 +6835,8 @@ function openAddModal(type, prefill) {
       + '</div>'; // end delta-modal
 
     document.body.appendChild(overlay);
+    // 初始化四象限编辑器事件
+    _initQuadEditorEvents();
     // 给所有初始条目/组/列注入删除按钮
     overlay.querySelectorAll('.dm-item-pair').forEach(function(p) {
       if (!p.querySelector('.dm-item-del')) p.insertAdjacentHTML('beforeend', _itemDelBtn);
@@ -7373,6 +7513,9 @@ function submitDelta(type) {
       });
       bodyVal = cmpLead;
       if (cols.length) bodyVal += '<compare>' + cols.join('||') + '</compare>';
+
+    } else if (tabType === 'quad') {
+      bodyVal = _buildQuadBody();
     }
 
     titleVal = titleVal.trim();
@@ -7467,6 +7610,9 @@ function submitDelta(type) {
       });
       bodyVal = cmpLead;
       if (cols.length) bodyVal += '<compare>' + cols.join('||') + '</compare>';
+
+    } else if (tabType === 'quad') {
+      bodyVal = _buildQuadBody();
     }
 
     titleVal = titleVal.trim();
