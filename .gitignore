@@ -1,8 +1,10 @@
 .DS_Store
 .netlify/
 .claude/
-*.bak
-*.backup*
-*.txt
-/private/
 .wrangler/
+*.bak
+*.backup
+*.backup2
+serve_dev.js
+serve.rb
+References/

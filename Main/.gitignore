@@ -1,0 +1,8 @@
+.DS_Store
+.netlify/
+.claude/
+*.bak
+*.backup*
+*.txt
+/private/
+.wrangler/
