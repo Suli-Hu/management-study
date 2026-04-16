@@ -580,7 +580,7 @@ body {
 }
 #panel-quiz .qz-ctr { font-size: 12px; color: #9a9288; }
 #panel-quiz .qz-ctr b { color: var(--text-primary); font-weight: var(--weight-semibold); }
-#panel-quiz .qz-prog-wrap { background: #e8e4dc; border-radius: 99px; height: 3px; flex: 1; margin: 0 12px; }
+#panel-quiz .qz-prog-wrap { background: #d0cbc2; border-radius: 99px; height: 3px; flex: 1; margin: 0 12px; }
 #panel-quiz .qz-prog-fill {
   height: 3px; background: #4a3728; border-radius: 99px;
   transition: width .5s cubic-bezier(.4,0,.2,1);
@@ -740,13 +740,13 @@ body {
   .split-back {
     display: flex; align-items: center; gap: 6px;
     padding: 10px 0 14px;
-    cursor: pointer; color: var(--text-quaternary);
-    font-size: 12px; font-weight: var(--weight-regular);
+    cursor: pointer; color: var(--text-tertiary);
+    font-size: 12px; font-weight: var(--weight-semibold);
     transition: color 0.15s;
     border-bottom: 1px solid var(--border-light);
     margin-bottom: 12px;
   }
-  .split-back:hover { color: var(--text-primary); }
+  .split-back:hover { color: var(--text-primary); text-decoration: underline; }
   #detail-body.split-pane {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -847,12 +847,16 @@ body {
   }
   .kp-panel-body strong { color: #1d1d1f; font-weight: var(--weight-semibold); }
   .kp-panel-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 12px;
     height: 100%;
     color: var(--text-quaternary);
     font-size: 13px;
+  }
+  .kp-panel-placeholder::before {
+    content: '📖';
+    font-size: 36px;
+    opacity: 0.3;
   }
   /* 日语切换按钮在左栏隐藏（右栏会自带） */
   .detail-left .ja-toggle {
@@ -2142,7 +2146,7 @@ body.dragging-active * { cursor: grabbing !important; }
   <div style="display:flex;align-items:center;gap:12px">
     <div>
       <h1>经营管理学派全览</h1>
-      <p>点击任意学派卡片查看详细内容</p>
+      <p id="header-subtitle">点击任意学派卡片查看详细内容</p>
     </div>
   </div>
   <div class="tab-nav" id="tab-nav">
@@ -2523,7 +2527,7 @@ body.dragging-active * { cursor: grabbing !important; }
       <div class="scholar-search-box">
         <span class="scholar-search-icon">&#9906;</span>
         <input class="scholar-search-input" id="scholar-search-input" type="text"
-          placeholder="搜索学者姓名（中文 · English · 日本語）"
+          placeholder="搜索学者（中文 / EN / 日本語）"
           oninput="scholarSearch(this.value)"
           autocomplete="off" spellcheck="false">
         <button class="scholar-search-clear" id="scholar-search-clear"
@@ -2557,7 +2561,7 @@ body.dragging-active * { cursor: grabbing !important; }
       <div class="scholar-search-box">
         <span class="scholar-search-icon">&#9906;</span>
         <input class="scholar-search-input" id="concept-search-input" type="text"
-          placeholder="搜索知识点（中文 · English · 日本語）"
+          placeholder="搜索（中文 / EN / 日本語）"
           oninput="conceptSearch(this.value)"
           autocomplete="off" spellcheck="false">
         <button class="scholar-search-clear" id="concept-search-clear"
@@ -2740,6 +2744,8 @@ function switchTab(tab, btn) {
   document.getElementById("view-detail").classList.remove("active");
   document.getElementById("view-list").classList.add("active");
   document.getElementById("view-list").scrollTop = 0;
+  var sub = document.getElementById('header-subtitle');
+  if (sub) sub.style.display = (tab === 'theme') ? '' : 'none';
   _navStack = [];
   _listState = null;
   if (tab === 'quiz' && !_quizConcept && !_sbActive) {
@@ -3464,7 +3470,7 @@ function show(key, accentOverride, skipPushNav) {
     var existingContent = detailBody.innerHTML;
     detailBody.innerHTML = '<div class="detail-left"><div class="split-back" onclick="goBack()">← 返回列表</div>' + existingContent + '</div>'
       + '<div class="detail-right" id="kp-detail-panel">'
-      + '<div class="kp-panel-placeholder">\u2190 \u70b9\u51fb\u5de6\u4fa7\u77e5\u8bc6\u70b9\u67e5\u770b\u8be6\u60c5</div>'
+      + '<div class="kp-panel-placeholder">点击左侧知识点查看详情</div>'
       + '</div>';
   } else {
     detailBody.classList.remove('split-pane');
@@ -5953,42 +5959,52 @@ function _initSwipe(container) {
     }
     function onEnd() {
       swiping = false;
-      inner.style.transition = 'transform 0.2s ease';
+      inner.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)';
       if (cx > 40) {
+        // 关闭之前打开的其他 swipe
+        if (_currentOpenedSwipe && _currentOpenedSwipe !== wrap) {
+          _currentOpenedSwipe._swipeDismiss();
+        }
         inner.style.transform = 'translateX(' + OPEN_W + 'px)';
         opened = true;
+        _currentOpenedSwipe = wrap;
         _updateBtn(OPEN_W);
         _updateEditBtn(OPEN_W);
       } else {
         _dismissSmooth(wrap, inner);
         opened = false;
+        if (_currentOpenedSwipe === wrap) _currentOpenedSwipe = null;
       }
     }
     function resetSwipe() {
       _dismissSmooth(wrap, inner);
+      if (_currentOpenedSwipe === wrap) _currentOpenedSwipe = null;
     }
     function _dismissSmooth(w, inn) {
-      // 按钮立即开始缩小消失
-      if (hideBtn) {
-        hideBtn.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
-        hideBtn.style.opacity = '0';
-        hideBtn.style.transform = 'translateY(-30%) scale(0.5)';
-        hideBtn.style.pointerEvents = 'none';
-      }
-      if (editBtn) {
-        editBtn.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
-        editBtn.style.opacity = '0';
-        editBtn.style.transform = 'translateY(-30%) scale(0.5)';
-        editBtn.style.pointerEvents = 'none';
-      }
-      inn.style.transition = 'transform 0.2s ease';
+      // 内容先滑回，iOS 风格弹性缓动
+      inn.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)';
       inn.style.transform = 'translateX(0)';
       opened = false;
+      // 按钮延迟 50ms 淡出，错开节奏
+      setTimeout(function() {
+        if (hideBtn) {
+          hideBtn.style.transition = 'opacity 0.2s ease-out, transform 0.2s ease-out';
+          hideBtn.style.opacity = '0';
+          hideBtn.style.transform = 'translateY(-30%) scale(0.5)';
+          hideBtn.style.pointerEvents = 'none';
+        }
+        if (editBtn) {
+          editBtn.style.transition = 'opacity 0.2s ease-out, transform 0.2s ease-out';
+          editBtn.style.opacity = '0';
+          editBtn.style.transform = 'translateY(-30%) scale(0.5)';
+          editBtn.style.pointerEvents = 'none';
+        }
+      }, 50);
       setTimeout(function() {
         w.classList.remove('swiping');
         if (hideBtn) hideBtn.style.transition = '';
         if (editBtn) editBtn.style.transition = '';
-      }, 200);
+      }, 300);
     }
     // 触摸事件
     inner.addEventListener('touchstart', function(e) {
@@ -6031,24 +6047,35 @@ function _initSwipe(container) {
       clearTimeout(wheelTimer);
       wheelTimer = setTimeout(function() {
         wStarted = false;
-        inner.style.transition = 'transform 0.2s ease';
+        inner.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)';
         if (wPos > 40) {
+          if (_currentOpenedSwipe && _currentOpenedSwipe !== wrap) _currentOpenedSwipe._swipeDismiss();
           inner.style.transform = 'translateX(' + OPEN_W + 'px)';
           cx = OPEN_W; wPos = OPEN_W; opened = true;
+          _currentOpenedSwipe = wrap;
           _updateBtn(OPEN_W);
           _updateEditBtn(OPEN_W);
         } else {
           _dismissSmooth(wrap, inner);
           wPos = 0;
+          if (_currentOpenedSwipe === wrap) _currentOpenedSwipe = null;
         }
       }, 120);
     }, { passive: false });
-    // 点击其他地方收回
-    document.addEventListener('click', function(e) {
-      if (opened && !wrap.contains(e.target)) resetSwipe();
-    });
+    // 注册到全局swipe管理器
+    wrap._swipeDismiss = resetSwipe;
+    wrap._swipeIsOpened = function() { return opened; };
+    wrap._swipeSetOpened = function(v) { opened = v; };
   });
 }
+// 全局：点击外部收回 + 打开新swipe时关闭旧的
+var _currentOpenedSwipe = null;
+document.addEventListener('click', function(e) {
+  if (_currentOpenedSwipe && !_currentOpenedSwipe.contains(e.target)) {
+    _currentOpenedSwipe._swipeDismiss();
+    _currentOpenedSwipe = null;
+  }
+});
 
 // ===== 动态渲染：学派卡片 + Tab计数 =====
 
@@ -6967,6 +6994,26 @@ function _slugify(s) {
     .filter(Boolean);
 }
 
+// 国籍文字 → 国旗 emoji 映射
+var _FLAG_MAP = {
+  '美国':'🇺🇸','英国':'🇬🇧','法国':'🇫🇷','德国':'🇩🇪','日本':'🇯🇵',
+  '加拿大':'🇨🇦','澳大利亚':'🇦🇺','奥地利':'🇦🇹','瑞士':'🇨🇭','瑞典':'🇸🇪',
+  '荷兰':'🇳🇱','比利时':'🇧🇪','意大利':'🇮🇹','西班牙':'🇪🇸','葡萄牙':'🇵🇹',
+  '俄罗斯':'🇷🇺','中国':'🇨🇳','韩国':'🇰🇷','印度':'🇮🇳','以色列':'🇮🇱',
+  '新西兰':'🇳🇿','丹麦':'🇩🇰','挪威':'🇳🇴','芬兰':'🇫🇮','爱尔兰':'🇮🇪',
+  '波兰':'🇵🇱','匈牙利':'🇭🇺','捷克':'🇨🇿','希腊':'🇬🇷','土耳其':'🇹🇷',
+  '巴西':'🇧🇷','墨西哥':'🇲🇽','阿根廷':'🇦🇷','南非':'🇿🇦','埃及':'🇪🇬',
+  '新加坡':'🇸🇬','马来西亚':'🇲🇾','泰国':'🇹🇭','印度尼西亚':'🇮🇩',
+  '台湾':'🇹🇼','香港':'🇭🇰'
+};
+function _nationalityToFlag(nationality) {
+  if (!nationality) return '';
+  // 支持 "加拿大/美国" 多国籍格式
+  return nationality.split(/[\/、]/).map(function(n) {
+    return _FLAG_MAP[n.trim()] || '';
+  }).filter(Boolean).join(' ');
+}
+
 function _generateScholarKey(name, en) {
   var base = '';
   // 优先从英文名取姓（最后一个单词）
@@ -7509,6 +7556,7 @@ function submitDelta(type) {
       name: nameVal,
       en: enVal.trim(),
       nationality: nationVal.trim(),
+      flag: _nationalityToFlag(nationVal.trim()),
       affiliation: affVal.trim(),
       field: fieldVal.trim(),
       schools: schoolsArr,
