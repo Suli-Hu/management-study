@@ -151,7 +151,7 @@ body {
   overflow-x: hidden;
   display: none;
   -webkit-overflow-scrolling: touch;
-  scroll-padding-bottom: 80px;
+  scroll-padding-bottom: 20px;
   min-height: 0;
 }
 .view.active { display: block; }
@@ -160,7 +160,7 @@ body {
 .view::-webkit-scrollbar-thumb { background: #d8d4cc; border-radius: 2px; }
 
 /* ---- LIST VIEW ---- */
-#view-list { padding: 28px 48px 80px; background: transparent; }
+#view-list { padding: 28px 48px 20px; background: transparent; }
 
 .section-label {
   font-size: 13px;
@@ -307,7 +307,7 @@ body {
 }
 
 .detail-body {
-  padding: 36px 48px 64px;
+  padding: 36px 48px 20px;
   max-width: 740px;
   background: transparent;
 }
@@ -719,20 +719,20 @@ body {
   .tab-nav { overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap; }
   .tab-nav::-webkit-scrollbar { display: none; }
   .tab-btn { padding: 5px 11px; font-size: 11.5px; }
-  #view-list { padding: 20px 24px 72px; }
+  #view-list { padding: 20px 24px 20px; }
   #view-detail .detail-back { padding: 12px 24px; }
-  #view-detail .detail-body { padding: 24px 24px 56px; }
+  #view-detail .detail-body { padding: 24px 24px 20px; }
   .cards-grid { gap: 8px; }
 }
 
 /* ── 宽屏KP分栏布局 ≥900px ── */
 @media (min-width: 900px) {
-  /* 分栏模式下view不滚动，由左右栏各自滚动 */
+  /* 分栏模式：absolute定位铺满，彻底避免Safari flex高度问题 */
   #view-detail:has(.split-pane) {
-    overflow-y: hidden;
+    position: relative;
+    overflow: hidden;
     padding-bottom: 0 !important;
   }
-  /* 分栏模式下隐藏顶部返回栏，改由左栏内嵌返回 */
   #view-detail:has(.split-pane) > .detail-back {
     display: none;
   }
@@ -747,29 +747,24 @@ body {
   }
   .split-back:hover { color: var(--text-primary); }
   #detail-body.split-pane {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
     display: flex !important;
     gap: 0;
     max-width: 100% !important;
     padding: 0 !important;
-    flex: 1;
   }
   .detail-left {
     flex: 0 0 40%;
     max-width: 40%;
     overflow-y: auto;
-    height: calc(100vh - 120px);
-    height: calc(100dvh - 120px);
-    padding: 20px 24px;
-    padding-bottom: 20px;
+    padding: 20px 24px 20px;
     border-right: 1px solid var(--border);
   }
   .detail-right {
     flex: 1;
     overflow-y: auto;
-    height: calc(100vh - 120px);
-    height: calc(100dvh - 120px);
-    padding: 28px 36px;
-    padding-bottom: 28px;
+    padding: 28px 36px 28px;
     display: none;
     background: var(--bg-primary);
     position: relative;
@@ -928,7 +923,7 @@ body {
   }
 
   /* ── List view ── */
-  #view-list { padding: 16px 12px 72px; }
+  #view-list { padding: 16px 12px 20px; }
   .section-label { margin: 18px 0 10px; font-size: 12px; padding-bottom: 7px; }
   .cards-grid { grid-template-columns: 1fr 1fr; gap: 7px; }
   .card { padding: 38px 12px 12px 12px; }
@@ -940,7 +935,7 @@ body {
 
   /* ── Detail view ── */
   .detail-back { padding: 10px 14px; }
-  .detail-body { padding: 16px 16px 52px; max-width: 100%; }
+  .detail-body { padding: 16px 16px 20px; max-width: 100%; }
   .d-title { font-size: 20px; letter-spacing: -0.02em; }
   .d-en { font-size: 11px; }
   .d-ja { font-size: 12.5px; }
