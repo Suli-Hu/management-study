@@ -736,6 +736,7 @@ body {
   /* 分栏模式下view不滚动，由左右栏各自滚动 */
   #view-detail:has(.split-pane) {
     overflow-y: hidden;
+    padding-bottom: 0 !important;
   }
   #detail-body.split-pane {
     display: flex !important;
@@ -749,18 +750,18 @@ body {
     max-width: 40%;
     overflow-y: auto;
     height: calc(100vh - 120px);
-    height: calc(100dvh - 120px - env(safe-area-inset-bottom, 0px));
+    height: calc(100dvh - 120px);
     padding: 20px 24px;
-    padding-bottom: max(20px, calc(20px + env(safe-area-inset-bottom, 0px)));
+    padding-bottom: env(safe-area-inset-bottom, 20px);
     border-right: 1px solid var(--border);
   }
   .detail-right {
     flex: 1;
     overflow-y: auto;
     height: calc(100vh - 120px);
-    height: calc(100dvh - 120px - env(safe-area-inset-bottom, 0px));
+    height: calc(100dvh - 120px);
     padding: 28px 36px;
-    padding-bottom: max(28px, calc(28px + env(safe-area-inset-bottom, 0px)));
+    padding-bottom: env(safe-area-inset-bottom, 28px);
     display: none;
     background: var(--bg-primary);
     position: relative;
