@@ -157,10 +157,10 @@ body {
   min-height: 0;
 }
 .view.active { display: block; }
-/* iOS 安全区域适配 */
+/* iOS 安全区域适配：仅保留最小安全距离 */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   #view-list, #view-detail {
-    padding-bottom: max(80px, calc(56px + env(safe-area-inset-bottom)));
+    padding-bottom: env(safe-area-inset-bottom, 20px);
   }
 }
 .view::-webkit-scrollbar { width: 4px; }
