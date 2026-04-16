@@ -8371,19 +8371,17 @@ updateTabCounts();
 })();
 
 // ===== 横屏分栏：左栏左边缘右滑返回 =====
-// 在 document 级别监听 touch，避免被 .detail-left 的 overflow 滚动吞掉事件
+// 触发区：左栏 padding 区域（约 44px），用 non-passive touchmove 防止被滚动吞掉
 (function() {
-  var EDGE = 20, THRESHOLD = 0.25;
-  var gsx = 0, gsy = 0, gActive = false, gDist = 0;
+  var EDGE = 44, THRESHOLD = 0.2;
+  var gsx = 0, gsy = 0, gActive = false, gDist = 0, gLocked = false;
 
   document.addEventListener('touchstart', function(e) {
-    var left = document.querySelector('.detail-left');
-    if (!left) return;
+    if (!document.querySelector('.detail-left')) return;
     var t = e.touches[0];
-    // 触摸起点必须在屏幕最左边 EDGE 像素内
     if (t.clientX > EDGE) return;
     gsx = t.clientX; gsy = t.clientY;
-    gActive = false; gDist = 0;
+    gActive = false; gDist = 0; gLocked = false;
   }, { passive: true });
 
   document.addEventListener('touchmove', function(e) {
@@ -8391,22 +8389,24 @@ updateTabCounts();
     var t = e.touches[0];
     var dx = t.clientX - gsx;
     var dy = Math.abs(t.clientY - gsy);
-    if (!gActive) {
-      // 方向判定：右滑且水平分量大于垂直
-      if (dx > 12 && dx > dy * 1.5) {
-        gActive = true;
-      } else if (dy > 12 || dx < -5) {
-        // 垂直滚动或左滑 → 放弃
-        gsx = 0; return;
+    if (!gLocked) {
+      if (dx > 8 && dx > dy) {
+        // 水平右滑 → 激活手势，阻止滚动
+        gActive = true; gLocked = true;
+      } else if (dy > 8) {
+        // 垂直 → 放弃，让滚动接管
+        gsx = 0; gLocked = true; return;
       }
-      return;
+      if (!gActive) return;
     }
+    if (!gActive) return;
+    e.preventDefault();
     gDist = Math.max(0, dx);
     var view = document.getElementById('view-detail');
     view.style.transition = 'none';
     view.style.transform = 'translateX(' + gDist + 'px)';
     view.style.opacity = 1 - gDist / window.innerWidth * 0.3;
-  }, { passive: true });
+  }, { passive: false });
 
   document.addEventListener('touchend', function() {
     if (!gActive) { gsx = 0; return; }
@@ -8427,7 +8427,7 @@ updateTabCounts();
       view.style.transform = '';
       view.style.opacity = '';
     }
-    gsx = 0; gActive = false; gDist = 0;
+    gsx = 0; gActive = false; gDist = 0; gLocked = false;
   });
 })();
 </script>
