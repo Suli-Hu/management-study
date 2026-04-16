@@ -8370,30 +8370,31 @@ updateTabCounts();
   });
 })();
 
-// ===== 左边缘右滑手势返回 =====
+// ===== 横屏分栏：左栏左边缘右滑返回 =====
 (function() {
+  var EDGE = 30, THRESHOLD = 0.3;
+  var gsx = 0, gsy = 0, gActive = false, gDist = 0, gLeft = null;
+
+  // 用事件委托在 view-detail 上监听，因为 .detail-left 是动态创建的
   var view = document.getElementById('view-detail');
-  var EDGE = 30;          // 左边缘触发区域宽度
-  var THRESHOLD = 0.3;    // 滑动超过屏幕30%完成返回
-  var gsx = 0, gsy = 0, gActive = false, gDist = 0;
 
   view.addEventListener('touchstart', function(e) {
-    // 分栏模式不需要手势返回（列表一直可见）
-    if (document.querySelector('.split-pane')) return;
-    // 只在详情页激活时
-    if (!view.classList.contains('active')) return;
+    // 仅分栏模式
+    gLeft = document.querySelector('.detail-left');
+    if (!gLeft) return;
     var t = e.touches[0];
-    if (t.clientX > EDGE) return;
+    // 触摸点必须在左栏的左边缘内
+    var leftRect = gLeft.getBoundingClientRect();
+    if (t.clientX > leftRect.left + EDGE || t.clientX < leftRect.left) return;
     gsx = t.clientX; gsy = t.clientY;
     gActive = false; gDist = 0;
   }, { passive: true });
 
   view.addEventListener('touchmove', function(e) {
-    if (!gsx) return;
+    if (!gsx || !gLeft) return;
     var t = e.touches[0];
     var dx = t.clientX - gsx;
     var dy = Math.abs(t.clientY - gsy);
-    // 方向锁定：水平才激活
     if (!gActive && dx > 10 && dx > dy * 1.5) {
       gActive = true;
       view.style.transition = 'none';
@@ -8405,10 +8406,9 @@ updateTabCounts();
   }, { passive: true });
 
   view.addEventListener('touchend', function() {
-    if (!gActive) { gsx = 0; return; }
+    if (!gActive) { gsx = 0; gLeft = null; return; }
     var w = window.innerWidth;
     if (gDist > w * THRESHOLD) {
-      // 完成返回：滑出屏幕再重置
       view.style.transition = 'transform 0.25s ease-out, opacity 0.25s ease-out';
       view.style.transform = 'translateX(' + w + 'px)';
       view.style.opacity = '0.5';
@@ -8419,12 +8419,11 @@ updateTabCounts();
         goBack();
       }, 260);
     } else {
-      // 回弹
       view.style.transition = 'transform 0.25s ease-out, opacity 0.25s ease-out';
       view.style.transform = '';
       view.style.opacity = '';
     }
-    gsx = 0; gActive = false; gDist = 0;
+    gsx = 0; gActive = false; gDist = 0; gLeft = null;
   });
 })();
 </script>
