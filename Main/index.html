@@ -212,6 +212,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 10px;
+  padding: 4px;
 }
 
 .card {
@@ -895,6 +896,13 @@ body {
     scrollbar-width: none;
   }
   .tab-nav::-webkit-scrollbar { display: none; }
+  /* 右侧渐变遮罩：提示可横滑 */
+  .header::after {
+    content: ''; position: absolute;
+    right: 0; bottom: 0; width: 36px; height: 36px;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.95));
+    pointer-events: none; z-index: 2;
+  }
   .tab-btn {
     flex: none;
     padding: 8px 12px;
@@ -1270,7 +1278,7 @@ body.dragging-active * { cursor: grabbing !important; }
   box-shadow: 0 4px 16px rgba(0,0,0,0.07);
 }
 .cn-header {
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;
   padding: 13px 16px 13px 14px;
   cursor: pointer; user-select: none; -webkit-user-select: none;
   transition: background 0.15s;
@@ -1285,13 +1293,14 @@ body.dragging-active * { cursor: grabbing !important; }
 }
 .cn-item.open .cn-arrow { transform: rotate(90deg); color: var(--text-quaternary); }
 .cn-title {
-  flex: 1; font-size: 13px; font-weight: var(--weight-semibold); color: #1d1d1f; line-height: 1.4;
-  letter-spacing: -0.01em;
+  flex: 1; min-width: 0; font-size: 13px; font-weight: var(--weight-semibold); color: #1d1d1f; line-height: 1.4;
+  letter-spacing: -0.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .cn-school {
   font-size: 10px; padding: 3px 10px; border-radius: 999px;
   border: 1px solid var(--accent); color: var(--accent);
-  font-weight: var(--weight-regular); flex-shrink: 0; margin-left: 4px;
+  font-weight: var(--weight-regular); flex-shrink: 1; margin-left: 4px;
+  min-width: 0; overflow: hidden; text-overflow: ellipsis;
   cursor: pointer; transition: opacity .15s; white-space: nowrap;
 }
 .cn-school:hover { opacity: .7; text-decoration: underline; }
