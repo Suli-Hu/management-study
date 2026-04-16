@@ -8350,6 +8350,81 @@ updateTabCounts();
       e.preventDefault();
       openSpotlight();
     }
+    // Cmd+J / Ctrl+J：切换当前展开KP的日文/中文
+    if ((e.metaKey || e.ctrlKey) && e.key && e.key.toLowerCase() === 'j') {
+      e.preventDefault();
+      // 排除编辑modal打开时
+      if (document.querySelector('.delta-overlay')) return;
+      // 分栏模式：右栏的日文按钮
+      var jaBtn = document.querySelector('#kp-detail-panel .ja-toggle');
+      // 竖屏模式：当前展开的KP的日文按钮
+      if (!jaBtn || !jaBtn.offsetParent) jaBtn = document.querySelector('.cn-item.open .ja-toggle');
+      if (jaBtn) {
+        jaBtn.click();
+        // 视觉反馈：按钮闪烁
+        jaBtn.style.transition = 'none';
+        jaBtn.style.transform = 'scale(1.2)';
+        setTimeout(function() { jaBtn.style.transition = 'transform 0.2s'; jaBtn.style.transform = ''; }, 100);
+      }
+    }
+  });
+})();
+
+// ===== 左边缘右滑手势返回 =====
+(function() {
+  var view = document.getElementById('view-detail');
+  var EDGE = 30;          // 左边缘触发区域宽度
+  var THRESHOLD = 0.3;    // 滑动超过屏幕30%完成返回
+  var gsx = 0, gsy = 0, gActive = false, gDist = 0;
+
+  view.addEventListener('touchstart', function(e) {
+    // 分栏模式不需要手势返回（列表一直可见）
+    if (document.querySelector('.split-pane')) return;
+    // 只在详情页激活时
+    if (!view.classList.contains('active')) return;
+    var t = e.touches[0];
+    if (t.clientX > EDGE) return;
+    gsx = t.clientX; gsy = t.clientY;
+    gActive = false; gDist = 0;
+  }, { passive: true });
+
+  view.addEventListener('touchmove', function(e) {
+    if (!gsx) return;
+    var t = e.touches[0];
+    var dx = t.clientX - gsx;
+    var dy = Math.abs(t.clientY - gsy);
+    // 方向锁定：水平才激活
+    if (!gActive && dx > 10 && dx > dy * 1.5) {
+      gActive = true;
+      view.style.transition = 'none';
+    }
+    if (!gActive) return;
+    gDist = Math.max(0, dx);
+    view.style.transform = 'translateX(' + gDist + 'px)';
+    view.style.opacity = 1 - gDist / window.innerWidth * 0.3;
+  }, { passive: true });
+
+  view.addEventListener('touchend', function() {
+    if (!gActive) { gsx = 0; return; }
+    var w = window.innerWidth;
+    if (gDist > w * THRESHOLD) {
+      // 完成返回：滑出屏幕再重置
+      view.style.transition = 'transform 0.25s ease-out, opacity 0.25s ease-out';
+      view.style.transform = 'translateX(' + w + 'px)';
+      view.style.opacity = '0.5';
+      setTimeout(function() {
+        view.style.transition = 'none';
+        view.style.transform = '';
+        view.style.opacity = '';
+        goBack();
+      }, 260);
+    } else {
+      // 回弹
+      view.style.transition = 'transform 0.25s ease-out, opacity 0.25s ease-out';
+      view.style.transform = '';
+      view.style.opacity = '';
+    }
+    gsx = 0; gActive = false; gDist = 0;
   });
 })();
 </script>
