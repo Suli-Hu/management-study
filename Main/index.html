@@ -8390,11 +8390,11 @@ updateTabCounts();
     var dx = t.clientX - gsx;
     var dy = Math.abs(t.clientY - gsy);
     if (!gLocked) {
-      if (dx > 8 && dx > dy) {
-        // 水平右滑 → 激活手势，阻止滚动
+      if (dx > 6 && dx > dy * 0.7) {
+        // 水平右滑（允许较大的斜角）→ 激活手势
         gActive = true; gLocked = true;
-      } else if (dy > 8) {
-        // 垂直 → 放弃，让滚动接管
+      } else if (dy > 15 && dy > dx * 2) {
+        // 明确的垂直滚动 → 放弃
         gsx = 0; gLocked = true; return;
       }
       if (!gActive) return;
