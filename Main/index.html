@@ -8373,7 +8373,7 @@ updateTabCounts();
 // ===== 横屏分栏：左栏左边缘右滑返回 =====
 // 触发区：左栏 padding 区域（约 44px），用 non-passive touchmove 防止被滚动吞掉
 (function() {
-  var EDGE = 44, THRESHOLD = 0.2;
+  var EDGE = 80, THRESHOLD = 0.15;
   var gsx = 0, gsy = 0, gActive = false, gDist = 0, gLocked = false;
 
   document.addEventListener('touchstart', function(e) {
@@ -8390,11 +8390,11 @@ updateTabCounts();
     var dx = t.clientX - gsx;
     var dy = Math.abs(t.clientY - gsy);
     if (!gLocked) {
-      if (dx > 6 && dx > dy * 0.7) {
-        // 水平右滑（允许较大的斜角）→ 激活手势
+      if (dx > 5 && dx > dy * 0.5) {
+        // 水平右滑（允许约 63° 斜角）→ 激活手势
         gActive = true; gLocked = true;
-      } else if (dy > 15 && dy > dx * 2) {
-        // 明确的垂直滚动 → 放弃
+      } else if (dy > 20 && dy > dx * 3) {
+        // 非常明确的垂直滚动 → 放弃
         gsx = 0; gLocked = true; return;
       }
       if (!gActive) return;
