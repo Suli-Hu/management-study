@@ -2638,6 +2638,8 @@ function _pushNav() {
       isSplitPane: db.classList.contains('split-pane'),
       leftScrollTop: db.querySelector('.detail-left') ? db.querySelector('.detail-left').scrollTop : 0
     });
+    // 限制栈深度，防止内存无限增长
+    if (_navStack.length > 10) _navStack.shift();
   } else {
     // 从列表页（view-list）跳到详情，保存列表状态
     var vl = document.getElementById("view-list");
@@ -2646,6 +2648,10 @@ function _pushNav() {
 }
 
 /* 从学者的 schools 数组推导 accent 颜色，避免手动维护 */
+function _escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 function _scholarAccent(s) {
   if (s.schools && s.schools.length) {
     for (var i = 0; i < s.schools.length; i++) {
@@ -2689,7 +2695,7 @@ function showScholar(key, skipPushNav) {
     +     '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M11.5 1.5l3 3-9 9H2.5v-3l9-9z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
     +   '</button>'
     +   '<div class="badge" style="border-color:' + ac + ';color:' + ac + ';background:' + accentBg + '">' + s.field + '</div>'
-    +   '<div class="d-title">' + s.name + '</div>'
+    +   '<div class="d-title">' + _escapeHtml(s.name) + '</div>'
     +   '<div class="d-en">' + s.en + '</div>'
     +   (s.ja ? '<div class="d-ja">' + s.ja + '</div>' : '')
     + '</div>'
@@ -2743,7 +2749,7 @@ function showScholar(key, skipPushNav) {
   if (_isSplitPane) {
     detailBody.classList.add('split-pane');
     var existingContent = detailBody.innerHTML;
-    detailBody.innerHTML = '<div class="detail-left"><div class="split-back" onclick="goBack()" style="--accent:' + ac + '">← ' + s.name + '</div>' + existingContent + '</div>'
+    detailBody.innerHTML = '<div class="detail-left"><div class="split-back" onclick="goBack()" style="--accent:' + ac + '">← ' + _escapeHtml(s.name) + '</div>' + existingContent + '</div>'
       + '<div class="detail-right" id="kp-detail-panel">'
       + '<div class="kp-panel-placeholder">点击左侧知识点查看详情</div>'
       + '</div>';
@@ -3470,7 +3476,7 @@ function show(key, accentOverride, skipPushNav) {
     +       '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M11.5 1.5l3 3-9 9H2.5v-3l9-9z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
     +     '</button>'
     +     '<div class="era-pill" style="margin-bottom:12px"><div class="era-dot" style="background:' + accent + '"></div>' + mergedEra + '</div>'
-    +     '<div class="d-title">' + d.title + '</div>'
+    +     '<div class="d-title">' + _escapeHtml(d.title) + '</div>'
     +     '<div class="d-en">' + d.en + '</div>'
     +     '<div class="d-ja">' + d.ja + '</div>'
     +     '<div class="hero-quiz-wrap" style="--accent:' + accent + '">'
@@ -3503,7 +3509,7 @@ function show(key, accentOverride, skipPushNav) {
   if (_isSplitPane) {
     detailBody.classList.add('split-pane');
     var existingContent = detailBody.innerHTML;
-    detailBody.innerHTML = '<div class="detail-left"><div class="split-back" onclick="goBack()" style="--accent:' + accent + '">← ' + d.title + '</div>' + existingContent + '</div>'
+    detailBody.innerHTML = '<div class="detail-left"><div class="split-back" onclick="goBack()" style="--accent:' + accent + '">← ' + _escapeHtml(d.title) + '</div>' + existingContent + '</div>'
       + '<div class="detail-right" id="kp-detail-panel">'
       + '<div class="kp-panel-placeholder">点击左侧知识点查看详情</div>'
       + '</div>';
@@ -3564,6 +3570,7 @@ function goBack() {
 // ===== Quiz 2.0: AI-powered practice =====
 
 var QUIZ_WORKER_URL = 'https://quiz-worker.husuli0623.workers.dev';
+// TODO: 迁移到 Worker 端 Origin 校验，移除客户端明文 token
 var QUIZ_AUTH_TOKEN = 'quiz_token_2026';
 
 // Delta merge: fetch KV additions/deletions and merge into memory
@@ -3936,7 +3943,8 @@ function _sbPickAnswer(key, accent, bank, queue, pos, prog, displayKey, optMap, 
       _sbRenderQuestion(key, accent, bank, queue, nextPos, prog);
     }
   });
-  setTimeout(function() { raEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 80);
+  var _ra = raEl;
+  setTimeout(function() { if (_ra && _ra.parentNode) _ra.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 80);
 }
 
 function _sbShowComplete(key, accent, bank, prog) {
@@ -4575,7 +4583,8 @@ var QZ = {
         if (el) el.scrollTop = 0;
       }
     });
-    setTimeout(function() { raEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 80);
+    var _ra2 = raEl;
+    setTimeout(function() { if (_ra2 && _ra2.parentNode) _ra2.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 80);
   },
 
   // === 通关画面 ===
@@ -8382,7 +8391,8 @@ updateTabCounts();
         // 视觉反馈：按钮闪烁
         jaBtn.style.transition = 'none';
         jaBtn.style.transform = 'scale(1.2)';
-        setTimeout(function() { jaBtn.style.transition = 'transform 0.2s'; jaBtn.style.transform = ''; }, 100);
+        var _jb = jaBtn;
+        setTimeout(function() { if (_jb && _jb.parentNode) { _jb.style.transition = 'transform 0.2s'; _jb.style.transform = ''; } }, 100);
       }
     }
   });
@@ -8446,6 +8456,19 @@ updateTabCounts();
       view.style.opacity = '';
     }
     gsx = 0; gActive = false; gDist = 0; gLocked = false;
+  });
+
+  // 页面隐藏时重置手势状态，防止切后台后 touchend 丢失导致误触
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+      if (gActive) {
+        var view = document.getElementById('view-detail');
+        view.style.transition = 'none';
+        view.style.transform = '';
+        view.style.opacity = '';
+      }
+      gsx = 0; gActive = false; gDist = 0; gLocked = false;
+    }
   });
 })();
 </script>
