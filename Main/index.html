@@ -2733,14 +2733,32 @@ function showScholar(key, skipPushNav) {
     + '<div class="sec-title">所属学派</div>'
     + '<div class="tags">' + schools + '</div>';
 
-  document.getElementById("detail-body").classList.remove('split-pane');
-  document.getElementById("detail-body").innerHTML = html;
+  var detailBody = document.getElementById("detail-body");
+  detailBody.classList.remove('split-pane');
+  detailBody.innerHTML = html;
+
+  // 宽屏分栏布局（与学派详情页同逻辑）
+  var knForScholar = KNOWLEDGE.filter(function(kn) { return _knScholars(kn).indexOf(key) >= 0; });
+  var _isSplitPane = window.innerWidth >= 900 && knForScholar.length > 0;
+  if (_isSplitPane) {
+    detailBody.classList.add('split-pane');
+    var existingContent = detailBody.innerHTML;
+    detailBody.innerHTML = '<div class="detail-left"><div class="split-back" onclick="goBack()" style="--accent:' + ac + '">← ' + s.name + '</div>' + existingContent + '</div>'
+      + '<div class="detail-right" id="kp-detail-panel">'
+      + '<div class="kp-panel-placeholder">点击左侧知识点查看详情</div>'
+      + '</div>';
+    _initSplitPaneHandlers(detailBody, ac);
+  }
+
   document.getElementById("view-list").classList.remove("active");
   document.getElementById("view-detail").classList.add("active");
   document.getElementById("view-detail").scrollTop = 0;
-  // 启用 KP 滑动手势（左滑显示 [删除][编辑] 按钮）
-  var theoriesList = document.getElementById("scholar-theories-list");
-  if (theoriesList) _initSwipe(theoriesList);
+  // 启用 KP 滑动手势
+  var theoriesList = detailBody.querySelector("#scholar-theories-list");
+  if (theoriesList) {
+    _initSwipe(theoriesList);
+    if (_isSplitPane) _initDragReorder(theoriesList, 'scholar:' + key);
+  }
 }
 
 function _moveTabSlider(btn) {
