@@ -18,7 +18,7 @@
 | 数据 | data.js（学派/学者/知识点）+ data_ja.js（日文翻译） |
 | 练习API | Cloudflare Worker + Gemini 2.5 Flash |
 | 题库缓存 | Cloudflare KV |
-| 部署 | Netlify（静态站点） |
+| 部署 | Cloudflare Pages（静态站点） |
 
 ## 文件结构
 
@@ -37,10 +37,12 @@ worker/
 
 ## 部署
 
-**静态站点（Netlify）：**
+**静态站点（Cloudflare Pages）：**
 ```bash
-npx netlify deploy --prod --dir=.
+wrangler pages deploy ./ --project-name management-study --branch main --commit-dirty=true
 ```
+
+**线上地址：** https://management-study.pages.dev/
 
 **练习API（Cloudflare Worker）：**
 ```bash
