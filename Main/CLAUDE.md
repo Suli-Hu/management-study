@@ -56,8 +56,26 @@
 
 ## 核心规则
 
-1. **部署前必须征得用户同意**，不要自动执行 `netlify deploy`
+1. **部署前必须征得用户同意**，部署命令：`wrangler pages deploy Main/ --project-name management-study --branch main --commit-dirty=true`
 2. **修改中文body后必须同步日文版**，日文版使用学术标准术语而非直译
 3. **新建KP按三层架构**：导语(400)+strong加粗→核心内容→评价标签(义/限)
 4. **语义标签用破折号**：`◆意义——xxx`，不能用冒号
 5. **回复使用中文**
+
+## 记忆文件
+
+项目记忆存储在 `.claude-memory/` 目录下，换电脑后请将这些文件复制到 `~/.claude/projects/` 对应目录的 `memory/` 下：
+
+```bash
+# 在新电脑上 clone 项目后执行（路径根据实际情况调整）
+PROJECT_MEMORY="$HOME/.claude/projects/-Users-$(whoami)-*Web-Project/memory"
+mkdir -p "$PROJECT_MEMORY"
+cp .claude-memory/*.md "$PROJECT_MEMORY/"
+```
+
+记忆包含：
+- **MEMORY.md** — 记忆索引
+- **feedback_no_auto_deploy.md** — 部署前必须征求用户同意
+- **feedback_frontend_methodology.md** — 前端排查方法论（全局扫描 + 真实尺寸测试 + Safari 坑清单）
+- **feedback_kp_generation.md** — KP 生成工作流程原则
+- **user_sulihu.md** — 用户画像（iPad Mini 用户，重视 UI 细节）
