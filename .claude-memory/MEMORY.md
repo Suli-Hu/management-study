@@ -1,4 +1,5 @@
 - [部署 = git push](feedback_no_auto_deploy.md) — GitHub Actions 自动部署，push 前必须问用户
+- [多 Claude 会话分工](feedback_worktree_scope.md) — engineering（elegant-*）不碰 data，learning（epic-*）不碰 js/CSS
 - [前端问题排查方法论](feedback_frontend_methodology.md) — 全局扫描+真实设备尺寸自测+Safari坑清单+回归测试
 - [用户画像](user_sulihu.md) — iPad Mini用户，重视UI细节，期望充分自测
 - [KP生成工作流程原则](feedback_kp_generation.md) — 先查重+高保真demo页选颗粒度+先样后批+详情见CONTRIBUTING.md第8节
