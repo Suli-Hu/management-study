@@ -480,7 +480,7 @@ var DATA = {
     era: "1920s Follett → 1960s–1970s Pondy·Thomas → 1980s Fisher → 1990s Jehn",
     who: ["玛丽·福列特 Mary P. Follett", "路易斯·庞迪 Louis Pondy", "肯尼斯·托马斯 Kenneth Thomas", "斯蒂芬·罗宾斯 Stephen Robbins", "卡伦·詹恩 Karen Jehn", "罗杰·费舍尔 Roger Fisher", "威廉·尤里 William Ury", "理查德·沃尔顿 Richard Walton", "莫顿·多伊奇 Morton Deutsch"],
     summary: "冲突是两个或两个以上的个人或集团之间产生的对立或敌对关系。冲突管理指的是对组织内发生的冲突进行适当管理与引导，使其服务于组织目标达成与有效性提升的过程。有益的冲突应被促进，有害的冲突应被化解——这是现代冲突管理的基本立场。",
-    concepts: ["k587","k588","k589","k590","k591","k592","k593","k594","k595","k596","k597","k598","k599","k600","k601","k602"],
+    concepts: ["k587","k588","k589","k590","k591","k592","k593","k594","k595","k596","k598","k599","k600","k601","k602"],
     influence: "TKI模型是全球使用最广的冲突评估工具之一；Fisher & Ury的原则式谈判影响了商业、外交、法律实务；冲突管理被纳入经营学大学院OB核心课程。冲突管理理论处于社会心理学、组织行为学、决策论学派、协商理论的交叉位置。",
     context: "冲突管理理论的思想前提来自Barnard的协作系统观和Cyert & March的「多元冲突目标」——组织内部存在多元利益主体是冲突的根本来源。1960年代以前视冲突为纯粹负面，1970年代行为科学学派开始系统研究冲突的类型和功能，逐渐形成「适度冲突有益」的现代观点。",
     related: ["组织行为学派", "行为科学学派", "卡内基学派"]
@@ -1509,7 +1509,7 @@ var SCHOLARS = {
     affiliation: "麻省理工学院斯隆管理学院",
     accent: "#007AFF", field: "数字经济 · 企业IT · AI管理",
     schools: ["AI · 数字化转型"],
-    theories: ["k465"],
+    theories: [],
     contribution: "麦卡菲是MIT数字经济研究的核心人物，与布林约尔松长期合作研究数字技术对企业和经济的影响。他提出「企业2.0」（Enterprise 2.0）概念，描述企业如何利用社会媒体和协作工具改变内部知识共享和创新流程。与布林约尔松合著的《与机器赛跑》（Race Against the Machine，2011）和《第二次机器革命》从经济学视角分析了数字自动化对就业市场的冲击，并探讨了人类如何在AI时代保持竞争力。他的研究为企业制定数字化战略和管理AI驱动的组织变革提供了重要的实证依据。"
   },
   stigler: {
@@ -2140,7 +2140,7 @@ var SCHOLARS = {
     affiliation: "东京大学大学院经济学研究科（教授）/ 早稻田大学商学院（兼任）",
     accent: "#007AFF", field: "生产管理 · 能力构筑竞争 · 产品架构理论",
     schools: ["生产战略·能力构筑竞争", "日本的经营"],
-    theories: ["k309", "k513"],
+    theories: ["k309", "k616"],
     contribution: "藤本隆宏是日本产业能力研究的代表性学者，也是国际制造管理学界为数不多真正影响全球研究议程的日本学者之一。他通过对丰田生产方式和汽车产业的长期深度研究，构建了以「组织进化能力」为核心的生产战略理论体系，将工厂现场（Gemba）的制造力与战略管理理论系统地连接起来。他的产品架构理论被广泛用于分析中国制造业升级路径（由模块型→整合型）以及日本制造业的竞争力来源和局限。是理解丰田生产方式（TPS）的重要理论视角，也是経営学大学院生産戦略論・日本企業論的核心参考。"
   },
 
@@ -2841,7 +2841,7 @@ var SCHOLARS = {
     affiliation: "圣迭戈州立大学",
     accent: "#34C759", field: "组织行为学",
     schools: ["冲突管理论"],
-    theories: ["k588", "k594", "k597"],
+    theories: ["k588", "k594"],
     contribution: "组织行为学教科书权威，冲突观三阶段演进、功能性vs失调性冲突的体系化"
   },
   thomas_k: {
@@ -4740,7 +4740,6 @@ var KNOWLEDGE = [
   {id:"k309", title:"能力构筑竞争", en:"Capability-Building Competition", scholar:"fujimoto", year:"", schools:["dynamic"], body:"与产品层面的市场竞争（波特式）相对，指企业在组织能力层面的长期积累和竞争。竞争优势来自深层能力的厚度，而非仅仅当前产品的功能或价格。能力的积累是历史性的，难以被竞争对手快速复制"},
   {id:"k310", title:"表层与深层与更深层竞争力", en:"Surface vs Deep vs Deeper Competitiveness", scholar:null, year:"", schools:["dynamic"], body:"表层：可见的产品竞争力（QCDF）；深层：支撑表层的组织能力（产品设计力、制程协调力）；更深层：深层能力的进化机制（组织惯例的持续改善能力）。三者相互叠加，更深层是真正难以复制的源泉"},
   {id:"k311", title:"QCDF框架", en:"QCDF Framework", scholar:"fujimoto", year:"", schools:["dynamic"], body:"Quality（品质）、Cost（成本）、Delivery（交货期）、Flexibility（生产灵活性），四维度构成制造现场核心竞争力的综合评估指标"},
-  {id:"k312", title:"产品架构：整合型与模块型", en:"Product Architecture: Integral vs Modular", scholar:null, year:"", schools:["dynamic"], body:"整合型（Integral）：零部件高度相互依赖，最优性能依赖跨部门精密协调，日本汽车产业的传统强项；模块型（Modular）：按标准接口组合，利于外包和快速迭代，PC与智能手机的主流。架构类型决定竞争优势来源和产业分工方式"},
   {id:"k313", title:"设计信息观", en:"Design Information View", scholar:null, year:"", schools:["dynamic"], body:"将制造活动理解为将产品设计信息准确高效地转移到介质（零件、产品）上的过程。组织能力的本质是创造、传递、改善设计信息的能力，这一视角连接了知识管理与生产管理"},
   {id:"k314", title:"丰田生产方式（TPS）", en:"Toyota Production System", scholar:"ohno", year:"1970s-", schools:["japanese_mgmt"], body:"大野耐一在丰田汽车30余年实践中构建的生产管理体系，20世纪70年代石油危机后被全球工业界广泛模仿，后被MIT命名为<strong>精益生产（Lean Production）</strong>。其根本哲学是通过<strong>全员参与的持续改善（Kaizen）</strong>彻底消除浪费、实现高效率与高品质的统一<br>【两大支柱】<br>①<strong>JIT（Just-in-Time）</strong>——只在需要时、以需要数量生产需要产品。通过看板（Kanban）实现后工序拉动式生产，消除中间库存。与传统推动式（Push）生产相反<br>②<strong>自働化（Jidoka）</strong>——「带人字旁的自动化」。设备异常时自动停止并触发安灯（Andon）报警，由作业者识别根本原因，品质管理内嵌于生产过程，实现「作り込み」——在过程中造出品质而非事后检验。加「人」偏旁强调不是单纯机械自动化，而是赋予机器人的判断力<br>【七种浪费】<br>①过量生产——在需要之前制造过多产品，大野耐一视为「最恶之浪费」，因其引发其余六种浪费<br>②等待——因设备故障、前工序延迟、工序不平衡等导致作业者空闲<br>③搬运——不产生附加价值的物料移动，源于布局不合理或批量过大<br>④加工浪费——超出客户要求的过度加工或不必要工序<br>⑤库存——原材料·在制品·成品的过量存储，掩盖生产问题并占用资金<br>⑥动作——寻找工具、不必要的步行·转身等不产生价值的身体动作<br>⑦不良品——产生废品或返工，浪费材料·工时并可能导致交货延迟<br>【生产方式与工具】<br>①看板方式（Kanban）——后工序向前工序发出取货指令的信息卡片系统，实现拉动式（Pull）生产，是JIT的核心运作机制（具体运作详见「JIT与看板方式」）<br>②平准化（Heijunka）——按品种和数量均匀化生产计划，避免需求波动引起的过量生产和负荷不均<br>③单元生产（Cell Production）——U形布局的自律性小组作业，一人多工序，实现少人化与灵活应对需求变动<br>④混流生产（Mixed-model Production）——同一生产线交替生产不同型号，实现多品种少量的高效率<br>⑤5S（整理·整顿·清扫·清洁·素养）——现场管理的基础方法论，为JIT和自働化创造可视化、标准化的作业环境<br>【开发管理手法】<br>①并行工程（Concurrent Engineering）——产品设计与制程设计同步进行，缩短开发周期。非丰田独有，日本制造业普遍采用<br>②前期装载（Front-loading）——将问题发现·解决集中在开发早期，降低后期设计变更的成本和风险<br>③设计嵌入（Design-in）——供应商在产品开发早期参与设计，将零部件专业技术融入客户产品。亦非丰田独有，是日本汽车产业的普遍做法<br>④主查制度（Chief Engineer）——由一位主查统括车型开发全过程，跨部门协调设计·生产·营销，是丰田强大产品力的组织保障<br>◆意义——以有限资源下追求极致效率的思路打破了大量生产的规模迷信，成为1980年代日本制造业竞争力的核心源泉；催生了「Lean Production」概念（MIT的Womack等1990年总结），使TPS成为全球制造业的通用语<br>◆局限——高度依赖稳定供应链与终身雇用下的劳资关系，对需求剧烈波动的脆弱性较高；难以在缺乏协作文化和长期雇用假设的海外环境中完整移植"},
   {id:"k334", title:"相关多角化与非相关多角化", en:"Related vs Unrelated Diversification", scholar:null, year:"", schools:["planning_s"], body:"相关多角化（Related）：进入与核心事业存在技术、市场或资源关联的领域，可发挥协同效应；非相关多角化（Unrelated/Conglomerate）：进入无关联领域，主要靠财务管理实现价值。Rumelt实证表明相关多角化企业绩效普遍优于非相关多角化"},
@@ -4894,7 +4893,6 @@ var KNOWLEDGE = [
   {id:"k509", title:"强文化论", en:"Strong Culture Theory", scholar:"deal", year:"", schools:["culture_s"], body:"（1982）与肯尼迪（Allan Kennedy）合作提出。拥有清晰核心价值观、英雄人物、仪式和文化网络的组织（即「强文化」组织），绩效显著优于文化薄弱的组织。文化四要素：价值观（Values）、英雄（Heroes）、仪式（Rites & Rituals）、文化网络（Cultural Network）"},
   {id:"k510", title:"追求卓越八要素", en:"Eight Attributes of Excellence", scholar:"peters_t", year:"", schools:["culture_s"], body:"（Peters & Waterman，1982）对43家卓越美国企业的研究归纳：偏好行动（Bias for Action）、接近顾客（Close to the Customer）、自主创业精神、以人为本的生产力、价值观驱动、坚守本业、精简机构、宽严并济"},
   {id:"k512", title:"跨国企业垄断优势论", en:"Monopolistic Advantage Theory", scholar:"hymer", year:"", schools:["international_strategy"], body:"（1960）跨国企业之所以能克服东道国企业的地方主场优势（本地知识、法律关系、语言文化），必然拥有能弥补跨国劣势的特定垄断性优势（技术、品牌、管理能力等），该优势的跨国转移和内部化构成FDI的根本动因。这是第一个从企业层面系统解释FDI的理论"},
-  {id:"k513", title:"产品架构理论", en:"整合型与模块型", scholar:"fujimoto", year:"", schools:["dynamic"], body:"整合型（Integral）：零部件高度相互依赖，最优性能依赖跨部门精密协调，日本汽车产业的传统强项；模块型（Modular）：按标准接口组合，利于外包和快速迭代，PC与智能手机产业的主流。架构类型决定竞争优势来源和产业分工方式"},
   {id:"k516", title:"社会比较理论", en:"Social Comparison Theory", scholar:"festinger", year:"", schools:["attitude_emotion"], body:"（1954）人们在缺乏客观标准时，通过与他人比较来评估自己的意见和能力；尤其在不确定情境中，他人成为衡量自我的参照基准"},
   {id:"k517", title:"团队有效性研究", en:"Team Effectiveness", scholar:"hackman", year:"", schools:["ob"], body:"提出有效团队需满足：真实团队（Real Team）、吸引性目标（Compelling Direction）、有利结构（Enabling Structure）、支持性组织情境（Supportive Context）、专家辅导（Expert Coaching）五条件；强调团队设计先于团队建设"},
   {id:"k518", title:"职业代码", en:"Holland Code", scholar:"holland", year:"", schools:["personality"], body:"每个人可用三个字母代码（如RIA、SEC等）描述其主导人格类型，与同样以三码标注的职业环境进行匹配，匹配度越高预测越好的工作适应与满意"},

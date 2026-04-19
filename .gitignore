@@ -6,5 +6,7 @@
 *.backup
 *.backup2
 serve_dev.js
+serve_dev.py
 serve.rb
 References/
+Main/demo_*.html

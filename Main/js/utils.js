@@ -46,24 +46,23 @@ var TOPIC_MAP = {
   personality:'人格・知覚',
   attitude_emotion:'態度・情緒',
   behavioral:'モチベーション・学習', ob:'モチベーション・学習', beh_econ:'モチベーション・学習',
-  // === OB 集団 ===
+  // === OB リーダーシップ／コンフリクト ===
   ohio:'リーダーシップ', michigan:'リーダーシップ', situational:'リーダーシップ',
   leadership_theory:'リーダーシップ',
-  group_team:'集団・チーム',
   conflict:'コンフリクト',
   // === OB 組織 ===
   change:'組織文化・変革',
   // km already defined above
   stanford:'組織学習', org_learning:'組織学習',
   // === OB HRM ===
-  shrm:'人的資源管理', hrm_practice:'人的資源管理',
+  hrm:'人的資源管理',
   hitotsubashi:'日本的経営', japanese_mgmt:'日本的経営',
   // === OT 経営基礎 ===
-  scientific:'経営史', bureaucracy:'経営史', process:'経営史', humanrel:'経営史',
+  scientific:'経営史', bureaucracy:'経営史', process:'経営史', humanrel:'経営史', static_structure:'経営史',
   carnegie:'意思決定論', equilibrium:'意思決定論', evolution_process:'意思決定論',
   decision_theory:'意思決定論',
   // === OT 組織設計 ===
-  contingency:'組織構造・設計', systems:'組織構造・設計',
+  contingency:'組織構造・設計', systems:'組織構造・設計', adaptive_design:'組織構造・設計',
   tavistock:'組織構造・設計', aston:'組織構造・設計', org_types:'組織構造・設計',
   // === OT 制度・生態 ===
   institutional:'制度理論',
@@ -74,7 +73,7 @@ var TOPIC_ORDER = [
   // SM
   '競争戦略','戦略形成学派','イノベーション戦略','国際戦略','ガバナンス・CSR',
   // OB
-  '人格・知覚','態度・情緒','モチベーション・学習','リーダーシップ','集団・チーム','コンフリクト','組織文化・変革','組織学習','人的資源管理','日本的経営',
+  '人格・知覚','態度・情緒','モチベーション・学習','リーダーシップ','コンフリクト','組織文化・変革','組織学習','人的資源管理','日本的経営',
   // OT
   '経営史','意思決定論','組織構造・設計','制度理論','ソーシャル・ネットワーク'
 ];
@@ -82,7 +81,7 @@ var TOPIC_ORDER = [
 // L1 → 子分类映射
 var _L1_CATS = {
   SM: ['競争戦略','戦略形成学派','イノベーション戦略','国際戦略','ガバナンス・CSR'],
-  OB: ['人格・知覚','態度・情緒','モチベーション・学習','リーダーシップ','集団・チーム','コンフリクト','組織文化・変革','組織学習','人的資源管理','日本的経営'],
+  OB: ['人格・知覚','態度・情緒','モチベーション・学習','リーダーシップ','コンフリクト','組織文化・変革','組織学習','人的資源管理','日本的経営'],
   OT: ['経営史','意思決定論','組織構造・設計','制度理論','ソーシャル・ネットワーク']
 };
 var _l1Colors = { SM:'#007AFF', OB:'#34C759', OT:'#FF9500' };
