@@ -58,8 +58,8 @@
 
 1. **部署 = `git push origin main`**（不要再跑 `wrangler pages deploy`）
    - 2026-04-19 起配了 GitHub Actions（`.github/workflows/deploy.yml`），每次 push 到 main 自动部署 Cloudflare Pages
-   - **因此 `git push` 前必须征得用户同意**（push 即上线，等同部署）
-   - 本地 `git commit` 随便做，不需要询问
+   - **默认：改完代码、自测通过 → 直接 push，不用问**
+   - 仍要问的情况：破坏性改动、未充分验证、跨会话冲突风险
    - 查看部署状态：https://github.com/Suli-Hu/management-study/actions
 2. **修改中文body后必须同步日文版**，日文版使用学术标准术语而非直译
 3. **新建KP按三层架构**：导语(400)+strong加粗→核心内容→评价标签(义/限)
