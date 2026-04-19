@@ -1,5 +1,30 @@
 // ===== utils.js — Global variables + utility functions =====
 
+// --- Stubs for functions defined in quiz.js (idle-preload) ---
+// 如果用户在 quiz.js 加载完成前点击学派详情页的 "在线答题" / "题库答题"，
+// 这两个 stub 会触发 _ensureQuizModules 加载 quiz.js，然后调用真函数。
+// quiz.js 加载后其 function 声明会覆盖这些 stub（浏览器 function declaration 后声明覆盖前声明）。
+function goSchoolQuiz() {
+  var args = arguments;
+  if (typeof window._ensureQuizModules === 'function') {
+    window._ensureQuizModules(function() {
+      if (window.goSchoolQuiz && window.goSchoolQuiz !== goSchoolQuiz) {
+        window.goSchoolQuiz.apply(null, args);
+      }
+    });
+  }
+}
+function startSchoolBank() {
+  var args = arguments;
+  if (typeof window._ensureQuizModules === 'function') {
+    window._ensureQuizModules(function() {
+      if (window.startSchoolBank && window.startSchoolBank !== startSchoolBank) {
+        window.startSchoolBank.apply(null, args);
+      }
+    });
+  }
+}
+
 var _navStack = [];
 var _listState = null; // 从列表跳到详情时保存列表滚动位置
 
