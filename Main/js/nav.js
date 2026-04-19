@@ -252,7 +252,7 @@ function show(key, accentOverride, skipPushNav) {
     +       '<button class="hq-btn hq-secondary" onclick="goSchoolQuiz(\'' + key + '\',\'' + accent + '\')">在线答题</button>'
     +       (typeof SCHOOL_QUIZ!=='undefined'&&SCHOOL_QUIZ[key] ? '<button class="hq-btn hq-primary" onclick="startSchoolBank(\'' + key + '\',\'' + accent + '\')">题库答题</button>' : '')
     +     '</div>'
-    +     _schoolBankProgress(key)
+    +     (typeof _schoolBankProgress === 'function' ? _schoolBankProgress(key) : '')
     +   '</div>'
     + '</div>'
     + '<div class="sec-title">概述</div>'

@@ -2632,17 +2632,98 @@ body.dragging-active * { cursor: grabbing !important; }
   <div class="detail-body" id="detail-body"></div>
 </div>
 
-<script src="data.js?v=9"></script>
-<script src="data_ja.js"></script>
-<script src="questions.js"></script>
-<script src="school_quiz.js?v=2"></script>
-<script src="js/utils.js"></script>
-<script src="js/render.js"></script>
-<script src="js/nav.js"></script>
-<script src="js/gestures.js"></script>
-<script src="js/editor.js"></script>
-<script src="js/quiz.js"></script>
-<script src="js/search.js"></script>
+<!-- 必需：数据 + 核心模块（defer = 并行下载、HTML 解析完成后按序执行） -->
+<script defer src="data.js?v=10"></script>
+<script defer src="js/utils.js?v=10"></script>
+<script defer src="js/render.js?v=10"></script>
+<script defer src="js/nav.js?v=10"></script>
+<script defer src="js/gestures.js?v=10"></script>
+<script defer src="js/editor.js?v=10"></script>
+<script defer src="js/search.js?v=10"></script>
+
+<!-- 懒加载：data_ja.js（空闲预取）、questions.js + school_quiz.js + quiz.js（点练习前加载） -->
+<script>
+(function() {
+  // ① data_ja.js — 空闲预加载
+  function loadDataJa() {
+    if (window._jaLoading) return;
+    window._jaLoading = true;
+    var s = document.createElement('script');
+    s.src = 'data_ja.js';
+    s.onload = function() {
+      // 失效 concepts 索引缓存，如在概念列表则刷新使日文按钮出现
+      window.CONCEPTS_INDEX = null;
+      try {
+        var panel = document.getElementById('panel-concepts');
+        if (panel && panel.classList.contains('active') && typeof renderConcepts === 'function') {
+          renderConcepts();
+        }
+      } catch(e) {}
+    };
+    document.head.appendChild(s);
+  }
+  window._ensureDataJa = loadDataJa;
+
+  // ② 练习模块 — 首次需要时加载
+  var _qzLoading = false, _qzReady = false, _qzCbs = [];
+  function loadQuizModules(cb) {
+    if (_qzReady) { if (cb) cb(); return; }
+    if (cb) _qzCbs.push(cb);
+    if (_qzLoading) return;
+    _qzLoading = true;
+    var srcs = ['questions.js', 'school_quiz.js?v=2', 'js/quiz.js'];
+    var done = 0;
+    srcs.forEach(function(src) {
+      var s = document.createElement('script');
+      s.src = src;
+      s.onload = function() {
+        done++;
+        if (done === srcs.length) {
+          _qzReady = true;
+          _qzCbs.forEach(function(f) { try { f(); } catch(e) {} });
+          _qzCbs = [];
+        }
+      };
+      document.head.appendChild(s);
+    });
+  }
+  window._ensureQuizModules = loadQuizModules;
+
+  // 拦截 switchTab('quiz') — 保证 quiz 模块已加载再切换
+  window.addEventListener('DOMContentLoaded', function() {
+    var orig = window.switchTab;
+    if (typeof orig !== 'function') return;
+    window.switchTab = function(tab, btn) {
+      if (tab === 'quiz') {
+        loadQuizModules(function() { orig(tab, btn); });
+      } else {
+        orig(tab, btn);
+      }
+    };
+  });
+
+  // 空闲时预加载 data_ja.js + quiz 模块（首屏已渲染，不阻塞）
+  function idlePreload() {
+    loadDataJa();
+    loadQuizModules(function() {
+      // quiz 模块到位后刷新学派卡片，让进度条显示（如果当前在学派页）
+      try {
+        var themePanel = document.getElementById('panel-theme');
+        if (themePanel && themePanel.classList.contains('active') && typeof renderHomeGrid === 'function') {
+          renderHomeGrid();
+        }
+      } catch(e) {}
+    });
+  }
+  window.addEventListener('load', function() {
+    if (window.requestIdleCallback) {
+      requestIdleCallback(idlePreload, { timeout: 2500 });
+    } else {
+      setTimeout(idlePreload, 500);
+    }
+  });
+})();
+</script>
 
 </body>
 </html>

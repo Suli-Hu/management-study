@@ -51,7 +51,7 @@ function _makeCard(key, color) {
     '<div class="card-title">' + d.title + '</div>' +
     '<div class="card-sub">' + _cardSub(d.who) + '</div>' +
     '<div class="card-era">' + eraStr + '</div>' +
-    _schoolCardProgress(key);
+    (typeof _schoolCardProgress === 'function' ? _schoolCardProgress(key) : '');
   return card;
 }
 
