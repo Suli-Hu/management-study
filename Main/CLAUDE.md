@@ -68,18 +68,23 @@
 
 ## 记忆文件
 
-项目记忆存储在 `.claude-memory/` 目录下，换电脑后请将这些文件复制到 `~/.claude/projects/` 对应目录的 `memory/` 下：
+项目记忆存储在 `.claude-memory/` 目录下（git 追踪，跨机/跨 worktree 同步）。**新会话启动时必须执行**以下脚本把记忆复制到本 session 的 memory 目录：
 
 ```bash
-# 在新电脑上 clone 项目后执行（路径根据实际情况调整）
-PROJECT_MEMORY="$HOME/.claude/projects/-Users-$(whoami)-*Web-Project/memory"
-mkdir -p "$PROJECT_MEMORY"
-cp .claude-memory/*.md "$PROJECT_MEMORY/"
+# 新 worktree / 新电脑的会话启动时执行一次
+SESSION_MEMORY="$HOME/.claude/projects/$(pwd | sed 's|/|-|g')/memory"
+mkdir -p "$SESSION_MEMORY"
+cp .claude-memory/*.md "$SESSION_MEMORY/"
 ```
 
-记忆包含：
-- **MEMORY.md** — 记忆索引
-- **feedback_no_auto_deploy.md** — 部署前必须征求用户同意
-- **feedback_frontend_methodology.md** — 前端排查方法论（全局扫描 + 真实尺寸测试 + Safari 坑清单）
-- **feedback_kp_generation.md** — KP 生成工作流程原则
-- **user_sulihu.md** — 用户画像（iPad Mini 用户，重视 UI 细节）
+记忆包含（完整清单见 `.claude-memory/MEMORY.md`）：
+- **feedback_truth_first.md** 🔴 — 第一原则·真实性优先（元规则凌驾其他一切）
+- **feedback_first_principles.md** 🔄 — 遇到 ≥2 次意外障碍时停下重估路径
+- **feedback_preview_efficiency.md** ⚡ — 数据验证走 curl/grep、用户浏览器是最快 preview
+- **feedback_no_auto_deploy.md** — git push = 部署，验证后直接 push
+- **feedback_worktree_scope.md** — engineering/learning 会话分工
+- **feedback_frontend_methodology.md** — 前端排查方法论
+- **feedback_kp_generation.md** — KP 生成 6 原则
+- **feedback_tutoring_workflow.md** — 经营学辅导工作流
+- **user_sulihu.md** — 用户画像（备考志望校、协作偏好）
+- **reference_study_materials.md** — 经营学备考教材位置
