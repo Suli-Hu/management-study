@@ -481,10 +481,10 @@ function _isNameSeg(seg) {
   return true;
 }
 
-function _jpLookup(title) {
+function _jpLookup(title, cnKey) {
   var v = JP_MAP[title];
   if (v) return v;
-  var cn = title.replace(/[（(][^）)]+[）)][\s]*$/, '').trim();
+  var cn = (cnKey != null && cnKey !== '') ? cnKey : title.replace(/[（(][^）)]+[）)][\s]*$/, '').trim();
   if (cn !== title) v = JP_MAP[cn];
   if (v) return v;
   if (typeof DATA_JA !== 'undefined') {

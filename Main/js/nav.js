@@ -102,6 +102,7 @@ function showScholar(key, skipPushNav) {
           + knForScholar.map(function(kn, idx) {
               return renderKnowledgeItem({
                 title: _knFullTitle(kn),
+                cnKey: kn.title,
                 body: kn.body,
                 accent: ac || '#8a7a6a',
                 id: 'th-' + Date.now() + '-' + idx,
@@ -197,6 +198,7 @@ function show(key, accentOverride, skipPushNav) {
   var concepts = knForSchool.map(function(kn, idx) {
     return renderKnowledgeItem({
       title: _knFullTitle(kn),
+      cnKey: kn.title,
       body: kn.body,
       accent: accent,
       id: 'ci-' + Date.now() + '-' + idx,

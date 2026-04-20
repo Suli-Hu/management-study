@@ -531,7 +531,7 @@ function renderKnowledgeItem(opts) {
   var q  = opts.query || '';
 
   var jpName = '';
-  var jpVal = _jpLookup(title);
+  var jpVal = _jpLookup(title, opts.cnKey);
   if (jpVal) {
     var _jpRaw = jpVal.split('——')[0].trim();
     jpName = _jpRaw.replace(/<\/?strong>/g, '').replace(/[（(][^）)]*[）)]/g, '').trim();
@@ -567,7 +567,9 @@ function renderKnowledgeItem(opts) {
     quizHtml = '<div style="margin-top:12px;text-align:right"><button class="pill-btn" onclick="event.stopPropagation();goQuiz(\'' + safeT + '\',\'' + safeSch + '\',\'' + accent + '\')">去练习 →</button></div>';
   }
 
-  var cnKey = title.replace(/([（(][^）)]+[）)][\s]*)+$/, '').trim();
+  var cnKey = (opts.cnKey != null && opts.cnKey !== '')
+    ? opts.cnKey
+    : title.replace(/([（(][^）)]+[）)][\s]*)+$/, '').trim();
   var jaToggleHtml = '';
   if (typeof DATA_JA !== 'undefined' && DATA_JA[cnKey]) {
     jaToggleHtml = '<button class="pill-btn pill-sm ja-toggle" onclick="event.stopPropagation();toggleJaLang(\'' + id + '\',this)" title="切换日语/中文"><span>日本語</span></button>';
@@ -601,7 +603,7 @@ function renderKnowledgeItem(opts) {
 function _renderCnItem(c, id, q) {
   return renderKnowledgeItem({
     title: c.title, body: c.body, accent: c.accent, id: id,
-    kpId: c.id,
+    kpId: c.id, cnKey: c.cnKey,
     school: c.school, schoolKey: c.key, scholar: c.scholar,
     schools: c.schools,
     swipeable: true, quizable: true, query: q
@@ -629,6 +631,7 @@ function _buildConceptsIndex() {
     list.push({
       id: k.id,
       title: _knFullTitle(k),
+      cnKey: cnKey,
       body: k.body,
       en: k.en || '',
       ja: jaText,
