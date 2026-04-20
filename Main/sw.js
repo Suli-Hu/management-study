@@ -1,7 +1,11 @@
 // Service Worker — 分层缓存策略
-// 版本号：改动部署策略时手动 bump；数据/JS 走 stale-while-revalidate 不靠版本
-const CACHE_VERSION = 'v1';
+// 版本号：改动部署策略时手动 bump → 清空旧缓存，避免跨版本串味
+const CACHE_VERSION = 'v2';
 const CACHE_NAME = `ms-${CACHE_VERSION}`;
+
+// 内容数据文件（频繁更新）— 匹配后走 network-first 策略
+// data.js / data_ja.js / questions.js / school_quiz.js
+const DATA_FILE_RE = /\/(data|data_ja|questions|school_quiz)\.js(\?|$)/;
 
 // 安装：预缓存入口（其他资源按需 cache on fetch）
 self.addEventListener('install', (event) => {
@@ -46,15 +50,23 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 其他静态资源（JS / CSS / SVG / 字体）— stale-while-revalidate：秒开 + 后台刷新
+  // 内容数据文件（频繁更新）— network-first，避免一次刷新滞后
+  if (DATA_FILE_RE.test(url.pathname)) {
+    event.respondWith(networkFirst(req));
+    return;
+  }
+
+  // 其他静态资源（js/*.js / CSS / SVG / 字体）— stale-while-revalidate：秒开 + 后台刷新
   event.respondWith(staleWhileRevalidate(req));
 });
 
-// network-first：尝试网络，失败回退缓存
+// network-first：尝试网络（bypass 浏览器 HTTP 缓存），失败回退 SW 缓存
 async function networkFirst(request) {
   const cache = await caches.open(CACHE_NAME);
   try {
-    const response = await fetch(request);
+    // 关键：cache: 'no-store' 让 SW 内部 fetch 不命中浏览器 HTTP 缓存，始终走真实网络
+    // 这样数据文件改动后，刷新一次就能拿到最新版
+    const response = await fetch(request, { cache: 'no-store' });
     if (response && response.ok) cache.put(request, response.clone());
     return response;
   } catch (err) {
