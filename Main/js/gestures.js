@@ -37,6 +37,8 @@ function _initDragReorder(container, orderKey) {
 
     function onDown(clientY, clientX, e) {
       if (_drag.state !== 'idle') return;
+      // 阅览模式禁止拖拽调序
+      if (document.body.classList.contains('mode-read')) return;
       if (e && e.target && e.target.closest && (e.target.closest('button') || e.target.closest('a') || e.target.closest('.cn-school') || e.target.closest('.ja-toggle'))) return;
 
       _drag.startY = clientY;

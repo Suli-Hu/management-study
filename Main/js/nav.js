@@ -235,7 +235,7 @@ function show(key, accentOverride, skipPushNav) {
   var canDeleteSchool = (knForSchool.length === 0) && (clickableWhoCount === 0);
   var safeNameAttr = (d.title || key).replace(/'/g, "\\'").replace(/"/g, '&quot;');
   var deleteSchoolBtn = canDeleteSchool
-    ? '<hr class="divider"><div style="text-align:center;margin:24px 0"><button onclick="deltaDeleteSchool(\'' + key + '\',\'' + safeNameAttr + '\')" style="padding:10px 28px;border-radius:8px;border:1px solid #FF3B30;background:transparent;color:#FF3B30;font-size:13px;font-weight:var(--weight-semibold);cursor:pointer;transition:background .15s" onmouseover="this.style.background=\'rgba(255,59,48,0.08)\'" onmouseout="this.style.background=\'transparent\'">\u5220\u9664\u8BE5\u5B66\u6D3E</button><div style="margin-top:8px;font-size:11px;color:var(--text-quaternary)">\u5F53\u524D\u65E0\u77E5\u8BC6\u70B9\u4E14\u65E0\u5173\u8054\u5B66\u8005</div></div>'
+    ? '<hr class="divider edit-only"><div class="edit-only" style="text-align:center;margin:24px 0"><button onclick="deltaDeleteSchool(\'' + key + '\',\'' + safeNameAttr + '\')" style="padding:10px 28px;border-radius:8px;border:1px solid #FF3B30;background:transparent;color:#FF3B30;font-size:13px;font-weight:var(--weight-semibold);cursor:pointer;transition:background .15s" onmouseover="this.style.background=\'rgba(255,59,48,0.08)\'" onmouseout="this.style.background=\'transparent\'">\u5220\u9664\u8BE5\u5B66\u6D3E</button><div style="margin-top:8px;font-size:11px;color:var(--text-quaternary)">\u5F53\u524D\u65E0\u77E5\u8BC6\u70B9\u4E14\u65E0\u5173\u8054\u5B66\u8005</div></div>'
     : '';
   var html =
     '<div class="school-hero" style="--accent:' + accent + '">'

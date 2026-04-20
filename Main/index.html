@@ -1844,6 +1844,36 @@ body.dragging-active * { cursor: grabbing !important; }
   flex-shrink: 0;  /* 防止在小屏 flex 容器里被挤扁 */
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
+
+/* 模式切换按钮 — 阅览/编辑 */
+.tab-mode-btn {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 34px; height: 34px;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  transition: background .15s, color .15s, border-color .15s, transform .12s;
+  margin-right: 10px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.tab-mode-btn:hover { background: var(--bg-secondary); transform: scale(1.05); }
+.tab-mode-btn:active { transform: scale(0.96); }
+.tab-mode-btn .icon-edit { display: none; }
+body.mode-edit .tab-mode-btn { color: #FF9500; border-color: rgba(255,149,0,0.4); background: rgba(255,149,0,0.06); }
+body.mode-edit .tab-mode-btn .icon-read { display: none; }
+body.mode-edit .tab-mode-btn .icon-edit { display: block; }
+
+/* 阅览模式：隐藏所有编辑类控件 */
+body.mode-read .kp-add-btn,
+body.mode-read .scholar-edit-btn,
+body.mode-read .cn-edit-btn,
+body.mode-read .cn-hide-btn,
+body.mode-read .edit-only { display: none !important; }
+body.mode-read .cn-swipe-wrap { pointer-events: auto; }
+body.mode-read .cn-swipe-wrap .cn-swipe-inner { transform: none !important; transition: none !important; }
 .tab-spotlight-btn:hover, .tab-spotlight-btn:active {
   background: var(--bg-secondary);
   border-color: var(--text-quaternary);
@@ -2193,6 +2223,10 @@ body.dragging-active * { cursor: grabbing !important; }
     </div>
   </div>
   <div class="tab-nav" id="tab-nav">
+    <button class="tab-mode-btn" onclick="_toggleEditMode()" title="切换阅览/编辑模式" aria-label="切换模式">
+      <svg class="icon-read" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      <svg class="icon-edit" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+    </button>
     <div class="tab-slider" id="tab-slider"></div>
     <button class="tab-btn active" onclick="switchTab('theme', this)">学派全览<span class="tab-count" id="cnt-theme">30</span></button>
     <button class="tab-btn" onclick="switchTab('scholar', this)">学者目录<span class="tab-count" id="cnt-scholar">107</span></button>
@@ -2747,6 +2781,68 @@ body.dragging-active * { cursor: grabbing !important; }
     } else {
       setTimeout(idlePreload, 500);
     }
+  });
+
+  // ===== 模式切换（阅览 / 编辑）=====
+  // 默认阅览模式。进入编辑需要密码（sha256 'Sl#82521210'）。
+  // 编辑模式用 sessionStorage 保存 → 关 tab 自动回阅览。
+  var EDIT_HASH = 'e2ad2e751cb985a879053b3c8966bdaa0dca34f693763719182c90673eae8af0';
+  function _sha256Hex(str) {
+    var encoder = new TextEncoder();
+    return crypto.subtle.digest('SHA-256', encoder.encode(str)).then(function(buf) {
+      return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+    });
+  }
+  function _getMode() {
+    return sessionStorage.getItem('app_mode') === 'edit' ? 'edit' : 'read';
+  }
+  function _applyMode() {
+    var m = _getMode();
+    document.body.classList.toggle('mode-read', m === 'read');
+    document.body.classList.toggle('mode-edit', m === 'edit');
+    var btn = document.querySelector('.tab-mode-btn');
+    if (btn) btn.setAttribute('title', m === 'edit' ? '退出编辑模式（改为阅览）' : '切换到编辑模式');
+  }
+  // 初始化：默认 read
+  document.addEventListener('DOMContentLoaded', _applyMode);
+  // body 可能在 script 运行时就绪
+  if (document.body) _applyMode();
+
+  window._toggleEditMode = function() {
+    var cur = _getMode();
+    if (cur === 'edit') {
+      sessionStorage.removeItem('app_mode');
+      _applyMode();
+      return;
+    }
+    // 提示输入密码
+    var pw = window.prompt('请输入编辑密码');
+    if (!pw) return;
+    _sha256Hex(pw).then(function(hash) {
+      if (hash === EDIT_HASH) {
+        sessionStorage.setItem('app_mode', 'edit');
+        _applyMode();
+      } else {
+        window.alert('密码错误');
+      }
+    });
+  };
+
+  // 拦截编辑函数 — 阅览模式下 no-op
+  window.addEventListener('DOMContentLoaded', function() {
+    var guardedNames = ['openAddModal', 'openEditKP', 'openEditScholar', 'openEditSchool',
+                        'deltaDeleteKP', 'deltaDeleteScholar', 'deltaDeleteSchool'];
+    guardedNames.forEach(function(name) {
+      var orig = window[name];
+      if (typeof orig !== 'function') return;
+      window[name] = function() {
+        if (_getMode() !== 'edit') {
+          // 静默忽略；如果需要可以改成提示
+          return;
+        }
+        return orig.apply(this, arguments);
+      };
+    });
   });
 
   // Service Worker 注册（二次访问秒开 + 离线可用）
