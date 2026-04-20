@@ -349,6 +349,50 @@ function toggleItem(id, e) {
   if (el) el.classList.toggle('open');
 }
 
+// ---- 分栏视图下 ↑/↓ 键切换知识点 ----
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+  // 忽略输入场景
+  var tgt = e.target;
+  if (tgt && (tgt.tagName === 'INPUT' || tgt.tagName === 'TEXTAREA' || tgt.isContentEditable)) return;
+  // 忽略有 modal / spotlight 打开时
+  if (document.querySelector('.delta-modal-overlay, .spotlight-overlay, #auth-gate[style*="display: flex"], #auth-gate:not([style*="none"])')) {
+    var gate = document.getElementById('auth-gate');
+    if (gate && gate.style.display !== 'none') return;
+  }
+  // 只在分栏视图生效
+  var split = document.querySelector('.detail-body.split-pane');
+  if (!split) return;
+  var leftPane = split.querySelector('.detail-left');
+  if (!leftPane) return;
+  var items = Array.prototype.slice.call(leftPane.querySelectorAll('.cn-item'));
+  if (!items.length) return;
+
+  e.preventDefault();
+
+  var curIdx = -1;
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].classList.contains('kp-selected')) { curIdx = i; break; }
+  }
+  var nextIdx;
+  if (e.key === 'ArrowDown') {
+    nextIdx = curIdx === -1 ? 0 : Math.min(curIdx + 1, items.length - 1);
+  } else {
+    nextIdx = curIdx === -1 ? items.length - 1 : Math.max(curIdx - 1, 0);
+  }
+  if (nextIdx === curIdx) return;
+
+  var target = items[nextIdx];
+  var header = target.querySelector('.cn-header');
+  if (header) {
+    header.click();
+    // 滚动到可见区域（不必全居中）
+    if (typeof target.scrollIntoView === 'function') {
+      target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+});
+
 // ---- 宽屏分栏：KP点击处理 ----
 function _initSplitPaneHandlers(detailBody, accent) {
   var leftPane = detailBody.querySelector('.detail-left');
