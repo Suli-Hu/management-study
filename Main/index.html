@@ -2693,13 +2693,13 @@ body.mode-read .cn-swipe-wrap .cn-swipe-inner { transform: none !important; tran
 </div>
 
 <!-- 必需：数据 + 核心模块（defer = 并行下载、HTML 解析完成后按序执行） -->
-<script defer src="data.js?v=10"></script>
-<script defer src="js/utils.js?v=10"></script>
-<script defer src="js/render.js?v=10"></script>
-<script defer src="js/nav.js?v=10"></script>
-<script defer src="js/gestures.js?v=10"></script>
-<script defer src="js/editor.js?v=10"></script>
-<script defer src="js/search.js?v=10"></script>
+<script defer src="data.js?v=__SHA__"></script>
+<script defer src="js/utils.js?v=__SHA__"></script>
+<script defer src="js/render.js?v=__SHA__"></script>
+<script defer src="js/nav.js?v=__SHA__"></script>
+<script defer src="js/gestures.js?v=__SHA__"></script>
+<script defer src="js/editor.js?v=__SHA__"></script>
+<script defer src="js/search.js?v=__SHA__"></script>
 
 <!-- 懒加载：data_ja.js（空闲预取）、questions.js + school_quiz.js + quiz.js（点练习前加载） -->
 <script>
@@ -2709,7 +2709,7 @@ body.mode-read .cn-swipe-wrap .cn-swipe-inner { transform: none !important; tran
     if (window._jaLoading) return;
     window._jaLoading = true;
     var s = document.createElement('script');
-    s.src = 'data_ja.js';
+    s.src = 'data_ja.js?v=__SHA__';
     s.onload = function() {
       // 失效 concepts 索引缓存，如在概念列表则刷新使日文按钮出现
       window.CONCEPTS_INDEX = null;
@@ -2731,7 +2731,7 @@ body.mode-read .cn-swipe-wrap .cn-swipe-inner { transform: none !important; tran
     if (cb) _qzCbs.push(cb);
     if (_qzLoading) return;
     _qzLoading = true;
-    var srcs = ['questions.js', 'school_quiz.js?v=2', 'js/quiz.js'];
+    var srcs = ['questions.js?v=__SHA__', 'school_quiz.js?v=__SHA__', 'js/quiz.js?v=__SHA__'];
     var done = 0;
     srcs.forEach(function(src) {
       var s = document.createElement('script');

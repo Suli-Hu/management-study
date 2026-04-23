@@ -15,6 +15,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Inject commit SHA into cache-bust placeholders
+        # Replaces ?v=__SHA__ in index.html with the current commit SHA so that
+        # every data/JS update forces browsers + Service Worker to fetch fresh.
+        run: sed -i "s/__SHA__/${{ github.sha }}/g" Main/index.html
+
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
