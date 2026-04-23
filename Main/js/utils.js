@@ -775,8 +775,18 @@ function _deltaFetch(path, body) {
       Object.keys(sa).forEach(function(k) { if (!SCHOLARS[k]) SCHOLARS[k] = sa[k]; });
     }
     if (d.kp) {
+      // data.js = source of truth (git-tracked). delta 只应 overlay data.js 里没有的新 KP。
+      // 如果 delta 里某 id 同时在 deleted + added（= 编辑器 update 操作留下的 stale entry），
+      // 且 data.js 已经有该 id → 以 data.js 为准，整个 delta 对该 id 不生效。
+      // 否则 learning 直接改 data.js 的新内容会被 KV 里的 stale delta 反向覆盖回旧版。
+      var addedMap = {};
+      (d.kp.added || []).forEach(function(e) { addedMap[e.id] = e; });
       var delSet = {};
-      (d.kp.deleted || []).forEach(function(id) { delSet[id] = true; });
+      (d.kp.deleted || []).forEach(function(id) {
+        // data.js 已有 + delta.added 也有 = stale update pair，跳过
+        if (addedMap[id] && KNOWLEDGE_MAP[id]) return;
+        delSet[id] = true;
+      });
       if (Object.keys(delSet).length) {
         KNOWLEDGE = KNOWLEDGE.filter(function(k) { return !delSet[k.id]; });
         Object.keys(delSet).forEach(function(id) { delete KNOWLEDGE_MAP[id]; });
@@ -789,7 +799,8 @@ function _deltaFetch(path, body) {
       });
       if (d.kp.ja && typeof DATA_JA !== 'undefined') {
         Object.keys(d.kp.ja).forEach(function(k) {
-          DATA_JA[k] = d.kp.ja[k];
+          // 同理：不覆盖 data_ja.js 已有的 key（data_ja.js 权威）
+          if (!DATA_JA[k]) DATA_JA[k] = d.kp.ja[k];
         });
       }
     }
