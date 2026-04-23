@@ -16,9 +16,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Inject commit SHA into cache-bust placeholders
-        # Replaces ?v=__SHA__ in index.html with the current commit SHA so that
-        # every data/JS update forces browsers + Service Worker to fetch fresh.
-        run: sed -i "s/__SHA__/${{ github.sha }}/g" Main/index.html
+        # index.html: rewrites ?v=__SHA__ on every script tag → unique URLs per
+        #   deploy → browsers + SW can't reuse stale cached copies.
+        # sw.js:     rewrites CACHE_VERSION = '__SHA__' → sw.js bytes change on
+        #   every deploy → Chrome/Safari auto-detect SW update → new SW's
+        #   activate step deletes every previous `ms-*` cache → client gets
+        #   a clean slate on the next normal refresh (no manual unregister).
+        run: |
+          sed -i "s/__SHA__/${{ github.sha }}/g" Main/index.html
+          sed -i "s/__SHA__/${{ github.sha }}/g" Main/sw.js
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3

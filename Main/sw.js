@@ -1,6 +1,8 @@
 // Service Worker — 分层缓存策略
-// 版本号：改动部署策略时手动 bump → 清空旧缓存，避免跨版本串味
-const CACHE_VERSION = 'v2';
+// 版本号：由 deploy workflow 在部署时注入 commit SHA（见 .github/workflows/deploy.yml）
+// 这样每次部署 sw.js 字节都变 → Chrome 触发 SW update → 新 SW activate 时清除
+// 所有旧 cache（包括旧 data.js / index.html），用户下次普通刷新就拿到最新。
+const CACHE_VERSION = '__SHA__';
 const CACHE_NAME = `ms-${CACHE_VERSION}`;
 
 // 内容数据文件（频繁更新）— 匹配后走 network-first 策略
