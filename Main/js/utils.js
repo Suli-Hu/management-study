@@ -775,32 +775,48 @@ function _deltaFetch(path, body) {
       Object.keys(sa).forEach(function(k) { if (!SCHOLARS[k]) SCHOLARS[k] = sa[k]; });
     }
     if (d.kp) {
-      // data.js = source of truth (git-tracked). delta 只应 overlay data.js 里没有的新 KP。
-      // 如果 delta 里某 id 同时在 deleted + added（= 编辑器 update 操作留下的 stale entry），
-      // 且 data.js 已经有该 id → 以 data.js 为准，整个 delta 对该 id 不生效。
-      // 否则 learning 直接改 data.js 的新内容会被 KV 里的 stale delta 反向覆盖回旧版。
-      var addedMap = {};
-      (d.kp.added || []).forEach(function(e) { addedMap[e.id] = e; });
+      // 双路径数据融合（方案 C：时间戳权威）
+      // 两条路径都能写数据：
+      //   - Git 路径：learning 终端写 data.js → deploy → DATA_DEPLOY_TIME（注入的部署时间）
+      //   - Overlay 路径：编辑器写 KV delta → entry.updatedAt
+      // 规则：entry.updatedAt > DATA_DEPLOY_TIME → fresh overlay 生效（L1：编辑器改完立即可见）
+      //       entry.updatedAt < DATA_DEPLOY_TIME → stale（learning 已 commit 到 data.js 并部署）
+      // + 服务端在 deploy 成功后也会 purge 掉 stale 条目（双保险）
+      var deployTime = (typeof window !== 'undefined' && window.DATA_DEPLOY_TIME) || '';
+      var isPlaceholder = !deployTime || deployTime === '__DEPLOY_TIME__';
+
       var delSet = {};
-      (d.kp.deleted || []).forEach(function(id) {
-        // data.js 已有 + delta.added 也有 = stale update pair，跳过
-        if (addedMap[id] && KNOWLEDGE_MAP[id]) return;
-        delSet[id] = true;
+      (d.kp.deleted || []).forEach(function(id) { delSet[id] = true; });
+
+      (d.kp.added || []).forEach(function(entry) {
+        var isPureAdd = !KNOWLEDGE_MAP[entry.id];
+        var isFresh = isPlaceholder || !entry.updatedAt || entry.updatedAt > deployTime;
+        // Pure-add（data.js 里没有此 id）永远应用 —— overlay 是该 KP 的唯一副本，
+        // 不能因时间戳老旧就把它当 stale 抛弃（会让用户看不到自己加的新 KP）。
+        if (isFresh || isPureAdd) {
+          var existingIdx = KNOWLEDGE.findIndex(function(k) { return k.id === entry.id; });
+          if (existingIdx >= 0) KNOWLEDGE[existingIdx] = entry;
+          else KNOWLEDGE.push(entry);
+          KNOWLEDGE_MAP[entry.id] = entry;
+          // update overlay 的 deleted 只是 book-keeping，不执行
+          delete delSet[entry.id];
+        } else {
+          // Stale update pair：data.js 里有此 id，且 overlay 比 commit 旧 →
+          // learning 已 commit 新版覆盖，跳过 overlay + 解除删除命令（保 data.js）
+          delete delSet[entry.id];
+        }
       });
+
       if (Object.keys(delSet).length) {
         KNOWLEDGE = KNOWLEDGE.filter(function(k) { return !delSet[k.id]; });
         Object.keys(delSet).forEach(function(id) { delete KNOWLEDGE_MAP[id]; });
       }
-      (d.kp.added || []).forEach(function(entry) {
-        if (!KNOWLEDGE_MAP[entry.id]) {
-          KNOWLEDGE.push(entry);
-          KNOWLEDGE_MAP[entry.id] = entry;
-        }
-      });
+
       if (d.kp.ja && typeof DATA_JA !== 'undefined') {
+        // delta.kp.ja 结构是 {cnKey: jaString}，无时间戳。暂保留原 override 行为
+        // （overlay always wins）—— ja 是轻量字段，stale 问题影响远小于 body
         Object.keys(d.kp.ja).forEach(function(k) {
-          // 同理：不覆盖 data_ja.js 已有的 key（data_ja.js 权威）
-          if (!DATA_JA[k]) DATA_JA[k] = d.kp.ja[k];
+          DATA_JA[k] = d.kp.ja[k];
         });
       }
     }

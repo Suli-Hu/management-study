@@ -668,6 +668,46 @@ async function handleDeltaMutate(request, env, pathname) {
       return jsonResponse({ success: true });
     }
 
+    // POST /delta/kp/purge-stale
+    // body: {
+    //   beforeTime: "2026-04-23T01:00:00.000Z",  // 部署对应的 git commit 时间（UTC ISO Z）
+    //   dataJsIds: ["k1", "k2", ..., "k626"]     // 当次部署 data.js 收录的所有 KP id
+    // }
+    // 清除同时满足以下两个条件的 kp.added 条目：
+    //   (1) updatedAt <= beforeTime   — overlay 产生于本次 commit 之前
+    //   (2) id ∈ dataJsIds             — 这次部署的 data.js 里有同 id（权威版已 commit）
+    // 不满足 (2) = pure-add（data.js 没有），保留 —— 这是用户加的新 KP，overlay 是唯一副本。
+    // 同步清理 kp.deleted 里对应 id（编辑器 /delta/kp/update 双写，必须配对清）。
+    if (pathname === '/delta/kp/purge-stale') {
+      if (!body.beforeTime) {
+        return jsonResponse({ error: 'beforeTime (ISO string) is required' }, 400);
+      }
+      if (!Array.isArray(body.dataJsIds)) {
+        return jsonResponse({ error: 'dataJsIds (array) is required' }, 400);
+      }
+      const beforeTime = body.beforeTime;
+      const dataJsIdSet = new Set(body.dataJsIds);
+      const staleIds = [];
+      delta.kp.added = delta.kp.added.filter(e => {
+        const isStale =
+          e.updatedAt && e.updatedAt <= beforeTime && dataJsIdSet.has(e.id);
+        if (isStale) staleIds.push(e.id);
+        return !isStale;
+      });
+      if (staleIds.length) {
+        const staleSet = new Set(staleIds);
+        delta.kp.deleted = delta.kp.deleted.filter(id => !staleSet.has(id));
+      }
+      await saveDelta(env, delta);
+      return jsonResponse({
+        success: true,
+        purgedAddedCount: staleIds.length,
+        purgedIds: staleIds,
+        beforeTime,
+        dataJsIdCount: body.dataJsIds.length,
+      });
+    }
+
     // POST /delta/kp/translate — 翻译单个 KP 为日文
     // body: { title, body }（或 { id }，会从 delta 找）
     if (pathname === '/delta/kp/translate') {
