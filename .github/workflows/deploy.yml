@@ -20,4 +20,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy Main --project-name=management-study --branch=main --commit-dirty=true
+          # --commit-message uses SHA (ASCII) to avoid Cloudflare API bug #11749:
+          # Pages API truncates long multi-line UTF-8 commit messages at byte 380,
+          # which splits multi-byte CJK chars and triggers "Invalid UTF-8" (code 8000111).
+          command: pages deploy Main --project-name=management-study --branch=main --commit-dirty=true --commit-hash=${{ github.sha }} --commit-message=${{ github.sha }}
