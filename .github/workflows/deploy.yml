@@ -82,8 +82,12 @@ jobs:
         # Two-criterion purge: overlay stored before this commit AND id in this deploy's
         # data.js → safe to remove. Preserves pure-add overlays (new KP not yet in git)
         # and overlays saved during the deploy window (updatedAt > commit time).
-        # continue-on-error: Pages already live. If purge fails (e.g. Worker not yet
-        # redeployed with new endpoint), client-side timestamp compare still hides stale.
+        # Retry-with-backoff: when Worker code is redeployed, propagation to CF edge
+        # nodes takes a few seconds. The first curl right after Deploy Worker can hit
+        # an old edge still returning 404 for new endpoints. 5 retries up to ~30s
+        # covers typical propagation time.
+        # continue-on-error: even if all retries fail, Pages is already live and the
+        # client-side timestamp compare still hides stale overlays.
         continue-on-error: true
         run: |
           BODY=$(python3 -c "
@@ -95,9 +99,18 @@ jobs:
           }))
           ")
           echo "Request body: ${#BODY} bytes, ${{ steps.ids.outputs.count }} ids, beforeTime=${{ steps.ts.outputs.commit_time }}"
-          curl -fsS -X POST "${WORKER_URL}/delta/kp/purge-stale" \
-            -H "Authorization: Bearer ${WORKER_AUTH_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d "$BODY"
-          echo ""
-          echo "Purge complete."
+          for attempt in 1 2 3 4 5; do
+            if curl -fsS -X POST "${WORKER_URL}/delta/kp/purge-stale" \
+                -H "Authorization: Bearer ${WORKER_AUTH_TOKEN}" \
+                -H "Content-Type: application/json" \
+                -d "$BODY"; then
+              echo ""
+              echo "Purge complete (attempt ${attempt})."
+              exit 0
+            fi
+            WAIT=$((2 ** (attempt - 1)))  # 1, 2, 4, 8, 16 seconds
+            echo "Attempt ${attempt} failed, retrying in ${WAIT}s..."
+            sleep "$WAIT"
+          done
+          echo "Purge failed after 5 attempts; giving up (continue-on-error)."
+          exit 1
