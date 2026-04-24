@@ -1,0 +1,52 @@
+---
+import Layout from '~/layouts/Layout.astro';
+
+const user = Astro.locals.user;
+if (user) return Astro.redirect('/');
+
+const error = Astro.url.searchParams.get('error');
+const errorMessages: Record<string, string> = {
+  invalid_or_expired: '登录链接无效或已过期，请重新申请。',
+  missing_token: '链接不完整，请重新申请。',
+};
+const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。') : null;
+---
+
+<Layout title="登录">
+  <main class="max-w-reading mx-auto px-4 py-10">
+    <div class="max-w-md mx-auto">
+      <header class="mb-6">
+        <h1 class="text-2xl mb-2">登录</h1>
+        <p class="text-sm text-tertiary">输入邮箱，我们会发一条只能用一次的登录链接给你。</p>
+      </header>
+
+      {errorMsg && (
+        <div class="mb-4 p-3 rounded-md bg-badge-limit text-accent-warning text-xs">
+          {errorMsg}
+        </div>
+      )}
+
+      <form method="POST" action="/api/auth/login" class="space-y-3">
+        <input
+          type="email"
+          name="email"
+          required
+          autocomplete="email"
+          placeholder="you@example.com"
+          class="w-full px-3 py-2 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
+        />
+        <button
+          type="submit"
+          class="w-full px-4 py-2 rounded-md bg-accent-strategy text-white text-sm font-semibold"
+        >
+          发送登录链接
+        </button>
+      </form>
+
+      <p class="text-xs text-quaternary mt-6 leading-relaxed">
+        我们只用你的邮箱识别你是谁 —— 不用密码，不会发推广邮件。
+        登录后可以记录进度、收藏 KP、写私人笔记（后续版本）。
+      </p>
+    </div>
+  </main>
+</Layout>

@@ -20,8 +20,10 @@ database_id = "4e236c30-cf6f-40f3-8bbc-b6b78444c797"
 [vars]
 ENVIRONMENT = "production"
 SITE_NAME = "全学科学习笔记"
+RESEND_FROM = "onboarding@resend.dev"
+APP_URL = "https://management-study-v2.pages.dev"
 
-# === 待添加（W2 / W3 用） ===
-# - RESEND_API_KEY (secret, magic link 发邮件)
-# - SESSION_SECRET (secret, lucia auth)
-# - STRIPE_SECRET_KEY (secret, W3 付费时)
+# === Secrets（在 CF Pages Dashboard 设，不写 wrangler.toml） ===
+# - RESEND_API_KEY  —— magic link 发邮件 (v0.2.5 起)
+# - SESSION_SECRET  —— 预留（CSRF / signed cookies 用，v0.2.5 暂未使用）
+# - STRIPE_SECRET_KEY —— W3 付费时

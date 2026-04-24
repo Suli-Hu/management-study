@@ -7,6 +7,7 @@ interface Props {
 }
 
 const { currentDiscipline, currentSection } = Astro.props;
+const user = Astro.locals.user;
 
 let disciplineTitle: string | null = null;
 if (currentDiscipline) {
@@ -25,6 +26,8 @@ const sections: Array<{ key: 'schools' | 'scholars' | 'kps'; label: string; href
       { key: 'kps', label: '知识点', href: `/${currentDiscipline}/kp` },
     ]
   : [];
+
+const emailInitial = user?.email.charAt(0).toUpperCase() ?? '';
 ---
 
 <nav class="sticky top-0 z-50 bg-bg-primary/90 backdrop-blur-sm border-b border-bg-tertiary">
@@ -68,5 +71,34 @@ const sections: Array<{ key: 'schools' | 'scholars' | 'kps'; label: string; href
         </a>
       </div>
     )}
+
+    <div class="flex items-center gap-1 text-xs shrink-0">
+      {user ? (
+        <>
+          <span
+            aria-label={user.email}
+            title={user.email}
+            class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-accent-strategy text-white font-semibold text-xs"
+          >
+            {emailInitial}
+          </span>
+          <form method="POST" action="/api/auth/logout" class="inline">
+            <button
+              type="submit"
+              class="px-2 py-1 rounded text-tertiary hover:text-primary transition-colors"
+            >
+              退出
+            </button>
+          </form>
+        </>
+      ) : (
+        <a
+          href="/login"
+          class="px-2 py-1 rounded text-tertiary hover:text-primary transition-colors no-underline"
+        >
+          登录
+        </a>
+      )}
+    </div>
   </div>
 </nav>

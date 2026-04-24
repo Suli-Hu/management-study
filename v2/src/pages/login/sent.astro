@@ -1,0 +1,31 @@
+---
+import Layout from '~/layouts/Layout.astro';
+
+const email = Astro.url.searchParams.get('email') ?? '';
+const maskedEmail = email.replace(/^(.{2}).*(@.*)$/, '$1•••$2');
+---
+
+<Layout title="已发送">
+  <main class="max-w-reading mx-auto px-4 py-10">
+    <div class="max-w-md mx-auto">
+      <header class="mb-6">
+        <h1 class="text-2xl mb-2">查收邮箱</h1>
+        <p class="text-sm text-tertiary leading-relaxed">
+          我们给 <strong class="text-secondary">{maskedEmail || '你的邮箱'}</strong> 发了一封登录邮件。
+        </p>
+      </header>
+
+      <div class="p-4 rounded-md bg-bg-warm text-xs text-secondary leading-relaxed">
+        <ol class="list-decimal list-inside space-y-2">
+          <li>打开邮箱，找到主题「登录全学科学习笔记」</li>
+          <li>点击邮件里的「登录」按钮（或复制链接到浏览器）</li>
+          <li>就自动登录回来了</li>
+        </ol>
+      </div>
+
+      <p class="text-xs text-quaternary mt-6 leading-relaxed">
+        链接 10 分钟内有效。没收到？检查垃圾邮件；或 <a href="/login" class="text-accent-strategy">重新申请</a>。
+      </p>
+    </div>
+  </main>
+</Layout>

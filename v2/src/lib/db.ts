@@ -14,6 +14,12 @@ export interface Env {
   DB: D1Database;
   ENVIRONMENT?: string;
   SITE_NAME?: string;
+
+  // v0.2.5 auth 相关
+  RESEND_API_KEY?: string;
+  RESEND_FROM?: string;
+  APP_URL?: string;
+  SESSION_SECRET?: string;
 }
 
 /** 从 Astro.locals.runtime.env 取 DB —— Cloudflare Pages adapter 注入 */
