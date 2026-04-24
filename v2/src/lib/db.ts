@@ -20,6 +20,9 @@ export interface Env {
   RESEND_FROM?: string;
   APP_URL?: string;
   SESSION_SECRET?: string;
+
+  // v0.2.8 admin role（逗号分隔邮箱 CSV）
+  ADMIN_EMAILS?: string;
 }
 
 /** 从 Astro.locals.runtime.env 取 DB —— Cloudflare Pages adapter 注入 */

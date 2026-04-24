@@ -43,6 +43,21 @@ export interface User {
   email_verified_at: string | null;
 }
 
+/**
+ * 判断用户是否管理员 —— 逗号分隔的 email CSV 来自 env.ADMIN_EMAILS
+ * （wrangler.toml [vars]，可随时改，无需发 code）。
+ * 非 admin = 只读；admin = 可编辑/删除 KP（write gate）。
+ */
+export function isAdmin(user: User | null, adminEmailsCSV: string | undefined): boolean {
+  if (!user) return false;
+  if (!adminEmailsCSV) return false;
+  const admins = adminEmailsCSV
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  return admins.includes(user.email.toLowerCase());
+}
+
 // ========== Magic link ==========
 
 export async function createMagicLink(db: D1Database, email: string): Promise<{ token: string; code: string }> {

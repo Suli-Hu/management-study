@@ -22,6 +22,9 @@ ENVIRONMENT = "production"
 SITE_NAME = "全学科学习笔记"
 RESEND_FROM = "onboarding@resend.dev"
 APP_URL = "https://management-study-v2.pages.dev"
+# 管理员邮箱（逗号分隔）—— 只有这些邮箱登录后 locals.isAdmin = true，
+# 可以编辑/删除 KP（write 权限）。其他用户只能 read。
+ADMIN_EMAILS = "husuli0623@gmail.com"
 
 # === Secrets（在 CF Pages Dashboard 设，不写 wrangler.toml） ===
 # - RESEND_API_KEY  —— magic link 发邮件 (v0.2.5 起)

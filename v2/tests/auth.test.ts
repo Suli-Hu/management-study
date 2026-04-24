@@ -5,7 +5,9 @@ import {
   parseCookieSession,
   buildSessionCookie,
   buildClearCookie,
+  isAdmin,
   COOKIE_NAME,
+  type User,
 } from '../src/lib/auth';
 
 describe('generateToken', () => {
@@ -84,5 +86,34 @@ describe('buildClearCookie', () => {
     const c = buildClearCookie(true);
     expect(c).toContain(`${COOKIE_NAME}=`);
     expect(c).toContain('Max-Age=0');
+  });
+});
+
+describe('isAdmin', () => {
+  const admin: User = {
+    id: 'u1',
+    email: 'husuli0623@gmail.com',
+    display_name: null,
+    created_at: '',
+    email_verified_at: null,
+  };
+  const other: User = { ...admin, email: 'bob@example.com' };
+
+  test('null user is not admin', () => {
+    expect(isAdmin(null, 'husuli0623@gmail.com')).toBe(false);
+  });
+  test('missing csv is not admin', () => {
+    expect(isAdmin(admin, undefined)).toBe(false);
+    expect(isAdmin(admin, '')).toBe(false);
+  });
+  test('email match (case-insensitive)', () => {
+    expect(isAdmin(admin, 'husuli0623@gmail.com')).toBe(true);
+    expect(isAdmin({ ...admin, email: 'Husuli0623@GMAIL.com' }, 'husuli0623@gmail.com')).toBe(true);
+  });
+  test('non-admin rejected', () => {
+    expect(isAdmin(other, 'husuli0623@gmail.com')).toBe(false);
+  });
+  test('multiple admins csv', () => {
+    expect(isAdmin(other, 'husuli0623@gmail.com, bob@example.com')).toBe(true);
   });
 });
