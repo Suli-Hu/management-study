@@ -118,7 +118,7 @@ const lifespanDisplay = (scholar.born && scholar.died)
 >
   {/* 整个 main = 视口剩余高度；左右两栏独立滚动（与 v1 view-detail 一致） */}
   <main
-    class="h-full lg:h-full lg:grid lg:grid-cols-[380px_1fr]"
+    class="h-full lg:h-full lg:grid lg:grid-cols-[minmax(440px,520px)_1fr]"
     style={`--accent:${scholarAccentHex}`}
     data-active-ring="ring-[color:var(--accent)]"
   >
@@ -127,18 +127,30 @@ const lifespanDisplay = (scholar.born && scholar.died)
       {/* Scholar hero with accent bar */}
       <section class="flex rounded-xl overflow-hidden border bg-bg-primary shadow-card mb-5">
         <div class="w-1.5 shrink-0" style={`background:${scholarAccentHex}`}></div>
-        <div class="flex-1 p-5">
-          {scholar.field && (
-            <div
-              class="inline-block text-xs font-semibold px-2.5 py-0.5 rounded-full border mb-2"
-              style={`color:${scholarAccentHex};border-color:${scholarAccentHex};background:${scholarAccentHex}14`}
-            >
-              {scholar.field}
-            </div>
-          )}
-          <h1 class="text-xl font-semibold leading-tight">{displayName}</h1>
-          {scholar.name_en && <div class="text-xs text-tertiary mt-1">{scholar.name_en}</div>}
-          {scholar.name_ja && lang === 'zh' && <div class="text-xs text-quaternary mt-0.5">{scholar.name_ja}</div>}
+        <div class="flex-1 p-5 flex items-start gap-3">
+          <div class="flex-1 min-w-0">
+            {scholar.field && (
+              <div
+                class="inline-block text-xs font-semibold px-2.5 py-0.5 rounded-full border mb-2"
+                style={`color:${scholarAccentHex};border-color:${scholarAccentHex};background:${scholarAccentHex}14`}
+              >
+                {scholar.field}
+              </div>
+            )}
+            <h1 class="text-xl font-semibold leading-tight">{displayName}</h1>
+            {scholar.name_en && <div class="text-xs text-tertiary mt-1">{scholar.name_en}</div>}
+            {scholar.name_ja && lang === 'zh' && <div class="text-xs text-quaternary mt-0.5">{scholar.name_ja}</div>}
+          </div>
+          <button
+            id="scholar-star-toggle"
+            type="button"
+            data-scholar-key={scholar.key}
+            aria-label="收藏学者"
+            aria-pressed="false"
+            class="scholar-star shrink-0 -mr-1 -mt-1 w-9 h-9 rounded-full flex items-center justify-center text-xl leading-none text-quaternary hover:bg-bg-tertiary transition-colors"
+          >
+            <span aria-hidden="true">☆</span>
+          </button>
         </div>
       </section>
 
@@ -199,7 +211,7 @@ const lifespanDisplay = (scholar.born && scholar.died)
       {/* 代表理论 */}
       <section>
         <h2 class="text-xs font-semibold text-tertiary mb-3">
-          代表理论 ({kps.length}<span id="kp-count-known" class="hidden" style={`color:${scholarAccentHex}`}> · ★ <span data-known-count>0</span></span>)
+          代表理论 ({kps.length})
         </h2>
         {kps.length > 0 ? (
           <ul class="space-y-2">
@@ -217,10 +229,7 @@ const lifespanDisplay = (scholar.born && scholar.died)
                     ]}
                     style={isActive ? `--tw-ring-color:${scholarAccentHex};border-color:${scholarAccentHex};background:${scholarAccentHex}14` : ''}
                   >
-                    <h3 class="text-sm font-semibold text-primary">
-                      <span class="kp-known-star hidden mr-1" style={`color:${scholarAccentHex}`} aria-hidden="true">★</span>
-                      {k.title_zh}
-                    </h3>
+                    <h3 class="text-sm font-semibold text-primary">{k.title_zh}</h3>
                     {k.title_ja && <div class="text-xs text-tertiary mt-0.5">{k.title_ja}</div>}
                     {k.title_en && <div class="text-xs text-quaternary italic mt-0.5">{k.title_en}</div>}
                     {k.year && <div class="text-xs text-quaternary mt-0.5">{k.year}</div>}
@@ -267,19 +276,7 @@ const lifespanDisplay = (scholar.born && scholar.died)
       {selectedKp ? (
         <div class="max-w-reading mx-auto">
           <header class="mb-6 pb-4 border-b">
-            <div class="flex items-start justify-between gap-3">
-              <h2 class="text-xl font-semibold flex-1">{selectedKp.title_zh}</h2>
-              <button
-                id="kp-known-toggle"
-                type="button"
-                data-kp-id={selectedKp.id}
-                aria-label="标记已会"
-                aria-pressed="false"
-                class="kp-star shrink-0 mt-1 w-9 h-9 rounded-full flex items-center justify-center text-xl leading-none text-quaternary hover:text-accent-classic hover:bg-bg-tertiary transition-colors"
-              >
-                <span aria-hidden="true">☆</span>
-              </button>
-            </div>
+            <h2 class="text-xl font-semibold">{selectedKp.title_zh}</h2>
             <div class="flex flex-wrap items-baseline gap-2 text-xs text-tertiary mt-2">
               {selectedScholars.map((s) => (
                 <a href={`/${discipline}/scholars/${s.key}`} class="font-semibold hover:underline">
@@ -312,3 +309,26 @@ const lifespanDisplay = (scholar.born && scholar.died)
 </Layout>
 
 <script is:inline src="/split-pane.js"></script>
+
+<script is:inline define:vars={{ scholarKey: scholar.key, accentHex: scholarAccentHex }}>
+  // v0.3.15: 学者收藏星标（localStorage，访客/admin 同）
+  (function () {
+    const btn = document.getElementById('scholar-star-toggle');
+    if (!btn) return;
+    const KEY = `scholar-starred:${scholarKey}`;
+    const iconSpan = btn.querySelector('span');
+    function render() {
+      const starred = localStorage.getItem(KEY) === '1';
+      btn.setAttribute('aria-pressed', String(starred));
+      if (iconSpan) iconSpan.textContent = starred ? '★' : '☆';
+      btn.style.color = starred ? accentHex : '';
+      btn.setAttribute('aria-label', starred ? '已收藏学者（点击取消）' : '收藏学者');
+    }
+    render();
+    btn.addEventListener('click', () => {
+      if (localStorage.getItem(KEY) === '1') localStorage.removeItem(KEY);
+      else localStorage.setItem(KEY, '1');
+      render();
+    });
+  })();
+</script>

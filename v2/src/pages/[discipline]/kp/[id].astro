@@ -64,18 +64,7 @@ const title = lang === 'ja' ? (kp.title_ja ?? kp.title_zh) : kp.title_zh;
 <Layout title={kp.title_zh} currentDiscipline={discipline} currentSection="kps">
   <main class="max-w-reading mx-auto px-4 py-6">
     <header class="mb-6 pb-4 border-b">
-      <div class="flex items-start justify-between gap-3">
-        <h1 class="text-2xl mb-2 flex-1">{title}</h1>
-        <button
-          id="kp-known-toggle"
-          type="button"
-          aria-label="标记已会"
-          aria-pressed="false"
-          class="kp-star shrink-0 mt-1 w-9 h-9 rounded-full flex items-center justify-center text-xl leading-none text-quaternary hover:text-accent-classic hover:bg-bg-tertiary transition-colors"
-        >
-          <span aria-hidden="true">☆</span>
-        </button>
-      </div>
+      <h1 class="text-2xl mb-2">{title}</h1>
       <div class="flex flex-wrap items-baseline gap-2 text-xs text-tertiary">
         {scholars.map((s) => (
           <a href={`/${discipline}/scholars/${s.key}`} class="font-semibold hover:underline">
@@ -115,32 +104,3 @@ const title = lang === 'ja' ? (kp.title_ja ?? kp.title_zh) : kp.title_zh;
     )}
   </main>
 </Layout>
-
-<script is:inline define:vars={{ kpId: kp.id }}>
-  // v0.3.7: 已会星标（纯前端 localStorage，未登录用户也可用；访客/admin 同）
-  (function () {
-    const btn = document.getElementById('kp-known-toggle');
-    if (!btn) return;
-    const KEY = `kp-known:${kpId}`;
-    const iconSpan = btn.querySelector('span');
-
-    function render() {
-      const known = localStorage.getItem(KEY) === '1';
-      btn.setAttribute('aria-pressed', String(known));
-      if (iconSpan) iconSpan.textContent = known ? '★' : '☆';
-      btn.classList.toggle('text-accent-classic', known);
-      btn.classList.toggle('text-quaternary', !known);
-      btn.setAttribute('aria-label', known ? '已会（点击取消）' : '标记已会');
-    }
-
-    render();
-    btn.addEventListener('click', () => {
-      if (localStorage.getItem(KEY) === '1') {
-        localStorage.removeItem(KEY);
-      } else {
-        localStorage.setItem(KEY, '1');
-      }
-      render();
-    });
-  })();
-</script>

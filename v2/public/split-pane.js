@@ -1,65 +1,15 @@
-// v0.3.12 shared split-pane JS — 学派页 / 学者页共用
+// v0.3.15 shared split-pane JS — 学派页 / 学者页共用
 // 页面需准备：
 //   - .kp-list-item[data-kp-id]   每个列表项
 //   - [data-kp-link]               item 里的 <a>（href 指向全页；JS 拦截走 ?kp=X）
 //   - [data-kp-link][data-kp-wide-href]  宽屏应去的相对 URL
 //   - #kp-detail-pane              右栏容器（server 端按 ?kp= SSR 内容）
-//   - #kp-known-toggle[data-kp-id] 右栏 ☆/★ 切换按钮（可选）
-//   - #kp-count-known[data-known-count]  左栏统计（可选）
-//   - .kp-known-star               列表里的已会小星（默认 hidden）
 //   - data-active-ring             右栏 active 时额外加的 ring 色 class（默认 'ring-accent-strategy'）
 
 (function () {
   function getActiveRing() {
     const root = document.querySelector('[data-active-ring]');
     return root?.getAttribute('data-active-ring') || 'ring-accent-strategy';
-  }
-
-  function renderKnownStars() {
-    const items = document.querySelectorAll('[data-kp-id]');
-    let known = 0;
-    items.forEach((li) => {
-      const id = li.getAttribute('data-kp-id');
-      const isKnown = localStorage.getItem('kp-known:' + id) === '1';
-      const star = li.querySelector('.kp-known-star');
-      star?.classList.toggle('hidden', !isKnown);
-      if (isKnown && li.tagName === 'LI') known++;
-    });
-    const badge = document.getElementById('kp-count-known');
-    const countSpan = badge?.querySelector('[data-known-count]');
-    if (badge && countSpan) {
-      countSpan.textContent = String(known);
-      badge.classList.toggle('hidden', known === 0);
-    }
-  }
-
-  function renderDetailStar() {
-    const btn = document.getElementById('kp-known-toggle');
-    if (!btn) return;
-    const id = btn.getAttribute('data-kp-id');
-    const known = localStorage.getItem('kp-known:' + id) === '1';
-    btn.setAttribute('aria-pressed', String(known));
-    const span = btn.querySelector('span');
-    if (span) span.textContent = known ? '★' : '☆';
-    btn.classList.toggle('text-accent-classic', known);
-    btn.classList.toggle('text-quaternary', !known);
-    btn.setAttribute('aria-label', known ? '已会（点击取消）' : '标记已会');
-  }
-
-  function initStarToggle() {
-    renderKnownStars();
-    renderDetailStar();
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest?.('#kp-known-toggle');
-      if (!btn) return;
-      const id = btn.getAttribute('data-kp-id');
-      if (!id) return;
-      const k = 'kp-known:' + id;
-      if (localStorage.getItem(k) === '1') localStorage.removeItem(k);
-      else localStorage.setItem(k, '1');
-      renderDetailStar();
-      renderKnownStars();
-    });
   }
 
   function initSplitPane() {
@@ -90,7 +40,6 @@
         });
         const newTitle = doc.querySelector('title')?.textContent;
         if (newTitle) document.title = newTitle;
-        renderDetailStar();
         detailPane.scrollTop = 0;
       } catch (err) {
         console.error('[split-pane] showKpInPane failed:', err);
@@ -144,6 +93,5 @@
     });
   }
 
-  initStarToggle();
   initSplitPane();
 })();
