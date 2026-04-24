@@ -1,7 +1,7 @@
 {
   "name": "management-study-v2",
   "type": "module",
-  "version": "0.2.5",
+  "version": "0.2.2",
   "private": true,
   "description": "Multi-discipline study notes SaaS — v2 (Astro + D1 + Tailwind)",
   "scripts": {
@@ -15,7 +15,8 @@
     "migrate:from-v1": "tsx scripts/migrate-from-v1.ts",
     "sync:d1": "tsx scripts/sync-to-d1.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:learning-flow": "tsx scripts/test-learning-flow.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.0",

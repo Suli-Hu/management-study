@@ -56,7 +56,9 @@ const title = lang === 'ja' ? (kp.title_ja ?? kp.title_zh) : kp.title_zh;
       <h1 class="text-2xl mb-2">{title}</h1>
       <div class="flex flex-wrap items-baseline gap-2 text-xs text-tertiary">
         {scholars.map((s) => (
-          <span class="font-semibold">{s.name_en ?? s.name_zh}</span>
+          <a href={`/${discipline}/scholars/${s.key}`} class="font-semibold hover:underline">
+            {s.name_en ?? s.name_zh}
+          </a>
         ))}
         {kp.year && <span class="text-quaternary">'{kp.year}</span>}
       </div>

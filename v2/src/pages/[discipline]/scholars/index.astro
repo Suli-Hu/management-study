@@ -80,32 +80,37 @@ const groupKeys = Array.from(grouped.keys()).sort((a, b) => {
         <h2 class="text-sm font-semibold text-quaternary mb-3 sticky top-12 bg-bg-primary/90 backdrop-blur-sm py-1 -mx-1 px-1">
           {k}
         </h2>
-        <ul class="space-y-1">
+        <ul class="space-y-0.5">
           {grouped.get(k)!.map((s) => (
-            <li class="flex items-baseline justify-between gap-3 py-2 border-b border-bg-tertiary">
-              <div class="min-w-0 flex-1">
-                <div class="flex items-baseline gap-2 flex-wrap">
-                  <span class="text-base font-semibold text-primary">
-                    {s.name_en ?? s.name_zh}
-                  </span>
-                  {s.name_en && s.name_zh && (
-                    <span class="text-xs text-tertiary">{s.name_zh}</span>
-                  )}
-                  {s.nobel_year && (
-                    <span class="chip border-accent-classic text-accent-classic" title={`诺贝尔奖 ${s.nobel_year}`}>
-                      🏅 {s.nobel_year}
+            <li>
+              <a
+                href={`/${discipline}/scholars/${s.key}`}
+                class="flex items-baseline justify-between gap-3 py-2 px-1 border-b border-bg-tertiary hover:bg-bg-tertiary rounded-sm no-underline"
+              >
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-baseline gap-2 flex-wrap">
+                    <span class="text-base font-semibold text-primary">
+                      {s.name_en ?? s.name_zh}
                     </span>
+                    {s.name_en && s.name_zh && (
+                      <span class="text-xs text-tertiary">{s.name_zh}</span>
+                    )}
+                    {s.nobel_year && (
+                      <span class="chip border-accent-classic text-accent-classic" title={`诺贝尔奖 ${s.nobel_year}`}>
+                        🏅 {s.nobel_year}
+                      </span>
+                    )}
+                  </div>
+                  {(s.lifespan || s.institution) && (
+                    <div class="text-xs text-quaternary mt-0.5">
+                      {s.lifespan}
+                      {s.lifespan && s.institution && ' · '}
+                      {s.institution}
+                    </div>
                   )}
                 </div>
-                {(s.lifespan || s.institution) && (
-                  <div class="text-xs text-quaternary mt-0.5">
-                    {s.lifespan}
-                    {s.lifespan && s.institution && ' · '}
-                    {s.institution}
-                  </div>
-                )}
-              </div>
-              <span class="text-xs text-quaternary whitespace-nowrap">{s.kp_count} KP</span>
+                <span class="text-xs text-quaternary whitespace-nowrap">{s.kp_count} KP</span>
+              </a>
             </li>
           ))}
         </ul>
