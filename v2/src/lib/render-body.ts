@@ -15,7 +15,39 @@
  *
  * 交互：元素上带 inline onclick="this.classList.toggle('...')"，
  *   样式定义在 src/styles/components.css。
+ *
+ * XSS 防护（v0.3.3 修 A9）：
+ *   所有用户数据字段（来自 D1 / JSON）在插入 HTML 前经 escInline：
+ *     - `& < > " '` → HTML entity
+ *     - 白名单 tag（strong / em / br，无属性）还原
+ *   未来多 admin / 用户笔记上线前必须保持此不变式。
  */
+
+/** 基础 HTML escape — 五字符全 encode。 */
+export function escapeHtml(s: unknown): string {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * Inline-safe escape — 除白名单 inline tag 外全部转义。
+ *
+ * 白名单（无属性版本）：<strong> </strong> <em> </em> <br> <br/> <br />
+ * `<strong onclick=...>` 不会通过（不匹配精确形式）。
+ */
+export function escInline(s: unknown): string {
+  const escaped = escapeHtml(s);
+  return escaped
+    .replace(/&lt;strong&gt;/g, '<strong>')
+    .replace(/&lt;\/strong&gt;/g, '</strong>')
+    .replace(/&lt;em&gt;/g, '<em>')
+    .replace(/&lt;\/em&gt;/g, '</em>')
+    .replace(/&lt;br\s*\/?&gt;/g, '<br>');
+}
 
 const CIRCLED = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩', '⑪', '⑫', '⑬', '⑭', '⑮'];
 const NUM_MAP: Record<string, string> = {
@@ -42,7 +74,7 @@ function renderCompareCards(lead: string, data: string, accent: string): string 
   const rgb = hexRgb(accent);
   const cols = data.split('||').map((c) => c.trim()).filter(Boolean);
   let html = '';
-  if (lead) html += `<div class="body-lead">${lead}</div>`;
+  if (lead) html += `<div class="body-lead">${escInline(lead)}</div>`;
   html += `<div class="compare-grid" style="grid-template-columns:repeat(${cols.length},1fr);--accent:${accent};--accent-bg:rgba(${rgb},.08)">`;
   cols.forEach((col, i) => {
     const f = col.split('|').map((s) => s.trim());
@@ -53,22 +85,22 @@ function renderCompareCards(lead: string, data: string, accent: string): string 
     const theories = f[4] ?? '';
     const detail = f[5] ?? '';
     const theoriesHtml = theories
-      ? theories.split(',').map((t) => `<span>${t.trim()}</span>`).join('')
+      ? theories.split(',').map((t) => `<span>${escInline(t.trim())}</span>`).join('')
       : '';
     html +=
       `<div class="compare-col" onclick="this.classList.toggle('flipped')">` +
       `<div class="compare-col-inner">` +
       `<div class="compare-front">` +
       `<div class="compare-num">${i + 1}</div>` +
-      `<div class="compare-title">${title}</div>` +
-      `<div class="compare-keyword">${keyword}</div>` +
-      `<div class="compare-desc">${desc}</div>` +
+      `<div class="compare-title">${escInline(title)}</div>` +
+      `<div class="compare-keyword">${escInline(keyword)}</div>` +
+      `<div class="compare-desc">${escInline(desc)}</div>` +
       `<div class="compare-theories">${theoriesHtml}</div>` +
       `</div>` +
       (detail
         ? `<div class="compare-back">` +
-          `<div class="compare-back-title">${title}${type ? ` · ${type}` : ''}</div>` +
-          `<div class="compare-back-text">${detail}</div>` +
+          `<div class="compare-back-title">${escInline(title)}${type ? ` · ${escInline(type)}` : ''}</div>` +
+          `<div class="compare-back-text">${escInline(detail)}</div>` +
           `</div>`
         : '') +
       `</div></div>`;
@@ -121,20 +153,20 @@ function renderQuadChart(lead: string, data: string, accent: string): string {
   }
 
   let html = '';
-  if (lead) html += `<div class="body-lead">${lead}</div>`;
+  if (lead) html += `<div class="body-lead">${escInline(lead)}</div>`;
   html += `<div class="quad-wrap" style="--accent:${accent};--accent-bg:rgba(${rgb},.08)">`;
   if (yAxis) {
     if (isBinary) {
       html +=
         `<div class="quad-y-axis">` +
-        `<span class="quad-axis-label">${yBin[0] ?? ''}</span>` +
-        `<span class="quad-axis-label">${yBin[1] ?? ''}</span>` +
+        `<span class="quad-axis-label">${escInline(yBin[0] ?? '')}</span>` +
+        `<span class="quad-axis-label">${escInline(yBin[1] ?? '')}</span>` +
         `</div>`;
     } else {
       html +=
         `<div class="quad-y-axis-3">` +
         `<span class="quad-axis-label">高</span>` +
-        `<span class="quad-axis-label" style="font-size:8px;opacity:.6">${yName}</span>` +
+        `<span class="quad-axis-label" style="font-size:8px;opacity:.6">${escInline(yName)}</span>` +
         `<span class="quad-axis-label">低</span>` +
         `</div>`;
     }
@@ -145,21 +177,21 @@ function renderQuadChart(lead: string, data: string, accent: string): string {
       html +=
         `<div class="quad-cell" style="cursor:default">` +
         `<div class="quad-front" style="height:100%">` +
-        `<div class="quad-back-text" style="font-size:11.5px;color:#4a4a4a;line-height:1.75">${c.name}</div>` +
+        `<div class="quad-back-text" style="font-size:11.5px;color:#4a4a4a;line-height:1.75">${escInline(c.name)}</div>` +
         `</div></div>`;
     } else {
       html +=
         `<div class="quad-cell" onclick="this.classList.toggle('flipped')">` +
         `<div class="quad-cell-inner">` +
         `<div class="quad-front">` +
-        `<div class="quad-emoji">${c.emoji ?? ''}</div>` +
-        `<div class="quad-name">${c.name}</div>` +
-        `<div class="quad-sub">${c.sub ?? ''}</div>` +
+        `<div class="quad-emoji">${escInline(c.emoji ?? '')}</div>` +
+        `<div class="quad-name">${escInline(c.name)}</div>` +
+        `<div class="quad-sub">${escInline(c.sub ?? '')}</div>` +
         `</div>` +
         (c.detail
           ? `<div class="quad-back">` +
-            `<div class="quad-back-title">${c.name}</div>` +
-            `<div class="quad-back-text">${c.detail}</div>` +
+            `<div class="quad-back-title">${escInline(c.name)}</div>` +
+            `<div class="quad-back-text">${escInline(c.detail)}</div>` +
             `</div>`
           : '') +
         `</div></div>`;
@@ -170,14 +202,14 @@ function renderQuadChart(lead: string, data: string, accent: string): string {
     if (isBinary) {
       html +=
         `<div class="quad-x-axis">` +
-        `<span class="quad-axis-label">${xBin[0] ?? ''}</span>` +
-        `<span class="quad-axis-label">${xBin[1] ?? ''}</span>` +
+        `<span class="quad-axis-label">${escInline(xBin[0] ?? '')}</span>` +
+        `<span class="quad-axis-label">${escInline(xBin[1] ?? '')}</span>` +
         `</div>`;
     } else {
       html +=
         `<div class="quad-x-axis-3">` +
         `<span class="quad-axis-label" style="visibility:hidden">低</span>` +
-        `<span class="quad-axis-label" style="font-size:8px;opacity:.6">${xName}</span>` +
+        `<span class="quad-axis-label" style="font-size:8px;opacity:.6">${escInline(xName)}</span>` +
         `<span class="quad-axis-label">高</span>` +
         `</div>`;
     }
@@ -190,7 +222,7 @@ function renderBodyCard(item: string, accent: string, rgb: string): string {
   item = item.trim().replace(/[；;]\s*$/, '');
   const m = item.match(/^([①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮]|S[1-4])([\s\S]*)/);
   if (!m) {
-    return `<div style="font-size:12px;color:#6a6460;line-height:1.65">${item}</div>`;
+    return `<div style="font-size:12px;color:#6a6460;line-height:1.65">${escInline(item)}</div>`;
   }
   const num = m[1];
   let displayNum = NUM_MAP[num] ?? num;
@@ -223,10 +255,10 @@ function renderBodyCard(item: string, accent: string, rgb: string): string {
   const descStyle = isLabel ? ' style="color:#3a3632;font-weight:400"' : '';
   return (
     `<div class="body-card" style="--accent:${accent}">` +
-    `<span class="body-num" style="${numStyle}">${displayNum}</span>` +
+    `<span class="body-num" style="${numStyle}">${escInline(displayNum)}</span>` +
     `<div class="body-card-content">` +
-    `<div class="body-item-name">${name}</div>` +
-    (desc ? `<div class="body-item-desc"${descStyle}>${desc}</div>` : '') +
+    `<div class="body-item-name">${escInline(name)}</div>` +
+    (desc ? `<div class="body-item-desc"${descStyle}>${escInline(desc)}</div>` : '') +
     `</div></div>`
   );
 }
@@ -236,7 +268,7 @@ function renderGroupedBody(lead: string, items: string[], accent: string, rgb: s
     意义: true, 局限: true, 企业例: true, 应对: true, 应用: true, 比喻: true, 例子: true, 例: true,
     意義: true, 限界: true,
   };
-  let html = `<div class="body-lead">${lead}</div><div class="body-items">`;
+  let html = `<div class="body-lead">${escInline(lead)}</div><div class="body-items">`;
   let inGroup = false;
   items.forEach((raw) => {
     const item = raw.trim();
@@ -245,7 +277,7 @@ function renderGroupedBody(lead: string, items: string[], accent: string, rgb: s
       if (inGroup) html += '</div></div>';
       html +=
         `<div class="body-group">` +
-        `<div class="body-group-title" onclick="this.parentElement.classList.toggle('open')">${gm[1]}</div>` +
+        `<div class="body-group-title" onclick="this.parentElement.classList.toggle('open')">${escInline(gm[1])}</div>` +
         `<div class="body-group-items" style="border-color:rgba(${rgb},.15)">`;
       inGroup = true;
     } else {
@@ -305,32 +337,32 @@ export function renderBody(body: string, accent: string = '#8a7a6a'): string {
     lead = parts[0];
     items = parts.slice(1).filter((p) => p.trim());
     if (!items.length || !/^[①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮【]|^S[1-4]/.test(items[0].trim())) {
-      return body;
+      return escInline(body);
     }
   } else if (/◆/.test(body)) {
     const splitParts = body.split(/◆\s*/);
     lead = splitParts[0].replace(/[：:；，,]\s*$/, '');
     items = splitParts.slice(1).filter((p) => p.trim());
-    if (items.length < 2) return body;
+    if (items.length < 2) return escInline(body);
     items = items.map((it, idx) => CIRCLED[idx % CIRCLED.length] + it.replace(/[；;]\s*$/, ''));
   } else if (/[①②③]/.test(body)) {
     const splitParts = body.split(/(?=[①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮])/);
     lead = splitParts[0].replace(/[：:；]\s*$/, '');
     items = splitParts.slice(1).filter((p) => p.trim());
-    if (items.length < 2) return body;
+    if (items.length < 2) return escInline(body);
     const last = items[items.length - 1];
     const lastPeriod = last.lastIndexOf('。');
     if (lastPeriod > 0 && lastPeriod < last.length - 1) {
       items[items.length - 1] = last.slice(0, lastPeriod + 1);
     }
   } else {
-    return body;
+    return escInline(body);
   }
 
   const hasGroups = items.some((it) => /^【/.test(it.trim()));
   if (hasGroups) return renderGroupedBody(lead, items, accent, rgb);
 
-  let html = `<div class="body-lead">${lead}</div><div class="body-items">`;
+  let html = `<div class="body-lead">${escInline(lead)}</div><div class="body-items">`;
   items.forEach((item) => {
     html += renderBodyCard(item, accent, rgb);
   });
