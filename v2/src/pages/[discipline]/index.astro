@@ -23,7 +23,7 @@ const themes = JSON.parse(disc.themes_json) as Array<{
   schools: string[];
 }>;
 
-// 学派列表（按 theme_key 分组）
+// 学派列表
 const schoolsResult = await db
   .prepare(`
     SELECT key, title_zh, title_en, era, theme_key, accent,
@@ -37,15 +37,51 @@ const schoolsResult = await db
 const schools = schoolsResult.results ?? [];
 const schoolByKey = new Map(schools.map((s) => [s.key, s]));
 
+// v0.3.8: 所有 KP + 按学派聚合（inline 展开用），以及所有学者 name lookup
+const kpsResult = await db
+  .prepare(`
+    SELECT ks.school_key, ks.position, k.id, k.title_zh, k.title_ja, k.year,
+      (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id ORDER BY position) as scholars_csv
+    FROM kp k
+    INNER JOIN kp_school ks ON ks.kp_id = k.id
+    WHERE k.discipline = ?
+    ORDER BY ks.school_key, ks.position, k.id
+  `)
+  .bind(discipline)
+  .all<{ school_key: string; position: number; id: string; title_zh: string; title_ja: string | null; year: string; scholars_csv: string | null }>();
+
+type KpRow = { id: string; title_zh: string; title_ja: string | null; year: string; scholars_csv: string | null };
+const kpsBySchool = new Map<string, KpRow[]>();
+for (const k of kpsResult.results ?? []) {
+  const list = kpsBySchool.get(k.school_key) ?? [];
+  list.push(k);
+  kpsBySchool.set(k.school_key, list);
+}
+
+// 学者名 lookup —— 按 discipline 一次拉，避免 IN (?...) 撞 D1 变量上限 ~100
+const scholarsLookupResult = await db
+  .prepare('SELECT key, name_zh, name_en FROM scholar WHERE discipline = ?')
+  .bind(discipline)
+  .all<{ key: string; name_zh: string; name_en: string | null }>();
+const scholarByKey = new Map((scholarsLookupResult.results ?? []).map((s) => [s.key, s]));
+
 // 按 themes[].schools 顺序整理
 const themed = themes.map((t) => ({
   ...t,
   schoolList: t.schools.map((sk) => schoolByKey.get(sk)).filter(Boolean) as typeof schools,
 }));
 
-// 兜底：themes 没列出的学派（数据迁移可能漏的）
+// 兜底：themes 没列出的学派
 const accountedKeys = new Set(themes.flatMap((t) => t.schools));
 const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
+
+function scholarLabel(csv: string | null): string {
+  if (!csv) return '';
+  return csv.split(',').filter(Boolean)
+    .map((sk) => scholarByKey.get(sk)?.name_en ?? scholarByKey.get(sk)?.name_zh ?? sk)
+    .filter(Boolean)
+    .join(' · ');
+}
 ---
 
 <Layout title={disc.title_zh} currentDiscipline={discipline} currentSection="schools">
@@ -62,19 +98,49 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
           {t.desc?.zh && <p class="text-xs text-tertiary mt-0.5">{t.desc.zh}</p>}
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-          {t.schoolList.map((s) => (
-            <a
-              href={`/${discipline}/${s.key}`}
-              class="block p-3 rounded border bg-bg-primary hover:shadow-card transition-shadow"
-            >
-              <div class="flex items-baseline justify-between">
-                <h3 class="text-sm font-semibold text-primary">{s.title_zh}</h3>
-                <span class="text-xs text-quaternary">{s.kp_count}</span>
-              </div>
-              {s.title_en && <div class="text-xs text-tertiary mt-0.5">{s.title_en}</div>}
-              {s.era && <div class="text-xs text-quaternary mt-0.5">{s.era}</div>}
-            </a>
-          ))}
+          {t.schoolList.map((s) => {
+            const kps = kpsBySchool.get(s.key) ?? [];
+            return (
+              <details class="school-accordion rounded border bg-bg-primary hover:shadow-card transition-shadow group" data-school-key={s.key}>
+                <summary class="cursor-pointer list-none p-3 select-none">
+                  <div class="flex items-baseline justify-between gap-2">
+                    <h3 class="text-sm font-semibold text-primary flex-1">
+                      <span class="inline-block w-3 text-quaternary text-xs group-open:rotate-90 transition-transform">▸</span>
+                      {s.title_zh}
+                    </h3>
+                    <span class="text-xs text-quaternary">
+                      <span class="school-known-count hidden text-accent-classic">★ <span data-known-count>0</span> · </span>
+                      {s.kp_count}
+                    </span>
+                  </div>
+                  {s.title_en && <div class="text-xs text-tertiary mt-0.5 ml-4">{s.title_en}</div>}
+                  {s.era && <div class="text-xs text-quaternary mt-0.5 ml-4">{s.era}</div>}
+                </summary>
+                <div class="px-3 pb-3 pt-1 border-t bg-bg-secondary">
+                  {kps.length > 0 ? (
+                    <ul class="space-y-1 pt-2">
+                      {kps.map((k) => (
+                        <li data-kp-id={k.id}>
+                          <a href={`/${discipline}/kp/${k.id}`} class="flex items-baseline gap-2 text-xs py-1 px-2 rounded hover:bg-bg-tertiary">
+                            <span class="kp-known-star hidden text-accent-classic" aria-hidden="true">★</span>
+                            <span class="flex-1 text-secondary">{k.title_zh}</span>
+                            <span class="text-quaternary text-xs whitespace-nowrap">
+                              {scholarLabel(k.scholars_csv)}{k.year && ` · ${k.year}`}
+                            </span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p class="text-xs text-quaternary py-2">暂无知识点</p>
+                  )}
+                  <div class="mt-2 pt-2 border-t">
+                    <a href={`/${discipline}/${s.key}`} class="text-xs text-accent-strategy hover:underline">进入学派页 →</a>
+                  </div>
+                </div>
+              </details>
+            );
+          })}
         </div>
       </section>
     ))}
@@ -96,3 +162,29 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
     )}
   </main>
 </Layout>
+
+<script is:inline>
+  // v0.3.8: 学派 accordion 内的 KP 列表 ★ 标记 + 学派 header 计数
+  (function () {
+    const accordions = document.querySelectorAll('.school-accordion');
+    accordions.forEach((acc) => {
+      const items = acc.querySelectorAll('[data-kp-id]');
+      let known = 0;
+      items.forEach((li) => {
+        const id = li.getAttribute('data-kp-id');
+        if (localStorage.getItem(`kp-known:${id}`) === '1') {
+          li.querySelector('.kp-known-star')?.classList.remove('hidden');
+          known++;
+        }
+      });
+      if (known > 0) {
+        const badge = acc.querySelector('.school-known-count');
+        const countSpan = badge?.querySelector('[data-known-count]');
+        if (badge && countSpan) {
+          countSpan.textContent = String(known);
+          badge.classList.remove('hidden');
+        }
+      }
+    });
+  })();
+</script>
