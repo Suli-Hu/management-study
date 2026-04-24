@@ -14,7 +14,7 @@ pages_build_output_dir = "./dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "management-study-v2"
-database_id = "TODO_REPLACE_AFTER_W1_3"
+database_id = "4e236c30-cf6f-40f3-8bbc-b6b78444c797"
 
 # === 环境变量（非 secret） ===
 [vars]
