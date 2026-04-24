@@ -30,16 +30,20 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const isSecure = reqUrl.protocol === 'https:';
 
   let password = '';
+  let remember = true;
   try {
     const body = await request.formData();
     password = String(body.get('password') ?? '').trim();
+    // checkbox：未勾选时根本不在 FormData 里；勾选时值通常 "1" / "on"
+    remember = body.get('remember') !== null;
   } catch {
     /* noop */
   }
   if (!password) {
     try {
-      const json = (await request.json()) as { password?: string };
+      const json = (await request.json()) as { password?: string; remember?: boolean };
       password = (json.password ?? '').trim();
+      if (typeof json.remember === 'boolean') remember = json.remember;
     } catch {
       /* noop */
     }
@@ -65,8 +69,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   const user = await findOrCreateUser(db, email);
-  const sessionId = await createSession(db, user.id);
-  const cookie = buildSessionCookie(sessionId, isSecure);
+  const sessionId = await createSession(db, user.id, remember);
+  const cookie = buildSessionCookie(sessionId, isSecure, remember);
 
   return new Response(null, {
     status: 303,

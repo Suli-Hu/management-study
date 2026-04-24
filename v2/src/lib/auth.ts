@@ -16,6 +16,8 @@ import type { D1Database } from '@cloudflare/workers-types';
 
 const MAGIC_LINK_TTL_MS = 10 * 60 * 1000;
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+/** 非 remember 模式：cookie 无 Max-Age（关浏览器就失效），DB 里给 1 小时上限防堆积 */
+const SESSION_EPHEMERAL_TTL_MS = 60 * 60 * 1000;
 
 export const COOKIE_NAME = 'session';
 
@@ -191,9 +193,13 @@ export async function findOrCreateUser(db: D1Database, email: string): Promise<U
 
 // ========== Session ==========
 
-export async function createSession(db: D1Database, userId: string): Promise<string> {
+export async function createSession(
+  db: D1Database,
+  userId: string,
+  remember: boolean = true,
+): Promise<string> {
   const id = generateToken(32);
-  const expiresAt = Date.now() + SESSION_TTL_MS;
+  const expiresAt = Date.now() + (remember ? SESSION_TTL_MS : SESSION_EPHEMERAL_TTL_MS);
   await db
     .prepare('INSERT INTO session (id, user_id, expires_at) VALUES (?, ?, ?)')
     .bind(id, userId, expiresAt)
@@ -237,15 +243,21 @@ export function parseCookieSession(cookieHeader: string | null | undefined): str
   return null;
 }
 
-export function buildSessionCookie(sessionId: string, isProd: boolean): string {
-  const maxAge = Math.floor(SESSION_TTL_MS / 1000);
+export function buildSessionCookie(
+  sessionId: string,
+  isProd: boolean,
+  remember: boolean = true,
+): string {
   const parts = [
     `${COOKIE_NAME}=${sessionId}`,
     'HttpOnly',
     'SameSite=Lax',
     'Path=/',
-    `Max-Age=${maxAge}`,
   ];
+  // remember = true → 30 天 persistent cookie；false → 无 Max-Age，关浏览器即失效
+  if (remember) {
+    parts.push(`Max-Age=${Math.floor(SESSION_TTL_MS / 1000)}`);
+  }
   if (isProd) parts.push('Secure');
   return parts.join('; ');
 }
