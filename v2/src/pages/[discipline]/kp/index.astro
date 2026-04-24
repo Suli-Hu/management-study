@@ -1,0 +1,168 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import { getDb } from '~/lib/db';
+
+const { discipline } = Astro.params;
+const db = getDb(Astro.locals.runtime.env);
+
+const disc = await db
+  .prepare('SELECT key, title_zh, themes_json FROM discipline WHERE key = ?')
+  .bind(discipline)
+  .first<{ key: string; title_zh: string; themes_json: string }>();
+if (!disc) return Astro.redirect('/404');
+
+const themes = JSON.parse(disc.themes_json) as Array<{
+  key: string;
+  title: { zh: string; en?: string };
+  schools: string[];
+}>;
+
+// Pull every KP with its primary school (lowest position in kp_school) + scholars.
+const kpsResult = await db
+  .prepare(`
+    SELECT
+      k.id, k.title_zh, k.title_en, k.title_ja, k.year,
+      ks.school_key as primary_school,
+      s.title_zh as school_title,
+      s.theme_key,
+      (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id ORDER BY position) as scholars_csv,
+      (SELECT GROUP_CONCAT(school_key, ',') FROM kp_school WHERE kp_id = k.id ORDER BY position) as schools_csv
+    FROM kp k
+    LEFT JOIN kp_school ks
+      ON ks.kp_id = k.id
+     AND ks.position = (SELECT MIN(position) FROM kp_school WHERE kp_id = k.id)
+    LEFT JOIN school s ON s.key = ks.school_key
+    WHERE k.discipline = ?
+    ORDER BY s.theme_key, ks.school_key, ks.position, k.id
+  `)
+  .bind(discipline)
+  .all<{
+    id: string;
+    title_zh: string;
+    title_en: string | null;
+    title_ja: string | null;
+    year: string;
+    primary_school: string | null;
+    school_title: string | null;
+    theme_key: string | null;
+    scholars_csv: string | null;
+    schools_csv: string | null;
+  }>();
+
+const kps = kpsResult.results ?? [];
+
+// Scholar name lookup — fetch all scholars in this discipline (D1 caps `IN (?,?,...)` at ~100 vars).
+const scholarsResult = await db
+  .prepare('SELECT key, name_zh, name_en FROM scholar WHERE discipline = ?')
+  .bind(discipline)
+  .all<{ key: string; name_zh: string; name_en: string | null }>();
+const scholarByKey = new Map((scholarsResult.results ?? []).map((s) => [s.key, s]));
+
+// Group: theme → school → kps. Use themes order from discipline.themes_json.
+type KP = (typeof kps)[number];
+const byThemeBySchool = new Map<string, Map<string, KP[]>>();
+for (const k of kps) {
+  const theme = k.theme_key ?? '_orphan';
+  const school = k.primary_school ?? '_orphan';
+  if (!byThemeBySchool.has(theme)) byThemeBySchool.set(theme, new Map());
+  const schoolMap = byThemeBySchool.get(theme)!;
+  if (!schoolMap.has(school)) schoolMap.set(school, []);
+  schoolMap.get(school)!.push(k);
+}
+
+// Theme order: themes[].key first, orphans last.
+const orderedThemes: Array<{ key: string; title: string; schoolOrder: string[] }> = themes.map((t) => ({
+  key: t.key,
+  title: t.title.zh,
+  schoolOrder: t.schools,
+}));
+const themedKeys = new Set(orderedThemes.map((t) => t.key));
+for (const tk of byThemeBySchool.keys()) {
+  if (!themedKeys.has(tk)) {
+    orderedThemes.push({ key: tk, title: tk === '_orphan' ? '未分组' : tk, schoolOrder: [] });
+  }
+}
+---
+
+<Layout title={`知识点 · ${disc.title_zh}`} currentDiscipline={discipline} currentSection="kps">
+  <main class="max-w-panel mx-auto px-4 py-6">
+    <header class="mb-6">
+      <h1 class="text-2xl mb-1">知识点</h1>
+      <p class="text-xs text-quaternary">{disc.title_zh} · 共 {kps.length} 条</p>
+    </header>
+
+    <nav class="mb-6 flex flex-wrap gap-1 text-xs">
+      {orderedThemes.filter((t) => byThemeBySchool.has(t.key)).map((t) => (
+        <a
+          href={`#theme-${t.key}`}
+          class="px-2 py-1 rounded text-tertiary hover:text-primary hover:bg-bg-tertiary no-underline"
+        >
+          {t.title}
+        </a>
+      ))}
+    </nav>
+
+    {orderedThemes.map((t) => {
+      const schoolMap = byThemeBySchool.get(t.key);
+      if (!schoolMap) return null;
+      const schoolKeys = t.schoolOrder.length > 0
+        ? [...t.schoolOrder.filter((sk) => schoolMap.has(sk)), ...Array.from(schoolMap.keys()).filter((sk) => !t.schoolOrder.includes(sk))]
+        : Array.from(schoolMap.keys());
+      return (
+        <section id={`theme-${t.key}`} class="mb-10 scroll-mt-16">
+          <h2 class="text-base font-semibold text-primary mb-4 sticky top-12 bg-bg-primary/90 backdrop-blur-sm py-1.5 -mx-1 px-1 border-b">
+            {t.title}
+          </h2>
+          {schoolKeys.map((sk) => {
+            const items = schoolMap.get(sk)!;
+            const schoolTitle = items[0]?.school_title ?? sk;
+            return (
+              <div class="mb-6">
+                <h3 class="text-sm font-semibold text-tertiary mb-2 flex items-baseline gap-2">
+                  {sk !== '_orphan' ? (
+                    <a href={`/${discipline}/${sk}`} class="text-tertiary hover:text-primary no-underline">
+                      {schoolTitle}
+                    </a>
+                  ) : (
+                    <span>未分组</span>
+                  )}
+                  <span class="text-xs text-quaternary font-normal">{items.length}</span>
+                </h3>
+                <ul class="space-y-1">
+                  {items.map((k) => {
+                    const scholarKeys = (k.scholars_csv ?? '').split(',').filter(Boolean);
+                    const scholarLabel = scholarKeys
+                      .map((sk2) => scholarByKey.get(sk2)?.name_en ?? scholarByKey.get(sk2)?.name_zh ?? sk2)
+                      .join(' · ');
+                    return (
+                      <li>
+                        <a
+                          href={`/${discipline}/kp/${k.id}`}
+                          class="block py-2 px-3 rounded hover:bg-bg-tertiary no-underline"
+                        >
+                          <div class="flex items-baseline justify-between gap-3">
+                            <div class="min-w-0 flex-1">
+                              <span class="text-sm text-primary font-semibold">{k.title_zh}</span>
+                              {k.title_ja && <span class="text-xs text-tertiary ml-2">{k.title_ja}</span>}
+                            </div>
+                            <span class="text-xs text-quaternary whitespace-nowrap shrink-0">
+                              {scholarLabel}{k.year && ` · ${k.year}`}
+                            </span>
+                          </div>
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            );
+          })}
+        </section>
+      );
+    })}
+
+    {kps.length === 0 && (
+      <p class="text-sm text-tertiary">暂无知识点。</p>
+    )}
+  </main>
+</Layout>

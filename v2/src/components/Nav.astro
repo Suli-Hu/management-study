@@ -1,0 +1,57 @@
+---
+import { getDb } from '~/lib/db';
+
+interface Props {
+  currentDiscipline?: string;
+  currentSection?: 'schools' | 'scholars' | 'kps';
+}
+
+const { currentDiscipline, currentSection } = Astro.props;
+
+let disciplineTitle: string | null = null;
+if (currentDiscipline) {
+  const db = getDb(Astro.locals.runtime.env);
+  const row = await db
+    .prepare('SELECT title_zh FROM discipline WHERE key = ?')
+    .bind(currentDiscipline)
+    .first<{ title_zh: string }>();
+  disciplineTitle = row?.title_zh ?? null;
+}
+
+const sections: Array<{ key: 'schools' | 'scholars' | 'kps'; label: string; href: string }> = currentDiscipline
+  ? [
+      { key: 'schools', label: '学派', href: `/${currentDiscipline}` },
+      { key: 'scholars', label: '学者', href: `/${currentDiscipline}/scholars` },
+      { key: 'kps', label: '知识点', href: `/${currentDiscipline}/kp` },
+    ]
+  : [];
+---
+
+<nav class="sticky top-0 z-50 bg-bg-primary/90 backdrop-blur-sm border-b border-bg-tertiary">
+  <div class="max-w-panel mx-auto px-4 h-12 flex items-center justify-between gap-3">
+    <a href="/" class="text-sm font-semibold text-primary shrink-0 no-underline">
+      全学科笔记
+    </a>
+
+    {currentDiscipline && (
+      <div class="flex items-center gap-0.5 text-xs">
+        {disciplineTitle && (
+          <span class="text-quaternary mr-2 hidden sm:inline">{disciplineTitle}</span>
+        )}
+        {sections.map((s) => (
+          <a
+            href={s.href}
+            class:list={[
+              'px-2 py-1 rounded transition-colors no-underline',
+              currentSection === s.key
+                ? 'text-primary font-semibold bg-bg-tertiary'
+                : 'text-tertiary hover:text-primary',
+            ]}
+          >
+            {s.label}
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</nav>

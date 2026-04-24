@@ -38,12 +38,8 @@ const scholarsResult = allScholarKeys.size > 0
 const scholarByKey = new Map((scholarsResult.results ?? []).map((s) => [s.key, s]));
 ---
 
-<Layout title={sch.title_zh}>
-  <main class="max-w-panel mx-auto px-4 py-8">
-    <nav class="mb-6 text-xs">
-      <a href={`/${discipline}`} class="text-quaternary hover:text-tertiary">← {discipline}</a>
-    </nav>
-
+<Layout title={sch.title_zh} currentDiscipline={discipline} currentSection="schools">
+  <main class="max-w-panel mx-auto px-4 py-6">
     <header class="mb-6">
       <h1 class="text-2xl mb-1">{sch.title_zh}</h1>
       <div class="text-xs text-tertiary">
