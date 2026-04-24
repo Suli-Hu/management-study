@@ -1,33 +1,52 @@
 /**
  * Astro middleware — 每个请求读 session cookie，populate Astro.locals.user.
  *
+ * + 强制登录 gate（v0.2.7 起）：除白名单外所有路径，未登录 → 302 /login
+ *
  * locals.user = 完整 User 对象 | null
- * 页面/API route 可直接读 Astro.locals.user 判断登录态。
  */
 
 import { defineMiddleware } from 'astro:middleware';
 import { parseCookieSession, getSessionUser } from '~/lib/auth';
 import { getDb } from '~/lib/db';
 
+/** 不需要登录就能访问的路径（前缀匹配） */
+const PUBLIC_PATH_PREFIXES = [
+  '/login',          // 登录页 + /login/sent
+  '/api/auth/',      // login / verify / verify-code / logout
+  '/favicon',
+  '/robots.txt',
+  '/_astro/',        // 静态资源（dev + prod）
+];
+
+function isPublicPath(pathname: string): boolean {
+  return PUBLIC_PATH_PREFIXES.some((p) => pathname === p || pathname.startsWith(p));
+}
+
 export const onRequest = defineMiddleware(async (context, next) => {
   const env = context.locals.runtime?.env;
+  const url = new URL(context.request.url);
+
+  // Populate locals.user
   if (!env) {
     context.locals.user = null;
-    return next();
+  } else {
+    const sessionId = parseCookieSession(context.request.headers.get('cookie'));
+    if (!sessionId) {
+      context.locals.user = null;
+    } else {
+      try {
+        const db = getDb(env);
+        context.locals.user = await getSessionUser(db, sessionId);
+      } catch {
+        context.locals.user = null;
+      }
+    }
   }
 
-  const sessionId = parseCookieSession(context.request.headers.get('cookie'));
-  if (!sessionId) {
-    context.locals.user = null;
-    return next();
-  }
-
-  try {
-    const db = getDb(env);
-    const user = await getSessionUser(db, sessionId);
-    context.locals.user = user;
-  } catch {
-    context.locals.user = null;
+  // Gate: 未登录 + 非公开路径 → 跳 /login
+  if (!context.locals.user && !isPublicPath(url.pathname)) {
+    return Response.redirect(`${url.origin}/login`, 302);
   }
 
   return next();
