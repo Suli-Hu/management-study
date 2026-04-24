@@ -1,0 +1,27 @@
+{
+  "id": "k441",
+  "discipline": "keiei",
+  "schools": [
+    "institutional",
+    "stanford",
+    "environment_s",
+    "evolution_process"
+  ],
+  "scholars": [
+    "meyer"
+  ],
+  "year": "",
+  "title": {
+    "zh": "脱耦理论",
+    "en": "Decoupling",
+    "ja": "脱連結理論"
+  },
+  "body": {
+    "zh": "组织的正式结构与实际运作活动往往相互脱离，形式合规不等于实质运作改变",
+    "ja": "——組織の公式構造と実際の運営活動はしばしば相互に分離しており、形式的遵守は実質的な運営変化を意味しない"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

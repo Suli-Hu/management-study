@@ -1,0 +1,25 @@
+{
+  "id": "k078",
+  "discipline": "keiei",
+  "schools": [
+    "io",
+    "international_strategy"
+  ],
+  "scholars": [
+    "porter"
+  ],
+  "year": "1990",
+  "title": {
+    "zh": "钻石模型",
+    "en": "Diamond Model",
+    "ja": "ダイヤモンド・モデル"
+  },
+  "body": {
+    "zh": "解释国家或地区产业竞争力的分析框架，包含四个相互关联的决定因素：◆ 要素条件（Factor Conditions）——人力资源、自然资源、知识资源、资本、基础设施等生产要素的质量与数量◆ 需求条件（Demand Conditions）——国内市场需求的质量、规模和成熟度，挑剔的国内消费者能促进创新◆ 相关及支持产业（Related and Supporting Industries）——具有国际竞争力的供应商和关联产业的集聚产生集群效应◆ 企业战略、结构与竞争环境（Firm Strategy, Structure, and Rivalry）——国内的激烈竞争促使企业不断创新和提升效率。四要素的相互作用形成自我强化的良性循环，决定特定产业的国家竞争优势",
+    "ja": "——国家または地域の産業競争力を決定する四つの相互関連要因を体系化した分析枠組み：◆ 要素条件（Factor Conditions）——人的資源、天然資源、知識資源、資本、インフラ等の生産要素の質と量◆ 需要条件（Demand Conditions）——国内市場の需要の質・量・洗練度。厳しい国内顧客の存在がイノベーションを促進する◆ 関連・支援産業（Related and Supporting Industries）——国際的に競争力のあるサプライヤーや関連産業の集積がクラスター効果を生む◆ 企業戦略・構造・競争環境（Firm Strategy, Structure, and Rivalry）——国内の激しい競争が企業のイノベーションと効率向上を促す。四要因の相互作用が自己強化的な好循環を形成し、特定産業における国家競争優位を決定する"
+  },
+  "tags": [],
+  "format": "flat-list",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

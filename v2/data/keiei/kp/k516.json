@@ -1,0 +1,24 @@
+{
+  "id": "k516",
+  "discipline": "keiei",
+  "schools": [
+    "attitude_emotion"
+  ],
+  "scholars": [
+    "festinger"
+  ],
+  "year": "",
+  "title": {
+    "zh": "社会比较理论",
+    "en": "Social Comparison Theory",
+    "ja": "社会的比較理論"
+  },
+  "body": {
+    "zh": "（1954）人们在缺乏客观标准时，通过与他人比较来评估自己的意见和能力；尤其在不确定情境中，他人成为衡量自我的参照基准",
+    "ja": "——客観的基準が欠如する状況において、人々は自己の意見や能力を評価するために他者との比較を行う。特に不確実な状況において、他者が自己を測る参照基準となる"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

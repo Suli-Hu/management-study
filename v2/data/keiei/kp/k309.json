@@ -1,0 +1,24 @@
+{
+  "id": "k309",
+  "discipline": "keiei",
+  "schools": [
+    "dynamic"
+  ],
+  "scholars": [
+    "fujimoto"
+  ],
+  "year": "",
+  "title": {
+    "zh": "能力构筑竞争",
+    "en": "Capability-Building Competition",
+    "ja": "能力構築競争"
+  },
+  "body": {
+    "zh": "与产品层面的市场竞争（波特式）相对，指企业在组织能力层面的长期积累和竞争。竞争优势来自深层能力的厚度，而非仅仅当前产品的功能或价格。能力的积累是历史性的，难以被竞争对手快速复制",
+    "ja": "——組織能力レベルの長期的蓄積・競争。能力の蓄積は歴史的で短期間複製困難"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

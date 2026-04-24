@@ -1,0 +1,24 @@
+{
+  "id": "k497",
+  "discipline": "keiei",
+  "schools": [
+    "dynamic"
+  ],
+  "scholars": [
+    "shuen"
+  ],
+  "year": "",
+  "title": {
+    "zh": "动态能力理论共同创立",
+    "en": "Dynamic Capabilities Co-founding",
+    "ja": "ダイナミック・ケイパビリティ理論の共同創立"
+  },
+  "body": {
+    "zh": "（1997）与蒂斯、皮萨诺合作发表奠基性论文《动态能力与战略管理》，提出感知-整合-重构三维动态能力框架",
+    "ja": "——（1997年）ティース、ピサノとの共同による基盤的論文『ダイナミック・ケイパビリティと戦略経営』を発表。感知（Sensing）・捕捉（Seizing）・変革（Transforming）の三次元からなるダイナミック・ケイパビリティのフレームワークを提唱した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

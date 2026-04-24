@@ -1,0 +1,24 @@
+{
+  "id": "k100",
+  "discipline": "keiei",
+  "schools": [
+    "innovation"
+  ],
+  "scholars": [
+    "chesbrough"
+  ],
+  "year": "",
+  "title": {
+    "zh": "开放式创新",
+    "en": "Open Innovation",
+    "ja": "オープン・イノベーション"
+  },
+  "body": {
+    "zh": "企业应打开边界，引入外部知识和技术，而非封闭式R&D",
+    "ja": "——R&Dの境界を開放し、外部知識・技術を内部に取り込み（アウトサイド・イン）、内部の未活用技術を外部に流出させる（インサイド・アウト）"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

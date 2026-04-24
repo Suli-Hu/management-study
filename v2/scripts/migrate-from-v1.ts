@@ -344,11 +344,13 @@ for (const key of Object.keys(SCHOLARS)) {
     updatedAt: NOW,
   };
 
-  // 学派列表至少 1 个 — 都没解析出来 → skip 该学者（避免 cross-ref dangling）
+  // 允许 schools 为空（v1 SCHOLARS 引用的部分中文学派名在 DATA 里找不到 — 数据本身不一致）
+  // 不 skip，避免 KP cross-ref 连锁失败
   if (scholar.schools.length === 0) {
-    console.warn(`  ! scholar ${key}: no resolved school (raw=${JSON.stringify(rawSchools)}) — skipping`);
     scholarSkipped++;
-    continue;
+    if (rawSchools.length > 0) {
+      // 有引用但全 unmapped — 仅记一次 warn，详情走 unmappedNames 汇总
+    }
   }
 
   const r = Scholar.safeParse(scholar);

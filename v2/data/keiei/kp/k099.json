@@ -1,0 +1,24 @@
+{
+  "id": "k099",
+  "discipline": "keiei",
+  "schools": [
+    "innovation"
+  ],
+  "scholars": [
+    "christensen"
+  ],
+  "year": "1997",
+  "title": {
+    "zh": "创新者困境",
+    "en": "Innovator's Dilemma",
+    "ja": "イノベーターのジレンマ"
+  },
+  "body": {
+    "zh": "优秀的在位企业遵循最佳实践，反而使其更难应对颠覆",
+    "ja": "——優良企業が最善の経営慣行に従うことが、かえって破壊的イノベーションへの対応を困難にするパラドクス"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

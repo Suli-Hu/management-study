@@ -1,0 +1,24 @@
+{
+  "id": "k458",
+  "discipline": "keiei",
+  "schools": [
+    "rbv"
+  ],
+  "scholars": [
+    "wernerfelt"
+  ],
+  "year": "",
+  "title": {
+    "zh": "资源壁垒",
+    "en": "Resource Position Barriers",
+    "ja": "資源障壁"
+  },
+  "body": {
+    "zh": "类比产业组织学中的进入壁垒，指出企业凭借独特资源位置可建立他人难以逾越的竞争壁垒",
+    "ja": "——産業組織論における参入障壁に類似して、企業が独自の資源ポジションに基づき、他者が容易に乗り越えられない競争障壁を構築できることを指摘した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

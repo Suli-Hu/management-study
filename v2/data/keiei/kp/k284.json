@@ -1,0 +1,24 @@
+{
+  "id": "k284",
+  "discipline": "keiei",
+  "schools": [
+    "agency"
+  ],
+  "scholars": [
+    "williamson"
+  ],
+  "year": "1964",
+  "title": {
+    "zh": "经营者效用最大化假说",
+    "en": "Managerial Utility Maximization",
+    "ja": "経営者効用最大化仮説"
+  },
+  "body": {
+    "zh": "威廉姆森在《裁量行为的经济学》中提出：享有裁量权的经营者会追求自身效用最大化，效用函数包含三个变量：①人员规模（Staff）——扩大部下数量提升权力感；②管理津贴（Managerial Emoluments）——公车、秘书、豪华办公室等在职消费；③裁量投资（Discretionary Investment）——超出利润要求的自由投资。经营者在满足最低利润约束后，将剩余资源用于最大化这三项",
+    "ja": "——◆ スタッフ規模◆ 経営者報酬（在職消費）◆ 裁量投資。最低利潤制約後にこれらを最大化"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

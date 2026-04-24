@@ -1,0 +1,20 @@
+{
+  "key": "trist",
+  "discipline": "keiei",
+  "name": {
+    "zh": "埃里克·兰斯洛特·特里斯特",
+    "en": "Eric Lansdown Trist",
+    "ja": "エリック・トリスト"
+  },
+  "schools": [
+    "tavistock"
+  ],
+  "contribution": {
+    "zh": "特里斯特是社会技术系统理论（Socio-Technical Systems Theory）的核心创始人。1950年代初，他与肯·班福斯在英国煤矿研究中发现：新引入的\"长壁采煤法\"虽然技术上更先进，却导致工人满意度和生产率双双下降——原因在于新技术破坏了原有的社会工作群体结构。由此提出社会技术系统理论：任何工作系统都由技术子系统和社会子系统构成，两者必须协同优化（Joint Optimization），单独优化任何一方都无法实现整体最优。他还倡导自主工作团队（Autonomous Work Groups）——赋予工人团队对工作安排的自主决定权，结果显示生产效率和工人满意度同步提升。特里斯特的研究影响了斯堪的纳维亚工作民主化运动，也成为后来Scrum等敏捷自组织团队设计思想的重要先驱。"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

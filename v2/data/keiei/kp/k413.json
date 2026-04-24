@@ -1,0 +1,25 @@
+{
+  "id": "k413",
+  "discipline": "keiei",
+  "schools": [
+    "contingency",
+    "adaptive_design"
+  ],
+  "scholars": [
+    "fiedler"
+  ],
+  "year": "",
+  "title": {
+    "zh": "认知资源理论",
+    "en": "Cognitive Resource Theory",
+    "ja": "認知資源理論"
+  },
+  "body": {
+    "zh": "智力和经验对领导效能的影响受压力水平调节：低压力时智力更重要，高压力时经验更重要",
+    "ja": "——知性と経験がリーダーの有効性に及ぼす影響はストレス水準によって調節される。低ストレス下では知性がより重要であり、高ストレス下では経験がより重要となる"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

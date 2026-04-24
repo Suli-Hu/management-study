@@ -1,0 +1,22 @@
+{
+  "id": "k379",
+  "discipline": "keiei",
+  "schools": [
+    "ob"
+  ],
+  "scholars": [],
+  "year": "",
+  "title": {
+    "zh": "团队四类型",
+    "en": "Four Types of Teams",
+    "ja": "チームの四類型"
+  },
+  "body": {
+    "zh": "◆ 问题解决团队（Problem-Solving Teams）——讨论改善建议◆ 自我管理团队（Self-Managed Teams）——自主安排工作◆ 跨职能团队（Cross-Functional Teams）——跨部门协作◆ 虚拟团队（Virtual Teams）——远程协作。各类型适用不同的组织情境",
+    "ja": "——◆ 問題解決チーム（Problem-Solving Teams）——改善提案を議論する◆ 自己管理チーム（Self-Managed Teams）——作業を自律的に編成する◆ 機能横断チーム（Cross-Functional Teams）——部門を横断して協働する◆ バーチャル・チーム（Virtual Teams）——遠隔地からの協働。各類型は異なる組織状況に適合する"
+  },
+  "tags": [],
+  "format": "flat-list",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

@@ -1,0 +1,20 @@
+{
+  "key": "bandura",
+  "discipline": "keiei",
+  "name": {
+    "zh": "阿尔伯特·班杜拉",
+    "en": "Albert Bandura",
+    "ja": "アルバート・バンデューラ"
+  },
+  "schools": [
+    "ob"
+  ],
+  "contribution": {
+    "zh": "班杜拉是20世纪最具影响力的心理学家之一，社会学习理论（Social Learning Theory）的创立者。他提出人的行为不只受直接强化影响，还通过观察和模仿他人（替代性学习）而习得，从而超越了斯金纳纯粹行为主义的局限。他最重要的管理学贡献是提出自我效能感（Self-Efficacy）概念——个体对自身完成特定任务能力的信念，是预测工作绩效、学习动机和目标坚持的最有力变量之一。自我效能理论被广泛应用于员工培训设计、领导力发展和绩效管理实践，也是积极组织行为学（Positive Organizational Behavior）的理论基础。"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

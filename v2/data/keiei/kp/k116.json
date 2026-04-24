@@ -1,0 +1,22 @@
+{
+  "id": "k116",
+  "discipline": "keiei",
+  "schools": [
+    "csr"
+  ],
+  "scholars": [],
+  "year": "",
+  "title": {
+    "zh": "供应链可持续性",
+    "en": "Supply Chain Sustainability",
+    "ja": "サプライチェーン・サステナビリティ"
+  },
+  "body": {
+    "zh": "将ESG要求延伸至整个供应链，成为跨国企业合规压力的重要来源",
+    "ja": "——ESG要求をサプライチェーン全体に拡張するマネジメント・アプローチ"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

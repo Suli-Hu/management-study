@@ -1,0 +1,22 @@
+{
+  "id": "k305",
+  "discipline": "keiei",
+  "schools": [
+    "org_types"
+  ],
+  "scholars": [],
+  "year": "",
+  "title": {
+    "zh": "组织生命周期",
+    "en": "Organizational Life Cycle",
+    "ja": "組織ライフサイクル"
+  },
+  "body": {
+    "zh": "组织成长的四阶段模型：①起业者阶段（Entrepreneurial）——创业期，非正式组织，创业者领导；②共同体阶段（Collectivity）——成长期，形成使命感和归属感；③公式化阶段（Formalization）——制度化、规则化、官僚化；④精巧化阶段（Elaboration）——成熟期，追求柔軟性和创新以避免衰退",
+    "ja": "——組織成長の四段階モデル：①起業者段階（Entrepreneurial）——創業期、非公式組織、創業者のリーダーシップ；②共同体段階（Collectivity）——成長期、使命感と帰属意識の形成；③公式化段階（Formalization）——制度化・規則化・官僚制化；④精巧化段階（Elaboration）——成熟期、柔軟性と革新を追求し衰退を回避する。各段階の移行期には固有の危機が伴い、その克服が次の段階への前提条件となる"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

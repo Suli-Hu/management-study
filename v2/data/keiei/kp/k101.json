@@ -1,0 +1,24 @@
+{
+  "id": "k101",
+  "discipline": "keiei",
+  "schools": [
+    "innovation"
+  ],
+  "scholars": [
+    "vonhippel"
+  ],
+  "year": "",
+  "title": {
+    "zh": "用户创新",
+    "en": "User Innovation",
+    "ja": "ユーザー・イノベーション"
+  },
+  "body": {
+    "zh": "领先用户（Lead Users）往往是创新的真正来源",
+    "ja": "——イノベーションの真の源泉はしばしばリード・ユーザーにある。企業はリード・ユーザーとの協働でイノベーション成功確率を高めることができる"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "k167",
+  "discipline": "keiei",
+  "schools": [
+    "hrm"
+  ],
+  "scholars": [
+    "beer_m"
+  ],
+  "year": "1984",
+  "title": {
+    "zh": "哈佛模型",
+    "en": "Harvard Model",
+    "ja": "ハーバード・モデル"
+  },
+  "body": {
+    "zh": "比尔（Beer）等人1984年提出的综合性HRM分析框架，被称为软性HRM的代表模型。◆ 利益相关者（Stakeholder Interests）——股东、经营者、员工、工会、政府、社区等多方利益必须同时被考虑◆ 情境因素（Situational Factors）——劳动力特征、经营战略、管理哲学、劳动市场条件、技术水平、法律与社会价值观◆ HRM政策四领域——①员工影响力（Employee Influence）②人力资源流动（HR Flow：招聘→配置→晋升→退出）③报酬系统（Reward Systems）④工作系统（Work Systems）◆ 4C成果——承诺（Commitment）、能力（Competence）、一致性（Congruence：员工与组织目标的契合）、成本效益（Cost-effectiveness）◆ 长期后果三层次——个人福祉、组织效率、社会福祉。与密歇根模型相比，哈佛模型更重视员工参与和多方利益平衡",
+    "ja": "——ビアーらが提唱したモデルであり、HRM政策は多方面の利害関係者を考慮する必要があるとする。従業員のコミットメント（Commitment）、能力（Competence）、一致性（Congruence）、コスト効率（Cost Effectiveness）の四つのCに影響を与えることを通じて、個人・組織・社会の各レベルにおける長期的成果を産出する。ハーバード・モデルの特徴は、HRMを純粹な効率追求ではなく、利害関係者間のバランスの中に位置づけた点にある"
+  },
+  "tags": [],
+  "format": "flat-list",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

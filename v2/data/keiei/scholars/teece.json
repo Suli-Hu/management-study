@@ -1,0 +1,20 @@
+{
+  "key": "teece",
+  "discipline": "keiei",
+  "name": {
+    "zh": "大卫·约翰·蒂斯",
+    "en": "David John Teece",
+    "ja": "デビッド・ティース"
+  },
+  "schools": [
+    "dynamic"
+  ],
+  "contribution": {
+    "zh": "蒂斯是动态能力理论的核心创立者，也是当代战略管理领域被引用最多的学者之一。1997年与皮萨诺、苏恩共同发表《动态能力与战略管理》，提出动态能力框架——在快速变化的技术和市场环境中，企业持续竞争优势来自感知（Sensing）市场机会与威胁、整合（Seizing）资源把握机会、转型重构（Reconfiguring/Transforming）资产的能力。他还深入研究了创新的知识产权保护与互补资产（Complementary Assets）对创新价值实现的关键作用，解释了为什么技术发明者不一定是创新受益者。他的框架被广泛应用于数字化转型、AI战略和企业边界分析，与巴尼的RBV共同构成当代战略理论的两大支柱。"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

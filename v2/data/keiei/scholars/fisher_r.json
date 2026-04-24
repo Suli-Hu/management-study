@@ -1,0 +1,20 @@
+{
+  "key": "fisher_r",
+  "discipline": "keiei",
+  "name": {
+    "zh": "罗杰·费舍尔",
+    "en": "Roger Fisher",
+    "ja": "ロジャー・フィッシャー"
+  },
+  "schools": [
+    "conflict"
+  ],
+  "contribution": {
+    "zh": "哈佛谈判项目创始人，与Ury合著《Getting to Yes》提出原则式谈判和BATNA概念"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

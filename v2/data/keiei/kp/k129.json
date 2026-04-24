@@ -1,0 +1,22 @@
+{
+  "id": "k129",
+  "discipline": "keiei",
+  "schools": [
+    "platform"
+  ],
+  "scholars": [],
+  "year": "",
+  "title": {
+    "zh": "数据飞轮与数据护城河",
+    "en": "Data Flywheel and Data Moat",
+    "ja": "データ・フライホイールとデータ・モート"
+  },
+  "body": {
+    "zh": "数据作为战略资源，数据资产的构建逻辑",
+    "ja": "——◆ フライホイール——正のフィードバック・ループでデータを自己増幅的に蓄積◆ モート——データ資産が競合の参入を阻止する防御的障壁"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

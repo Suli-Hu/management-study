@@ -1,0 +1,25 @@
+{
+  "id": "k448",
+  "discipline": "keiei",
+  "schools": [
+    "process",
+    "static_structure"
+  ],
+  "scholars": [
+    "koontz"
+  ],
+  "year": "",
+  "title": {
+    "zh": "管理过程整合框架",
+    "en": "Integrated Management Process Framework",
+    "ja": "管理過程の統合枠組み"
+  },
+  "body": {
+    "zh": "将计划、组织、人员配置、领导、控制五项职能确立为统一的管理学分析骨架，推动管理学成为可系统传授的独立学科",
+    "ja": "——計画・組織・人員配置・指揮・統制の五つの職能を統一的な管理学分析の骨格として確立し、管理学を体系的に教授可能な独立学問分野へと推進した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

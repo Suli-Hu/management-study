@@ -1,0 +1,20 @@
+{
+  "key": "murray",
+  "discipline": "keiei",
+  "name": {
+    "zh": "亨利·默里",
+    "en": "Henry A. Murray",
+    "ja": "ヘンリー・マレー"
+  },
+  "schools": [
+    "behavioral"
+  ],
+  "contribution": {
+    "zh": "默里的欲求体系为麦克莱兰的成就动机理论提供了直接基础。TAT测验至今仍在人格和动机研究中使用。他是哈佛心理学诊所（Harvard Psychological Clinic）的创立者。"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

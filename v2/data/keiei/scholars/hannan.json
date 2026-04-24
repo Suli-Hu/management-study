@@ -1,0 +1,21 @@
+{
+  "key": "hannan",
+  "discipline": "keiei",
+  "name": {
+    "zh": "迈克尔·汉南",
+    "en": "Michael Hannan",
+    "ja": "マイケル・ハナン"
+  },
+  "schools": [
+    "institutional",
+    "stanford"
+  ],
+  "contribution": {
+    "zh": "汉南与约翰·弗里曼共同创立了组织生态学（Organizational Ecology）研究范式。1977年发表《组织的种群生态学》，将生物进化论的概念引入组织研究——用「种群」（Population）描述具有相似形式的组织集合，用「选择」（Selection）替代适应（Adaptation）来解释组织形式的存续与消亡。他们的核心主张是：由于结构惯性（Structural Inertia），组织难以快速改变自身以适应环境；真正决定哪种组织形式得以生存的，是环境的选择机制，而非管理者的有意识适应。组织生态学为理解行业内企业多样性、新企业进入率、企业死亡率等现象提供了系统性理论框架，是制度理论和进化经济学的重要交叉点。"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

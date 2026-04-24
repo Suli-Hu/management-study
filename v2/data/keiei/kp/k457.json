@@ -1,0 +1,24 @@
+{
+  "id": "k457",
+  "discipline": "keiei",
+  "schools": [
+    "rbv"
+  ],
+  "scholars": [
+    "wernerfelt"
+  ],
+  "year": "",
+  "title": {
+    "zh": "资源基础观奠基论文",
+    "en": "Resource-Based View Seminal Paper",
+    "ja": "資源ベース理論の基盤論文"
+  },
+  "body": {
+    "zh": "（1984）首次提出以资源为分析单元理解企业竞争优势，比巴尼早七年建立了RBV的理论源头",
+    "ja": "——（1984年）資源を分析単位として企業の競争優位を理解する視角を初めて提唱した。バーニーより7年早くRBVの理論的源泉を確立した先駆的業績"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

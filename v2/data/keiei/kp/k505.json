@@ -1,0 +1,24 @@
+{
+  "id": "k505",
+  "discipline": "keiei",
+  "schools": [
+    "hitotsubashi"
+  ],
+  "scholars": [
+    "numagami"
+  ],
+  "year": "",
+  "title": {
+    "zh": "组织论的方法论反思",
+    "en": "Methodological Reflections on Organization Theory",
+    "ja": "組織論の方法論的反省"
+  },
+  "body": {
+    "zh": "对经营组织论研究方法论的系统反思，强调理论与实践的对话以及情境特殊性对组织理论普遍性的挑战",
+    "ja": "——経営組織論の研究方法論に対する体系的反省。理論と実践の対話、および文脈の特殊性が組織理論の普遍性に突きつける挑戦を強調した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

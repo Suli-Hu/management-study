@@ -1,0 +1,24 @@
+{
+  "id": "k517",
+  "discipline": "keiei",
+  "schools": [
+    "ob"
+  ],
+  "scholars": [
+    "hackman"
+  ],
+  "year": "",
+  "title": {
+    "zh": "团队有效性研究",
+    "en": "Team Effectiveness",
+    "ja": "チーム有効性研究"
+  },
+  "body": {
+    "zh": "提出有效团队需满足：真实团队（Real Team）、吸引性目标（Compelling Direction）、有利结构（Enabling Structure）、支持性组织情境（Supportive Context）、专家辅导（Expert Coaching）五条件；强调团队设计先于团队建设",
+    "ja": "——有効なチームは五つの条件を満たす必要がある：真正のチーム（Real Team）・魅力的な目標（Compelling Direction）・有利な構造（Enabling Structure）・支援的な組織文脈（Supportive Context）・専門的コーチング（Expert Coaching）。チーム設計はチームビルディングに先行すべきことを強調"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

@@ -1,0 +1,25 @@
+{
+  "id": "k419",
+  "discipline": "keiei",
+  "schools": [
+    "innovation",
+    "entrepreneur_s"
+  ],
+  "scholars": [
+    "schumpeter"
+  ],
+  "year": "",
+  "title": {
+    "zh": "企业家职能理论",
+    "en": "Theory of Entrepreneurial Function",
+    "ja": "企業家機能理論"
+  },
+  "body": {
+    "zh": "企业家通过将新知识和新组合付诸实施驱动创新，区别于发明者和管理者，是经济发展不可或缺的独特角色",
+    "ja": "——企業家は新しい知識と新結合を実行に移すことでイノベーションを推進する。発明家や管理者とは区別される、経済発展に不可欠な独自の役割である"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

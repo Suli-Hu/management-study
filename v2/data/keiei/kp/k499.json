@@ -1,0 +1,24 @@
+{
+  "id": "k499",
+  "discipline": "keiei",
+  "schools": [
+    "dynamic"
+  ],
+  "scholars": [
+    "winter_s"
+  ],
+  "year": "",
+  "title": {
+    "zh": "进化经济理论",
+    "en": "Evolutionary Theory of Economic Change",
+    "ja": "進化経済学理論"
+  },
+  "body": {
+    "zh": "（1982）与纳尔逊合著，将生物进化逻辑引入经济学，提出企业以惯例（Routines）而非最优化为行为基础，惯例的变异与选择驱动产业动态",
+    "ja": "——（1982年）ネルソンとの共著。生物学的進化のロジックを経済学に導入し、企業は最適化ではなくルーティン（Routines）を行動基盤とし、ルーティンの変異と選択が産業の動態を駆動すると提唱した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

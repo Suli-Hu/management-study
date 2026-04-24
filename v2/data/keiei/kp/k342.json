@@ -1,0 +1,22 @@
+{
+  "id": "k342",
+  "discipline": "keiei",
+  "schools": [
+    "planning_s"
+  ],
+  "scholars": [],
+  "year": "",
+  "title": {
+    "zh": "内部新事业开发",
+    "en": "Internal Venturing",
+    "ja": "内部新事業開発"
+  },
+  "body": {
+    "zh": "企业自主投入资源开发新事业，包括企业内创业（Intrapreneurship/Corporate Venturing）。Burgelman研究了企业内部创业的战略过程和自主战略行为",
+    "ja": "——社内起業を含む自前の新事業開発手法"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

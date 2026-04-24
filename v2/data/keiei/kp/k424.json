@@ -1,0 +1,25 @@
+{
+  "id": "k424",
+  "discipline": "keiei",
+  "schools": [
+    "change",
+    "leadership_theory"
+  ],
+  "scholars": [
+    "lewin"
+  ],
+  "year": "",
+  "title": {
+    "zh": "场论",
+    "en": "Field Theory",
+    "ja": "場の理論"
+  },
+  "body": {
+    "zh": "个体行为是人与其所处心理场（情境总和）相互作用的结果，为理解组织情境对行为的影响提供了理论基础",
+    "ja": "——個人の行動は人とその心理的場（状況の総体）との相互作用の結果であり、組織の状況が行動に及ぼす影響を理解するための理論的基盤を提供した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

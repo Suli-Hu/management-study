@@ -1,0 +1,20 @@
+{
+  "key": "huber_g",
+  "discipline": "keiei",
+  "name": {
+    "zh": "乔治·休伯",
+    "en": "George P. Huber",
+    "ja": "ジョージ・ヒューバー"
+  },
+  "schools": [
+    "org_learning"
+  ],
+  "contribution": {
+    "zh": "休伯在1991年发表的综述论文中，从信息处理视角将组织学习分解为知识获取、信息分配、信息解释、组织记忆四个构成过程，成为美国教材的标准分析框架和实证研究的常用模型。"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

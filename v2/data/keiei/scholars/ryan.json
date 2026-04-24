@@ -1,0 +1,21 @@
+{
+  "key": "ryan",
+  "discipline": "keiei",
+  "name": {
+    "zh": "理查德·瑞安",
+    "en": "Richard M. Ryan",
+    "ja": "リチャード・ライアン"
+  },
+  "schools": [
+    "behavioral",
+    "ob"
+  ],
+  "contribution": {
+    "zh": "瑞安与德西共同发展了自我决定理论的完整框架，特别是在动机内化连续体和跨文化适用性方面做出了核心贡献。"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

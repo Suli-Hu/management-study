@@ -1,0 +1,22 @@
+{
+  "id": "k355",
+  "discipline": "keiei",
+  "schools": [
+    "dynamic"
+  ],
+  "scholars": [],
+  "year": "1987",
+  "title": {
+    "zh": "VUCA",
+    "en": "Volatility，Uncertainty，Complexity，Ambiguity，US Army War College",
+    "ja": "VUCA"
+  },
+  "body": {
+    "zh": "Volatility（变动性）、Uncertainty（不确定性）、Complexity（复杂性）、Ambiguity（模糊性），源自1990年代美军用语，描述当代经营环境的核心特征。要求组织具备敏捷性、韧性和持续学习能力",
+    "ja": "——変動性・不確実性・複雑性・曖昧性。現代経営環境の本質的特徴"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "k046",
+  "discipline": "keiei",
+  "schools": [
+    "ob"
+  ],
+  "scholars": [
+    "kelley"
+  ],
+  "year": "1967",
+  "title": {
+    "zh": "归因理论与知觉偏见",
+    "en": "Attribution Theory & Perceptual Biases",
+    "ja": "帰属理論と知覚バイアス"
+  },
+  "body": {
+    "zh": "归因理论（Attribution Theory，Heider，1958；Kelley，1967）解释个体如何判断行为是由内部因素（个人特质）还是外部情境引起。Kelley协变模型三要素：区别性（Distinctiveness，不同情境下行为是否不同）、一致性（Consensus，他人面对相似情境是否同样反应）、一贯性（Consistency，行为是否跨时间稳定）。两大归因偏误：基本归因错误（Fundamental Attribution Error，低估他人行为中的外部因素、高估个人内部因素）；自我服务偏见（Self-Serving Bias，成功归内因、失败归外因）。四种知觉捷径（Perceptual Shortcuts）：晕轮效应（Halo Effect，以一点遮蔽对整体的判断）；刻板印象（Stereotyping，以群体特征代替对个体的评估）；首因效应（Primacy Effect，最初印象的强烈影响，尤其对陌生人）；近因效应（Recency Effect，最后印象的强烈影响，尤其对熟悉者）",
+    "ja": "——帰属理論（Attribution Theory、Heider、1958；Kelley、1967）は、個人が行動の原因を内的要因（個人特性）と外的状況のいずれに帰属させるかを説明する。ケリーの共変モデルの三要素：弁別性（Distinctiveness、異なる状況での行動の差異の有無）・合意性（Consensus、類似状況で他者も同様に反応するか）・一貫性（Consistency、行動が時間を超えて安定しているか）。二大帰属バイアス：基本的帰属錯誤（Fundamental Attribution Error、他者の行動における外的要因を過小評価し内的要因を過大評価する）；自己奉仕バイアス（Self-Serving Bias、成功を内因に帰属し失敗を外因に帰属する）。四つの知覚的捷径（Perceptual Shortcuts）：ハロー効果（Halo Effect、一点の印象が全体判断を覆う）；ステレオタイプ化（Stereotyping、集団特性で個人を評価する）；初頭効果（Primacy Effect、最初の印象の強い影響、特に初対面者に対して）；新近効果（Recency Effect、最後の印象の強い影響、特に既知の者に対して）"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

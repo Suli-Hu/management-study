@@ -1,0 +1,22 @@
+{
+  "id": "k126",
+  "discipline": "keiei",
+  "schools": [
+    "platform"
+  ],
+  "scholars": [],
+  "year": "",
+  "title": {
+    "zh": "数字化与数字转型",
+    "en": "Digitization vs Digital Transformation",
+    "ja": "デジタイゼーションとDX"
+  },
+  "body": {
+    "zh": "数字化是模拟→数字；数字转型是商业模式的根本再造",
+    "ja": "——◆ デジタイゼーション——アナログ→デジタル変換◆ デジタライゼーション——既存業務プロセス改善◆ DX——ビジネスモデルの根本的再構築"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

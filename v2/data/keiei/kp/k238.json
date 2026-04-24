@@ -1,0 +1,24 @@
+{
+  "id": "k238",
+  "discipline": "keiei",
+  "schools": [
+    "learning_s"
+  ],
+  "scholars": [
+    "winter_s"
+  ],
+  "year": "1982",
+  "title": {
+    "zh": "进化理论",
+    "en": "Evolutionary Theory",
+    "ja": "進化理論"
+  },
+  "body": {
+    "zh": "纳尔逊和温特将生物进化逻辑引入企业战略：组织由多个子系统的「惯例」（Routines）构成，惯例面对新情境时产生变异（Variation），存活于环境选择（Selection），并通过组织学习留存（Retention）。战略不是理性设计的产物，而是这一进化过程的结果——有效的惯例「生存」，无效的惯例「消亡」",
+    "ja": "——組織のルーティンが変異→選択→保持を経て進化する。戦略は合理的設計ではなく進化プロセスの結果"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

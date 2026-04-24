@@ -1,0 +1,22 @@
+{
+  "id": "k216",
+  "discipline": "keiei",
+  "schools": [
+    "planning_s"
+  ],
+  "scholars": [],
+  "year": "",
+  "title": {
+    "zh": "战略规划程序",
+    "en": "Strategic Planning Process",
+    "ja": "戦略計画プロセス"
+  },
+  "body": {
+    "zh": "标准化的多阶段流程：SWOT分析→目标设定→战略方案生成→评估选择→预算分配→运营计划→控制机制。计划学派认为流程的形式化程度本身就是战略质量的保证，形式化手续、数量数据和各类核查清单（Checklist）是其核心工具",
+    "ja": "——SWOT分析→目標設定→戦略代替案生成→評価選択→予算配分→運営計画→統制メカニズムの標準化フロー"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

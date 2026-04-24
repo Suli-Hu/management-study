@@ -1,0 +1,24 @@
+{
+  "id": "k359",
+  "discipline": "keiei",
+  "schools": [
+    "learning_s"
+  ],
+  "scholars": [
+    "senge"
+  ],
+  "year": "1990",
+  "title": {
+    "zh": "系统思考",
+    "en": "Systems Thinking",
+    "ja": "システム思考"
+  },
+  "body": {
+    "zh": "将组织视为相互关联要素的整体系统。硬系统思考（OR/运筹学）追求最优化；软系统方法论（SSM，Checkland，1970s）承认问题的模糊性，通过利益相关者对话寻求共识",
+    "ja": "——◆ ハード・システム思考——最適化追求◆ ソフト・システム方法論——ステークホルダー対話による合意形成"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

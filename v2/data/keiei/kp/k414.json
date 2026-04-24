@@ -1,0 +1,24 @@
+{
+  "id": "k414",
+  "discipline": "keiei",
+  "schools": [
+    "situational"
+  ],
+  "scholars": [
+    "hersey"
+  ],
+  "year": "",
+  "title": {
+    "zh": "情境领导理论",
+    "en": "Situational Leadership Theory",
+    "ja": "状況的リーダーシップ理論"
+  },
+  "body": {
+    "zh": "与布兰查德合作，主张有效领导者应根据下属在特定任务上的发展阶段（能力+意愿）动态切换告知、推销、参与、授权四种领导风格",
+    "ja": "——ブランチャードとの共同研究により、有効なリーダーはフォロワーの特定課題における成熟度（能力＋意欲）に応じて、教示的（Telling）・説得的（Selling）・参加的（Participating）・委任的（Delegating）の四つのリーダーシップ・スタイルを動態的に切り替えるべきであると主張"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

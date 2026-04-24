@@ -1,0 +1,25 @@
+{
+  "id": "k009",
+  "discipline": "keiei",
+  "schools": [
+    "process",
+    "static_structure"
+  ],
+  "scholars": [
+    "urwick"
+  ],
+  "year": "1937",
+  "title": {
+    "zh": "POSDCORB框架",
+    "en": "POSDCORB",
+    "ja": "POSDCORBフレームワーク"
+  },
+  "body": {
+    "zh": "古利克与厄威克在法约尔POCCC五职能基础上扩展而来的七项管理职能框架，更侧重公共行政组织。出自合编论文集《Papers on the Science of Administration》：◆ 计划（Planning）——确定组织目标，制定达成目标的方针、方法和程序◆ 组织（Organizing）——建立正式的权限结构，划分部门和职位，使各部分协调运作◆ 人员配置（Staffing）——人员的招募、选拔、培训、配置以及维持良好的劳动条件◆ 指挥（Directing）——作为领导者做出决策，以命令和指示的形式传达并推动组织运转◆ 协调（Coordinating）——将组织各部分的工作相互关联，确保整体协调一致◆ 报告（Reporting）——通过记录、调查、检查等方式，使上级和下级了解工作进展◆ 预算（Budgeting）——财务计划、会计和财务控制等预算管理活动。※ 与POCCC的区别：将Commander拆分为Directing，Contrôler拆分为Reporting+Budgeting，新增Staffing",
+    "ja": "——ギューリックとアーウィックがファヨールのPOCCC五職能を基盤として拡張した七つの管理職能枠組みであり、特に公共行政組織を重視する。共編論文集『Papers on the Science of Administration』に収録：◆ 計画（Planning）——組織目標を確定し、その達成のための方針・方法・手続きを策定する◆ 組織（Organizing）——公式の権限構造を構築し、部門・職位を編成して各部分の協調的運営を可能にする◆ 人事（Staffing）——人材の採用・選抜・訓練・配置および良好な労働条件の維持◆ 指揮（Directing）——指導者として意思決定を行い、命令・指示の形で伝達し組織を駆動する◆ 調整（Coordinating）——組織各部分の業務を相互に関連づけ、全体としての整合性を確保する◆ 報告（Reporting）——記録・調査・検査等を通じて上位者・下位者に業務の進捗を把握させる◆ 予算（Budgeting）——財務計画・会計・財務統制等の予算管理活動。※ POCCCとの相違：CommanderをDirectingに、ContrôlerをReporting＋Budgetingに分割し、Staffingを新設"
+  },
+  "tags": [],
+  "format": "flat-list",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

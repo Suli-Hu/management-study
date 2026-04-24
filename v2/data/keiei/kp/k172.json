@@ -1,0 +1,22 @@
+{
+  "id": "k172",
+  "discipline": "keiei",
+  "schools": [
+    "hrm"
+  ],
+  "scholars": [],
+  "year": "1964",
+  "title": {
+    "zh": "人力资本理论",
+    "en": "Human Capital Theory",
+    "ja": "人的資本理論"
+  },
+  "body": {
+    "zh": "贝克尔（Gary Becker）奠基，将教育与培训视为对人的投资：◆ 通用人力资本（General Human Capital）——在任何企业都通用的知识和技能，劳动力市场流动性高◆ 企业专用人力资本（Firm-Specific Human Capital）——仅在特定企业内具有价值的知识和技能，积累需要时间，跳槽时价值贬损。SHRM在此框架基础上将人力资本纳入战略资源分析体系",
+    "ja": "——ベッカー（Gary Becker）が基礎を築いた理論であり、教育と訓練を人的投資として捉える。◆ 一般的人的資本（General Human Capital）——あらゆる企業で通用する汎用的知識・スキル。労働市場における流動性が高い◆ 企業特殊的人的資本（Firm-Specific Human Capital）——特定企業においてのみ価値を持つ知識・スキル。蓄積には時間を要し、転職時に価値が減損する。SHRMはこの枠組みの上に、人的資本を戦略的資源として分析フレームワークに組み込んだ"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

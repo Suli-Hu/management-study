@@ -1,0 +1,24 @@
+{
+  "id": "k113",
+  "discipline": "keiei",
+  "schools": [
+    "csr"
+  ],
+  "scholars": [
+    "rhenman"
+  ],
+  "year": "2006",
+  "title": {
+    "zh": "ESG框架",
+    "en": "ESG Framework",
+    "ja": "ESGフレームワーク"
+  },
+  "body": {
+    "zh": "环境（E）、社会（S）、治理（G）三维度评估企业可持续性表现",
+    "ja": "——◆ E（環境）◆ S（社会）◆ G（ガバナンス）の三次元で企業の持続可能性を評価。機関投資家の標準的評価基準"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

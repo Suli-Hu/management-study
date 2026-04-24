@@ -1,0 +1,21 @@
+{
+  "key": "follett",
+  "discipline": "keiei",
+  "name": {
+    "zh": "玛丽·帕克·福莱特",
+    "en": "Mary Parker Follett",
+    "ja": "メアリー・パーカー・フォレット"
+  },
+  "schools": [
+    "behavioral",
+    "conflict"
+  ],
+  "contribution": {
+    "zh": "福莱特是管理思想史上被严重低估的先驱者，被德鲁克赞誉为「管理学的先知」（Prophet of Management）。她在1920年代就提出了许多远超时代的管理理念：建设性冲突（Integration）、状况法则（Law of the Situation）、Power-with（共存型权力）等概念，预见了后来半个世纪才逐步主流化的参与式管理、团队合作、授权赋能和权变理论等思想。她主张组织应是群体经验的网络而非层级的指挥链，管理的本质在于协调而非控制。由于当时的性别偏见和她非学术界出身的背景，其思想在生前未获应有重视，但在1990年代以后被重新发掘，被视为人本管理和后现代组织理论的思想源流。"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

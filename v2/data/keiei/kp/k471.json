@@ -1,0 +1,24 @@
+{
+  "id": "k471",
+  "discipline": "keiei",
+  "schools": [
+    "aston"
+  ],
+  "scholars": [
+    "hickson"
+  ],
+  "year": "",
+  "title": {
+    "zh": "战略应急理论",
+    "en": "Strategic Contingency Theory of Power",
+    "ja": "戦略的コンティンジェンシー理論"
+  },
+  "body": {
+    "zh": "子单元通过控制关键的不确定性来源获取组织权力，权力分布反映各部门在应对外部关键问题上的战略重要性",
+    "ja": "——下位ユニットは重要な不確定性の源泉を統制することにより組織内権力を獲得する。権力分布は各部門が外部の重要問題への対処において持つ戦略的重要性を反映する"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

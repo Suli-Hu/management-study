@@ -1,0 +1,20 @@
+{
+  "key": "granovetter",
+  "discipline": "keiei",
+  "name": {
+    "zh": "马克·格兰诺维特",
+    "en": "Mark Granovetter",
+    "ja": "マーク・グラノヴェッター"
+  },
+  "schools": [
+    "social_network"
+  ],
+  "contribution": {
+    "zh": "格兰诺维特的「弱连带的强度」论文是社会网络理论的奠基之作，被引用超过6万次。嵌入性概念重新定义了经济社会学的研究范式，影响了组织理论、创新管理和知识管理等多个领域。"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

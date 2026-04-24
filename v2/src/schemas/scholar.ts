@@ -13,7 +13,7 @@ export const Scholar = z.object({
   key: ScholarKey,
   discipline: DisciplineKey,
   name: I18nString,
-  schools: z.array(SchoolKey).min(1).describe('属于哪些学派 — 第一个决定学者卡片 accent 色'),
+  schools: z.array(SchoolKey).default([]).describe('属于哪些学派 — 第一个决定学者卡片 accent 色。可空（独立学者）'),
   contribution: BilingualBody,
   lifespan: z.string().trim().default('').describe('如 "1947–" 或 "1916–2008"'),
   institution: z.string().trim().default('').describe('代表性机构，如 "Harvard Business School"'),

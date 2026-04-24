@@ -1,0 +1,22 @@
+{
+  "id": "k236",
+  "discipline": "keiei",
+  "schools": [
+    "learning_s"
+  ],
+  "scholars": [],
+  "year": "1959",
+  "title": {
+    "zh": "非连结渐进主义",
+    "en": "Disjointed Incrementalism",
+    "ja": "非連結的漸進主義"
+  },
+  "body": {
+    "zh": "政策制定不是理性规划，而是连续的、改善性的、相互分立的小步调整，重点在问题解决而非机会开拓。林德布洛姆将对理性规划的颠覆描述为「混乱的科学」（Science of Muddling Through）。这一视角最初来自政治学对政策制定的观察，明茨伯格将其引入战略管理",
+    "ja": "——政策形成は合理的計画ではなく、小幅な調整の積み重ね。「混乱の科学」と表現された"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

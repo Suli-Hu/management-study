@@ -1,0 +1,24 @@
+{
+  "id": "k097",
+  "discipline": "keiei",
+  "schools": [
+    "innovation"
+  ],
+  "scholars": [
+    "schumpeter"
+  ],
+  "year": "",
+  "title": {
+    "zh": "创造性破坏",
+    "en": "Creative Destruction",
+    "ja": "創造的破壊"
+  },
+  "body": {
+    "zh": "创新是资本主义的内在动力，新技术不断摧毁旧经济结构",
+    "ja": "——イノベーションは不断に旧い経済構造を内部から破壊し、新しい構造を創造する。資本主義のダイナミズムの源泉"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

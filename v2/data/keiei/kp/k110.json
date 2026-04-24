@@ -1,0 +1,22 @@
+{
+  "id": "k110",
+  "discipline": "keiei",
+  "schools": [
+    "platform"
+  ],
+  "scholars": [],
+  "year": "",
+  "title": {
+    "zh": "平台治理",
+    "en": "Platform Governance",
+    "ja": "プラットフォーム・ガバナンス"
+  },
+  "body": {
+    "zh": "制定规则、筛选参与者、解决冲突、防止平台滥用",
+    "ja": "——エコシステムの健全性を維持するための統治メカニズム：ルール設定、参加者スクリーニング、紛争解決、権力濫用防止"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "k428",
+  "discipline": "keiei",
+  "schools": [
+    "agency"
+  ],
+  "scholars": [
+    "meckling"
+  ],
+  "year": "",
+  "title": {
+    "zh": "所有权结构与代理成本关系",
+    "en": "Ownership Structure and Agency Costs",
+    "ja": "所有権構造とエージェンシー・コストの関係"
+  },
+  "body": {
+    "zh": "论证了经理人持股比例与代理成本之间的系统性关系，为股权激励机制的设计提供了理论依据",
+    "ja": "——経営者の持株比率とエージェンシー・コストの間の体系的関係を論証し、株式インセンティブ・メカニズムの設計に理論的根拠を提供した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

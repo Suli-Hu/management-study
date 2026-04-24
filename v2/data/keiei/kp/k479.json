@@ -1,0 +1,25 @@
+{
+  "id": "k479",
+  "discipline": "keiei",
+  "schools": [
+    "evolution_process",
+    "cognitive_s"
+  ],
+  "scholars": [
+    "weick"
+  ],
+  "year": "",
+  "title": {
+    "zh": "松散耦合",
+    "en": "Loose Coupling",
+    "ja": "疎結合"
+  },
+  "body": {
+    "zh": "组织各单元之间存在响应性但保持一定独立性，松散耦合系统更具弹性、适应性和局部创新能力",
+    "ja": "——組織の各ユニット間には応答性が存在するが一定の独立性が維持されている。疎結合システムはより高い弾力性・適応性・局所的イノベーション能力を有する"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

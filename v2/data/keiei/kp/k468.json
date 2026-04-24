@@ -1,0 +1,24 @@
+{
+  "id": "k468",
+  "discipline": "keiei",
+  "schools": [
+    "michigan"
+  ],
+  "scholars": [
+    "katz_d"
+  ],
+  "year": "1966",
+  "title": {
+    "zh": "组织开放系统理论",
+    "en": "Open Systems Theory of Organizations",
+    "ja": "組織のオープンシステム理論"
+  },
+  "body": {
+    "zh": "在《组织的社会心理学》（The Social Psychology of Organizations）中，将组织界定为<strong>开放系统</strong>（Open System），分析<strong>能量输入→转换→输出</strong>的循环过程。组织不断从环境获取资源，经过内部活动转化，再将产品或服务输出到环境中，并通过反馈维持动态平衡。组织的社会心理基础由<strong>角色</strong>、<strong>规范</strong>和<strong>价值观</strong>构成。打破了将组织视为封闭系统的传统假设",
+    "ja": "——『組織の社会心理学』（The Social Psychology of Organizations）において、組織をオープンシステムとして位置づけ、エネルギー投入→変換→産出の循環プロセスを分析した。組織は環境から絶えず資源を獲得し、内部活動を通じて変換し、製品やサービスとして環境に産出し、フィードバックを通じて動態的均衡を維持する。組織の社会心理的基盤は役割・規範・価値観から構成される。組織を閉鎖システムとみなす伝統的仮定を打破した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

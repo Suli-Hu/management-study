@@ -1,0 +1,25 @@
+{
+  "id": "k420",
+  "discipline": "keiei",
+  "schools": [
+    "innovation",
+    "entrepreneur_s"
+  ],
+  "scholars": [
+    "schumpeter"
+  ],
+  "year": "",
+  "title": {
+    "zh": "创新五类型",
+    "en": "Five Types of Innovation",
+    "ja": "イノベーションの五類型"
+  },
+  "body": {
+    "zh": "新产品、新方法、新市场、新供应来源、新组织形式，奠定了创新管理研究的分类基础",
+    "ja": "——新製品・新方法・新市場・新供給源・新組織形態の五類型。イノベーション・マネジメント研究の分類基盤を確立した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

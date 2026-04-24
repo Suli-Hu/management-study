@@ -1,0 +1,22 @@
+{
+  "id": "k290",
+  "discipline": "keiei",
+  "schools": [
+    "csr"
+  ],
+  "scholars": [],
+  "year": "1997",
+  "title": {
+    "zh": "三重底线",
+    "en": "Triple Bottom Line",
+    "ja": "トリプル・ボトムライン"
+  },
+  "body": {
+    "zh": "企业绩效评价应同时考量经济（Profit）、社会（People）、环境（Planet）三个维度，而非仅关注财务利润",
+    "ja": "——Profit・People・Planetの三次元評価"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

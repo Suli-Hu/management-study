@@ -1,0 +1,22 @@
+{
+  "id": "k362",
+  "discipline": "keiei",
+  "schools": [
+    "personality"
+  ],
+  "scholars": [],
+  "year": "2002",
+  "title": {
+    "zh": "暗黑三特质",
+    "en": "Dark Triad",
+    "ja": "ダーク・トライアド"
+  },
+  "body": {
+    "zh": "◆ 马基雅维利主义（Machiavellianism）——操纵性强、重利益轻道德，为达目的不择手段◆ 自恋（Narcissism）——自我膨胀、极度重视自身权力、缺乏共情能力◆ 精神病态（Psychopathy）——冲动性强、缺乏对他人的关怀和罪恶感、反社会倾向。三者均与职场中的反生产行为（CWB）相关，在领导力和职场偏差行为研究中受到广泛关注",
+    "ja": "——◆ マキャベリアニズム（Machiavellianism）——操作性が高く、利益重視で道徳軽視◆ ナルシシズム（Narcissism）——自己膨張・共感性の欠如◆ サイコパシー（Psychopathy）——衝動性・反社会的傾向。三特性はリーダーシップ研究や職場における逸脱行動の研究で注目されている"
+  },
+  "tags": [],
+  "format": "flat-list",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

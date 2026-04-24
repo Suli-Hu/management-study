@@ -1,0 +1,24 @@
+{
+  "id": "k436",
+  "discipline": "keiei",
+  "schools": [
+    "learning_s"
+  ],
+  "scholars": [
+    "hamel"
+  ],
+  "year": "",
+  "title": {
+    "zh": "管理创新理论",
+    "en": "Management Innovation Theory",
+    "ja": "マネジメント・イノベーション理論"
+  },
+  "body": {
+    "zh": "主张对管理体系本身进行创新与对产品工艺创新同等重要，是未来竞争优势最难复制的来源",
+    "ja": "——経営システムそのものへのイノベーションは、製品・工程イノベーションと同等に重要であり、将来の競争優位の中で最も模倣困難な源泉であると主張した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

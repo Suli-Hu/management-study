@@ -1,0 +1,22 @@
+{
+  "id": "k337",
+  "discipline": "keiei",
+  "schools": [
+    "planning_s"
+  ],
+  "scholars": [],
+  "year": "1981",
+  "title": {
+    "zh": "范围经济",
+    "en": "Economies of Scope",
+    "ja": "範囲の経済"
+  },
+  "body": {
+    "zh": "在一个组织内同时生产多种产品的总成本，低于分别由独立企业各自生产的成本之和。是多角化的经济学理论基础，与规模经济（Economies of Scale）相辅相成",
+    "ja": "——一組織内の複数製品同時生産が個別生産の合計より低コスト。多角化の経済学的基盤"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

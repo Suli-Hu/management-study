@@ -1,0 +1,24 @@
+{
+  "id": "k456",
+  "discipline": "keiei",
+  "schools": [
+    "design_s"
+  ],
+  "scholars": [
+    "andrews"
+  ],
+  "year": "",
+  "title": {
+    "zh": "企业战略与业务战略区分",
+    "en": "Corporate Strategy vs Business Strategy",
+    "ja": "企業戦略と事業戦略の区分"
+  },
+  "body": {
+    "zh": "区分公司整体发展方向与特定竞争领域的策略，奠定了后来公司战略与竞争战略两大研究方向的学科分野",
+    "ja": "——企業全体の発展方向と特定の競争領域における戦略を区別し、後の企業戦略（全社戦略）と競争戦略という二大研究方向の学問的分岐を確立した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

@@ -1,0 +1,177 @@
+{
+  "key": "keiei",
+  "title": {
+    "zh": "经营学",
+    "en": "Management",
+    "ja": "経営学"
+  },
+  "tagline": {
+    "zh": "日本大学院入试备考"
+  },
+  "accent": "classic",
+  "themes": [
+    {
+      "key": "ob_individual",
+      "title": {
+        "zh": "个体的世界"
+      },
+      "desc": {
+        "zh": "人格→态度→动机(内容→过程)→判断偏误"
+      },
+      "accent": "ob",
+      "schools": [
+        "personality",
+        "attitude_emotion",
+        "behavioral",
+        "ob",
+        "beh_econ"
+      ]
+    },
+    {
+      "key": "ob_group",
+      "title": {
+        "zh": "人与人之间"
+      },
+      "desc": {
+        "zh": "非正式组织→集团动力学→领导力→冲突管理"
+      },
+      "accent": "ob",
+      "schools": [
+        "humanrel",
+        "leadership_theory",
+        "conflict"
+      ]
+    },
+    {
+      "key": "org_classic",
+      "title": {
+        "zh": "古典组织论"
+      },
+      "desc": {
+        "zh": "作业层→管理职能→整体结构→形态分类"
+      },
+      "accent": "classic",
+      "schools": [
+        "scientific",
+        "process",
+        "bureaucracy",
+        "org_types"
+      ]
+    },
+    {
+      "key": "org_modern",
+      "title": {
+        "zh": "近代组织论"
+      },
+      "desc": {
+        "zh": "协作系统→决策系统→学习主体→变革主体"
+      },
+      "accent": "classic",
+      "schools": [
+        "systems",
+        "decision_theory",
+        "org_learning",
+        "change"
+      ]
+    },
+    {
+      "key": "org_environment",
+      "title": {
+        "zh": "组织与环境"
+      },
+      "desc": {
+        "zh": "权变→生态学→制度论→社会网络"
+      },
+      "accent": "classic",
+      "schools": [
+        "contingency",
+        "evolution_process",
+        "institutional",
+        "social_network"
+      ]
+    },
+    {
+      "key": "hr",
+      "title": {
+        "zh": "人材与雇用"
+      },
+      "desc": {
+        "zh": "英美HRM↔日本式经营的对照"
+      },
+      "accent": "classic",
+      "schools": [
+        "hrm",
+        "japanese_mgmt"
+      ]
+    },
+    {
+      "key": "strategy_internal",
+      "title": {
+        "zh": "战略论 内部视点"
+      },
+      "desc": {
+        "zh": "治理→资源(RBV)→动态能力→知识→创新"
+      },
+      "accent": "strategy",
+      "schools": [
+        "agency",
+        "rbv",
+        "dynamic",
+        "km",
+        "innovation"
+      ]
+    },
+    {
+      "key": "strategy_external",
+      "title": {
+        "zh": "战略论 外部视点"
+      },
+      "desc": {
+        "zh": "竞争定位→平台→CSR→交易费用→国际经营"
+      },
+      "accent": "strategy",
+      "schools": [
+        "io",
+        "platform",
+        "csr",
+        "tce",
+        "international_strategy"
+      ]
+    },
+    {
+      "key": "strategy_process",
+      "title": {
+        "zh": "战略形成过程（HOW）"
+      },
+      "desc": {
+        "zh": "明茨伯格将战略形成归纳为十种学派，反映战略是理性设计的还是涌现学习的"
+      },
+      "accent": "strategy",
+      "schools": []
+    },
+    {
+      "key": "scott_quadrant",
+      "title": {
+        "zh": "斯科特四象限"
+      },
+      "desc": {
+        "zh": "封闭/开放 × 合理/自然 的2×2组织理论分类框架"
+      },
+      "accent": "classic",
+      "schools": []
+    },
+    {
+      "key": "institutes",
+      "title": {
+        "zh": "院校学派"
+      },
+      "desc": {
+        "zh": "以大学为核心形成的学术传统与研究群体"
+      },
+      "accent": "strategy",
+      "schools": []
+    }
+  ],
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

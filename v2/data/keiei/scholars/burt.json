@@ -1,0 +1,20 @@
+{
+  "key": "burt",
+  "discipline": "keiei",
+  "name": {
+    "zh": "罗纳德·伯特",
+    "en": "Ronald S. Burt",
+    "ja": "ロナルド・S・バート"
+  },
+  "schools": [
+    "social_network"
+  ],
+  "contribution": {
+    "zh": "伯特的结构空隙理论将社会网络位置与竞争优势直接关联，深刻影响了组织设计、人力资源管理和开放式创新等领域的研究与实践。"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

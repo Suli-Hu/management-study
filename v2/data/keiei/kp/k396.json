@@ -1,0 +1,24 @@
+{
+  "id": "k396",
+  "discipline": "keiei",
+  "schools": [
+    "michigan"
+  ],
+  "scholars": [
+    "likert"
+  ],
+  "year": "",
+  "title": {
+    "zh": "四系统组织体制模型",
+    "en": "Likert's System 1-4 Model",
+    "ja": "4システム組織体制モデル"
+  },
+  "body": {
+    "zh": "将管理体制分为剥削性权威、温和权威、协商式、参与性群体四种类型，认为高信任和高参与的System 4是最有效的管理体制",
+    "ja": "——管理体制を搾取的権威型（System 1）・温情的権威型（System 2）・協議型（System 3）・参加的集団型（System 4）の四類型に分類し、高信頼・高参加のSystem 4が最も有効な管理体制であると主張した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

@@ -1,0 +1,22 @@
+{
+  "id": "k377",
+  "discipline": "keiei",
+  "schools": [
+    "ob"
+  ],
+  "scholars": [],
+  "year": "",
+  "title": {
+    "zh": "社会助长与抑制",
+    "en": "Social Facilitation and Inhibition",
+    "ja": "社会的促進と抑制"
+  },
+  "body": {
+    "zh": "他人在场时，对简单/熟练任务产生促进效果（Social Facilitation），对复杂/新任务产生抑制效果（Social Inhibition）。Zajonc用优势反应理论解释",
+    "ja": "——他者の存在が、◆ 単純・習熟課題に対しては促進効果（Social Facilitation）を生じさせ、◆ 複雑・未習熟課題に対しては抑制効果（Social Inhibition）を生じさせる。ザイアンス（Zajonc）が優勢反応理論（Dominant Response Theory）で説明した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

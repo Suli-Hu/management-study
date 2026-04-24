@@ -1,0 +1,20 @@
+{
+  "key": "graen",
+  "discipline": "keiei",
+  "name": {
+    "zh": "乔治·格兰",
+    "en": "George B. Graen",
+    "ja": "ジョージ・グレーン"
+  },
+  "schools": [
+    "leadership_theory"
+  ],
+  "contribution": {
+    "zh": "格兰开创了LMX理论，将领导力研究从「领导者对所有追随者统一施加影响」转向关注领导者-成员间的二元关系质量差异，是关系型领导力研究的先驱。"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

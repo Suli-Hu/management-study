@@ -1,0 +1,27 @@
+{
+  "id": "k120",
+  "discipline": "keiei",
+  "schools": [
+    "change"
+  ],
+  "scholars": [
+    "hammer_m"
+  ],
+  "year": "1993",
+  "title": {
+    "zh": "BPR——业务流程再造",
+    "en": "Business Process Reengineering",
+    "ja": "BPR"
+  },
+  "body": {
+    "zh": "<strong>Michael Hammer</strong>（1990 HBR「Don't Automate, Obliterate」）+ <strong>Hammer & Champy</strong>（1993 Reengineering the Corporation）提出。对业务流程进行<strong>根本性重新思考 + 彻底重新设计</strong>，在成本·质量·服务·速度上实现<strong>戏剧性飞跃</strong>。Hammer 的核心主张：不是自动化旧流程，而是用 IT <strong>推倒重来</strong>。是 1990s 激进变革思潮的顶峰。<br>【4 定义关键词（根·彻·流·戏）】<br>①<strong>根本性</strong>（Fundamental）——反复问「我们为什么做这个？」不是问怎么改好，是问根本要不要做<br>②<strong>彻底性</strong>（Radical）——从零开始（Clean slate），推倒重来，不是 patch 是 rewrite<br>③<strong>业务流程</strong>（Business Processes）——跨部门端到端流程，不是单个职能，视角革命<br>④<strong>戏剧性</strong>（Dramatic）——10 倍·百倍改善，不是 10%；小改善不是 BPR<br>【5 种典型手法】<br>①<strong>多人流程合并为单人</strong>（Case Worker）——7 人接力的事 → 一个全能选手做完<br>②<strong>决策权下放</strong>——决策点下移到执行处，去除审批层<br>③<strong>并行替代串行</strong>——能同时做的步骤不按顺序做<br>④<strong>流程分叉</strong>——不同输入用不同流程版本，不追求「一套流程包打天下」<br>⑤<strong>控制点最小化</strong>——砍掉核查·审批·对账等不增值活动<br>【Hammer 1996『Beyond Reengineering』自省的 3 个早期错误】<br>①<strong>忽视员工参与</strong>——没让现场人参与设计，重设计脱离实际<br>②<strong>IT 幻觉</strong>——以为装了 ERP 就是 BPR，忽视人与文化<br>③<strong>暴力裁员当改革</strong>——只裁不重设计，抵抗极强<br>◆意义——1990s 变革思潮顶峰；Ford 应付账款 500→125 人等戏剧案例震撼业界；把「流程」确立为组织设计单位<br>◆局限——失败率 50-70%；激进幅度超组织承受力；Hammer 本人 1996 承认忽视了人的因素。对照 Kaizen（渐进·赋能·日式）路径更可持续",
+    "ja": "——<strong>マイケル・ハマー</strong>（1990 HBR「Don't Automate, Obliterate」）および <strong>Hammer & Champy</strong>（1993 Reengineering the Corporation）が提唱。業務プロセスを<strong>根本的に再思考し、徹底的に再設計</strong>し、コスト・品質・サービス・スピードにおいて<strong>劇的な飛躍</strong>を実現する。ハマーの中核主張：旧プロセスを自動化するのではなく、IT を活用して<strong>ゼロから作り直す</strong>。1990年代ラディカル変革思潮の頂点。<br>【4つの定義キーワード】<br>①<strong>根本性</strong>（Fundamental）——「なぜこれをやっているのか？」を問い直す。改善方法ではなく、そもそも必要かを問う<br>②<strong>抜本性</strong>（Radical）——ゼロベース（Clean slate）で再設計。パッチではなく書き直し<br>③<strong>業務プロセス</strong>（Business Processes）——部門横断のエンド・トゥ・エンド・プロセスを単位とする、視座の革命<br>④<strong>劇的性</strong>（Dramatic）——10倍・百倍の改善であり、10% ではない。小幅改善は BPR ではない<br>【5つの典型的手法】<br>①<strong>複数人業務の1人への統合</strong>（Case Worker）——7人リレーの業務を1人のマルチ担当者が完結<br>②<strong>意思決定権限の委譲</strong>——意思決定点を実行現場に下ろし、承認階層を削減<br>③<strong>並行処理への転換</strong>——同時実行可能なステップを順次実行しない<br>④<strong>プロセスの分岐</strong>——入力の違いに応じて異なるプロセス版を用意。「万能プロセス」に固執しない<br>⑤<strong>統制ポイントの最小化</strong>——検査・承認・照合等の非付加価値活動を削減<br>【Hammer 1996『Beyond Reengineering』における3つの自己反省】<br>①<strong>従業員参加の軽視</strong>——現場の人間が設計に参加せず、再設計が実態から乖離<br>②<strong>IT 幻想</strong>——ERP 導入 = BPR 完了と誤認、人と文化を軽視<br>③<strong>暴力的リストラを改革と混同</strong>——再設計を伴わない削減のみでは抵抗が極めて強い<br>◆意義——1990年代の変革思潮の頂点；フォード買掛金部門 500→125 人等の劇的事例が業界に衝撃；「プロセス」を組織設計の単位として確立<br>◆限界——失敗率 50-70%；変革の急激さが組織の許容範囲を超える；ハマー自身が 1996 年に「人間要因の軽視」を認めた。対照的にカイゼン（日本型・漸進・エンパワメント）路線の方が持続可能"
+  },
+  "tags": [
+    "义",
+    "限"
+  ],
+  "format": "accordion",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

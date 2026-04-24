@@ -1,0 +1,25 @@
+{
+  "id": "k061",
+  "discipline": "keiei",
+  "schools": [
+    "contingency",
+    "adaptive_design"
+  ],
+  "scholars": [
+    "woodward"
+  ],
+  "year": "1958/1965",
+  "title": {
+    "zh": "技术-结构权变论",
+    "en": "Technology-Structure Contingency",
+    "ja": "技術-構造権変論"
+  },
+  "body": {
+    "zh": "伍德沃德对英国100家工业企业的研究发现，组织结构的最优形态与生产技术类型密切相关：单件/小批量生产（Job Production）→扁平灵活的有机结构；大批量/大规模生产（Mass Production）→高集中、高标准化的机械式结构；连续流程生产（Process Production）→重新趋向有机、高技能型结构。这一发现揭示了技术作为结构权变因素的重要性",
+    "ja": "——ウッドワードが英国100社の工業企業を調査した結果、組織構造の最適形態は生産技術の類型と密接に関連していることが判明した：個別生産・小ロット生産（Job Production）→フラットで柔軟な有機的構造；大量生産（Mass Production）→高度に集権化され標準化された機械的構造；連続プロセス生産（Process Production）→再び有機的・高技能型構造へ回帰する。この発見は、技術が構造の権変要因として持つ重要性を明らかにした"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

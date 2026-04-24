@@ -1,0 +1,24 @@
+{
+  "id": "k112",
+  "discipline": "keiei",
+  "schools": [
+    "csr"
+  ],
+  "scholars": [
+    "freeman"
+  ],
+  "year": "1984",
+  "title": {
+    "zh": "利益相关者",
+    "en": "Stakeholder Theory",
+    "ja": "ステークホルダー理論"
+  },
+  "body": {
+    "zh": "任何受企业决策影响、或能影响企业决策的群体",
+    "ja": "——企業はすべてのステークホルダーの利害を考慮すべきであるとし、株主至上主義に根本的挑戦を投げかけた"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

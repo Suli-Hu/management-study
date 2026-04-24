@@ -1,0 +1,25 @@
+{
+  "id": "k098",
+  "discipline": "keiei",
+  "schools": [
+    "innovation",
+    "harvard"
+  ],
+  "scholars": [
+    "christensen"
+  ],
+  "year": "",
+  "title": {
+    "zh": "颠覆性创新",
+    "en": "Disruptive Innovation",
+    "ja": "破壊的イノベーション"
+  },
+  "body": {
+    "zh": "新进者从<strong>低端市场</strong>或<strong>新市场</strong>切入，以较低成本、更简便的技术满足被忽视的客户群，逐步向主流市场进攻，最终颠覆在位者。在位企业因聚焦现有优质客户、遵循维持性创新的最佳实践，反而错过颠覆性技术——即<strong>创新者困境</strong>（Innovator's Dilemma）。与维持性创新（Sustaining Innovation）相对，后者沿现有技术轨迹渐进改良",
+    "ja": "——新規参入者がローエンド市場や新市場から参入し、技術の進化とともに上位市場へ侵食し、最終的に既存企業を駆逐する"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

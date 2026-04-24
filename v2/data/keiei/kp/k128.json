@@ -1,0 +1,22 @@
+{
+  "id": "k128",
+  "discipline": "keiei",
+  "schools": [
+    "dynamic"
+  ],
+  "scholars": [],
+  "year": "",
+  "title": {
+    "zh": "人机协作",
+    "en": "Human-AI Collaboration",
+    "ja": "人間-AI協働"
+  },
+  "body": {
+    "zh": "哪些任务适合AI，哪些需要人类判断，如何设计协作界面",
+    "ja": "——AIと人間がそれぞれの強みを活かして協働する枠組み。効果的な協働の鍵はAIを人間の能力拡張として位置づけること"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

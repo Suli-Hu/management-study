@@ -1,0 +1,25 @@
+{
+  "id": "k447",
+  "discipline": "keiei",
+  "schools": [
+    "behavioral",
+    "equilibrium"
+  ],
+  "scholars": [
+    "follett"
+  ],
+  "year": "",
+  "title": {
+    "zh": "权力共享与共存权力",
+    "en": "Power-with vs Power-over",
+    "ja": "権力の共有と共存的権力"
+  },
+  "body": {
+    "zh": "区分「支配型权力」（Power-over）和「共存型权力」（Power-with）。主张管理者不应以权力支配下属，而应通过共同参与和协作发展出共存型权力，实现组织整体效能的提升。这是参与型管理和授权（Empowerment）思想的先驱",
+    "ja": "——「支配的権力」（Power-over）と「共存的権力」（Power-with）を区別する。管理者は権力によって部下を支配するのではなく、共同参画と協働を通じて共存的権力を発展させ、組織全体の効能を向上させるべきである。この考え方は参加型管理とエンパワーメント思想の先駆である"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

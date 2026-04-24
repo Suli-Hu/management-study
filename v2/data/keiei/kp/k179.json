@@ -1,0 +1,24 @@
+{
+  "id": "k179",
+  "discipline": "keiei",
+  "schools": [
+    "adaptive_design"
+  ],
+  "scholars": [
+    "thompson_jd"
+  ],
+  "year": "",
+  "title": {
+    "zh": "缓冲机制",
+    "en": "Buffering",
+    "ja": "緩衝メカニズム"
+  },
+  "body": {
+    "zh": "组织通过储存、预测、调度等手段在技术核心与外部环境之间建立缓冲层，减少不确定性的直接冲击。除缓冲之外，汤普森还提出了平准化（Leveling）、预测（Forecasting）和配给（Rationing）等应对环境不确定性的策略",
+    "ja": "——組織は備蓄・予測・日程調整等の手段を通じて技術コアと外部環境の間に緩衝層を構築し、不確定性の直接的衝撃を低減する。緩衝に加えて、トンプソンは環境をより広く包摂する「平準化」（Leveling）や、環境との直接交渉による「予測」（Forecasting）・「割当」（Rationing）といった対処戦略も提示している"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

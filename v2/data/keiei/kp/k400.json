@@ -1,0 +1,24 @@
+{
+  "id": "k400",
+  "discipline": "keiei",
+  "schools": [
+    "planning_s"
+  ],
+  "scholars": [
+    "ansoff"
+  ],
+  "year": "",
+  "title": {
+    "zh": "战略惊喜管理",
+    "en": "Strategic Surprise Management",
+    "ja": "戦略的サプライズ管理"
+  },
+  "body": {
+    "zh": "提出组织应建立实时监测系统以应对突发性战略威胁，是危机管理和战略韧性研究的早期先驱",
+    "ja": "——組織はリアルタイムのモニタリング・システムを構築し、突発的な戦略的脅威に対応すべきであると提唱した。危機管理と戦略的レジリエンス研究の初期の先駆である"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "k495",
+  "discipline": "keiei",
+  "schools": [
+    "harvard"
+  ],
+  "scholars": [
+    "kanter"
+  ],
+  "year": "",
+  "title": {
+    "zh": "超越巨人",
+    "en": "When Giants Learn to Dance",
+    "ja": "巨人を超えて"
+  },
+  "body": {
+    "zh": "1989年提出大型企业需要在规模与灵活性之间取得平衡，\"后企业家时代\"的组织需要兼具大企业资源和小企业敏捷性",
+    "ja": "——1989年に提唱。大規模企業が規模と柔軟性の間のバランスを取る必要性を説いた"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

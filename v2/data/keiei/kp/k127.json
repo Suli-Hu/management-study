@@ -1,0 +1,24 @@
+{
+  "id": "k127",
+  "discipline": "keiei",
+  "schools": [
+    "dynamic"
+  ],
+  "scholars": [
+    "raisch"
+  ],
+  "year": "",
+  "title": {
+    "zh": "AI能力的动态能力视角",
+    "en": "AI as Dynamic Capability",
+    "ja": "ダイナミック・ケイパビリティとしてのAI"
+  },
+  "body": {
+    "zh": "感知AI机会、整合AI资源、重构组织流程",
+    "ja": "——ティースのフレームワークをAI能力構築に適用：感知→捕捉→変革。AI能力は継続的に更新されるダイナミック・ケイパビリティとして捉えるべき"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

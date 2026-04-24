@@ -1,0 +1,24 @@
+{
+  "id": "k391",
+  "discipline": "keiei",
+  "schools": [
+    "behavioral"
+  ],
+  "scholars": [
+    "maslow"
+  ],
+  "year": "",
+  "title": {
+    "zh": "高峰体验",
+    "en": "Peak Experience",
+    "ja": "至高体験"
+  },
+  "body": {
+    "zh": "描述人在自我实现时感受到的极致满足与意义感，是积极心理学研究的重要先驱概念",
+    "ja": "——人が自己実現の瞬間に感じる究極的な満足感と意味感。ポジティブ心理学研究の重要な先駆概念である"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

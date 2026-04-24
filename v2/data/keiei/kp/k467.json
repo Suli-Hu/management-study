@@ -1,0 +1,24 @@
+{
+  "id": "k467",
+  "discipline": "keiei",
+  "schools": [
+    "chicago"
+  ],
+  "scholars": [
+    "stigler"
+  ],
+  "year": "",
+  "title": {
+    "zh": "信息经济学",
+    "en": "Economics of Information",
+    "ja": "情報の経済学"
+  },
+  "body": {
+    "zh": "1961年首次系统分析信息搜寻成本对市场价格分散的影响，开创了信息不对称研究的早期路径",
+    "ja": "——1961年に情報探索コストが市場における価格分散に及ぼす影響を初めて体系的に分析し、情報の非対称性研究の初期的経路を切り開いた"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

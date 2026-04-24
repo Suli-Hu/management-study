@@ -1,0 +1,24 @@
+{
+  "id": "k494",
+  "discipline": "keiei",
+  "schools": [
+    "harvard"
+  ],
+  "scholars": [
+    "kanter"
+  ],
+  "year": "",
+  "title": {
+    "zh": "组织权力理论",
+    "en": "Organizational Power Theory",
+    "ja": "組織内権力の理論"
+  },
+  "body": {
+    "zh": "分析组织中权力（Power）的来源——信息、资源和支持——以及权力匮乏（Powerlessness）如何导致官僚主义行为和组织低效",
+    "ja": "——組織内の権力（Power）の源泉——情報・資源・支援——と、権力の欠乏（Powerlessness）がいかに官僚主義的行動と組織の非効率を招くかを分析した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

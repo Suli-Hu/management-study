@@ -1,0 +1,25 @@
+{
+  "id": "k406",
+  "discipline": "keiei",
+  "schools": [
+    "institutional",
+    "evolution_process"
+  ],
+  "scholars": [
+    "powell"
+  ],
+  "year": "",
+  "title": {
+    "zh": "网络作为第三种协调机制",
+    "en": "Network as Third Governance Form",
+    "ja": "ネットワークとしての第三の調整メカニズム"
+  },
+  "body": {
+    "zh": "提出组织间网络是有别于市场和层级的第三种治理形式，在知识密集型产业中尤为重要",
+    "ja": "——組織間ネットワークは市場とヒエラルキーとは異なる第三のガバナンス形態であり、知識集約型産業において特に重要であることを提唱した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

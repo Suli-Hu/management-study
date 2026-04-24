@@ -1,0 +1,25 @@
+{
+  "id": "k534",
+  "discipline": "keiei",
+  "schools": [
+    "culture_s",
+    "international_strategy"
+  ],
+  "scholars": [
+    "hofstede"
+  ],
+  "year": "",
+  "title": {
+    "zh": "权力距离",
+    "en": "Power Distance",
+    "ja": "権力格差"
+  },
+  "body": {
+    "zh": "社会成员对权力分配不平等的接受程度。高权力距离文化（日本、中国）倾向接受层级；低权力距离文化（北欧）追求平等",
+    "ja": "——社会の成員が権力分配の不平等を受容する程度。権力格差の高い文化（日本・中国）はヒエラルキーを受容する傾向があり、権力格差の低い文化（北欧）は平等を追求する"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

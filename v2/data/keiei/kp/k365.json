@@ -1,0 +1,24 @@
+{
+  "id": "k365",
+  "discipline": "keiei",
+  "schools": [
+    "personality"
+  ],
+  "scholars": [
+    "kelley"
+  ],
+  "year": "",
+  "title": {
+    "zh": "归因理论",
+    "en": "Attribution Theory",
+    "ja": "帰属理論"
+  },
+  "body": {
+    "zh": "人们通过三维度判断行为原因：区别性（Distinctiveness）、一致性（Consensus）、一贯性（Consistency）。常见偏误：基本归因错误（高估内因低估外因）、自利偏见（成功归内因失败归外因）",
+    "ja": "——人々が行動の原因を判断する際の三次元：◆ 弁別性（Distinctiveness）——特定の状況でのみ生じるか◆ 合意性（Consensus）——他者も同様に行動するか◆ 一貫性（Consistency）——時間や状況を超えて一貫しているか。典型的バイアス：基本的帰属の誤り（内的要因の過大評価・外的要因の過小評価）、自己奉仕バイアス（成功は内因に、失敗は外因に帰属）"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

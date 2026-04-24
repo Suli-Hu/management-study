@@ -1,0 +1,25 @@
+{
+  "id": "k455",
+  "discipline": "keiei",
+  "schools": [
+    "systems",
+    "adaptive_design"
+  ],
+  "scholars": [
+    "bertalanffy"
+  ],
+  "year": "",
+  "title": {
+    "zh": "一般系统论",
+    "en": "General Systems Theory",
+    "ja": "一般システム理論"
+  },
+  "body": {
+    "zh": "所有复杂系统共享整体大于部分之和、开放性、自我调节等结构性原则，为跨学科研究提供了统一的理论框架",
+    "ja": "——あらゆる複雑システムは「全体は部分の総和を超える」・開放性・自己調節等の構造的原理を共有するとし、学際的研究に統一的な理論枠組みを提供した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "k452",
+  "discipline": "keiei",
+  "schools": [
+    "leadership_theory"
+  ],
+  "scholars": [
+    "house"
+  ],
+  "year": "",
+  "title": {
+    "zh": "魅力型领导理论",
+    "en": "Charismatic Leadership Theory",
+    "ja": "カリスマ的リーダーシップ理論"
+  },
+  "body": {
+    "zh": "识别了魅力型领导者的行为特征及其通过愿景激励和情感感召驱动追随者超额绩效的心理机制",
+    "ja": "——カリスマ的リーダーの行動特徴と、ビジョンによる鼓舞と感情的感化を通じてフォロワーの期待を超える業績を引き出す心理的メカニズムを解明した"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

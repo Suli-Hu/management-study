@@ -1,0 +1,21 @@
+{
+  "key": "mcclelland",
+  "discipline": "keiei",
+  "name": {
+    "zh": "大卫·克拉伦斯·麦克莱兰",
+    "en": "David Clarence McClelland",
+    "ja": "デイビッド・マクレランド"
+  },
+  "schools": [
+    "behavioral",
+    "ob"
+  ],
+  "contribution": {
+    "zh": "麦克莱兰是动机心理学的重要代表人物，亨利·穆雷（Henry Murray）需求理论的继承者和发展者。他最重要的贡献是提出「达成动机」（nAch）概念并通过主题统觉测验（TAT）进行测量，研究表明社会中nAch水平与经济发展速度正相关，将个体动机研究扩展至社会层面。他还较早将能力评估（Competency Assessment）引入人才选拔实践，挑战了传统以智力测验为主的选才方式，成为现代人力资源管理「胜任力模型」的思想先驱。三需求理论是经营学动机理论中与马斯洛、赫茨伯格、阿尔德弗并列的核心内容理论。"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

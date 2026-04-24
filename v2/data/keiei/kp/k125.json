@@ -1,0 +1,25 @@
+{
+  "id": "k125",
+  "discipline": "keiei",
+  "schools": [
+    "dynamic",
+    "platform"
+  ],
+  "scholars": [
+    "raisch"
+  ],
+  "year": "2025",
+  "title": {
+    "zh": "AI工具三类型",
+    "en": "Three Types of AI Tools",
+    "ja": "AIツールの三類型"
+  },
+  "body": {
+    "zh": "助手型（Assistant）、协作型（Co-pilot）、自主型（Autonomous），对员工自主性和创造力影响机制不同",
+    "ja": "——◆ アシスタント型◆ コパイロット型◆ 自律型。三類型は従業員のスキル要件と組織設計に異なる影響を及ぼす"
+  },
+  "tags": [],
+  "format": "narrative",
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

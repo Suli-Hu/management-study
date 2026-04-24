@@ -1,0 +1,20 @@
+{
+  "key": "holland",
+  "discipline": "keiei",
+  "name": {
+    "zh": "约翰·霍兰德",
+    "en": "John L. Holland",
+    "ja": "ジョン・ホランド"
+  },
+  "schools": [
+    "ob"
+  ],
+  "contribution": {
+    "zh": "霍兰德是职业咨询和生涯发展领域最具影响力的理论家。他的RIASEC模型（1959）是全球使用最广泛的职业匹配框架，被O*NET（美国职业信息网络）、SAT职业探索量表（SDS）等数十种主流职业测评工具采用。他的理论连接了人格心理学与劳动经济学，为组织招募与岗位设计提供了有力的科学依据。"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

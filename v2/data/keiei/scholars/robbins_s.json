@@ -1,0 +1,20 @@
+{
+  "key": "robbins_s",
+  "discipline": "keiei",
+  "name": {
+    "zh": "斯蒂芬·罗宾斯",
+    "en": "Stephen P. Robbins",
+    "ja": "スティーブン・ロビンズ"
+  },
+  "schools": [
+    "conflict"
+  ],
+  "contribution": {
+    "zh": "组织行为学教科书权威，冲突观三阶段演进、功能性vs失调性冲突的体系化"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

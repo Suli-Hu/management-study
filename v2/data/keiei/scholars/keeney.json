@@ -1,0 +1,20 @@
+{
+  "key": "keeney",
+  "discipline": "keiei",
+  "name": {
+    "zh": "拉尔夫·基尼",
+    "en": "Ralph L. Keeney",
+    "ja": "ラルフ・キーニー"
+  },
+  "schools": [
+    "decision_theory"
+  ],
+  "contribution": {
+    "zh": "基尼与雷法合著《Decisions with Multiple Objectives》（1976）系统建立了多属性效用理论（MAUT），获得兰彻斯特奖。后独自提出价值聚焦思维（Value-Focused Thinking, 1992），主张决策应从明确价值观出发而非从备选方案出发。MIT运筹学博士，长期推动决策分析在公共政策、环境、能源等领域的应用。"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}

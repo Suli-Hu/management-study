@@ -1,0 +1,21 @@
+{
+  "key": "pondy",
+  "discipline": "keiei",
+  "name": {
+    "zh": "路易斯·庞迪",
+    "en": "Louis R. Pondy",
+    "ja": "ルイス・ポンディ"
+  },
+  "schools": [
+    "behavioral",
+    "conflict"
+  ],
+  "contribution": {
+    "zh": "庞迪是组织冲突研究的先驱，其1967年论文系统化了冲突分析的过程模型，成为后续组织行为学冲突研究的基础参考。"
+  },
+  "lifespan": "",
+  "institution": "",
+  "nobel": null,
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-24T02:21:59.847Z"
+}
