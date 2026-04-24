@@ -1,0 +1,269 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import { getDb } from '~/lib/db';
+
+const { discipline } = Astro.params;
+const db = getDb(Astro.locals.runtime.env);
+
+const disc = await db
+  .prepare('SELECT key, title_zh FROM discipline WHERE key = ?')
+  .bind(discipline)
+  .first<{ key: string; title_zh: string }>();
+if (!disc) return Astro.redirect('/404');
+
+const rawQ = (Astro.url.searchParams.get('q') ?? '').trim();
+
+// FTS5 特殊字符兜底：去除 " ' ( ) - * ^ 和多余空白
+function sanitizeFts(q: string): string {
+  return q.replace(/[\"'()\-*^]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+const ftsQ = sanitizeFts(rawQ);
+
+// trigram tokenizer 需要 ≥3 字符；短查询走 LIKE fallback
+// 判断：去掉空白后的长度（避免 "a b" 这种 3 字符但实际单字）
+const useFts = ftsQ.replace(/\s+/g, '').length >= 3;
+
+interface KpHit {
+  id: string;
+  title_zh: string;
+  title_en: string | null;
+  title_ja: string | null;
+  year: string;
+  excerpt_zh: string;
+  excerpt_ja: string | null;
+  scholars_csv: string | null;
+  schools_csv: string | null;
+}
+
+interface ScholarHit {
+  key: string;
+  name_zh: string;
+  name_en: string | null;
+  kp_count: number;
+}
+
+interface SchoolHit {
+  key: string;
+  title_zh: string;
+  title_en: string | null;
+  kp_count: number;
+}
+
+let kpHits: KpHit[] = [];
+let scholarHits: ScholarHit[] = [];
+let schoolHits: SchoolHit[] = [];
+
+if (ftsQ.length > 0) {
+  if (useFts) {
+    // 长查询：FTS5 trigram MATCH + BM25 rank + snippet
+    const kpRes = await db
+      .prepare(`
+        SELECT
+          k.id, k.title_zh, k.title_en, k.title_ja, k.year,
+          snippet(kp_fts, 4, '<mark>', '</mark>', '...', 24) as excerpt_zh,
+          snippet(kp_fts, 5, '<mark>', '</mark>', '...', 24) as excerpt_ja,
+          (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id ORDER BY position) as scholars_csv,
+          (SELECT GROUP_CONCAT(school_key,   ',') FROM kp_school  WHERE kp_id = k.id ORDER BY position) as schools_csv
+        FROM kp_fts
+        INNER JOIN kp k ON k.id = kp_fts.id
+        WHERE kp_fts MATCH ?
+          AND k.discipline = ?
+        ORDER BY rank
+        LIMIT 50
+      `)
+      .bind(ftsQ, discipline)
+      .all<KpHit>();
+    kpHits = kpRes.results ?? [];
+  } else {
+    // 短查询（< 3 字符）：LIKE 回退，title 命中优先
+    const like = `%${rawQ}%`;
+    const kpRes = await db
+      .prepare(`
+        SELECT
+          k.id, k.title_zh, k.title_en, k.title_ja, k.year,
+          '' as excerpt_zh, '' as excerpt_ja,
+          (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id ORDER BY position) as scholars_csv,
+          (SELECT GROUP_CONCAT(school_key,   ',') FROM kp_school  WHERE kp_id = k.id ORDER BY position) as schools_csv
+        FROM kp k
+        WHERE k.discipline = ?
+          AND (
+            k.title_zh LIKE ? OR k.title_en LIKE ? OR k.title_ja LIKE ?
+            OR k.body_zh LIKE ? OR k.body_ja LIKE ?
+          )
+        ORDER BY
+          CASE WHEN k.title_zh LIKE ? OR k.title_en LIKE ? OR k.title_ja LIKE ? THEN 0 ELSE 1 END,
+          k.id
+        LIMIT 50
+      `)
+      .bind(discipline, like, like, like, like, like, like, like, like)
+      .all<KpHit>();
+    kpHits = kpRes.results ?? [];
+  }
+
+  // 学者名 LIKE 匹配（zh/en/ja 任一命中）
+  const like = `%${rawQ}%`;
+  const schRes = await db
+    .prepare(`
+      SELECT key, name_zh, name_en,
+        (SELECT COUNT(*) FROM kp_scholar WHERE scholar_key = scholar.key) as kp_count
+      FROM scholar
+      WHERE discipline = ?
+        AND (name_zh LIKE ? OR name_en LIKE ? OR name_ja LIKE ? OR key LIKE ?)
+      ORDER BY kp_count DESC, key
+      LIMIT 10
+    `)
+    .bind(discipline, like, like, like, `%${rawQ.toLowerCase()}%`)
+    .all<ScholarHit>();
+  scholarHits = schRes.results ?? [];
+
+  // 学派名 LIKE 匹配
+  const schoolRes = await db
+    .prepare(`
+      SELECT key, title_zh, title_en,
+        (SELECT COUNT(*) FROM kp_school WHERE school_key = school.key) as kp_count
+      FROM school
+      WHERE discipline = ?
+        AND (title_zh LIKE ? OR title_en LIKE ? OR key LIKE ?)
+      ORDER BY kp_count DESC, key
+      LIMIT 10
+    `)
+    .bind(discipline, like, like, `%${rawQ.toLowerCase()}%`)
+    .all<SchoolHit>();
+  schoolHits = schoolRes.results ?? [];
+}
+
+// Scholar name lookup for KP chips
+const allScholarKeys = new Set(kpHits.flatMap((k) => (k.scholars_csv ?? '').split(',').filter(Boolean)));
+const scholarByKey = new Map<string, { key: string; name_zh: string; name_en: string | null }>();
+if (allScholarKeys.size > 0) {
+  // 避免 IN 上限：整个 discipline 一次拉
+  const r = await db
+    .prepare('SELECT key, name_zh, name_en FROM scholar WHERE discipline = ?')
+    .bind(discipline)
+    .all<{ key: string; name_zh: string; name_en: string | null }>();
+  for (const s of r.results ?? []) scholarByKey.set(s.key, s);
+}
+
+const totalHits = kpHits.length + scholarHits.length + schoolHits.length;
+---
+
+<Layout title={rawQ ? `搜索：${rawQ}` : '搜索'} currentDiscipline={discipline} currentSection="search">
+  <main class="max-w-panel mx-auto px-4 py-6">
+    <header class="mb-6">
+      <h1 class="text-2xl mb-3">搜索</h1>
+      <form method="get" action={`/${discipline}/search`} class="flex gap-2">
+        <input
+          type="search"
+          name="q"
+          value={rawQ}
+          autofocus
+          placeholder={`在 ${disc.title_zh} 里搜知识点 / 学者 / 学派…`}
+          class="flex-1 px-3 py-2 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
+        />
+        <button type="submit" class="px-4 py-2 rounded-md bg-accent-strategy text-white text-sm font-semibold">
+          搜索
+        </button>
+      </form>
+      {rawQ && (
+        <p class="text-xs text-quaternary mt-3">
+          共 {totalHits} 条结果（知识点 {kpHits.length} · 学者 {scholarHits.length} · 学派 {schoolHits.length}）
+        </p>
+      )}
+    </header>
+
+    {rawQ && totalHits === 0 && (
+      <p class="text-sm text-tertiary">
+        没找到匹配「<span class="font-semibold text-secondary">{rawQ}</span>」的内容。
+      </p>
+    )}
+
+    {scholarHits.length > 0 && (
+      <section class="mb-8">
+        <h2 class="text-sm font-semibold text-tertiary mb-3">学者 ({scholarHits.length})</h2>
+        <ul class="space-y-1">
+          {scholarHits.map((s) => (
+            <li>
+              <a
+                href={`/${discipline}/scholars/${s.key}`}
+                class="flex items-baseline justify-between gap-3 py-2 px-3 rounded hover:bg-bg-tertiary no-underline"
+              >
+                <span>
+                  <span class="text-sm font-semibold text-primary">{s.name_en ?? s.name_zh}</span>
+                  {s.name_en && <span class="text-xs text-tertiary ml-2">{s.name_zh}</span>}
+                </span>
+                <span class="text-xs text-quaternary">{s.kp_count} KP</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {schoolHits.length > 0 && (
+      <section class="mb-8">
+        <h2 class="text-sm font-semibold text-tertiary mb-3">学派 ({schoolHits.length})</h2>
+        <ul class="space-y-1">
+          {schoolHits.map((s) => (
+            <li>
+              <a
+                href={`/${discipline}/${s.key}`}
+                class="flex items-baseline justify-between gap-3 py-2 px-3 rounded hover:bg-bg-tertiary no-underline"
+              >
+                <span>
+                  <span class="text-sm font-semibold text-primary">{s.title_zh}</span>
+                  {s.title_en && <span class="text-xs text-tertiary ml-2">{s.title_en}</span>}
+                </span>
+                <span class="text-xs text-quaternary">{s.kp_count} KP</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {kpHits.length > 0 && (
+      <section>
+        <h2 class="text-sm font-semibold text-tertiary mb-3">知识点 ({kpHits.length})</h2>
+        <ul class="space-y-2">
+          {kpHits.map((k) => {
+            const scholarKeys = (k.scholars_csv ?? '').split(',').filter(Boolean);
+            const scholarLabel = scholarKeys
+              .map((sk) => scholarByKey.get(sk)?.name_en ?? scholarByKey.get(sk)?.name_zh ?? sk)
+              .join(' · ');
+            const excerpt = k.excerpt_zh && k.excerpt_zh.length > 0 ? k.excerpt_zh : k.excerpt_ja;
+            return (
+              <li>
+                <a
+                  href={`/${discipline}/kp/${k.id}`}
+                  class="block p-3 rounded border bg-bg-primary hover:shadow-card transition-shadow no-underline"
+                >
+                  <div class="flex items-baseline justify-between gap-3">
+                    <h3 class="text-base font-semibold text-primary">{k.title_zh}</h3>
+                    <span class="text-xs text-quaternary whitespace-nowrap shrink-0">
+                      {scholarLabel}{k.year && ` · ${k.year}`}
+                    </span>
+                  </div>
+                  {k.title_ja && <div class="text-xs text-tertiary mt-0.5">{k.title_ja}</div>}
+                  {excerpt && (
+                    <div class="text-xs text-secondary mt-2 leading-relaxed" set:html={excerpt} />
+                  )}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    )}
+  </main>
+</Layout>
+
+<style>
+  /* 搜索结果高亮 */
+  :global(mark) {
+    background: #fff4e0;
+    color: #1d1d1f;
+    font-weight: 600;
+    padding: 0 2px;
+    border-radius: 2px;
+  }
+</style>
