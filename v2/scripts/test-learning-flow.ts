@@ -87,6 +87,33 @@ function cleanup() {
   }
 }
 
+// v0.3.1: 进程无论如何退出都尝试清理（Ctrl+C / 崩溃 / 未捕获异常）
+// 防止 kt99999.json 留在 filesystem 被 git pick up → 污染 learning
+let cleanupDone = false;
+function safeCleanup() {
+  if (cleanupDone) return;
+  cleanupDone = true;
+  try {
+    cleanup();
+  } catch (e) {
+    console.error('[safeCleanup] failed:', e);
+  }
+}
+process.on('exit', safeCleanup);
+process.on('SIGINT', () => {
+  safeCleanup();
+  process.exit(130);
+});
+process.on('SIGTERM', () => {
+  safeCleanup();
+  process.exit(143);
+});
+process.on('uncaughtException', (err) => {
+  console.error('[uncaughtException]', err);
+  safeCleanup();
+  process.exit(1);
+});
+
 async function main() {
   console.log('=== learning-flow smoke test ===');
 

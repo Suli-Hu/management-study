@@ -34,3 +34,16 @@ yarn-error.log*
 # Test
 coverage/
 .vitest-cache/
+
+# === v0.3.1 Learning isolation ===
+# 测试 KP（smoke test / 手测临时数据）不能入 git
+# 否则 learning pull 下来会被污染
+data/*/kp/kt*.json
+data/*/kp/kfix_*.json
+data/*/kp/k[89][0-9][0-9][0-9].json
+
+# engineering 多学科 seed 原型目录（未正式 release 不应进 git）
+# learning 接手某学科后才从 .engineering/<discipline>/ 复制到 data/<discipline>/
+# 注意：忽略目录里的所有内容但保留 README（目录本身不能 ignored，否则 negate 无效）
+data/.engineering/*
+!data/.engineering/README.md

@@ -2,6 +2,7 @@
 name: 前端问题排查方法论
 description: 全局扫描再修、用真实设备尺寸自测、Safari/iOS 坑清单、回归测试断点清单
 type: feedback
+scope: engineering-only
 originSessionId: 83912dfd-dab7-4ab8-81fc-2b38245f101f
 ---
 ## 1. 排查：先全局扫描，再动手修
