@@ -1,0 +1,59 @@
+/**
+ * POST /api/auth/verify-code  (form: email + code)
+ *   跨设备 code 登录：电脑端发起 → 手机收邮件 → 电脑端输 6 位 code → 电脑登录
+ */
+
+import type { APIRoute } from 'astro';
+import { getDb } from '~/lib/db';
+import { consumeMagicLinkByCode, findOrCreateUser, createSession, buildSessionCookie } from '~/lib/auth';
+
+export const POST: APIRoute = async ({ request, locals }) => {
+  const env = locals.runtime.env;
+  const db = getDb(env);
+  const reqUrl = new URL(request.url);
+  const reqOrigin = reqUrl.origin;
+  const isSecure = reqUrl.protocol === 'https:';
+
+  let email = '';
+  let code = '';
+  try {
+    const body = await request.formData();
+    email = String(body.get('email') ?? '').trim().toLowerCase();
+    code = String(body.get('code') ?? '').trim();
+  } catch {
+    /* noop */
+  }
+  if (!email || !code) {
+    try {
+      const json = (await request.json()) as { email?: string; code?: string };
+      email = (json.email ?? '').trim().toLowerCase();
+      code = (json.code ?? '').trim();
+    } catch {
+      /* noop */
+    }
+  }
+
+  if (!email || !code) {
+    return Response.redirect(`${reqOrigin}/login?error=missing_code`, 303);
+  }
+
+  const verifiedEmail = await consumeMagicLinkByCode(db, email, code);
+  if (!verifiedEmail) {
+    return Response.redirect(
+      `${reqOrigin}/login/sent?email=${encodeURIComponent(email)}&error=invalid_code`,
+      303,
+    );
+  }
+
+  const user = await findOrCreateUser(db, verifiedEmail);
+  const sessionId = await createSession(db, user.id);
+  const cookie = buildSessionCookie(sessionId, isSecure);
+
+  return new Response(null, {
+    status: 303,
+    headers: {
+      Location: `${reqOrigin}/`,
+      'Set-Cookie': cookie,
+    },
+  });
+};

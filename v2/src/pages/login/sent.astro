@@ -2,10 +2,15 @@
 import Layout from '~/layouts/Layout.astro';
 
 const email = Astro.url.searchParams.get('email') ?? '';
+const err = Astro.url.searchParams.get('error');
+const errorMsg = err === 'invalid_code'
+  ? 'Code 错了或已过期，检查邮件里的 6 位数字，或去 /login 重新发送。'
+  : null;
+
 const maskedEmail = email.replace(/^(.{2}).*(@.*)$/, '$1•••$2');
 ---
 
-<Layout title="已发送">
+<Layout title="输入 code">
   <main class="max-w-reading mx-auto px-4 py-10">
     <div class="max-w-md mx-auto">
       <header class="mb-6">
@@ -15,17 +20,40 @@ const maskedEmail = email.replace(/^(.{2}).*(@.*)$/, '$1•••$2');
         </p>
       </header>
 
-      <div class="p-4 rounded-md bg-bg-warm text-xs text-secondary leading-relaxed">
-        <ol class="list-decimal list-inside space-y-2">
-          <li>打开邮箱，找到主题「登录全学科学习笔记」</li>
-          <li>点击邮件里的「登录」按钮（或复制链接到浏览器）</li>
-          <li>就自动登录回来了</li>
-        </ol>
-      </div>
+      {errorMsg && (
+        <div class="mb-4 p-3 rounded-md bg-badge-limit text-accent-warning text-xs">
+          {errorMsg}
+        </div>
+      )}
 
-      <p class="text-xs text-quaternary mt-6 leading-relaxed">
-        链接 10 分钟内有效。没收到？检查垃圾邮件；或 <a href="/login" class="text-accent-strategy">重新申请</a>。
-      </p>
+      <section class="mb-6">
+        <p class="text-sm text-secondary mb-3">
+          输入邮件里的 <strong>6 位 code</strong>：
+        </p>
+        <form method="POST" action="/api/auth/verify-code" class="flex gap-2">
+          <input type="hidden" name="email" value={email} />
+          <input
+            type="text"
+            name="code"
+            required
+            autofocus
+            autocomplete="one-time-code"
+            inputmode="numeric"
+            pattern="\d{6}"
+            maxlength="6"
+            placeholder="123456"
+            class="flex-1 px-3 py-2 rounded-md border border-bg-tertiary text-center text-lg font-mono tracking-widest focus:outline-none focus:border-accent-strategy"
+          />
+          <button type="submit" class="px-4 py-2 rounded-md bg-accent-strategy text-white text-sm font-semibold">
+            登录
+          </button>
+        </form>
+      </section>
+
+      <section class="p-4 rounded-md bg-bg-warm text-xs text-secondary leading-relaxed">
+        <p class="mb-2 text-tertiary font-semibold">或者：直接在收到邮件的那台设备点击邮件里的「在当前设备登录」按钮。</p>
+        <p class="text-quaternary">链接和 code 10 分钟内有效。没收到？检查垃圾邮件，或 <a href="/login" class="text-accent-strategy">重新申请</a>。</p>
+      </section>
     </div>
   </main>
 </Layout>

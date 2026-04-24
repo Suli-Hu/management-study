@@ -33,13 +33,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response('Invalid email', { status: 400 });
   }
 
-  const token = await createMagicLink(db, email);
+  const { token, code } = await createMagicLink(db, email);
   const reqOrigin = new URL(request.url).origin;
   // 邮件里的 verify 链接永远用 APP_URL（固定公网地址），否则 dev → 用户收到 localhost 链接
   const emailAppUrl = env.APP_URL ?? reqOrigin;
   const verifyUrl = `${emailAppUrl}/api/auth/verify?token=${encodeURIComponent(token)}`;
 
-  const { html, text } = renderMagicLinkEmail({ email, url: verifyUrl });
+  const { html, text } = renderMagicLinkEmail({ email, url: verifyUrl, code });
 
   try {
     await sendEmail(env, {

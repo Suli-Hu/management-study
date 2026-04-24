@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import {
   generateToken,
+  generateCode,
   parseCookieSession,
   buildSessionCookie,
   buildClearCookie,
@@ -23,6 +24,21 @@ describe('generateToken', () => {
     const t = generateToken(12);
     // 12 bytes base64 = 16 chars, minus "==" padding = 16
     expect(t.length).toBe(16);
+  });
+});
+
+describe('generateCode', () => {
+  test('always 6 digits, leading zeros preserved', () => {
+    for (let i = 0; i < 50; i++) {
+      const c = generateCode();
+      expect(c).toMatch(/^\d{6}$/);
+    }
+  });
+
+  test('distribution across many samples (not a constant value)', () => {
+    const set = new Set(Array.from({ length: 50 }, () => generateCode()));
+    // 50 samples from 10^6 space — all equal would be astronomically unlikely
+    expect(set.size).toBeGreaterThan(40);
   });
 });
 

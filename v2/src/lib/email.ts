@@ -49,16 +49,29 @@ export async function sendEmail(env: Env, opts: SendEmailOptions): Promise<void>
   }
 }
 
-/** Magic link 邮件模板 */
-export function renderMagicLinkEmail(params: { email: string; url: string }): { html: string; text: string } {
-  const { email, url } = params;
+/** Magic link 邮件模板（含 6 位 code + 链接两种登录方式） */
+export function renderMagicLinkEmail(params: {
+  email: string;
+  url: string;
+  code: string;
+}): { html: string; text: string } {
+  const { email, url, code } = params;
+  // 为方便阅读，把 6 位 code 格式化为 "123 456"
+  const codeDisplay = `${code.slice(0, 3)} ${code.slice(3)}`;
+
   const text = `你好，
 
-点击下方链接登录全学科学习笔记：
+登录全学科学习笔记有两种方式：
 
-${url}
+方式 1 —— 如果你在其他设备（比如电脑）上发起的登录，在那台设备输入下面这个 6 位 code：
 
-链接 10 分钟有效，仅可使用一次。如果不是你发起的登录请求，忽略即可。
+    ${codeDisplay}
+
+方式 2 —— 或者直接在当前设备点这个链接登录：
+
+    ${url}
+
+链接和 code 都 10 分钟有效，单次使用。如果不是你发起的登录请求，忽略即可。
 
 — 全学科学习笔记
 `;
@@ -68,20 +81,27 @@ ${url}
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', sans-serif; background: #f5f5f7; margin: 0; padding: 32px 16px;">
   <div style="max-width: 480px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 32px 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
     <h1 style="font-size: 20px; margin: 0 0 16px; color: #1d1d1f;">登录全学科学习笔记</h1>
-    <p style="font-size: 14px; color: #2c2c2e; line-height: 1.7; margin: 0 0 24px;">
-      你好，点击下面按钮登录：
+
+    <p style="font-size: 13px; color: #86868b; line-height: 1.7; margin: 0 0 8px;">
+      在发起登录的设备输入这个 6 位 code：
+    </p>
+    <div style="margin: 0 0 28px; padding: 20px 24px; background: #f5f5f7; border-radius: 10px; text-align: center; font-family: 'SF Mono', Menlo, monospace; font-size: 28px; font-weight: 700; color: #1d1d1f; letter-spacing: 0.15em;">
+      ${codeDisplay}
+    </div>
+
+    <p style="font-size: 13px; color: #86868b; line-height: 1.7; margin: 0 0 8px;">
+      或者直接在当前设备点击登录：
     </p>
     <p style="margin: 0 0 24px;">
-      <a href="${url}" style="display: inline-block; padding: 10px 20px; background: #007AFF; color: #fff; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">登录</a>
+      <a href="${url}" style="display: inline-block; padding: 10px 20px; background: #007AFF; color: #fff; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">在当前设备登录</a>
     </p>
-    <p style="font-size: 12px; color: #86868b; line-height: 1.6; margin: 0 0 8px;">
-      如果按钮无法点击，复制下面链接到浏览器：
-    </p>
-    <p style="font-size: 11px; color: #48484a; word-break: break-all; margin: 0 0 24px; padding: 10px; background: #f5f5f7; border-radius: 6px;">
+
+    <p style="font-size: 11px; color: #48484a; word-break: break-all; margin: 0 0 24px; padding: 10px; background: #fafafa; border-radius: 6px; border: 1px solid #eee;">
       ${url}
     </p>
+
     <p style="font-size: 12px; color: #86868b; line-height: 1.6; margin: 0;">
-      链接 10 分钟内有效，仅可使用一次。如果不是你发起的登录请求，忽略即可。
+      链接和 code 都 10 分钟有效，仅可使用一次。如果不是你发起的登录请求，忽略即可。
     </p>
   </div>
   <p style="text-align: center; font-size: 11px; color: #86868b; margin-top: 16px;">

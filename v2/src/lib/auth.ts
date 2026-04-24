@@ -28,6 +28,13 @@ export function generateToken(bytes = 32): string {
   return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 }
 
+/** 6 位数字 code（跨设备登录用） */
+export function generateCode(): string {
+  const buf = new Uint32Array(1);
+  crypto.getRandomValues(buf);
+  return String(buf[0] % 1_000_000).padStart(6, '0');
+}
+
 export interface User {
   id: string;
   email: string;
@@ -38,14 +45,15 @@ export interface User {
 
 // ========== Magic link ==========
 
-export async function createMagicLink(db: D1Database, email: string): Promise<string> {
+export async function createMagicLink(db: D1Database, email: string): Promise<{ token: string; code: string }> {
   const token = generateToken(32);
+  const code = generateCode();
   const expiresAt = Date.now() + MAGIC_LINK_TTL_MS;
   await db
-    .prepare('INSERT INTO magic_link (token, email, expires_at) VALUES (?, ?, ?)')
-    .bind(token, email.toLowerCase().trim(), expiresAt)
+    .prepare('INSERT INTO magic_link (token, email, code, expires_at) VALUES (?, ?, ?, ?)')
+    .bind(token, email.toLowerCase().trim(), code, expiresAt)
     .run();
-  return token;
+  return { token, code };
 }
 
 /** 验证并 consume token，返回 email 或 null（失败 = 不存在/过期/已用） */
@@ -63,6 +71,39 @@ export async function consumeMagicLink(db: D1Database, token: string): Promise<s
     .bind(new Date().toISOString(), token)
     .run();
   return row.email;
+}
+
+/**
+ * 按 (email, code) 匹配并 consume。返回 email 或 null。
+ * 同一 email 可能有多条未过期 link（反复重发），我们取最新一条 code 匹配。
+ */
+export async function consumeMagicLinkByCode(
+  db: D1Database,
+  email: string,
+  code: string,
+): Promise<string | null> {
+  const normEmail = email.toLowerCase().trim();
+  const normCode = code.replace(/\D/g, '').trim();
+  if (normCode.length !== 6) return null;
+
+  const row = await db
+    .prepare(`
+      SELECT token, expires_at, used_at
+      FROM magic_link
+      WHERE email = ? AND code = ? AND used_at IS NULL
+      ORDER BY expires_at DESC
+      LIMIT 1
+    `)
+    .bind(normEmail, normCode)
+    .first<{ token: string; expires_at: number; used_at: string | null }>();
+  if (!row) return null;
+  if (row.expires_at < Date.now()) return null;
+
+  await db
+    .prepare('UPDATE magic_link SET used_at = ? WHERE token = ?')
+    .bind(new Date().toISOString(), row.token)
+    .run();
+  return normEmail;
 }
 
 // ========== User ==========
