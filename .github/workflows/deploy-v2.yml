@@ -1,17 +1,13 @@
 name: Deploy v2 to Cloudflare Pages
 
-# ⚠️ 暂时仅手动触发（workflow_dispatch）— 直到 SETUP.md 完成：
-#   1. wrangler d1 create management-study-v2  → 填 wrangler.toml database_id
-#   2. pnpm migrate:from-v1                    → 生成真实 data/ JSON 并 commit
-#   3. wrangler d1 migrations apply --remote   → schema 上线
-#
-# SETUP 完成后取消下方注释以启用 push 自动触发：
+# W1 完成后启用 push 自动触发（D1 已上线 + 数据已 sync）。
+# 仍保留 workflow_dispatch 以便手动重跑。
 on:
-  # push:
-  #   branches: [main]
-  #   paths:
-  #     - 'v2/**'
-  #     - '.github/workflows/deploy-v2.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'v2/**'
+      - '.github/workflows/deploy-v2.yml'
   workflow_dispatch:
 
 jobs:
