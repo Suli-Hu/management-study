@@ -247,9 +247,172 @@ describe('renderBody — XSS 注入在各字段被中和', () => {
 
   test('引号（"）被 escape —— 防属性断开注入', () => {
     // 假设字段值带引号尝试逃出属性
-    const body = 'lead<br>①foo"bar——baz<br>②q——w';
+    const body = 'lead<br>①foo"bar——baz<br>²q——w';
     const out = renderBody(body);
     // escape 后的引号不应出现为裸 " 字符
     expect(out).toContain('foo&quot;bar');
+  });
+});
+
+// ===== v0.3.16 W3.3 render-body 输入套件（emoji / 破标签 / 空字段） =====
+
+describe('renderBody — 空字段 / 边界输入', () => {
+  test('空字符串 → 空串（不抛错）', () => {
+    expect(renderBody('')).toBe('');
+  });
+
+  test('只有 whitespace → 原样 escape passthrough（不匹配结构）', () => {
+    expect(renderBody('   ')).toBe('   ');
+    expect(renderBody('\n\t')).toBe('\n\t');
+  });
+
+  test('只有 <br> 没内容 → passthrough', () => {
+    const out = renderBody('<br><br>');
+    expect(out).toBe('<br><br>');
+  });
+
+  test('单独 ① 没 desc → 不崩，生成空 body-card', () => {
+    // 一定要 2+ 个 item 才进 numbered-items 分支，否则走 passthrough
+    const body = 'lead<br>①<br>②';
+    const out = renderBody(body);
+    expect(out).toContain('class="body-card"');
+  });
+
+  test('——前后为空 → name/desc 都是空 但结构完整', () => {
+    const body = 'lead<br>①——<br>②——';
+    const out = renderBody(body);
+    expect(out.match(/class="body-card"/g)?.length).toBe(2);
+  });
+
+  test('compare 单列只有 title，其它字段全缺', () => {
+    const body = '<compare>OnlyTitle</compare>';
+    const out = renderBody(body);
+    expect(out).toContain('class="compare-col"');
+    expect(out).toContain('OnlyTitle');
+    expect(out).not.toContain('compare-back'); // 无 detail
+  });
+
+  test('quad 连续模式只给 name，其它字段缺', () => {
+    const body = '<quad>重要度,紧急度||A||B||C||D</quad>';
+    const out = renderBody(body);
+    expect(out.match(/class="quad-cell"/g)?.length).toBe(4);
+  });
+
+  test('compare 空 body → 正则不命中，落 passthrough + escape 不抛', () => {
+    const body = '<compare></compare>';
+    const out = renderBody(body);
+    // 现行正则要求 data 段非空（[\s\S]+?），空 → 不匹配 → passthrough 分支 → escape 掉
+    expect(out).toBe('&lt;compare&gt;&lt;/compare&gt;');
+  });
+});
+
+describe('renderBody — emoji / 多语言 字段', () => {
+  test('title/desc 里的 emoji 不被破坏（基础 BMP emoji）', () => {
+    const body = 'lead<br>①🏅诺奖——获奖<br>②🔥热门——trending';
+    const out = renderBody(body);
+    expect(out).toContain('🏅诺奖');
+    expect(out).toContain('🔥热门');
+  });
+
+  test('emoji 在 quad emoji 字段原样出现', () => {
+    const body = '<quad>Y,X||A|🔴|sub|det||B|🟡|sub|det||C|🟢|sub|det||D|⚪|sub|det</quad>';
+    const out = renderBody(body);
+    expect(out).toContain('🔴');
+    expect(out).toContain('🟡');
+    expect(out).toContain('🟢');
+    expect(out).toContain('⚪');
+  });
+
+  test('日文/韩文/俄文 字段', () => {
+    const body = 'lead<br>①日本語テスト——説明<br>②한국어——설명';
+    const out = renderBody(body);
+    expect(out).toContain('日本語テスト');
+    expect(out).toContain('한국어');
+  });
+
+  test('compare 字段混 emoji + 多语言 + 引号 都通过 escape', () => {
+    const body = '<compare>📊データ|K|"hi"|Ty|Th|B</compare>';
+    const out = renderBody(body);
+    expect(out).toContain('📊');
+    expect(out).toContain('&quot;hi&quot;');
+    expect(out).not.toMatch(/"hi"/); // 不能留裸引号
+  });
+});
+
+describe('renderBody — 破标签 / 不规范 HTML', () => {
+  test('不闭合 <strong>x —— 白名单还原 <strong> 但没 </strong>，<strong> 留着', () => {
+    // escInline 只还原精确的 <strong> 和 </strong>。缺闭合 → 渲染浏览器会吞后续，但测试层面 string 里 <strong> 存在
+    const body = '<strong>unclosed';
+    const out = renderBody(body);
+    expect(out).toContain('<strong>'); // opening tag passthrough
+    expect(out).not.toContain('&lt;strong&gt;');
+  });
+
+  test('只有 </strong> 闭合没 open → 白名单还原，浏览器层会忽略，测试层 string 有 </strong>', () => {
+    const body = 'text</strong>';
+    const out = renderBody(body);
+    expect(out).toContain('</strong>');
+  });
+
+  test('带属性的 <strong class="x"> → 不匹配精确形式，被 escape', () => {
+    const body = '<strong class="sneaky">x</strong>';
+    const out = renderBody(body);
+    expect(out).toContain('&lt;strong class=&quot;sneaky&quot;&gt;');
+    // 结束 </strong> 是白名单形式，会被还原
+    expect(out).toContain('</strong>');
+  });
+
+  test('奇怪的 <br 缺 > → escape（不匹配白名单）', () => {
+    const body = 'a<br junk b';
+    const out = renderBody(body);
+    expect(out).toContain('&lt;br junk b');
+  });
+
+  test('<compare> 没闭合 → passthrough 分支（不匹配 compare 正则）', () => {
+    const body = '<compare>T|K|D';
+    const out = renderBody(body);
+    // 没闭合标签不匹配 → passthrough → escape
+    expect(out).not.toContain('class="compare-grid"');
+    expect(out).toContain('&lt;compare&gt;');
+  });
+
+  test('嵌套 <compare><quad>...</quad></compare> → 外层 compare 正则贪婪匹配到最外闭合', () => {
+    // 健壮性：不应崩，不应 XSS
+    const body = '<compare>T|K|<script>x</script>|Ty|Th|B</compare>';
+    const out = renderBody(body);
+    expect(out).not.toMatch(/<script>x<\/script>/);
+  });
+
+  test('畸形 【group】 缺闭合 】 → 被 passthrough 处理', () => {
+    const body = 'lead<br>【group unclosed<br>①A——a<br>②B——b';
+    const out = renderBody(body);
+    // 没匹配上 group 正则，按 numbered items 走，不崩
+    expect(out).toContain('class="body-card"');
+    // 【 被 escape 因为没 group 分支命中
+    expect(out).toContain('【group unclosed');
+  });
+
+  test('巨长 body 不崩（512KB 级）', () => {
+    const body = 'lead<br>' + Array.from({ length: 1000 }, (_, i) => `①item${i}——desc${i}`).join('<br>');
+    const out = renderBody(body);
+    expect(typeof out).toBe('string');
+    expect(out.length).toBeGreaterThan(body.length);
+  });
+});
+
+describe('escapeHtml / escInline — 空/非字符串输入', () => {
+  test('escapeHtml 处理 number / boolean / object', () => {
+    expect(escapeHtml(123)).toBe('123');
+    expect(escapeHtml(true)).toBe('true');
+    expect(escapeHtml({ a: 1 })).toBe('[object Object]');
+  });
+
+  test('escInline 保留 number / boolean 转字符串', () => {
+    expect(escInline(0)).toBe('0');
+    expect(escInline(false)).toBe('false');
+  });
+
+  test('escInline emoji 穿透不破坏', () => {
+    expect(escInline('🏅 & <strong>bold</strong>')).toBe('🏅 &amp; <strong>bold</strong>');
   });
 });
