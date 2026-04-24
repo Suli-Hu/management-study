@@ -2,8 +2,8 @@
 
 engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 
-**当前版本**：v0.3.2（main = `e07c701`）
-**当前阶段**：W3.1 完成 3/4，欠 3 项技术债（见下方 _W3.1 拖欠_）
+**当前版本**：v0.3.4
+**当前阶段**：W3.1 清债进行中（A9 + A2 已清；A5 / CSRF / A6-A8 待清）
 
 ---
 
@@ -14,17 +14,13 @@ engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 | 版本 | 内容 | 状态 | commit |
 |---|---|---|---|
 | v0.3.1 | `.gitignore` + `.engineering/` + memory `scope:` + pre-push hook | ✅ | `64db8c6` |
-| v0.3.2 | A1 race + A3 cleanup + A4 rate limit | ⚠️ 合并执行；A2 跳过 | `e07c701` |
-| v0.3.3 | A5 signed cookie（减 DB 查询） | ❌ 未做 | — |
-| v0.3.4 | CSRF Origin check middleware | ❌ 未做（A4 已在 v0.3.2 吃掉） | — |
+| v0.3.2 | A1 race + A3 cleanup + A4 rate limit | ✅ 合并执行 | `e07c701` |
+| v0.3.3 | A9 XSS 防护（escInline + 白名单） + ROADMAP.md | ✅ | `030a3e8` |
+| v0.3.4 | A2 wipe-cascade（migration 0005 + sync 增量 upsert + orphan cleanup） | ✅ | 本 patch |
+| v0.3.5 | A5 signed cookie + CSRF Origin check（都改 middleware） | ❌ 未做 | — |
+| v0.3.6 | A6 flash session + A7 去 email param + A8 logger 统一 | ❌ 未做 | — |
 
-#### W3.1 拖欠（engineering4 起手可清）
-
-- **A2 — wipe-and-reload 级联删用户数据**
-  源头：[migrations/0001_initial.sql](migrations/0001_initial.sql) 的 `kp_school_ref_kp ON DELETE CASCADE` +
-  [scripts/sync-to-d1.ts](scripts/sync-to-d1.ts) 的 wipe-then-reload。
-  修复方向：FK 改 `RESTRICT` / `SET NULL`；sync 改增量 upsert。
-  当前影响：user_note / user_progress 表真有数据时才爆发（目前无用户写入功能，属埋雷）。
+#### W3.1 剩余 3 项（下个 patch 起清）
 
 - **A5 — middleware 每请求查 DB（N+1）**
   源头：[src/middleware.ts](src/middleware.ts) 每请求 `getSessionUser()` 查 D1。
@@ -36,6 +32,11 @@ engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
   源头：`SESSION_SECRET` env 已预留未用，所有 POST 路径 (`/api/auth/*`) 只靠 Astro 默认 Origin check。
   修复方向：middleware 对 state-changing method（POST/PUT/DELETE）强制 Origin ∈ allowlist。
   当前影响：外部 form 跨域 POST 可过 Astro 默认一层。
+
+- **A6 / A7 / A8 — 小账**（v0.3.6 一次清）
+  A6 `?error=` 在 URL 明文 → flash session；
+  A7 login `?email=xxx` redirect → 邮箱枚举泄漏；
+  A8 `catch { /* noop */ }` silent → 统一 logger。
 
 ### W3.2 — UX 核心补齐（v1 → v2 回补）
 
@@ -133,19 +134,19 @@ engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 | # | 问题 | 文件 | 状态 |
 |---|---|---|---|
 | A1 | `findOrCreateUser` race condition | `auth.ts` | ✅ v0.3.2 |
-| A2 | wipe-and-reload 级联删 user_note | `migrations/0001` + `sync-to-d1.ts` | ❌ 欠 |
+| A2 | wipe-and-reload 级联删 user_note | `migrations/0005` + `sync-to-d1.ts` | ✅ v0.3.4 |
 | A3 | Session 行永不清理 | `auth.ts` | ✅ v0.3.2 |
 | A4 | Magic link code 无 rate limit | `auth.ts` | ✅ v0.3.2 |
-| A5 | Middleware 每请求查 DB | `middleware.ts` | ❌ 欠 |
+| A5 | Middleware 每请求查 DB | `middleware.ts` | ❌ 欠（v0.3.5） |
 
 🟡 W3 顺手：
 
 | # | 问题 | 状态 |
 |---|---|---|
-| A6 | `?error=` 在 URL 明文 → flash session | ❌ |
-| A7 | login `?email=xxx` redirect → 邮箱枚举泄漏 | ❌ |
-| A8 | `catch { /* noop */ }` silent → 统一 logger | ❌ |
-| A9 | render-body 未转义 emoji/sub → XSS 隐患 | ❌（见 W3.3 v0.3.10） |
+| A6 | `?error=` 在 URL 明文 → flash session | ❌（v0.3.6） |
+| A7 | login `?email=xxx` redirect → 邮箱枚举泄漏 | ❌（v0.3.6） |
+| A8 | `catch { /* noop */ }` silent → 统一 logger | ❌（v0.3.6） |
+| A9 | render-body 未转义 emoji/sub → XSS 隐患 | ✅ v0.3.3 |
 
 💭 扩展性：
 

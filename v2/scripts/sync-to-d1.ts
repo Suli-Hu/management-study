@@ -5,10 +5,14 @@
  *   wrangler d1 execute management-study-v2 --remote --file=.wrangler/sync.sql
  * 由 GitHub Actions 跑（见 .github/workflows/deploy-v2.yml）。
  *
- * 策略：wipe-and-reload（删全表 + 重新 INSERT）
- *   - 优点：简单、永远是最终一致；删除的 KP 自动消失
- *   - 缺点：每次 sync 时间 = O(N)。513 KP ~500ms，能接受
- *   - 增量优化（按 updated_at diff）留到 KP 涨到 5000+ 时再做
+ * 策略：upsert + 孤儿清理（v0.3.4 修 A2）
+ *   - 内容表（discipline/school/scholar/kp）用 ON CONFLICT DO UPDATE
+ *     → 不 DELETE → 不触发 FK cascade → user_progress / user_note 保住
+ *   - 关联表（kp_school/kp_scholar/scholar_school）/ FTS5 仍 wipe-reload
+ *     → 它们内容完全由 JSON 决定且和 user 数据无关
+ *   - 孤儿清理：learning 删掉的 KP，通过临时表 NOT IN 做 DELETE
+ *     → 这是唯一一处会触发 cascade 的地方，但 user_note.kp_id 已在 migration 0005
+ *       改为 SET NULL，笔记保留；user_progress 仍 CASCADE（进度跟 KP 走，合理）
  *
  * 用法（本地干跑生成 SQL 但不执行）：
  *   pnpm sync:d1
@@ -162,52 +166,73 @@ sqlLines.push(`-- Source commit: ${COMMIT_SHA}`);
 sqlLines.push(`-- Generated at: ${new Date().toISOString()}`);
 sqlLines.push('');
 
-// Wipe — 顺序：先关联表 + FTS，后基础表（外键安全）
-sqlLines.push('-- Wipe content tables (user/session/etc untouched)');
+// Wipe 只清理关联表 + FTS（它们和 user 数据无关、完全由 JSON 决定）。
+// 内容表改 upsert，见下方。
+sqlLines.push('-- Wipe join tables + FTS (user/session/etc untouched)');
 sqlLines.push('DELETE FROM kp_fts;');
 sqlLines.push('DELETE FROM kp_school;');
 sqlLines.push('DELETE FROM kp_scholar;');
 sqlLines.push('DELETE FROM scholar_school;');
-sqlLines.push('DELETE FROM kp;');
-sqlLines.push('DELETE FROM scholar;');
-sqlLines.push('DELETE FROM school;');
-sqlLines.push('DELETE FROM discipline;');
 sqlLines.push('');
 
-// === Disciplines ===
+/** 生成 ON CONFLICT DO UPDATE SET 子句（除 key 列外全部 overwrite） */
+function updateSet(cols: string[], keyCol: string): string {
+  return cols.filter((c) => c !== keyCol).map((c) => `${c}=excluded.${c}`).join(', ');
+}
+
+// === Disciplines (upsert) ===
 sqlLines.push('-- Disciplines');
+const discCols = ['key','title_zh','title_en','title_ja','tagline_zh','tagline_ja','accent','themes_json','created_at','updated_at'];
 for (const d of disciplines) {
   sqlLines.push(
-    `INSERT INTO discipline (key, title_zh, title_en, title_ja, tagline_zh, tagline_ja, accent, themes_json, created_at, updated_at) VALUES (` +
+    `INSERT INTO discipline (${discCols.join(', ')}) VALUES (` +
     `${q(d.key)}, ${q(d.title.zh)}, ${q(d.title.en)}, ${q(d.title.ja)}, ` +
     `${q(d.tagline?.zh)}, ${q(d.tagline?.ja)}, ${q(d.accent)}, ${jq(d.themes)}, ` +
-    `${q(d.createdAt)}, ${q(d.updatedAt)});`
+    `${q(d.createdAt)}, ${q(d.updatedAt)}) ` +
+    `ON CONFLICT(key) DO UPDATE SET ${updateSet(discCols, 'key')};`
   );
 }
 sqlLines.push('');
 
-// === Schools ===
+// === Schools (upsert) ===
 sqlLines.push('-- Schools');
+const schoolCols = ['key','discipline','title_zh','title_en','title_ja','era','summary_zh','summary_ja','theme_key','accent','created_at','updated_at'];
 for (const s of schools) {
   sqlLines.push(
-    `INSERT INTO school (key, discipline, title_zh, title_en, title_ja, era, summary_zh, summary_ja, theme_key, accent, created_at, updated_at) VALUES (` +
+    `INSERT INTO school (${schoolCols.join(', ')}) VALUES (` +
     `${q(s.key)}, ${q(s.discipline)}, ${q(s.title.zh)}, ${q(s.title.en)}, ${q(s.title.ja)}, ` +
     `${q(s.era)}, ${q(s.summary.zh)}, ${q(s.summary.ja)}, ${q(s.themeKey)}, ${q(s.accent)}, ` +
-    `${q(s.createdAt)}, ${q(s.updatedAt)});`
+    `${q(s.createdAt)}, ${q(s.updatedAt)}) ` +
+    `ON CONFLICT(key) DO UPDATE SET ${updateSet(schoolCols, 'key')};`
   );
 }
 sqlLines.push('');
 
-// === Scholars ===
+// === Scholars (upsert) ===
 sqlLines.push('-- Scholars');
+const scholarCols = ['key','discipline','name_zh','name_en','name_ja','contribution_zh','contribution_ja','lifespan','institution','nobel_year','nobel_detail','created_at','updated_at'];
 for (const sc of scholars) {
   sqlLines.push(
-    `INSERT INTO scholar (key, discipline, name_zh, name_en, name_ja, contribution_zh, contribution_ja, lifespan, institution, nobel_year, nobel_detail, created_at, updated_at) VALUES (` +
+    `INSERT INTO scholar (${scholarCols.join(', ')}) VALUES (` +
     `${q(sc.key)}, ${q(sc.discipline)}, ${q(sc.name.zh)}, ${q(sc.name.en)}, ${q(sc.name.ja)}, ` +
     `${q(sc.contribution.zh)}, ${q(sc.contribution.ja)}, ${q(sc.lifespan)}, ${q(sc.institution)}, ` +
-    `${q(sc.nobel?.year)}, ${q(sc.nobel?.detail)}, ${q(sc.createdAt)}, ${q(sc.updatedAt)});`
+    `${q(sc.nobel?.year)}, ${q(sc.nobel?.detail)}, ${q(sc.createdAt)}, ${q(sc.updatedAt)}) ` +
+    `ON CONFLICT(key) DO UPDATE SET ${updateSet(scholarCols, 'key')};`
   );
 }
+sqlLines.push('');
+
+// === 孤儿清理：discipline / school / scholar ===
+// learning 删掉的 school.json / scholar.json / discipline.json → 这里 DELETE
+// scholar / school 被 DELETE → kp_school / kp_scholar / scholar_school 的
+// CASCADE 会清相关 join（但这些表我们上面已 wipe，无额外影响）。
+sqlLines.push('-- Orphan cleanup: discipline / school / scholar');
+const discKeysCSV = disciplines.map((d) => q(d.key)).join(',') || "''";
+const schoolKeysCSV = schools.map((s) => q(s.key)).join(',') || "''";
+const scholarKeysCSV = scholars.map((s) => q(s.key)).join(',') || "''";
+sqlLines.push(`DELETE FROM discipline WHERE key NOT IN (${discKeysCSV});`);
+sqlLines.push(`DELETE FROM school WHERE key NOT IN (${schoolKeysCSV});`);
+sqlLines.push(`DELETE FROM scholar WHERE key NOT IN (${scholarKeysCSV});`);
 sqlLines.push('');
 
 // === Scholar ↔ School ===
@@ -220,15 +245,26 @@ for (const sc of scholars) {
 }
 sqlLines.push('');
 
-// === KPs ===
+// === KPs (upsert) ===
 sqlLines.push('-- KPs');
+const kpCols = ['id','discipline','year','title_zh','title_en','title_ja','body_zh','body_ja','tags_json','format','created_at','updated_at'];
 for (const k of kps) {
   sqlLines.push(
-    `INSERT INTO kp (id, discipline, year, title_zh, title_en, title_ja, body_zh, body_ja, tags_json, format, created_at, updated_at) VALUES (` +
+    `INSERT INTO kp (${kpCols.join(', ')}) VALUES (` +
     `${q(k.id)}, ${q(k.discipline)}, ${q(k.year)}, ${q(k.title.zh)}, ${q(k.title.en)}, ${q(k.title.ja)}, ` +
-    `${q(k.body.zh)}, ${q(k.body.ja)}, ${jq(k.tags)}, ${q(k.format)}, ${q(k.createdAt)}, ${q(k.updatedAt)});`
+    `${q(k.body.zh)}, ${q(k.body.ja)}, ${jq(k.tags)}, ${q(k.format)}, ${q(k.createdAt)}, ${q(k.updatedAt)}) ` +
+    `ON CONFLICT(id) DO UPDATE SET ${updateSet(kpCols, 'id')};`
   );
 }
+sqlLines.push('');
+
+// === 孤儿清理：kp ===
+// learning 删掉的 kp.json → 这里 DELETE。
+// cascade：kp_school/kp_scholar（已 wipe） + user_progress（CASCADE，进度跟 KP 走，合理）
+// + user_note（migration 0005 改 SET NULL，笔记保留）
+sqlLines.push('-- Orphan cleanup: kp');
+const kpIdsCSV = kps.map((k) => q(k.id)).join(',') || "''";
+sqlLines.push(`DELETE FROM kp WHERE id NOT IN (${kpIdsCSV});`);
 sqlLines.push('');
 
 // === KP ↔ School（用 school.concepts 顺序优先；fallback 到 KP.schools 顺序） ===
