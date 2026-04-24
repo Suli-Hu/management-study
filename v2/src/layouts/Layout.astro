@@ -1,6 +1,7 @@
 ---
 import '~/styles/global.css';
 import Nav from '~/components/Nav.astro';
+import Footer from '~/components/Footer.astro';
 
 interface Props {
   title?: string;
@@ -28,8 +29,9 @@ const fullTitle = title === '全学科学习笔记' ? title : `${title} · 全�
     <title>{fullTitle}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
-  <body>
+  <body class="min-h-screen flex flex-col">
     <Nav currentDiscipline={currentDiscipline} currentSection={currentSection} />
-    <slot />
+    <div class="flex-1"><slot /></div>
+    <Footer />
   </body>
 </html>

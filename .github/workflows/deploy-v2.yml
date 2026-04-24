@@ -48,6 +48,8 @@ jobs:
       # ========== Build Astro ==========
       - name: Build
         run: pnpm build
+        env:
+          PUBLIC_GIT_SHA: ${{ github.sha }}
 
       # ========== Sync D1 ==========
       # 生成 sync.sql 然后用 wrangler 执行

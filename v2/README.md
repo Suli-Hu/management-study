@@ -43,7 +43,7 @@ pnpm dev                   # 本地起 server 看效果
 git add data/ && git commit -m "Add k627" && git push
 
 # GitHub Actions 自动：validate → sync to D1 → 部署
-# ~30 秒后 v2.management-study.pages.dev 可见
+# ~30 秒后 management-study-v2.pages.dev 可见
 ```
 
 ## 开发
@@ -70,6 +70,6 @@ wrangler d1 create management-study-v2
 ## 与 v1 关系
 
 - v1 (`Main/`) 仍在跑 (`management-study.pages.dev`)
-- v2 (`v2/`) 同 repo 独立项目 (`v2.management-study.pages.dev`)
+- v2 (`v2/`) 同 repo 独立项目 (`management-study-v2.pages.dev`)
 - W1 闭环后 learning **立即切换**到 v2 工作流（不再加 KP 到 v1）
 - W4 cutover：v2 替代 v1 域名
