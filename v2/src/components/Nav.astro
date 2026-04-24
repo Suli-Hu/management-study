@@ -74,6 +74,16 @@ const emailInitial = user?.email.charAt(0).toUpperCase() ?? '';
     )}
 
     <div class="flex items-center gap-1 text-xs shrink-0">
+      <button
+        id="theme-toggle"
+        type="button"
+        aria-label="切换夜间模式"
+        class="p-1 rounded text-tertiary hover:text-primary transition-colors"
+        title="切换夜间模式"
+      >
+        <span data-theme-icon-light aria-hidden="true">☀︎</span>
+        <span data-theme-icon-dark aria-hidden="true" class="hidden">☾</span>
+      </button>
       {user ? (
         <>
           {isGuest ? (
@@ -113,3 +123,28 @@ const emailInitial = user?.email.charAt(0).toUpperCase() ?? '';
     </div>
   </div>
 </nav>
+
+<script is:inline>
+  // v0.3.9 夜间模式 toggle。初始状态由 Layout head 的 inline script 已应用（无闪烁）。
+  (function () {
+    const btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    const iconLight = btn.querySelector('[data-theme-icon-light]');
+    const iconDark = btn.querySelector('[data-theme-icon-dark]');
+
+    function render() {
+      const isDark = document.documentElement.classList.contains('dark');
+      iconLight?.classList.toggle('hidden', isDark);
+      iconDark?.classList.toggle('hidden', !isDark);
+      btn.setAttribute('aria-label', isDark ? '切换到日间模式' : '切换到夜间模式');
+    }
+    render();
+
+    btn.addEventListener('click', () => {
+      const next = !document.documentElement.classList.contains('dark');
+      document.documentElement.classList.toggle('dark', next);
+      localStorage.setItem('theme', next ? 'dark' : 'light');
+      render();
+    });
+  })();
+</script>

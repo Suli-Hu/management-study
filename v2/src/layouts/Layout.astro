@@ -25,11 +25,23 @@ const fullTitle = title === '全学科学习笔记' ? title : `${title} · 全�
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1a1c" media="(prefers-color-scheme: dark)" />
     <title>{fullTitle}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      // v0.3.9 夜间模式：无闪烁初始化（在 body 渲染前确定 html.dark）
+      (function () {
+        try {
+          const saved = localStorage.getItem('theme');
+          const prefersDark = matchMedia('(prefers-color-scheme: dark)').matches;
+          const isDark = saved ? saved === 'dark' : prefersDark;
+          if (isDark) document.documentElement.classList.add('dark');
+        } catch {}
+      })();
+    </script>
   </head>
-  <body class="min-h-screen flex flex-col">
+  <body class="min-h-screen flex flex-col bg-bg-primary text-secondary">
     <Nav currentDiscipline={currentDiscipline} currentSection={currentSection} />
     <div class="flex-1"><slot /></div>
     <Footer />

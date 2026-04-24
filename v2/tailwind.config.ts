@@ -7,39 +7,45 @@ import type { Config } from 'tailwindcss';
  * 来源：v1 Main/CONTRIBUTING.md §0 + v1 实际 CSS 变量
  */
 export default {
+  // v0.3.9: class-based dark mode（html.dark 切换；受用户 toggle + prefers-color-scheme 驱动）
+  darkMode: 'class',
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
   theme: {
     extend: {
       colors: {
-        // === 文字色阶（5 级灰度，主要阅读层级） ===
-        primary: '#1d1d1f',      // 标题、加粗关键词
-        secondary: '#2c2c2e',    // 正文（默认阅读色）
-        tertiary: '#48484a',     // 副标题、英文 sub
-        quaternary: '#86868b',   // 时间戳、提示
+        // 文字 + bg 走 CSS 变量（见 global.css :root / html.dark），accent/badge 保持固定 hex
+        // === 文字色阶（5 级灰度） ===
+        primary: 'var(--color-text-primary)',
+        secondary: 'var(--color-text-secondary)',
+        tertiary: 'var(--color-text-tertiary)',
+        quaternary: 'var(--color-text-quaternary)',
 
         // === 背景 ===
         bg: {
-          primary: '#ffffff',
-          secondary: '#fafafa',
-          tertiary: '#f5f5f7',
-          warm: '#fdfaf6',       // 米色卡片背景
+          primary: 'var(--color-bg-primary)',
+          secondary: 'var(--color-bg-secondary)',
+          tertiary: 'var(--color-bg-tertiary)',
+          warm: 'var(--color-bg-warm)',
         },
 
-        // === 学科 / 学派 accent 色（v1 group color） ===
+        // === 学科 / 学派 accent 色（亮暗模式均可用） ===
         accent: {
-          ob: '#34C759',         // 个体/群体（绿）— OB
-          classic: '#FF9500',    // 古典/近代/组织环境（橙）— 组织论
-          strategy: '#007AFF',   // 战略内/外/形成（蓝）— 战略
+          ob: '#34C759',
+          classic: '#FF9500',
+          strategy: '#007AFF',
           warning: '#FF3B30',
         },
 
         // === 语义标签底色（义/限/例/应/用/喻 badge） ===
         badge: {
-          meaning: '#fff4e0',
-          limit: '#ffe5e5',
-          example: '#e0f0ff',
-          neutral: '#f0f0f3',
+          meaning: 'var(--color-badge-meaning)',
+          limit: 'var(--color-badge-limit)',
+          example: 'var(--color-badge-example)',
+          neutral: 'var(--color-badge-neutral)',
         },
+      },
+      borderColor: {
+        DEFAULT: 'var(--color-border)',
       },
       fontFamily: {
         // SF Pro 优先（macOS / iOS 原生），Noto Sans CJK fallback
