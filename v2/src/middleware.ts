@@ -7,8 +7,11 @@
  */
 
 import { defineMiddleware } from 'astro:middleware';
-import { parseCookieSession, getSessionUser, isAdmin, isGuest } from '~/lib/auth';
+import { parseCookieSession, getSessionUser, isAdmin, isGuest, cleanupExpired } from '~/lib/auth';
 import { getDb } from '~/lib/db';
+
+/** v0.3.2: 每 ~1% 请求触发一次清理（概率性，无需 Cron） */
+const CLEANUP_PROBABILITY = 0.01;
 
 /** 不需要登录就能访问的路径（前缀匹配） */
 const PUBLIC_PATH_PREFIXES = [
@@ -53,6 +56,18 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // Gate: 未登录 + 非公开路径 → 跳 /login
   if (!context.locals.user && !isPublicPath(url.pathname)) {
     return Response.redirect(`${url.origin}/login`, 302);
+  }
+
+  // v0.3.2: 概率性 cleanup 过期 session / magic_link（防 DB 堆积）
+  // fire-and-forget：不阻塞当前响应；失败 silently 记 log
+  if (env && Math.random() < CLEANUP_PROBABILITY) {
+    cleanupExpired(getDb(env))
+      .then(({ sessions, magicLinks }) => {
+        if (sessions + magicLinks > 0) {
+          console.log(`[cleanup] removed ${sessions} sessions + ${magicLinks} magic_links`);
+        }
+      })
+      .catch((err) => console.error('[cleanup] failed', err));
   }
 
   return next();

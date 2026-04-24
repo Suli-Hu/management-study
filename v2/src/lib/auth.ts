@@ -120,9 +120,20 @@ export async function consumeMagicLink(db: D1Database, token: string): Promise<s
   return row.email;
 }
 
+/** 失败 3 次后 code 作废（v0.3.2 修 A4 rate limit） */
+export const MAX_CODE_ATTEMPTS = 3;
+
 /**
- * 按 (email, code) 匹配并 consume。返回 email 或 null。
- * 同一 email 可能有多条未过期 link（反复重发），我们取最新一条 code 匹配。
+ * 按 (email, code) 匹配并 consume —— 带速率限制（v0.3.2 修 A4）
+ *
+ * 行为：
+ *   - code 对 → 置 used_at → 返回 email
+ *   - code 错 → 找最新 unused link（不限 code 匹配）attempt_count + 1
+ *     - 达到 MAX_CODE_ATTEMPTS 时把该行 used_at 置位（等同作废）
+ *     - 无论错多少次，返回 null
+ *   - 无 link 或 expired → 返回 null（同静默失败，防 enumeration）
+ *
+ * 用户视角：错 3 次就要重发；暴力攻击 10^6 / 10min 被压到 3 / 10min。
  */
 export async function consumeMagicLinkByCode(
   db: D1Database,
@@ -133,62 +144,96 @@ export async function consumeMagicLinkByCode(
   const normCode = code.replace(/\D/g, '').trim();
   if (normCode.length !== 6) return null;
 
-  const row = await db
+  // 先查 code 是否匹配
+  const matched = await db
     .prepare(`
-      SELECT token, expires_at, used_at
+      SELECT token, expires_at, used_at, attempt_count
       FROM magic_link
       WHERE email = ? AND code = ? AND used_at IS NULL
       ORDER BY expires_at DESC
       LIMIT 1
     `)
     .bind(normEmail, normCode)
-    .first<{ token: string; expires_at: number; used_at: string | null }>();
-  if (!row) return null;
-  if (row.expires_at < Date.now()) return null;
+    .first<{ token: string; expires_at: number; used_at: string | null; attempt_count: number }>();
 
-  await db
-    .prepare('UPDATE magic_link SET used_at = ? WHERE token = ?')
-    .bind(new Date().toISOString(), row.token)
-    .run();
-  return normEmail;
+  if (matched && matched.expires_at >= Date.now()) {
+    // 成功 → consume
+    await db
+      .prepare('UPDATE magic_link SET used_at = ? WHERE token = ?')
+      .bind(new Date().toISOString(), matched.token)
+      .run();
+    return normEmail;
+  }
+
+  // code 不对 or 过期 → 给最新 unused link +1 attempt
+  const latestForEmail = await db
+    .prepare(`
+      SELECT token, attempt_count
+      FROM magic_link
+      WHERE email = ? AND used_at IS NULL AND expires_at >= ?
+      ORDER BY expires_at DESC
+      LIMIT 1
+    `)
+    .bind(normEmail, Date.now())
+    .first<{ token: string; attempt_count: number }>();
+
+  if (latestForEmail) {
+    const nextCount = latestForEmail.attempt_count + 1;
+    if (nextCount >= MAX_CODE_ATTEMPTS) {
+      // 达到上限 → 作废整条 link
+      await db
+        .prepare('UPDATE magic_link SET used_at = ?, attempt_count = ? WHERE token = ?')
+        .bind(new Date().toISOString(), nextCount, latestForEmail.token)
+        .run();
+    } else {
+      await db
+        .prepare('UPDATE magic_link SET attempt_count = ? WHERE token = ?')
+        .bind(nextCount, latestForEmail.token)
+        .run();
+    }
+  }
+
+  return null;
 }
 
 // ========== User ==========
 
+/**
+ * 找或建 user —— race-safe（v0.3.2 修 A1 TOCTOU）
+ *
+ * 并发两个 request 同 email login：旧 SELECT-then-INSERT 会有一方挂 UNIQUE constraint。
+ * 新实现用 `INSERT OR IGNORE` + `SELECT` —— 插入失败（已存在）被静默忽略，
+ * 然后 SELECT 拿到那一条（无论是刚插的还是并发对方插的）。
+ */
 export async function findOrCreateUser(db: D1Database, email: string): Promise<User> {
   const normEmail = email.toLowerCase().trim();
-  const existing = await db
-    .prepare('SELECT * FROM user WHERE email = ?')
-    .bind(normEmail)
-    .first<User>();
-  if (existing) {
-    // 首次 magic link 验证算邮箱确认
-    if (!existing.email_verified_at) {
-      const now = new Date().toISOString();
-      await db
-        .prepare('UPDATE user SET email_verified_at = ? WHERE id = ?')
-        .bind(now, existing.id)
-        .run();
-      existing.email_verified_at = now;
-    }
-    return existing;
-  }
-
   const id = generateToken(12);
   const now = new Date().toISOString();
+
+  // INSERT OR IGNORE：若 UNIQUE(email) 已存在则不做任何事（无错误）
   await db
     .prepare(
-      'INSERT INTO user (id, email, display_name, created_at, email_verified_at) VALUES (?, ?, NULL, ?, ?)',
+      'INSERT OR IGNORE INTO user (id, email, display_name, created_at, email_verified_at) VALUES (?, ?, NULL, ?, ?)',
     )
     .bind(id, normEmail, now, now)
     .run();
-  return {
-    id,
-    email: normEmail,
-    display_name: null,
-    created_at: now,
-    email_verified_at: now,
-  };
+
+  // 现在必然存在（刚插或并发对方插或更早就存在）
+  const user = await db
+    .prepare('SELECT * FROM user WHERE email = ?')
+    .bind(normEmail)
+    .first<User>();
+  if (!user) throw new Error(`findOrCreateUser: user vanished after INSERT for ${normEmail}`);
+
+  // 首次 magic link 验证算邮箱确认（若老 user 从未验证）
+  if (!user.email_verified_at) {
+    await db
+      .prepare('UPDATE user SET email_verified_at = ? WHERE id = ?')
+      .bind(now, user.id)
+      .run();
+    user.email_verified_at = now;
+  }
+  return user;
 }
 
 // ========== Session ==========
@@ -229,6 +274,34 @@ export async function getSessionUser(db: D1Database, sessionId: string): Promise
 
 export async function deleteSession(db: D1Database, sessionId: string): Promise<void> {
   await db.prepare('DELETE FROM session WHERE id = ?').bind(sessionId).run();
+}
+
+/**
+ * 清理过期 session + 过期 magic_link（v0.3.2 修 A3 DB 堆积）
+ *
+ * 设计：不起后台 Cron，middleware 概率性触发（~1% requests）。
+ * 单用户体量下每天 ~100 次清理足够；避免多起 Cron / Worker 依赖。
+ * 返回删除的行数（方便日志/debug）。
+ */
+export async function cleanupExpired(
+  db: D1Database,
+): Promise<{ sessions: number; magicLinks: number }> {
+  const now = Date.now();
+  const s = await db.prepare('DELETE FROM session WHERE expires_at < ?').bind(now).run();
+  // magic_link 表：删 (used_at 非空 AND 超过 30 天) OR (expires_at 已过期 AND 未使用但老)
+  const thirtyDaysAgo = new Date(now - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const m = await db
+    .prepare(`
+      DELETE FROM magic_link
+      WHERE (used_at IS NOT NULL AND used_at < ?)
+         OR (expires_at < ?)
+    `)
+    .bind(thirtyDaysAgo, now - 60 * 1000) // expired > 1 min ago
+    .run();
+  return {
+    sessions: (s.meta as { changes?: number })?.changes ?? 0,
+    magicLinks: (m.meta as { changes?: number })?.changes ?? 0,
+  };
 }
 
 // ========== Cookie ==========
