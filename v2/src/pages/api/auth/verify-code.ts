@@ -5,7 +5,12 @@
 
 import type { APIRoute } from 'astro';
 import { getDb } from '~/lib/db';
-import { consumeMagicLinkByCode, findOrCreateUser, createSession, buildSessionCookie } from '~/lib/auth';
+import {
+  consumeMagicLinkByCode,
+  findOrCreateUser,
+  buildSignedSessionCookie,
+  getSessionSecret,
+} from '~/lib/auth';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const env = locals.runtime.env;
@@ -50,8 +55,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   const user = await findOrCreateUser(db, verifiedEmail);
-  const sessionId = await createSession(db, user.id);
-  const cookie = buildSessionCookie(sessionId, isSecure);
+  const secret = getSessionSecret(env.SESSION_SECRET);
+  const cookie = await buildSignedSessionCookie(user, true, secret, isSecure);
 
   return new Response(null, {
     status: 303,

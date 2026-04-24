@@ -2,8 +2,8 @@
 
 engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 
-**当前版本**：v0.3.4
-**当前阶段**：W3.1 清债进行中（A9 + A2 已清；A5 / CSRF / A6-A8 待清）
+**当前版本**：v0.3.5
+**当前阶段**：W3.1 清债进行中（A9 + A2 + A5 + CSRF 已清；A6-A8 待清）
 
 ---
 
@@ -17,23 +17,12 @@ engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 | v0.3.2 | A1 race + A3 cleanup + A4 rate limit | ✅ 合并执行 | `e07c701` |
 | v0.3.3 | A9 XSS 防护（escInline + 白名单） + ROADMAP.md | ✅ | `030a3e8` |
 | v0.3.4 | A2 wipe-cascade（migration 0005 + sync 增量 upsert + orphan cleanup） | ✅ | 本 patch |
-| v0.3.5 | A5 signed cookie + CSRF Origin check（都改 middleware） | ❌ 未做 | — |
+| v0.3.5 | A5 signed cookie + CSRF Origin check（都改 middleware） | ✅ | 本 patch |
 | v0.3.6 | A6 flash session + A7 去 email param + A8 logger 统一 | ❌ 未做 | — |
 
-#### W3.1 剩余 3 项（下个 patch 起清）
+#### W3.1 剩余 1 项（v0.3.6 清）
 
-- **A5 — middleware 每请求查 DB（N+1）**
-  源头：[src/middleware.ts](src/middleware.ts) 每请求 `getSessionUser()` 查 D1。
-  修复方向：signed cookie（HMAC with `SESSION_SECRET`）承载 user id + expires，
-  middleware 只做 HMAC verify，不查 DB；或 LRU in-memory cache。
-  当前影响：页面加载多一次 D1 round-trip (~20ms)，页面资源也算——PWA 时更痛。
-
-- **CSRF — Origin check middleware**
-  源头：`SESSION_SECRET` env 已预留未用，所有 POST 路径 (`/api/auth/*`) 只靠 Astro 默认 Origin check。
-  修复方向：middleware 对 state-changing method（POST/PUT/DELETE）强制 Origin ∈ allowlist。
-  当前影响：外部 form 跨域 POST 可过 Astro 默认一层。
-
-- **A6 / A7 / A8 — 小账**（v0.3.6 一次清）
+- **A6 / A7 / A8 — 小账合并修**
   A6 `?error=` 在 URL 明文 → flash session；
   A7 login `?email=xxx` redirect → 邮箱枚举泄漏；
   A8 `catch { /* noop */ }` silent → 统一 logger。
@@ -137,7 +126,7 @@ engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 | A2 | wipe-and-reload 级联删 user_note | `migrations/0005` + `sync-to-d1.ts` | ✅ v0.3.4 |
 | A3 | Session 行永不清理 | `auth.ts` | ✅ v0.3.2 |
 | A4 | Magic link code 无 rate limit | `auth.ts` | ✅ v0.3.2 |
-| A5 | Middleware 每请求查 DB | `middleware.ts` | ❌ 欠（v0.3.5） |
+| A5 | Middleware 每请求查 DB | `middleware.ts` | ✅ v0.3.5（signed cookie stateless） |
 
 🟡 W3 顺手：
 

@@ -316,13 +316,170 @@ export function parseCookieSession(cookieHeader: string | null | undefined): str
   return null;
 }
 
+// ========== Signed session cookie (v0.3.5 修 A5) ==========
+//
+// 背景：原来 middleware 每请求 `SELECT ... FROM session s JOIN user u ...` 查 D1。
+// N+1 问题：首页 + 每个静态资源每次都查。PWA 时更痛。
+//
+// 新方案（stateless）：
+//   cookie = base64url(JSON payload) + "." + hex(HMAC-SHA256(payload, secret))
+//   payload = { uid, email, exp, rem }
+//
+// Middleware：
+//   1. 解 cookie → verifySessionCookie() → payload | null
+//   2. 若 exp > now，synthesize locals.user = { id: uid, email, ... }
+//   3. **不查 D1**
+//
+// 撤销：logout 清 cookie 即可。被盗 cookie 在 exp 前仍有效 —— 接受此 tradeoff（单用户 + 访客场景）。
+//
+// SESSION_SECRET：prod 从 CF Pages Dashboard secret 注入；dev fallback 用固定字符串。
+
+/** SessionUser — 从 cookie 解出的最小身份，不含 display_name / created_at（查 D1 才有） */
+export interface SessionUser {
+  id: string;
+  email: string;
+  display_name: string | null;
+  created_at: string;
+  email_verified_at: string | null;
+}
+
+export interface SessionPayload {
+  uid: string;
+  email: string;
+  exp: number; // unix ms
+  rem: boolean;
+}
+
+/** dev fallback —— prod 必设 SESSION_SECRET，缺失 = 警告 + 用此值（仅能阻挡非攻击者的意外 tamper） */
+const DEV_SECRET_FALLBACK = 'dev-secret-do-not-use-in-prod';
+
+export function getSessionSecret(secret: string | undefined): string {
+  if (!secret) {
+    console.warn('[auth] SESSION_SECRET missing — using dev fallback. Set in CF Pages for prod.');
+    return DEV_SECRET_FALLBACK;
+  }
+  return secret;
+}
+
+/** URL-safe base64 encode (没 padding) */
+function b64url(bytes: Uint8Array): string {
+  let s = '';
+  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+  return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+function b64urlDecode(s: string): Uint8Array {
+  const pad = s.length % 4 ? 4 - (s.length % 4) : 0;
+  const b64 = s.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat(pad);
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes;
+}
+function hex(bytes: ArrayBuffer | Uint8Array): string {
+  const arr = bytes instanceof ArrayBuffer ? new Uint8Array(bytes) : bytes;
+  let s = '';
+  for (let i = 0; i < arr.length; i++) s += arr[i].toString(16).padStart(2, '0');
+  return s;
+}
+function hexDecode(s: string): Uint8Array {
+  const bytes = new Uint8Array(s.length / 2);
+  for (let i = 0; i < bytes.length; i++) bytes[i] = parseInt(s.slice(i * 2, i * 2 + 2), 16);
+  return bytes;
+}
+
+async function hmacSign(payloadB64: string, secret: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payloadB64));
+  return hex(sig);
+}
+
+async function hmacVerify(payloadB64: string, sigHex: string, secret: string): Promise<boolean> {
+  try {
+    const key = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['verify'],
+    );
+    return await crypto.subtle.verify(
+      'HMAC',
+      key,
+      hexDecode(sigHex),
+      new TextEncoder().encode(payloadB64),
+    );
+  } catch {
+    return false;
+  }
+}
+
+/** 签发 session cookie value（not 整个 Set-Cookie header；见 buildSessionCookie 组装） */
+export async function signSessionCookie(payload: SessionPayload, secret: string): Promise<string> {
+  const jsonBytes = new TextEncoder().encode(JSON.stringify(payload));
+  const payloadB64 = b64url(jsonBytes);
+  const sig = await hmacSign(payloadB64, secret);
+  return `${payloadB64}.${sig}`;
+}
+
+/** 验证 + 解 cookie value → payload | null（失败 = tampered / expired / malformed） */
+export async function verifySessionCookie(
+  cookieValue: string | null | undefined,
+  secret: string,
+): Promise<SessionPayload | null> {
+  if (!cookieValue) return null;
+  const dot = cookieValue.indexOf('.');
+  if (dot <= 0 || dot === cookieValue.length - 1) return null;
+  const payloadB64 = cookieValue.slice(0, dot);
+  const sig = cookieValue.slice(dot + 1);
+  const ok = await hmacVerify(payloadB64, sig, secret);
+  if (!ok) return null;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(new TextDecoder().decode(b64urlDecode(payloadB64)));
+  } catch {
+    return null;
+  }
+  if (
+    !parsed ||
+    typeof parsed !== 'object' ||
+    typeof (parsed as SessionPayload).uid !== 'string' ||
+    typeof (parsed as SessionPayload).email !== 'string' ||
+    typeof (parsed as SessionPayload).exp !== 'number' ||
+    typeof (parsed as SessionPayload).rem !== 'boolean'
+  ) {
+    return null;
+  }
+  const payload = parsed as SessionPayload;
+  if (payload.exp < Date.now()) return null;
+  return payload;
+}
+
+/** 把 payload 变 SessionUser（middleware 放 locals.user 用） */
+export function sessionUserFromPayload(payload: SessionPayload): SessionUser {
+  return {
+    id: payload.uid,
+    email: payload.email,
+    display_name: null,
+    created_at: '',
+    email_verified_at: null,
+  };
+}
+
+// ========== Cookie 组装 ==========
+
 export function buildSessionCookie(
-  sessionId: string,
+  signedValue: string,
   isProd: boolean,
   remember: boolean = true,
 ): string {
   const parts = [
-    `${COOKIE_NAME}=${sessionId}`,
+    `${COOKIE_NAME}=${signedValue}`,
     'HttpOnly',
     'SameSite=Lax',
     'Path=/',
@@ -339,4 +496,22 @@ export function buildClearCookie(isProd: boolean): string {
   const parts = [`${COOKIE_NAME}=`, 'HttpOnly', 'SameSite=Lax', 'Path=/', 'Max-Age=0'];
   if (isProd) parts.push('Secure');
   return parts.join('; ');
+}
+
+/** 组合：从 user + remember + secret 一把出 Set-Cookie header value */
+export async function buildSignedSessionCookie(
+  user: { id: string; email: string },
+  remember: boolean,
+  secret: string,
+  isProd: boolean,
+): Promise<string> {
+  const expiresAt = Date.now() + (remember ? SESSION_TTL_MS : SESSION_EPHEMERAL_TTL_MS);
+  const payload: SessionPayload = {
+    uid: user.id,
+    email: user.email,
+    exp: expiresAt,
+    rem: remember,
+  };
+  const signedValue = await signSessionCookie(payload, secret);
+  return buildSessionCookie(signedValue, isProd, remember);
 }

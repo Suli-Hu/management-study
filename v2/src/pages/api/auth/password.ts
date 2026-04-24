@@ -12,8 +12,8 @@ import type { APIRoute } from 'astro';
 import { getDb } from '~/lib/db';
 import {
   findOrCreateUser,
-  createSession,
-  buildSessionCookie,
+  buildSignedSessionCookie,
+  getSessionSecret,
   getPrimaryAdminEmail,
   timingSafeEqual,
 } from '~/lib/auth';
@@ -69,8 +69,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   const user = await findOrCreateUser(db, email);
-  const sessionId = await createSession(db, user.id, remember);
-  const cookie = buildSessionCookie(sessionId, isSecure, remember);
+  const secret = getSessionSecret(env.SESSION_SECRET);
+  const cookie = await buildSignedSessionCookie(user, remember, secret, isSecure);
 
   return new Response(null, {
     status: 303,

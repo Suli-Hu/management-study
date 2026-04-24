@@ -1,23 +1,15 @@
 /**
  * POST /api/auth/logout
- *   删 session row + 清 cookie + redirect /
+ *   清 cookie + redirect /（v0.3.5 起 cookie 是 stateless signed，清掉即失效）
  */
 
 import type { APIRoute } from 'astro';
-import { getDb } from '~/lib/db';
-import { parseCookieSession, deleteSession, buildClearCookie } from '~/lib/auth';
+import { buildClearCookie } from '~/lib/auth';
 
-export const POST: APIRoute = async ({ request, locals }) => {
-  const env = locals.runtime.env;
-  const db = getDb(env);
+export const POST: APIRoute = async ({ request }) => {
   const reqUrl = new URL(request.url);
   const reqOrigin = reqUrl.origin;
   const isSecure = reqUrl.protocol === 'https:';
-
-  const sessionId = parseCookieSession(request.headers.get('cookie'));
-  if (sessionId) {
-    await deleteSession(db, sessionId);
-  }
 
   return new Response(null, {
     status: 302,

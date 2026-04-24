@@ -5,7 +5,7 @@ type Runtime = import('@astrojs/cloudflare').Runtime<import('./lib/db').Env>;
 
 declare namespace App {
   interface Locals extends Runtime {
-    user: import('./lib/auth').User | null;
+    user: import('./lib/auth').SessionUser | null;
     isAdmin: boolean;
     isGuest: boolean;
   }
