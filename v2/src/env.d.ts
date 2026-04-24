@@ -7,6 +7,7 @@ declare namespace App {
   interface Locals extends Runtime {
     user: import('./lib/auth').User | null;
     isAdmin: boolean;
+    isGuest: boolean;
   }
 }
 

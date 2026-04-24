@@ -8,6 +8,7 @@ interface Props {
 
 const { currentDiscipline, currentSection } = Astro.props;
 const user = Astro.locals.user;
+const isGuest = Astro.locals.isGuest;
 
 let disciplineTitle: string | null = null;
 if (currentDiscipline) {
@@ -75,13 +76,23 @@ const emailInitial = user?.email.charAt(0).toUpperCase() ?? '';
     <div class="flex items-center gap-1 text-xs shrink-0">
       {user ? (
         <>
-          <span
-            aria-label={user.email}
-            title={user.email}
-            class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-accent-strategy text-white font-semibold text-xs"
-          >
-            {emailInitial}
-          </span>
+          {isGuest ? (
+            <span
+              aria-label="访客"
+              title="访客（只读，无记忆）"
+              class="inline-flex items-center px-2 py-0.5 rounded-full bg-bg-tertiary text-tertiary font-semibold"
+            >
+              访客
+            </span>
+          ) : (
+            <span
+              aria-label={user.email}
+              title={user.email}
+              class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-accent-strategy text-white font-semibold text-xs"
+            >
+              {emailInitial}
+            </span>
+          )}
           <form method="POST" action="/api/auth/logout" class="inline">
             <button
               type="submit"

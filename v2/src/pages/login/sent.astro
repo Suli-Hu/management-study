@@ -1,6 +1,11 @@
 ---
 import Layout from '~/layouts/Layout.astro';
 
+// v0.2.9: password 模式下不应到达这里
+if (Astro.locals.runtime.env.AUTH_MODE === 'password') {
+  return Astro.redirect('/login');
+}
+
 const email = Astro.url.searchParams.get('email') ?? '';
 const err = Astro.url.searchParams.get('error');
 const errorMsg = err === 'invalid_code'

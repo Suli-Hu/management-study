@@ -58,6 +58,36 @@ export function isAdmin(user: User | null, adminEmailsCSV: string | undefined): 
   return admins.includes(user.email.toLowerCase());
 }
 
+/** 从 ADMIN_EMAILS CSV 里取第一个（password 模式需要知道 admin 身份的固定 email） */
+export function getPrimaryAdminEmail(adminEmailsCSV: string | undefined): string | null {
+  if (!adminEmailsCSV) return null;
+  const first = adminEmailsCSV.split(',')[0]?.trim().toLowerCase();
+  return first || null;
+}
+
+/**
+ * 判断用户是否访客（password 模式下 GUEST_PASSWORD 登录者）。
+ * 访客行为：只读 + 未来 user_progress/note 写入跳过（"无记忆"约定）。
+ */
+export function isGuest(user: User | null, guestEmail: string | undefined): boolean {
+  if (!user) return false;
+  if (!guestEmail) return false;
+  return user.email.toLowerCase() === guestEmail.trim().toLowerCase();
+}
+
+/**
+ * 常量时间字符串比较（防 timing attack）。仅比较 ASCII 可打印字符足够。
+ * 密码比 email / 邮箱后，走这个而不是 ===。
+ */
+export function timingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) {
+    diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return diff === 0;
+}
+
 // ========== Magic link ==========
 
 export async function createMagicLink(db: D1Database, email: string): Promise<{ token: string; code: string }> {

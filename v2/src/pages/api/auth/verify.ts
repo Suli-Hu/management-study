@@ -10,6 +10,10 @@ import { consumeMagicLink, findOrCreateUser, createSession, buildSessionCookie }
 
 export const GET: APIRoute = async ({ url, request, locals }) => {
   const env = locals.runtime.env;
+  // v0.2.9: password 模式下禁用 email flow
+  if (env.AUTH_MODE === 'password') {
+    return new Response('Email login disabled in password mode', { status: 404 });
+  }
   const db = getDb(env);
   const reqUrl = new URL(request.url);
   const reqOrigin = reqUrl.origin;

@@ -23,6 +23,12 @@ export interface Env {
 
   // v0.2.8 admin role（逗号分隔邮箱 CSV）
   ADMIN_EMAILS?: string;
+
+  // v0.2.9 password 模式（考试期开关）
+  AUTH_MODE?: 'password' | 'email';
+  GUEST_EMAIL?: string;
+  ADMIN_PASSWORD?: string;
+  GUEST_PASSWORD?: string;
 }
 
 /** 从 Astro.locals.runtime.env 取 DB —— Cloudflare Pages adapter 注入 */

@@ -6,6 +6,9 @@ import {
   buildSessionCookie,
   buildClearCookie,
   isAdmin,
+  isGuest,
+  getPrimaryAdminEmail,
+  timingSafeEqual,
   COOKIE_NAME,
   type User,
 } from '../src/lib/auth';
@@ -115,5 +118,62 @@ describe('isAdmin', () => {
   });
   test('multiple admins csv', () => {
     expect(isAdmin(other, 'husuli0623@gmail.com, bob@example.com')).toBe(true);
+  });
+});
+
+describe('isGuest', () => {
+  const guest: User = {
+    id: 'g1',
+    email: 'guest@local.invalid',
+    display_name: null,
+    created_at: '',
+    email_verified_at: null,
+  };
+  const real: User = { ...guest, email: 'real@example.com' };
+
+  test('null user is not guest', () => {
+    expect(isGuest(null, 'guest@local.invalid')).toBe(false);
+  });
+  test('missing GUEST_EMAIL is not guest', () => {
+    expect(isGuest(guest, undefined)).toBe(false);
+    expect(isGuest(guest, '')).toBe(false);
+  });
+  test('exact email match (case-insensitive)', () => {
+    expect(isGuest(guest, 'guest@local.invalid')).toBe(true);
+    expect(isGuest({ ...guest, email: 'GUEST@local.invalid' }, 'guest@local.invalid')).toBe(true);
+  });
+  test('non-guest user rejected', () => {
+    expect(isGuest(real, 'guest@local.invalid')).toBe(false);
+  });
+});
+
+describe('getPrimaryAdminEmail', () => {
+  test('null/empty csv → null', () => {
+    expect(getPrimaryAdminEmail(undefined)).toBeNull();
+    expect(getPrimaryAdminEmail('')).toBeNull();
+    expect(getPrimaryAdminEmail(',,,')).toBeNull();
+  });
+  test('single email', () => {
+    expect(getPrimaryAdminEmail('husuli0623@gmail.com')).toBe('husuli0623@gmail.com');
+  });
+  test('first of multiple, lowercased + trimmed', () => {
+    expect(getPrimaryAdminEmail(' Husuli0623@Gmail.com , bob@example.com '))
+      .toBe('husuli0623@gmail.com');
+  });
+});
+
+describe('timingSafeEqual', () => {
+  test('equal strings', () => {
+    expect(timingSafeEqual('abc', 'abc')).toBe(true);
+    expect(timingSafeEqual('', '')).toBe(true);
+  });
+  test('different strings', () => {
+    expect(timingSafeEqual('abc', 'abd')).toBe(false);
+    expect(timingSafeEqual('abc', 'ab')).toBe(false);
+    expect(timingSafeEqual('ab', 'abc')).toBe(false);
+  });
+  test('same content different types of chars', () => {
+    expect(timingSafeEqual('123', '123')).toBe(true);
+    expect(timingSafeEqual('husuli0623@gmail.com', 'husuli0623@gmail.com')).toBe(true);
   });
 });

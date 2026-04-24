@@ -11,6 +11,10 @@ import { sendEmail, renderMagicLinkEmail } from '~/lib/email';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const env = locals.runtime.env;
+  // v0.2.9: password 模式下邮箱 flow 禁用
+  if (env.AUTH_MODE === 'password') {
+    return new Response('Email login disabled in password mode', { status: 404 });
+  }
   const db = getDb(env);
 
   let email = '';

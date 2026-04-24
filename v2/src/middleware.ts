@@ -7,7 +7,7 @@
  */
 
 import { defineMiddleware } from 'astro:middleware';
-import { parseCookieSession, getSessionUser, isAdmin } from '~/lib/auth';
+import { parseCookieSession, getSessionUser, isAdmin, isGuest } from '~/lib/auth';
 import { getDb } from '~/lib/db';
 
 /** 不需要登录就能访问的路径（前缀匹配） */
@@ -46,6 +46,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // v0.2.8: admin flag（写权限 gate 依赖这个）
   context.locals.isAdmin = isAdmin(context.locals.user, env?.ADMIN_EMAILS);
+
+  // v0.2.9: guest flag（password 模式 GUEST_PASSWORD 登录者；未来 user_progress 写入要跳过）
+  context.locals.isGuest = isGuest(context.locals.user, env?.GUEST_EMAIL);
 
   // Gate: 未登录 + 非公开路径 → 跳 /login
   if (!context.locals.user && !isPublicPath(url.pathname)) {
