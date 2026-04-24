@@ -1,6 +1,7 @@
 ---
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
+import { renderBody } from '~/lib/render-body';
 
 const { discipline, key } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
@@ -21,130 +22,380 @@ const scholar = await db
   `)
   .bind(key, discipline)
   .first<{
-    key: string;
-    discipline: string;
-    name_zh: string;
-    name_en: string | null;
-    name_ja: string | null;
-    contribution_zh: string;
-    contribution_ja: string | null;
-    lifespan: string;
-    institution: string;
-    nobel_year: string | null;
-    nobel_detail: string | null;
+    key: string; discipline: string; name_zh: string; name_en: string | null; name_ja: string | null;
+    contribution_zh: string; contribution_ja: string | null;
+    lifespan: string; institution: string;
+    nobel_year: string | null; nobel_detail: string | null;
   }>();
 
 if (!scholar) return Astro.redirect('/404');
 
+// 关联学派（用来取 accent）
 const schoolsResult = await db
   .prepare(`
-    SELECT s.key, s.title_zh, s.title_en, s.theme_key
+    SELECT s.key, s.title_zh, s.accent, s.theme_key
     FROM school s
     INNER JOIN scholar_school ss ON ss.school_key = s.key
     WHERE ss.scholar_key = ?
     ORDER BY ss.position, s.key
   `)
   .bind(key)
-  .all<{ key: string; title_zh: string; title_en: string | null; theme_key: string }>();
+  .all<{ key: string; title_zh: string; accent: string; theme_key: string }>();
 const schools = schoolsResult.results ?? [];
 
+const ACCENT_MAP: Record<string, string> = {
+  ob: '#34C759',
+  classic: '#FF9500',
+  strategy: '#007AFF',
+  warning: '#FF3B30',
+};
+const scholarAccentHex = ACCENT_MAP[schools[0]?.accent ?? 'classic'] ?? '#8a7a6a';
+
+// 代表理论（KP by scholar），按年份排
 const kpsResult = await db
   .prepare(`
-    SELECT
-      k.id, k.title_zh, k.title_en, k.title_ja, k.year,
-      (SELECT GROUP_CONCAT(school_key, ',') FROM kp_school WHERE kp_id = k.id ORDER BY position) as schools_csv
+    SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year
     FROM kp k
     INNER JOIN kp_scholar ks ON ks.kp_id = k.id
     WHERE ks.scholar_key = ?
     ORDER BY
       CASE WHEN k.year = '' OR k.year IS NULL THEN 1 ELSE 0 END,
-      k.year,
-      k.id
+      k.year, k.id
   `)
   .bind(key)
-  .all<{
-    id: string;
-    title_zh: string;
-    title_en: string | null;
-    title_ja: string | null;
-    year: string;
-    schools_csv: string | null;
-  }>();
+  .all<{ id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string }>();
 const kps = kpsResult.results ?? [];
 
-// 语言切换（与 KP 详情页保持一致的 ?lang=ja 约定）
+// v0.3.11 Split-pane: ?kp=X 时 SSR 渲染该 KP 详情到右栏
+const selectedKpId = Astro.url.searchParams.get('kp');
+let selectedKp: {
+  id: string; title_zh: string; title_en: string | null; title_ja: string | null;
+  year: string; body_zh: string; body_ja: string | null; tags_json: string;
+} | null = null;
+let selectedScholars: Array<{ key: string; name_zh: string; name_en: string | null }> = [];
+let selectedTags: string[] = [];
+if (selectedKpId) {
+  const kpRow = await db
+    .prepare('SELECT id, title_zh, title_en, title_ja, year, body_zh, body_ja, tags_json FROM kp WHERE id = ? AND discipline = ?')
+    .bind(selectedKpId, discipline)
+    .first<typeof selectedKp>();
+  selectedKp = kpRow ?? null;
+  if (selectedKp) {
+    selectedTags = JSON.parse(selectedKp.tags_json) as string[];
+    const scRes = await db
+      .prepare(`
+        SELECT sc.key, sc.name_zh, sc.name_en
+        FROM scholar sc INNER JOIN kp_scholar ks ON ks.scholar_key = sc.key
+        WHERE ks.kp_id = ? ORDER BY ks.position
+      `)
+      .bind(selectedKpId)
+      .all<{ key: string; name_zh: string; name_en: string | null }>();
+    selectedScholars = scRes.results ?? [];
+  }
+}
+
+// 语言切换（仅 contribution 段；KP 详情页内部自己处理 lang）
 const lang = (Astro.url.searchParams.get('lang') === 'ja' && scholar.contribution_ja) ? 'ja' : 'zh';
 const displayName = lang === 'ja' ? (scholar.name_ja ?? scholar.name_zh) : scholar.name_zh;
 const contribution = lang === 'ja' ? scholar.contribution_ja! : scholar.contribution_zh;
 ---
 
 <Layout title={scholar.name_en ?? scholar.name_zh} currentDiscipline={discipline} currentSection="scholars">
-  <main class="max-w-reading mx-auto px-4 py-6">
-    <header class="mb-6 pb-4 border-b">
-      <h1 class="text-2xl mb-1">{scholar.name_en ?? displayName}</h1>
-      <div class="text-xs text-tertiary flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        {scholar.name_en && <span>{displayName}</span>}
-        {scholar.name_ja && lang === 'zh' && <span class="text-quaternary">{scholar.name_ja}</span>}
-        {scholar.lifespan && <span class="text-quaternary">· {scholar.lifespan}</span>}
-        {scholar.institution && <span class="text-quaternary">· {scholar.institution}</span>}
-      </div>
-      {scholar.nobel_detail && (
-        <div class="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-badge-meaning text-accent-classic text-xs">
-          🏅 诺贝尔经济学奖{scholar.nobel_year ? ` · ${scholar.nobel_year}` : ''}
-        </div>
-      )}
+  <main class="max-w-screen-2xl mx-auto px-4 py-6">
+    <div class="grid lg:grid-cols-[360px_1fr] gap-6">
+      {/* === 左栏：学者信息 + 代表理论 === */}
+      <aside class="kp-list lg:sticky lg:top-14 lg:max-h-[calc(100vh-80px)] lg:overflow-y-auto lg:pr-1">
+        {/* Scholar hero with accent bar */}
+        <section class="flex rounded-xl overflow-hidden border bg-bg-primary shadow-card mb-6">
+          <div class="w-1.5 shrink-0" style={`background:${scholarAccentHex}`}></div>
+          <div class="flex-1 p-5">
+            <h1 class="text-xl font-semibold leading-tight">{displayName}</h1>
+            {scholar.name_en && <div class="text-xs text-tertiary mt-1">{scholar.name_en}</div>}
+            {scholar.name_ja && lang === 'zh' && <div class="text-xs text-quaternary mt-0.5">{scholar.name_ja}</div>}
+          </div>
+        </section>
 
-      <div class="flex gap-2 mt-4 flex-wrap">
-        {scholar.contribution_ja && (
-          <a
-            href={lang === 'zh' ? `?lang=ja` : Astro.url.pathname}
-            class="chip border-quaternary"
-          >
-            {lang === 'zh' ? '日本語' : '中文'}
-          </a>
+        {/* 基本信息 */}
+        <section class="mb-6">
+          <h2 class="text-xs font-semibold text-tertiary mb-2">基本信息</h2>
+          <table class="w-full text-xs">
+            <tbody>
+              {scholar.lifespan && (
+                <tr class="border-b">
+                  <td class="py-2 text-quaternary w-20 align-top">生卒年</td>
+                  <td class="py-2 text-secondary">{scholar.lifespan}</td>
+                </tr>
+              )}
+              {scholar.institution && (
+                <tr class="border-b">
+                  <td class="py-2 text-quaternary align-top">主要任职</td>
+                  <td class="py-2 text-secondary leading-relaxed">{scholar.institution}</td>
+                </tr>
+              )}
+              {scholar.nobel_year && (
+                <tr class="border-b">
+                  <td class="py-2 text-quaternary align-top">获奖</td>
+                  <td class="py-2 text-accent-classic font-semibold">🏅 {scholar.nobel_year}</td>
+                </tr>
+              )}
+              {schools.length > 0 && (
+                <tr>
+                  <td class="py-2 text-quaternary align-top">所属学派</td>
+                  <td class="py-2">
+                    <div class="flex flex-wrap gap-1">
+                      {schools.map((s) => (
+                        <a href={`/${discipline}/${s.key}`} class="chip border-quaternary text-xs">{s.title_zh}</a>
+                      ))}
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </section>
+
+        {/* 代表理论 */}
+        <section>
+          <h2 class="text-xs font-semibold text-tertiary mb-3">
+            代表理论 (<span>{kps.length}</span>
+            <span id="kp-count-known" class="hidden text-accent-classic"> · ★ <span data-known-count>0</span></span>)
+          </h2>
+          {kps.length > 0 ? (
+            <ul class="space-y-2">
+              {kps.map((k) => {
+                const isActive = selectedKpId === k.id;
+                return (
+                  <li data-kp-id={k.id} class:list={['kp-list-item', isActive && 'is-active']}>
+                    <a
+                      href={`/${discipline}/kp/${k.id}`}
+                      data-kp-link
+                      data-kp-wide-href={`?kp=${k.id}`}
+                      class:list={[
+                        'block p-3 rounded border bg-bg-primary hover:shadow-card transition-shadow',
+                        isActive && 'ring-2 ring-accent-classic border-accent-classic',
+                      ]}
+                      style={isActive ? `background:${scholarAccentHex}14` : ''}
+                    >
+                      <h3 class="text-sm font-semibold text-primary">
+                        <span class="kp-known-star hidden text-accent-classic mr-1" aria-hidden="true">★</span>
+                        {k.title_zh}
+                      </h3>
+                      {k.title_ja && <div class="text-xs text-tertiary mt-0.5">{k.title_ja}</div>}
+                      {k.title_en && <div class="text-xs text-quaternary italic mt-0.5">{k.title_en}</div>}
+                      {k.year && <div class="text-xs text-quaternary mt-0.5">{k.year}</div>}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p class="text-xs text-quaternary">暂无关联知识点。</p>
+          )}
+        </section>
+
+        {/* 学术贡献（contribution 段）*/}
+        {contribution && (
+          <section class="mt-6 pt-6 border-t">
+            <h2 class="text-xs font-semibold text-tertiary mb-2">
+              学术贡献
+              {scholar.contribution_ja && (
+                <a href={lang === 'zh' ? `?lang=ja${selectedKpId ? `&kp=${selectedKpId}` : ''}` : Astro.url.pathname + (selectedKpId ? `?kp=${selectedKpId}` : '')} class="ml-2 text-xs text-accent-strategy">
+                  {lang === 'zh' ? '日本語' : '中文'}
+                </a>
+              )}
+            </h2>
+            <article class="text-xs text-secondary leading-relaxed whitespace-pre-line" set:html={contribution} />
+          </section>
         )}
-        {schools.map((s) => (
-          <a href={`/${discipline}/${s.key}`} class="chip border-quaternary">{s.title_zh}</a>
-        ))}
-      </div>
-    </header>
 
-    {contribution && (
-      <section class="mb-10">
-        <article class="prose prose-sm max-w-none text-secondary leading-relaxed whitespace-pre-line" set:html={contribution} />
+        {/* 诺贝尔奖授奖词 */}
         {scholar.nobel_detail && (
-          <aside class="mt-6 p-4 rounded-md bg-bg-warm text-xs text-secondary leading-relaxed">
+          <section class="mt-6 p-4 rounded-md bg-bg-warm text-xs text-secondary leading-relaxed">
             <div class="text-accent-classic font-semibold mb-1">🏅 诺贝尔奖授奖词</div>
             <div class="whitespace-pre-line">{scholar.nobel_detail}</div>
-          </aside>
+          </section>
         )}
-      </section>
-    )}
+      </aside>
 
-    <section>
-      <h2 class="text-sm font-semibold text-tertiary mb-3">相关知识点 ({kps.length})</h2>
-      {kps.length > 0 ? (
-        <ul class="space-y-1">
-          {kps.map((k) => (
-            <li>
-              <a
-                href={`/${discipline}/kp/${k.id}`}
-                class="block py-2 px-3 rounded hover:bg-bg-tertiary no-underline"
-              >
-                <div class="flex items-baseline justify-between gap-3">
-                  <div class="min-w-0 flex-1">
-                    <span class="text-sm font-semibold text-primary">{k.title_zh}</span>
-                    {k.title_ja && <span class="text-xs text-tertiary ml-2">{k.title_ja}</span>}
-                  </div>
-                  {k.year && <span class="text-xs text-quaternary whitespace-nowrap shrink-0">{k.year}</span>}
-                </div>
-              </a>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p class="text-sm text-tertiary">暂无关联知识点。</p>
-      )}
-    </section>
+      {/* === 右栏：KP 详情（仅宽屏）=== */}
+      <article class="kp-detail-pane hidden lg:block" id="kp-detail-pane">
+        {selectedKp ? (
+          <div class="max-w-reading">
+            <header class="mb-6 pb-4 border-b">
+              <div class="flex items-start justify-between gap-3">
+                <h2 class="text-xl font-semibold flex-1">{selectedKp.title_zh}</h2>
+                <button
+                  id="kp-known-toggle"
+                  type="button"
+                  data-kp-id={selectedKp.id}
+                  aria-label="标记已会"
+                  aria-pressed="false"
+                  class="kp-star shrink-0 mt-1 w-9 h-9 rounded-full flex items-center justify-center text-xl leading-none text-quaternary hover:text-accent-classic hover:bg-bg-tertiary transition-colors"
+                >
+                  <span aria-hidden="true">☆</span>
+                </button>
+              </div>
+              <div class="flex flex-wrap items-baseline gap-2 text-xs text-tertiary mt-2">
+                {selectedScholars.map((s) => (
+                  <a href={`/${discipline}/scholars/${s.key}`} class="font-semibold hover:underline">
+                    {s.name_en ?? s.name_zh}
+                  </a>
+                ))}
+                {selectedKp.year && <span class="text-quaternary">'{selectedKp.year}</span>}
+              </div>
+              {selectedKp.title_en && <div class="text-xs text-quaternary italic mt-1">{selectedKp.title_en}</div>}
+              {selectedKp.title_ja && <div class="text-xs text-tertiary mt-1">{selectedKp.title_ja}</div>}
+              <div class="mt-3">
+                <a href={`/${discipline}/kp/${selectedKp.id}`} class="text-xs text-accent-strategy hover:underline">
+                  在独立页面打开 →
+                </a>
+              </div>
+            </header>
+            <div class="kp-body text-secondary" set:html={renderBody(selectedKp.body_zh, scholarAccentHex)} />
+            {selectedTags.length > 0 && (
+              <footer class="mt-8 pt-4 border-t flex gap-2">
+                {selectedTags.map((t) => (
+                  <span class={`badge ${t === '义' ? 'badge-meaning' : t === '限' ? 'badge-limit' : 'bg-badge-neutral text-tertiary'}`}>
+                    {t}
+                  </span>
+                ))}
+              </footer>
+            )}
+          </div>
+        ) : (
+          <div class="text-sm text-quaternary py-10 px-4">
+            <p>选中左侧代表理论查看详情，或按 <kbd class="px-1.5 py-0.5 text-xs rounded border bg-bg-secondary">↓</kbd> / <kbd class="px-1.5 py-0.5 text-xs rounded border bg-bg-secondary">↑</kbd> 切换</p>
+          </div>
+        )}
+      </article>
+    </div>
   </main>
 </Layout>
+
+<script is:inline>
+  // Split-pane 交互（与 [school]/index.astro 同一套，未来可抽出共享）
+  (function () {
+    function renderKnownStars() {
+      const items = document.querySelectorAll('[data-kp-id]');
+      let known = 0;
+      items.forEach((li) => {
+        const id = li.getAttribute('data-kp-id');
+        const isKnown = localStorage.getItem(`kp-known:${id}`) === '1';
+        const star = li.querySelector('.kp-known-star');
+        star?.classList.toggle('hidden', !isKnown);
+        if (isKnown && li.tagName === 'LI') known++;
+      });
+      const badge = document.getElementById('kp-count-known');
+      const countSpan = badge?.querySelector('[data-known-count]');
+      if (badge && countSpan) {
+        countSpan.textContent = String(known);
+        badge.classList.toggle('hidden', known === 0);
+      }
+    }
+    renderKnownStars();
+
+    function renderDetailStar() {
+      const btn = document.getElementById('kp-known-toggle');
+      if (!btn) return;
+      const id = btn.getAttribute('data-kp-id');
+      const known = localStorage.getItem(`kp-known:${id}`) === '1';
+      btn.setAttribute('aria-pressed', String(known));
+      const span = btn.querySelector('span');
+      if (span) span.textContent = known ? '★' : '☆';
+      btn.classList.toggle('text-accent-classic', known);
+      btn.classList.toggle('text-quaternary', !known);
+      btn.setAttribute('aria-label', known ? '已会（点击取消）' : '标记已会');
+    }
+    renderDetailStar();
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest?.('#kp-known-toggle');
+      if (!btn) return;
+      const id = btn.getAttribute('data-kp-id');
+      if (!id) return;
+      const k = `kp-known:${id}`;
+      if (localStorage.getItem(k) === '1') localStorage.removeItem(k);
+      else localStorage.setItem(k, '1');
+      renderDetailStar();
+      renderKnownStars();
+    });
+
+    const MQ = window.matchMedia('(min-width: 1024px)');
+    const detailPane = document.getElementById('kp-detail-pane');
+
+    async function showKpInPane(kpId) {
+      if (!detailPane) return;
+      const url = `${location.pathname}?kp=${encodeURIComponent(kpId)}`;
+      detailPane.setAttribute('aria-busy', 'true');
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('fetch failed: ' + res.status);
+        const html = await res.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const newPane = doc.getElementById('kp-detail-pane');
+        if (!newPane) throw new Error('no detail pane in response');
+        detailPane.innerHTML = newPane.innerHTML;
+        history.pushState(null, '', url);
+        document.querySelectorAll('.kp-list-item').forEach((li) => {
+          const isActive = li.getAttribute('data-kp-id') === kpId;
+          li.classList.toggle('is-active', isActive);
+          const a = li.querySelector('[data-kp-link]');
+          a?.classList.toggle('ring-2', isActive);
+          a?.classList.toggle('ring-accent-classic', isActive);
+          a?.classList.toggle('border-accent-classic', isActive);
+        });
+        const newTitle = doc.querySelector('title')?.textContent;
+        if (newTitle) document.title = newTitle;
+        renderDetailStar();
+      } catch (err) {
+        console.error('[scholar-split-pane] showKpInPane failed:', err);
+      } finally {
+        detailPane.removeAttribute('aria-busy');
+      }
+    }
+
+    document.querySelectorAll('[data-kp-link]').forEach((a) => {
+      if (a.dataset.splitBound) return;
+      a.dataset.splitBound = '1';
+      a.addEventListener('click', (e) => {
+        if (!MQ.matches) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+        e.preventDefault();
+        const li = a.closest('[data-kp-id]');
+        const id = li?.getAttribute('data-kp-id');
+        if (id) showKpInPane(id);
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!MQ.matches) return;
+      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+      const tag = e.target?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target?.isContentEditable) return;
+      const items = Array.from(document.querySelectorAll('.kp-list-item'));
+      if (!items.length) return;
+      e.preventDefault();
+      const current = new URLSearchParams(location.search).get('kp');
+      let idx = items.findIndex((el) => el.getAttribute('data-kp-id') === current);
+      if (idx < 0) idx = e.key === 'ArrowDown' ? -1 : 0;
+      idx += e.key === 'ArrowDown' ? 1 : -1;
+      idx = Math.max(0, Math.min(items.length - 1, idx));
+      const nextId = items[idx].getAttribute('data-kp-id');
+      if (nextId && nextId !== current) {
+        showKpInPane(nextId);
+        items[idx].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    });
+
+    if (MQ.matches) {
+      const active = document.querySelector('.kp-list-item.is-active');
+      active?.scrollIntoView({ block: 'center' });
+    }
+
+    window.addEventListener('popstate', () => {
+      if (!MQ.matches) return;
+      const id = new URLSearchParams(location.search).get('kp');
+      if (id) showKpInPane(id);
+    });
+  })();
+</script>
