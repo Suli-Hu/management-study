@@ -108,6 +108,25 @@ const { DATA, SCHOLARS, KNOWLEDGE, THEME_ORDER, DATA_JA } = sandbox;
 
 console.log(`  ✓ ${Object.keys(DATA).length} schools, ${Object.keys(SCHOLARS).length} scholars, ${KNOWLEDGE.length} KPs, ${Object.keys(DATA_JA).length} ja entries`);
 
+// v1 SCHOLARS[X].schools 字段存的是 **中文学派名**（如 "科学管理学派"），不是 DATA 的 key。
+// 建反查表把中文 → key（v1 前端用 findSchoolKey 等函数实时查；迁移时一次性算好）
+const schoolNameToKey = new Map<string, string>();
+for (const key of Object.keys(DATA)) {
+  const d = DATA[key];
+  if (d?.title) schoolNameToKey.set(String(d.title).trim(), key);
+  if (d?.en) schoolNameToKey.set(String(d.en).trim(), key);
+  if (d?.ja) schoolNameToKey.set(String(d.ja).trim(), key);
+}
+
+function resolveSchoolKey(nameOrKey: string): string | null {
+  const trimmed = clean(nameOrKey);
+  if (!trimmed) return null;
+  // 已经是合法 key（小写蛇形）就 keep
+  if (/^[a-z][a-z0-9_]*$/.test(trimmed)) return trimmed;
+  // 否则查中文反查表
+  return schoolNameToKey.get(trimmed) ?? null;
+}
+
 // ============================================================
 // 2. 工具函数
 // ============================================================
@@ -285,9 +304,23 @@ console.log('→ Writing scholars/...');
 clearJsonDir(join(OUT_ROOT, 'scholars'));
 
 let scholarCount = 0;
+let scholarSkipped = 0;
+const unmappedNames = new Set<string>();
 for (const key of Object.keys(SCHOLARS)) {
   const s = SCHOLARS[key];
   if (!s || typeof s !== 'object') continue;
+
+  // v1 schools 是中文 — 反查到 key，未匹配的 drop + warn
+  const rawSchools = (s.schools ?? []) as string[];
+  const resolvedSchools: string[] = [];
+  for (const name of rawSchools) {
+    const k = resolveSchoolKey(name);
+    if (k) {
+      resolvedSchools.push(k);
+    } else {
+      unmappedNames.add(name);
+    }
+  }
 
   const scholar: Scholar = {
     key,
@@ -297,7 +330,7 @@ for (const key of Object.keys(SCHOLARS)) {
       en: clean(s.en) || undefined,
       ja: clean(s.ja) || undefined,
     },
-    schools: (s.schools ?? []) as string[],
+    schools: resolvedSchools,
     contribution: {
       zh: clean(s.contribution),
       ja: undefined,
@@ -311,10 +344,11 @@ for (const key of Object.keys(SCHOLARS)) {
     updatedAt: NOW,
   };
 
-  // 学派列表至少 1 个 — 兜底
+  // 学派列表至少 1 个 — 都没解析出来 → skip 该学者（避免 cross-ref dangling）
   if (scholar.schools.length === 0) {
-    console.warn(`  ! scholar ${key} has no schools, defaulting to ['other']`);
-    scholar.schools = ['other'];
+    console.warn(`  ! scholar ${key}: no resolved school (raw=${JSON.stringify(rawSchools)}) — skipping`);
+    scholarSkipped++;
+    continue;
   }
 
   const r = Scholar.safeParse(scholar);
@@ -324,6 +358,12 @@ for (const key of Object.keys(SCHOLARS)) {
   }
   writeJson(join(OUT_ROOT, 'scholars', `${key}.json`), scholar);
   scholarCount++;
+}
+
+if (unmappedNames.size > 0) {
+  console.warn(`  ! ${unmappedNames.size} unmapped school names (these will be ignored):`);
+  for (const n of Array.from(unmappedNames).slice(0, 10)) console.warn(`      "${n}"`);
+  if (unmappedNames.size > 10) console.warn(`      ... and ${unmappedNames.size - 10} more`);
 }
 console.log(`  ✓ ${scholarCount} scholars`);
 

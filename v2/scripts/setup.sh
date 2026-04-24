@@ -61,13 +61,10 @@ ok "pnpm $(pnpm -v)"
 # Step 1: Install deps
 # ============================================================
 
-if [ ! -d node_modules ]; then
-  step "Step 1/7: pnpm install"
-  pnpm install
-  ok "deps installed"
-else
-  ok "Step 1/7: deps already installed (skip)"
-fi
+step "Step 1/7: pnpm install"
+# 永远跑（fast no-op if up-to-date；package.json 改动会触发更新）
+pnpm install
+ok "deps installed"
 
 # ============================================================
 # Step 2: Migrate v1 data
