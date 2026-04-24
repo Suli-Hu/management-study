@@ -2712,12 +2712,31 @@ body.mode-read .cn-swipe-wrap .cn-swipe-inner { transform: none !important; tran
     var s = document.createElement('script');
     s.src = 'data_ja.js?v=__SHA__';
     s.onload = function() {
+      var hadPendingJa = !!window._pendingDeltaJa;
+      // Apply pending delta.kp.ja overlays that arrived before DATA_JA was loaded
+      // (delta fetch usually returns faster than this idle-deferred script).
+      if (hadPendingJa && typeof DATA_JA !== 'undefined') {
+        Object.keys(window._pendingDeltaJa).forEach(function(k) {
+          DATA_JA[k] = window._pendingDeltaJa[k];
+        });
+        window._pendingDeltaJa = null;
+      }
       // 失效 concepts 索引缓存，如在概念列表则刷新使日文按钮出现
       window.CONCEPTS_INDEX = null;
       try {
         var panel = document.getElementById('panel-concepts');
         if (panel && panel.classList.contains('active') && typeof renderConcepts === 'function') {
           renderConcepts();
+        }
+      } catch(e) {}
+      // 如果当前在学派/学者详情页（已渲染的 KP 列表里 jaToggle 按钮缺失），
+      // 重新调用 show()/showScholar() 以重渲染整个列表 — 让日文按钮出现。
+      // skipPushNav=true 避免污染浏览器历史栈。
+      try {
+        if (window._curSchoolKey && typeof show === 'function') {
+          show(window._curSchoolKey, null, true);
+        } else if (window._curScholarKey && typeof showScholar === 'function') {
+          showScholar(window._curScholarKey, true);
         }
       } catch(e) {}
     };

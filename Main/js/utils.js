@@ -812,12 +812,22 @@ function _deltaFetch(path, body) {
         Object.keys(delSet).forEach(function(id) { delete KNOWLEDGE_MAP[id]; });
       }
 
-      if (d.kp.ja && typeof DATA_JA !== 'undefined') {
-        // delta.kp.ja 结构是 {cnKey: jaString}，无时间戳。暂保留原 override 行为
+      if (d.kp.ja) {
+        // delta.kp.ja 结构是 {cnKey: jaString}，无时间戳。暂保留 override 行为
         // （overlay always wins）—— ja 是轻量字段，stale 问题影响远小于 body
-        Object.keys(d.kp.ja).forEach(function(k) {
-          DATA_JA[k] = d.kp.ja[k];
-        });
+        // 时序问题：data_ja.js 是 idle 懒加载，delta fetch 通常更早返回。
+        // 直接 merge 时 DATA_JA 可能还 undefined，跳过会让纯 overlay KP 的日文翻译丢失
+        // （比如编辑器加的新 KP，data_ja.js 里没有，只有 KV 里有）。
+        // 解决：缓存 pending ja，data_ja.js onload 时 apply（见 index.html loadDataJa）。
+        if (typeof DATA_JA !== 'undefined') {
+          Object.keys(d.kp.ja).forEach(function(k) {
+            DATA_JA[k] = d.kp.ja[k];
+          });
+        } else {
+          window._pendingDeltaJa = d.kp.ja;
+          // 不等 idle preload — 立即触发 data_ja.js 加载，让按钮尽早出现
+          if (typeof window._ensureDataJa === 'function') window._ensureDataJa();
+        }
       }
     }
     if (d.order) window._deltaOrder = d.order;
