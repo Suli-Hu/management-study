@@ -210,12 +210,18 @@ sqlLines.push('');
 
 // === Scholars (upsert) ===
 sqlLines.push('-- Scholars');
-const scholarCols = ['key','discipline','name_zh','name_en','name_ja','contribution_zh','contribution_ja','lifespan','institution','nobel_year','nobel_detail','created_at','updated_at'];
+const scholarCols = [
+  'key','discipline','name_zh','name_en','name_ja',
+  'contribution_zh','contribution_ja','lifespan','institution',
+  'born','died','nationality','flag','origin','field','accent',
+  'nobel_year','nobel_detail','created_at','updated_at',
+];
 for (const sc of scholars) {
   sqlLines.push(
     `INSERT INTO scholar (${scholarCols.join(', ')}) VALUES (` +
     `${q(sc.key)}, ${q(sc.discipline)}, ${q(sc.name.zh)}, ${q(sc.name.en)}, ${q(sc.name.ja)}, ` +
     `${q(sc.contribution.zh)}, ${q(sc.contribution.ja)}, ${q(sc.lifespan)}, ${q(sc.institution)}, ` +
+    `${q(sc.born)}, ${q(sc.died)}, ${q(sc.nationality)}, ${q(sc.flag)}, ${q(sc.origin)}, ${q(sc.field)}, ${q(sc.accent)}, ` +
     `${q(sc.nobel?.year)}, ${q(sc.nobel?.detail)}, ${q(sc.createdAt)}, ${q(sc.updatedAt)}) ` +
     `ON CONFLICT(key) DO UPDATE SET ${updateSet(scholarCols, 'key')};`
   );

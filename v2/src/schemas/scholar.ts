@@ -15,8 +15,17 @@ export const Scholar = z.object({
   name: I18nString,
   schools: z.array(SchoolKey).default([]).describe('属于哪些学派 — 第一个决定学者卡片 accent 色。可空（独立学者）'),
   contribution: BilingualBody,
-  lifespan: z.string().trim().default('').describe('如 "1947–" 或 "1916–2008"'),
+  lifespan: z.string().trim().default('').describe('合并展示兜底；优先用 born/died'),
   institution: z.string().trim().default('').describe('代表性机构，如 "Harvard Business School"'),
+
+  // v0.3.12: 100% 对齐 v1 SCHOLARS 字段
+  born: z.string().trim().default('').describe('生年，如 "1890年9月9日"'),
+  died: z.string().trim().default('').describe('卒年。在世为空'),
+  nationality: z.string().trim().default('').describe('国籍，如 "德国/美国"'),
+  flag: z.string().trim().default('').describe('国旗 emoji，如 "🇩🇪 🇺🇸"'),
+  origin: z.string().trim().default('').describe('出身/籍贯'),
+  field: z.string().trim().default('').describe('研究领域 badge，如 "社会心理学 · 组织变革"'),
+  accent: z.string().trim().default('').describe('hex 色，如 "#FF9500"；空时由主 school.accent 决定'),
 
   /** 诺贝尔奖（可选） */
   nobel: z.object({

@@ -322,6 +322,11 @@ for (const key of Object.keys(SCHOLARS)) {
     }
   }
 
+  // born + died 合成 lifespan 兜底（UI 优先用 born/died 精确字段）
+  const bornClean = clean(s.born ?? '');
+  const diedClean = clean(s.died ?? '');
+  const lifespanFallback = bornClean && diedClean ? `${bornClean} — ${diedClean}` : bornClean || diedClean;
+
   const scholar: Scholar = {
     key,
     discipline: 'keiei',
@@ -335,10 +340,18 @@ for (const key of Object.keys(SCHOLARS)) {
       zh: clean(s.contribution),
       ja: undefined,
     },
-    lifespan: clean(s.lifespan ?? s.years),
-    institution: clean(s.institution),
+    lifespan: clean(s.lifespan ?? s.years ?? lifespanFallback ?? ''),
+    institution: clean(s.institution ?? s.affiliation ?? ''),
+    // v0.3.12 对齐 v1 SCHOLARS 全字段
+    born: bornClean,
+    died: diedClean,
+    nationality: clean(s.nationality ?? ''),
+    flag: clean(s.flag ?? ''),
+    origin: clean(s.origin ?? ''),
+    field: clean(s.field ?? ''),
+    accent: clean(s.accent ?? ''),
     nobel: s.nobel_detail
-      ? { year: clean(s.nobel_year), detail: clean(s.nobel_detail) }
+      ? { year: clean(s.nobel_year ?? s.nobel ?? ''), detail: clean(s.nobel_detail) }
       : null,
     createdAt: NOW,
     updatedAt: NOW,

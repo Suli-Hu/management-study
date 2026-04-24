@@ -5,7 +5,7 @@
  * GIT_SHA：构建时从 PUBLIC_GIT_SHA 注入（见 .github/workflows/deploy-v2.yml）。
  *   本地 dev 时为 'local'。
  */
-export const APP_VERSION = '0.3.11';
+export const APP_VERSION = '0.3.12';
 
 const rawSha = import.meta.env.PUBLIC_GIT_SHA ?? 'local';
 export const GIT_SHA = rawSha.slice(0, 7);

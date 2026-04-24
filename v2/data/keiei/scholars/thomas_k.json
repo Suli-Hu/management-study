@@ -12,9 +12,16 @@
   "contribution": {
     "zh": "与Kilmann共同开发TKI（Thomas-Kilmann Conflict Mode Instrument），全球使用最广的冲突评估工具"
   },
-  "lifespan": "",
-  "institution": "",
+  "lifespan": "1943年",
+  "institution": "海军研究生院",
+  "born": "1943年",
+  "died": "",
+  "nationality": "美国",
+  "flag": "🇺🇸",
+  "origin": "美国",
+  "field": "组织行为学 · 冲突管理",
+  "accent": "#34C759",
   "nobel": null,
-  "createdAt": "2026-04-24T02:21:59.847Z",
-  "updatedAt": "2026-04-24T02:21:59.847Z"
+  "createdAt": "2026-04-24T16:21:30.256Z",
+  "updatedAt": "2026-04-24T16:21:30.256Z"
 }

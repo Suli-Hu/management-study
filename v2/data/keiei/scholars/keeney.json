@@ -12,9 +12,16 @@
   "contribution": {
     "zh": "基尼与雷法合著《Decisions with Multiple Objectives》（1976）系统建立了多属性效用理论（MAUT），获得兰彻斯特奖。后独自提出价值聚焦思维（Value-Focused Thinking, 1992），主张决策应从明确价值观出发而非从备选方案出发。MIT运筹学博士，长期推动决策分析在公共政策、环境、能源等领域的应用。"
   },
-  "lifespan": "",
-  "institution": "",
+  "lifespan": "1944年1月29日",
+  "institution": "杜克大学（荣誉退休）/ 南加州大学（荣誉退休）",
+  "born": "1944年1月29日",
+  "died": "",
+  "nationality": "美国",
+  "flag": "🇺🇸",
+  "origin": "蒙大拿州刘易斯敦",
+  "field": "决策分析 · 多目标决策 · 价值聚焦思维",
+  "accent": "#34C759",
   "nobel": null,
-  "createdAt": "2026-04-24T02:21:59.847Z",
-  "updatedAt": "2026-04-24T02:21:59.847Z"
+  "createdAt": "2026-04-24T16:21:30.256Z",
+  "updatedAt": "2026-04-24T16:21:30.256Z"
 }
