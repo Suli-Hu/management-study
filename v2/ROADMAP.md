@@ -2,8 +2,8 @@
 
 engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 
-**当前版本**：v0.3.9
-**当前阶段**：W3.1 ✅ + W3.2 已会星标 ✅ + inline 展开 ✅ + 夜间模式 ✅。剩余 W3.2：Split-pane。
+**当前版本**：v0.3.10
+**当前阶段**：**W3.1 ✅ + W3.2 ✅** 全部完成。下一步 W3.3（测试质量升级）或直接 W4。
 
 ---
 
@@ -29,7 +29,7 @@ engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 | v0.3.7 | **KP "已会" 星标 + localStorage 进度** | ✅ |
 | v0.3.8 | **学派 inline 展开**（`<details>` accordion，带 ★ 已会计数） | ✅ 本 patch |
 | v0.3.9 | **夜间模式** toggle + `prefers-color-scheme` 持久化 | ✅ 本 patch |
-| v0.3.10 | **Split-pane 双栏**（宽屏左 KP 列表 + 右详情，↑↓ 切换；窄屏单栏） | ❌ |
+| v0.3.10 | **Split-pane 双栏**（lg:1024 宽屏，fetch+swap，↑↓ 键切换；窄屏回退 /kp/[id]） | ✅ 本 patch |
 
 ### W3.3 — 测试质量升级
 
