@@ -1,12 +1,13 @@
 /**
  * POST /api/auth/login  { email: string }
- *   生成 magic link token，存 DB，发邮件，返回 { ok: true }。
- *   即使 email 无效或 Resend 挂，也返回 200（防 email enumeration）。
+ *   生成 magic link token，存 DB，发邮件，跳 /login/sent（email 走 flash cookie，不入 URL）。
+ *   即使 email 无效或 Resend 挂，也不泄露状态（防 email enumeration）。
  */
 
 import type { APIRoute } from 'astro';
 import { getDb } from '~/lib/db';
 import { createMagicLink } from '~/lib/auth';
+import { buildFlashCookie } from '~/lib/flash';
 import { sendEmail, renderMagicLinkEmail } from '~/lib/email';
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -21,15 +22,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const body = await request.formData();
     email = String(body.get('email') ?? '').trim().toLowerCase();
-  } catch {
-    // fallback: json body
+  } catch (err) {
+    console.error('[/api/auth/login] formData parse failed:', err);
   }
   if (!email) {
     try {
       const json = (await request.json()) as { email?: string };
       email = (json.email ?? '').trim().toLowerCase();
-    } catch {
-      /* noop */
+    } catch (err) {
+      console.error('[/api/auth/login] json parse failed:', err);
     }
   }
 
@@ -38,7 +39,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   const { token, code } = await createMagicLink(db, email);
-  const reqOrigin = new URL(request.url).origin;
+  const reqUrl = new URL(request.url);
+  const reqOrigin = reqUrl.origin;
+  const isSecure = reqUrl.protocol === 'https:';
   // 邮件里的 verify 链接永远用 APP_URL（固定公网地址），否则 dev → 用户收到 localhost 链接
   const emailAppUrl = env.APP_URL ?? reqOrigin;
   const verifyUrl = `${emailAppUrl}/api/auth/verify?token=${encodeURIComponent(token)}`;
@@ -57,5 +60,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // 仍然 redirect to sent — 不泄露 email 状态
   }
 
-  return Response.redirect(`${reqOrigin}/login/sent?email=${encodeURIComponent(email)}`, 303);
+  return new Response(null, {
+    status: 303,
+    headers: {
+      Location: `${reqOrigin}/login/sent`,
+      'Set-Cookie': buildFlashCookie({ email }, isSecure),
+    },
+  });
 };

@@ -1,5 +1,6 @@
 ---
 import Layout from '~/layouts/Layout.astro';
+import { readFlash, FLASH_COOKIE } from '~/lib/flash';
 
 const user = Astro.locals.user;
 if (user) return Astro.redirect('/');
@@ -7,10 +8,15 @@ if (user) return Astro.redirect('/');
 const env = Astro.locals.runtime.env;
 const mode = env.AUTH_MODE === 'password' ? 'password' : 'email';
 
-const error = Astro.url.searchParams.get('error');
+// v0.3.6: 错误从 flash cookie 读（URL 不留痕），读一次即清
+const flash = readFlash(Astro.request.headers.get('cookie'));
+if (flash) Astro.cookies.delete(FLASH_COOKIE, { path: '/' });
+
+const error = flash?.error ?? null;
 const errorMessages: Record<string, string> = {
   invalid_or_expired: '登录链接无效或已过期，请重新申请。',
   missing_token: '链接不完整，请重新申请。',
+  missing_code: '请输入 6 位 code。',
   bad_password: '密码不对。',
 };
 const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。') : null;

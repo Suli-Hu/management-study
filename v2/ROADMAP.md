@@ -2,8 +2,8 @@
 
 engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 
-**当前版本**：v0.3.5
-**当前阶段**：W3.1 清债进行中（A9 + A2 + A5 + CSRF 已清；A6-A8 待清）
+**当前版本**：v0.3.6
+**当前阶段**：W3.1 全部清完 ✅。下一步 W3.2（Split-pane / inline 展开 / 已会星标 / 夜间模式）。
 
 ---
 
@@ -18,14 +18,9 @@ engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 | v0.3.3 | A9 XSS 防护（escInline + 白名单） + ROADMAP.md | ✅ | `030a3e8` |
 | v0.3.4 | A2 wipe-cascade（migration 0005 + sync 增量 upsert + orphan cleanup） | ✅ | 本 patch |
 | v0.3.5 | A5 signed cookie + CSRF Origin check（都改 middleware） | ✅ | 本 patch |
-| v0.3.6 | A6 flash session + A7 去 email param + A8 logger 统一 | ❌ 未做 | — |
+| v0.3.6 | A6 flash cookie + A7 email 移出 URL + A8 logger 统一 | ✅ | 本 patch |
 
-#### W3.1 剩余 1 项（v0.3.6 清）
-
-- **A6 / A7 / A8 — 小账合并修**
-  A6 `?error=` 在 URL 明文 → flash session；
-  A7 login `?email=xxx` redirect → 邮箱枚举泄漏；
-  A8 `catch { /* noop */ }` silent → 统一 logger。
+#### W3.1 ✅ 全部完成（8 patch，A1-A9 全清）
 
 ### W3.2 — UX 核心补齐（v1 → v2 回补）
 
@@ -132,9 +127,9 @@ engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 
 | # | 问题 | 状态 |
 |---|---|---|
-| A6 | `?error=` 在 URL 明文 → flash session | ❌（v0.3.6） |
-| A7 | login `?email=xxx` redirect → 邮箱枚举泄漏 | ❌（v0.3.6） |
-| A8 | `catch { /* noop */ }` silent → 统一 logger | ❌（v0.3.6） |
+| A6 | `?error=` 在 URL 明文 → flash cookie | ✅ v0.3.6 |
+| A7 | login `?email=xxx` redirect → 邮箱枚举泄漏 | ✅ v0.3.6 |
+| A8 | `catch { /* noop */ }` silent → 统一 logger | ✅ v0.3.6 |
 | A9 | render-body 未转义 emoji/sub → XSS 隐患 | ✅ v0.3.3 |
 
 💭 扩展性：

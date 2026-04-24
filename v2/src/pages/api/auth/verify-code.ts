@@ -11,6 +11,7 @@ import {
   buildSignedSessionCookie,
   getSessionSecret,
 } from '~/lib/auth';
+import { buildFlashCookie } from '~/lib/flash';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const env = locals.runtime.env;
@@ -29,29 +30,38 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const body = await request.formData();
     email = String(body.get('email') ?? '').trim().toLowerCase();
     code = String(body.get('code') ?? '').trim();
-  } catch {
-    /* noop */
+  } catch (err) {
+    console.error('[/api/auth/verify-code] formData parse failed:', err);
   }
   if (!email || !code) {
     try {
       const json = (await request.json()) as { email?: string; code?: string };
       email = (json.email ?? '').trim().toLowerCase();
       code = (json.code ?? '').trim();
-    } catch {
-      /* noop */
+    } catch (err) {
+      console.error('[/api/auth/verify-code] json parse failed:', err);
     }
   }
 
   if (!email || !code) {
-    return Response.redirect(`${reqOrigin}/login?error=missing_code`, 303);
+    return new Response(null, {
+      status: 303,
+      headers: {
+        Location: `${reqOrigin}/login`,
+        'Set-Cookie': buildFlashCookie({ error: 'missing_code' }, isSecure),
+      },
+    });
   }
 
   const verifiedEmail = await consumeMagicLinkByCode(db, email, code);
   if (!verifiedEmail) {
-    return Response.redirect(
-      `${reqOrigin}/login/sent?email=${encodeURIComponent(email)}&error=invalid_code`,
-      303,
-    );
+    return new Response(null, {
+      status: 303,
+      headers: {
+        Location: `${reqOrigin}/login/sent`,
+        'Set-Cookie': buildFlashCookie({ email, error: 'invalid_code' }, isSecure),
+      },
+    });
   }
 
   const user = await findOrCreateUser(db, verifiedEmail);

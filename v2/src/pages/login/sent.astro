@@ -1,13 +1,18 @@
 ---
 import Layout from '~/layouts/Layout.astro';
+import { readFlash, FLASH_COOKIE } from '~/lib/flash';
 
 // v0.2.9: password 模式下不应到达这里
 if (Astro.locals.runtime.env.AUTH_MODE === 'password') {
   return Astro.redirect('/login');
 }
 
-const email = Astro.url.searchParams.get('email') ?? '';
-const err = Astro.url.searchParams.get('error');
+// v0.3.6: email + error 从 flash cookie 读（URL 不留痕）
+const flash = readFlash(Astro.request.headers.get('cookie'));
+if (flash) Astro.cookies.delete(FLASH_COOKIE, { path: '/' });
+
+const email = flash?.email ?? '';
+const err = flash?.error ?? null;
 const errorMsg = err === 'invalid_code'
   ? 'Code 错了或已过期，检查邮件里的 6 位数字，或去 /login 重新发送。'
   : null;

@@ -12,6 +12,7 @@ import {
   buildSignedSessionCookie,
   getSessionSecret,
 } from '~/lib/auth';
+import { buildFlashCookie } from '~/lib/flash';
 
 export const GET: APIRoute = async ({ url, request, locals }) => {
   const env = locals.runtime.env;
@@ -26,12 +27,24 @@ export const GET: APIRoute = async ({ url, request, locals }) => {
 
   const token = url.searchParams.get('token');
   if (!token) {
-    return Response.redirect(`${reqOrigin}/login?error=missing_token`, 302);
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: `${reqOrigin}/login`,
+        'Set-Cookie': buildFlashCookie({ error: 'missing_token' }, isSecure),
+      },
+    });
   }
 
   const email = await consumeMagicLink(db, token);
   if (!email) {
-    return Response.redirect(`${reqOrigin}/login?error=invalid_or_expired`, 302);
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: `${reqOrigin}/login`,
+        'Set-Cookie': buildFlashCookie({ error: 'invalid_or_expired' }, isSecure),
+      },
+    });
   }
 
   const user = await findOrCreateUser(db, email);

@@ -17,6 +17,7 @@ import {
   getPrimaryAdminEmail,
   timingSafeEqual,
 } from '~/lib/auth';
+import { buildFlashCookie } from '~/lib/flash';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const env = locals.runtime.env;
@@ -36,22 +37,29 @@ export const POST: APIRoute = async ({ request, locals }) => {
     password = String(body.get('password') ?? '').trim();
     // checkbox：未勾选时根本不在 FormData 里；勾选时值通常 "1" / "on"
     remember = body.get('remember') !== null;
-  } catch {
-    /* noop */
+  } catch (err) {
+    console.error('[/api/auth/password] formData parse failed:', err);
   }
   if (!password) {
     try {
       const json = (await request.json()) as { password?: string; remember?: boolean };
       password = (json.password ?? '').trim();
       if (typeof json.remember === 'boolean') remember = json.remember;
-    } catch {
-      /* noop */
+    } catch (err) {
+      console.error('[/api/auth/password] json parse failed:', err);
     }
   }
 
-  if (!password) {
-    return Response.redirect(`${reqOrigin}/login?error=bad_password`, 303);
-  }
+  const badPasswordResponse = () =>
+    new Response(null, {
+      status: 303,
+      headers: {
+        Location: `${reqOrigin}/login`,
+        'Set-Cookie': buildFlashCookie({ error: 'bad_password' }, isSecure),
+      },
+    });
+
+  if (!password) return badPasswordResponse();
 
   // timing-safe 比对，避免早期 bail 泄漏长度差异
   const adminPwd = env.ADMIN_PASSWORD ?? '';
@@ -65,7 +73,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   } else if (isGuestPwd) {
     email = env.GUEST_EMAIL ?? 'guest@local';
   } else {
-    return Response.redirect(`${reqOrigin}/login?error=bad_password`, 303);
+    return badPasswordResponse();
   }
 
   const user = await findOrCreateUser(db, email);
