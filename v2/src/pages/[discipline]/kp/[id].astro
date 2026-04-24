@@ -1,6 +1,7 @@
 ---
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
+import { renderBody } from '~/lib/render-body';
 
 const { discipline, id } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
@@ -19,18 +20,28 @@ if (!kp) return Astro.redirect('/404');
 
 const tags = JSON.parse(kp.tags_json) as string[];
 
-// 关联学派 + 学者
+// 关联学派 + 学者（含 accent，primary school 的 accent 给 body renderer 用）
 const schoolsResult = await db
   .prepare(`
-    SELECT s.key, s.title_zh
+    SELECT s.key, s.title_zh, s.accent
     FROM school s
     INNER JOIN kp_school ks ON ks.school_key = s.key
     WHERE ks.kp_id = ?
     ORDER BY ks.position
   `)
   .bind(id)
-  .all<{ key: string; title_zh: string }>();
+  .all<{ key: string; title_zh: string; accent: string }>();
 const schools = schoolsResult.results ?? [];
+
+// accent key → hex color (tailwind.config.ts 的 accent 色板)
+const ACCENT_MAP: Record<string, string> = {
+  ob: '#34C759',
+  classic: '#FF9500',
+  strategy: '#007AFF',
+  warning: '#FF3B30',
+};
+const accentKey = schools[0]?.accent ?? 'classic';
+const accentHex = ACCENT_MAP[accentKey] ?? '#8a7a6a';
 
 const scholarsResult = await db
   .prepare(`
@@ -80,7 +91,7 @@ const title = lang === 'ja' ? (kp.title_ja ?? kp.title_zh) : kp.title_zh;
       </div>
     </header>
 
-    <article class="prose prose-sm max-w-none text-secondary leading-relaxed" set:html={body} />
+    <article class="kp-body text-secondary" set:html={renderBody(body, accentHex)} />
 
     {tags.length > 0 && (
       <footer class="mt-8 pt-4 border-t flex gap-2">

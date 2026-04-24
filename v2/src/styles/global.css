@@ -1,3 +1,6 @@
+/* KP body 组件（compare / quad / 手风琴 / 编号卡）— @import 必须在 @tailwind 之前 */
+@import './components.css';
+
 /* Tailwind base + components + utilities */
 @tailwind base;
 @tailwind components;
