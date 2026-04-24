@@ -1,0 +1,27 @@
+# Cloudflare Pages + D1 配置
+# 部署：pnpm run build && wrangler pages deploy dist --project-name=management-study-v2
+#
+# D1 binding 在 W1.3 设计 schema 后填上 database_id
+
+name = "management-study-v2"
+compatibility_date = "2026-04-24"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "./dist"
+
+# === D1 数据库（KP 数据 + 用户数据） ===
+# 创建命令：wrangler d1 create management-study-v2
+# 创建后把返回的 database_id 填到这里
+[[d1_databases]]
+binding = "DB"
+database_name = "management-study-v2"
+database_id = "TODO_REPLACE_AFTER_W1_3"
+
+# === 环境变量（非 secret） ===
+[vars]
+ENVIRONMENT = "production"
+SITE_NAME = "全学科学习笔记"
+
+# === 待添加（W2 / W3 用） ===
+# - RESEND_API_KEY (secret, magic link 发邮件)
+# - SESSION_SECRET (secret, lucia auth)
+# - STRIPE_SECRET_KEY (secret, W3 付费时)

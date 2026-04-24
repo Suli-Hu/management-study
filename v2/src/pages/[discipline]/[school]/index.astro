@@ -1,0 +1,86 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import { getDb } from '~/lib/db';
+
+const { discipline, school } = Astro.params;
+const db = getDb(Astro.locals.runtime.env);
+
+const sch = await db
+  .prepare('SELECT * FROM school WHERE key = ? AND discipline = ?')
+  .bind(school, discipline)
+  .first<{ key: string; title_zh: string; title_en: string | null; era: string; summary_zh: string; accent: string }>();
+
+if (!sch) return Astro.redirect('/404');
+
+// KP 列表（按 kp_school.position 排序）
+const kpsResult = await db
+  .prepare(`
+    SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year,
+      (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id ORDER BY position) as scholars_csv
+    FROM kp k
+    INNER JOIN kp_school ks ON ks.kp_id = k.id
+    WHERE ks.school_key = ?
+    ORDER BY ks.position, k.id
+  `)
+  .bind(school)
+  .all<{ id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string; scholars_csv: string | null }>();
+
+const kps = kpsResult.results ?? [];
+
+// 学者名 lookup
+const allScholarKeys = new Set(kps.flatMap((k) => (k.scholars_csv ?? '').split(',').filter(Boolean)));
+const scholarsResult = allScholarKeys.size > 0
+  ? await db
+      .prepare(`SELECT key, name_zh, name_en FROM scholar WHERE key IN (${Array.from(allScholarKeys).map(() => '?').join(',')})`)
+      .bind(...Array.from(allScholarKeys))
+      .all<{ key: string; name_zh: string; name_en: string | null }>()
+  : { results: [] };
+const scholarByKey = new Map((scholarsResult.results ?? []).map((s) => [s.key, s]));
+---
+
+<Layout title={sch.title_zh}>
+  <main class="max-w-panel mx-auto px-4 py-8">
+    <nav class="mb-6 text-xs">
+      <a href={`/${discipline}`} class="text-quaternary hover:text-tertiary">← {discipline}</a>
+    </nav>
+
+    <header class="mb-6">
+      <h1 class="text-2xl mb-1">{sch.title_zh}</h1>
+      <div class="text-xs text-tertiary">
+        {sch.title_en}
+        {sch.era && <span class="text-quaternary">　·　{sch.era}</span>}
+      </div>
+      {sch.summary_zh && <p class="text-body text-secondary mt-3 leading-relaxed">{sch.summary_zh}</p>}
+    </header>
+
+    <section>
+      <h2 class="text-sm font-semibold text-tertiary mb-3">核心概念 ({kps.length})</h2>
+      <ul class="space-y-2">
+        {kps.map((k) => {
+          const scholarKeys = (k.scholars_csv ?? '').split(',').filter(Boolean);
+          const scholarLabel = scholarKeys
+            .map((sk) => scholarByKey.get(sk)?.name_en ?? sk)
+            .filter(Boolean)
+            .join(' · ');
+          return (
+            <li>
+              <a
+                href={`/${discipline}/kp/${k.id}`}
+                class="block p-3 rounded border bg-bg-primary hover:shadow-card transition-shadow"
+              >
+                <div class="flex items-baseline justify-between gap-3">
+                  <h3 class="text-base font-semibold text-primary flex-1">{k.title_zh}</h3>
+                  <span class="text-xs text-quaternary whitespace-nowrap">
+                    {scholarLabel}{k.year && ` · ${k.year}`}
+                  </span>
+                </div>
+                {k.title_ja && <div class="text-xs text-tertiary mt-0.5">{k.title_ja}</div>}
+                {k.title_en && <div class="text-xs text-quaternary italic mt-0.5">{k.title_en}</div>}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  </main>
+</Layout>

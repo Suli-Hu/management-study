@@ -1,0 +1,55 @@
+/* Tailwind base + components + utilities */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === Base layer 微调（来自 v1 风格）=== */
+@layer base {
+  html {
+    /* 始终显示纵向滚动条占位，避免页面切换时宽度抖动 */
+    overflow-y: scroll;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-bg-primary text-secondary font-sans;
+    font-feature-settings: 'kern', 'liga', 'palt';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* 标题层级 */
+  h1, h2, h3, h4 {
+    @apply text-primary font-semibold;
+    letter-spacing: -0.01em;
+  }
+
+  /* 链接 */
+  a {
+    @apply text-accent-strategy no-underline transition-colors;
+  }
+  a:hover {
+    @apply opacity-80;
+  }
+
+  /* strong 在正文里作为"加粗关键词"使用（v1 设计语言） */
+  strong {
+    @apply text-primary font-semibold;
+  }
+}
+
+/* === Component layer：可复用的 KP / 卡片 / 标签 样式 === */
+@layer components {
+  /* 学派 / 学者 chip（v1 .cn-school 等价） */
+  .chip {
+    @apply inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold;
+    @apply border bg-bg-primary;
+  }
+
+  /* 语义标签（义/限/例 等单字 badge） */
+  .badge {
+    @apply inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-semibold;
+  }
+  .badge-meaning { @apply bg-badge-meaning text-accent-classic; }
+  .badge-limit   { @apply bg-badge-limit text-accent-warning; }
+}

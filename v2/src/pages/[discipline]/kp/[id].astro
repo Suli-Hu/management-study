@@ -1,0 +1,97 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import { getDb } from '~/lib/db';
+
+const { discipline, id } = Astro.params;
+const db = getDb(Astro.locals.runtime.env);
+
+const kp = await db
+  .prepare('SELECT * FROM kp WHERE id = ? AND discipline = ?')
+  .bind(id, discipline)
+  .first<{
+    id: string; discipline: string; year: string;
+    title_zh: string; title_en: string | null; title_ja: string | null;
+    body_zh: string; body_ja: string | null;
+    tags_json: string; format: string;
+  }>();
+
+if (!kp) return Astro.redirect('/404');
+
+const tags = JSON.parse(kp.tags_json) as string[];
+
+// 关联学派 + 学者
+const schoolsResult = await db
+  .prepare(`
+    SELECT s.key, s.title_zh
+    FROM school s
+    INNER JOIN kp_school ks ON ks.school_key = s.key
+    WHERE ks.kp_id = ?
+    ORDER BY ks.position
+  `)
+  .bind(id)
+  .all<{ key: string; title_zh: string }>();
+const schools = schoolsResult.results ?? [];
+
+const scholarsResult = await db
+  .prepare(`
+    SELECT sc.key, sc.name_zh, sc.name_en
+    FROM scholar sc
+    INNER JOIN kp_scholar ks ON ks.scholar_key = sc.key
+    WHERE ks.kp_id = ?
+    ORDER BY ks.position
+  `)
+  .bind(id)
+  .all<{ key: string; name_zh: string; name_en: string | null }>();
+const scholars = scholarsResult.results ?? [];
+
+// 当前显示语言（W1 简化：默认中文，?lang=ja 切日文）
+const lang = (Astro.url.searchParams.get('lang') === 'ja' && kp.body_ja) ? 'ja' : 'zh';
+const body = lang === 'ja' ? kp.body_ja! : kp.body_zh;
+const title = lang === 'ja' ? (kp.title_ja ?? kp.title_zh) : kp.title_zh;
+---
+
+<Layout title={kp.title_zh}>
+  <main class="max-w-reading mx-auto px-4 py-8">
+    <nav class="mb-6 text-xs">
+      <a href={`/${discipline}`} class="text-quaternary hover:text-tertiary">← {discipline}</a>
+    </nav>
+
+    <header class="mb-6 pb-4 border-b">
+      <h1 class="text-2xl mb-2">{title}</h1>
+      <div class="flex flex-wrap items-baseline gap-2 text-xs text-tertiary">
+        {scholars.map((s) => (
+          <span class="font-semibold">{s.name_en ?? s.name_zh}</span>
+        ))}
+        {kp.year && <span class="text-quaternary">'{kp.year}</span>}
+      </div>
+      {kp.title_en && <div class="text-xs text-quaternary italic mt-1">{kp.title_en}</div>}
+      {kp.title_ja && lang === 'zh' && <div class="text-xs text-tertiary mt-1">{kp.title_ja}</div>}
+
+      <div class="flex gap-2 mt-4">
+        {kp.body_ja && (
+          <a
+            href={lang === 'zh' ? `?lang=ja` : Astro.url.pathname}
+            class="chip border-quaternary"
+          >
+            {lang === 'zh' ? '日本語' : '中文'}
+          </a>
+        )}
+        {schools.map((s) => (
+          <a href={`/${discipline}/${s.key}`} class="chip border-quaternary">{s.title_zh}</a>
+        ))}
+      </div>
+    </header>
+
+    <article class="prose prose-sm max-w-none text-secondary leading-relaxed" set:html={body} />
+
+    {tags.length > 0 && (
+      <footer class="mt-8 pt-4 border-t flex gap-2">
+        {tags.map((t) => (
+          <span class={`badge ${t === '义' ? 'badge-meaning' : t === '限' ? 'badge-limit' : 'bg-badge-neutral text-tertiary'}`}>
+            {t}
+          </span>
+        ))}
+      </footer>
+    )}
+  </main>
+</Layout>

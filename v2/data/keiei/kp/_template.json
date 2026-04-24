@@ -1,0 +1,20 @@
+{
+  "id": "kXXX",
+  "discipline": "keiei",
+  "schools": ["change"],
+  "scholars": ["tushman"],
+  "year": "2026",
+  "title": {
+    "zh": "中文标题",
+    "en": "English Title",
+    "ja": "日本語タイトル"
+  },
+  "body": {
+    "zh": "<strong>导语关键词</strong>——一句话定义。【段落标题】<br>①<strong>要点 1</strong>——展开说明<br>②<strong>要点 2</strong>——展开<br>◆意义——这个 KP 为什么重要<br>◆局限——它的边界",
+    "ja": "<strong>導入キーワード</strong>——一文の定義。【段落タイトル】<br>①<strong>ポイント 1</strong>——展開<br>②<strong>ポイント 2</strong>——展開<br>◆意義——重要性<br>◆限界——境界"
+  },
+  "tags": ["义", "限"],
+  "format": "narrative",
+  "createdAt": "2026-04-24T00:00:00.000Z",
+  "updatedAt": "2026-04-24T00:00:00.000Z"
+}

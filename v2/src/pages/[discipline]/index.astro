@@ -1,0 +1,102 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import { getDb } from '~/lib/db';
+
+const { discipline } = Astro.params;
+const db = getDb(Astro.locals.runtime.env);
+
+// 学科信息
+const disc = await db
+  .prepare('SELECT * FROM discipline WHERE key = ?')
+  .bind(discipline)
+  .first<{ key: string; title_zh: string; title_en: string | null; tagline_zh: string | null; accent: string; themes_json: string }>();
+
+if (!disc) {
+  return Astro.redirect('/404');
+}
+
+const themes = JSON.parse(disc.themes_json) as Array<{
+  key: string;
+  title: { zh: string; en?: string; ja?: string };
+  desc?: { zh?: string; en?: string; ja?: string };
+  accent: string;
+  schools: string[];
+}>;
+
+// 学派列表（按 theme_key 分组）
+const schoolsResult = await db
+  .prepare(`
+    SELECT key, title_zh, title_en, era, theme_key, accent,
+      (SELECT COUNT(*) FROM kp_school WHERE school_key = school.key) as kp_count
+    FROM school
+    WHERE discipline = ?
+  `)
+  .bind(discipline)
+  .all<{ key: string; title_zh: string; title_en: string | null; era: string; theme_key: string; accent: string; kp_count: number }>();
+
+const schools = schoolsResult.results ?? [];
+const schoolByKey = new Map(schools.map((s) => [s.key, s]));
+
+// 按 themes[].schools 顺序整理
+const themed = themes.map((t) => ({
+  ...t,
+  schoolList: t.schools.map((sk) => schoolByKey.get(sk)).filter(Boolean) as typeof schools,
+}));
+
+// 兜底：themes 没列出的学派（数据迁移可能漏的）
+const accountedKeys = new Set(themes.flatMap((t) => t.schools));
+const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
+---
+
+<Layout title={disc.title_zh}>
+  <main class="max-w-panel mx-auto px-4 py-8">
+    <nav class="mb-6 text-xs">
+      <a href="/" class="text-quaternary hover:text-tertiary">← 全学科</a>
+    </nav>
+
+    <header class="mb-8">
+      <h1 class="text-2xl mb-1">{disc.title_zh}</h1>
+      <p class="text-xs text-quaternary">{disc.title_en}{disc.tagline_zh ? ` · ${disc.tagline_zh}` : ''}</p>
+    </header>
+
+    {themed.map((t) => t.schoolList.length > 0 && (
+      <section class="mb-8">
+        <div class="mb-3">
+          <h2 class="text-base font-semibold">{t.title.zh}</h2>
+          {t.desc?.zh && <p class="text-xs text-tertiary mt-0.5">{t.desc.zh}</p>}
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+          {t.schoolList.map((s) => (
+            <a
+              href={`/${discipline}/${s.key}`}
+              class="block p-3 rounded border bg-bg-primary hover:shadow-card transition-shadow"
+            >
+              <div class="flex items-baseline justify-between">
+                <h3 class="text-sm font-semibold text-primary">{s.title_zh}</h3>
+                <span class="text-xs text-quaternary">{s.kp_count}</span>
+              </div>
+              {s.title_en && <div class="text-xs text-tertiary mt-0.5">{s.title_en}</div>}
+              {s.era && <div class="text-xs text-quaternary mt-0.5">{s.era}</div>}
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+
+    {orphanSchools.length > 0 && (
+      <section class="mb-8">
+        <h2 class="text-base font-semibold mb-3 text-tertiary">未分组</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+          {orphanSchools.map((s) => (
+            <a href={`/${discipline}/${s.key}`} class="block p-3 rounded border bg-bg-primary hover:shadow-card transition-shadow">
+              <div class="flex items-baseline justify-between">
+                <h3 class="text-sm font-semibold text-primary">{s.title_zh}</h3>
+                <span class="text-xs text-quaternary">{s.kp_count}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </main>
+</Layout>

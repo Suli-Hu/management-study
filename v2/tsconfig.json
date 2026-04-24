@@ -1,0 +1,12 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": ["src/**/*", "scripts/**/*", "tests/**/*", "astro.config.mjs", "tailwind.config.ts"],
+  "exclude": ["dist", ".astro", "node_modules"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["src/*"],
+      "@data/*": ["data/*"]
+    }
+  }
+}

@@ -1,0 +1,70 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import { getDb } from '~/lib/db';
+
+// 从 D1 拉真实学科列表
+const db = getDb(Astro.locals.runtime.env);
+const result = await db
+  .prepare(`
+    SELECT
+      d.key, d.title_zh, d.title_en, d.tagline_zh, d.accent,
+      (SELECT COUNT(*) FROM school WHERE discipline = d.key) as school_count,
+      (SELECT COUNT(*) FROM kp     WHERE discipline = d.key) as kp_count
+    FROM discipline d
+    ORDER BY d.key
+  `)
+  .all<{ key: string; title_zh: string; title_en: string | null; tagline_zh: string | null; accent: string; school_count: number; kp_count: number }>();
+
+const disciplines = result.results ?? [];
+
+// 占位：未来其他学科（marketing 等）等加进 data/marketing/discipline.json 后自动出现
+const upcoming = [
+  { key: 'marketing', title_zh: 'Marketing', title_en: 'Marketing' },
+  { key: 'finance',   title_zh: '金融',       title_en: 'Finance' },
+];
+const upcomingFiltered = upcoming.filter((u) => !disciplines.some((d) => d.key === u.key));
+---
+
+<Layout title="全学科学习笔记">
+  <main class="max-w-reading mx-auto px-4 py-12">
+    <header class="mb-12">
+      <h1 class="text-3xl mb-2">全学科学习笔记</h1>
+      <p class="text-tertiary text-sm">日本大学院入试备考知识库 · v2</p>
+    </header>
+
+    <section>
+      <h2 class="text-xl mb-4">学科</h2>
+      <div class="space-y-3">
+        {disciplines.map((d) => (
+          <a
+            href={`/${d.key}`}
+            class="block p-4 rounded-lg border bg-bg-primary shadow-card transition-all hover:shadow-card-hover hover:-translate-y-px"
+          >
+            <div class="flex items-baseline justify-between mb-1">
+              <h3 class="text-lg">{d.title_zh}</h3>
+              <span class="text-xs text-quaternary">{d.title_en}</span>
+            </div>
+            {d.tagline_zh && <div class="text-xs text-tertiary mb-1">{d.tagline_zh}</div>}
+            <div class="text-xs text-quaternary">
+              {d.school_count} 学派 · {d.kp_count} 知识点
+            </div>
+          </a>
+        ))}
+
+        {upcomingFiltered.map((u) => (
+          <div class="block p-4 rounded-lg border bg-bg-primary shadow-card opacity-50">
+            <div class="flex items-baseline justify-between mb-1">
+              <h3 class="text-lg">{u.title_zh}</h3>
+              <span class="text-xs text-quaternary">{u.title_en}</span>
+            </div>
+            <div class="text-xs text-tertiary">即将上线</div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <footer class="mt-16 pt-6 border-t text-xs text-quaternary">
+      v2 · Astro {Astro.generator} · 个人笔记，非商业用途
+    </footer>
+  </main>
+</Layout>

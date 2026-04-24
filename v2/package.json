@@ -1,0 +1,35 @@
+{
+  "name": "management-study-v2",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Multi-discipline study notes SaaS — v2 (Astro + D1 + Tailwind)",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "validate": "tsx scripts/validate-data.ts",
+    "migrate:from-v1": "tsx scripts/migrate-from-v1.ts",
+    "sync:d1": "tsx scripts/sync-to-d1.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^11.0.0",
+    "@astrojs/check": "^0.9.0",
+    "@astrojs/tailwind": "^5.1.0",
+    "astro": "^5.0.0",
+    "tailwindcss": "^3.4.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0",
+    "wrangler": "^3.90.0"
+  },
+  "packageManager": "pnpm@9.0.0"
+}
