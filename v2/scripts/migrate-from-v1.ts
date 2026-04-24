@@ -222,17 +222,33 @@ function clearJsonDir(dir: string) {
 
 console.log('→ Writing discipline.json...');
 
+// 预建 group → [school keys] 映射，让 order 为空的 theme fallback 用 group 收集
+// （v1 strategy_process / scott_quadrant / institutes 三个 theme 只靠 group 编号划分，无 order）
+const schoolsByGroup = new Map<number, string[]>();
+for (const skey of Object.keys(DATA)) {
+  const sch = DATA[skey];
+  if (!sch || typeof sch !== 'object') continue;
+  const g = sch.group;
+  if (typeof g !== 'number') continue;
+  if (!schoolsByGroup.has(g)) schoolsByGroup.set(g, []);
+  schoolsByGroup.get(g)!.push(skey);
+}
+
 const themes: ThemeGroup[] = THEME_ORDER.map((t: any) => {
   const groups = (t.groups ?? []) as number[];
   const key = groups.length === 1 ? themeKeyOf(groups[0]) : `theme_${groups.join('_')}`;
   // 拆 label "组织与环境：超越组织的世界" → title "组织与环境" + tagline "超越组织的世界"
   const [titleZh, taglineZh] = String(t.label || '').split(/[：:]/).map((s) => s.trim());
+  // order 优先；没 order 则按 group 收集所有归属学派（保持 DATA insertion 顺序）
+  const explicitOrder = (t.order ?? []) as string[];
+  const fromGroups = groups.flatMap((g) => schoolsByGroup.get(g) ?? []);
+  const schools = explicitOrder.length > 0 ? explicitOrder : fromGroups;
   return {
     key,
     title: { zh: titleZh || key, en: undefined, ja: undefined },
     desc: t.desc ? { zh: clean(t.desc) } : undefined,
     accent: toAccent(t.color),
-    schools: (t.order ?? []) as string[],
+    schools,
   };
 });
 
