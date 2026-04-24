@@ -50,7 +50,10 @@ const scholarByKey = new Map((scholarsResult.results ?? []).map((s) => [s.key, s
     </header>
 
     <section>
-      <h2 class="text-sm font-semibold text-tertiary mb-3">核心概念 ({kps.length})</h2>
+      <h2 class="text-sm font-semibold text-tertiary mb-3">
+        核心概念 (<span id="kp-count-total">{kps.length}</span>
+        <span id="kp-count-known" class="hidden text-accent-classic"> · ★ <span data-known-count>0</span></span>)
+      </h2>
       <ul class="space-y-2">
         {kps.map((k) => {
           const scholarKeys = (k.scholars_csv ?? '').split(',').filter(Boolean);
@@ -59,13 +62,16 @@ const scholarByKey = new Map((scholarsResult.results ?? []).map((s) => [s.key, s
             .filter(Boolean)
             .join(' · ');
           return (
-            <li>
+            <li data-kp-id={k.id}>
               <a
                 href={`/${discipline}/kp/${k.id}`}
                 class="block p-3 rounded border bg-bg-primary hover:shadow-card transition-shadow"
               >
                 <div class="flex items-baseline justify-between gap-3">
-                  <h3 class="text-base font-semibold text-primary flex-1">{k.title_zh}</h3>
+                  <h3 class="text-base font-semibold text-primary flex-1">
+                    <span class="kp-known-star hidden text-accent-classic mr-1" aria-hidden="true">★</span>
+                    {k.title_zh}
+                  </h3>
                   <span class="text-xs text-quaternary whitespace-nowrap">
                     {scholarLabel}{k.year && ` · ${k.year}`}
                   </span>
@@ -80,3 +86,26 @@ const scholarByKey = new Map((scholarsResult.results ?? []).map((s) => [s.key, s
     </section>
   </main>
 </Layout>
+
+<script is:inline>
+  // v0.3.7: 读 localStorage，高亮已会 KP + 显示计数
+  (function () {
+    const items = document.querySelectorAll('[data-kp-id]');
+    let known = 0;
+    items.forEach((li) => {
+      const id = li.getAttribute('data-kp-id');
+      if (localStorage.getItem(`kp-known:${id}`) === '1') {
+        li.querySelector('.kp-known-star')?.classList.remove('hidden');
+        known++;
+      }
+    });
+    if (known > 0) {
+      const badge = document.getElementById('kp-count-known');
+      const countSpan = badge?.querySelector('[data-known-count]');
+      if (badge && countSpan) {
+        countSpan.textContent = String(known);
+        badge.classList.remove('hidden');
+      }
+    }
+  })();
+</script>
