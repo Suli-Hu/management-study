@@ -2,8 +2,8 @@
 
 engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 
-**当前版本**：v0.3.15
-**当前阶段**：W3.1 ✅ + W3.2 ✅（含 v1 对齐 / 设计系统 / 学派学者 split-pane / 星标语义迁移）。**W3.3（测试）全未开工**，可选择先推进 W3.3 或跳到 W4.1 编辑器。
+**当前版本**：v0.3.17
+**当前阶段**：W3.1 ✅ + W3.2 ✅ + W3.3 3/4（auth-api integration + render-body 输入套件 + learning-flow 进 CI 已 ✅；Playwright E2E 未开）。
 
 ---
 
@@ -40,11 +40,11 @@ engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 
 | 版本 | 内容 | 状态 |
 |---|---|---|
-| v0.3.9 | Auth API 5 路由 integration tests（mock D1） | ❌ |
-| v0.3.10 | render-body XSS 输入套件（emoji / 破标签 / 空字段） | ❌ |
-| v0.3.11 | Playwright E2E：登录 → 搜 → KP → 登出 | ❌ |
-| v0.3.12 | learning-flow smoke 进 CI（data/ 改动触发） | ❌ |
-| v0.3.0 | W3 tag 收官 | ❌ |
+| v0.3.16 | learning-flow smoke 进 CI（`data/**`/`migrations/**`/`scripts/**` 触发，local miniflare D1） | ✅ |
+| v0.3.16 | render-body 输入套件（空字段 / emoji / 多语言 / 破标签 / 不闭合 HTML / 巨长 body，28 新 case） | ✅ |
+| v0.3.17 | Auth API 5 路由 integration tests（mock D1 + Request，21 case 覆盖 AUTH_MODE 网关 / cookie / flash 分支） | ✅ |
+| v0.3.18 | Playwright E2E：登录 → 搜 → KP → 登出 | ❌ |
+| v0.3.0 | W3 tag 收官（Playwright 落地后打） | ❌ |
 
 ---
 

@@ -1,4 +1,7 @@
 import { defineConfig } from 'vitest/config';
+import { fileURLToPath } from 'node:url';
+
+const SRC = fileURLToPath(new URL('./src', import.meta.url));
 
 export default defineConfig({
   test: {
@@ -8,8 +11,9 @@ export default defineConfig({
     pool: 'forks',
   },
   resolve: {
-    alias: {
-      '~': new URL('./src', import.meta.url).pathname,
-    },
+    alias: [
+      // 用 regex 精确匹配 `~/...` 前缀，避免误吞裸 `~`
+      { find: /^~\/(.*)$/, replacement: `${SRC}/$1` },
+    ],
   },
 });
