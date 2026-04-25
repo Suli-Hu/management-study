@@ -6,6 +6,7 @@ const SRC = fileURLToPath(new URL('./src', import.meta.url));
 export default defineConfig({
   test: {
     include: ['tests/**/*.test.ts'],
+    exclude: ['tests/e2e/**', 'node_modules/**'], // playwright 走 *.spec.ts，避免 vitest 误抓
     environment: 'node',
     testTimeout: 30000, // 加载 513 KP 一次 ~1s
     pool: 'forks',

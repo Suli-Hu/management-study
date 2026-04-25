@@ -1,0 +1,85 @@
+name: Playwright E2E
+
+# 端到端：登录 → 浏览 → 退出 全流程黑盒测试。
+# 用 password 模式（test-only secrets 写在 .dev.vars，不触 prod creds）。
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'v2/**'
+      - '.github/workflows/playwright-e2e.yml'
+  pull_request:
+    paths:
+      - 'v2/**'
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: v2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: v2/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('v2/pnpm-lock.yaml') }}
+
+      - name: Install Playwright Chromium
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Apply D1 migrations (local miniflare)
+        run: pnpm exec wrangler d1 migrations apply management-study-v2 --local
+
+      - name: Generate D1 sync SQL
+        run: pnpm sync:d1
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+
+      - name: Apply D1 data sync (local)
+        run: pnpm exec wrangler d1 execute management-study-v2 --local --file=.wrangler/sync.sql
+
+      - name: Write test .dev.vars
+        run: |
+          cat > .dev.vars <<EOF
+          ADMIN_PASSWORD=test-admin-pw
+          GUEST_PASSWORD=test-guest-pw
+          SESSION_SECRET=ci-test-secret-not-for-prod-use-32chars
+          EOF
+
+      - name: Run Playwright tests
+        run: pnpm test:e2e
+        env:
+          CI: true
+          E2E_ADMIN_PASSWORD: test-admin-pw
+          E2E_GUEST_PASSWORD: test-guest-pw
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: v2/playwright-report/
+          retention-days: 7

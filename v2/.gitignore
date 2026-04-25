@@ -35,6 +35,12 @@ yarn-error.log*
 coverage/
 .vitest-cache/
 
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+blob-report/
+
 # === v0.3.1 Learning isolation ===
 # 测试 KP（smoke test / 手测临时数据）不能入 git
 # 否则 learning pull 下来会被污染

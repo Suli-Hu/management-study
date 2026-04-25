@@ -1,7 +1,7 @@
 {
   "name": "management-study-v2",
   "type": "module",
-  "version": "0.3.17",
+  "version": "0.3.18",
   "private": true,
   "description": "Multi-discipline study notes SaaS — v2 (Astro + D1 + Tailwind)",
   "scripts": {
@@ -16,7 +16,9 @@
     "sync:d1": "tsx scripts/sync-to-d1.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:learning-flow": "tsx scripts/test-learning-flow.ts"
+    "test:learning-flow": "tsx scripts/test-learning-flow.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:install": "playwright install --with-deps chromium"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.0",
@@ -28,6 +30,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260424.1",
+    "@playwright/test": "^1.59.1",
     "@types/node": "^22.0.0",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
