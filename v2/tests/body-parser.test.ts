@@ -10,7 +10,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  parseBody, serializeBody, changeFormat, emptyParsed,
+  parseBody, serializeBody, changeFormat, emptyParsed, deriveTagsFromBody,
   type ParsedBody, type Format,
 } from '../src/lib/body-parser';
 
@@ -43,6 +43,19 @@ describe('parseBody — flat-list', () => {
     expect(p.items).toHaveLength(2);
     expect(p.meaning).toBe('重要性');
     expect(p.limit).toBe('边界');
+  });
+
+  test('6 评价 全 抽取（义/限/例/应/用/喻）', () => {
+    const body = '导：◆A——a◆意义——M◆局限——L◆例子——E◆应对——R◆应用——U◆比喻——AN';
+    const p = parseBody(body, 'flat-list');
+    if (p.format !== 'flat-list') return;
+    expect(p.items).toHaveLength(1);
+    expect(p.meaning).toBe('M');
+    expect(p.limit).toBe('L');
+    expect(p.example).toBe('E');
+    expect(p.response).toBe('R');
+    expect(p.application).toBe('U');
+    expect(p.analogy).toBe('AN');
   });
 
   test('items 间 ；分隔符不破坏解析', () => {
@@ -164,6 +177,27 @@ describe('emptyParsed', () => {
       const s = serializeBody(p);
       expect(typeof s).toBe('string');
     });
+  });
+});
+
+describe('deriveTagsFromBody — 自动推 tags 数组', () => {
+  test('flat-list body 含 ◆意义/◆局限 → ["义","限"]', () => {
+    const body = 'lead：◆A——a◆意义——M◆局限——L';
+    expect(deriveTagsFromBody(body, 'flat-list').sort()).toEqual(['义', '限'].sort());
+  });
+
+  test('全 6 评价都在 → 6 个短码', () => {
+    const body = 'l：◆A——a◆意义——M◆局限——L◆例子——E◆应对——R◆应用——U◆比喻——AN';
+    expect(deriveTagsFromBody(body, 'flat-list').sort()).toEqual(['义', '限', '例', '应', '用', '喻'].sort());
+  });
+
+  test('无 ◆ 评价 → 空数组', () => {
+    expect(deriveTagsFromBody('单纯叙述文本', 'narrative')).toEqual([]);
+    expect(deriveTagsFromBody('lead：◆A——a', 'flat-list')).toEqual([]);
+  });
+
+  test('narrative 也支持 parse ◆评价', () => {
+    expect(deriveTagsFromBody('文本 ◆意义——X', 'narrative')).toEqual(['义']);
   });
 });
 

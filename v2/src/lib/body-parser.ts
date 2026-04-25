@@ -24,9 +24,28 @@ export interface CompareCol {
 export interface QuadCell { name: string; emoji: string; sub: string; detail: string }
 
 export interface Evaluations {
-  meaning: string;
-  limit: string;
+  meaning: string;     // 义 — 学术贡献 / 实务价值（论述题必答）
+  limit: string;       // 限 — 不足 / 边界 / 被批判（论述题必答）
+  example: string;     // 例 — 企业案例 / 事例
+  response: string;    // 应 — 应对策略 / 处方
+  application: string; // 用 — 实务应用场景
+  analogy: string;     // 喻 — 比喻 / 类比记忆
 }
+
+/** 6 个评价 label 的中文全称 + 短标签 + 用于 body ◆ 标记的全称（多别名）。 */
+export const EVAL_DEFS: Array<{
+  key: keyof Evaluations;
+  short: string;
+  zhFull: string;       // 输入到 body 的标准全称
+  aliases: string[];    // parser 接受的多种写法
+}> = [
+  { key: 'meaning',     short: '义', zhFull: '意义', aliases: ['意义', '意義'] },
+  { key: 'limit',       short: '限', zhFull: '局限', aliases: ['局限', '限界'] },
+  { key: 'example',     short: '例', zhFull: '例子', aliases: ['例子', '企业例', '例'] },
+  { key: 'response',    short: '应', zhFull: '应对', aliases: ['应对', '應對'] },
+  { key: 'application', short: '用', zhFull: '应用', aliases: ['应用', '應用'] },
+  { key: 'analogy',     short: '喻', zhFull: '比喻', aliases: ['比喻', '譬喩'] },
+];
 
 export type ParsedBody =
   | { format: 'narrative'; raw: string }
@@ -38,28 +57,24 @@ export type ParsedBody =
 const CIRCLED = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩', '⑪', '⑫', '⑬', '⑭', '⑮'];
 const NUMBERED_RE = /^[①-⑮]/;
 
-/** 抽出尾部 ◆意义—— / ◆局限—— 评价段，返 { rest, meaning, limit }。 */
-function extractEvaluations(s: string): { rest: string; meaning: string; limit: string } {
+/** 抽出 body 里所有 ◆评价—— 段，返 { rest, evaluations }。EVAL_DEFS 决定支持哪些标签 + 别名。 */
+function extractEvaluations(s: string): { rest: string; evaluations: Evaluations } {
   let working = s;
-  let meaning = '';
-  let limit = '';
+  const ev: Evaluations = {
+    meaning: '', limit: '', example: '', response: '', application: '', analogy: '',
+  };
 
-  // 意义 (or 意義)
-  const meaningRe = /◆\s*(?:意义|意義)\s*——\s*([^◆]*?)(?=◆|<\/compare>|<\/quad>|$)/;
-  const m1 = working.match(meaningRe);
-  if (m1) {
-    meaning = m1[1].trim().replace(/[；;\s]+$/, '');
-    working = working.slice(0, m1.index!) + working.slice(m1.index! + m1[0].length);
+  for (const def of EVAL_DEFS) {
+    const aliasGroup = def.aliases.map((a) => a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+    const re = new RegExp(`◆\\s*(?:${aliasGroup})\\s*——\\s*([^◆]*?)(?=◆|</compare>|</quad>|$)`);
+    const m = working.match(re);
+    if (m) {
+      ev[def.key] = m[1].trim().replace(/[；;\s]+$/, '');
+      working = working.slice(0, m.index!) + working.slice(m.index! + m[0].length);
+    }
   }
 
-  const limitRe = /◆\s*(?:局限|限界)\s*——\s*([^◆]*?)(?=◆|<\/compare>|<\/quad>|$)/;
-  const m2 = working.match(limitRe);
-  if (m2) {
-    limit = m2[1].trim().replace(/[；;\s]+$/, '');
-    working = working.slice(0, m2.index!) + working.slice(m2.index! + m2[0].length);
-  }
-
-  return { rest: working, meaning, limit };
+  return { rest: working, evaluations: ev };
 }
 
 function parseDiamondItems(s: string): Item[] {
@@ -97,11 +112,11 @@ function parseNumberedItems(s: string): Item[] {
 export function parseBody(body: string, format: Format): ParsedBody {
   if (format === 'narrative') return { format: 'narrative', raw: body };
 
-  const { rest: working, meaning, limit } = extractEvaluations(body);
+  const { rest: working, evaluations } = extractEvaluations(body);
 
   if (format === 'compare') {
     const m = working.match(/^([\s\S]*?)<compare>([\s\S]+?)<\/compare>([\s\S]*)$/i);
-    if (!m) return { format: 'compare', lead: working.trim(), cols: [], meaning, limit };
+    if (!m) return { format: 'compare', lead: working.trim(), cols: [], ...evaluations };
     const lead = m[1].trim().replace(/[:：]\s*$/, '');
     const cols = m[2].split('||').map((c) => c.trim()).filter(Boolean).map((c) => {
       const f = c.split('|').map((s) => s.trim());
@@ -110,12 +125,12 @@ export function parseBody(body: string, format: Format): ParsedBody {
         type: f[3] ?? '', theories: f[4] ?? '', detail: f[5] ?? '',
       };
     });
-    return { format: 'compare', lead, cols, meaning, limit };
+    return { format: 'compare', lead, cols, ...evaluations };
   }
 
   if (format === 'quad') {
     const m = working.match(/^([\s\S]*?)<quad>([\s\S]+?)<\/quad>([\s\S]*)$/i);
-    if (!m) return { format: 'quad', lead: working.trim(), yAxis: '', xAxis: '', cells: [], meaning, limit };
+    if (!m) return { format: 'quad', lead: working.trim(), yAxis: '', xAxis: '', cells: [], ...evaluations };
     const lead = m[1].trim().replace(/[:：]\s*$/, '');
     const parts = m[2].split('||');
     const axes = (parts[0] ?? '').split(',').map((s) => s.trim());
@@ -125,7 +140,7 @@ export function parseBody(body: string, format: Format): ParsedBody {
       const f = c.split('|').map((s) => s.trim());
       return { name: f[0] ?? '', emoji: f[1] ?? '', sub: f[2] ?? '', detail: f[3] ?? '' };
     });
-    return { format: 'quad', lead, yAxis, xAxis, cells, meaning, limit };
+    return { format: 'quad', lead, yAxis, xAxis, cells, ...evaluations };
   }
 
   if (format === 'accordion') {
@@ -133,7 +148,7 @@ export function parseBody(body: string, format: Format): ParsedBody {
     const groupRe = /<br\s*\/?>?\s*【\s*([^】]+?)\s*】\s*<br\s*\/?>?/g;
     const matches = [...working.matchAll(groupRe)];
     if (matches.length === 0) {
-      return { format: 'accordion', lead: working.trim(), groups: [], meaning, limit };
+      return { format: 'accordion', lead: working.trim(), groups: [], ...evaluations };
     }
     const lead = working.slice(0, matches[0].index).trim();
     const groups: Group[] = [];
@@ -143,25 +158,25 @@ export function parseBody(body: string, format: Format): ParsedBody {
       const itemsStr = working.slice(start, end);
       groups.push({ title: m[1].trim(), items: parseNumberedItems(itemsStr) });
     });
-    return { format: 'accordion', lead, groups, meaning, limit };
+    return { format: 'accordion', lead, groups, ...evaluations };
   }
 
   // flat-list
   const firstDiamond = working.indexOf('◆');
   if (firstDiamond < 0) {
-    return { format: 'flat-list', lead: working.trim(), items: [], meaning, limit };
+    return { format: 'flat-list', lead: working.trim(), items: [], ...evaluations };
   }
   const lead = working.slice(0, firstDiamond).replace(/[:：]\s*$/, '').trim();
   const items = parseDiamondItems(working.slice(firstDiamond));
-  return { format: 'flat-list', lead, items, meaning, limit };
+  return { format: 'flat-list', lead, items, ...evaluations };
 }
 
 export function serializeBody(parsed: ParsedBody): string {
   if (parsed.format === 'narrative') return parsed.raw;
 
-  const evalSuffix =
-    (parsed.meaning ? `◆意义——${parsed.meaning}` : '') +
-    (parsed.limit ? `◆局限——${parsed.limit}` : '');
+  const evalSuffix = EVAL_DEFS
+    .map((def) => parsed[def.key] ? `◆${def.zhFull}——${parsed[def.key]}` : '')
+    .join('');
 
   if (parsed.format === 'flat-list') {
     let s = parsed.lead;
@@ -213,9 +228,24 @@ export function changeFormat(parsed: ParsedBody, newFormat: Format): ParsedBody 
 /** 创建空白结构，用于新增 KP 或 format 切换无源时。 */
 export function emptyParsed(format: Format): ParsedBody {
   if (format === 'narrative') return { format: 'narrative', raw: '' };
-  const base = { lead: '', meaning: '', limit: '' };
+  const emptyEvals: Evaluations = {
+    meaning: '', limit: '', example: '', response: '', application: '', analogy: '',
+  };
+  const base = { lead: '', ...emptyEvals };
   if (format === 'flat-list') return { format, ...base, items: [] };
   if (format === 'accordion') return { format, ...base, groups: [] };
   if (format === 'compare') return { format, ...base, cols: [] };
   return { format: 'quad', ...base, yAxis: '', xAxis: '', cells: [] };
+}
+
+/** 自动推导 tags 数组（短码 义/限/...）— 服务端在 PUT 前用，免 admin 重复劳动。 */
+export function deriveTagsFromBody(body: string, format: Format): string[] {
+  if (format === 'narrative') {
+    // 仍 try parse evaluations from raw（用户可能在 narrative 里也写 ◆意义）
+    const { evaluations } = extractEvaluations(body);
+    return EVAL_DEFS.filter((d) => evaluations[d.key]).map((d) => d.short);
+  }
+  const parsed = parseBody(body, format);
+  if (parsed.format === 'narrative') return [];
+  return EVAL_DEFS.filter((d) => parsed[d.key]).map((d) => d.short);
 }

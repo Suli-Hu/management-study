@@ -9,8 +9,8 @@
  */
 
 import {
-  parseBody, serializeBody, changeFormat, emptyParsed,
-  type Format, type ParsedBody, type Item, type Group, type CompareCol, type QuadCell,
+  parseBody, serializeBody, changeFormat, emptyParsed, EVAL_DEFS,
+  type Format, type ParsedBody, type Item, type Group, type CompareCol, type QuadCell, type Evaluations,
 } from './body-parser';
 
 const FORMATS: Array<{ key: Format; label: string }> = [
@@ -172,31 +172,47 @@ function buildLangTabs(active: 'zh' | 'ja', onChange: (l: 'zh' | 'ja') => void):
   return wrap;
 }
 
-function buildEvalSection(parsed: { meaning: string; limit: string }, onUpdate: (m: string, l: string) => void): HTMLElement {
-  const wrap = el('section', 'border-t pt-3 mt-4 space-y-2');
-  const lbl = el('div', 'text-xs text-quaternary');
-  lbl.textContent = '评价（可选）';
-  wrap.appendChild(lbl);
+interface EvalPlaceholders { [k: string]: string }
+const EVAL_PLACEHOLDERS: EvalPlaceholders = {
+  meaning: '学术贡献 / 实务价值（论述题必答）',
+  limit: '不足 / 边界 / 被批判（论述题必答）',
+  example: '企业案例 / 历史事例',
+  response: '面对相关问题，这理论建议怎么办',
+  application: '实务场景下的具体用法',
+  analogy: '帮自己记忆的比喻 / 类比',
+};
 
-  const m = el('div');
-  const mLbl = el('label', 'block text-xs text-tertiary mb-0.5');
-  mLbl.textContent = '意义';
-  m.appendChild(mLbl);
-  m.appendChild(textarea({
-    value: parsed.meaning, placeholder: '这个 KP 为什么重要', rows: 2,
-    onInput: (v) => onUpdate(v, parsed.limit),
-  }));
-  wrap.appendChild(m);
+function buildEvalSection(
+  parsed: Evaluations,
+  onUpdate: (key: keyof Evaluations, value: string) => void,
+): HTMLElement {
+  const wrap = el('section', 'border-t pt-4 mt-4 space-y-3');
+  const head = el('div', 'flex items-baseline gap-2');
+  const lbl = el('span', 'text-xs font-semibold text-tertiary');
+  lbl.textContent = '评价标签（论述题答题骨架，简单概念可全空）';
+  head.appendChild(lbl);
+  wrap.appendChild(head);
 
-  const l = el('div');
-  const lLbl = el('label', 'block text-xs text-tertiary mb-0.5');
-  lLbl.textContent = '局限';
-  l.appendChild(lLbl);
-  l.appendChild(textarea({
-    value: parsed.limit, placeholder: '边界 / 不足', rows: 2,
-    onInput: (v) => onUpdate(parsed.meaning, v),
-  }));
-  wrap.appendChild(l);
+  EVAL_DEFS.forEach((def) => {
+    const row = el('div', 'flex gap-2 items-start');
+    const tag = el('span',
+      'shrink-0 inline-flex items-center justify-center w-6 h-6 rounded text-xs font-semibold border bg-bg-secondary text-tertiary mt-1.5'
+    );
+    tag.textContent = def.short;
+    tag.title = def.zhFull;
+    row.appendChild(tag);
+    const label = el('label', 'shrink-0 text-xs text-tertiary mt-2 w-12');
+    label.textContent = def.zhFull;
+    row.appendChild(label);
+    row.appendChild(textarea({
+      value: parsed[def.key],
+      placeholder: EVAL_PLACEHOLDERS[def.key] ?? '',
+      rows: 2,
+      cls: 'flex-1 px-2 py-1.5 rounded border text-sm leading-relaxed',
+      onInput: (v) => onUpdate(def.key, v),
+    }));
+    wrap.appendChild(row);
+  });
   return wrap;
 }
 
@@ -269,7 +285,7 @@ function renderFlatList(
   }, 'w-full py-2 rounded border border-dashed text-xs text-tertiary hover:bg-bg-tertiary'));
   parent.appendChild(itemsSec);
 
-  parent.appendChild(buildEvalSection(parsed, (m, l) => update({ meaning: m, limit: l })));
+  parent.appendChild(buildEvalSection(parsed, (key, value) => update({ [key]: value } as Partial<typeof parsed>)));
 }
 
 function renderAccordion(
@@ -349,7 +365,7 @@ function renderAccordion(
     update({ groups: [...parsed.groups, { title: '', items: [] }] });
   }, 'w-full py-2 rounded border border-dashed text-xs text-tertiary hover:bg-bg-tertiary'));
 
-  parent.appendChild(buildEvalSection(parsed, (m, l) => update({ meaning: m, limit: l })));
+  parent.appendChild(buildEvalSection(parsed, (key, value) => update({ [key]: value } as Partial<typeof parsed>)));
 }
 
 function renderCompare(
@@ -400,7 +416,7 @@ function renderCompare(
     update({ cols: [...parsed.cols, { title: '', keyword: '', desc: '', type: '', theories: '', detail: '' }] });
   }, 'w-full py-2 rounded border border-dashed text-xs text-tertiary hover:bg-bg-tertiary'));
 
-  parent.appendChild(buildEvalSection(parsed, (m, l) => update({ meaning: m, limit: l })));
+  parent.appendChild(buildEvalSection(parsed, (key, value) => update({ [key]: value } as Partial<typeof parsed>)));
 }
 
 function renderQuad(
@@ -455,7 +471,7 @@ function renderQuad(
   });
   parent.appendChild(grid);
 
-  parent.appendChild(buildEvalSection(parsed, (m, l) => update({ meaning: m, limit: l })));
+  parent.appendChild(buildEvalSection(parsed, (key, value) => update({ [key]: value } as Partial<typeof parsed>)));
 }
 
 function textareaSection(label: string, value: string, onInput: (v: string) => void): HTMLElement {

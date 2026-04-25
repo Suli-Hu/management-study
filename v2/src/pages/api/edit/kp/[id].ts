@@ -13,6 +13,7 @@
 import type { APIRoute } from 'astro';
 import { Kp } from '~/schemas/kp';
 import { getFile, putFile, deleteFile } from '~/lib/github';
+import { deriveTagsFromBody } from '~/lib/body-parser';
 
 interface SuccessBody {
   ok: true;
@@ -76,6 +77,8 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
 
   // updatedAt 强制刷为 now（防止前端伪造时间戳）
   kp.updatedAt = new Date().toISOString();
+  // v0.4.9: tags 服务端自动从 body 推（admin 不用重复劳动；body ◆评价 = 单源真理）
+  kp.tags = deriveTagsFromBody(kp.body.zh ?? '', kp.format) as typeof kp.tags;
 
   const path = `v2/data/${kp.discipline}/kp/${kp.id}.json`;
   const adminEmail = locals.user?.email ?? 'unknown@admin';
