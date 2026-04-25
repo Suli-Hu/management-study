@@ -61,10 +61,12 @@ export function mountBodyEditor(container: HTMLElement, opts: BodyEditorOptions)
 
   function render() {
     container.innerHTML = '';
-    container.appendChild(buildFormatTabs(format, switchFormat));
-    const langBar = el('div', 'flex items-center gap-2 mb-2');
-    langBar.appendChild(buildLangTabs(lang, (l) => { lang = l; render(); }));
-    container.appendChild(langBar);
+
+    // v0.4.12 PM 方案 B：format 锁定 + 角落「更改」入口（不再 5 tab 平铺）
+    const headerBar = el('div', 'flex items-center justify-between gap-2 mb-3 pb-2 border-b flex-wrap');
+    headerBar.appendChild(buildFormatHeader(format, getCurrent, switchFormat));
+    headerBar.appendChild(buildLangTabs(lang, (l) => { lang = l; render(); }));
+    container.appendChild(headerBar);
 
     const formArea = el('div', 'space-y-3');
     container.appendChild(formArea);
@@ -141,22 +143,114 @@ function deleteBtn(onClick: () => void): HTMLButtonElement {
   return button('×', onClick, 'shrink-0 w-7 h-7 rounded text-quaternary hover:text-accent-warning hover:bg-bg-tertiary text-base');
 }
 
-function buildFormatTabs(active: Format, onChange: (f: Format) => void): HTMLElement {
-  const wrap = el('div', 'flex items-center gap-1 mb-3 border-b pb-2 flex-wrap');
-  const lbl = el('span', 'text-xs text-quaternary mr-1');
-  lbl.textContent = '格式';
+/** 计算当前 parsed 在某 format 下的「内容容量」，用于切换提示损失程度。 */
+function countContent(p: ParsedBody): number {
+  if (p.format === 'narrative') return p.raw.trim().length > 0 ? 1 : 0;
+  if (p.format === 'flat-list') return p.items.length;
+  if (p.format === 'accordion') return p.groups.reduce((s, g) => s + g.items.length, 0);
+  if (p.format === 'compare') return p.cols.length;
+  if (p.format === 'quad') return p.cells.filter((c) => c.name || c.detail).length;
+  return 0;
+}
+
+function previewFormatChange(parsed: ParsedBody, target: Format): { hint: string; lossy: boolean } {
+  if (parsed.format === target) return { hint: '当前格式', lossy: false };
+  const before = countContent(parsed);
+  if (before === 0) return { hint: '当前空，可安全切换', lossy: false };
+  // 同质转换无损：narrative 到任何（lead 留），任何到 narrative（保 raw）
+  if (target === 'narrative') return { hint: '保为原始文本（无损）', lossy: false };
+  if (parsed.format === 'narrative') return { hint: '将按新结构重新填写', lossy: false };
+  // 其它跨结构 = lossy（除 accordion ⟷ flat-list 也丢，因结构不同）
+  return { hint: `将丢失 ${before} 项结构内容（lead/eval 保留）`, lossy: true };
+}
+
+function buildFormatHeader(
+  active: Format,
+  getCurrent: () => ParsedBody,
+  onChange: (f: Format) => void,
+): HTMLElement {
+  const wrap = el('div', 'flex items-center gap-2');
+  const lbl = el('span', 'text-xs text-quaternary');
+  lbl.textContent = '当前格式：';
   wrap.appendChild(lbl);
-  FORMATS.forEach((f) => {
-    const b = el('button');
-    b.type = 'button';
-    b.textContent = f.label;
-    b.className = `px-3 py-1 text-xs rounded transition-colors ${
-      f.key === active ? 'bg-accent-strategy text-white' : 'text-tertiary hover:bg-bg-tertiary'
-    }`;
-    b.addEventListener('click', () => onChange(f.key));
-    wrap.appendChild(b);
+  const value = el('span', 'text-sm font-semibold text-primary');
+  value.textContent = FORMATS.find((f) => f.key === active)?.label ?? active;
+  wrap.appendChild(value);
+  const changeBtn = el('button');
+  changeBtn.type = 'button';
+  changeBtn.textContent = '更改 ▾';
+  changeBtn.className = 'ml-1 px-2 py-0.5 text-xs rounded border text-tertiary hover:bg-bg-tertiary';
+  let closeMenu: (() => void) | null = null;
+  changeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (closeMenu) { closeMenu(); closeMenu = null; return; }
+    closeMenu = openFormatMenu(changeBtn, active, getCurrent(), (f) => {
+      closeMenu = null;
+      onChange(f);
+    });
   });
+  wrap.appendChild(changeBtn);
   return wrap;
+}
+
+function openFormatMenu(
+  anchor: HTMLElement,
+  currentFormat: Format,
+  currentParsed: ParsedBody,
+  onPick: (f: Format) => void,
+): () => void {
+  const menu = el('div', 'fixed z-30 w-72 max-w-[90vw] border rounded-md bg-bg-primary shadow-card overflow-hidden');
+  FORMATS.forEach((f, idx) => {
+    const row = el('button');
+    row.type = 'button';
+    row.className = `block w-full text-left px-3 py-2 hover:bg-bg-tertiary ${idx < FORMATS.length - 1 ? 'border-b' : ''} ${
+      f.key === currentFormat ? 'bg-bg-secondary' : ''
+    }`;
+    const head = el('div', 'flex items-center gap-2');
+    const name = el('span', 'text-sm font-semibold');
+    name.textContent = f.label;
+    head.appendChild(name);
+    if (f.key === currentFormat) {
+      const cur = el('span', 'text-xs text-accent-strategy');
+      cur.textContent = '✓ 当前';
+      head.appendChild(cur);
+    }
+    row.appendChild(head);
+    const preview = previewFormatChange(currentParsed, f.key);
+    const hint = el('div', `text-xs mt-0.5 ${preview.lossy ? 'text-accent-warning' : 'text-quaternary'}`);
+    hint.textContent = preview.hint;
+    row.appendChild(hint);
+    row.addEventListener('click', () => {
+      if (f.key === currentFormat) { close(); return; }
+      if (preview.lossy && !confirm(`切换到「${f.label}」：\n${preview.hint}\n\n继续？`)) return;
+      onPick(f.key);
+      close();
+    });
+    menu.appendChild(row);
+  });
+
+  const rect = anchor.getBoundingClientRect();
+  menu.style.top = `${rect.bottom + 4}px`;
+  menu.style.left = `${rect.left}px`;
+  document.body.appendChild(menu);
+
+  function close() {
+    menu.remove();
+    document.removeEventListener('click', onOutside, true);
+    document.removeEventListener('keydown', onKey, true);
+  }
+  function onOutside(e: MouseEvent) {
+    if (menu.contains(e.target as Node) || anchor.contains(e.target as Node)) return;
+    close();
+  }
+  function onKey(e: KeyboardEvent) {
+    if (e.key === 'Escape') close();
+  }
+  setTimeout(() => {
+    document.addEventListener('click', onOutside, true);
+    document.addEventListener('keydown', onKey, true);
+  }, 0);
+  return close;
 }
 
 function buildLangTabs(active: 'zh' | 'ja', onChange: (l: 'zh' | 'ja') => void): HTMLElement {
