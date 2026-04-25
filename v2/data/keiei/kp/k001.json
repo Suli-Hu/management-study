@@ -11,15 +11,15 @@
   "year": "1911",
   "title": {
     "zh": "科学管理法",
-    "en": "Scientific Management",
-    "ja": "科学的管理法"
+    "ja": "科学的管理法",
+    "en": "Scientific Management"
   },
   "body": {
-    "zh": "泰勒在《科学管理原理》中提出的系统化工厂管理方法，核心内容包括：◆ 课业管理（Task Management）——为每位工人制定科学的日工作标准，以客观数据取代主观判断；◆ 作业研究（Time and Motion Study）——系统拆解工作动作、剔除无效操作，测定完成标准作业的最短时间；◆ 差别计件工资制（Differential Piece-Rate System）——达标者高单价、未达标者低单价，以物质激励驱动效率；◆ 职能别职长制（Functional Foremanship）——将单一工头拆分为多位专职职长（速度、检查、纪律等），各司其职；◆ 指图票制度（Instruction Card System）——由计划部门下发标准作业指示单，实现计划与执行的分离",
+    "zh": "泰勒在《科学管理原理》中提出的系统化工厂管理方法，核心内容包括：◆ 课业管理（Task Management）——为每位工人制定科学的日工作标准，以客观数据取代主观判断；◆ 作业研究（Time and Motion Study）——系统拆解工作动作、剔除无效操作，测定完成标准作业的最短时间；◆ 差别计件工资制（Differential Piece-Rate System）——达标者高单价、未达标者低单价，以物质激励驱动效率；◆ 职能别职长制（Functional Foremanship）——将单一工头拆分为多位专职职长（速度、检查、纪律等），各司其职；◆ 指图票制度（Instruction Card System）——由计划部门下发标准作业指示单，实现计划与执行的分离 [editor smoke test 2026-04-25 — will revert]",
     "ja": "——テイラーが著書『科学的管理法の諸原理』において提唱した工場管理の体系的方法論。核心となる内容は以下の通り：◆ 課業管理（Task Management）——各労働者に対し科学的根拠に基づく一日の標準作業量を設定し、主観的判断に代えて客観的データによる管理を行う◆ 時間動作研究（Time and Motion Study）——作業動作を体系的に分解し、無駄な動作を排除したうえで、標準作業に要する最短時間を測定する◆ 差別出来高給制（Differential Piece-Rate System）——標準達成者には高単価、未達成者には低単価を適用し、物質的誘因によって能率向上を促す◆ 職能別職長制（Functional Foremanship）——一人の職長が担っていた監督機能を、速度・検査・規律など複数の専門職長に分割し、各自の専門領域に特化させる◆ 指図票制度（Instruction Card System）——計画部門が標準作業指示票を作成・交付し、計画と実行の分離を制度化する"
   },
   "tags": [],
   "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
-  "updatedAt": "2026-04-24T02:21:59.847Z"
+  "updatedAt": "2026-04-25T04:13:54.329Z"
 }
