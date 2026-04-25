@@ -5,7 +5,7 @@
  *   1. 写临时 KP JSON → data/keiei/kp/kt99999.json
  *   2. pnpm validate（schema + cross-ref）
  *   3. pnpm sync:d1（生成 SQL）
- *   4. wrangler d1 execute --local --file=sync.sql（应用到 miniflare D1）
+ *   4. 按 .wrangler/sync/*.sql 顺序 apply 到 miniflare D1（v0.4.14 分片）
  *   5. 查 D1 断言：KP 存在、kp_school 关联、kp_scholar 关联
  *   6. 删临时 JSON
  *   7. 再 sync + apply
@@ -18,7 +18,7 @@
  * 执行：pnpm test:learning-flow
  */
 
-import { writeFileSync, unlinkSync, existsSync } from 'node:fs';
+import { writeFileSync, unlinkSync, existsSync, readdirSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -80,6 +80,20 @@ function parseCount(out: string): number {
   return parseInt(m[1], 10);
 }
 
+function applyAllShards() {
+  const SHARD_DIR = join(V2_ROOT, '.wrangler', 'sync');
+  const files = readdirSync(SHARD_DIR).filter((f) => f.endsWith('.sql')).sort();
+  if (files.length === 0) throw new Error(`no shards in ${SHARD_DIR}`);
+  for (const f of files) {
+    const r = run(
+      'pnpm',
+      ['exec', 'wrangler', 'd1', 'execute', 'management-study-v2', '--local', `--file=.wrangler/sync/${f}`],
+      `apply ${f}`,
+    );
+    if (r.code !== 0) throw new Error(`apply ${f} failed`);
+  }
+}
+
 function cleanup() {
   if (existsSync(TEST_KP_PATH)) {
     unlinkSync(TEST_KP_PATH);
@@ -132,19 +146,14 @@ async function main() {
     const v = run('pnpm', ['validate'], 'validate');
     if (v.code !== 0) throw new Error('validate failed (see above)');
 
-    // 3. sync:d1 (writes .wrangler/sync.sql)
+    // 3. sync:d1 (writes .wrangler/sync/*.sql 分片)
     console.log('→ step 3: pnpm sync:d1');
     const s = run('pnpm', ['sync:d1'], 'sync:d1');
     if (s.code !== 0) throw new Error('sync:d1 failed');
 
-    // 4. apply to local D1
-    console.log('→ step 4: apply SQL to local D1');
-    const a = run(
-      'pnpm',
-      ['exec', 'wrangler', 'd1', 'execute', 'management-study-v2', '--local', '--file=.wrangler/sync.sql'],
-      'apply sync.sql',
-    );
-    if (a.code !== 0) throw new Error('apply failed');
+    // 4. apply 所有 shards 到 local D1（按字母序）
+    console.log('→ step 4: apply SQL shards to local D1');
+    applyAllShards();
 
     // 5. assert KP + joins present
     console.log('→ step 5: assert test KP present in D1');
@@ -173,16 +182,11 @@ async function main() {
     console.log('→ step 6: delete test JSON');
     unlinkSync(TEST_KP_PATH);
 
-    // 7. re-sync + re-apply
-    console.log('→ step 7: re-sync + re-apply');
+    // 7. re-sync + re-apply 所有 shards
+    console.log('→ step 7: re-sync + re-apply shards');
     const s2 = run('pnpm', ['sync:d1'], 're-sync');
     if (s2.code !== 0) throw new Error('re-sync failed');
-    const a2 = run(
-      'pnpm',
-      ['exec', 'wrangler', 'd1', 'execute', 'management-study-v2', '--local', '--file=.wrangler/sync.sql'],
-      're-apply',
-    );
-    if (a2.code !== 0) throw new Error('re-apply failed');
+    applyAllShards();
 
     // 8. assert gone + baseline restored
     console.log('→ step 8: assert test KP gone + baseline restored');

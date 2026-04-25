@@ -65,6 +65,16 @@ describe('parseBody — flat-list', () => {
     expect(p.items).toHaveLength(2);
     expect(p.items[0].desc).toBe('desc1');
   });
+
+  test('flat-list 也支持 numbered style ①②③ <br>（v0.4.13 修补）', () => {
+    const body = '五维度：<br>①<strong>开放性</strong>——好奇心<br>②<strong>尽责性</strong>——自律';
+    const p = parseBody(body, 'flat-list');
+    if (p.format !== 'flat-list') return;
+    expect(p.lead).toBe('五维度');
+    expect(p.items).toHaveLength(2);
+    expect(p.items[0].name).toBe('<strong>开放性</strong>');
+    expect(p.items[1].desc).toBe('自律');
+  });
 });
 
 describe('parseBody — accordion', () => {

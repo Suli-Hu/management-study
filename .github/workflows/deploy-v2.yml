@@ -72,13 +72,46 @@ jobs:
           workingDirectory: v2
           command: d1 migrations apply management-study-v2 --remote
 
-      - name: Sync data to D1
+      # v0.4.14 sync 拆 5 片避免 D1 1MB batch 上限 + workerd hash bug
+      - name: Sync shard 01 meta+wipe
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: v2
-          command: d1 execute management-study-v2 --remote --file=.wrangler/sync.sql
+          command: d1 execute management-study-v2 --remote --file=.wrangler/sync/01_meta_wipe.sql
+
+      - name: Sync shard 02 KP
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: v2
+          command: d1 execute management-study-v2 --remote --file=.wrangler/sync/02_kp.sql
+
+      - name: Sync shard 03 KP joins
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: v2
+          command: d1 execute management-study-v2 --remote --file=.wrangler/sync/03_kp_joins.sql
+
+      - name: Sync shard 04 FTS
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: v2
+          command: d1 execute management-study-v2 --remote --file=.wrangler/sync/04_fts.sql
+
+      - name: Sync shard 05 log
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: v2
+          command: d1 execute management-study-v2 --remote --file=.wrangler/sync/05_log.sql
 
       # ========== Deploy Pages ==========
       - name: Deploy Pages

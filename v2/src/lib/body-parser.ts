@@ -161,13 +161,23 @@ export function parseBody(body: string, format: Format): ParsedBody {
     return { format: 'accordion', lead, groups, ...evaluations };
   }
 
-  // flat-list
+  // flat-list — 同时支持 ◆name—— 和 <br>①name—— 两种 input style
   const firstDiamond = working.indexOf('◆');
-  if (firstDiamond < 0) {
+  const numberedRe = /<br\s*\/?>?\s*[①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮]/i;
+  const numberedMatch = working.match(numberedRe);
+  const firstNumbered = numberedMatch ? numberedMatch.index! : -1;
+
+  // 选最早出现的标记定 lead
+  const candidates = [firstDiamond, firstNumbered].filter((i) => i >= 0);
+  if (candidates.length === 0) {
     return { format: 'flat-list', lead: working.trim(), items: [], ...evaluations };
   }
-  const lead = working.slice(0, firstDiamond).replace(/[:：]\s*$/, '').trim();
-  const items = parseDiamondItems(working.slice(firstDiamond));
+  const splitAt = Math.min(...candidates);
+  const lead = working.slice(0, splitAt).replace(/[:：]\s*$/, '').trim();
+  const itemsStr = working.slice(splitAt);
+  const items = itemsStr.includes('◆')
+    ? parseDiamondItems(itemsStr)
+    : parseNumberedItems(itemsStr);
   return { format: 'flat-list', lead, items, ...evaluations };
 }
 
