@@ -243,10 +243,12 @@ interface GetCtx {
   pathFor: (ident: string, discipline: string) => string;
   resolveDiscipline: (ident: string, db: any) => Promise<string | null>;
   urlIdentifier: () => string | undefined;
+  /** 可选：返回前 merge 的额外字段（如 kp_count、themes）。键名不能与 ok/json/base_sha 冲突。 */
+  enrich?: (ident: string, discipline: string, db: any) => Promise<Record<string, unknown>>;
 }
 
 export async function handleGet(opts: GetCtx): Promise<Response> {
-  const { ctx, pathFor, resolveDiscipline, urlIdentifier } = opts;
+  const { ctx, pathFor, resolveDiscipline, urlIdentifier, enrich } = opts;
   if (!ctx.locals.isAdmin) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
   const env = ctx.locals.runtime.env;
@@ -270,5 +272,6 @@ export async function handleGet(opts: GetCtx): Promise<Response> {
   } catch (e) {
     return jsonRes<EditError>(502, { ok: false, reason: 'github_error', detail: `invalid json: ${(e as Error).message}` });
   }
-  return jsonRes(200, { ok: true, json: parsed, base_sha: res.data.sha });
+  const meta = enrich ? await enrich(ident, discipline, env.DB) : {};
+  return jsonRes(200, { ok: true, json: parsed, base_sha: res.data.sha, ...meta });
 }

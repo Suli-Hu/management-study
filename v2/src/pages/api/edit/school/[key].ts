@@ -1,10 +1,13 @@
 /**
  * GET / PUT / DELETE /api/edit/school/:key  (v0.4.4 part 1)
+ *
+ * v0.4.18: GET enrich themes + kp_count（编辑器需要主题下拉 + 删除按钮 gate）。
+ *          DELETE 加 KP-count 后端硬约束（前端 disabled 是 UX，这里防绕过）。
  */
 
 import type { APIRoute } from 'astro';
 import { School } from '~/schemas/school';
-import { handleGet, handlePut, handleDelete } from '~/lib/edit-helpers';
+import { handleGet, handlePut, handleDelete, jsonRes, type EditError } from '~/lib/edit-helpers';
 
 const pathFor = (key: string, discipline: string) => `v2/data/${discipline}/schools/${key}.json`;
 
@@ -13,11 +16,21 @@ const resolveDiscipline = async (key: string, db: any): Promise<string | null> =
   return row?.discipline ?? null;
 };
 
+async function countKpsInSchool(db: any, schoolKey: string): Promise<number> {
+  const row = await db.prepare('SELECT COUNT(*) as n FROM kp_school WHERE school_key = ?').bind(schoolKey).first<{ n: number }>();
+  return row?.n ?? 0;
+}
+
 export const GET: APIRoute = (ctx) => handleGet({
   ctx,
   pathFor,
   resolveDiscipline,
   urlIdentifier: () => ctx.params.key,
+  enrich: async (key, discipline, db) => {
+    const themesRow = await db.prepare('SELECT themes_json FROM discipline WHERE key = ?').bind(discipline).first<{ themes_json: string }>();
+    const themes = themesRow?.themes_json ? JSON.parse(themesRow.themes_json) : [];
+    return { themes, kp_count: await countKpsInSchool(db, key) };
+  },
 });
 
 export const PUT: APIRoute = (ctx) => handlePut({
@@ -30,10 +43,24 @@ export const PUT: APIRoute = (ctx) => handlePut({
   forceFields: () => ({ updatedAt: new Date().toISOString() }),
 });
 
-export const DELETE: APIRoute = (ctx) => handleDelete({
-  ctx,
-  pathFor,
-  objectLabel: (key) => `school/${key}`,
-  resolveDiscipline,
-  urlIdentifier: () => ctx.params.key,
-});
+export const DELETE: APIRoute = async (ctx) => {
+  // 后端硬约束：学派下还有 KP 关联时拒绝删除（前端 disabled 是 UX，这里防绕过）
+  if (!ctx.locals.isAdmin) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+  const key = ctx.params.key;
+  if (!key) return jsonRes<EditError>(400, { ok: false, reason: 'bad_request' });
+  const kpCount = await countKpsInSchool(ctx.locals.runtime.env.DB, key);
+  if (kpCount > 0) {
+    return jsonRes(409, {
+      ok: false,
+      reason: 'has_dependents' as const,
+      detail: `学派下还有 ${kpCount} 个 KP 关联。先把这些 KP 移到别的学派或删掉再试。`,
+    });
+  }
+  return handleDelete({
+    ctx,
+    pathFor,
+    objectLabel: (k) => `school/${k}`,
+    resolveDiscipline,
+    urlIdentifier: () => ctx.params.key,
+  });
+};
