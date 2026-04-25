@@ -12,7 +12,7 @@
 
 import type { APIRoute } from 'astro';
 import { Kp } from '~/schemas/kp';
-import { getFile, putFile } from '~/lib/github';
+import { getFile, putFile, deleteFile } from '~/lib/github';
 
 interface SuccessBody {
   ok: true;
@@ -104,6 +104,61 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     new_blob_sha: res.data.new_blob_sha,
     deploy_eta_seconds: 90,
   });
+};
+
+/**
+ * DELETE /api/edit/kp/:id  (v0.4.2 收尾)
+ *   admin only。硬删（决策 2）：从 GitHub 删 data/<discipline>/kp/<id>.json
+ *   body: { base_sha: string } —— 乐观锁，防 stale
+ *   commit message: `v2: delete kp/<id> by <admin_email>`
+ */
+export const DELETE: APIRoute = async ({ params, request, locals }) => {
+  if (!locals.isAdmin) return json<ErrorBody>(403, { ok: false, reason: 'not_admin' });
+
+  const env = locals.runtime.env;
+  if (!env.GITHUB_PAT || !env.GITHUB_REPO) {
+    return json<ErrorBody>(503, { ok: false, reason: 'config_missing' });
+  }
+
+  const id = params.id;
+  if (!id) return json<ErrorBody>(400, { ok: false, reason: 'bad_request' });
+
+  let body: { base_sha?: string };
+  try {
+    body = (await request.json()) as typeof body;
+  } catch {
+    return json<ErrorBody>(400, { ok: false, reason: 'bad_request', detail: 'body must be JSON' });
+  }
+  if (typeof body.base_sha !== 'string' || !body.base_sha) {
+    return json<ErrorBody>(400, { ok: false, reason: 'bad_request', detail: 'base_sha required' });
+  }
+
+  // 必须先知道 discipline 才能定位文件
+  const row = await env.DB
+    .prepare('SELECT discipline FROM kp WHERE id = ?')
+    .bind(id)
+    .first<{ discipline: string }>();
+  if (!row) return json<ErrorBody>(404, { ok: false, reason: 'bad_request', detail: 'kp not in D1' });
+
+  const path = `v2/data/${row.discipline}/kp/${id}.json`;
+  const adminEmail = locals.user?.email ?? 'unknown@admin';
+  const message = `v2: delete kp/${id} by ${adminEmail}`;
+
+  const res = await deleteFile(
+    { pat: env.GITHUB_PAT, repo: env.GITHUB_REPO },
+    path,
+    { message, sha: body.base_sha, branch: 'main' },
+  );
+  if (!res.ok) {
+    if (res.reason === 'conflict') {
+      const cur = await getFile({ pat: env.GITHUB_PAT, repo: env.GITHUB_REPO }, path);
+      const current_sha = cur.ok ? cur.data.sha : undefined;
+      return json<ErrorBody>(409, { ok: false, reason: 'sha_conflict', current_sha });
+    }
+    return json<ErrorBody>(502, { ok: false, reason: 'github_error', detail: res.detail });
+  }
+
+  return json(200, { ok: true, commit_sha: res.data.commit_sha, deploy_eta_seconds: 90 });
 };
 
 /** GET 用于编辑器页加载：返当前 JSON + base_sha */

@@ -218,7 +218,7 @@ const lifespanDisplay = (scholar.born && scholar.died)
             {kps.map((k) => {
               const isActive = selectedKpId === k.id;
               return (
-                <li data-kp-id={k.id} class:list={['kp-list-item', isActive && 'is-active']}>
+                <li data-kp-id={k.id} class:list={['kp-list-item group relative', isActive && 'is-active']}>
                   <a
                     href={`/${discipline}/kp/${k.id}`}
                     data-kp-link
@@ -234,6 +234,30 @@ const lifespanDisplay = (scholar.born && scholar.died)
                     {k.title_en && <div class="text-xs text-quaternary italic mt-0.5">{k.title_en}</div>}
                     {k.year && <div class="text-xs text-quaternary mt-0.5">{k.year}</div>}
                   </a>
+                  {Astro.locals.isAdmin && (
+                    <div class="kp-admin-tools hidden lg:flex absolute top-2 right-2 gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <a
+                        href={`/${discipline}/kp/${k.id}/edit`}
+                        class="w-6 h-6 rounded bg-bg-primary border flex items-center justify-center text-xs text-tertiary hover:text-accent-strategy hover:border-accent-strategy"
+                        aria-label={`编辑 ${k.title_zh}`}
+                        title="编辑"
+                        onclick="event.stopPropagation()"
+                      >
+                        ✎
+                      </a>
+                      <button
+                        type="button"
+                        data-kp-delete
+                        data-kp-id={k.id}
+                        data-kp-title={k.title_zh}
+                        class="w-6 h-6 rounded bg-bg-primary border flex items-center justify-center text-xs text-tertiary hover:text-accent-warning hover:border-accent-warning"
+                        aria-label={`删除 ${k.title_zh}`}
+                        title="删除（硬删，进 git history）"
+                      >
+                        ✗
+                      </button>
+                    </div>
+                  )}
                 </li>
               );
             })}
@@ -309,6 +333,7 @@ const lifespanDisplay = (scholar.born && scholar.died)
 </Layout>
 
 <script is:inline src="/split-pane.js"></script>
+<script is:inline src="/admin-tools.js"></script>
 
 <script is:inline define:vars={{ scholarKey: scholar.key, accentHex: scholarAccentHex }}>
   // v0.3.15: 学者收藏星标（localStorage，访客/admin 同）

@@ -93,12 +93,14 @@ GitHub Contents API 自带乐观锁：PUT 必须带 `sha`，与 server 端不一
 
 | 版本 | 内容 |
 |---|---|
-| **v0.4.1** | 本 doc + GitHub PAT + CF secret + `/api/edit/health` smoke |
-| v0.4.2 | KP 文本编辑器：textarea + ◆/义/限/strong/br toolbar + inline `renderBody` 预览 + POST `/api/edit/kp/:id` |
+| **v0.4.1** ✅ | 本 doc + GitHub PAT + CF secret + `/api/edit/health` smoke |
+| **v0.4.2** ✅ | KP 文本编辑器（GET/PUT/**DELETE**）+ 学派/学者 split-pane KP 列表项 hover-reveal ✎/✗ |
 | v0.4.3 | Quad / Compare / Accordion DSL ⟷ JSON 可视化编辑（DSL roundtrip vitest） |
-| v0.4.4 | 学派 / 学者 新增/编辑/删除 UI |
+| v0.4.4 | **新增** KP / 学派 / 学者（+ 学派/学者整对象编辑/删除）—— hero ✎ + 「+ 新增」chip |
 | v0.4.5 | 长按拖动重排 KP `position`（kp_school 关联表的 position 字段） |
 | ~~v0.4.6~~ | ~~左滑 → 编辑 / 删除快捷按钮~~（移动端编辑废案，见决策 3） |
+
+**v0.4.2 范围调整**：原计划「删除留 v0.4.4」，但 V1 模式 ✎/✗ 在 KP 列表项上一起 hover 出，分两期会断裂入口。所以 v0.4.2 收尾合并：DELETE 路由 + 二次 confirm。新增 KP / 学派 / 学者整对象 CRUD 仍留 v0.4.4。
 
 ---
 

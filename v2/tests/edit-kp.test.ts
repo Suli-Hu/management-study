@@ -13,7 +13,7 @@ function utf8Btoa(s: string): string {
   for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
   return btoa(bin);
 }
-import { PUT as kpPUT, GET as kpGET } from '../src/pages/api/edit/kp/[id]';
+import { PUT as kpPUT, GET as kpGET, DELETE as kpDELETE } from '../src/pages/api/edit/kp/[id]';
 import type { APIContext } from 'astro';
 
 interface MockHandler {
@@ -235,5 +235,80 @@ describe('GET /api/edit/kp/:id', () => {
     const data = await res.json();
     expect(data).toMatchObject({ ok: true, base_sha: 'blob-1' });
     expect(data.json.id).toBe('k001');
+  });
+});
+
+describe('DELETE /api/edit/kp/:id', () => {
+  beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn());
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  test('非 admin → 403', async () => {
+    const res = await kpDELETE(makeCtx({
+      id: 'k001', method: 'PUT', body: { base_sha: 'x' }, env: baseEnv, isAdmin: false,
+    }));
+    expect(res.status).toBe(403);
+  });
+
+  test('config 缺 → 503', async () => {
+    const res = await kpDELETE(makeCtx({
+      id: 'k001', method: 'PUT', body: { base_sha: 'x' },
+      env: { ...baseEnv, GITHUB_PAT: undefined },
+    }));
+    expect(res.status).toBe(503);
+  });
+
+  test('base_sha 缺 → 400', async () => {
+    const res = await kpDELETE(makeCtx({
+      id: 'k001', method: 'PUT', body: {}, env: baseEnv,
+    }));
+    expect(res.status).toBe(400);
+  });
+
+  test('D1 找不到 → 404', async () => {
+    const env = { ...baseEnv, DB: mockDb(() => ({ rows: [] })) };
+    const res = await kpDELETE(makeCtx({
+      id: 'k001', method: 'PUT', body: { base_sha: 'x' }, env,
+    }));
+    expect(res.status).toBe(404);
+  });
+
+  test('happy path → 200 + commit message 含 admin email + delete', async () => {
+    let capturedMethod = '';
+    let capturedBody: any = null;
+    (globalThis.fetch as ReturnType<typeof vi.fn>).mockImplementation(async (_url, init) => {
+      capturedMethod = init.method;
+      capturedBody = JSON.parse(init.body);
+      return new Response(JSON.stringify({ commit: { sha: 'del-commit' } }), { status: 200 });
+    });
+    const env = { ...baseEnv, DB: mockDb(() => ({ rows: [{ discipline: 'keiei' }] })) };
+    const res = await kpDELETE(makeCtx({
+      id: 'k001', method: 'PUT', body: { base_sha: 'old-blob' }, env,
+    }));
+    expect(res.status).toBe(200);
+    expect(await res.json()).toMatchObject({ ok: true, commit_sha: 'del-commit', deploy_eta_seconds: 90 });
+    expect(capturedMethod).toBe('DELETE');
+    expect(capturedBody.message).toContain('delete kp/k001 by admin@test.com');
+    expect(capturedBody.sha).toBe('old-blob');
+  });
+
+  test('GitHub 409 → 409 sha_conflict + current_sha', async () => {
+    const fetchMock = globalThis.fetch as ReturnType<typeof vi.fn>;
+    fetchMock
+      .mockResolvedValueOnce(new Response('stale', { status: 409 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        sha: 'cur-blob',
+        encoding: 'base64',
+        content: utf8Btoa('{}'),
+      }), { status: 200 }));
+    const env = { ...baseEnv, DB: mockDb(() => ({ rows: [{ discipline: 'keiei' }] })) };
+    const res = await kpDELETE(makeCtx({
+      id: 'k001', method: 'PUT', body: { base_sha: 'stale' }, env,
+    }));
+    expect(res.status).toBe(409);
+    expect(await res.json()).toMatchObject({ ok: false, reason: 'sha_conflict', current_sha: 'cur-blob' });
   });
 });

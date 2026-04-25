@@ -55,7 +55,7 @@ engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 | 版本 | 内容 | 状态 |
 |---|---|---|
 | v0.4.1 | 选型 doc（[EDITOR-DESIGN.md](docs/EDITOR-DESIGN.md)）+ `/api/edit/health` smoke + GITHUB_PAT/REPO env 接线（7 vitest case） | ✅ |
-| v0.4.2 | KP text 编辑器 + toolbar（◆ ——  br strong 组）+ 双语 inline preview + GET/PUT `/api/edit/kp/:id`（带 SHA 乐观锁，commit msg 带 admin email，updatedAt 服务端强制刷）；admin only 铅笔入口（≥1024px）；11 vitest 全过 | ✅ |
+| v0.4.2 | KP text 编辑器 + toolbar + 双语 inline preview + GET/PUT/DELETE `/api/edit/kp/:id`（SHA 乐观锁，commit msg 带 admin email，updatedAt 服务端强制刷）；admin 铅笔入口在 KP 详情页 + 学派/学者 split-pane 列表项 hover-reveal ✎/✗（lg 视口）；硬删带二次 confirm；17 vitest case 全过；prod 端到端跑过 add-marker → revert 全绿 | ✅ |
 | v0.4.3 | Quad / Compare / Accordion DSL ⟷ JSON 可视化编辑器 + roundtrip vitest | ❌ |
 | v0.4.4 | 学派 / 学者 新增/编辑/删除 UI | ❌ |
 | v0.4.5 | 长按拖动重排 KP position | ❌ |
