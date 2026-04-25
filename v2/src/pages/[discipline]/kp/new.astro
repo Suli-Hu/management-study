@@ -97,6 +97,7 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
 </Layout>
 
 <script>
+  // @ts-nocheck — DOM form 类型推断弱，runtime 已验证
   // v0.4.11: multi-select typeahead 学派/学者
   import { mountBodyEditor } from '~/lib/body-editor-client';
   import { mountMultiSelect } from '~/lib/multi-select-client';

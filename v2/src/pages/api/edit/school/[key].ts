@@ -12,12 +12,12 @@ import { handleGet, handlePut, handleDelete, jsonRes, type EditError } from '~/l
 const pathFor = (key: string, discipline: string) => `v2/data/${discipline}/schools/${key}.json`;
 
 const resolveDiscipline = async (key: string, db: any): Promise<string | null> => {
-  const row = await db.prepare('SELECT discipline FROM school WHERE key = ?').bind(key).first<{ discipline: string }>();
+  const row = await db.prepare('SELECT discipline FROM school WHERE key = ?').bind(key).first() as { discipline: string } | null;
   return row?.discipline ?? null;
 };
 
 async function countKpsInSchool(db: any, schoolKey: string): Promise<number> {
-  const row = await db.prepare('SELECT COUNT(*) as n FROM kp_school WHERE school_key = ?').bind(schoolKey).first<{ n: number }>();
+  const row = await db.prepare('SELECT COUNT(*) as n FROM kp_school WHERE school_key = ?').bind(schoolKey).first() as { n: number } | null;
   return row?.n ?? 0;
 }
 
@@ -27,7 +27,7 @@ export const GET: APIRoute = (ctx) => handleGet({
   resolveDiscipline,
   urlIdentifier: () => ctx.params.key,
   enrich: async (key, discipline, db) => {
-    const themesRow = await db.prepare('SELECT themes_json FROM discipline WHERE key = ?').bind(discipline).first<{ themes_json: string }>();
+    const themesRow = await db.prepare('SELECT themes_json FROM discipline WHERE key = ?').bind(discipline).first() as { themes_json: string } | null;
     const themes = themesRow?.themes_json ? JSON.parse(themesRow.themes_json) : [];
     return { themes, kp_count: await countKpsInSchool(db, key) };
   },

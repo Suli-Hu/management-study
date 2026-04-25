@@ -11,12 +11,12 @@ import { handleGet, handlePut, handleDelete, jsonRes, type EditError } from '~/l
 const pathFor = (key: string, discipline: string) => `v2/data/${discipline}/scholars/${key}.json`;
 
 const resolveDiscipline = async (key: string, db: any): Promise<string | null> => {
-  const row = await db.prepare('SELECT discipline FROM scholar WHERE key = ?').bind(key).first<{ discipline: string }>();
+  const row = await db.prepare('SELECT discipline FROM scholar WHERE key = ?').bind(key).first() as { discipline: string } | null;
   return row?.discipline ?? null;
 };
 
 async function countKpsByScholar(db: any, scholarKey: string): Promise<number> {
-  const row = await db.prepare('SELECT COUNT(*) as n FROM kp_scholar WHERE scholar_key = ?').bind(scholarKey).first<{ n: number }>();
+  const row = await db.prepare('SELECT COUNT(*) as n FROM kp_scholar WHERE scholar_key = ?').bind(scholarKey).first() as { n: number } | null;
   return row?.n ?? 0;
 }
 

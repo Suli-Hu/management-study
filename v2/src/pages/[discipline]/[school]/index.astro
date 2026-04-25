@@ -57,10 +57,11 @@ const schoolAccentHex = ACCENT_MAP[sch.accent] ?? '#8a7a6a';
 // 未指定 ?kp= 时默认选第一个（v0.3.13）
 const requestedKpId = Astro.url.searchParams.get('kp');
 const selectedKpId = requestedKpId ?? kps[0]?.id ?? null;
-let selectedKp: {
+type SelectedKp = {
   id: string; title_zh: string; title_en: string | null; title_ja: string | null;
   year: string; body_zh: string; body_ja: string | null; tags_json: string;
-} | null = null;
+};
+let selectedKp: SelectedKp | null = null;
 let selectedScholars: Array<{ key: string; name_zh: string; name_en: string | null }> = [];
 let selectedTags: string[] = [];
 
@@ -68,7 +69,7 @@ if (selectedKpId) {
   const kpRow = await db
     .prepare('SELECT id, title_zh, title_en, title_ja, year, body_zh, body_ja, tags_json FROM kp WHERE id = ? AND discipline = ?')
     .bind(selectedKpId, discipline)
-    .first<typeof selectedKp>();
+    .first() as SelectedKp | null;
   selectedKp = kpRow ?? null;
   if (selectedKp) {
     selectedTags = JSON.parse(selectedKp.tags_json) as string[];

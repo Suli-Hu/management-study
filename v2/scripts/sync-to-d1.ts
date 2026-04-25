@@ -132,6 +132,21 @@ for (const scholar of scholars) {
     if (!schoolKeys.has(sk)) errors.push(`Scholar ${scholar.key}.schools references missing school "${sk}"`);
   }
 }
+// v0.4.20：school.themeKey 必须对应 discipline.themes[].key（首页分组依赖此）
+const themeKeysByDiscipline = new Map<string, Set<string>>();
+for (const d of disciplines) {
+  themeKeysByDiscipline.set(d.key, new Set(d.themes.map((t) => t.key)));
+}
+for (const school of schools) {
+  const validThemes = themeKeysByDiscipline.get(school.discipline);
+  if (!validThemes) {
+    errors.push(`School ${school.key} references unknown discipline "${school.discipline}"`);
+    continue;
+  }
+  if (!validThemes.has(school.themeKey)) {
+    errors.push(`School ${school.key}.themeKey "${school.themeKey}" not in discipline.themes (有效值: ${[...validThemes].join(', ')})`);
+  }
+}
 
 if (errors.length) {
   console.error(`✗ ${errors.length} cross-ref errors:`);

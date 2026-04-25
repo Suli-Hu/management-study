@@ -48,6 +48,9 @@ jobs:
       - name: Validate data
         run: pnpm validate
 
+      - name: Typecheck (v0.4.20 卡门：禁止类型漂移)
+        run: pnpm typecheck
+
       - name: Run regression tests
         run: pnpm test
 

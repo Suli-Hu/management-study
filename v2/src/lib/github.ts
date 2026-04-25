@@ -23,7 +23,9 @@ export interface GhFile {
 
 export type GhResult<T> =
   | { ok: true; data: T }
-  | { ok: false; status: number; reason: 'not_found' | 'unauthorized' | 'conflict' | 'rate_limit' | 'unknown'; detail?: string };
+  | { ok: false; status: number; reason: GhErrorReason; detail?: string };
+
+export type GhErrorReason = 'not_found' | 'unauthorized' | 'conflict' | 'rate_limit' | 'unknown';
 
 function headers(pat: string): HeadersInit {
   return {
@@ -34,7 +36,7 @@ function headers(pat: string): HeadersInit {
   };
 }
 
-function classifyError(status: number): GhResult<never>['reason'] {
+function classifyError(status: number): GhErrorReason {
   if (status === 401 || status === 403) return 'unauthorized';
   if (status === 404) return 'not_found';
   if (status === 409 || status === 412 || status === 422) return 'conflict';

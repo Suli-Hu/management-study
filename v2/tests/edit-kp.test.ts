@@ -157,7 +157,7 @@ describe('PUT /api/edit/kp/:id', () => {
       id: 'k001', method: 'PUT', body: { json: VALID_KP, base_sha: 'old-blob' }, env: baseEnv,
     }));
     expect(res.status).toBe(200);
-    const data = await res.json();
+    const data = await res.json() as any;
     expect(data).toMatchObject({ ok: true, commit_sha: 'commit-abc', new_blob_sha: 'blob-new', deploy_eta_seconds: 90 });
     expect(putBody.message).toContain('edit kp/k001 by admin@test.com');
     expect(putBody.sha).toBe('old-blob');
@@ -232,7 +232,7 @@ describe('GET /api/edit/kp/:id', () => {
     const env = { ...baseEnv, DB: mockDb(() => ({ rows: [{ discipline: 'keiei' }] })) };
     const res = await kpGET(makeCtx({ id: 'k001', method: 'GET', env }));
     expect(res.status).toBe(200);
-    const data = await res.json();
+    const data = await res.json() as any;
     expect(data).toMatchObject({ ok: true, base_sha: 'blob-1' });
     expect(data.json.id).toBe('k001');
   });

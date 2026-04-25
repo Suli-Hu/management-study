@@ -173,7 +173,7 @@ describe('GET /api/edit/school/:key', () => {
     );
     const res = await schGET(makeCtx({ paramKey: 'change', paramName: 'key', method: 'GET', env: baseEnv }));
     expect(res.status).toBe(200);
-    const data = await res.json();
+    const data = await res.json() as any;
     expect(data).toMatchObject({ ok: true, base_sha: 'b1' });
     expect(data.json.key).toBe('change');
   });
@@ -249,7 +249,180 @@ describe('GET /api/edit/scholar/:key', () => {
     );
     const res = await scGET(makeCtx({ paramKey: 'lewin', paramName: 'key', method: 'GET', env: baseEnv }));
     expect(res.status).toBe(200);
-    const data = await res.json();
+    const data = await res.json() as any;
     expect(data.json.key).toBe('lewin');
+  });
+});
+
+// ============================================================
+// has_dependents (v0.4.18/19) — 删除时 KP 关联检查
+// ============================================================
+
+/** mockDb 按 SQL 模式分发 — 给 has_dependents / themes enrich 测试用 */
+function mockDbBySql(map: { discipline?: string; kpCountSchool?: number; kpCountScholar?: number; themesJson?: string }) {
+  return mockDb((sql) => {
+    if (sql.includes('SELECT discipline FROM')) return { rows: [{ discipline: map.discipline ?? 'keiei' }] };
+    if (sql.includes('FROM kp_school WHERE school_key')) return { rows: [{ n: map.kpCountSchool ?? 0 }] };
+    if (sql.includes('FROM kp_scholar WHERE scholar_key')) return { rows: [{ n: map.kpCountScholar ?? 0 }] };
+    if (sql.includes('themes_json FROM discipline')) return { rows: [{ themes_json: map.themesJson ?? '[]' }] };
+    return { rows: [] };
+  });
+}
+
+describe('DELETE /api/edit/school/:key — has_dependents (v0.4.18)', () => {
+  beforeEach(() => { vi.stubGlobal('fetch', vi.fn()); });
+  afterEach(() => { vi.unstubAllGlobals(); });
+
+  test('学派下还有 KP 关联 → 409 has_dependents（不调 GitHub）', async () => {
+    const env = { ...baseEnv, DB: mockDbBySql({ kpCountSchool: 5 }) };
+    const res = await schDEL(makeCtx({
+      paramKey: 'change', paramName: 'key', method: 'DELETE',
+      body: { base_sha: 'x' }, env,
+    }));
+    expect(res.status).toBe(409);
+    const data = await res.json() as any;
+    expect(data).toMatchObject({ ok: false, reason: 'has_dependents' });
+    expect(data.detail).toContain('5 个 KP');
+    expect((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls.length).toBe(0);
+  });
+
+  test('KP 关联为 0 → 走 happy path（调 GitHub DELETE）', async () => {
+    (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      new Response(JSON.stringify({ commit: { sha: 'd-empty' } }), { status: 200 }),
+    );
+    const env = { ...baseEnv, DB: mockDbBySql({ kpCountSchool: 0 }) };
+    const res = await schDEL(makeCtx({
+      paramKey: 'empty_school', paramName: 'key', method: 'DELETE',
+      body: { base_sha: 'x' }, env,
+    }));
+    expect(res.status).toBe(200);
+  });
+});
+
+describe('DELETE /api/edit/scholar/:key — has_dependents (v0.4.19)', () => {
+  beforeEach(() => { vi.stubGlobal('fetch', vi.fn()); });
+  afterEach(() => { vi.unstubAllGlobals(); });
+
+  test('学者名下还有 KP 关联 → 409 has_dependents（不调 GitHub）', async () => {
+    const env = { ...baseEnv, DB: mockDbBySql({ kpCountScholar: 3 }) };
+    const res = await scDEL(makeCtx({
+      paramKey: 'lewin', paramName: 'key', method: 'DELETE',
+      body: { base_sha: 'x' }, env,
+    }));
+    expect(res.status).toBe(409);
+    const data = await res.json() as any;
+    expect(data).toMatchObject({ ok: false, reason: 'has_dependents' });
+    expect(data.detail).toContain('3 个 KP');
+  });
+
+  test('KP 关联为 0 → 走 happy path', async () => {
+    (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      new Response(JSON.stringify({ commit: { sha: 'd-empty-sc' } }), { status: 200 }),
+    );
+    const env = { ...baseEnv, DB: mockDbBySql({ kpCountScholar: 0 }) };
+    const res = await scDEL(makeCtx({
+      paramKey: 'orphan_scholar', paramName: 'key', method: 'DELETE',
+      body: { base_sha: 'x' }, env,
+    }));
+    expect(res.status).toBe(200);
+  });
+
+  test('非 admin → 403（先于 has_dependents check）', async () => {
+    const env = { ...baseEnv, DB: mockDbBySql({ kpCountScholar: 99 }) };
+    const res = await scDEL(makeCtx({
+      paramKey: 'lewin', paramName: 'key', method: 'DELETE',
+      body: { base_sha: 'x' }, env, isAdmin: false,
+    }));
+    expect(res.status).toBe(403);
+  });
+});
+
+// ============================================================
+// sha_conflict (v0.4.4) — 学派/学者 PUT/DELETE 乐观锁
+// ============================================================
+
+describe('PUT /api/edit/school/:key — sha_conflict', () => {
+  beforeEach(() => { vi.stubGlobal('fetch', vi.fn()); });
+  afterEach(() => { vi.unstubAllGlobals(); });
+
+  test('GitHub 409 → 409 sha_conflict + current_sha', async () => {
+    const fetchMock = globalThis.fetch as ReturnType<typeof vi.fn>;
+    fetchMock
+      .mockResolvedValueOnce(new Response('stale', { status: 409 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        sha: 'current-school-sha', encoding: 'base64', content: utf8Btoa('{}'),
+      }), { status: 200 }));
+    const res = await schPUT(makeCtx({
+      paramKey: 'change', paramName: 'key', method: 'PUT',
+      body: { json: VALID_SCHOOL, base_sha: 'stale' }, env: baseEnv,
+    }));
+    expect(res.status).toBe(409);
+    expect(await res.json()).toMatchObject({ ok: false, reason: 'sha_conflict', current_sha: 'current-school-sha' });
+  });
+});
+
+describe('PUT /api/edit/scholar/:key — sha_conflict', () => {
+  beforeEach(() => { vi.stubGlobal('fetch', vi.fn()); });
+  afterEach(() => { vi.unstubAllGlobals(); });
+
+  test('GitHub 409 → 409 sha_conflict + current_sha', async () => {
+    const fetchMock = globalThis.fetch as ReturnType<typeof vi.fn>;
+    fetchMock
+      .mockResolvedValueOnce(new Response('stale', { status: 409 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        sha: 'current-scholar-sha', encoding: 'base64', content: utf8Btoa('{}'),
+      }), { status: 200 }));
+    const res = await scPUT(makeCtx({
+      paramKey: 'lewin', paramName: 'key', method: 'PUT',
+      body: { json: VALID_SCHOLAR, base_sha: 'stale' }, env: baseEnv,
+    }));
+    expect(res.status).toBe(409);
+    expect(await res.json()).toMatchObject({ ok: false, reason: 'sha_conflict', current_sha: 'current-scholar-sha' });
+  });
+});
+
+// ============================================================
+// GET enrich (v0.4.18 school / v0.4.19 scholar) — themes / kp_count
+// ============================================================
+
+describe('GET /api/edit/school/:key — enrich themes + kp_count (v0.4.18)', () => {
+  beforeEach(() => { vi.stubGlobal('fetch', vi.fn()); });
+  afterEach(() => { vi.unstubAllGlobals(); });
+
+  test('返 themes 数组 + kp_count', async () => {
+    const themes = [
+      { key: 'individual', title: { zh: '个体的世界' }, accent: 'ob' },
+      { key: 'change', title: { zh: '变革' }, accent: 'classic' },
+    ];
+    (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      new Response(JSON.stringify({
+        sha: 'b1', encoding: 'base64', content: utf8Btoa(JSON.stringify(VALID_SCHOOL)),
+      }), { status: 200 }),
+    );
+    const env = { ...baseEnv, DB: mockDbBySql({ kpCountSchool: 12, themesJson: JSON.stringify(themes) }) };
+    const res = await schGET(makeCtx({ paramKey: 'change', paramName: 'key', method: 'GET', env }));
+    expect(res.status).toBe(200);
+    const data = await res.json() as any;
+    expect(data.kp_count).toBe(12);
+    expect(data.themes).toHaveLength(2);
+    expect(data.themes[0].key).toBe('individual');
+  });
+});
+
+describe('GET /api/edit/scholar/:key — enrich kp_count (v0.4.19)', () => {
+  beforeEach(() => { vi.stubGlobal('fetch', vi.fn()); });
+  afterEach(() => { vi.unstubAllGlobals(); });
+
+  test('返 kp_count', async () => {
+    (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      new Response(JSON.stringify({
+        sha: 'b2', encoding: 'base64', content: utf8Btoa(JSON.stringify(VALID_SCHOLAR)),
+      }), { status: 200 }),
+    );
+    const env = { ...baseEnv, DB: mockDbBySql({ kpCountScholar: 7 }) };
+    const res = await scGET(makeCtx({ paramKey: 'lewin', paramName: 'key', method: 'GET', env }));
+    expect(res.status).toBe(200);
+    const data = await res.json() as any;
+    expect(data.kp_count).toBe(7);
   });
 });

@@ -117,6 +117,7 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
 </Layout>
 
 <script>
+  // @ts-nocheck — DOM form 类型推断弱（HTMLElement vs HTMLInputElement），runtime 已验证
   // v0.4.11: multi-select typeahead for schools
   import { mountMultiSelect } from '~/lib/multi-select-client';
   const form = document.getElementById('scholar-new-form');

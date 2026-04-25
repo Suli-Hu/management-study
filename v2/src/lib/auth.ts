@@ -411,7 +411,7 @@ async function hmacVerify(payloadB64: string, sigHex: string, secret: string): P
     return await crypto.subtle.verify(
       'HMAC',
       key,
-      hexDecode(sigHex),
+      hexDecode(sigHex) as BufferSource,
       new TextEncoder().encode(payloadB64),
     );
   } catch {
