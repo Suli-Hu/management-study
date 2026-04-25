@@ -12,7 +12,7 @@ const GUEST_PASSWORD = process.env.E2E_GUEST_PASSWORD ?? 'test-guest-pw';
 
 test.describe('登录', () => {
   test('未登录访问受保护页 → 重定向到 /login', async ({ page }) => {
-    await page.goto('/org');
+    await page.goto('/');
     await expect(page).toHaveURL(/\/login$/);
     await expect(page.locator('h1')).toContainText('登录');
   });
@@ -41,28 +41,24 @@ test.describe('登录', () => {
     await page.waitForURL((u) => u.pathname === '/');
   });
 
-  test('登录后退出 → 回登录页 + session cookie 清除', async ({ page, context, request }) => {
+  test('登录后点击「退出」按钮 → 回登录页 + session cookie 清除', async ({ page, context }) => {
     // 先登录
     await page.goto('/login');
     await page.fill('input[name=password]', ADMIN_PASSWORD);
     await page.click('button[type=submit]');
     await page.waitForURL((u) => u.pathname === '/');
 
-    // 退出（form POST /api/auth/logout）—— 用 request API 模拟，避免找按钮
     const cookiesBefore = await context.cookies();
-    const sessionBefore = cookiesBefore.find((c) => c.name === 'session');
-    expect(sessionBefore).toBeDefined();
+    expect(cookiesBefore.find((c) => c.name === 'session')).toBeDefined();
 
-    const res = await request.post('/api/auth/logout', {
-      maxRedirects: 0,
-      failOnStatusCode: false,
-    });
-    expect(res.status()).toBe(302);
-    const setCookie = res.headers()['set-cookie'] ?? '';
-    expect(setCookie).toContain('Max-Age=0');
+    // 点 nav 的「退出」按钮（form POST 自带 Origin，过 CSRF）
+    await page.click('form[action="/api/auth/logout"] button');
+    // 退出后 302 → / 但 / 又被 middleware 拦回 /login
+    await page.waitForURL(/\/login$/);
 
-    // 访问受保护页 → 应被踢回 /login
-    await page.goto('/org');
-    await expect(page).toHaveURL(/\/login$/);
+    const cookiesAfter = await context.cookies();
+    const sessionAfter = cookiesAfter.find((c) => c.name === 'session');
+    // session 要么不存在，要么已经是空值（Max-Age=0 应被浏览器清掉）
+    expect(sessionAfter?.value ?? '').toBe('');
   });
 });
