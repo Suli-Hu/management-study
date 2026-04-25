@@ -100,12 +100,19 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
       </section>
 
       <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">contribution（中文） <span class="text-accent-warning">*</span></label>
-        <textarea name="contribution_zh" required rows="6" class="w-full px-3 py-2 rounded-md border text-sm leading-relaxed"></textarea>
-      </section>
-      <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">contribution（日本語）</label>
-        <textarea name="contribution_ja" rows="6" class="w-full px-3 py-2 rounded-md border text-sm leading-relaxed"></textarea>
+        <div class="flex items-center gap-2 mb-1">
+          <label class="text-xs font-semibold text-tertiary">contribution <span class="text-accent-warning">*</span></label>
+          <div role="tablist" class="inline-flex border rounded overflow-hidden text-xs">
+            <button type="button" data-lang-tab="zh" data-active class="px-2.5 py-0.5 hover:bg-bg-tertiary data-[active]:bg-accent-strategy data-[active]:text-white">中</button>
+            <button type="button" data-lang-tab="ja" class="px-2.5 py-0.5 border-l hover:bg-bg-tertiary data-[active]:bg-accent-strategy data-[active]:text-white">日</button>
+          </div>
+        </div>
+        <div data-lang-pane="zh">
+          <textarea name="contribution_zh" required rows="8" class="w-full px-3 py-2 rounded-md border text-sm leading-relaxed"></textarea>
+        </div>
+        <div data-lang-pane="ja" class="hidden">
+          <textarea name="contribution_ja" rows="8" class="w-full px-3 py-2 rounded-md border text-sm leading-relaxed"></textarea>
+        </div>
       </section>
 
       <section>
@@ -167,6 +174,13 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
       updatedAt: now,
     };
   }
+
+  document.querySelectorAll('[data-lang-tab]').forEach((b) => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('[data-lang-tab]').forEach((x) => x.toggleAttribute('data-active', x.dataset.langTab === b.dataset.langTab));
+      document.querySelectorAll('[data-lang-pane]').forEach((p) => p.classList.toggle('hidden', p.dataset.langPane !== b.dataset.langTab));
+    });
+  });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();

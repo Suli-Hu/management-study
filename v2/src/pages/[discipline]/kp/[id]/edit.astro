@@ -109,29 +109,24 @@ const allScholars = scholarsResult.results ?? [];
       </section>
 
       <section>
-        <div class="flex items-center justify-between mb-1">
-          <label class="text-xs font-semibold text-tertiary">中文正文</label>
-          <div id="zh-toolbar" class="flex gap-1 text-xs"></div>
-        </div>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          <textarea name="body_zh" required rows="14" class="w-full px-3 py-2 rounded-md border text-sm font-mono leading-relaxed"></textarea>
-          <div class="border rounded-md p-3 bg-bg-secondary overflow-auto" data-preview-target="zh">
-            <div class="text-xs text-quaternary mb-2">预览</div>
-            <div class="kp-body text-secondary text-sm" data-preview-html="zh"></div>
+        <div class="flex items-center gap-2 mb-1 flex-wrap">
+          <label class="text-xs font-semibold text-tertiary">正文</label>
+          <div role="tablist" class="inline-flex border rounded overflow-hidden text-xs">
+            <button type="button" data-lang-tab="zh" data-active class="px-2.5 py-0.5 hover:bg-bg-tertiary data-[active]:bg-accent-strategy data-[active]:text-white">中</button>
+            <button type="button" data-lang-tab="ja" class="px-2.5 py-0.5 border-l hover:bg-bg-tertiary data-[active]:bg-accent-strategy data-[active]:text-white">日</button>
           </div>
-        </div>
-      </section>
-
-      <section>
-        <div class="flex items-center justify-between mb-1">
-          <label class="text-xs font-semibold text-tertiary">日本語本文</label>
-          <div id="ja-toolbar" class="flex gap-1 text-xs"></div>
+          <div id="body-toolbar" class="flex gap-1 text-xs ml-auto"></div>
         </div>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          <textarea name="body_ja" rows="14" class="w-full px-3 py-2 rounded-md border text-sm font-mono leading-relaxed"></textarea>
-          <div class="border rounded-md p-3 bg-bg-secondary overflow-auto" data-preview-target="ja">
-            <div class="text-xs text-quaternary mb-2">プレビュー</div>
-            <div class="kp-body text-secondary text-sm" data-preview-html="ja"></div>
+          <div data-lang-pane="zh">
+            <textarea name="body_zh" required rows="16" class="w-full px-3 py-2 rounded-md border text-sm font-mono leading-relaxed"></textarea>
+          </div>
+          <div data-lang-pane="ja" class="hidden">
+            <textarea name="body_ja" rows="16" class="w-full px-3 py-2 rounded-md border text-sm font-mono leading-relaxed"></textarea>
+          </div>
+          <div class="border rounded-md p-3 bg-bg-secondary overflow-auto">
+            <div class="text-xs text-quaternary mb-2" data-preview-label>预览（中）</div>
+            <div class="kp-body text-secondary text-sm" data-preview-html></div>
           </div>
         </div>
       </section>
@@ -171,9 +166,22 @@ const allScholars = scholarsResult.results ?? [];
     status.classList.remove('hidden');
   }
 
-  function renderPreview(lang) {
-    const ta = form.querySelector(`textarea[name=body_${lang}]`);
-    const target = document.querySelector(`[data-preview-html="${lang}"]`);
+  let activeLang = 'zh';
+  function switchLang(lang) {
+    activeLang = lang;
+    document.querySelectorAll('[data-lang-tab]').forEach((b) => {
+      b.toggleAttribute('data-active', b.dataset.langTab === lang);
+    });
+    document.querySelectorAll('[data-lang-pane]').forEach((p) => {
+      p.classList.toggle('hidden', p.dataset.langPane !== lang);
+    });
+    const lbl = document.querySelector('[data-preview-label]');
+    if (lbl) lbl.textContent = lang === 'zh' ? '预览（中）' : 'プレビュー（日）';
+    renderPreview();
+  }
+  function renderPreview() {
+    const ta = form.querySelector(`textarea[name=body_${activeLang}]`);
+    const target = document.querySelector('[data-preview-html]');
     if (!ta || !target) return;
     try {
       target.innerHTML = renderBody(ta.value, PREVIEW_ACCENT);
@@ -182,9 +190,8 @@ const allScholars = scholarsResult.results ?? [];
     }
   }
 
-  function buildToolbar(lang) {
-    const ta = form.querySelector(`textarea[name=body_${lang}]`);
-    const bar = $(`#${lang}-toolbar`);
+  function buildToolbar() {
+    const bar = $('#body-toolbar');
     const btns = [
       { label: '◆', insert: '◆' },
       { label: '——', insert: '——' },
@@ -198,11 +205,12 @@ const allScholars = scholarsResult.results ?? [];
       el.textContent = b.label;
       el.className = 'px-2 py-0.5 rounded border text-xs hover:bg-bg-tertiary font-mono';
       el.addEventListener('click', () => {
+        const ta = form.querySelector(`textarea[name=body_${activeLang}]`);
         const start = ta.selectionStart, end = ta.selectionEnd;
         ta.value = ta.value.slice(0, start) + b.insert + ta.value.slice(end);
         ta.focus();
         ta.selectionStart = ta.selectionEnd = start + b.insert.length;
-        renderPreview(lang);
+        renderPreview();
       });
       bar.appendChild(el);
     });
@@ -240,8 +248,7 @@ const allScholars = scholarsResult.results ?? [];
 
     form.classList.remove('hidden');
     status.classList.add('hidden');
-    renderPreview('zh');
-    renderPreview('ja');
+    renderPreview();
   }
 
   function buildI18n(zh, en, ja) {
@@ -298,10 +305,12 @@ const allScholars = scholarsResult.results ?? [];
     saveBtn.disabled = false;
   }
 
-  buildToolbar('zh');
-  buildToolbar('ja');
-  form.body_zh.addEventListener('input', () => renderPreview('zh'));
-  form.body_ja.addEventListener('input', () => renderPreview('ja'));
+  buildToolbar();
+  document.querySelectorAll('[data-lang-tab]').forEach((b) => {
+    b.addEventListener('click', () => switchLang(b.dataset.langTab));
+  });
+  form.body_zh.addEventListener('input', () => { if (activeLang === 'zh') renderPreview(); });
+  form.body_ja.addEventListener('input', () => { if (activeLang === 'ja') renderPreview(); });
   form.addEventListener('submit', save);
   load();
 </script>

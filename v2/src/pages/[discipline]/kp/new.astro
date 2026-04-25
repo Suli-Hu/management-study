@@ -33,7 +33,7 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
       <p class="text-xs text-quaternary mt-1">id 一旦提交不可改（rename 走 worktree）。命名建议 <code>k</code> + 数字。</p>
     </header>
 
-    <form id="kp-new-form" class="space-y-5" autocomplete="off">
+    <form id="kp-new-form" class="space-y-5" autocomplete="off" data-discipline={discipline}>
       <section>
         <label class="block text-xs font-semibold text-tertiary mb-1">id <span class="text-accent-warning">*</span></label>
         <input name="id" type="text" required pattern="[a-z]{1,3}[0-9]+" placeholder="k999" class="w-48 px-3 py-2 rounded-md border text-sm font-mono" />
@@ -109,12 +109,25 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
       </section>
 
       <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">中文正文 <span class="text-accent-warning">*</span></label>
-        <textarea name="body_zh" required rows="10" class="w-full px-3 py-2 rounded-md border text-sm font-mono leading-relaxed" placeholder="◆ 项一——desc1◆ 项二——desc2"></textarea>
-      </section>
-      <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">日本語本文</label>
-        <textarea name="body_ja" rows="10" class="w-full px-3 py-2 rounded-md border text-sm font-mono leading-relaxed"></textarea>
+        <div class="flex items-center gap-2 mb-1 flex-wrap">
+          <label class="text-xs font-semibold text-tertiary">正文 <span class="text-accent-warning">*</span></label>
+          <div role="tablist" class="inline-flex border rounded overflow-hidden text-xs">
+            <button type="button" data-lang-tab="zh" data-active class="px-2.5 py-0.5 hover:bg-bg-tertiary data-[active]:bg-accent-strategy data-[active]:text-white">中</button>
+            <button type="button" data-lang-tab="ja" class="px-2.5 py-0.5 border-l hover:bg-bg-tertiary data-[active]:bg-accent-strategy data-[active]:text-white">日</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <div data-lang-pane="zh">
+            <textarea name="body_zh" required rows="14" class="w-full px-3 py-2 rounded-md border text-sm font-mono leading-relaxed" placeholder="◆ 项一——desc1◆ 项二——desc2"></textarea>
+          </div>
+          <div data-lang-pane="ja" class="hidden">
+            <textarea name="body_ja" rows="14" class="w-full px-3 py-2 rounded-md border text-sm font-mono leading-relaxed"></textarea>
+          </div>
+          <div class="border rounded-md p-3 bg-bg-secondary overflow-auto">
+            <div class="text-xs text-quaternary mb-2" data-preview-label>预览（中）</div>
+            <div class="kp-body text-secondary text-sm" data-preview-html></div>
+          </div>
+        </div>
       </section>
 
       <footer class="sticky bottom-0 bg-bg-primary py-3 border-t flex items-center gap-3">
@@ -127,10 +140,43 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
   </main>
 </Layout>
 
-<script type="module" define:vars={{ discipline }}>
+<script>
+  // v0.4.7: 真预览 + lang tab
+  import { renderBody } from '~/lib/render-body';
   const form = document.getElementById('kp-new-form');
   const saveBtn = document.getElementById('save-btn');
   const saveStatus = document.getElementById('save-status');
+  const discipline = form.dataset.discipline;
+  const PREVIEW_ACCENT = '#007AFF';
+
+  let activeLang = 'zh';
+  function switchLang(lang) {
+    activeLang = lang;
+    document.querySelectorAll('[data-lang-tab]').forEach((b) => {
+      b.toggleAttribute('data-active', b.dataset.langTab === lang);
+    });
+    document.querySelectorAll('[data-lang-pane]').forEach((p) => {
+      p.classList.toggle('hidden', p.dataset.langPane !== lang);
+    });
+    const lbl = document.querySelector('[data-preview-label]');
+    if (lbl) lbl.textContent = lang === 'zh' ? '预览（中）' : 'プレビュー（日）';
+    renderPreview();
+  }
+  function renderPreview() {
+    const ta = form.querySelector(`textarea[name=body_${activeLang}]`);
+    const target = document.querySelector('[data-preview-html]');
+    if (!ta || !target) return;
+    try {
+      target.innerHTML = renderBody(ta.value, PREVIEW_ACCENT);
+    } catch (err) {
+      target.innerHTML = `<div style="color:#FF3B30;font-size:11px">预览出错：${String(err).slice(0, 200)}</div>`;
+    }
+  }
+  document.querySelectorAll('[data-lang-tab]').forEach((b) => {
+    b.addEventListener('click', () => switchLang(b.dataset.langTab));
+  });
+  form.body_zh.addEventListener('input', () => { if (activeLang === 'zh') renderPreview(); });
+  form.body_ja.addEventListener('input', () => { if (activeLang === 'ja') renderPreview(); });
 
   function buildI18n(zh, en, ja) {
     const o = { zh: zh.trim() };
