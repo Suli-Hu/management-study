@@ -88,6 +88,15 @@ const allScholars = scholarsResult.results ?? [];
         <button type="submit" id="save-btn" class="px-4 py-2 rounded-md bg-accent-strategy text-white text-sm font-semibold disabled:opacity-50">
           保存（commit + 部署）
         </button>
+        <button
+          type="button"
+          id="delete-btn"
+          disabled
+          class="px-4 py-2 rounded-md bg-bg-primary border border-accent-warning text-accent-warning text-sm font-semibold ml-auto disabled:opacity-40 disabled:cursor-not-allowed"
+          title="加载中..."
+        >
+          硬删此 KP
+        </button>
         <span id="save-status" class="text-xs text-tertiary"></span>
       </footer>
     </form>
@@ -107,6 +116,7 @@ const allScholars = scholarsResult.results ?? [];
   const status = $('#editor-status');
   const form = $('#kp-edit-form');
   const saveBtn = $('#save-btn');
+  const deleteBtn = $('#delete-btn');
   const saveStatus = $('#save-status');
   const editorMount = $('#body-editor-mount');
   const kpId = form.dataset.kpId;
@@ -115,6 +125,7 @@ const allScholars = scholarsResult.results ?? [];
   const fromLbl = form.dataset.fromLabel;
   let baseSha = null;
   let originalCreatedAt = null;
+  let cascadeMsg = '';
   let editor = null;
   let schoolsMS = null;
   let scholarsMS = null;
@@ -170,9 +181,10 @@ const allScholars = scholarsResult.results ?? [];
       setStatus(`加载失败：${res.status} ${err.reason ?? ''}`, 'error');
       return;
     }
-    const { json: kp, base_sha } = await res.json();
+    const { json: kp, base_sha, progress_count, note_count } = await res.json();
     baseSha = base_sha;
     originalCreatedAt = kp.createdAt;
+    cascadeMsg = buildCascadeMsg(progress_count ?? 0, note_count ?? 0);
 
     form.title_zh.value = kp.title?.zh ?? '';
     form.title_en.value = kp.title?.en ?? '';
@@ -182,8 +194,17 @@ const allScholars = scholarsResult.results ?? [];
     initEditor(kp.format ?? 'narrative', kp.body?.zh ?? '', kp.body?.ja ?? '');
     schoolsMS?.setSelected(kp.schools ?? []);
     scholarsMS?.setSelected(kp.scholars ?? []);
+    deleteBtn.disabled = false;
+    deleteBtn.title = cascadeMsg ? `删除会同时影响：${cascadeMsg.replace(/\n/g, ' / ')}` : '硬删此 KP（进 git history 可 revert，~90s 后线上消失）';
     form.classList.remove('hidden');
     status.classList.add('hidden');
+  }
+
+  function buildCascadeMsg(progressN, noteN) {
+    const lines = [];
+    if (progressN > 0) lines.push(`同时删除 ${progressN} 条学习进度（不可恢复）`);
+    if (noteN > 0) lines.push(`${noteN} 条用户笔记 kp_id 置 NULL（笔记内容保留）`);
+    return lines.join('\n');
   }
 
   function buildI18n(zh, en, ja) {
@@ -246,6 +267,29 @@ const allScholars = scholarsResult.results ?? [];
     saveBtn.disabled = false;
   }
 
+  async function del() {
+    if (deleteBtn.disabled) return;
+    const cascadeStr = cascadeMsg ? '\n\n级联影响：\n• ' + cascadeMsg.replace(/\n/g, '\n• ') : '';
+    if (!confirm(`确认硬删除 KP「${kpId}」？\n\n• 进 git history 可 revert\n• ~90 秒后线上消失${cascadeStr}`)) return;
+    deleteBtn.disabled = true;
+    deleteBtn.textContent = '删除中...';
+    const res = await fetch(`/api/edit/kp/${kpId}`, {
+      method: 'DELETE',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ base_sha: baseSha }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) {
+      alert(`✓ 已删除 KP/${kpId}\ncommit ${data.commit_sha?.slice(0, 7)}`);
+      location.href = fromPath;
+    } else {
+      alert(`删除失败：${res.status} ${data.reason ?? 'error'}`);
+      deleteBtn.disabled = false;
+      deleteBtn.textContent = '硬删此 KP';
+    }
+  }
+
   form.addEventListener('submit', save);
+  deleteBtn.addEventListener('click', del);
   load();
 </script>
