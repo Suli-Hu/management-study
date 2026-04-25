@@ -40,7 +40,7 @@ const allScholars = scholarsResult.results ?? [];
 
     <div id="editor-status" class="hidden mb-4 p-3 rounded-md text-xs"></div>
 
-    <form id="kp-edit-form" class="space-y-5 hidden" autocomplete="off">
+    <form id="kp-edit-form" class="space-y-5 hidden" autocomplete="off" data-kp-id={id} data-discipline={discipline}>
       <section>
         <label class="block text-xs font-semibold text-tertiary mb-1">中文标题</label>
         <input name="title_zh" type="text" required class="w-full px-3 py-2 rounded-md border text-sm" />
@@ -146,15 +146,19 @@ const allScholars = scholarsResult.results ?? [];
   </main>
 </Layout>
 
-<script type="module" define:vars={{ kpId: id, discipline, allSchools, allScholars }}>
-  // 简易客户端：load → fill → preview → save
-  // renderBody 用 server SSR 不方便，预览用极简 markdown-ish：仅展开 \n → <br>，◆ 编号，escape <>
-  // （正经预览效果靠保存后 deploy + reload 看真页面；这里只防离谱写错）
+<script>
+  // v0.4.6: 真预览 —— import renderBody，消除 90s deploy 反馈循环
+  // 用 hoisted bundled <script>（不能 define:vars，所以 server 值走 data-* attrs）
+  import { renderBody } from '~/lib/render-body';
+
   const $ = (s) => document.querySelector(s);
   const status = $('#editor-status');
   const form = $('#kp-edit-form');
   const saveBtn = $('#save-btn');
   const saveStatus = $('#save-status');
+  const kpId = form.dataset.kpId;
+  const discipline = form.dataset.discipline;
+  const PREVIEW_ACCENT = '#007AFF'; // 预览用统一 strategy 蓝；线上按 KP 主学派 accent 渲
   let baseSha = null;
   let originalCreatedAt = null;
 
@@ -167,23 +171,15 @@ const allScholars = scholarsResult.results ?? [];
     status.classList.remove('hidden');
   }
 
-  function escapeHtml(s) {
-    return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-  }
-  function inlinePreview(s) {
-    // 极简：escape 后还原 <strong> <em> <br>，◆ 视觉化
-    let out = escapeHtml(s);
-    out = out.replace(/&lt;strong&gt;/g, '<strong>').replace(/&lt;\/strong&gt;/g, '</strong>')
-             .replace(/&lt;em&gt;/g, '<em>').replace(/&lt;\/em&gt;/g, '</em>')
-             .replace(/&lt;br\s*\/?&gt;/g, '<br>');
-    out = out.replace(/◆/g, '<span style="color:var(--accent,#007AFF);font-weight:600">◆</span>');
-    return out;
-  }
   function renderPreview(lang) {
     const ta = form.querySelector(`textarea[name=body_${lang}]`);
     const target = document.querySelector(`[data-preview-html="${lang}"]`);
     if (!ta || !target) return;
-    target.innerHTML = inlinePreview(ta.value);
+    try {
+      target.innerHTML = renderBody(ta.value, PREVIEW_ACCENT);
+    } catch (err) {
+      target.innerHTML = `<div style="color:#FF3B30;font-size:11px">预览出错：${String(err).slice(0, 200)}</div>`;
+    }
   }
 
   function buildToolbar(lang) {

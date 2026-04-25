@@ -10,6 +10,12 @@ on:
       - '.github/workflows/deploy-v2.yml'
   workflow_dispatch:
 
+# 防多次 push 触发并发 D1 sync 写 race（孤儿清理可能误删刚加的 KP）
+# v0.4.6: 后端审查 #1 修
+concurrency:
+  group: deploy-v2-prod
+  cancel-in-progress: false
+
 jobs:
   deploy-v2:
     runs-on: ubuntu-latest

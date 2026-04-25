@@ -145,7 +145,7 @@ const lifespanDisplay = (scholar.born && scholar.died)
             {Astro.locals.isAdmin && (
               <a
                 href={`/${discipline}/scholars/${scholar.key}/edit`}
-                class="hidden lg:inline-flex w-9 h-9 rounded-full items-center justify-center text-base text-quaternary hover:text-accent-strategy hover:bg-bg-tertiary transition-colors"
+                class="inline-flex w-9 h-9 rounded-full items-center justify-center text-base text-quaternary hover:text-accent-strategy hover:bg-bg-tertiary transition-colors opacity-60 hover:opacity-100"
                 aria-label="编辑此学者"
                 title="编辑此学者"
               >
@@ -227,7 +227,7 @@ const lifespanDisplay = (scholar.born && scholar.died)
           {Astro.locals.isAdmin && (
             <a
               href={`/${discipline}/kp/new?scholar=${scholar.key}`}
-              class="hidden lg:inline-flex group-hover:opacity-100 opacity-0 transition-opacity items-center px-2 py-0.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white"
+              class="inline-flex opacity-50 hover:opacity-100 transition-opacity items-center px-2 py-0.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white"
               title="新增 KP 并预选此学者"
             >
               + 新增
@@ -256,7 +256,7 @@ const lifespanDisplay = (scholar.born && scholar.died)
                     {k.year && <div class="text-xs text-quaternary mt-0.5">{k.year}</div>}
                   </a>
                   {Astro.locals.isAdmin && (
-                    <div class="kp-admin-tools hidden lg:flex absolute top-2 right-2 gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div class="kp-admin-tools hidden lg:flex absolute top-2 right-2 gap-1 opacity-40 hover:opacity-100 transition-opacity">
                       <a
                         href={`/${discipline}/kp/${k.id}/edit`}
                         class="w-6 h-6 rounded bg-bg-primary border flex items-center justify-center text-xs text-tertiary hover:text-accent-strategy hover:border-accent-strategy"
