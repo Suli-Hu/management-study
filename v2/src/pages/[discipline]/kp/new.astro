@@ -55,21 +55,9 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
         </div>
       </section>
 
-      <section class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">年份</label>
-          <input name="year" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">format</label>
-          <select name="format" class="w-full px-3 py-2 rounded-md border text-sm">
-            <option value="narrative">narrative</option>
-            <option value="flat-list">flat-list</option>
-            <option value="accordion">accordion</option>
-            <option value="compare">compare</option>
-            <option value="quad">quad</option>
-          </select>
-        </div>
+      <section>
+        <label class="block text-xs font-semibold text-tertiary mb-1">年份</label>
+        <input name="year" type="text" class="w-48 px-3 py-2 rounded-md border text-sm" />
       </section>
 
       <section>
@@ -109,22 +97,10 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
       </section>
 
       <section>
-        <div class="flex items-center gap-2 mb-1 flex-wrap">
-          <label class="text-xs font-semibold text-tertiary">正文 <span class="text-accent-warning">*</span></label>
-          <div role="tablist" class="inline-flex border rounded overflow-hidden text-xs">
-            <button type="button" data-lang-tab="zh" data-active class="px-2.5 py-0.5 hover:bg-bg-tertiary data-[active]:bg-accent-strategy data-[active]:text-white">中</button>
-            <button type="button" data-lang-tab="ja" class="px-2.5 py-0.5 border-l hover:bg-bg-tertiary data-[active]:bg-accent-strategy data-[active]:text-white">日</button>
-          </div>
-        </div>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          <div data-lang-pane="zh">
-            <textarea name="body_zh" required rows="14" class="w-full px-3 py-2 rounded-md border text-sm font-mono leading-relaxed" placeholder="◆ 项一——desc1◆ 项二——desc2"></textarea>
-          </div>
-          <div data-lang-pane="ja" class="hidden">
-            <textarea name="body_ja" rows="14" class="w-full px-3 py-2 rounded-md border text-sm font-mono leading-relaxed"></textarea>
-          </div>
+          <div id="body-editor-mount" class="border rounded-md p-3 bg-bg-primary"></div>
           <div class="border rounded-md p-3 bg-bg-secondary overflow-auto">
-            <div class="text-xs text-quaternary mb-2" data-preview-label>预览（中）</div>
+            <div class="text-xs text-quaternary mb-2" data-preview-label>预览</div>
             <div class="kp-body text-secondary text-sm" data-preview-html></div>
           </div>
         </div>
@@ -141,42 +117,51 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
 </Layout>
 
 <script>
-  // v0.4.7: 真预览 + lang tab
+  // v0.4.8: format-aware structured body editor
   import { renderBody } from '~/lib/render-body';
+  import { mountBodyEditor } from '~/lib/body-editor-client';
   const form = document.getElementById('kp-new-form');
   const saveBtn = document.getElementById('save-btn');
   const saveStatus = document.getElementById('save-status');
+  const editorMount = document.getElementById('body-editor-mount');
   const discipline = form.dataset.discipline;
   const PREVIEW_ACCENT = '#007AFF';
 
+  let currentBodyZh = '';
+  let currentBodyJa = '';
+  let currentFormat = 'narrative';
   let activeLang = 'zh';
-  function switchLang(lang) {
-    activeLang = lang;
-    document.querySelectorAll('[data-lang-tab]').forEach((b) => {
-      b.toggleAttribute('data-active', b.dataset.langTab === lang);
-    });
-    document.querySelectorAll('[data-lang-pane]').forEach((p) => {
-      p.classList.toggle('hidden', p.dataset.langPane !== lang);
-    });
-    const lbl = document.querySelector('[data-preview-label]');
-    if (lbl) lbl.textContent = lang === 'zh' ? '预览（中）' : 'プレビュー（日）';
-    renderPreview();
-  }
+
   function renderPreview() {
-    const ta = form.querySelector(`textarea[name=body_${activeLang}]`);
     const target = document.querySelector('[data-preview-html]');
-    if (!ta || !target) return;
+    if (!target) return;
+    const body = activeLang === 'zh' ? currentBodyZh : currentBodyJa;
     try {
-      target.innerHTML = renderBody(ta.value, PREVIEW_ACCENT);
+      target.innerHTML = renderBody(body, PREVIEW_ACCENT);
     } catch (err) {
       target.innerHTML = `<div style="color:#FF3B30;font-size:11px">预览出错：${String(err).slice(0, 200)}</div>`;
     }
   }
-  document.querySelectorAll('[data-lang-tab]').forEach((b) => {
-    b.addEventListener('click', () => switchLang(b.dataset.langTab));
+
+  const editor = mountBodyEditor(editorMount, {
+    initialFormat: 'narrative',
+    initialZhBody: '',
+    initialJaBody: '',
+    onChange: (zh, ja, fmt) => {
+      currentBodyZh = zh;
+      currentBodyJa = ja;
+      currentFormat = fmt;
+      renderPreview();
+    },
   });
-  form.body_zh.addEventListener('input', () => { if (activeLang === 'zh') renderPreview(); });
-  form.body_ja.addEventListener('input', () => { if (activeLang === 'ja') renderPreview(); });
+  editorMount.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn || !['中', '日'].includes(btn.textContent?.trim())) return;
+    activeLang = btn.textContent.trim() === '中' ? 'zh' : 'ja';
+    const lbl = document.querySelector('[data-preview-label]');
+    if (lbl) lbl.textContent = activeLang === 'zh' ? '预览（中）' : 'プレビュー（日）';
+    renderPreview();
+  });
 
   function buildI18n(zh, en, ja) {
     const o = { zh: zh.trim() };
@@ -199,9 +184,9 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
       id, discipline, schools, scholars,
       year: form.year.value.trim(),
       title: buildI18n(form.title_zh.value, form.title_en.value, form.title_ja.value),
-      body: buildBody(form.body_zh.value, form.body_ja.value),
+      body: buildBody(currentBodyZh, currentBodyJa),
       tags,
-      format: form.format.value,
+      format: currentFormat,
       createdAt: now,
       updatedAt: now,
     };

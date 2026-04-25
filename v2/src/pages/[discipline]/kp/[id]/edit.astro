@@ -55,21 +55,9 @@ const allScholars = scholarsResult.results ?? [];
           <input name="title_ja" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
         </div>
       </section>
-      <section class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">年份</label>
-          <input name="year" type="text" placeholder="1911" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">format</label>
-          <select name="format" class="w-full px-3 py-2 rounded-md border text-sm">
-            <option value="narrative">narrative</option>
-            <option value="flat-list">flat-list</option>
-            <option value="accordion">accordion</option>
-            <option value="compare">compare</option>
-            <option value="quad">quad</option>
-          </select>
-        </div>
+      <section>
+        <label class="block text-xs font-semibold text-tertiary mb-1">年份</label>
+        <input name="year" type="text" placeholder="1911" class="w-48 px-3 py-2 rounded-md border text-sm" />
       </section>
 
       <section>
@@ -109,23 +97,10 @@ const allScholars = scholarsResult.results ?? [];
       </section>
 
       <section>
-        <div class="flex items-center gap-2 mb-1 flex-wrap">
-          <label class="text-xs font-semibold text-tertiary">正文</label>
-          <div role="tablist" class="inline-flex border rounded overflow-hidden text-xs">
-            <button type="button" data-lang-tab="zh" data-active class="px-2.5 py-0.5 hover:bg-bg-tertiary data-[active]:bg-accent-strategy data-[active]:text-white">中</button>
-            <button type="button" data-lang-tab="ja" class="px-2.5 py-0.5 border-l hover:bg-bg-tertiary data-[active]:bg-accent-strategy data-[active]:text-white">日</button>
-          </div>
-          <div id="body-toolbar" class="flex gap-1 text-xs ml-auto"></div>
-        </div>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          <div data-lang-pane="zh">
-            <textarea name="body_zh" required rows="16" class="w-full px-3 py-2 rounded-md border text-sm font-mono leading-relaxed"></textarea>
-          </div>
-          <div data-lang-pane="ja" class="hidden">
-            <textarea name="body_ja" rows="16" class="w-full px-3 py-2 rounded-md border text-sm font-mono leading-relaxed"></textarea>
-          </div>
+          <div id="body-editor-mount" class="border rounded-md p-3 bg-bg-primary"></div>
           <div class="border rounded-md p-3 bg-bg-secondary overflow-auto">
-            <div class="text-xs text-quaternary mb-2" data-preview-label>预览（中）</div>
+            <div class="text-xs text-quaternary mb-2" data-preview-label>预览</div>
             <div class="kp-body text-secondary text-sm" data-preview-html></div>
           </div>
         </div>
@@ -142,20 +117,26 @@ const allScholars = scholarsResult.results ?? [];
 </Layout>
 
 <script>
-  // v0.4.6: 真预览 —— import renderBody，消除 90s deploy 反馈循环
-  // 用 hoisted bundled <script>（不能 define:vars，所以 server 值走 data-* attrs）
+  // v0.4.8: format-aware structured body editor
   import { renderBody } from '~/lib/render-body';
+  import { mountBodyEditor } from '~/lib/body-editor-client';
 
   const $ = (s) => document.querySelector(s);
   const status = $('#editor-status');
   const form = $('#kp-edit-form');
   const saveBtn = $('#save-btn');
   const saveStatus = $('#save-status');
+  const editorMount = $('#body-editor-mount');
   const kpId = form.dataset.kpId;
   const discipline = form.dataset.discipline;
-  const PREVIEW_ACCENT = '#007AFF'; // 预览用统一 strategy 蓝；线上按 KP 主学派 accent 渲
+  const PREVIEW_ACCENT = '#007AFF';
   let baseSha = null;
   let originalCreatedAt = null;
+  let editor = null;
+  let currentBodyZh = '';
+  let currentBodyJa = '';
+  let currentFormat = 'narrative';
+  let activeLang = 'zh';
 
   function setStatus(msg, kind = 'info') {
     status.textContent = msg;
@@ -166,53 +147,38 @@ const allScholars = scholarsResult.results ?? [];
     status.classList.remove('hidden');
   }
 
-  let activeLang = 'zh';
-  function switchLang(lang) {
-    activeLang = lang;
-    document.querySelectorAll('[data-lang-tab]').forEach((b) => {
-      b.toggleAttribute('data-active', b.dataset.langTab === lang);
-    });
-    document.querySelectorAll('[data-lang-pane]').forEach((p) => {
-      p.classList.toggle('hidden', p.dataset.langPane !== lang);
-    });
-    const lbl = document.querySelector('[data-preview-label]');
-    if (lbl) lbl.textContent = lang === 'zh' ? '预览（中）' : 'プレビュー（日）';
-    renderPreview();
-  }
   function renderPreview() {
-    const ta = form.querySelector(`textarea[name=body_${activeLang}]`);
-    const target = document.querySelector('[data-preview-html]');
-    if (!ta || !target) return;
+    const target = $('[data-preview-html]');
+    if (!target) return;
+    const body = activeLang === 'zh' ? currentBodyZh : currentBodyJa;
     try {
-      target.innerHTML = renderBody(ta.value, PREVIEW_ACCENT);
+      target.innerHTML = renderBody(body, PREVIEW_ACCENT);
     } catch (err) {
       target.innerHTML = `<div style="color:#FF3B30;font-size:11px">预览出错：${String(err).slice(0, 200)}</div>`;
     }
   }
 
-  function buildToolbar() {
-    const bar = $('#body-toolbar');
-    const btns = [
-      { label: '◆', insert: '◆' },
-      { label: '——', insert: '——' },
-      { label: '<br>', insert: '<br>' },
-      { label: '<strong>', insert: '<strong>__</strong>' },
-      { label: '【组】', insert: '<br>【__】<br>' },
-    ];
-    btns.forEach((b) => {
-      const el = document.createElement('button');
-      el.type = 'button';
-      el.textContent = b.label;
-      el.className = 'px-2 py-0.5 rounded border text-xs hover:bg-bg-tertiary font-mono';
-      el.addEventListener('click', () => {
-        const ta = form.querySelector(`textarea[name=body_${activeLang}]`);
-        const start = ta.selectionStart, end = ta.selectionEnd;
-        ta.value = ta.value.slice(0, start) + b.insert + ta.value.slice(end);
-        ta.focus();
-        ta.selectionStart = ta.selectionEnd = start + b.insert.length;
+  function initEditor(initFormat, initZh, initJa) {
+    if (editor) editor.destroy();
+    editor = mountBodyEditor(editorMount, {
+      initialFormat: initFormat,
+      initialZhBody: initZh,
+      initialJaBody: initJa,
+      onChange: (zh, ja, fmt) => {
+        currentBodyZh = zh;
+        currentBodyJa = ja;
+        currentFormat = fmt;
         renderPreview();
-      });
-      bar.appendChild(el);
+      },
+    });
+    // 同步预览 lang 切换：监听 editor 内的 lang tab 按钮（class 含 'bg-accent-strategy'）
+    editorMount.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (!btn || !['中', '日'].includes(btn.textContent?.trim())) return;
+      activeLang = btn.textContent.trim() === '中' ? 'zh' : 'ja';
+      const lbl = $('[data-preview-label]');
+      if (lbl) lbl.textContent = activeLang === 'zh' ? '预览（中）' : 'プレビュー（日）';
+      renderPreview();
     });
   }
 
@@ -232,9 +198,8 @@ const allScholars = scholarsResult.results ?? [];
     form.title_en.value = kp.title?.en ?? '';
     form.title_ja.value = kp.title?.ja ?? '';
     form.year.value = kp.year ?? '';
-    form.format.value = kp.format ?? 'narrative';
-    form.body_zh.value = kp.body?.zh ?? '';
-    form.body_ja.value = kp.body?.ja ?? '';
+
+    initEditor(kp.format ?? 'narrative', kp.body?.zh ?? '', kp.body?.ja ?? '');
 
     document.querySelectorAll('input[name=school]').forEach((cb) => {
       cb.checked = (kp.schools ?? []).includes(cb.value);
@@ -273,9 +238,9 @@ const allScholars = scholarsResult.results ?? [];
       scholars,
       year: form.year.value.trim(),
       title: buildI18n(form.title_zh.value, form.title_en.value, form.title_ja.value),
-      body: buildBody(form.body_zh.value, form.body_ja.value),
+      body: buildBody(currentBodyZh, currentBodyJa),
       tags,
-      format: form.format.value,
+      format: currentFormat,
       createdAt: originalCreatedAt,
       updatedAt: new Date().toISOString(),
     };
@@ -305,12 +270,6 @@ const allScholars = scholarsResult.results ?? [];
     saveBtn.disabled = false;
   }
 
-  buildToolbar();
-  document.querySelectorAll('[data-lang-tab]').forEach((b) => {
-    b.addEventListener('click', () => switchLang(b.dataset.langTab));
-  });
-  form.body_zh.addEventListener('input', () => { if (activeLang === 'zh') renderPreview(); });
-  form.body_ja.addEventListener('input', () => { if (activeLang === 'ja') renderPreview(); });
   form.addEventListener('submit', save);
   load();
 </script>
