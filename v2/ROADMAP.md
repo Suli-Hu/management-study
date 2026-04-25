@@ -2,8 +2,8 @@
 
 engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 
-**当前版本**：v0.3.18
-**当前阶段**：W3.1 ✅ + W3.2 ✅ + W3.3 ✅（4/4，含 Playwright E2E）。下一步打 v0.3.0 W3 收官 tag → W4.1 编辑器选型。
+**当前版本**：v0.3.18 · **W3 收官 tag：v0.3.0** ✅
+**当前阶段**：W3 全部完成（W3.1 + W3.2 + W3.3）。下一步 W4.1 编辑器选型。
 
 ---
 
@@ -44,7 +44,7 @@ engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 | v0.3.16 | render-body 输入套件（空字段 / emoji / 多语言 / 破标签 / 不闭合 HTML / 巨长 body，28 新 case） | ✅ |
 | v0.3.17 | Auth API 5 路由 integration tests（mock D1 + Request，21 case 覆盖 AUTH_MODE 网关 / cookie / flash 分支） | ✅ |
 | v0.3.18 | Playwright E2E：登录 → 搜 → KP → 登出（chromium，9 specs，CI 自动 webServer） | ✅ |
-| v0.3.0 | W3 tag 收官 | 🚧 待打 |
+| v0.3.0 | W3 tag 收官（138 vitest + 9 playwright + 3 CI workflow） | ✅ |
 
 ---
 
