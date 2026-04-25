@@ -1,12 +1,16 @@
 ---
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
+import { parseFrom, fromLabel } from '~/lib/nav';
 
 const { discipline, id } = Astro.params;
 
 if (!Astro.locals.isAdmin) {
   return Astro.redirect(`/${discipline}/kp/${id}`);
 }
+
+const fromPath = parseFrom(Astro.url.searchParams.get('from'), `/${discipline}/kp/${id}`);
+const fromLbl = fromLabel(fromPath);
 
 const db = getDb(Astro.locals.runtime.env);
 const exists = await db
@@ -33,14 +37,14 @@ const allScholars = scholarsResult.results ?? [];
 <Layout title={`编辑 · ${exists.title_zh}`} currentDiscipline={discipline} currentSection="kps">
   <main class="max-w-reading mx-auto px-4 py-6">
     <header class="mb-4">
-      <a href={`/${discipline}/kp/${id}`} class="text-xs text-tertiary hover:underline">← 返回 {exists.title_zh}</a>
+      <a href={fromPath} class="text-xs text-tertiary hover:underline">← 返回{fromLbl}</a>
       <h1 class="text-2xl mt-2">编辑 KP <code class="text-base text-tertiary">{id}</code></h1>
       <p class="text-xs text-quaternary mt-1">保存后约 60–90s 部署生效。改 id 或 discipline 请走 worktree。</p>
     </header>
 
     <div id="editor-status" class="hidden mb-4 p-3 rounded-md text-xs"></div>
 
-    <form id="kp-edit-form" class="space-y-5 hidden" autocomplete="off" data-kp-id={id} data-discipline={discipline}>
+    <form id="kp-edit-form" class="space-y-5 hidden" autocomplete="off" data-kp-id={id} data-discipline={discipline} data-from={fromPath} data-from-label={fromLbl}>
       <section>
         <label class="block text-xs font-semibold text-tertiary mb-1">中文标题</label>
         <input name="title_zh" type="text" required class="w-full px-3 py-2 rounded-md border text-sm" />
@@ -103,6 +107,8 @@ const allScholars = scholarsResult.results ?? [];
   const editorMount = $('#body-editor-mount');
   const kpId = form.dataset.kpId;
   const discipline = form.dataset.discipline;
+  const fromPath = form.dataset.from;
+  const fromLbl = form.dataset.fromLabel;
   let baseSha = null;
   let originalCreatedAt = null;
   let editor = null;
@@ -221,7 +227,7 @@ const allScholars = scholarsResult.results ?? [];
     });
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
-      saveStatus.innerHTML = `✓ commit <code>${data.commit_sha?.slice(0, 7)}</code>，~${data.deploy_eta_seconds}s 后生效`;
+      saveStatus.innerHTML = `✓ commit <code>${data.commit_sha?.slice(0, 7)}</code>，~${data.deploy_eta_seconds}s 后生效 · <a href="${fromPath}" class="text-accent-strategy hover:underline">完成 → 返回${fromLbl}</a>`;
       baseSha = data.new_blob_sha;
     } else if (res.status === 409) {
       saveStatus.innerHTML = `<span style="color:#FF3B30">冲突：文件已被其它修改（current_sha=${data.current_sha?.slice(0, 7)}），请刷新</span>`;

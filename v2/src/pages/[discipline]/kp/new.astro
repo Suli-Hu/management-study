@@ -1,10 +1,14 @@
 ---
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
+import { parseFrom, fromLabel } from '~/lib/nav';
 
 const { discipline } = Astro.params;
 
 if (!Astro.locals.isAdmin) return Astro.redirect(`/${discipline}/kp`);
+
+const fromPath = parseFrom(Astro.url.searchParams.get('from'), `/${discipline}/kp`);
+const fromLbl = fromLabel(fromPath);
 
 const db = getDb(Astro.locals.runtime.env);
 
@@ -28,12 +32,12 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
 <Layout title="新增 KP" currentDiscipline={discipline} currentSection="kps">
   <main class="max-w-reading mx-auto px-4 py-6">
     <header class="mb-4">
-      <a href={`/${discipline}/kp`} class="text-xs text-tertiary hover:underline">← 返回 KP 列表</a>
+      <a href={fromPath} class="text-xs text-tertiary hover:underline">← 返回{fromLbl}</a>
       <h1 class="text-2xl mt-2">新增 KP</h1>
       <p class="text-xs text-quaternary mt-1">id 一旦提交不可改（rename 走 worktree）。命名建议 <code>k</code> + 数字。</p>
     </header>
 
-    <form id="kp-new-form" class="space-y-5" autocomplete="off" data-discipline={discipline}>
+    <form id="kp-new-form" class="space-y-5" autocomplete="off" data-discipline={discipline} data-from={fromPath}>
       <section>
         <label class="block text-xs font-semibold text-tertiary mb-1">id <span class="text-accent-warning">*</span></label>
         <input name="id" type="text" required pattern="[a-z]{1,3}[0-9]+" placeholder="k999" class="w-48 px-3 py-2 rounded-md border text-sm font-mono" />
@@ -101,6 +105,7 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
   const saveStatus = document.getElementById('save-status');
   const editorMount = document.getElementById('body-editor-mount');
   const discipline = form.dataset.discipline;
+  const fromPath = form.dataset.from;
 
   let currentBodyZh = '';
   let currentBodyJa = '';
@@ -178,7 +183,11 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
       saveStatus.innerHTML = `✓ 已创建 commit <code>${data.commit_sha?.slice(0, 7)}</code>，~${data.deploy_eta_seconds}s 后跳转`;
-      setTimeout(() => { location.href = `/${discipline}/kp/${json.id}`; }, 1500);
+      // 跳回来源（学派/学者 detail 自动 ?kp= 高亮新 KP；列表/独立页则单跳）
+      const fromIsDetail = /^\/[^/]+\/(?:[^/]+|scholars\/[^/]+)$/.test(fromPath);
+      const sep = fromPath.includes('?') ? '&' : '?';
+      const target = fromIsDetail ? `${fromPath}${sep}kp=${json.id}` : `/${discipline}/kp/${json.id}`;
+      setTimeout(() => { location.href = target; }, 1500);
     } else if (res.status === 409) {
       saveStatus.innerHTML = `<span style="color:#FF3B30">id 已存在，请改 id 或去现有页编辑</span>`;
       saveBtn.disabled = false;

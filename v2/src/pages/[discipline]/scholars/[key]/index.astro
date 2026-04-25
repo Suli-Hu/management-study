@@ -2,6 +2,7 @@
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
 import { renderBody } from '~/lib/render-body';
+import { editHref } from '~/lib/nav';
 
 const { discipline, key } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
@@ -143,7 +144,7 @@ const lifespanDisplay = (scholar.born && scholar.died)
           <div class="shrink-0 -mr-1 -mt-1 flex items-center gap-0.5">
             {Astro.locals.isAdmin && (
               <a
-                href={`/${discipline}/scholars/${scholar.key}/edit`}
+                href={editHref(`/${discipline}/scholars/${scholar.key}/edit`, Astro.url.pathname)}
                 class="inline-flex w-9 h-9 rounded-full items-center justify-center text-base text-quaternary hover:text-accent-strategy hover:bg-bg-tertiary transition-colors opacity-60 hover:opacity-100"
                 aria-label="编辑此学者"
                 title="编辑此学者"
@@ -225,7 +226,7 @@ const lifespanDisplay = (scholar.born && scholar.died)
           代表理论 ({kps.length})
           {Astro.locals.isAdmin && (
             <a
-              href={`/${discipline}/kp/new?scholar=${scholar.key}`}
+              href={editHref(`/${discipline}/kp/new?scholar=${scholar.key}`, Astro.url.pathname)}
               class="inline-flex opacity-50 hover:opacity-100 transition-opacity items-center px-2 py-0.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white"
               title="新增 KP 并预选此学者"
             >
@@ -257,7 +258,7 @@ const lifespanDisplay = (scholar.born && scholar.died)
                   {Astro.locals.isAdmin && (
                     <div class="kp-admin-tools hidden lg:flex absolute top-2 right-2 gap-1 opacity-40 hover:opacity-100 transition-opacity">
                       <a
-                        href={`/${discipline}/kp/${k.id}/edit`}
+                        href={editHref(`/${discipline}/kp/${k.id}/edit`, Astro.url.pathname)}
                         class="w-6 h-6 rounded bg-bg-primary border flex items-center justify-center text-xs text-tertiary hover:text-accent-strategy hover:border-accent-strategy"
                         aria-label={`编辑 ${k.title_zh}`}
                         title="编辑"

@@ -2,6 +2,7 @@
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
 import { renderBody } from '~/lib/render-body';
+import { editHref } from '~/lib/nav';
 
 const { discipline, id } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
@@ -68,7 +69,7 @@ const title = lang === 'ja' ? (kp.title_ja ?? kp.title_zh) : kp.title_zh;
         <h1 class="text-2xl mb-2 flex-1">{title}</h1>
         {Astro.locals.isAdmin && (
           <a
-            href={`/${discipline}/kp/${kp.id}/edit`}
+            href={editHref(`/${discipline}/kp/${kp.id}/edit`, Astro.url.pathname)}
             class="inline-flex shrink-0 mt-1 w-9 h-9 rounded-full items-center justify-center text-base text-quaternary hover:text-accent-strategy hover:bg-bg-tertiary transition-colors opacity-60 hover:opacity-100"
             aria-label="编辑此 KP"
             title="编辑此 KP"

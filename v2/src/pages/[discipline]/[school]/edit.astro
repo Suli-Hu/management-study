@@ -1,10 +1,14 @@
 ---
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
+import { parseFrom, fromLabel } from '~/lib/nav';
 
 const { discipline, school } = Astro.params;
 
 if (!Astro.locals.isAdmin) return Astro.redirect(`/${discipline}/${school}`);
+
+const fromPath = parseFrom(Astro.url.searchParams.get('from'), `/${discipline}/${school}`);
+const fromLbl = fromLabel(fromPath);
 
 const db = getDb(Astro.locals.runtime.env);
 const exists = await db
@@ -17,7 +21,7 @@ if (!exists) return Astro.redirect('/404');
 <Layout title={`编辑 · ${exists.title_zh}`} currentDiscipline={discipline} currentSection="schools">
   <main class="max-w-reading mx-auto px-4 py-6">
     <header class="mb-4">
-      <a href={`/${discipline}/${school}`} class="text-xs text-tertiary hover:underline">← 返回 {exists.title_zh}</a>
+      <a href={fromPath} class="text-xs text-tertiary hover:underline">← 返回{fromLbl}</a>
       <h1 class="text-2xl mt-2">编辑学派 <code class="text-base text-tertiary">{school}</code></h1>
       <p class="text-xs text-quaternary mt-1">key/discipline 不可改（rename 走 worktree）。学者关联请去学者编辑器改 schools[]。</p>
     </header>
