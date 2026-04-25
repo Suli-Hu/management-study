@@ -1,34 +1,64 @@
-# 知识点创建指南（给AI的完整说明）
+# 知识点创建指南（给 AI 的完整说明）
 
-本文档教你如何为「经营管理学派全览」知识库生成知识点内容。用户会把你生成的内容逐条复制粘贴到网页端的创建表单中。
+本文档教你如何为「经营管理学派全览」知识库生成知识点内容。
+
+> **⚠️ V1（Main/data.js）已停用读写。本指南面向 V2 流程。** 教学法（颗粒度、加粗、术语附英日、三层架构）通用；操作改为编辑 `v2/data/keiei/kp/{id}.json` 或用 v2 admin UI。
 
 ## 重要前提
 
 - 这是一个日本大学院（经营管理学方向）的备考知识库
 - 内容必须**学术准确**，基于教材和学术文献
 - 正文使用**中文**，术语可附英文/日文括号标注
-- 用 `**双星号**` 标记需要加粗的关键词，系统会自动转为加粗显示
-- 每个知识点属于一个或多个「学派」，由一个或多个「学者」提出
+- 用 `**双星号**` 标记需要加粗的关键词，渲染时自动 `<strong>`
+- 每个知识点属于**一个或多个**「学派」(`schools[≥1]`)，由 0+ 个「学者」(`scholars[]`) 提出
 
 ---
 
-## 表单结构总览
+## V2 数据流程（learning agent 用）
 
-网页端的创建表单分为两部分：
+KP 一个文件：`v2/data/keiei/kp/k627.json`，结构：
 
-### 上半部分：元信息（metadata）
+```json
+{
+  "id": "k627",
+  "discipline": "keiei",
+  "year": "1967",
+  "title": { "zh": "庞迪的冲突过程五阶段模型", "en": "Pondy's 5-Stage Conflict Model", "ja": "..." },
+  "body": { "zh": "...", "ja": "..." },
+  "schools": ["conflict"],
+  "scholars": ["pondy"],
+  "tags": ["..."],
+  "format": "narrative" | "flat-list" | "accordion" | "compare" | "quad",
+  "createdAt": "2026-04-25T12:00:00.000Z",
+  "updatedAt": "2026-04-25T12:00:00.000Z"
+}
+```
 
-| 字段 | 说明 | 示例 |
-|------|------|------|
-| 学派 | 已自动填好当前学派，一般不需要改 | 冲突管理论 |
-| 学者 | 从下拉菜单中选择，选不到就选"不选·常识" | 路易斯·庞迪 (Louis R. Pondy) |
-| 年份 | 理论提出的年份 | 1967 |
-| 标题 | 知识点的中文名称 | 庞迪的冲突过程五阶段模型 |
-| EN | 英文名称（可留空） | Pondy's Five-Stage Conflict Model |
+**写流程**（任选其一）：
+1. **直接编 JSON**：`vim v2/data/keiei/kp/k627.json` → `cd v2 && pnpm validate`（zod + cross-ref）→ `git add ... && git commit -m "..." && git push` → ~90s 后线上
+2. **admin UI**：`/keiei/kp/new` 表单 → 后端写 GitHub 文件 + 自动部署
 
-### 下半部分：正文内容（4种格式tab）
+**字段映射**（V1 → V2）：
 
-根据内容结构选择合适的tab，每种tab有不同的输入框。
+| V1 (data.js) | V2 (JSON) |
+|---|---|
+| `title` | `title.zh` |
+| `en` | `title.en` |
+| 单独 `data_ja.js[cnKey]` | `title.ja` + `body.ja` |
+| `body` | `body.zh` |
+| `scholar: "pondy"` 或 `"a,b"` | `scholars: ["pondy"]` 或 `["a","b"]` |
+| `schools: ["conflict"]` | `schools: ["conflict"]` ≥1 必填 |
+| `year: "1967"` | `year: "1967"` |
+
+**自动派生**（不要手填）：
+- `tags`：从 `body.zh` 解析（v0.4.9 deriveTagsFromBody）
+- 颜色：学者颜色 = 主属学派颜色 = 主题分组色（不要写 hex）
+
+---
+
+## 格式选择（4 种）
+
+JSON 里 `format` 字段写下面之一，body 内容用对应的语法：
 
 ---
 

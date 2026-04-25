@@ -108,26 +108,47 @@
 
 ## 3. 数据同步规范
 
-### 新建/修改KP时的检查清单
+> **⚠️ V1（Main/data.js）已停用读写。线上版本是 v2/，本节仅作历史参考。新建/修改 KP 走 V2 流程（见下方"V2 数据流程"）。**
 
-1. **data.js body必须纯中文**，术语附英文/日文用括号标注
-2. **data_ja.js必须遵守 `<strong>標題</strong>——正文` 格式**
-3. **三处同步**：KNOWLEDGE数组 + 学派concepts数组 + 学者theories数组
-4. **schools不允许为空数组**
-5. **DATA_JA key = cnKey**（标题去掉尾部所有括号）
+### V2 数据流程（当前生产）
 
-### 合并KP时
+KP / 学者 / 学派 各自一个 JSON 文件，存在 `v2/data/{discipline}/{kp,scholars,schools}/{key}.json`。
 
-1. DATA_JA key必须用cnKey（去掉括号后的标题）
-2. 删除被合并KP的DATA_JA条目
-3. 更新保留KP的DATA_JA内容
-4. 用脚本验证cnKey匹配
+**两条等价的写路径**：
 
-### 多学者支持
+1. **本地编辑 JSON + git commit**（learning agent 推荐）
+   - 直接编辑 `v2/data/keiei/kp/k627.json`
+   - 跑 `cd v2 && pnpm validate`（zod schema + cross-ref 校验，含 themeKey 必须 ∈ discipline.themes[].key）
+   - `git add v2/data/.../k627.json && git commit -m "..."` → push 到 main → GitHub Actions 自动 sync 到 D1
+   - ~90s 后线上生效
 
-- scholar字段支持逗号分隔：`scholar:"cyert,march"`
-- 标题栏自动显示多个独立可点击标签
-- `_knScholars(k)` 函数解析
+2. **admin UI 编辑器**（用户日常用）
+   - 访问 `/keiei/kp/new` 或 `/keiei/kp/{id}/edit`
+   - 表单 → POST/PUT `/api/edit/...` → 后端 schema 校验 → GitHub commit → 自动部署
+   - 删学派/学者前 0-KP gate（v0.4.18/19）
+
+### KP / 学者 / 学派 三类的字段（v2 schema）
+
+| 类别 | 必填字段 | 多语言字段 | 关联字段 |
+|---|---|---|---|
+| **KP** | id / discipline / year / title.zh / body.zh / schools[≥1] | title.{zh,en?,ja?} / body.{zh,ja?} | schools[] / scholars[] |
+| **学者** | key / discipline / name.zh / contribution.zh / born | name.{zh,en?,ja?} / contribution.{zh,ja?} | schools[] |
+| **学派** | key / discipline / title.zh / themeKey ∈ discipline.themes / summary.zh | title.{zh,en?,ja?} / summary.{zh,ja?} | concepts[]（KP id 列表） |
+
+**自动派生**（不要手填）：
+- `school.accent` ← `discipline.themes[themeKey].accent`（sync 时强制）
+- `scholar.accent` ← schools[0] → school → theme.accent（公开页 fallback 链）
+- `kp.tags` ← `deriveTagsFromBody(body.zh)`（v0.4.9，编辑器自动解析）
+
+### V2 不再需要的 V1 概念
+
+- ❌ "三处同步"（KNOWLEDGE + 学派 concepts + 学者 theories）→ V2 用 D1 关联表 `kp_school` / `kp_scholar` / `scholar_school`，sync 时从 JSON 字段双向 union 自动构建
+- ❌ "DATA_JA key = cnKey"匹配 → V2 中 ja 是 `title.ja` / `body.ja` 子字段，无独立 key
+- ❌ 手动维护 `Main/data.js` / `Main/data_ja.js`
+
+### 多学者（同 V1 但字段名变）
+
+V2: `scholars: ["cyert", "march"]` 数组（V1 是 `scholar: "cyert,march"` 逗号分隔字符串）。
 
 ---
 
@@ -202,24 +223,24 @@ title|keyword|desc|type|theories|detail(翻面)
 
 ### 原则1：先查重，再生成
 任何新KP生成前：
-1. 用title关键词、学者名、概念英文名搜索`data.js`（以及`data_ja.js`）
-2. 如果找到相关KP → 用`AskUserQuestion`询问用户：
-   - **补充**到现有KP（扩充body）
+1. 用 title 关键词、学者名、概念英文名搜索 **`v2/data/keiei/kp/*.json`**（grep `title.zh` / `body.zh` / `scholars[]` / `id`）
+2. 如果找到相关 KP → 用 `AskUserQuestion` 询问用户：
+   - **补充**到现有 KP（扩充 body）
    - **新建**作为独立专题（必须有明确边界差异）
-   - **合并**替换现有KP
-3. 只有查无同类才创建新KP
+   - **合并**替换现有 KP
+3. 只有查无同类才创建新 KP
 4. 如果发现重复，必须**逐项对比两边独有内容并列表格**给用户看
 
 ### 原则2：用真实渲染的高保真对比页确认颗粒度 ⭐
-**每次涉及新KP主题时，必须先做demo页给用户看颗粒度选项**：
-1. 创建`Main/demo_granularity.html`（或类似临时页）
-2. 用网站真实CSS渲染该主题的3种颗粒度方案：
-   - **方案A**：合并到父KP（简版，每项50字）
-   - **方案B**：抽成1个专题KP（每项200字+对策+案例）
-   - **方案C**：每种子概念独立KP（每项400-600字含根本原因/关系）
-3. 通过Claude Preview让用户视觉对比
+**每次涉及新 KP 主题时，必须先做 demo 页给用户看颗粒度选项**：
+1. 推荐在 v2 admin UI 上预览（`/keiei/kp/new` 即时渲染），或创建 `v2/public/demo_granularity.html` 临时页
+2. 用网站真实 CSS 渲染该主题的 3 种颗粒度方案：
+   - **方案A**：合并到父 KP（简版，每项 50 字）
+   - **方案B**：抽成 1 个专题 KP（每项 200 字+对策+案例）
+   - **方案C**：每种子概念独立 KP（每项 400-600 字含根本原因/关系）
+3. 通过 Claude Preview 让用户视觉对比
 4. 给出**推荐方案+理由**，但最终由用户决定
-5. 不同主题可以用不同颗粒度（比如TPS总览用A，七种浪费用B）
+5. 不同主题可以用不同颗粒度（比如 TPS 总览用 A，七种浪费用 B）
 
 **禁止**：用纯文字描述颗粒度让用户选（用户无法从文字判断实际效果）
 
