@@ -224,7 +224,7 @@ const lifespanDisplay = (scholar.born && scholar.died)
       {/* 代表理论 */}
       <section class="group">
         <h2 class="text-xs font-semibold text-tertiary mb-3 flex items-center gap-2">
-          代表理论 ({kps.length})
+          <span data-count-label="代表理论" data-count={kps.length}>代表理论 ({kps.length})</span>
           {Astro.locals.isAdmin && (
             <a
               href={editHref(`/${discipline}/kp/new?scholar=${scholar.key}`, Astro.url.pathname)}

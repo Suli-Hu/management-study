@@ -42,9 +42,16 @@
       const data = await delRes.json().catch(() => ({}));
       if (!delRes.ok) throw new Error(`${delRes.status} ${data.reason ?? 'error'}: ${String(data.detail ?? '').slice(0, 120)}`);
 
-      // 成功 → 从 UI 移除该 li，并提示
+      // 成功 → 从 UI 移除该 li，并把 "核心概念 (X)" / "代表理论 (X)" count -1（v0.4.24 Pack E L5）
       const li = btn.closest('[data-kp-id]');
       if (li) li.remove();
+      document.querySelectorAll('[data-count-label][data-count]').forEach((el) => {
+        const cur = parseInt(el.getAttribute('data-count') ?? '0', 10);
+        const next = Math.max(0, cur - 1);
+        el.setAttribute('data-count', String(next));
+        const label = el.getAttribute('data-count-label');
+        el.textContent = `${label} (${next})`;
+      });
       alert(`✓ 已删除 KP/${id}\ncommit ${data.commit_sha?.slice(0, 7)}\n约 ${data.deploy_eta_seconds}s 后线上消失`);
 
       // 如果当前右栏正是被删的 KP，回到列表

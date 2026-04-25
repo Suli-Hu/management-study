@@ -74,7 +74,8 @@ const groupKeys = Array.from(grouped.keys()).sort((a, b) => {
     </header>
 
     {groupKeys.length > 0 && (
-      <nav class="mb-6 flex flex-wrap gap-1 text-xs">
+      <nav class="mb-6 flex flex-wrap items-center gap-1 text-xs">
+        <span class="text-quaternary mr-2">按英文姓氏 A–Z：</span>
         {groupKeys.map((k) => (
           <a
             href={`#letter-${k}`}
