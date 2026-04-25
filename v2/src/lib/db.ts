@@ -29,6 +29,10 @@ export interface Env {
   GUEST_EMAIL?: string;
   ADMIN_PASSWORD?: string;
   GUEST_PASSWORD?: string;
+
+  // v0.4.1 编辑器：GitHub Contents API 写 data/*.json
+  GITHUB_PAT?: string;       // fine-grained PAT，仅 Contents R/W
+  GITHUB_REPO?: string;      // "Suli-Hu/management-study"，默认从 wrangler.toml [vars] 注入
 }
 
 /** 从 Astro.locals.runtime.env 取 DB —— Cloudflare Pages adapter 注入 */

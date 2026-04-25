@@ -98,13 +98,24 @@ GitHub Contents API 自带乐观锁：PUT 必须带 `sha`，与 server 端不一
 | v0.4.3 | Quad / Compare / Accordion DSL ⟷ JSON 可视化编辑（DSL roundtrip vitest） |
 | v0.4.4 | 学派 / 学者 新增/编辑/删除 UI |
 | v0.4.5 | 长按拖动重排 KP `position`（kp_school 关联表的 position 字段） |
-| v0.4.6 | 左滑 → 编辑 / 删除快捷按钮 |
+| ~~v0.4.6~~ | ~~左滑 → 编辑 / 删除快捷按钮~~（移动端编辑废案，见决策 3） |
 
 ---
 
-## Open questions（落 v0.4.2 前要拍板）
+## 已拍板的决策（v0.4.2 起步前）
 
-1. **commit message 模板**：`v2: edit kp/{id} via web editor` 还是带 admin email？
-2. **删 KP 流程**：直接 DELETE contents API 还是软删 + 标记 deprecated？倾向硬删（git 留痕足够）
-3. **批量编辑**：MVP 一次一文件。批量改（比如 rename school key）走 worktree + push，不进编辑器
-4. **移动端**：iPad Safari 是主力，textarea + toolbar 在小屏要重新设计；建议 v0.4.2 先桌面，v0.4.6 再补移动手势
+1. **commit message 模板** = **带人**：`v2: edit kp/{id} by {admin_email}`
+   - 理由：将来加 admin（W4.2 v0.4.9 `user_permission` 表）后，老 commit 不用 grep 抓瞎
+   - 实现：服务端从 `locals.user.email` 取，模板字符串拼接
+
+2. **删 KP** = **硬删**：直接 `DELETE /repos/.../contents/...json`
+   - 理由：MVP 单用户、`user_progress` 表无 KP 级数据（v0.3.15 后星标已挪学派/学者）
+   - 撤销：git revert + 重新 commit（接受成本）
+   - 升级路径：未来需要学习追踪/错题本 → migration 加 `deprecated` 字段，老数据默认 false，所有查询补 `WHERE deprecated = 0`
+
+3. **平台** = **桌面 only**
+   - 移动端编辑不做（textarea 长内容 + toolbar 在 iPad/手机上手感差，没人会真用）
+   - 浏览功能仍全平台支持
+   - 编辑入口（铅笔图标等）只在 `≥1024px` 视口显示
+
+4. **批量编辑** = **不做**：rename school key、移 KP 学派之类的批量操作走 worktree + push，不进编辑器
