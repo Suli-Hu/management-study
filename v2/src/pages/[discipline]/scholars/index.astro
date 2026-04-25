@@ -57,7 +57,7 @@ const groupKeys = Array.from(grouped.keys()).sort((a, b) => {
 
 <Layout title={`学者 · ${disc.title_zh}`} currentDiscipline={discipline} currentSection="scholars">
   <main class="max-w-panel mx-auto px-4 py-6">
-    <header class="mb-6 flex items-baseline justify-between gap-3">
+    <header class="mb-6 flex items-baseline justify-between gap-3 group">
       <div>
         <h1 class="text-2xl mb-1">学者</h1>
         <p class="text-xs text-quaternary">{disc.title_zh} · 共 {scholars.length} 位</p>
@@ -65,7 +65,7 @@ const groupKeys = Array.from(grouped.keys()).sort((a, b) => {
       {Astro.locals.isAdmin && (
         <a
           href={`/${discipline}/scholars/new`}
-          class="hidden lg:inline-flex shrink-0 items-center px-3 py-1.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white transition-colors"
+          class="hidden lg:inline-flex shrink-0 group-hover:opacity-100 opacity-0 transition-opacity items-center px-3 py-1.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white"
         >
           + 新增学者
         </a>

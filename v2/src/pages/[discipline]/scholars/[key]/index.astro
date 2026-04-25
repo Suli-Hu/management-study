@@ -221,13 +221,13 @@ const lifespanDisplay = (scholar.born && scholar.died)
       </section>
 
       {/* 代表理论 */}
-      <section>
+      <section class="group">
         <h2 class="text-xs font-semibold text-tertiary mb-3 flex items-center gap-2">
           代表理论 ({kps.length})
           {Astro.locals.isAdmin && (
             <a
               href={`/${discipline}/kp/new?scholar=${scholar.key}`}
-              class="inline-flex items-center px-2 py-0.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white transition-colors"
+              class="hidden lg:inline-flex group-hover:opacity-100 opacity-0 transition-opacity items-center px-2 py-0.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white"
               title="新增 KP 并预选此学者"
             >
               + 新增
