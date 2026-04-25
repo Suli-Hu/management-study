@@ -131,7 +131,13 @@ process.on('uncaughtException', (err) => {
 async function main() {
   console.log('=== learning-flow smoke test ===');
 
-  // 0. Baseline（在任何改动之前 snapshot 当前 local D1 状态）
+  // 0a. 先 prime D1：跑一次初始 sync（CI 上 D1 是空的，必须先把 baseline 数据 sync 进去）
+  console.log('→ step 0a: prime D1 with initial sync');
+  const ps = run('pnpm', ['sync:d1'], 'prime sync:d1');
+  if (ps.code !== 0) throw new Error('prime sync failed');
+  applyAllShards();
+
+  // 0b. 现在 snapshot baseline（应反映完整 data/ 目录的 KP 数）
   const baselineKpCount = parseCount(d1Query('SELECT COUNT(*) as n FROM kp', 'baseline kp count'));
   const baselineSchoolLinkCount = parseCount(d1Query('SELECT COUNT(*) as n FROM kp_school', 'baseline kp_school count'));
   console.log(`  baseline: ${baselineKpCount} KPs, ${baselineSchoolLinkCount} kp_school links`);
