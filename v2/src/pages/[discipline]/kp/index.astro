@@ -86,9 +86,19 @@ for (const tk of byThemeBySchool.keys()) {
 
 <Layout title={`知识点 · ${disc.title_zh}`} currentDiscipline={discipline} currentSection="kps">
   <main class="max-w-panel mx-auto px-4 py-6">
-    <header class="mb-6">
-      <h1 class="text-2xl mb-1">知识点</h1>
-      <p class="text-xs text-quaternary">{disc.title_zh} · 共 {kps.length} 条</p>
+    <header class="mb-6 flex items-baseline justify-between gap-3">
+      <div>
+        <h1 class="text-2xl mb-1">知识点</h1>
+        <p class="text-xs text-quaternary">{disc.title_zh} · 共 {kps.length} 条</p>
+      </div>
+      {Astro.locals.isAdmin && (
+        <a
+          href={`/${discipline}/kp/new`}
+          class="hidden lg:inline-flex shrink-0 items-center px-3 py-1.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white transition-colors"
+        >
+          + 新增 KP
+        </a>
+      )}
     </header>
 
     <nav class="mb-6 flex flex-wrap gap-1 text-xs">

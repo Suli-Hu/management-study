@@ -134,9 +134,20 @@ if (selectedKpId) {
         </div>
       </section>
 
-      {schoolScholars.length > 0 && (
-        <section class="mb-5">
-          <h2 class="text-xs font-semibold text-tertiary mb-2">代表学者 ({schoolScholars.length})</h2>
+      <section class="mb-5">
+        <h2 class="text-xs font-semibold text-tertiary mb-2 flex items-center gap-2">
+          代表学者 ({schoolScholars.length})
+          {Astro.locals.isAdmin && (
+            <a
+              href={`/${discipline}/scholars/new?school=${sch.key}`}
+              class="inline-flex items-center px-2 py-0.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white transition-colors"
+              title="新增学者并预选此学派"
+            >
+              + 新增
+            </a>
+          )}
+        </h2>
+        {schoolScholars.length > 0 ? (
           <div class="flex flex-wrap gap-1.5">
             {schoolScholars.map((s) => (
               <a
@@ -147,8 +158,10 @@ if (selectedKpId) {
               </a>
             ))}
           </div>
-        </section>
-      )}
+        ) : (
+          <p class="text-xs text-quaternary">暂无关联学者。</p>
+        )}
+      </section>
 
       {sch.summary_zh && (
         <section class="mb-5">
@@ -158,8 +171,17 @@ if (selectedKpId) {
       )}
 
       <section>
-        <h2 class="text-xs font-semibold text-tertiary mb-3">
+        <h2 class="text-xs font-semibold text-tertiary mb-3 flex items-center gap-2">
           核心概念 ({kps.length})
+          {Astro.locals.isAdmin && (
+            <a
+              href={`/${discipline}/kp/new?school=${sch.key}`}
+              class="inline-flex items-center px-2 py-0.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white transition-colors"
+              title="新增 KP 并预选此学派"
+            >
+              + 新增
+            </a>
+          )}
         </h2>
         <ul class="space-y-2">
           {kps.map((k) => {

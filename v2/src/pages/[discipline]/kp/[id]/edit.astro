@@ -248,6 +248,17 @@ const allScholars = scholarsResult.results ?? [];
     renderPreview('ja');
   }
 
+  function buildI18n(zh, en, ja) {
+    const o = { zh: zh.trim() };
+    if (en?.trim()) o.en = en.trim();
+    if (ja?.trim()) o.ja = ja.trim();
+    return o;
+  }
+  function buildBody(zh, ja) {
+    const o = { zh };
+    if (ja?.trim()) o.ja = ja;
+    return o;
+  }
   function collect() {
     const schools = [...document.querySelectorAll('input[name=school]:checked')].map((c) => c.value);
     const scholars = [...document.querySelectorAll('input[name=scholar]:checked')].map((c) => c.value);
@@ -258,8 +269,8 @@ const allScholars = scholarsResult.results ?? [];
       schools,
       scholars,
       year: form.year.value.trim(),
-      title: { zh: form.title_zh.value.trim(), en: form.title_en.value.trim(), ja: form.title_ja.value.trim() },
-      body: { zh: form.body_zh.value, ja: form.body_ja.value },
+      title: buildI18n(form.title_zh.value, form.title_en.value, form.title_ja.value),
+      body: buildBody(form.body_zh.value, form.body_ja.value),
       tags,
       format: form.format.value,
       createdAt: originalCreatedAt,

@@ -111,6 +111,77 @@ export async function handlePut<S extends ZodTypeAny>(opts: PutCtx<S>): Promise<
   });
 }
 
+interface PostCtx<S extends ZodTypeAny> {
+  ctx: APIContext;
+  schema: S;
+  pathFor: (obj: ZodInfer<S>) => string;
+  objectLabel: (obj: ZodInfer<S>) => string;
+  /** 强制服务端字段（createdAt / updatedAt = now） */
+  forceFields?: (obj: ZodInfer<S>) => Partial<ZodInfer<S>>;
+}
+
+/** 新建：POST 路由调它。不带 sha 写 = create；GitHub 返 422 时认为是 key 冲突。 */
+export async function handlePost<S extends ZodTypeAny>(opts: PostCtx<S>): Promise<Response> {
+  const { ctx, schema, pathFor, objectLabel, forceFields } = opts;
+  if (!ctx.locals.isAdmin) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+
+  const env = ctx.locals.runtime.env;
+  if (!env.GITHUB_PAT || !env.GITHUB_REPO) {
+    return jsonRes<EditError>(503, { ok: false, reason: 'config_missing' });
+  }
+
+  let body: { json?: unknown };
+  try {
+    body = (await ctx.request.json()) as typeof body;
+  } catch {
+    return jsonRes<EditError>(400, { ok: false, reason: 'bad_request', detail: 'body must be JSON' });
+  }
+  if (!body.json) {
+    return jsonRes<EditError>(400, { ok: false, reason: 'bad_request', detail: 'json required' });
+  }
+
+  const parsed = schema.safeParse(body.json);
+  if (!parsed.success) {
+    return jsonRes<EditError>(422, { ok: false, reason: 'schema_invalid', detail: parsed.error.issues });
+  }
+  let obj = parsed.data as ZodInfer<S>;
+  if (forceFields) {
+    obj = { ...obj, ...forceFields(obj) };
+  }
+
+  const path = pathFor(obj);
+
+  // 先看文件是否已存在（key 冲突）
+  const exists = await getFile({ pat: env.GITHUB_PAT, repo: env.GITHUB_REPO }, path);
+  if (exists.ok) {
+    return jsonRes<EditError>(409, {
+      ok: false, reason: 'sha_conflict',
+      detail: `key 已存在：${path}（先去编辑现有）`,
+      current_sha: exists.data.sha,
+    });
+  }
+
+  const adminEmail = ctx.locals.user?.email ?? 'unknown@admin';
+  const message = `v2: create ${objectLabel(obj)} by ${adminEmail}`;
+  const content = JSON.stringify(obj, null, 2) + '\n';
+
+  // PUT 不带 sha = create
+  const res = await putFile(
+    { pat: env.GITHUB_PAT, repo: env.GITHUB_REPO },
+    path,
+    { content, message, branch: 'main' },
+  );
+  if (!res.ok) {
+    return jsonRes<EditError>(502, { ok: false, reason: 'github_error', detail: res.detail });
+  }
+  return jsonRes(201, {
+    ok: true,
+    commit_sha: res.data.commit_sha,
+    new_blob_sha: res.data.new_blob_sha,
+    deploy_eta_seconds: 90,
+  });
+}
+
 interface DeleteCtx {
   ctx: APIContext;
   pathFor: (ident: string, discipline: string) => string;

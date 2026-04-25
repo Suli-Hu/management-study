@@ -127,13 +127,24 @@ if (!exists) return Astro.redirect('/404');
     status.classList.add('hidden');
   }
 
+  function buildI18n(zh, en, ja) {
+    const o = { zh: zh.trim() };
+    if (en?.trim()) o.en = en.trim();
+    if (ja?.trim()) o.ja = ja.trim();
+    return o;
+  }
+  function buildBody(zh, ja) {
+    const o = { zh };
+    if (ja?.trim()) o.ja = ja;
+    return o;
+  }
   function collect() {
     return {
       key: schoolKey,
       discipline,
-      title: { zh: form.title_zh.value.trim(), en: form.title_en.value.trim(), ja: form.title_ja.value.trim() },
+      title: buildI18n(form.title_zh.value, form.title_en.value, form.title_ja.value),
       era: form.era.value.trim(),
-      summary: { zh: form.summary_zh.value, ja: form.summary_ja.value },
+      summary: buildBody(form.summary_zh.value, form.summary_ja.value),
       themeKey: form.themeKey.value.trim(),
       accent: document.querySelector('input[name=accent]:checked')?.value ?? 'classic',
       concepts: originalConcepts,

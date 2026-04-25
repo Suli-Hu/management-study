@@ -187,6 +187,17 @@ const allSchools = schoolsResult.results ?? [];
     status.classList.add('hidden');
   }
 
+  function buildI18n(zh, en, ja) {
+    const o = { zh: zh.trim() };
+    if (en?.trim()) o.en = en.trim();
+    if (ja?.trim()) o.ja = ja.trim();
+    return o;
+  }
+  function buildBody(zh, ja) {
+    const o = { zh };
+    if (ja?.trim()) o.ja = ja;
+    return o;
+  }
   function collect() {
     const schools = [...document.querySelectorAll('input[name=school]:checked')].map((c) => c.value);
     const nobelYear = form.nobel_year.value.trim();
@@ -194,9 +205,9 @@ const allSchools = schoolsResult.results ?? [];
     return {
       key: scholarKey,
       discipline,
-      name: { zh: form.name_zh.value.trim(), en: form.name_en.value.trim(), ja: form.name_ja.value.trim() },
+      name: buildI18n(form.name_zh.value, form.name_en.value, form.name_ja.value),
       schools,
-      contribution: { zh: form.contribution_zh.value, ja: form.contribution_ja.value },
+      contribution: buildBody(form.contribution_zh.value, form.contribution_ja.value),
       lifespan: form.lifespan.value.trim(),
       institution: form.institution.value.trim(),
       born: form.born.value.trim(),
