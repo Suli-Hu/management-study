@@ -10,7 +10,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  parseBody, serializeBody, changeFormat, emptyParsed, deriveTagsFromBody,
+  parseBody, serializeBody, changeFormat, emptyParsed, deriveTagsFromBody, detectFormatFromBody,
   type ParsedBody, type Format,
 } from '../src/lib/body-parser';
 
@@ -198,6 +198,34 @@ describe('deriveTagsFromBody — 自动推 tags 数组', () => {
 
   test('narrative 也支持 parse ◆评价', () => {
     expect(deriveTagsFromBody('文本 ◆意义——X', 'narrative')).toEqual(['义']);
+  });
+});
+
+describe('detectFormatFromBody — 自动 detect 真实 format', () => {
+  test('空 body / 纯文本 → narrative', () => {
+    expect(detectFormatFromBody('')).toBe('narrative');
+    expect(detectFormatFromBody('一段普通叙述文字')).toBe('narrative');
+  });
+  test('只 1 个 ◆ 评价段 → narrative（不算结构）', () => {
+    expect(detectFormatFromBody('叙述文字 ◆意义——重要')).toBe('narrative');
+  });
+  test('≥2 个 ◆ name—— → flat-list', () => {
+    expect(detectFormatFromBody('lead ◆A——a ◆B——b')).toBe('flat-list');
+  });
+  test('≥2 个 ①②③ → flat-list', () => {
+    expect(detectFormatFromBody('lead<br>①A——a<br>②B——b')).toBe('flat-list');
+  });
+  test('<br>【组】<br> → accordion', () => {
+    expect(detectFormatFromBody('lead<br>【组1】<br>①A——a')).toBe('accordion');
+  });
+  test('<compare> → compare', () => {
+    expect(detectFormatFromBody('lead<compare>T|K|D|Ty|Th|B</compare>')).toBe('compare');
+  });
+  test('<quad> → quad', () => {
+    expect(detectFormatFromBody('lead<quad>Y/Y2,X/X2||A|🔥|s|d</quad>')).toBe('quad');
+  });
+  test('剥评价后再判：1 ◆ name 加 1 ◆意义 → narrative', () => {
+    expect(detectFormatFromBody('叙述 ◆只有一项——desc ◆意义——重要')).toBe('narrative');
   });
 });
 

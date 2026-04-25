@@ -16,7 +16,7 @@
     "ja": "——パーソナリティ（Personality）とは個人の独自の心理的特性の安定した集合であり、独自性・安定性・一貫性・全体性・傾向性の五大特徴を持つ。主要な評価フレームワーク：<br>①ビッグファイブモデル（Big Five / OCEAN、McCrae & Costa）——外向性（Extraversion）・協調性（Agreeableness）・誠実性（Conscientiousness）・神経症傾向（Neuroticism）・経験への開放性（Openness to Experience）の五次元。実証的基盤が最も強固であり、職務業績を予測可能；<br>②MBTI（Myers-Briggs Type Indicator）——E/I（外向/内向）・S/N（感覚/直観）・T/F（思考/感情）・J/P（判断/知覚）の四次元16類型。広く使用されているが学術的妥当性に疑問あり；<br>③ダークトライアド（Dark Triad）——マキャベリズム（Machiavellianism、目的のために手段を選ばない）・ナルシシズム（Narcissism、自己権力を極度に重視）・サイコパシー（Psychopathy、他者への配慮と罪悪感の欠如）。三者はいずれも職場における反生産的行動（CWB）と関連；<br>④四種の気質（Temperament、先天的神経系特性）——多血質（Sanguine、活発型）・胆汁質（Choleric、興奮型）・粘液質（Phlegmatic、沈着型）・憂鬱質（Melancholic、抑鬱型）。優劣の区別はない"
   },
   "tags": [],
-  "format": "narrative",
+  "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

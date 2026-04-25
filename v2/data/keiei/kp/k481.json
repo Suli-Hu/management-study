@@ -20,7 +20,7 @@
     "ja": "——管理者の実際の業務に対する直接観察に基づき、三類型十種の役割を帰納した：<br>①<strong>対人関係の役割（Interpersonal）</strong>——フィギュアヘッド（Figurehead）・リーダー（Leader）・リエゾン（Liaison）。象徴的職務の遂行・部下の動機づけ・外部関係ネットワークの維持<br>②<strong>情報の役割（Informational）</strong>——モニター（Monitor）・周知伝達者（Disseminator）・スポークスパーソン（Spokesperson）。環境情報の収集・内部への共有・外部への代弁<br>③<strong>意思決定の役割（Decisional）</strong>——企業家（Entrepreneur）・障害処理者（Disturbance Handler）・資源配分者（Resource Allocator）・交渉者（Negotiator）。機会の追求・危機の処理・資源の配分・外部交渉"
   },
   "tags": [],
-  "format": "narrative",
+  "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

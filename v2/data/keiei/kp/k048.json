@@ -18,7 +18,7 @@
     "ja": "——タックマンの五段階モデル（Tuckman、1965）：形成期（Forming、探索的相互作用）→混乱期（Storming、葛藤と摩擦）→統一期（Norming、規則の確立）→遂行期（Performing、高効率の運営）→散会期（Adjourning、課題の完了）。断続的均衡モデル（Punctuated Equilibrium Model、Gersick、1988）：集団は慣性により運営し、ライフサイクルの中間点で飛躍的変化を起こし、線形的漸進の法則に従わない。三つの集団意思決定方法：<br>①相互作用集団（Interacting Groups）——最も一般的、対面形式だが、同調圧力と優勢意見の支配を受けやすい；<br>②ブレインストーミング（Brainstorming、Osborn）——批判禁止・量の奨励により同調を克服するが、アイデアが多い反面精度に欠ける；<br>③名目集団法（Nominal Group Technique、NGT）——沈黙の書面記入→順番に提出→順位投票により独立した思考を維持する。実証研究ではブレインストーミングより優れた結果を示す"
   },
   "tags": [],
-  "format": "narrative",
+  "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

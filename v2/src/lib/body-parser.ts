@@ -238,6 +238,35 @@ export function emptyParsed(format: Format): ParsedBody {
   return { format: 'quad', ...base, yAxis: '', xAxis: '', cells: [] };
 }
 
+/**
+ * 从 body 内容自动 detect 真实结构 format。
+ * 用于一次性 migration（修历史 format 字段标错的 KP）+ 编辑器 load 时校正显示。
+ *
+ * 策略（高优先级在前）：
+ *   含 <compare>     → compare
+ *   含 <quad>        → quad
+ *   含 <br>【title】 → accordion
+ *   含 ≥2 个 ◆name—— 或 ≥2 个 ①②③ 项 → flat-list
+ *   否则             → narrative
+ *
+ * 注意：剥离 ◆评价 段（◆意义/◆局限/...）后再判断 ◆ 数量，
+ *       否则只有评价的纯叙述 KP 会被误判 flat-list。
+ */
+export function detectFormatFromBody(body: string): Format {
+  if (!body) return 'narrative';
+  if (/<compare>/i.test(body)) return 'compare';
+  if (/<quad>/i.test(body)) return 'quad';
+  // 剥评价段
+  const { rest } = extractEvaluations(body);
+  if (/<br\s*\/?>?\s*【[^】]+】\s*<br\s*\/?>?/i.test(rest)) return 'accordion';
+  const numberedCount = (rest.match(/[①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮]/g) ?? []).length;
+  const diamondCount = rest.split('◆').length - 1;
+  // 至少 2 项才算结构（1 项可能是装饰性）
+  if (numberedCount >= 2) return 'flat-list';
+  if (diamondCount >= 2) return 'flat-list';
+  return 'narrative';
+}
+
 /** 自动推导 tags 数组（短码 义/限/...）— 服务端在 PUT 前用，免 admin 重复劳动。 */
 export function deriveTagsFromBody(body: string, format: Format): string[] {
   if (format === 'narrative') {
