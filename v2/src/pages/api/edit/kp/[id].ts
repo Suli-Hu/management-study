@@ -181,7 +181,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
   const row = await db
     .prepare('SELECT discipline FROM kp WHERE id = ?')
     .bind(id)
-    .first<{ discipline: string }>();
+    .first() as { discipline: string } | null;
   if (!row) return json<ErrorBody>(404, { ok: false, reason: 'bad_request', detail: 'kp not in D1' });
 
   const path = `v2/data/${row.discipline}/kp/${id}.json`;
@@ -197,5 +197,15 @@ export const GET: APIRoute = async ({ params, locals }) => {
     return json<ErrorBody>(502, { ok: false, reason: 'github_error', detail: `invalid json in repo: ${(e as Error).message}` });
   }
 
-  return json(200, { ok: true, json: parsed, base_sha: res.data.sha });
+  // v0.4.22 Pack C M7: 返 user_progress / user_note 数量，给前端 confirm 文案显示级联范围
+  const progressRow = await db.prepare('SELECT COUNT(*) as n FROM user_progress WHERE kp_id = ?').bind(id).first() as { n: number } | null;
+  const noteRow = await db.prepare('SELECT COUNT(*) as n FROM user_note WHERE kp_id = ?').bind(id).first() as { n: number } | null;
+
+  return json(200, {
+    ok: true,
+    json: parsed,
+    base_sha: res.data.sha,
+    progress_count: progressRow?.n ?? 0,
+    note_count: noteRow?.n ?? 0,
+  });
 };

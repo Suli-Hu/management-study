@@ -120,6 +120,7 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
   // @ts-nocheck — DOM form 类型推断弱（HTMLElement vs HTMLInputElement），runtime 已验证
   // v0.4.11: multi-select typeahead for schools
   import { mountMultiSelect } from '~/lib/multi-select-client';
+  import { formatZodIssues } from '~/lib/zod-errors-zh';
   const form = document.getElementById('scholar-new-form');
   const saveBtn = document.getElementById('save-btn');
   const saveStatus = document.getElementById('save-status');
@@ -196,7 +197,8 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
       saveStatus.innerHTML = `<span style="color:#FF3B30">key 已存在</span>`;
       saveBtn.disabled = false;
     } else if (res.status === 422) {
-      saveStatus.innerHTML = `<span style="color:#FF3B30">${JSON.stringify(data.detail).slice(0, 150)}</span>`;
+      const lines = formatZodIssues(data.detail);
+      saveStatus.innerHTML = `<span style="color:#FF3B30">字段校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
       saveBtn.disabled = false;
     } else {
       saveStatus.innerHTML = `<span style="color:#FF3B30">${res.status} ${data.reason ?? 'error'}</span>`;

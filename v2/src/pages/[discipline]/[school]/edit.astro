@@ -28,7 +28,7 @@ if (!exists) return Astro.redirect('/404');
 
     <div id="status" class="hidden mb-4 p-3 rounded-md text-xs"></div>
 
-    <form id="school-edit-form" class="space-y-5 hidden" autocomplete="off">
+    <form id="school-edit-form" class="space-y-5 hidden" autocomplete="off" data-school-key={school} data-discipline={discipline}>
       <section>
         <label class="block text-xs font-semibold text-tertiary mb-1">中文标题</label>
         <input name="title_zh" type="text" required class="w-full px-3 py-2 rounded-md border text-sm" />
@@ -92,8 +92,14 @@ if (!exists) return Astro.redirect('/404');
   </main>
 </Layout>
 
-<script type="module" define:vars={{ schoolKey: school, discipline }}>
+<script>
+  // @ts-nocheck — DOM form 类型推断弱，runtime 已验证
+  import { formatZodIssues } from '~/lib/zod-errors-zh';
+  import { watchDeploy } from '~/lib/deploy-progress-client';
   const $ = (s) => document.querySelector(s);
+  const schoolKey = document.getElementById('school-edit-form').dataset.schoolKey;
+  const discipline = document.getElementById('school-edit-form').dataset.discipline;
+  let _deployWatcher = null;
   const status = $('#status');
   const form = $('#school-edit-form');
   const saveBtn = $('#save-btn');
@@ -198,12 +204,14 @@ if (!exists) return Astro.redirect('/404');
     });
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
-      saveStatus.innerHTML = `✓ commit <code>${data.commit_sha?.slice(0, 7)}</code>，~${data.deploy_eta_seconds}s 后生效`;
+      if (_deployWatcher) _deployWatcher.stop();
+      _deployWatcher = watchDeploy({ statusEl: saveStatus, commitSha: data.commit_sha, savedAtIso: new Date().toISOString() });
       baseSha = data.new_blob_sha;
     } else if (res.status === 409) {
       saveStatus.innerHTML = `<span style="color:#FF3B30">冲突：current=${data.current_sha?.slice(0, 7)}，请刷新</span>`;
     } else if (res.status === 422) {
-      saveStatus.innerHTML = `<span style="color:#FF3B30">schema 错：${JSON.stringify(data.detail).slice(0, 120)}</span>`;
+      const lines = formatZodIssues(data.detail);
+      saveStatus.innerHTML = `<span style="color:#FF3B30">字段校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
     } else {
       saveStatus.innerHTML = `<span style="color:#FF3B30">${res.status} ${data.reason ?? 'error'}: ${String(data.detail).slice(0, 80)}</span>`;
     }

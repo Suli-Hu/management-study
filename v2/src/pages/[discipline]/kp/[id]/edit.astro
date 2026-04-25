@@ -99,6 +99,9 @@ const allScholars = scholarsResult.results ?? [];
   // v0.4.11: multi-select typeahead 学派/学者
   import { mountBodyEditor } from '~/lib/body-editor-client';
   import { mountMultiSelect } from '~/lib/multi-select-client';
+  import { formatZodIssues } from '~/lib/zod-errors-zh';
+  import { watchDeploy } from '~/lib/deploy-progress-client';
+  let _deployWatcher = null;
 
   const $ = (s) => document.querySelector(s);
   const status = $('#editor-status');
@@ -228,12 +231,15 @@ const allScholars = scholarsResult.results ?? [];
     });
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
-      saveStatus.innerHTML = `✓ commit <code>${data.commit_sha?.slice(0, 7)}</code>，~${data.deploy_eta_seconds}s 后生效 · <a href="${fromPath}" class="text-accent-strategy hover:underline">完成 → 返回${fromLbl}</a>`;
+      if (_deployWatcher) _deployWatcher.stop();
+      _deployWatcher = watchDeploy({ statusEl: saveStatus, commitSha: data.commit_sha, savedAtIso: new Date().toISOString() });
+      saveStatus.insertAdjacentHTML('beforeend', ` · <a href="${fromPath}" class="text-accent-strategy hover:underline">完成 → 返回${fromLbl}</a>`);
       baseSha = data.new_blob_sha;
     } else if (res.status === 409) {
       saveStatus.innerHTML = `<span style="color:#FF3B30">冲突：文件已被其它修改（current_sha=${data.current_sha?.slice(0, 7)}），请刷新</span>`;
     } else if (res.status === 422) {
-      saveStatus.innerHTML = `<span style="color:#FF3B30">schema 校验失败：${JSON.stringify(data.detail).slice(0, 120)}</span>`;
+      const lines = formatZodIssues(data.detail);
+      saveStatus.innerHTML = `<span style="color:#FF3B30">字段校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
     } else {
       saveStatus.innerHTML = `<span style="color:#FF3B30">${res.status} ${data.reason ?? 'error'}: ${String(data.detail).slice(0, 80)}</span>`;
     }

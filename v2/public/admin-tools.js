@@ -13,18 +13,26 @@
     const title = btn.getAttribute('data-kp-title') ?? id;
     if (!id) return;
 
-    if (!confirm(`确认硬删除 KP「${title}」(${id})？\n\n• 进 git history 可 revert，但需手动\n• ~90 秒后线上消失`)) {
-      return;
-    }
-
     btn.disabled = true;
     btn.textContent = '…';
     try {
-      // 先 GET 拿 base_sha（避免前端缓存的 sha stale）
+      // 先 GET 拿 base_sha + 级联影响数量（v0.4.22 M7：confirm 时显示）
       const getRes = await fetch(`/api/edit/kp/${id}`);
       if (!getRes.ok) throw new Error(`GET 失败 ${getRes.status}`);
-      const { base_sha } = await getRes.json();
+      const { base_sha, progress_count, note_count } = await getRes.json();
       if (!base_sha) throw new Error('base_sha 为空');
+
+      // 显示级联影响后再 confirm（progress CASCADE 删 / note SET NULL 保留）
+      const cascadeMsg = [];
+      if (progress_count > 0) cascadeMsg.push(`• 同时删除 ${progress_count} 条学习进度记录（不可恢复）`);
+      if (note_count > 0) cascadeMsg.push(`• ${note_count} 条用户笔记 kp_id 置 NULL（笔记内容保留）`);
+      const cascadeStr = cascadeMsg.length ? '\n\n级联影响：\n' + cascadeMsg.join('\n') : '';
+
+      if (!confirm(`确认硬删除 KP「${title}」(${id})？\n\n• 进 git history 可 revert\n• ~90 秒后线上消失${cascadeStr}`)) {
+        btn.disabled = false;
+        btn.textContent = '✗';
+        return;
+      }
 
       const delRes = await fetch(`/api/edit/kp/${id}`, {
         method: 'DELETE',

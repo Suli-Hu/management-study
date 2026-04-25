@@ -101,6 +101,7 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
   // v0.4.11: multi-select typeahead 学派/学者
   import { mountBodyEditor } from '~/lib/body-editor-client';
   import { mountMultiSelect } from '~/lib/multi-select-client';
+  import { formatZodIssues } from '~/lib/zod-errors-zh';
   const form = document.getElementById('kp-new-form');
   const saveBtn = document.getElementById('save-btn');
   const saveStatus = document.getElementById('save-status');
@@ -193,7 +194,8 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
       saveStatus.innerHTML = `<span style="color:#FF3B30">id 已存在，请改 id 或去现有页编辑</span>`;
       saveBtn.disabled = false;
     } else if (res.status === 422) {
-      saveStatus.innerHTML = `<span style="color:#FF3B30">schema 错：${JSON.stringify(data.detail).slice(0, 150)}</span>`;
+      const lines = formatZodIssues(data.detail);
+      saveStatus.innerHTML = `<span style="color:#FF3B30">字段校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
       saveBtn.disabled = false;
     } else {
       saveStatus.innerHTML = `<span style="color:#FF3B30">${res.status} ${data.reason ?? 'error'}</span>`;
