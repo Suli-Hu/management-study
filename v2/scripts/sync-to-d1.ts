@@ -257,13 +257,44 @@ sqlLines.push(`DELETE FROM school WHERE key NOT IN (${schoolKeysCSV});`);
 sqlLines.push(`DELETE FROM scholar WHERE key NOT IN (${scholarKeysCSV});`);
 sqlLines.push('');
 
-// === Scholar ↔ School ===
+// === Scholar ↔ School（v0.4.17：补 V1→V2 迁移漏掉的两路数据源） ===
+// V1 学派"代表人物"是三路并集（Main/js/nav.js）。V2 schema 简化但迁移只搬了第 1 路，
+// 大量学者 schools=[] → 学派页"代表学者 (0)"。三路 union 通过 PK 去重：
+//   1) scholar.schools[]              — 学者主属机构 / 暂无 KP 的占位声明
+//   2) school.concepts[] × kp.scholars — 学派显式列出的 KP，其学者
+//   3) kp.schools[]   × kp.scholars   — KP 自己声明的学派，其学者
 sqlLines.push('-- scholar_school');
+const scholarSchoolEmitted = new Set<string>();
+// 1) 学者声明优先（保留 schools[] 的 position 语义）
 for (const sc of scholars) {
   sc.schools.forEach((sk, i) => {
     if (!schoolKeys.has(sk)) return;
+    const k = `${sc.key}|${sk}`;
+    if (scholarSchoolEmitted.has(k)) return;
+    scholarSchoolEmitted.add(k);
     sqlLines.push(`INSERT INTO scholar_school (scholar_key, school_key, position) VALUES (${q(sc.key)}, ${q(sk)}, ${i});`);
   });
+}
+// 2+3) KP 反向派生（position=1000 让学者声明排前，同 position 按 sc.key 字典序）
+const kpById = new Map(kps.map((k) => [k.id, k]));
+function emitDerivedScholarSchool(scKey: string, schoolKey: string) {
+  if (!scholarKeys.has(scKey) || !schoolKeys.has(schoolKey)) return;
+  const k = `${scKey}|${schoolKey}`;
+  if (scholarSchoolEmitted.has(k)) return;
+  scholarSchoolEmitted.add(k);
+  sqlLines.push(`INSERT INTO scholar_school (scholar_key, school_key, position) VALUES (${q(scKey)}, ${q(schoolKey)}, 1000);`);
+}
+for (const school of schools) {
+  for (const kpId of school.concepts) {
+    const kp = kpById.get(kpId);
+    if (!kp) continue;
+    for (const scKey of kp.scholars) emitDerivedScholarSchool(scKey, school.key);
+  }
+}
+for (const kp of kps) {
+  for (const sk of kp.schools) {
+    for (const scKey of kp.scholars) emitDerivedScholarSchool(scKey, sk);
+  }
 }
 sqlLines.push('');
 
