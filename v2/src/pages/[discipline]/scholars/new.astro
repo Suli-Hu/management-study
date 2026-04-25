@@ -53,47 +53,33 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
         ></div>
       </section>
 
-      <section class="grid grid-cols-3 gap-3">
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">born</label>
-          <input name="born" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">died</label>
-          <input name="died" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">lifespan</label>
-          <input name="lifespan" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-      </section>
-      <section class="grid grid-cols-3 gap-3">
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">nationality</label>
-          <input name="nationality" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">flag</label>
-          <input name="flag" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">origin</label>
-          <input name="origin" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-      </section>
       <section class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">field</label>
-          <input name="field" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
+          <label class="block text-xs font-semibold text-tertiary mb-1">出生年 <span class="text-accent-warning">*</span></label>
+          <input name="born" type="text" required placeholder="1890年9月9日" class="w-full px-3 py-2 rounded-md border text-sm" />
         </div>
         <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">accent (hex 可空)</label>
-          <input name="accent" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
+          <label class="block text-xs font-semibold text-tertiary mb-1">卒年</label>
+          <input name="died" type="text" placeholder="（在世为空）" class="w-full px-3 py-2 rounded-md border text-sm" />
+        </div>
+      </section>
+      <section class="grid grid-cols-3 gap-3">
+        <div>
+          <label class="block text-xs font-semibold text-tertiary mb-1">国籍</label>
+          <input name="nationality" type="text" placeholder="德国/美国" class="w-full px-3 py-2 rounded-md border text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-tertiary mb-1">国旗</label>
+          <input name="flag" type="text" placeholder="🇩🇪 🇺🇸" class="w-full px-3 py-2 rounded-md border text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-tertiary mb-1">研究领域 badge</label>
+          <input name="field" type="text" placeholder="社会心理学 · 组织变革" class="w-full px-3 py-2 rounded-md border text-sm" />
         </div>
       </section>
       <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">institution</label>
-        <input name="institution" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
+        <label class="block text-xs font-semibold text-tertiary mb-1">代表机构</label>
+        <input name="institution" type="text" placeholder="Harvard Business School" class="w-full px-3 py-2 rounded-md border text-sm" />
       </section>
 
       <section>
@@ -168,15 +154,16 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
       name: buildI18n(form.name_zh.value, form.name_en.value, form.name_ja.value),
       schools,
       contribution: buildBody(form.contribution_zh.value, form.contribution_ja.value),
-      lifespan: form.lifespan.value.trim(),
+      // lifespan/origin/accent UI 移除（v0.4.19）— schema 字段保留，新建时填空，sync 时 accent 由学派派生
+      lifespan: '',
+      origin: '',
+      accent: '',
       institution: form.institution.value.trim(),
       born: form.born.value.trim(),
       died: form.died.value.trim(),
       nationality: form.nationality.value.trim(),
       flag: form.flag.value.trim(),
-      origin: form.origin.value.trim(),
       field: form.field.value.trim(),
-      accent: form.accent.value.trim(),
       nobel,
       createdAt: now,
       updatedAt: now,

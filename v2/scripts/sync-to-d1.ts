@@ -233,6 +233,7 @@ for (const s of schools) {
 sqlLines.push('');
 
 // === Scholars (upsert) ===
+// v0.4.19：accent 强制写空（学者颜色 = 主属学派颜色 = 主题分组色，公开页 fallback 链派生）
 sqlLines.push('-- Scholars');
 const scholarCols = [
   'key','discipline','name_zh','name_en','name_ja',
@@ -245,7 +246,7 @@ for (const sc of scholars) {
     `INSERT INTO scholar (${scholarCols.join(', ')}) VALUES (` +
     `${q(sc.key)}, ${q(sc.discipline)}, ${q(sc.name.zh)}, ${q(sc.name.en)}, ${q(sc.name.ja)}, ` +
     `${q(sc.contribution.zh)}, ${q(sc.contribution.ja)}, ${q(sc.lifespan)}, ${q(sc.institution)}, ` +
-    `${q(sc.born)}, ${q(sc.died)}, ${q(sc.nationality)}, ${q(sc.flag)}, ${q(sc.origin)}, ${q(sc.field)}, ${q(sc.accent)}, ` +
+    `${q(sc.born)}, ${q(sc.died)}, ${q(sc.nationality)}, ${q(sc.flag)}, ${q(sc.origin)}, ${q(sc.field)}, ${q('')}, ` +
     `${q(sc.nobel?.year)}, ${q(sc.nobel?.detail)}, ${q(sc.createdAt)}, ${q(sc.updatedAt)}) ` +
     `ON CONFLICT(key) DO UPDATE SET ${updateSet(scholarCols, 'key')};`
   );

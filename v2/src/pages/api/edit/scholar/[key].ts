@@ -1,10 +1,12 @@
 /**
  * GET / PUT / DELETE /api/edit/scholar/:key  (v0.4.4 part 1)
+ *
+ * v0.4.19: GET enrich kp_count；DELETE 加 has_dependents 硬约束（前端 disabled 是 UX，这里防绕过）
  */
 
 import type { APIRoute } from 'astro';
 import { Scholar } from '~/schemas/scholar';
-import { handleGet, handlePut, handleDelete } from '~/lib/edit-helpers';
+import { handleGet, handlePut, handleDelete, jsonRes, type EditError } from '~/lib/edit-helpers';
 
 const pathFor = (key: string, discipline: string) => `v2/data/${discipline}/scholars/${key}.json`;
 
@@ -13,11 +15,17 @@ const resolveDiscipline = async (key: string, db: any): Promise<string | null> =
   return row?.discipline ?? null;
 };
 
+async function countKpsByScholar(db: any, scholarKey: string): Promise<number> {
+  const row = await db.prepare('SELECT COUNT(*) as n FROM kp_scholar WHERE scholar_key = ?').bind(scholarKey).first<{ n: number }>();
+  return row?.n ?? 0;
+}
+
 export const GET: APIRoute = (ctx) => handleGet({
   ctx,
   pathFor,
   resolveDiscipline,
   urlIdentifier: () => ctx.params.key,
+  enrich: async (key, _discipline, db) => ({ kp_count: await countKpsByScholar(db, key) }),
 });
 
 export const PUT: APIRoute = (ctx) => handlePut({
@@ -30,10 +38,23 @@ export const PUT: APIRoute = (ctx) => handlePut({
   forceFields: () => ({ updatedAt: new Date().toISOString() }),
 });
 
-export const DELETE: APIRoute = (ctx) => handleDelete({
-  ctx,
-  pathFor,
-  objectLabel: (key) => `scholar/${key}`,
-  resolveDiscipline,
-  urlIdentifier: () => ctx.params.key,
-});
+export const DELETE: APIRoute = async (ctx) => {
+  if (!ctx.locals.isAdmin) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+  const key = ctx.params.key;
+  if (!key) return jsonRes<EditError>(400, { ok: false, reason: 'bad_request' });
+  const kpCount = await countKpsByScholar(ctx.locals.runtime.env.DB, key);
+  if (kpCount > 0) {
+    return jsonRes(409, {
+      ok: false,
+      reason: 'has_dependents' as const,
+      detail: `学者名下还有 ${kpCount} 个 KP 关联。先把这些 KP 移到别的学者或删掉再试。`,
+    });
+  }
+  return handleDelete({
+    ctx,
+    pathFor,
+    objectLabel: (k) => `scholar/${k}`,
+    resolveDiscipline,
+    urlIdentifier: () => ctx.params.key,
+  });
+};

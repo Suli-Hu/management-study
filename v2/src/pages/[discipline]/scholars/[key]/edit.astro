@@ -58,49 +58,34 @@ const allSchools = schoolsResult.results ?? [];
         ></div>
       </section>
 
-      <section class="grid grid-cols-3 gap-3">
+      <section class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">born</label>
-          <input name="born" type="text" placeholder="1890年9月9日" class="w-full px-3 py-2 rounded-md border text-sm" />
+          <label class="block text-xs font-semibold text-tertiary mb-1">出生年 <span class="text-accent-warning">*</span></label>
+          <input name="born" type="text" required placeholder="1890年9月9日" class="w-full px-3 py-2 rounded-md border text-sm" />
         </div>
         <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">died</label>
+          <label class="block text-xs font-semibold text-tertiary mb-1">卒年</label>
           <input name="died" type="text" placeholder="（在世为空）" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">lifespan（兜底）</label>
-          <input name="lifespan" type="text" placeholder="1890–1976" class="w-full px-3 py-2 rounded-md border text-sm" />
         </div>
       </section>
 
       <section class="grid grid-cols-3 gap-3">
         <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">nationality</label>
+          <label class="block text-xs font-semibold text-tertiary mb-1">国籍</label>
           <input name="nationality" type="text" placeholder="德国/美国" class="w-full px-3 py-2 rounded-md border text-sm" />
         </div>
         <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">flag</label>
+          <label class="block text-xs font-semibold text-tertiary mb-1">国旗</label>
           <input name="flag" type="text" placeholder="🇩🇪 🇺🇸" class="w-full px-3 py-2 rounded-md border text-sm" />
         </div>
         <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">origin</label>
-          <input name="origin" type="text" placeholder="出身/籍贯" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-      </section>
-
-      <section class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">field（badge）</label>
+          <label class="block text-xs font-semibold text-tertiary mb-1">研究领域 badge</label>
           <input name="field" type="text" placeholder="社会心理学 · 组织变革" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">accent（hex 可空）</label>
-          <input name="accent" type="text" placeholder="#FF9500" class="w-full px-3 py-2 rounded-md border text-sm" />
         </div>
       </section>
 
       <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">institution</label>
+        <label class="block text-xs font-semibold text-tertiary mb-1">代表机构</label>
         <input name="institution" type="text" placeholder="Harvard Business School" class="w-full px-3 py-2 rounded-md border text-sm" />
       </section>
 
@@ -132,7 +117,13 @@ const allSchools = schoolsResult.results ?? [];
         <button type="submit" id="save-btn" class="px-4 py-2 rounded-md bg-accent-strategy text-white text-sm font-semibold disabled:opacity-50">
           保存（commit + 部署）
         </button>
-        <button type="button" id="delete-btn" class="px-4 py-2 rounded-md bg-bg-primary border border-accent-warning text-accent-warning text-sm font-semibold ml-auto">
+        <button
+          type="button"
+          id="delete-btn"
+          disabled
+          class="px-4 py-2 rounded-md bg-bg-primary border border-accent-warning text-accent-warning text-sm font-semibold ml-auto disabled:opacity-40 disabled:cursor-not-allowed"
+          title="加载中..."
+        >
           硬删此学者
         </button>
         <span id="save-status" class="text-xs text-tertiary"></span>
@@ -161,6 +152,20 @@ const allSchools = schoolsResult.results ?? [];
   });
   let baseSha = null;
   let originalCreatedAt = null;
+  // v0.4.19: lifespan/origin/accent 字段从 UI 移除但 schema 保留 — 用 originalXxx 持久化旧值避免数据流失
+  let originalLifespan = '';
+  let originalOrigin = '';
+  let originalAccent = '';
+
+  function applyDeleteGate(kpCount) {
+    if (kpCount === 0) {
+      deleteBtn.disabled = false;
+      deleteBtn.title = '删此学者（进 git history 可 revert，~90s 后线上消失）';
+    } else {
+      deleteBtn.disabled = true;
+      deleteBtn.title = `还有 ${kpCount} 个知识点关联此学者。先把它们移到别的学者或删掉，才能删此学者。`;
+    }
+  }
 
   function setStatus(msg, kind = 'info') {
     status.textContent = msg;
@@ -179,26 +184,27 @@ const allSchools = schoolsResult.results ?? [];
       setStatus(`加载失败：${res.status} ${err.reason ?? ''}`, 'error');
       return;
     }
-    const { json: s, base_sha } = await res.json();
+    const { json: s, base_sha, kp_count } = await res.json();
     baseSha = base_sha;
     originalCreatedAt = s.createdAt;
+    originalLifespan = s.lifespan ?? '';
+    originalOrigin = s.origin ?? '';
+    originalAccent = s.accent ?? '';
     form.name_zh.value = s.name?.zh ?? '';
     form.name_en.value = s.name?.en ?? '';
     form.name_ja.value = s.name?.ja ?? '';
     form.born.value = s.born ?? '';
     form.died.value = s.died ?? '';
-    form.lifespan.value = s.lifespan ?? '';
     form.nationality.value = s.nationality ?? '';
     form.flag.value = s.flag ?? '';
-    form.origin.value = s.origin ?? '';
     form.field.value = s.field ?? '';
-    form.accent.value = s.accent ?? '';
     form.institution.value = s.institution ?? '';
     form.contribution_zh.value = s.contribution?.zh ?? '';
     form.contribution_ja.value = s.contribution?.ja ?? '';
     form.nobel_year.value = s.nobel?.year ?? '';
     form.nobel_detail.value = s.nobel?.detail ?? '';
     schoolsMS.setSelected(s.schools ?? []);
+    applyDeleteGate(kp_count ?? 0);
     form.classList.remove('hidden');
     status.classList.add('hidden');
   }
@@ -224,15 +230,16 @@ const allSchools = schoolsResult.results ?? [];
       name: buildI18n(form.name_zh.value, form.name_en.value, form.name_ja.value),
       schools,
       contribution: buildBody(form.contribution_zh.value, form.contribution_ja.value),
-      lifespan: form.lifespan.value.trim(),
+      // lifespan/origin/accent 从 UI 移除（v0.4.19）— schema 字段保留，保旧值不动
+      lifespan: originalLifespan,
+      origin: originalOrigin,
+      accent: originalAccent,
       institution: form.institution.value.trim(),
       born: form.born.value.trim(),
       died: form.died.value.trim(),
       nationality: form.nationality.value.trim(),
       flag: form.flag.value.trim(),
-      origin: form.origin.value.trim(),
       field: form.field.value.trim(),
-      accent: form.accent.value.trim(),
       nobel,
       createdAt: originalCreatedAt,
       updatedAt: new Date().toISOString(),
@@ -263,7 +270,8 @@ const allSchools = schoolsResult.results ?? [];
   }
 
   async function del() {
-    if (!confirm(`确认硬删除学者「${scholarKey}」？\n\n• 进 git history 可 revert\n• 关联 KP 仍保留 scholars 字段中的 key（需各自处理）\n• ~90s 后线上消失`)) return;
+    if (deleteBtn.disabled) return;
+    if (!confirm(`确认硬删除学者「${scholarKey}」？\n\n• 进 git history 可 revert\n• ~90s 后线上消失`)) return;
     deleteBtn.disabled = true;
     const res = await fetch(`/api/edit/scholar/${scholarKey}`, {
       method: 'DELETE',
@@ -274,6 +282,9 @@ const allSchools = schoolsResult.results ?? [];
     if (res.ok) {
       alert(`✓ 已删除 scholar/${scholarKey}\ncommit ${data.commit_sha?.slice(0, 7)}`);
       location.href = `/${discipline}/scholars`;
+    } else if (res.status === 409 && data.reason === 'has_dependents') {
+      alert(`无法删除：${data.detail}`);
+      deleteBtn.disabled = false;
     } else {
       alert(`删除失败：${res.status} ${data.reason}`);
       deleteBtn.disabled = false;
