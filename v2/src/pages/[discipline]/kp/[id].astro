@@ -64,7 +64,19 @@ const title = lang === 'ja' ? (kp.title_ja ?? kp.title_zh) : kp.title_zh;
 <Layout title={kp.title_zh} currentDiscipline={discipline} currentSection="kps">
   <main class="max-w-reading mx-auto px-4 py-6">
     <header class="mb-6 pb-4 border-b">
-      <h1 class="text-2xl mb-2">{title}</h1>
+      <div class="flex items-start gap-3">
+        <h1 class="text-2xl mb-2 flex-1">{title}</h1>
+        {Astro.locals.isAdmin && (
+          <a
+            href={`/${discipline}/kp/${kp.id}/edit`}
+            class="hidden lg:inline-flex shrink-0 mt-1 w-9 h-9 rounded-full items-center justify-center text-base text-quaternary hover:text-accent-strategy hover:bg-bg-tertiary transition-colors"
+            aria-label="编辑此 KP"
+            title="编辑此 KP"
+          >
+            ✎
+          </a>
+        )}
+      </div>
       <div class="flex flex-wrap items-baseline gap-2 text-xs text-tertiary">
         {scholars.map((s) => (
           <a href={`/${discipline}/scholars/${s.key}`} class="font-semibold hover:underline">

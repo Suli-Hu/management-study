@@ -2,8 +2,8 @@
 
 engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 
-**当前版本**：v0.4.1 · **W3 收官 tag：v0.3.0** ✅
-**当前阶段**：W4.1 编辑器进入实施。v0.4.1 选型 doc + `/api/edit/health` smoke 已就绪，等用户配 GITHUB_PAT secret 后接通即可开 v0.4.2。
+**当前版本**：v0.4.2 · **W3 收官 tag：v0.3.0** ✅
+**当前阶段**：W4.1 编辑器进入实施。v0.4.2 KP 文本编辑器已落，下一步 v0.4.3 Quad/Compare/Accordion 可视化编辑器。
 
 ---
 
@@ -55,7 +55,7 @@ engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 | 版本 | 内容 | 状态 |
 |---|---|---|
 | v0.4.1 | 选型 doc（[EDITOR-DESIGN.md](docs/EDITOR-DESIGN.md)）+ `/api/edit/health` smoke + GITHUB_PAT/REPO env 接线（7 vitest case） | ✅ |
-| v0.4.2 | KP text 编辑器 + toolbar（◆ 义/限/例/strong/br）+ inline renderBody preview + POST `/api/edit/kp/:id`（带 SHA 乐观锁） | ❌ |
+| v0.4.2 | KP text 编辑器 + toolbar（◆ ——  br strong 组）+ 双语 inline preview + GET/PUT `/api/edit/kp/:id`（带 SHA 乐观锁，commit msg 带 admin email，updatedAt 服务端强制刷）；admin only 铅笔入口（≥1024px）；11 vitest 全过 | ✅ |
 | v0.4.3 | Quad / Compare / Accordion DSL ⟷ JSON 可视化编辑器 + roundtrip vitest | ❌ |
 | v0.4.4 | 学派 / 学者 新增/编辑/删除 UI | ❌ |
 | v0.4.5 | 长按拖动重排 KP position | ❌ |

@@ -1,0 +1,300 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import { getDb } from '~/lib/db';
+
+const { discipline, id } = Astro.params;
+
+if (!Astro.locals.isAdmin) {
+  return Astro.redirect(`/${discipline}/kp/${id}`);
+}
+
+const db = getDb(Astro.locals.runtime.env);
+const exists = await db
+  .prepare('SELECT id, title_zh FROM kp WHERE id = ? AND discipline = ?')
+  .bind(id, discipline)
+  .first<{ id: string; title_zh: string }>();
+
+if (!exists) return Astro.redirect('/404');
+
+// 拉学派 / 学者 选项（用于 multi-select chip）
+const schoolsResult = await db
+  .prepare('SELECT key, title_zh, accent FROM school WHERE discipline = ? ORDER BY title_zh')
+  .bind(discipline)
+  .all<{ key: string; title_zh: string; accent: string }>();
+const allSchools = schoolsResult.results ?? [];
+
+const scholarsResult = await db
+  .prepare('SELECT key, name_zh, name_en FROM scholar WHERE discipline = ? ORDER BY key')
+  .bind(discipline)
+  .all<{ key: string; name_zh: string; name_en: string | null }>();
+const allScholars = scholarsResult.results ?? [];
+---
+
+<Layout title={`编辑 · ${exists.title_zh}`} currentDiscipline={discipline} currentSection="kps">
+  <main class="max-w-reading mx-auto px-4 py-6">
+    <header class="mb-4">
+      <a href={`/${discipline}/kp/${id}`} class="text-xs text-tertiary hover:underline">← 返回 {exists.title_zh}</a>
+      <h1 class="text-2xl mt-2">编辑 KP <code class="text-base text-tertiary">{id}</code></h1>
+      <p class="text-xs text-quaternary mt-1">保存后约 60–90s 部署生效。改 id 或 discipline 请走 worktree。</p>
+    </header>
+
+    <div id="editor-status" class="hidden mb-4 p-3 rounded-md text-xs"></div>
+
+    <form id="kp-edit-form" class="space-y-5 hidden" autocomplete="off">
+      <section>
+        <label class="block text-xs font-semibold text-tertiary mb-1">中文标题</label>
+        <input name="title_zh" type="text" required class="w-full px-3 py-2 rounded-md border text-sm" />
+      </section>
+      <section class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-semibold text-tertiary mb-1">English</label>
+          <input name="title_en" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-tertiary mb-1">日本語</label>
+          <input name="title_ja" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
+        </div>
+      </section>
+      <section class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-semibold text-tertiary mb-1">年份</label>
+          <input name="year" type="text" placeholder="1911" class="w-full px-3 py-2 rounded-md border text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-tertiary mb-1">format</label>
+          <select name="format" class="w-full px-3 py-2 rounded-md border text-sm">
+            <option value="narrative">narrative</option>
+            <option value="flat-list">flat-list</option>
+            <option value="accordion">accordion</option>
+            <option value="compare">compare</option>
+            <option value="quad">quad</option>
+          </select>
+        </div>
+      </section>
+
+      <section>
+        <label class="block text-xs font-semibold text-tertiary mb-1">学派（必选 ≥1）</label>
+        <div id="schools-pool" class="flex flex-wrap gap-1">
+          {allSchools.map((s) => (
+            <label class="inline-flex items-center gap-1 px-2 py-1 rounded border text-xs cursor-pointer hover:bg-bg-tertiary">
+              <input type="checkbox" name="school" value={s.key} class="w-3 h-3" />
+              <span>{s.title_zh}</span>
+            </label>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <label class="block text-xs font-semibold text-tertiary mb-1">学者</label>
+        <div id="scholars-pool" class="flex flex-wrap gap-1 max-h-40 overflow-y-auto p-1 border rounded">
+          {allScholars.map((s) => (
+            <label class="inline-flex items-center gap-1 px-2 py-1 rounded border text-xs cursor-pointer hover:bg-bg-tertiary">
+              <input type="checkbox" name="scholar" value={s.key} class="w-3 h-3" />
+              <span>{s.name_en ?? s.name_zh}</span>
+            </label>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <label class="block text-xs font-semibold text-tertiary mb-1">tags（评价标签）</label>
+        <div class="flex gap-2">
+          {['义', '限', '例', '应', '用', '喻'].map((t) => (
+            <label class="inline-flex items-center gap-1 px-2 py-1 rounded border text-xs cursor-pointer">
+              <input type="checkbox" name="tag" value={t} class="w-3 h-3" />
+              <span>{t}</span>
+            </label>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <div class="flex items-center justify-between mb-1">
+          <label class="text-xs font-semibold text-tertiary">中文正文</label>
+          <div id="zh-toolbar" class="flex gap-1 text-xs"></div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <textarea name="body_zh" required rows="14" class="w-full px-3 py-2 rounded-md border text-sm font-mono leading-relaxed"></textarea>
+          <div class="border rounded-md p-3 bg-bg-secondary overflow-auto" data-preview-target="zh">
+            <div class="text-xs text-quaternary mb-2">预览</div>
+            <div class="kp-body text-secondary text-sm" data-preview-html="zh"></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="flex items-center justify-between mb-1">
+          <label class="text-xs font-semibold text-tertiary">日本語本文</label>
+          <div id="ja-toolbar" class="flex gap-1 text-xs"></div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <textarea name="body_ja" rows="14" class="w-full px-3 py-2 rounded-md border text-sm font-mono leading-relaxed"></textarea>
+          <div class="border rounded-md p-3 bg-bg-secondary overflow-auto" data-preview-target="ja">
+            <div class="text-xs text-quaternary mb-2">プレビュー</div>
+            <div class="kp-body text-secondary text-sm" data-preview-html="ja"></div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="sticky bottom-0 bg-bg-primary py-3 border-t flex items-center gap-3">
+        <button type="submit" id="save-btn" class="px-4 py-2 rounded-md bg-accent-strategy text-white text-sm font-semibold disabled:opacity-50">
+          保存（commit + 部署）
+        </button>
+        <span id="save-status" class="text-xs text-tertiary"></span>
+      </footer>
+    </form>
+  </main>
+</Layout>
+
+<script type="module" define:vars={{ kpId: id, discipline, allSchools, allScholars }}>
+  // 简易客户端：load → fill → preview → save
+  // renderBody 用 server SSR 不方便，预览用极简 markdown-ish：仅展开 \n → <br>，◆ 编号，escape <>
+  // （正经预览效果靠保存后 deploy + reload 看真页面；这里只防离谱写错）
+  const $ = (s) => document.querySelector(s);
+  const status = $('#editor-status');
+  const form = $('#kp-edit-form');
+  const saveBtn = $('#save-btn');
+  const saveStatus = $('#save-status');
+  let baseSha = null;
+  let originalCreatedAt = null;
+
+  function setStatus(msg, kind = 'info') {
+    status.textContent = msg;
+    status.className = `mb-4 p-3 rounded-md text-xs ${
+      kind === 'error' ? 'bg-badge-limit text-accent-warning' :
+      kind === 'success' ? 'bg-badge-meaning' : 'bg-bg-secondary text-tertiary'
+    }`;
+    status.classList.remove('hidden');
+  }
+
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function inlinePreview(s) {
+    // 极简：escape 后还原 <strong> <em> <br>，◆ 视觉化
+    let out = escapeHtml(s);
+    out = out.replace(/&lt;strong&gt;/g, '<strong>').replace(/&lt;\/strong&gt;/g, '</strong>')
+             .replace(/&lt;em&gt;/g, '<em>').replace(/&lt;\/em&gt;/g, '</em>')
+             .replace(/&lt;br\s*\/?&gt;/g, '<br>');
+    out = out.replace(/◆/g, '<span style="color:var(--accent,#007AFF);font-weight:600">◆</span>');
+    return out;
+  }
+  function renderPreview(lang) {
+    const ta = form.querySelector(`textarea[name=body_${lang}]`);
+    const target = document.querySelector(`[data-preview-html="${lang}"]`);
+    if (!ta || !target) return;
+    target.innerHTML = inlinePreview(ta.value);
+  }
+
+  function buildToolbar(lang) {
+    const ta = form.querySelector(`textarea[name=body_${lang}]`);
+    const bar = $(`#${lang}-toolbar`);
+    const btns = [
+      { label: '◆', insert: '◆' },
+      { label: '——', insert: '——' },
+      { label: '<br>', insert: '<br>' },
+      { label: '<strong>', insert: '<strong>__</strong>' },
+      { label: '【组】', insert: '<br>【__】<br>' },
+    ];
+    btns.forEach((b) => {
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.textContent = b.label;
+      el.className = 'px-2 py-0.5 rounded border text-xs hover:bg-bg-tertiary font-mono';
+      el.addEventListener('click', () => {
+        const start = ta.selectionStart, end = ta.selectionEnd;
+        ta.value = ta.value.slice(0, start) + b.insert + ta.value.slice(end);
+        ta.focus();
+        ta.selectionStart = ta.selectionEnd = start + b.insert.length;
+        renderPreview(lang);
+      });
+      bar.appendChild(el);
+    });
+  }
+
+  async function load() {
+    setStatus('加载中...');
+    const res = await fetch(`/api/edit/kp/${kpId}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      setStatus(`加载失败：${res.status} ${err.reason ?? ''}`, 'error');
+      return;
+    }
+    const { json: kp, base_sha } = await res.json();
+    baseSha = base_sha;
+    originalCreatedAt = kp.createdAt;
+
+    form.title_zh.value = kp.title?.zh ?? '';
+    form.title_en.value = kp.title?.en ?? '';
+    form.title_ja.value = kp.title?.ja ?? '';
+    form.year.value = kp.year ?? '';
+    form.format.value = kp.format ?? 'narrative';
+    form.body_zh.value = kp.body?.zh ?? '';
+    form.body_ja.value = kp.body?.ja ?? '';
+
+    document.querySelectorAll('input[name=school]').forEach((cb) => {
+      cb.checked = (kp.schools ?? []).includes(cb.value);
+    });
+    document.querySelectorAll('input[name=scholar]').forEach((cb) => {
+      cb.checked = (kp.scholars ?? []).includes(cb.value);
+    });
+    document.querySelectorAll('input[name=tag]').forEach((cb) => {
+      cb.checked = (kp.tags ?? []).includes(cb.value);
+    });
+
+    form.classList.remove('hidden');
+    status.classList.add('hidden');
+    renderPreview('zh');
+    renderPreview('ja');
+  }
+
+  function collect() {
+    const schools = [...document.querySelectorAll('input[name=school]:checked')].map((c) => c.value);
+    const scholars = [...document.querySelectorAll('input[name=scholar]:checked')].map((c) => c.value);
+    const tags = [...document.querySelectorAll('input[name=tag]:checked')].map((c) => c.value);
+    return {
+      id: kpId,
+      discipline,
+      schools,
+      scholars,
+      year: form.year.value.trim(),
+      title: { zh: form.title_zh.value.trim(), en: form.title_en.value.trim(), ja: form.title_ja.value.trim() },
+      body: { zh: form.body_zh.value, ja: form.body_ja.value },
+      tags,
+      format: form.format.value,
+      createdAt: originalCreatedAt,
+      updatedAt: new Date().toISOString(),
+    };
+  }
+
+  async function save(e) {
+    e.preventDefault();
+    saveBtn.disabled = true;
+    saveStatus.textContent = '保存中...';
+    const json = collect();
+    const res = await fetch(`/api/edit/kp/${kpId}`, {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ json, base_sha: baseSha }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) {
+      saveStatus.innerHTML = `✓ commit <code>${data.commit_sha?.slice(0, 7)}</code>，~${data.deploy_eta_seconds}s 后生效`;
+      baseSha = data.new_blob_sha;
+    } else if (res.status === 409) {
+      saveStatus.innerHTML = `<span style="color:#FF3B30">冲突：文件已被其它修改（current_sha=${data.current_sha?.slice(0, 7)}），请刷新</span>`;
+    } else if (res.status === 422) {
+      saveStatus.innerHTML = `<span style="color:#FF3B30">schema 校验失败：${JSON.stringify(data.detail).slice(0, 120)}</span>`;
+    } else {
+      saveStatus.innerHTML = `<span style="color:#FF3B30">${res.status} ${data.reason ?? 'error'}: ${String(data.detail).slice(0, 80)}</span>`;
+    }
+    saveBtn.disabled = false;
+  }
+
+  buildToolbar('zh');
+  buildToolbar('ja');
+  form.body_zh.addEventListener('input', () => renderPreview('zh'));
+  form.body_ja.addEventListener('input', () => renderPreview('ja'));
+  form.addEventListener('submit', save);
+  load();
+</script>
