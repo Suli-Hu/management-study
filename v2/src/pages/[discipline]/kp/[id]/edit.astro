@@ -61,27 +61,19 @@ const allScholars = scholarsResult.results ?? [];
       </section>
 
       <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">学派（必选 ≥1）</label>
-        <div id="schools-pool" class="flex flex-wrap gap-1">
-          {allSchools.map((s) => (
-            <label class="inline-flex items-center gap-1 px-2 py-1 rounded border text-xs cursor-pointer hover:bg-bg-tertiary">
-              <input type="checkbox" name="school" value={s.key} class="w-3 h-3" />
-              <span>{s.title_zh}</span>
-            </label>
-          ))}
-        </div>
+        <label class="block text-xs font-semibold text-tertiary mb-1">学派 <span class="text-accent-warning">*（必选 ≥1）</span></label>
+        <div
+          id="schools-multi"
+          data-options={JSON.stringify(allSchools.map((s) => ({ key: s.key, label: s.title_zh })))}
+        ></div>
       </section>
 
       <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">学者</label>
-        <div id="scholars-pool" class="flex flex-wrap gap-1 max-h-40 overflow-y-auto p-1 border rounded">
-          {allScholars.map((s) => (
-            <label class="inline-flex items-center gap-1 px-2 py-1 rounded border text-xs cursor-pointer hover:bg-bg-tertiary">
-              <input type="checkbox" name="scholar" value={s.key} class="w-3 h-3" />
-              <span>{s.name_en ?? s.name_zh}</span>
-            </label>
-          ))}
-        </div>
+        <label class="block text-xs font-semibold text-tertiary mb-1">学者（可空）</label>
+        <div
+          id="scholars-multi"
+          data-options={JSON.stringify(allScholars.map((s) => ({ key: s.key, label: s.name_zh, sub: s.name_en ?? '' })))}
+        ></div>
       </section>
 
       <section>
@@ -99,8 +91,9 @@ const allScholars = scholarsResult.results ?? [];
 </Layout>
 
 <script>
-  // v0.4.10: 去掉预览（结构化 form 本身已是 visual proxy）
+  // v0.4.11: multi-select typeahead 学派/学者
   import { mountBodyEditor } from '~/lib/body-editor-client';
+  import { mountMultiSelect } from '~/lib/multi-select-client';
 
   const $ = (s) => document.querySelector(s);
   const status = $('#editor-status');
@@ -113,9 +106,28 @@ const allScholars = scholarsResult.results ?? [];
   let baseSha = null;
   let originalCreatedAt = null;
   let editor = null;
+  let schoolsMS = null;
+  let scholarsMS = null;
   let currentBodyZh = '';
   let currentBodyJa = '';
   let currentFormat = 'narrative';
+
+  function initMultiSelects() {
+    const schoolsMount = $('#schools-multi');
+    const scholarsMount = $('#scholars-multi');
+    schoolsMS = mountMultiSelect(schoolsMount, {
+      inputName: 'school',
+      options: JSON.parse(schoolsMount.dataset.options ?? '[]'),
+      placeholder: '搜索学派（必选 ≥1）',
+      required: true,
+    });
+    scholarsMS = mountMultiSelect(scholarsMount, {
+      inputName: 'scholar',
+      options: JSON.parse(scholarsMount.dataset.options ?? '[]'),
+      placeholder: '搜索学者（可空）',
+    });
+  }
+  initMultiSelects();
 
   function setStatus(msg, kind = 'info') {
     status.textContent = msg;
@@ -158,13 +170,8 @@ const allScholars = scholarsResult.results ?? [];
     form.year.value = kp.year ?? '';
 
     initEditor(kp.format ?? 'narrative', kp.body?.zh ?? '', kp.body?.ja ?? '');
-
-    document.querySelectorAll('input[name=school]').forEach((cb) => {
-      cb.checked = (kp.schools ?? []).includes(cb.value);
-    });
-    document.querySelectorAll('input[name=scholar]').forEach((cb) => {
-      cb.checked = (kp.scholars ?? []).includes(cb.value);
-    });
+    schoolsMS?.setSelected(kp.schools ?? []);
+    scholarsMS?.setSelected(kp.scholars ?? []);
     form.classList.remove('hidden');
     status.classList.add('hidden');
   }
@@ -181,8 +188,8 @@ const allScholars = scholarsResult.results ?? [];
     return o;
   }
   function collect() {
-    const schools = [...document.querySelectorAll('input[name=school]:checked')].map((c) => c.value);
-    const scholars = [...document.querySelectorAll('input[name=scholar]:checked')].map((c) => c.value);
+    const schools = schoolsMS?.getSelected() ?? [];
+    const scholars = scholarsMS?.getSelected() ?? [];
     return {
       id: kpId,
       discipline,
@@ -200,9 +207,13 @@ const allScholars = scholarsResult.results ?? [];
 
   async function save(e) {
     e.preventDefault();
+    const json = collect();
+    if (json.schools.length === 0) {
+      saveStatus.innerHTML = '<span style="color:#FF3B30">学派必选 ≥1（KP 不能成孤儿）</span>';
+      return;
+    }
     saveBtn.disabled = true;
     saveStatus.textContent = '保存中...';
-    const json = collect();
     const res = await fetch(`/api/edit/kp/${kpId}`, {
       method: 'PUT',
       headers: { 'content-type': 'application/json' },
