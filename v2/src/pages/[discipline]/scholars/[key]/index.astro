@@ -120,7 +120,6 @@ const lifespanDisplay = (scholar.born && scholar.died)
   <main
     class="h-full lg:h-full lg:grid lg:grid-cols-[minmax(440px,520px)_1fr]"
     style={`--accent:${scholarAccentHex}`}
-    data-active-ring="ring-[color:var(--accent)]"
   >
     {/* 左栏：学者信息 + 代表理论 */}
     <aside class="lg:h-full lg:overflow-y-auto lg:border-r px-4 py-6">
@@ -239,16 +238,16 @@ const lifespanDisplay = (scholar.born && scholar.died)
             {kps.map((k) => {
               const isActive = selectedKpId === k.id;
               return (
-                <li data-kp-id={k.id} class:list={['kp-list-item group relative', isActive && 'is-active']}>
+                <li
+                  data-kp-id={k.id}
+                  class:list={['kp-list-item group relative', isActive && 'is-active']}
+                  style={`--accent:${scholarAccentHex}`}
+                >
                   <a
                     href={`/${discipline}/kp/${k.id}`}
                     data-kp-link
                     data-kp-wide-href={`?kp=${k.id}`}
-                    class:list={[
-                      'block p-3 rounded border bg-bg-primary hover:shadow-card transition-shadow',
-                      isActive && 'ring-2',
-                    ]}
-                    style={isActive ? `--tw-ring-color:${scholarAccentHex};border-color:${scholarAccentHex};background:${scholarAccentHex}14` : ''}
+                    class="kp-list-item__link"
                   >
                     <h3 class="text-sm font-semibold text-primary">{k.title_zh}</h3>
                     {k.title_ja && <div class="text-xs text-tertiary mt-0.5">{k.title_ja}</div>}
@@ -334,15 +333,6 @@ const lifespanDisplay = (scholar.born && scholar.died)
             {selectedKp.title_ja && <div class="text-xs text-tertiary mt-1">{selectedKp.title_ja}</div>}
           </header>
           <div class="kp-body text-secondary" set:html={renderBody(selectedKp.body_zh, scholarAccentHex)} />
-          {selectedTags.length > 0 && (
-            <footer class="mt-8 pt-4 border-t flex gap-2">
-              {selectedTags.map((t) => (
-                <span class={`badge ${t === '义' ? 'badge-meaning' : t === '限' ? 'badge-limit' : 'bg-badge-neutral text-tertiary'}`}>
-                  {t}
-                </span>
-              ))}
-            </footer>
-          )}
         </div>
       ) : (
         <div class="text-sm text-quaternary py-10 px-4 max-w-reading mx-auto">

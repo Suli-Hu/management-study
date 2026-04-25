@@ -33,15 +33,25 @@ const emailInitial = user?.email.charAt(0).toUpperCase() ?? '';
 
 <nav class="sticky top-0 z-50 bg-bg-primary/90 backdrop-blur-sm border-b border-bg-tertiary">
   <div class="max-w-panel mx-auto px-4 h-12 flex items-center justify-between gap-3">
-    <a href="/" class="text-sm font-semibold text-primary shrink-0 no-underline">
-      全学科笔记
-    </a>
+    <div class="flex items-center gap-1.5 text-sm shrink-0">
+      <a href="/" class="font-semibold text-primary no-underline">
+        全学科笔记
+      </a>
+      {currentDiscipline && disciplineTitle && (
+        <>
+          <span class="text-quaternary text-xs">›</span>
+          <a
+            href={`/${currentDiscipline}`}
+            class="text-tertiary hover:text-primary text-xs no-underline hidden sm:inline"
+          >
+            {disciplineTitle}
+          </a>
+        </>
+      )}
+    </div>
 
     {currentDiscipline && (
-      <div class="flex items-center gap-0.5 text-xs">
-        {disciplineTitle && (
-          <span class="text-quaternary mr-2 hidden sm:inline">{disciplineTitle}</span>
-        )}
+      <div class="flex flex-1 items-center justify-center gap-0.5 text-xs">
         {sections.map((s) => (
           <a
             href={s.href}

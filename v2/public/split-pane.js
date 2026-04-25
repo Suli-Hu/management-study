@@ -1,22 +1,15 @@
-// v0.3.15 shared split-pane JS — 学派页 / 学者页共用
+// v0.4.15 shared split-pane JS — 学派页 / 学者页共用
 // 页面需准备：
-//   - .kp-list-item[data-kp-id]   每个列表项
+//   - .kp-list-item[data-kp-id]   每个列表项（CSS 自带 .is-active 样式，无需 ring class）
 //   - [data-kp-link]               item 里的 <a>（href 指向全页；JS 拦截走 ?kp=X）
 //   - [data-kp-link][data-kp-wide-href]  宽屏应去的相对 URL
 //   - #kp-detail-pane              右栏容器（server 端按 ?kp= SSR 内容）
-//   - data-active-ring             右栏 active 时额外加的 ring 色 class（默认 'ring-accent-strategy'）
 
 (function () {
-  function getActiveRing() {
-    const root = document.querySelector('[data-active-ring]');
-    return root?.getAttribute('data-active-ring') || 'ring-accent-strategy';
-  }
-
   function initSplitPane() {
     const MQ = window.matchMedia('(min-width: 1024px)');
     const detailPane = document.getElementById('kp-detail-pane');
     if (!detailPane) return;
-    const activeRing = getActiveRing();
 
     async function showKpInPane(kpId) {
       const url = location.pathname + '?kp=' + encodeURIComponent(kpId);
@@ -33,10 +26,7 @@
         document.querySelectorAll('.kp-list-item').forEach((li) => {
           const isActive = li.getAttribute('data-kp-id') === kpId;
           li.classList.toggle('is-active', isActive);
-          const a = li.querySelector('[data-kp-link]');
-          if (!a) return;
-          a.classList.toggle('ring-2', isActive);
-          a.classList.toggle(activeRing, isActive);
+          // v0.4.15: 不再 toggle ring-2 / activeRing class —— is-active 由 .kp-list-item__link CSS 处理
         });
         const newTitle = doc.querySelector('title')?.textContent;
         if (newTitle) document.title = newTitle;

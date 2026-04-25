@@ -460,3 +460,33 @@
     padding: 10px 8px;
   }
 }
+
+
+/* ==========================================================================
+ * KP 列表项（v0.4.15 — split-pane 左栏复用）
+ * 三态：default（无色卡）/ hover（border 变 accent）/ active（左 3px accent bar）
+ * 父 li 注入 style="--accent:#xxx" 由各页面服务端传
+ * ========================================================================== */
+.kp-list-item__link {
+  display: block;
+  padding: 10px 12px 10px 14px;
+  border-radius: 8px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+  text-decoration: none;
+  color: inherit;
+}
+.kp-list-item__link:hover {
+  border-color: var(--accent, #007aff);
+  background: var(--bg-secondary);
+}
+.kp-list-item.is-active .kp-list-item__link {
+  box-shadow: inset 3px 0 0 var(--accent, #007aff);
+  background: var(--bg-primary);
+  border-color: var(--border-light);
+}
+.kp-list-item.is-active .kp-list-item__link h3 {
+  font-weight: 600;
+}
+
