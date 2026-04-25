@@ -32,6 +32,19 @@ const scholarsLookupResult = await db
   .all<{ key: string; name_zh: string; name_en: string | null }>();
 const scholarByKey = new Map((scholarsLookupResult.results ?? []).map((s) => [s.key, s]));
 
+// 该学派的代表学者（v0.4.4 part 1：补 v1 who 字段对应 UI）
+const schoolScholarsResult = await db
+  .prepare(`
+    SELECT sc.key, sc.name_zh, sc.name_en
+    FROM scholar sc
+    INNER JOIN scholar_school ss ON ss.scholar_key = sc.key
+    WHERE ss.school_key = ?
+    ORDER BY ss.position, sc.key
+  `)
+  .bind(school)
+  .all<{ key: string; name_zh: string; name_en: string | null }>();
+const schoolScholars = schoolScholarsResult.results ?? [];
+
 const ACCENT_MAP: Record<string, string> = {
   ob: '#34C759',
   classic: '#FF9500',
@@ -96,18 +109,46 @@ if (selectedKpId) {
               {sch.era && <span class="text-quaternary">　·　{sch.era}</span>}
             </div>
           </div>
-          <button
-            id="school-star-toggle"
-            type="button"
-            data-school-key={sch.key}
-            aria-label="收藏学派"
-            aria-pressed="false"
-            class="school-star shrink-0 -mr-1 -mt-1 w-9 h-9 rounded-full flex items-center justify-center text-xl leading-none text-quaternary hover:bg-bg-tertiary transition-colors"
-          >
-            <span aria-hidden="true">☆</span>
-          </button>
+          <div class="shrink-0 -mr-1 -mt-1 flex items-center gap-0.5">
+            {Astro.locals.isAdmin && (
+              <a
+                href={`/${discipline}/${sch.key}/edit`}
+                class="hidden lg:inline-flex w-9 h-9 rounded-full items-center justify-center text-base text-quaternary hover:text-accent-strategy hover:bg-bg-tertiary transition-colors"
+                aria-label="编辑此学派"
+                title="编辑此学派"
+              >
+                ✎
+              </a>
+            )}
+            <button
+              id="school-star-toggle"
+              type="button"
+              data-school-key={sch.key}
+              aria-label="收藏学派"
+              aria-pressed="false"
+              class="school-star w-9 h-9 rounded-full flex items-center justify-center text-xl leading-none text-quaternary hover:bg-bg-tertiary transition-colors"
+            >
+              <span aria-hidden="true">☆</span>
+            </button>
+          </div>
         </div>
       </section>
+
+      {schoolScholars.length > 0 && (
+        <section class="mb-5">
+          <h2 class="text-xs font-semibold text-tertiary mb-2">代表学者 ({schoolScholars.length})</h2>
+          <div class="flex flex-wrap gap-1.5">
+            {schoolScholars.map((s) => (
+              <a
+                href={`/${discipline}/scholars/${s.key}`}
+                class="inline-flex items-center px-2.5 py-1 rounded-full border bg-bg-primary text-xs hover:shadow-card transition-shadow"
+              >
+                {s.name_en ?? s.name_zh}
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       {sch.summary_zh && (
         <section class="mb-5">

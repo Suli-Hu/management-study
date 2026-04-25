@@ -2,8 +2,8 @@
 
 engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 
-**当前版本**：v0.4.2 · **W3 收官 tag：v0.3.0** ✅
-**当前阶段**：W4.1 编辑器进入实施。v0.4.2 KP 文本编辑器已落，下一步 v0.4.3 Quad/Compare/Accordion 可视化编辑器。
+**当前版本**：v0.4.4 · **W3 收官 tag：v0.3.0** ✅
+**当前阶段**：W4.1 编辑器 part 1 完成（KP/学派/学者 编辑/删除）。下一步 v0.4.4 part 2「+ 新增」入口，或 v0.4.3 Quad/Compare/Accordion 可视化编辑器。
 
 ---
 
@@ -57,7 +57,7 @@ engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 | v0.4.1 | 选型 doc（[EDITOR-DESIGN.md](docs/EDITOR-DESIGN.md)）+ `/api/edit/health` smoke + GITHUB_PAT/REPO env 接线（7 vitest case） | ✅ |
 | v0.4.2 | KP text 编辑器 + toolbar + 双语 inline preview + GET/PUT/DELETE `/api/edit/kp/:id`（SHA 乐观锁，commit msg 带 admin email，updatedAt 服务端强制刷）；admin 铅笔入口在 KP 详情页 + 学派/学者 split-pane 列表项 hover-reveal ✎/✗（lg 视口）；硬删带二次 confirm；17 vitest case 全过；prod 端到端跑过 add-marker → revert 全绿 | ✅ |
 | v0.4.3 | Quad / Compare / Accordion DSL ⟷ JSON 可视化编辑器 + roundtrip vitest | ❌ |
-| v0.4.4 | 学派 / 学者 新增/编辑/删除 UI | ❌ |
+| v0.4.4 | 学派 / 学者 编辑/删除 UI（hero ✎ + 编辑页 + DELETE，hover-reveal 入口；学派 detail 页加「代表学者」section）；GET/PUT/DELETE `/api/edit/{school,scholar}/:key` + 共享 lib/edit-helpers.ts；11 vitest case；**新增 part 2 留下**：「+ 新增 KP/学派/学者」chip 入口 | 🚧 part 1 |
 | v0.4.5 | 长按拖动重排 KP position | ❌ |
 | ~~v0.4.6~~ | ~~移动端编辑手势~~ → 废案：编辑桌面 only | — |
 

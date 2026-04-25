@@ -141,16 +141,28 @@ const lifespanDisplay = (scholar.born && scholar.died)
             {scholar.name_en && <div class="text-xs text-tertiary mt-1">{scholar.name_en}</div>}
             {scholar.name_ja && lang === 'zh' && <div class="text-xs text-quaternary mt-0.5">{scholar.name_ja}</div>}
           </div>
-          <button
-            id="scholar-star-toggle"
-            type="button"
-            data-scholar-key={scholar.key}
-            aria-label="收藏学者"
-            aria-pressed="false"
-            class="scholar-star shrink-0 -mr-1 -mt-1 w-9 h-9 rounded-full flex items-center justify-center text-xl leading-none text-quaternary hover:bg-bg-tertiary transition-colors"
-          >
-            <span aria-hidden="true">☆</span>
-          </button>
+          <div class="shrink-0 -mr-1 -mt-1 flex items-center gap-0.5">
+            {Astro.locals.isAdmin && (
+              <a
+                href={`/${discipline}/scholars/${scholar.key}/edit`}
+                class="hidden lg:inline-flex w-9 h-9 rounded-full items-center justify-center text-base text-quaternary hover:text-accent-strategy hover:bg-bg-tertiary transition-colors"
+                aria-label="编辑此学者"
+                title="编辑此学者"
+              >
+                ✎
+              </a>
+            )}
+            <button
+              id="scholar-star-toggle"
+              type="button"
+              data-scholar-key={scholar.key}
+              aria-label="收藏学者"
+              aria-pressed="false"
+              class="scholar-star w-9 h-9 rounded-full flex items-center justify-center text-xl leading-none text-quaternary hover:bg-bg-tertiary transition-colors"
+            >
+              <span aria-hidden="true">☆</span>
+            </button>
+          </div>
         </div>
       </section>
 
