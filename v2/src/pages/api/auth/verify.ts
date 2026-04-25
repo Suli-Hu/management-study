@@ -36,8 +36,8 @@ export const GET: APIRoute = async ({ url, request, locals }) => {
     });
   }
 
-  const email = await consumeMagicLink(db, token);
-  if (!email) {
+  const consumed = await consumeMagicLink(db, token);
+  if (!consumed) {
     return new Response(null, {
       status: 302,
       headers: {
@@ -47,9 +47,9 @@ export const GET: APIRoute = async ({ url, request, locals }) => {
     });
   }
 
-  const user = await findOrCreateUser(db, email);
+  const user = await findOrCreateUser(db, consumed.email);
   const secret = getSessionSecret(env.SESSION_SECRET);
-  const cookie = await buildSignedSessionCookie(user, true, secret, isSecure);
+  const cookie = await buildSignedSessionCookie(user, consumed.remember, secret, isSecure);
 
   return new Response(null, {
     status: 302,

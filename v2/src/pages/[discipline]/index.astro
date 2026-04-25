@@ -56,7 +56,7 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
         <h1 class="text-2xl mb-1">{disc.title_zh}</h1>
         <p class="text-xs text-quaternary">{disc.title_en}{disc.tagline_zh ? ` · ${disc.tagline_zh}` : ''}</p>
       </div>
-      {Astro.locals.isAdmin && (
+      {Astro.locals.canEdit(discipline) && (
         <a
           href={editHref(`/${discipline}/schools/new`, Astro.url.pathname)}
           class="inline-flex shrink-0 opacity-50 hover:opacity-100 transition-opacity items-center px-3 py-1.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white"

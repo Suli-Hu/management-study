@@ -92,23 +92,23 @@ export function timingSafeEqual(a: string, b: string): boolean {
 
 // ========== Magic link ==========
 
-export async function createMagicLink(db: D1Database, email: string): Promise<{ token: string; code: string }> {
+export async function createMagicLink(db: D1Database, email: string, remember = true): Promise<{ token: string; code: string }> {
   const token = generateToken(32);
   const code = generateCode();
   const expiresAt = Date.now() + MAGIC_LINK_TTL_MS;
   await db
-    .prepare('INSERT INTO magic_link (token, email, code, expires_at) VALUES (?, ?, ?, ?)')
-    .bind(token, email.toLowerCase().trim(), code, expiresAt)
+    .prepare('INSERT INTO magic_link (token, email, code, expires_at, remember) VALUES (?, ?, ?, ?, ?)')
+    .bind(token, email.toLowerCase().trim(), code, expiresAt, remember ? 1 : 0)
     .run();
   return { token, code };
 }
 
-/** 验证并 consume token，返回 email 或 null（失败 = 不存在/过期/已用） */
-export async function consumeMagicLink(db: D1Database, token: string): Promise<string | null> {
+/** 验证并 consume token，返回 { email, remember } 或 null（失败 = 不存在/过期/已用） */
+export async function consumeMagicLink(db: D1Database, token: string): Promise<{ email: string; remember: boolean } | null> {
   const row = await db
-    .prepare('SELECT email, expires_at, used_at FROM magic_link WHERE token = ?')
+    .prepare('SELECT email, expires_at, used_at, remember FROM magic_link WHERE token = ?')
     .bind(token)
-    .first<{ email: string; expires_at: number; used_at: string | null }>();
+    .first() as { email: string; expires_at: number; used_at: string | null; remember: number } | null;
   if (!row) return null;
   if (row.used_at) return null;
   if (row.expires_at < Date.now()) return null;
@@ -117,7 +117,7 @@ export async function consumeMagicLink(db: D1Database, token: string): Promise<s
     .prepare('UPDATE magic_link SET used_at = ? WHERE token = ?')
     .bind(new Date().toISOString(), token)
     .run();
-  return row.email;
+  return { email: row.email, remember: row.remember === 1 };
 }
 
 /** 失败 3 次后 code 作废（v0.3.2 修 A4 rate limit） */
@@ -139,7 +139,7 @@ export async function consumeMagicLinkByCode(
   db: D1Database,
   email: string,
   code: string,
-): Promise<string | null> {
+): Promise<{ email: string; remember: boolean } | null> {
   const normEmail = email.toLowerCase().trim();
   const normCode = code.replace(/\D/g, '').trim();
   if (normCode.length !== 6) return null;
@@ -147,14 +147,14 @@ export async function consumeMagicLinkByCode(
   // 先查 code 是否匹配
   const matched = await db
     .prepare(`
-      SELECT token, expires_at, used_at, attempt_count
+      SELECT token, expires_at, used_at, attempt_count, remember
       FROM magic_link
       WHERE email = ? AND code = ? AND used_at IS NULL
       ORDER BY expires_at DESC
       LIMIT 1
     `)
     .bind(normEmail, normCode)
-    .first<{ token: string; expires_at: number; used_at: string | null; attempt_count: number }>();
+    .first() as { token: string; expires_at: number; used_at: string | null; attempt_count: number; remember: number } | null;
 
   if (matched && matched.expires_at >= Date.now()) {
     // 成功 → consume
@@ -162,7 +162,7 @@ export async function consumeMagicLinkByCode(
       .prepare('UPDATE magic_link SET used_at = ? WHERE token = ?')
       .bind(new Date().toISOString(), matched.token)
       .run();
-    return normEmail;
+    return { email: normEmail, remember: matched.remember === 1 };
   }
 
   // code 不对 or 过期 → 给最新 unused link +1 attempt
@@ -175,7 +175,7 @@ export async function consumeMagicLinkByCode(
       LIMIT 1
     `)
     .bind(normEmail, Date.now())
-    .first<{ token: string; attempt_count: number }>();
+    .first() as { token: string; attempt_count: number } | null;
 
   if (latestForEmail) {
     const nextCount = latestForEmail.attempt_count + 1;

@@ -43,7 +43,8 @@ function json<T>(status: number, body: T): Response {
 }
 
 export const PUT: APIRoute = async ({ params, request, locals }) => {
-  if (!locals.isAdmin) return json<ErrorBody>(403, { ok: false, reason: 'not_admin' });
+  // v0.4.25 RBAC：admin gate 推迟到拿到 kp.discipline 之后
+  if (!locals.user) return json<ErrorBody>(403, { ok: false, reason: 'not_admin' });
 
   const env = locals.runtime.env;
   if (!env.GITHUB_PAT || !env.GITHUB_REPO) {
@@ -69,6 +70,8 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     return json<ErrorBody>(422, { ok: false, reason: 'schema_invalid', detail: parsed.error.issues });
   }
   const kp = parsed.data;
+  // v0.4.25 RBAC：现在能拿到 discipline，做 per-学科 admin gate
+  if (!locals.canEdit(kp.discipline)) return json<ErrorBody>(403, { ok: false, reason: 'not_admin' });
 
   // id 一致性 —— 不允许通过编辑器改 id（rename 走 worktree）
   if (kp.id !== id) {
@@ -116,7 +119,8 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
  *   commit message: `v2: delete kp/<id> by <admin_email>`
  */
 export const DELETE: APIRoute = async ({ params, request, locals }) => {
-  if (!locals.isAdmin) return json<ErrorBody>(403, { ok: false, reason: 'not_admin' });
+  // v0.4.25 RBAC：admin gate 推迟到 D1 lookup discipline 之后
+  if (!locals.user) return json<ErrorBody>(403, { ok: false, reason: 'not_admin' });
 
   const env = locals.runtime.env;
   if (!env.GITHUB_PAT || !env.GITHUB_REPO) {
@@ -140,8 +144,10 @@ export const DELETE: APIRoute = async ({ params, request, locals }) => {
   const row = await env.DB
     .prepare('SELECT discipline FROM kp WHERE id = ?')
     .bind(id)
-    .first<{ discipline: string }>();
+    .first() as { discipline: string } | null;
   if (!row) return json<ErrorBody>(404, { ok: false, reason: 'bad_request', detail: 'kp not in D1' });
+  // v0.4.25 RBAC：拿到 discipline 后做 per-学科 admin gate
+  if (!locals.canEdit(row.discipline)) return json<ErrorBody>(403, { ok: false, reason: 'not_admin' });
 
   const path = `v2/data/${row.discipline}/kp/${id}.json`;
   const adminEmail = locals.user?.email ?? 'unknown@admin';
@@ -166,7 +172,8 @@ export const DELETE: APIRoute = async ({ params, request, locals }) => {
 
 /** GET 用于编辑器页加载：返当前 JSON + base_sha */
 export const GET: APIRoute = async ({ params, locals }) => {
-  if (!locals.isAdmin) return json<ErrorBody>(403, { ok: false, reason: 'not_admin' });
+  // v0.4.25 RBAC：admin gate 推迟到 D1 lookup discipline 之后
+  if (!locals.user) return json<ErrorBody>(403, { ok: false, reason: 'not_admin' });
 
   const env = locals.runtime.env;
   if (!env.GITHUB_PAT || !env.GITHUB_REPO) {
@@ -183,6 +190,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
     .bind(id)
     .first() as { discipline: string } | null;
   if (!row) return json<ErrorBody>(404, { ok: false, reason: 'bad_request', detail: 'kp not in D1' });
+  if (!locals.canEdit(row.discipline)) return json<ErrorBody>(403, { ok: false, reason: 'not_admin' });
 
   const path = `v2/data/${row.discipline}/kp/${id}.json`;
   const res = await getFile({ pat: env.GITHUB_PAT, repo: env.GITHUB_REPO }, path);

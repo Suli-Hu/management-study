@@ -3,7 +3,7 @@ import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
 
 const { discipline } = Astro.params;
-if (!Astro.locals.isAdmin) return Astro.redirect(`/${discipline}/scholars`);
+if (!Astro.locals.canEdit(discipline)) return Astro.redirect(`/${discipline}/scholars`);
 
 const db = getDb(Astro.locals.runtime.env);
 const schoolsResult = await db

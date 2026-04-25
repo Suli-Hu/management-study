@@ -30,7 +30,7 @@ ADMIN_EMAILS = "husuli0623@gmail.com"
 #   "password" —— 考试期：2 个硬编码密码（123 访客 / 邮箱 admin），靠 secrets 注入
 #   "email"    —— 正式期：magic link + 6-digit code（v0.2.5~7 实现）
 # 考完切回 "email" + 删 ADMIN_PASSWORD/GUEST_PASSWORD secrets 即可
-AUTH_MODE = "password"
+AUTH_MODE = "email"
 
 # password 模式下，访客共用这条 user 记录（所有 123 登录指向同一 user_id）
 GUEST_EMAIL = "guest@local"

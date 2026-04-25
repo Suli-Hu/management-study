@@ -111,7 +111,7 @@ if (selectedKpId) {
             </div>
           </div>
           <div class="shrink-0 -mr-1 -mt-1 flex items-center gap-0.5">
-            {Astro.locals.isAdmin && (
+            {Astro.locals.canEdit(discipline) && (
               <a
                 href={editHref(`/${discipline}/${sch.key}/edit`, Astro.url.pathname)}
                 class="inline-flex w-9 h-9 rounded-full items-center justify-center text-base text-quaternary hover:text-accent-strategy hover:bg-bg-tertiary transition-colors opacity-60 hover:opacity-100"
@@ -138,7 +138,7 @@ if (selectedKpId) {
       <section class="mb-5 group">
         <h2 class="text-xs font-semibold text-tertiary mb-2 flex items-center gap-2">
           代表学者 ({schoolScholars.length})
-          {Astro.locals.isAdmin && (
+          {Astro.locals.canEdit(discipline) && (
             <a
               href={editHref(`/${discipline}/scholars/new?school=${sch.key}`, Astro.url.pathname)}
               class="inline-flex opacity-50 hover:opacity-100 transition-opacity items-center px-2 py-0.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white"
@@ -174,7 +174,7 @@ if (selectedKpId) {
       <section class="group">
         <h2 class="text-xs font-semibold text-tertiary mb-3 flex items-center gap-2" data-count-label="核心概念" data-count={kps.length}>
           核心概念 ({kps.length})
-          {Astro.locals.isAdmin && (
+          {Astro.locals.canEdit(discipline) && (
             <a
               href={editHref(`/${discipline}/kp/new?school=${sch.key}`, Astro.url.pathname)}
               class="inline-flex opacity-50 hover:opacity-100 transition-opacity items-center px-2 py-0.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white"
@@ -212,7 +212,7 @@ if (selectedKpId) {
                   )}
                   {k.title_ja && <div class="text-xs text-tertiary mt-0.5">{k.title_ja}</div>}
                 </a>
-                {Astro.locals.isAdmin && (
+                {Astro.locals.canEdit(discipline) && (
                   <div class="kp-admin-tools hidden lg:flex absolute top-2 right-2 gap-1 opacity-40 hover:opacity-100 transition-opacity">
                     <a
                       href={editHref(`/${discipline}/kp/${k.id}/edit`, Astro.url.pathname)}

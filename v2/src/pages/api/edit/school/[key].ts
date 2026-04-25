@@ -44,10 +44,14 @@ export const PUT: APIRoute = (ctx) => handlePut({
 });
 
 export const DELETE: APIRoute = async (ctx) => {
-  // 后端硬约束：学派下还有 KP 关联时拒绝删除（前端 disabled 是 UX，这里防绕过）
-  if (!ctx.locals.isAdmin) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+  // v0.4.25 RBAC：admin gate 推迟到 resolveDiscipline 之后
+  if (!ctx.locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
   const key = ctx.params.key;
   if (!key) return jsonRes<EditError>(400, { ok: false, reason: 'bad_request' });
+  const discipline = await resolveDiscipline(key, ctx.locals.runtime.env.DB);
+  if (!discipline) return jsonRes<EditError>(404, { ok: false, reason: 'not_found' });
+  if (!ctx.locals.canEdit(discipline)) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+  // 后端硬约束：学派下还有 KP 关联时拒绝删除（前端 disabled 是 UX，这里防绕过）
   const kpCount = await countKpsInSchool(ctx.locals.runtime.env.DB, key);
   if (kpCount > 0) {
     return jsonRes(409, {

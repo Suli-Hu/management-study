@@ -5,7 +5,7 @@ import { parseFrom, fromLabel } from '~/lib/nav';
 
 const { discipline, id } = Astro.params;
 
-if (!Astro.locals.isAdmin) {
+if (!Astro.locals.canEdit(discipline)) {
   return Astro.redirect(`/${discipline}/kp/${id}`);
 }
 

@@ -5,7 +5,7 @@ import { parseFrom, fromLabel } from '~/lib/nav';
 
 const { discipline, key } = Astro.params;
 
-if (!Astro.locals.isAdmin) return Astro.redirect(`/${discipline}/scholars/${key}`);
+if (!Astro.locals.canEdit(discipline)) return Astro.redirect(`/${discipline}/scholars/${key}`);
 
 const fromPath = parseFrom(Astro.url.searchParams.get('from'), `/${discipline}/scholars/${key}`);
 const fromLbl = fromLabel(fromPath);

@@ -58,6 +58,10 @@ function makeCtx(opts: {
     locals: {
       runtime: { env: opts.env },
       isAdmin: opts.isAdmin ?? true,
+      isSuperAdmin: opts.isAdmin ?? true,
+      permissions: new Map(),
+      canEdit: () => opts.isAdmin ?? true,
+      canRead: () => opts.isAdmin ?? true,
       user: { id: 'u1', email: 'admin@test.com', display_name: null, created_at: '', email_verified_at: null },
     } as unknown as APIContext['locals'],
   } as unknown as APIContext;

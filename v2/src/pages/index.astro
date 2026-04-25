@@ -35,21 +35,51 @@ const upcomingFiltered = upcoming.filter((u) => !disciplines.some((d) => d.key =
     <section>
       <h2 class="text-xl mb-4">学科</h2>
       <div class="space-y-3">
-        {disciplines.map((d) => (
-          <a
-            href={`/${d.key}`}
-            class="block p-4 rounded-lg border bg-bg-primary shadow-card transition-all hover:shadow-card-hover hover:-translate-y-px"
-          >
-            <div class="flex items-baseline justify-between mb-1">
-              <h3 class="text-lg">{d.title_zh}</h3>
-              <span class="text-xs text-quaternary">{d.title_en}</span>
+        {disciplines.map((d) => {
+          // v0.4.25 RBAC：按权限渲染 — admin 可写 / guest 只读 / 无权限灰锁
+          const canEdit = Astro.locals.canEdit(d.key);
+          const canRead = Astro.locals.canRead(d.key);
+          if (canRead) {
+            return (
+              <a
+                href={`/${d.key}`}
+                class="block p-4 rounded-lg border bg-bg-primary shadow-card transition-all hover:shadow-card-hover hover:-translate-y-px"
+              >
+                <div class="flex items-baseline justify-between mb-1">
+                  <h3 class="text-lg flex items-baseline gap-2">
+                    {d.title_zh}
+                    {canEdit ? (
+                      <span class="text-xs px-1.5 py-0.5 rounded border border-accent-strategy text-accent-strategy">✎ 可编辑</span>
+                    ) : (
+                      <span class="text-xs px-1.5 py-0.5 rounded border border-bg-tertiary text-tertiary">👁 只读</span>
+                    )}
+                  </h3>
+                  <span class="text-xs text-quaternary">{d.title_en}</span>
+                </div>
+                {d.tagline_zh && <div class="text-xs text-tertiary mb-1">{d.tagline_zh}</div>}
+                <div class="text-xs text-quaternary">
+                  {d.school_count} 学派 · {d.kp_count} 知识点
+                </div>
+              </a>
+            );
+          }
+          // 无权限：灰锁卡片（不能点）
+          return (
+            <div
+              class="block p-4 rounded-lg border bg-bg-primary shadow-card opacity-40 cursor-not-allowed"
+              title="无权限。联系管理员申请。"
+            >
+              <div class="flex items-baseline justify-between mb-1">
+                <h3 class="text-lg flex items-baseline gap-2">
+                  {d.title_zh}
+                  <span class="text-xs px-1.5 py-0.5 rounded border border-bg-tertiary text-quaternary">🔒 无权限</span>
+                </h3>
+                <span class="text-xs text-quaternary">{d.title_en}</span>
+              </div>
+              <div class="text-xs text-quaternary">联系管理员申请</div>
             </div>
-            {d.tagline_zh && <div class="text-xs text-tertiary mb-1">{d.tagline_zh}</div>}
-            <div class="text-xs text-quaternary">
-              {d.school_count} 学派 · {d.kp_count} 知识点
-            </div>
-          </a>
-        ))}
+          );
+        })}
 
         {upcomingFiltered.map((u) => (
           <div class="block p-4 rounded-lg border bg-bg-primary shadow-card opacity-50">

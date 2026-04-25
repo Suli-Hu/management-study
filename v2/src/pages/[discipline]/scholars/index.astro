@@ -63,7 +63,7 @@ const groupKeys = Array.from(grouped.keys()).sort((a, b) => {
         <h1 class="text-2xl mb-1">学者</h1>
         <p class="text-xs text-quaternary">{disc.title_zh} · 共 {scholars.length} 位</p>
       </div>
-      {Astro.locals.isAdmin && (
+      {Astro.locals.canEdit(discipline) && (
         <a
           href={editHref(`/${discipline}/scholars/new`, Astro.url.pathname)}
           class="inline-flex shrink-0 opacity-50 hover:opacity-100 transition-opacity items-center px-3 py-1.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white"

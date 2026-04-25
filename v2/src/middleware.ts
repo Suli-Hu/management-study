@@ -73,15 +73,45 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const payload = await verifySessionCookie(cookieValue, secret);
   context.locals.user = payload ? sessionUserFromPayload(payload) : null;
 
-  // v0.2.8: admin flag（写权限 gate 依赖这个）
-  context.locals.isAdmin = isAdmin(context.locals.user, env?.ADMIN_EMAILS);
+  // v0.2.8 / v0.4.25: super-admin = ADMIN_EMAILS 命中（god mode，所有学科可写）
+  context.locals.isSuperAdmin = isAdmin(context.locals.user, env?.ADMIN_EMAILS);
+  // 兼容字段（旧代码可能仍读 isAdmin）— 在 RBAC 改造完成前保留
+  context.locals.isAdmin = context.locals.isSuperAdmin;
 
   // v0.2.9: guest flag（password 模式 GUEST_PASSWORD 登录者；未来 user_progress 写入要跳过）
   context.locals.isGuest = isGuest(context.locals.user, env?.GUEST_EMAIL);
 
+  // v0.4.25 RBAC：load 该 user 的 per-discipline permissions
+  context.locals.permissions = new Map();
+  if (context.locals.user && env?.DB && !context.locals.isSuperAdmin) {
+    const rows = await env.DB
+      .prepare('SELECT discipline_key, role FROM user_permission WHERE user_id = ?')
+      .bind(context.locals.user.id)
+      .all() as { results: Array<{ discipline_key: string; role: 'admin' | 'guest' }> };
+    for (const r of rows.results ?? []) {
+      context.locals.permissions.set(r.discipline_key, r.role);
+    }
+  }
+  context.locals.canEdit = (d: string | undefined) =>
+    !!d && (context.locals.isSuperAdmin || context.locals.permissions.get(d) === 'admin');
+  context.locals.canRead = (d: string | undefined) =>
+    !!d && (context.locals.isSuperAdmin || context.locals.permissions.has(d));
+
   // Gate: 未登录 + 非公开路径 → 跳 /login
   if (!context.locals.user && !isPublicPath(url.pathname)) {
     return Response.redirect(`${url.origin}/login`, 302);
+  }
+
+  // v0.4.25 RBAC Gate: 已登录但访问无权限学科 → 跳首页
+  // 路径形如 /:discipline/...（首段被 D1 discipline 表识别为有效 key 才挡，否则当 404 让 Astro 处理）
+  if (context.locals.user && !context.locals.isSuperAdmin) {
+    const seg = url.pathname.split('/').filter(Boolean)[0];
+    if (seg && !isPublicPath(url.pathname) && url.pathname !== '/' && env?.DB) {
+      const discRow = await env.DB.prepare('SELECT 1 FROM discipline WHERE key = ?').bind(seg).first();
+      if (discRow && !context.locals.canRead(seg)) {
+        return Response.redirect(`${url.origin}/`, 302);
+      }
+    }
   }
 
   // v0.3.2: 概率性 cleanup 过期 magic_link（session 表 v0.3.5 起不再写入，但老行清一清）

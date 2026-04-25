@@ -69,6 +69,10 @@ function makeCtx(opts: {
     locals: {
       runtime: { env: opts.env },
       isAdmin: opts.isAdmin ?? true,
+      isSuperAdmin: opts.isAdmin ?? true,
+      permissions: new Map(),
+      canEdit: () => opts.isAdmin ?? true,
+      canRead: () => opts.isAdmin ?? true,
       user: opts.user ?? { id: 'u1', email: 'admin@test.com', display_name: null, created_at: '', email_verified_at: null },
     } as unknown as APIContext['locals'],
   } as unknown as APIContext;
@@ -211,7 +215,9 @@ describe('GET /api/edit/kp/:id', () => {
   });
 
   test('非 admin → 403', async () => {
-    const res = await kpGET(makeCtx({ id: 'k001', method: 'GET', env: baseEnv, isAdmin: false }));
+    // v0.4.25 RBAC：admin gate 在 D1 lookup 之后，所以测试 DB 必须返 KP 存在
+    const env = { ...baseEnv, DB: mockDb(() => ({ rows: [{ discipline: 'keiei' }] })) };
+    const res = await kpGET(makeCtx({ id: 'k001', method: 'GET', env, isAdmin: false }));
     expect(res.status).toBe(403);
   });
 
@@ -247,8 +253,10 @@ describe('DELETE /api/edit/kp/:id', () => {
   });
 
   test('非 admin → 403', async () => {
+    // v0.4.25 RBAC：admin gate 在 D1 lookup 之后，所以测试 DB 必须返 KP 存在
+    const env = { ...baseEnv, DB: mockDb(() => ({ rows: [{ discipline: 'keiei' }] })) };
     const res = await kpDELETE(makeCtx({
-      id: 'k001', method: 'PUT', body: { base_sha: 'x' }, env: baseEnv, isAdmin: false,
+      id: 'k001', method: 'PUT', body: { base_sha: 'x' }, env, isAdmin: false,
     }));
     expect(res.status).toBe(403);
   });

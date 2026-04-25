@@ -67,7 +67,7 @@ const title = lang === 'ja' ? (kp.title_ja ?? kp.title_zh) : kp.title_zh;
     <header class="mb-6 pb-4 border-b">
       <div class="flex items-start gap-3">
         <h1 class="text-2xl mb-2 flex-1">{title}</h1>
-        {Astro.locals.isAdmin && (
+        {Astro.locals.canEdit(discipline) && (
           <a
             href={editHref(`/${discipline}/kp/${kp.id}/edit`, Astro.url.pathname)}
             class="inline-flex shrink-0 mt-1 w-9 h-9 rounded-full items-center justify-center text-base text-quaternary hover:text-accent-strategy hover:bg-bg-tertiary transition-colors opacity-60 hover:opacity-100"

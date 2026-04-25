@@ -49,7 +49,8 @@ interface PutCtx<S extends ZodTypeAny> {
 
 export async function handlePut<S extends ZodTypeAny>(opts: PutCtx<S>): Promise<Response> {
   const { ctx, schema, pathFor, objectLabel, identifierMatch, urlIdentifier, forceFields } = opts;
-  if (!ctx.locals.isAdmin) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+  // v0.4.25 RBAC：admin gate 推迟到拿到 obj.discipline 之后（按学科粒度判定）
+  if (!ctx.locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
   const env = ctx.locals.runtime.env;
   if (!env.GITHUB_PAT || !env.GITHUB_REPO) {
@@ -74,6 +75,11 @@ export async function handlePut<S extends ZodTypeAny>(opts: PutCtx<S>): Promise<
     return jsonRes<EditError>(422, { ok: false, reason: 'schema_invalid', detail: parsed.error.issues });
   }
   let obj = parsed.data as ZodInfer<S>;
+  // v0.4.25：现在能拿到 discipline，做 per-学科 admin gate
+  const objDiscipline = (obj as { discipline?: string }).discipline;
+  if (!objDiscipline || !ctx.locals.canEdit(objDiscipline)) {
+    return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+  }
   if (!identifierMatch(ident, obj)) {
     return jsonRes<EditError>(400, { ok: false, reason: 'key_mismatch', detail: `url ident ${ident} != obj` });
   }
@@ -123,7 +129,8 @@ interface PostCtx<S extends ZodTypeAny> {
 /** 新建：POST 路由调它。不带 sha 写 = create；GitHub 返 422 时认为是 key 冲突。 */
 export async function handlePost<S extends ZodTypeAny>(opts: PostCtx<S>): Promise<Response> {
   const { ctx, schema, pathFor, objectLabel, forceFields } = opts;
-  if (!ctx.locals.isAdmin) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+  // v0.4.25 RBAC：admin gate 推迟到拿到 obj.discipline 之后
+  if (!ctx.locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
   const env = ctx.locals.runtime.env;
   if (!env.GITHUB_PAT || !env.GITHUB_REPO) {
@@ -145,6 +152,11 @@ export async function handlePost<S extends ZodTypeAny>(opts: PostCtx<S>): Promis
     return jsonRes<EditError>(422, { ok: false, reason: 'schema_invalid', detail: parsed.error.issues });
   }
   let obj = parsed.data as ZodInfer<S>;
+  // v0.4.25 RBAC：拿到 obj.discipline 后做 per-学科 admin gate
+  const objDiscipline = (obj as { discipline?: string }).discipline;
+  if (!objDiscipline || !ctx.locals.canEdit(objDiscipline)) {
+    return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+  }
   if (forceFields) {
     obj = { ...obj, ...forceFields(obj) };
   }
@@ -193,7 +205,8 @@ interface DeleteCtx {
 
 export async function handleDelete(opts: DeleteCtx): Promise<Response> {
   const { ctx, pathFor, objectLabel, resolveDiscipline, urlIdentifier } = opts;
-  if (!ctx.locals.isAdmin) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+  // v0.4.25 RBAC：admin gate 推迟到 resolveDiscipline 之后
+  if (!ctx.locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
   const env = ctx.locals.runtime.env;
   if (!env.GITHUB_PAT || !env.GITHUB_REPO) {
@@ -215,6 +228,8 @@ export async function handleDelete(opts: DeleteCtx): Promise<Response> {
 
   const discipline = await resolveDiscipline(ident, env.DB);
   if (!discipline) return jsonRes<EditError>(404, { ok: false, reason: 'not_found' });
+  // v0.4.25 RBAC：拿到 discipline 后做 per-学科 admin gate
+  if (!ctx.locals.canEdit(discipline)) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
   const path = pathFor(ident, discipline);
   const adminEmail = ctx.locals.user?.email ?? 'unknown@admin';
@@ -249,7 +264,8 @@ interface GetCtx {
 
 export async function handleGet(opts: GetCtx): Promise<Response> {
   const { ctx, pathFor, resolveDiscipline, urlIdentifier, enrich } = opts;
-  if (!ctx.locals.isAdmin) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+  // v0.4.25 RBAC：admin gate 推迟到 resolveDiscipline 之后（GET 用于编辑器加载，需 canEdit）
+  if (!ctx.locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
   const env = ctx.locals.runtime.env;
   if (!env.GITHUB_PAT || !env.GITHUB_REPO) {
@@ -261,6 +277,7 @@ export async function handleGet(opts: GetCtx): Promise<Response> {
 
   const discipline = await resolveDiscipline(ident, env.DB);
   if (!discipline) return jsonRes<EditError>(404, { ok: false, reason: 'not_found' });
+  if (!ctx.locals.canEdit(discipline)) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
   const path = pathFor(ident, discipline);
   const res = await getFile({ pat: env.GITHUB_PAT, repo: env.GITHUB_REPO }, path);

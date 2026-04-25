@@ -3,7 +3,7 @@ import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
 
 const { discipline } = Astro.params;
-if (!Astro.locals.isAdmin) return Astro.redirect(`/${discipline}`);
+if (!Astro.locals.canEdit(discipline)) return Astro.redirect(`/${discipline}`);
 
 const db = getDb(Astro.locals.runtime.env);
 const themesRow = await db.prepare('SELECT themes_json FROM discipline WHERE key = ?').bind(discipline).first<{ themes_json: string }>();

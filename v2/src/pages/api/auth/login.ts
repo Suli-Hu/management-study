@@ -19,16 +19,19 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const db = getDb(env);
 
   let email = '';
+  let remember = true;
   try {
     const body = await request.formData();
     email = String(body.get('email') ?? '').trim().toLowerCase();
+    remember = body.get('remember') !== null;
   } catch (err) {
     console.error('[/api/auth/login] formData parse failed:', err);
   }
   if (!email) {
     try {
-      const json = (await request.json()) as { email?: string };
+      const json = (await request.json()) as { email?: string; remember?: boolean };
       email = (json.email ?? '').trim().toLowerCase();
+      if (typeof json.remember === 'boolean') remember = json.remember;
     } catch (err) {
       console.error('[/api/auth/login] json parse failed:', err);
     }
@@ -38,7 +41,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response('Invalid email', { status: 400 });
   }
 
-  const { token, code } = await createMagicLink(db, email);
+  const { token, code } = await createMagicLink(db, email, remember);
   const reqUrl = new URL(request.url);
   const reqOrigin = reqUrl.origin;
   const isSecure = reqUrl.protocol === 'https:';
