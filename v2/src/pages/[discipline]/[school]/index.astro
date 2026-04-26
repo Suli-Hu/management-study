@@ -17,6 +17,7 @@ import { getDb } from '~/lib/db';
 import { renderBodyForSchool, renderEvalModule } from '~/lib/render-body';
 import { editHref } from '~/lib/nav';
 import { tagColor } from '~/lib/tag-color';
+import { shortYear } from '~/lib/format-year';
 import type { Tag } from '~/schemas/discipline';
 import type { EvalContent } from '~/lib/eval-tag-defs';
 
@@ -212,12 +213,13 @@ const canEdit = Astro.locals.canEdit(discipline);
                 >
                   <div class="optA-kp-num">{String(i + 1).padStart(2, '0')}</div>
                   <div class="optA-kp-body">
-                    <div class="optA-kp-title">{k.title_zh}</div>
-                    {(scholarLabel || k.year) && (
-                      <div class="optA-kp-meta">
-                        {scholarLabel}{scholarLabel && k.year ? ' · ' : ''}{k.year}
-                      </div>
-                    )}
+                    <div class="optA-kp-title">
+                      {k.title_zh}
+                      {scholarLabel && <span class="optA-kp-scholar">{scholarLabel}</span>}
+                      {k.year && <span class="optA-kp-year">{shortYear(k.year)}</span>}
+                    </div>
+                    {k.title_ja && <div class="optA-kp-sub-ja">{k.title_ja}</div>}
+                    {k.title_en && <div class="optA-kp-sub-en">{k.title_en}</div>}
                   </div>
                 </a>
                 {canEdit && (
