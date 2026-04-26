@@ -97,10 +97,10 @@ for (const tk of byThemeBySchool.keys()) {
       {Astro.locals.canEdit(discipline) && (
         <a
           href={editHref(`/${discipline}/kp/new`, Astro.url.pathname)}
-          class="inline-flex shrink-0 opacity-50 hover:opacity-100 transition-opacity items-center px-3 py-1.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white"
-        >
-          + 新增 KP
-        </a>
+          class="icon-add-btn"
+          aria-label="新增知识点"
+          title="新增知识点"
+        >+</a>
       )}
     </header>
 
