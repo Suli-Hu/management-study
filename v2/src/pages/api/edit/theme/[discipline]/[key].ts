@@ -92,7 +92,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
     return jsonRes(409, {
       ok: false,
       reason: 'has_dependents' as const,
-      detail: `主题"${theme.title?.zh ?? key}"下还有 ${theme.schools.length} 个学派。先把它们移到别的主题或删掉再试。`,
+      detail: `学派组「${theme.title?.zh ?? key}」下还有 ${theme.schools.length} 个学派。先把它们移到别的学派组或删掉再试。`,
     });
   }
 

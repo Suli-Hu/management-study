@@ -5,11 +5,11 @@ const { discipline } = Astro.params;
 if (!Astro.locals.canEdit(discipline)) return Astro.redirect(`/${discipline}`);
 ---
 
-<Layout title="新增主题" currentDiscipline={discipline} currentSection="schools">
+<Layout title="新增学派组" currentDiscipline={discipline} currentSection="schools">
   <main class="max-w-reading mx-auto px-4 py-6">
     <header class="mb-4">
       <a href={`/${discipline}`} class="text-xs text-tertiary hover:underline">← 返回学派概览</a>
-      <h1 class="text-2xl mt-2">新增主题分组</h1>
+      <h1 class="text-2xl mt-2">新增学派组分组</h1>
       <p class="text-xs text-quaternary mt-1">key 一旦提交不可改。命名建议小写蛇形，如 <code>org_emergent</code>。schools[] 留空，建好后拖学派进来。</p>
     </header>
 

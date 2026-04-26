@@ -64,7 +64,7 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
             {Astro.locals.canEdit(discipline) && (
               <span
                 class="theme-drag-handle inline-flex w-5 h-5 items-center justify-center text-quaternary cursor-grab select-none opacity-30 group-hover:opacity-70 transition-opacity"
-                title="长按拖动调整主题顺序"
+                title="长按拖动调整学派组顺序"
                 aria-label="拖动 handle"
               >
                 ≡
@@ -97,7 +97,7 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
               <a
                 href={editHref(`/${discipline}/themes/${t.key}/edit`, Astro.url.pathname)}
                 class="w-7 h-7 rounded border bg-bg-primary text-tertiary hover:text-accent-strategy hover:border-accent-strategy flex items-center justify-center text-xs no-underline"
-                title="编辑此主题"
+                title="编辑此学派组"
                 aria-label={`编辑 ${t.title.zh}`}
               >
                 ✎
@@ -127,7 +127,7 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
           ))}
         </div>
         {t.schoolList.length === 0 && (
-          <p class="text-xs text-quaternary mt-2">暂无学派{Astro.locals.canEdit(discipline) ? '。从其他主题长按拖一个进来。' : '。'}</p>
+          <p class="text-xs text-quaternary mt-2">暂无学派{Astro.locals.canEdit(discipline) ? '。从其他学派组长按拖一个进来。' : '。'}</p>
         )}
         </div>
       </section>
@@ -139,9 +139,9 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
         <a
           href={editHref(`/${discipline}/themes/new`, Astro.url.pathname)}
           class="block py-3 rounded-lg border border-dashed border-bg-tertiary text-center text-xs text-quaternary hover:text-accent-strategy hover:border-accent-strategy no-underline opacity-60 hover:opacity-100 transition"
-          title="新增主题分组"
+          title="新增学派组分组"
         >
-          + 新增主题
+          + 新增学派组
         </a>
       </div>
     )}
@@ -170,7 +170,7 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
 
 <script>
   // @ts-nocheck — DOM 类型推断弱，runtime 已验证
-  // v0.4.30 跨组拖动 — 11 grid 共享同一 group key 实现跨主题拖学派
+  // v0.4.30 跨组拖动 — 11 grid 共享同一 group key 实现跨学派组拖学派
   import { mountDragReorder } from '~/lib/drag-reorder-client';
   const bootstrap = document.querySelector('[data-reorder-bootstrap="discipline-schools"]');
   if (bootstrap) {
@@ -221,7 +221,7 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
           });
           if (!res.ok) {
             const data = await res.json().catch(() => ({}));
-            alert(`保存主题顺序失败：${res.status} ${data.reason ?? 'error'}`);
+            alert(`保存学派组顺序失败：${res.status} ${data.reason ?? 'error'}`);
           }
         },
       });
@@ -230,7 +230,7 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
 </script>
 
 <script is:inline>
-  // v0.4.36 主题折叠（所有用户都能折叠，per-discipline localStorage 持久化）
+  // v0.4.36 学派组折叠（所有用户都能折叠，per-discipline localStorage 持久化）
   (function () {
     const path = window.location.pathname.split('/').filter(Boolean);
     const disc = path[0];

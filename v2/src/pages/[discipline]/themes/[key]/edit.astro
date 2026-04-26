@@ -9,11 +9,11 @@ const fromPath = parseFrom(Astro.url.searchParams.get('from'), `/${discipline}`)
 const fromLbl = fromLabel(fromPath);
 ---
 
-<Layout title={`编辑主题 · ${key}`} currentDiscipline={discipline} currentSection="schools">
+<Layout title={`编辑学派组 · ${key}`} currentDiscipline={discipline} currentSection="schools">
   <main class="max-w-reading mx-auto px-4 py-6">
     <header class="mb-4">
       <a href={fromPath} class="text-xs text-tertiary hover:underline">← 返回{fromLbl}</a>
-      <h1 class="text-2xl mt-2">编辑主题分组 <code class="text-base text-tertiary">{key}</code></h1>
+      <h1 class="text-2xl mt-2">编辑学派组分组 <code class="text-base text-tertiary">{key}</code></h1>
       <p class="text-xs text-quaternary mt-1">key 不可改。schools[] 由首页拖动管理。</p>
     </header>
 
@@ -68,7 +68,7 @@ const fromLbl = fromLabel(fromPath);
           class="px-4 py-2 rounded-md bg-bg-primary border border-accent-warning text-accent-warning text-sm font-semibold ml-auto disabled:opacity-40 disabled:cursor-not-allowed"
           title="加载中..."
         >
-          硬删此主题
+          硬删此学派组
         </button>
         <span id="save-status" class="text-xs text-tertiary"></span>
       </footer>
@@ -102,10 +102,10 @@ const fromLbl = fromLabel(fromPath);
   function applyDeleteGate(schoolCount) {
     if (schoolCount === 0) {
       deleteBtn.disabled = false;
-      deleteBtn.title = '删此主题（进 git history 可 revert，~90s 后线上消失）';
+      deleteBtn.title = '删此学派组（进 git history 可 revert，~90s 后线上消失）';
     } else {
       deleteBtn.disabled = true;
-      deleteBtn.title = `还有 ${schoolCount} 个学派归属此主题。先把它们移到别的主题或删掉，才能删此主题。`;
+      deleteBtn.title = `还有 ${schoolCount} 个学派归属此学派组。先把它们移到别的学派组或删掉，才能删此学派组。`;
     }
   }
 
@@ -172,7 +172,7 @@ const fromLbl = fromLabel(fromPath);
 
   async function del() {
     if (deleteBtn.disabled) return;
-    if (!confirm(`确认硬删除主题分组「${key}」？\n\n• 进 git history 可 revert\n• ~90s 后线上消失`)) return;
+    if (!confirm(`确认硬删除学派组分组「${key}」？\n\n• 进 git history 可 revert\n• ~90s 后线上消失`)) return;
     deleteBtn.disabled = true;
     deleteBtn.textContent = '删除中...';
     const res = await fetch(`/api/edit/theme/${discipline}/${key}`, { method: 'DELETE' });
@@ -183,11 +183,11 @@ const fromLbl = fromLabel(fromPath);
     } else if (res.status === 409 && data.reason === 'has_dependents') {
       alert(`无法删除：${data.detail}`);
       deleteBtn.disabled = false;
-      deleteBtn.textContent = '硬删此主题';
+      deleteBtn.textContent = '硬删此学派组';
     } else {
       alert(`删除失败：${res.status} ${data.reason}`);
       deleteBtn.disabled = false;
-      deleteBtn.textContent = '硬删此主题';
+      deleteBtn.textContent = '硬删此学派组';
     }
   }
 

@@ -30,7 +30,7 @@ const PATH_LABELS: Record<string, string> = {
   'contribution.ja': '贡献（日文）',
 
   // 学派
-  themeKey: '主题分组',
+  themeKey: '学派组',
   accent: 'accent',
   era: '时代',
   concepts: '核心概念列表',
