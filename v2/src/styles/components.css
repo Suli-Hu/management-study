@@ -76,7 +76,8 @@ mark {
 }
 .split > .left {
   border-right: 1px solid var(--color-border);
-  padding: 20px 18px;
+  /* v0.5.8: padding-top: 0 让 .optA-hero 可以 sticky 紧贴顶部（hero 自带 padding） */
+  padding: 0 18px 20px;
   overflow-y: auto;
   background: var(--color-bg-primary);
   min-height: 0;
@@ -329,10 +330,14 @@ mark {
  * 学派详情 OptionA — 紧凑密度
  * ============================================================ */
 .optA-hero {
+  /* v0.5.8: sticky 顶部，让用户滚长列表时仍能看到当前学派/学者 */
+  position: sticky; top: 0; z-index: 5;
+  background: var(--color-bg-primary);
   border-left: 3px solid var(--accent, var(--color-border));
-  padding: 4px 14px;
+  padding: 16px 14px 12px;
   display: flex; flex-direction: column; gap: 2px;
   margin-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
 }
 .optA-eyebrow {
   font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600;
@@ -351,9 +356,37 @@ mark {
 }
 
 .optA-block { padding: 0 8px 4px; }
+/* v0.5.8: 同级 .optA-block / .optA-summary-wrap 之间用底部边框分割 */
+.optA-block + .optA-block,
+.optA-summary-wrap + .optA-block,
+.optA-block + .optA-summary-wrap {
+  border-top: 1px solid var(--color-border);
+  padding-top: 4px;
+  margin-top: 4px;
+}
 .optA-section-head {
   display: flex; align-items: baseline; gap: 8px;
   padding: 8px 8px;
+}
+/* v0.5.8: section 头部的「+ 新增」按钮，默认 invisible，hover section 才显形 */
+.optA-section-add {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--color-text-quaternary);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity .12s, color .12s;
+}
+.optA-section-head:hover .optA-section-add,
+.optA-section-head--btn:hover .optA-section-add,
+.optA-block:hover .optA-section-add,
+.optA-summary-wrap:hover .optA-section-add,
+.optA-section-add:hover,
+.optA-section-add:focus {
+  opacity: 1;
+}
+.optA-section-add:hover {
+  color: var(--accent-strategy);
 }
 .optA-section-head h2 {
   font-size: 13px; font-weight: 600; color: var(--color-text-primary); margin: 0;

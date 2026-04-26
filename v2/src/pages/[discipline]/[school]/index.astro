@@ -175,7 +175,7 @@ const canEdit = Astro.locals.canEdit(discipline);
           {canEdit && (
             <a
               href={editHref(`/${discipline}/scholars/new?school=${sch.key}`, Astro.url.pathname)}
-              class="ml-auto text-xs text-quaternary hover:text-accent-strategy"
+              class="optA-section-add"
               onclick="event.stopPropagation()"
               title="新增学者"
             >+ 新增</a>
@@ -205,7 +205,7 @@ const canEdit = Astro.locals.canEdit(discipline);
           {canEdit && (
             <a
               href={editHref(`/${discipline}/kp/new?school=${sch.key}`, Astro.url.pathname)}
-              class="ml-auto text-xs text-quaternary hover:text-accent-strategy"
+              class="optA-section-add"
               title="新增 KP"
             >+ 新增</a>
           )}

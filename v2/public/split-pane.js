@@ -5,33 +5,59 @@
 //   - [data-kp-link][data-kp-wide-href]  宽屏应去的相对 URL
 //   - #kp-detail-pane              右栏容器（server 端按 ?kp= SSR 内容）
 
+// v0.5.8 延迟修复：
+//   - is-active toggle 改成 click 时立即执行（之前等 fetch 完成再切，~150ms 延迟）
+//   - AbortController 取消上一个未完成的 fetch（快速点击不会卡住）
+//   - history.pushState 也立即执行，UI 状态先到位
+
 (function () {
   function initSplitPane() {
     const MQ = window.matchMedia('(min-width: 1024px)');
     const detailPane = document.getElementById('kp-detail-pane');
     if (!detailPane) return;
 
+    let inflight = null;          // 当前 AbortController
+    // 从 URL ?kp= 或 .kp-list-item.is-active 初始化（避免点击当前 KP 时 no-op）
+    let activeKpId = new URLSearchParams(location.search).get('kp')
+      || document.querySelector('.kp-list-item.is-active')?.getAttribute('data-kp-id')
+      || null;
+
+    function setActiveImmediate(kpId) {
+      if (activeKpId === kpId) return false;
+      activeKpId = kpId;
+      const url = location.pathname + '?kp=' + encodeURIComponent(kpId);
+      // 立即切 active class（用户视觉反馈）
+      document.querySelectorAll('.kp-list-item').forEach((li) => {
+        li.classList.toggle('is-active', li.getAttribute('data-kp-id') === kpId);
+      });
+      // 立即更新 URL（按浏览器后退键回到上一个 KP）
+      try { history.pushState(null, '', url); } catch (_) {}
+      return true;
+    }
+
     async function showKpInPane(kpId) {
+      // 立即视觉反馈（不等 fetch）
+      if (!setActiveImmediate(kpId)) return;
+      // 取消上一个未完成的 fetch
+      if (inflight) inflight.abort();
+      inflight = new AbortController();
       const url = location.pathname + '?kp=' + encodeURIComponent(kpId);
       detailPane.setAttribute('aria-busy', 'true');
       try {
-        const res = await fetch(url);
+        const res = await fetch(url, { signal: inflight.signal });
         if (!res.ok) throw new Error('fetch failed: ' + res.status);
         const html = await res.text();
+        // 如果在 fetch 期间用户又切到另一个 KP，丢弃这次结果
+        if (activeKpId !== kpId) return;
         const doc = new DOMParser().parseFromString(html, 'text/html');
         const newPane = doc.getElementById('kp-detail-pane');
         if (!newPane) throw new Error('no detail pane in response');
         detailPane.innerHTML = newPane.innerHTML;
-        history.pushState(null, '', url);
-        document.querySelectorAll('.kp-list-item').forEach((li) => {
-          const isActive = li.getAttribute('data-kp-id') === kpId;
-          li.classList.toggle('is-active', isActive);
-          // v0.4.15: 不再 toggle ring-2 / activeRing class —— is-active 由 .kp-list-item__link CSS 处理
-        });
         const newTitle = doc.querySelector('title')?.textContent;
         if (newTitle) document.title = newTitle;
         detailPane.scrollTop = 0;
       } catch (err) {
+        if (err && err.name === 'AbortError') return;
         console.error('[split-pane] showKpInPane failed:', err);
       } finally {
         detailPane.removeAttribute('aria-busy');

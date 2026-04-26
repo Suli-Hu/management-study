@@ -271,7 +271,7 @@ const canEdit = Astro.locals.canEdit(discipline);
           {canEdit && (
             <a
               href={editHref(`/${discipline}/kp/new?scholar=${scholar.key}`, Astro.url.pathname)}
-              class="ml-auto text-xs text-quaternary hover:text-accent-strategy"
+              class="optA-section-add"
               title="新增 KP"
             >+ 新增</a>
           )}
