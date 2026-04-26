@@ -188,8 +188,8 @@
         "harvard",
         "michigan",
         "chicago",
-        "carnegie",
         "ohio",
+        "carnegie",
         "situational",
         "tavistock",
         "aston",
@@ -199,5 +199,5 @@
     }
   ],
   "createdAt": "2026-04-24T16:44:30.409Z",
-  "updatedAt": "2026-04-26T01:27:19.995Z"
+  "updatedAt": "2026-04-26T01:36:25.398Z"
 }
