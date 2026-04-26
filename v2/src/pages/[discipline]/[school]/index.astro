@@ -283,15 +283,18 @@ if (selectedKpId) {
 
 <script>
   // @ts-nocheck — DOM 类型推断弱，runtime 已验证
-  // v0.4.26 KP 列表长按拖动重排（admin 才挂载）
+  // v0.4.26 KP 列表长按拖动重排（v0.4.30 改新 onReorder API 签名 — 单容器仍用 idsByContainer Map）
   import { mountDragReorder } from '~/lib/drag-reorder-client';
   if (document.querySelector('[data-reorder-bootstrap="school-concepts"]')) {
     document.querySelectorAll('[data-reorder-kind="school-concepts"]').forEach((ul) => {
       const schoolKey = ul.dataset.schoolKey;
       mountDragReorder(ul, {
         getId: (el) => el.getAttribute('data-kp-id'),
+        getContainerKey: () => schoolKey,
         skipSelector: 'a, button',
-        onReorder: async (kpIds) => {
+        onReorder: async (idsByContainer) => {
+          const kpIds = idsByContainer.get(schoolKey) ?? [];
+          if (kpIds.length === 0) return;
           const res = await fetch('/api/edit/reorder/school-concepts', {
             method: 'POST',
             headers: { 'content-type': 'application/json' },

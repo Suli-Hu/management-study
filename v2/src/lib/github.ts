@@ -115,3 +115,72 @@ export async function deleteFile(
   const json = (await res.json()) as { commit: { sha: string } };
   return { ok: true, data: { commit_sha: json.commit.sha } };
 }
+
+/**
+ * 多文件原子 commit（v0.4.30 跨组拖动用）
+ *   通过 Tree API 在单次 commit 中更新多个 file。
+ *   流程：refs/heads/main → commit → tree → blob × N → tree(new) → commit(new) → ref(update)
+ *
+ *   files: [{ path, content }] — content 是 utf-8 字符串
+ */
+export async function commitMultipleFiles(
+  cfg: GhConfig,
+  files: Array<{ path: string; content: string }>,
+  message: string,
+  branch = 'main',
+): Promise<GhResult<{ commit_sha: string }>> {
+  const h = { ...headers(cfg.pat), 'content-type': 'application/json' };
+
+  // 1. ref → latest commit sha
+  const refRes = await fetch(`${GH_API}/repos/${cfg.repo}/git/refs/heads/${branch}`, { headers: h });
+  if (!refRes.ok) return { ok: false, status: refRes.status, reason: classifyError(refRes.status), detail: await refRes.text().catch(() => '') };
+  const refJson = (await refRes.json()) as { object: { sha: string } };
+  const latestCommitSha = refJson.object.sha;
+
+  // 2. commit → tree sha
+  const commitRes = await fetch(`${GH_API}/repos/${cfg.repo}/git/commits/${latestCommitSha}`, { headers: h });
+  if (!commitRes.ok) return { ok: false, status: commitRes.status, reason: classifyError(commitRes.status), detail: await commitRes.text().catch(() => '') };
+  const commitJson = (await commitRes.json()) as { tree: { sha: string } };
+  const baseTreeSha = commitJson.tree.sha;
+
+  // 3. 每个 file 新建一个 blob
+  const treeEntries: Array<{ path: string; mode: '100644'; type: 'blob'; sha: string }> = [];
+  for (const f of files) {
+    const blobRes = await fetch(`${GH_API}/repos/${cfg.repo}/git/blobs`, {
+      method: 'POST',
+      headers: h,
+      body: JSON.stringify({ content: f.content, encoding: 'utf-8' }),
+    });
+    if (!blobRes.ok) return { ok: false, status: blobRes.status, reason: classifyError(blobRes.status), detail: await blobRes.text().catch(() => '') };
+    const blobJson = (await blobRes.json()) as { sha: string };
+    treeEntries.push({ path: f.path, mode: '100644', type: 'blob', sha: blobJson.sha });
+  }
+
+  // 4. 新 tree
+  const treeRes = await fetch(`${GH_API}/repos/${cfg.repo}/git/trees`, {
+    method: 'POST',
+    headers: h,
+    body: JSON.stringify({ base_tree: baseTreeSha, tree: treeEntries }),
+  });
+  if (!treeRes.ok) return { ok: false, status: treeRes.status, reason: classifyError(treeRes.status), detail: await treeRes.text().catch(() => '') };
+  const treeJson = (await treeRes.json()) as { sha: string };
+
+  // 5. 新 commit
+  const newCommitRes = await fetch(`${GH_API}/repos/${cfg.repo}/git/commits`, {
+    method: 'POST',
+    headers: h,
+    body: JSON.stringify({ message, tree: treeJson.sha, parents: [latestCommitSha] }),
+  });
+  if (!newCommitRes.ok) return { ok: false, status: newCommitRes.status, reason: classifyError(newCommitRes.status), detail: await newCommitRes.text().catch(() => '') };
+  const newCommitJson = (await newCommitRes.json()) as { sha: string };
+
+  // 6. 更新 ref（fast-forward only — 若并发 push 已 advance 则失败，相当于 sha_conflict）
+  const updateRes = await fetch(`${GH_API}/repos/${cfg.repo}/git/refs/heads/${branch}`, {
+    method: 'PATCH',
+    headers: h,
+    body: JSON.stringify({ sha: newCommitJson.sha, force: false }),
+  });
+  if (!updateRes.ok) return { ok: false, status: updateRes.status, reason: classifyError(updateRes.status), detail: await updateRes.text().catch(() => '') };
+
+  return { ok: true, data: { commit_sha: newCommitJson.sha } };
+}

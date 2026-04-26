@@ -146,21 +146,29 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
 
 <script>
   // @ts-nocheck — DOM 类型推断弱，runtime 已验证
-  // v0.4.26 长按拖动重排（仅 admin 渲染了 bootstrap 标记才挂载）
+  // v0.4.30 跨组拖动 — 11 grid 共享同一 group key 实现跨主题拖学派
   import { mountDragReorder } from '~/lib/drag-reorder-client';
   const bootstrap = document.querySelector('[data-reorder-bootstrap="discipline-schools"]');
   if (bootstrap) {
     const discipline = bootstrap.dataset.discipline;
+    const groupKey = `discipline-themes-${discipline}`;
     document.querySelectorAll('[data-reorder-kind="discipline-schools"]').forEach((grid) => {
-      const themeKey = grid.dataset.themeKey;
       mountDragReorder(grid, {
+        group: groupKey,
         getId: (el) => el.getAttribute('data-school-key'),
+        getContainerKey: (el) => el.dataset.themeKey,
         skipSelector: 'button',
-        onReorder: async (schoolKeys) => {
+        onReorder: async (idsByContainer, movedInfo) => {
+          const themesSchools = Object.fromEntries(idsByContainer);
+          const body = { discipline, themesSchools };
+          // 跨组：附加 movedSchool 让后端同步 school.themeKey
+          if (movedInfo.fromKey !== movedInfo.toKey) {
+            body.movedSchool = { key: movedInfo.itemId, fromTheme: movedInfo.fromKey, toTheme: movedInfo.toKey };
+          }
           const res = await fetch('/api/edit/reorder/discipline-schools', {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({ discipline, themeKey, schoolKeys }),
+            body: JSON.stringify(body),
           });
           if (!res.ok) {
             const data = await res.json().catch(() => ({}));
