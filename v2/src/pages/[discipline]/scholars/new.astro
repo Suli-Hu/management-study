@@ -45,7 +45,7 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
       </section>
 
       <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">所属学派（可空 = 独立学者）</label>
+        <label class="block text-xs font-semibold text-tertiary mb-1">所属学派</label>
         <div
           id="schools-multi"
           data-options={JSON.stringify(allSchools.map((s) => ({ key: s.key, label: s.title_zh })))}
@@ -73,7 +73,7 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
           <input name="flag" type="text" placeholder="🇩🇪 🇺🇸" class="w-full px-3 py-2 rounded-md border text-sm" />
         </div>
         <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">研究领域 badge</label>
+          <label class="block text-xs font-semibold text-tertiary mb-1">研究领域</label>
           <input name="field" type="text" placeholder="社会心理学 · 组织变革" class="w-full px-3 py-2 rounded-md border text-sm" />
         </div>
       </section>
@@ -83,19 +83,8 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
       </section>
 
       <section>
-        <div class="flex items-center gap-2 mb-1">
-          <label class="text-xs font-semibold text-tertiary">contribution <span class="text-accent-warning">*</span></label>
-          <div role="tablist" class="inline-flex border rounded overflow-hidden text-xs">
-            <button type="button" data-lang-tab="zh" data-active class="px-2.5 py-0.5 hover:bg-bg-tertiary data-[active]:bg-accent-strategy data-[active]:text-white">中</button>
-            <button type="button" data-lang-tab="ja" class="px-2.5 py-0.5 border-l hover:bg-bg-tertiary data-[active]:bg-accent-strategy data-[active]:text-white">日</button>
-          </div>
-        </div>
-        <div data-lang-pane="zh">
-          <textarea name="contribution_zh" required rows="8" class="w-full px-3 py-2 rounded-md border text-sm leading-relaxed"></textarea>
-        </div>
-        <div data-lang-pane="ja" class="hidden">
-          <textarea name="contribution_ja" rows="8" class="w-full px-3 py-2 rounded-md border text-sm leading-relaxed"></textarea>
-        </div>
+        <label class="block text-xs font-semibold text-tertiary mb-1">学术贡献 <span class="text-accent-warning">*</span></label>
+        <textarea name="contribution_zh" required rows="8" class="w-full px-3 py-2 rounded-md border text-sm leading-relaxed"></textarea>
       </section>
 
       <section>
@@ -131,18 +120,13 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
     inputName: 'school',
     options: JSON.parse(schoolsMount.dataset.options ?? '[]'),
     selected: schoolsMount.dataset.preselect ? [schoolsMount.dataset.preselect] : [],
-    placeholder: '搜索学派（可空 = 独立学者）',
+    placeholder: '搜索学派',
   });
 
   function buildI18n(zh, en, ja) {
     const o = { zh: zh.trim() };
     if (en?.trim()) o.en = en.trim();
     if (ja?.trim()) o.ja = ja.trim();
-    return o;
-  }
-  function buildBody(zh, ja) {
-    const o = { zh };
-    if (ja?.trim()) o.ja = ja;
     return o;
   }
   function collect() {
@@ -155,7 +139,7 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
       discipline,
       name: buildI18n(form.name_zh.value, form.name_en.value, form.name_ja.value),
       schools,
-      contribution: buildBody(form.contribution_zh.value, form.contribution_ja.value),
+      contribution: { zh: form.contribution_zh.value },
       // lifespan/origin/accent UI 移除（v0.4.19）— schema 字段保留，新建时填空，sync 时 accent 由学派派生
       lifespan: '',
       origin: '',
@@ -171,13 +155,6 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
       updatedAt: now,
     };
   }
-
-  document.querySelectorAll('[data-lang-tab]').forEach((b) => {
-    b.addEventListener('click', () => {
-      document.querySelectorAll('[data-lang-tab]').forEach((x) => x.toggleAttribute('data-active', x.dataset.langTab === b.dataset.langTab));
-      document.querySelectorAll('[data-lang-pane]').forEach((p) => p.classList.toggle('hidden', p.dataset.langPane !== b.dataset.langTab));
-    });
-  });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();

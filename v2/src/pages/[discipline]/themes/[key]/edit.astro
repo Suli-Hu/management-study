@@ -1,26 +1,19 @@
 ---
 import Layout from '~/layouts/Layout.astro';
 import { parseFrom, fromLabel } from '~/lib/nav';
-import { getDb } from '~/lib/db';
-import type { Tag } from '~/schemas/discipline';
 
 const { discipline, key } = Astro.params;
 if (!Astro.locals.canEdit(discipline)) return Astro.redirect(`/${discipline}`);
 
 const fromPath = parseFrom(Astro.url.searchParams.get('from'), `/${discipline}`);
 const fromLbl = fromLabel(fromPath);
-
-const db = getDb(Astro.locals.runtime.env);
-const discRow = await db.prepare('SELECT tags_json FROM discipline WHERE key = ?').bind(discipline).first<{ tags_json: string }>();
-const tagLibrary: Tag[] = discRow?.tags_json ? JSON.parse(discRow.tags_json) : [];
 ---
 
 <Layout title={`编辑学派组 · ${key}`} currentDiscipline={discipline} currentSection="schools">
   <main class="max-w-reading mx-auto px-4 py-6">
     <header class="mb-4">
       <a href={fromPath} class="text-xs text-tertiary hover:underline">← 返回{fromLbl}</a>
-      <h1 class="text-2xl mt-2">编辑学派组分组 <code class="text-base text-tertiary">{key}</code></h1>
-      <p class="text-xs text-quaternary mt-1">key 不可改。schools[] 由首页拖动管理。</p>
+      <h1 class="text-2xl mt-2">编辑学派组</h1>
     </header>
 
     <div id="status" class="hidden mb-4 p-3 rounded-md text-xs"></div>
@@ -42,35 +35,13 @@ const tagLibrary: Tag[] = discRow?.tags_json ? JSON.parse(discRow.tags_json) : [
       </section>
 
       <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">副标题（中文）</label>
+        <label class="block text-xs font-semibold text-tertiary mb-1">副标题</label>
         <input name="desc_zh" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
-      </section>
-      <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">副标题（日文）</label>
-        <input name="desc_ja" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
-      </section>
-
-      <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">标签</label>
-        {tagLibrary.length === 0 ? (
-          <p class="text-xs text-quaternary">暂无标签可选 — 学科尚未配置标签库</p>
-        ) : (
-          <div class="flex gap-2 flex-wrap">
-            {tagLibrary.map((t) => (
-              <label class="inline-flex items-center gap-1 px-3 py-1.5 rounded border text-xs cursor-pointer">
-                <input type="checkbox" name="tag" value={t.key} class="w-3 h-3" />
-                <span>{t.label.zh ?? t.key}</span>
-                <span class="inline-block w-3 h-3 rounded-full" style={`background:${t.color}`}></span>
-              </label>
-            ))}
-          </div>
-        )}
-        <p class="text-xs text-quaternary mt-1">第一个勾选的标签决定卡片色，留空 = 中性灰</p>
       </section>
 
       <footer class="sticky bottom-0 bg-bg-primary py-3 border-t flex items-center gap-3">
         <button type="submit" id="save-btn" class="px-4 py-2 rounded-md bg-accent-strategy text-white text-sm font-semibold disabled:opacity-50">
-          保存（commit + 部署）
+          保存
         </button>
         <button
           type="button"
@@ -79,7 +50,7 @@ const tagLibrary: Tag[] = discRow?.tags_json ? JSON.parse(discRow.tags_json) : [
           class="px-4 py-2 rounded-md bg-bg-primary border border-accent-warning text-accent-warning text-sm font-semibold ml-auto disabled:opacity-40 disabled:cursor-not-allowed"
           title="加载中..."
         >
-          硬删此学派组
+          删除
         </button>
         <span id="save-status" class="text-xs text-tertiary"></span>
       </footer>
@@ -100,6 +71,9 @@ const tagLibrary: Tag[] = discRow?.tags_json ? JSON.parse(discRow.tags_json) : [
   const discipline = form.dataset.discipline;
   const key = form.dataset.key;
   let _deployWatcher = null;
+  // UI 移除但 schema 保留 — 保旧值不动
+  let originalTags = [];
+  let originalDescJa = '';
 
   function setStatus(msg, kind = 'info') {
     status.textContent = msg;
@@ -133,9 +107,8 @@ const tagLibrary: Tag[] = discRow?.tags_json ? JSON.parse(discRow.tags_json) : [
     form.title_en.value = t.title?.en ?? '';
     form.title_ja.value = t.title?.ja ?? '';
     form.desc_zh.value = t.desc?.zh ?? '';
-    form.desc_ja.value = t.desc?.ja ?? '';
-    const themeTags = new Set(t.tags ?? []);
-    document.querySelectorAll('input[name=tag]').forEach((c) => { c.checked = themeTags.has(c.value); });
+    originalDescJa = t.desc?.ja ?? '';
+    originalTags = Array.isArray(t.tags) ? t.tags : [];
     applyDeleteGate(school_count ?? 0);
     form.classList.remove('hidden');
     status.classList.add('hidden');
@@ -159,11 +132,10 @@ const tagLibrary: Tag[] = discRow?.tags_json ? JSON.parse(discRow.tags_json) : [
     e.preventDefault();
     saveBtn.disabled = true;
     saveStatus.textContent = '保存中...';
-    const checkedTags = Array.from(document.querySelectorAll('input[name=tag]:checked')).map((el) => el.value);
     const body = {
       title: buildI18n(form.title_zh.value, form.title_en.value, form.title_ja.value),
-      desc: buildOptionalI18n(form.desc_zh.value, form.desc_ja.value),
-      tags: checkedTags,
+      desc: buildOptionalI18n(form.desc_zh.value, originalDescJa),
+      tags: originalTags,
     };
     const res = await fetch(`/api/edit/theme/${discipline}/${key}`, {
       method: 'PUT',
@@ -185,7 +157,7 @@ const tagLibrary: Tag[] = discRow?.tags_json ? JSON.parse(discRow.tags_json) : [
 
   async function del() {
     if (deleteBtn.disabled) return;
-    if (!confirm(`确认硬删除学派组分组「${key}」？\n\n• 进 git history 可 revert\n• ~90s 后线上消失`)) return;
+    if (!confirm(`确认删除学派组「${key}」？\n\n• 进 git history 可 revert\n• ~90s 后线上消失`)) return;
     deleteBtn.disabled = true;
     deleteBtn.textContent = '删除中...';
     const res = await fetch(`/api/edit/theme/${discipline}/${key}`, { method: 'DELETE' });
@@ -196,11 +168,11 @@ const tagLibrary: Tag[] = discRow?.tags_json ? JSON.parse(discRow.tags_json) : [
     } else if (res.status === 409 && data.reason === 'has_dependents') {
       alert(`无法删除：${data.detail}`);
       deleteBtn.disabled = false;
-      deleteBtn.textContent = '硬删此学派组';
+      deleteBtn.textContent = '删除';
     } else {
       alert(`删除失败：${res.status} ${data.reason}`);
       deleteBtn.disabled = false;
-      deleteBtn.textContent = '硬删此学派组';
+      deleteBtn.textContent = '删除';
     }
   }
 
