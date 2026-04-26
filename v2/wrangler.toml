@@ -35,6 +35,11 @@ AUTH_MODE = "email"
 # password 模式下，访客共用这条 user 记录（所有 123 登录指向同一 user_id）
 GUEST_EMAIL = "guest@local"
 
+# v0.4.33 邀请码登录（无需邮箱）：输 INVITE_CODE_GUEST → 共用 INVITE_GUEST_EMAIL user → 全学科 guest 视角
+# 共用 user_id：所有邀请码登录指向同一 user（无 user_progress / user_note 区分），便利分享只读
+INVITE_CODE_GUEST = "123"
+INVITE_GUEST_EMAIL = "invite-guest@anytime"
+
 # v0.4.1 编辑器：GitHub Contents API 目标仓库
 GITHUB_REPO = "Suli-Hu/management-study"
 

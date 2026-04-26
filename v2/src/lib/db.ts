@@ -30,6 +30,10 @@ export interface Env {
   ADMIN_PASSWORD?: string;
   GUEST_PASSWORD?: string;
 
+  // v0.4.33 邀请码登录（共用 user，全学科 guest 视角）
+  INVITE_CODE_GUEST?: string;
+  INVITE_GUEST_EMAIL?: string;
+
   // v0.4.1 编辑器：GitHub Contents API 写 data/*.json
   GITHUB_PAT?: string;       // fine-grained PAT，仅 Contents R/W
   GITHUB_REPO?: string;      // "Suli-Hu/management-study"，默认从 wrangler.toml [vars] 注入

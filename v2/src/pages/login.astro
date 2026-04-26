@@ -6,9 +6,8 @@ const user = Astro.locals.user;
 if (user) return Astro.redirect('/');
 
 const env = Astro.locals.runtime.env;
-const mode = env.AUTH_MODE === 'password' ? 'password' : 'email';
+const passwordMode = env.AUTH_MODE === 'password';
 
-// v0.3.6: 错误从 flash cookie 读（URL 不留痕），读一次即清
 const flash = readFlash(Astro.request.headers.get('cookie'));
 if (flash) Astro.cookies.delete(FLASH_COOKIE, { path: '/' });
 
@@ -18,22 +17,17 @@ const errorMessages: Record<string, string> = {
   missing_token: '链接不完整，请重新申请。',
   missing_code: '请输入 6 位 code。',
   bad_password: '密码不对。',
+  bad_invite_code: '邀请码不对。',
 };
 const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。') : null;
 ---
 
 <Layout title="登录">
-  <main class="max-w-reading mx-auto px-4 py-10">
+  <main class="max-w-reading mx-auto px-4 py-12">
     <div class="max-w-md mx-auto">
-      <header class="mb-6">
-        <h1 class="text-2xl mb-2">登录</h1>
-        {mode === 'password' ? (
-          <p class="text-sm text-tertiary leading-relaxed">
-            输入密码登录。考试期间使用简化登录，考完切回邮箱验证。
-          </p>
-        ) : (
-          <p class="text-sm text-tertiary">输入邮箱，我们会发一条只能用一次的登录链接给你。</p>
-        )}
+      <header class="mb-8 text-center">
+        <h1 class="text-4xl font-bold mb-2 tracking-tight">Anytime Study</h1>
+        <p class="text-sm text-tertiary">个人笔记 · 非商业用途</p>
       </header>
 
       {errorMsg && (
@@ -42,7 +36,7 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
         </div>
       )}
 
-      {mode === 'password' ? (
+      {passwordMode ? (
         <form method="POST" action="/api/auth/password" class="space-y-3">
           <input
             type="password"
@@ -54,56 +48,92 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
             class="w-full px-3 py-2 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
           />
           <label class="flex items-center gap-2 text-xs text-tertiary cursor-pointer select-none">
-            <input
-              type="checkbox"
-              name="remember"
-              value="1"
-              checked
-              class="w-4 h-4 accent-accent-strategy cursor-pointer"
-            />
+            <input type="checkbox" name="remember" value="1" checked class="w-4 h-4 accent-accent-strategy cursor-pointer" />
             记住登录 30 天
           </label>
-          <button
-            type="submit"
-            class="w-full px-4 py-2 rounded-md bg-accent-strategy text-white text-sm font-semibold"
-          >
+          <button type="submit" class="w-full px-4 py-2 rounded-md bg-accent-strategy text-white text-sm font-semibold">
             登录
           </button>
+          <p class="text-xs text-quaternary text-center mt-4">访客密码仅可浏览；管理员密码可编辑。</p>
         </form>
       ) : (
-        <form method="POST" action="/api/auth/login" class="space-y-3">
-          <input
-            type="email"
-            name="email"
-            required
-            autocomplete="email"
-            placeholder="you@example.com"
-            class="w-full px-3 py-2 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
-          />
-          <label class="flex items-center gap-2 text-xs text-tertiary cursor-pointer select-none">
-            <input
-              type="checkbox"
-              name="remember"
-              value="1"
-              checked
-              class="w-4 h-4 accent-accent-strategy cursor-pointer"
-            />
-            记住登录 30 天
-          </label>
-          <button
-            type="submit"
-            class="w-full px-4 py-2 rounded-md bg-accent-strategy text-white text-sm font-semibold"
-          >
-            发送登录链接
-          </button>
-        </form>
-      )}
+        <div>
+          {/* tab 切换：邀请码 / 邮箱验证码 */}
+          <div class="flex bg-bg-secondary rounded-full p-1 mb-6" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              data-login-tab="invite"
+              data-active
+              class="flex-1 px-4 py-2 rounded-full text-sm font-semibold transition-colors data-[active]:bg-bg-primary data-[active]:shadow-card text-tertiary data-[active]:text-primary"
+            >
+              邀请码
+            </button>
+            <button
+              type="button"
+              role="tab"
+              data-login-tab="email"
+              class="flex-1 px-4 py-2 rounded-full text-sm font-semibold transition-colors data-[active]:bg-bg-primary data-[active]:shadow-card text-tertiary data-[active]:text-primary"
+            >
+              邮箱验证码
+            </button>
+          </div>
 
-      <p class="text-xs text-quaternary mt-6 leading-relaxed">
-        {mode === 'password'
-          ? '访客密码仅可浏览，不保存任何操作；管理员密码可编辑。'
-          : '我们只用你的邮箱识别你是谁 —— 不用密码，不会发推广邮件。'}
-      </p>
+          {/* 邀请码 tab */}
+          <form method="POST" action="/api/auth/invite-code" data-login-pane="invite" class="space-y-3">
+            <div>
+              <label class="block text-xs text-tertiary mb-1">邀请码</label>
+              <input
+                type="text"
+                name="code"
+                required
+                autocomplete="off"
+                placeholder="请输入邀请码"
+                class="w-full px-3 py-2.5 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
+              />
+            </div>
+            <input type="hidden" name="remember" value="1" />
+            <button type="submit" class="w-full px-4 py-2.5 rounded-md bg-accent-strategy text-white text-sm font-semibold">
+              继续
+            </button>
+            <p class="text-xs text-quaternary text-center mt-4">演示码 123 · 进入 guest 视角</p>
+          </form>
+
+          {/* 邮箱验证码 tab */}
+          <form method="POST" action="/api/auth/login" data-login-pane="email" class="space-y-3 hidden">
+            <div>
+              <label class="block text-xs text-tertiary mb-1">邮箱</label>
+              <input
+                type="email"
+                name="email"
+                required
+                autocomplete="email"
+                placeholder="you@gmail.com"
+                class="w-full px-3 py-2.5 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
+              />
+            </div>
+            <label class="flex items-center gap-2 text-xs text-tertiary cursor-pointer select-none">
+              <input type="checkbox" name="remember" value="1" checked class="w-4 h-4 accent-accent-strategy cursor-pointer" />
+              记住登录 30 天
+            </label>
+            <button type="submit" class="w-full px-4 py-2.5 rounded-md bg-accent-strategy text-white text-sm font-semibold">
+              发送验证码
+            </button>
+            <p class="text-xs text-quaternary text-center mt-4">白名单邮箱按既定权限进入</p>
+          </form>
+        </div>
+      )}
     </div>
   </main>
 </Layout>
+
+<script is:inline>
+  // tab 切换
+  document.querySelectorAll('[data-login-tab]').forEach((b) => {
+    b.addEventListener('click', () => {
+      const tab = b.getAttribute('data-login-tab');
+      document.querySelectorAll('[data-login-tab]').forEach((x) => x.toggleAttribute('data-active', x === b));
+      document.querySelectorAll('[data-login-pane]').forEach((p) => p.classList.toggle('hidden', p.getAttribute('data-login-pane') !== tab));
+    });
+  });
+</script>

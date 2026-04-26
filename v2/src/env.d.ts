@@ -12,6 +12,8 @@ declare namespace App {
     permissions: Map<string, 'admin' | 'guest'>;
     /** super-admin（ADMIN_EMAILS env 命中），所有 discipline 自动 admin */
     isSuperAdmin: boolean;
+    /** v0.4.33 邀请码登录的 guest（共用 INVITE_GUEST_EMAIL user）→ 全学科只读 */
+    isInviteGuest: boolean;
     /** 该 user 是否能写指定 discipline（super-admin 永远 true）。undefined 时安全返 false。 */
     canEdit: (discipline: string | undefined) => boolean;
     /** 该 user 是否能读指定 discipline。undefined 时安全返 false。 */
