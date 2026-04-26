@@ -1,5 +1,15 @@
 import { z } from 'zod';
 import { I18nString, BilingualBody } from './i18n';
+import { EVAL_GLYPHS } from '../lib/eval-tag-defs';
+
+/** 评价内容 — glyph → 文本（HTML 允许）。zh / ja 各一份 */
+const EvalContentDict = z.object(
+  Object.fromEntries(EVAL_GLYPHS.map((g) => [g, z.string()])) as Record<string, z.ZodString>,
+).partial();
+const EvalContentBilingual = z.object({
+  zh: EvalContentDict.optional(),
+  ja: EvalContentDict.optional(),
+}).strict();
 
 /**
  * KP id 格式：小写字母前缀 + 数字。
@@ -44,6 +54,11 @@ export const Kp = z.object({
   /** UI 渲染相关的 hint（可选） */
   format: z.enum(['narrative', 'flat-list', 'accordion', 'compare', 'quad']).default('narrative')
     .describe('正文渲染格式提示 — 见 v1 CONTRIBUTING §1'),
+
+  /** v0.5.1 评价内容结构化 — 义/限/例/应/用/喻 → 文本（中日各一份）
+   *  老数据通过 scripts/extract-eval-from-body.ts 一次性迁移注入；
+   *  新写入由编辑器直接结构化保存，不再混入 body */
+  evalContent: EvalContentBilingual.optional(),
 
   createdAt: IsoTimestamp,
   updatedAt: IsoTimestamp,

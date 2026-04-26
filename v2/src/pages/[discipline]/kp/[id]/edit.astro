@@ -1,13 +1,21 @@
 ---
+/**
+ * KP 编辑器 — OptionC「左 jump nav · 右长表单」(v0.5.1 设计稿落地)
+ *
+ * 布局：grid [280px 左 sticky] [1fr 右]
+ *   左：back link + eyebrow/title/id + 5 项 jump nav + 3 个按钮 + 元数据
+ *   右：5 个 section（basic / rel / body / tags / meta）
+ *
+ * 复用：mountBodyEditor (v2 现有结构化 body editor) + mountMultiSelect + edit API.
+ * 新增：eval tags section（6 row tagrow）→ 写入 evalContent dict.
+ */
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
 import { parseFrom, fromLabel } from '~/lib/nav';
+import { EVAL_TAG_DEFS } from '~/lib/eval-tag-defs';
 
 const { discipline, id } = Astro.params;
-
-if (!Astro.locals.canEdit(discipline)) {
-  return Astro.redirect(`/${discipline}/kp/${id}`);
-}
+if (!Astro.locals.canEdit(discipline)) return Astro.redirect(`/${discipline}/kp/${id}`);
 
 const fromPath = parseFrom(Astro.url.searchParams.get('from'), `/${discipline}/kp/${id}`);
 const fromLbl = fromLabel(fromPath);
@@ -17,14 +25,12 @@ const exists = await db
   .prepare('SELECT id, title_zh FROM kp WHERE id = ? AND discipline = ?')
   .bind(id, discipline)
   .first<{ id: string; title_zh: string }>();
-
 if (!exists) return Astro.redirect('/404');
 
-// 拉学派 / 学者 选项（用于 multi-select chip）
 const schoolsResult = await db
-  .prepare('SELECT key, title_zh, accent FROM school WHERE discipline = ? ORDER BY title_zh')
+  .prepare('SELECT key, title_zh FROM school WHERE discipline = ? ORDER BY title_zh')
   .bind(discipline)
-  .all<{ key: string; title_zh: string; accent: string }>();
+  .all<{ key: string; title_zh: string }>();
 const allSchools = schoolsResult.results ?? [];
 
 const scholarsResult = await db
@@ -34,95 +40,172 @@ const scholarsResult = await db
 const allScholars = scholarsResult.results ?? [];
 ---
 
-<Layout title={`编辑 · ${exists.title_zh}`} currentDiscipline={discipline} currentSection="kps">
-  <main class="max-w-reading mx-auto px-4 py-6">
-    <header class="mb-4">
-      <a href={fromPath} class="text-xs text-tertiary hover:underline">← 返回{fromLbl}</a>
-      <h1 class="text-2xl mt-2">编辑 KP <code class="text-base text-tertiary">{id}</code></h1>
-      <p class="text-xs text-quaternary mt-1">保存后约 60–90s 部署生效。改 id 或 discipline 请走 worktree。</p>
-    </header>
+<Layout title={`编辑 · ${exists.title_zh}`} currentDiscipline={discipline} currentSection="kps" fullHeight>
+  <div class="kpedit-C" data-kp-id={id} data-discipline={discipline} data-from={fromPath} data-from-label={fromLbl}>
 
-    <div id="editor-status" class="hidden mb-4 p-3 rounded-md text-xs"></div>
+    {/* ===== 左侧 sticky jump nav ===== */}
+    <aside class="kpedit-C-nav">
+      <a class="kpedit-C-back" href={fromPath}>← 返回{fromLbl}</a>
+      <div class="kpedit-C-eyebrow">编辑 KP</div>
+      <h2 class="kpedit-C-title" id="nav-title">{exists.title_zh}</h2>
+      <code class="kpedit-C-id">{id}</code>
 
-    <form id="kp-edit-form" class="space-y-5 hidden" autocomplete="off" data-kp-id={id} data-discipline={discipline} data-from={fromPath} data-from-label={fromLbl}>
-      <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">中文标题</label>
-        <input name="title_zh" type="text" required class="w-full px-3 py-2 rounded-md border text-sm" />
-      </section>
-      <section class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">English</label>
-          <input name="title_en" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
+      <nav class="kpedit-C-jump">
+        <a class="kpedit-C-jump-i is-active" href="#sec-basic" data-jump="basic">
+          <span class="kpedit-C-jump-l">基本信息</span>
+          <span class="kpedit-C-jump-c">5 字段</span>
+        </a>
+        <a class="kpedit-C-jump-i" href="#sec-rel" data-jump="rel">
+          <span class="kpedit-C-jump-l">关联</span>
+          <span class="kpedit-C-jump-c" id="rel-count">…</span>
+        </a>
+        <a class="kpedit-C-jump-i" href="#sec-body" data-jump="body">
+          <span class="kpedit-C-jump-l">正文</span>
+          <span class="kpedit-C-jump-c" id="body-count">narrative</span>
+        </a>
+        <a class="kpedit-C-jump-i" href="#sec-tags" data-jump="tags">
+          <span class="kpedit-C-jump-l">评价标签</span>
+          <span class="kpedit-C-jump-c" id="tags-count">0 / 6</span>
+        </a>
+        <a class="kpedit-C-jump-i" href="#sec-meta" data-jump="meta">
+          <span class="kpedit-C-jump-l">元数据</span>
+          <span class="kpedit-C-jump-c">只读</span>
+        </a>
+      </nav>
+
+      <div class="kpedit-C-actions">
+        <button id="save-btn" class="kpedit-C-btn-primary" type="button">保存并部署</button>
+        <a class="kpedit-C-btn-ghost" href={fromPath}>放弃</a>
+        <button id="delete-btn" class="kpedit-C-btn-danger" type="button" disabled>删除 KP</button>
+      </div>
+
+      <div class="kpedit-C-meta" id="nav-meta">
+        <div><span class="t-quaternary">学科</span> {discipline}</div>
+        <div id="meta-created"><span class="t-quaternary">创建于</span> …</div>
+        <div id="meta-updated"><span class="t-quaternary">修改于</span> …</div>
+      </div>
+
+      <div id="save-status" class="text-xs text-tertiary mt-2"></div>
+    </aside>
+
+    {/* ===== 右侧长表单 ===== */}
+    <form id="kp-edit-form" class="kpedit-C-form" autocomplete="off">
+
+      {/* basic */}
+      <section id="sec-basic" class="kpedit-C-sec">
+        <div class="kpedit-C-sec-h">
+          <h3>基本信息</h3>
+          <span class="kpedit-C-sec-hint">中文必填，其他可空</span>
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">日本語</label>
-          <input name="title_ja" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
+
+        <div class="kpedit-row kpedit-grid-2">
+          <div class="kpedit-field">
+            <div class="kpedit-field-h"><label class="kpedit-label">ID</label><span class="kpedit-hint">不可改</span></div>
+            <input class="kpedit-input is-mono" value={id} disabled />
+          </div>
+          <div class="kpedit-field">
+            <div class="kpedit-field-h"><label class="kpedit-label">年份</label></div>
+            <input name="year" type="text" placeholder="1911" class="kpedit-input" />
+          </div>
+        </div>
+
+        <div class="kpedit-field">
+          <div class="kpedit-field-h"><label class="kpedit-label">中文标题<span class="kpedit-req">*</span></label></div>
+          <input name="title_zh" type="text" required class="kpedit-input is-lg" />
+        </div>
+
+        <div class="kpedit-row kpedit-grid-2">
+          <div class="kpedit-field">
+            <div class="kpedit-field-h"><label class="kpedit-label">English</label></div>
+            <input name="title_en" type="text" class="kpedit-input" />
+          </div>
+          <div class="kpedit-field">
+            <div class="kpedit-field-h"><label class="kpedit-label">日本語</label></div>
+            <input name="title_ja" type="text" class="kpedit-input" />
+          </div>
         </div>
       </section>
-      <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">年份</label>
-        <input name="year" type="text" placeholder="1911" class="w-48 px-3 py-2 rounded-md border text-sm" />
+
+      {/* rel */}
+      <section id="sec-rel" class="kpedit-C-sec">
+        <div class="kpedit-C-sec-h"><h3>关联</h3><span class="kpedit-C-sec-hint">学派必选 ≥1</span></div>
+        <div class="kpedit-field">
+          <div class="kpedit-field-h"><label class="kpedit-label">所属学派<span class="kpedit-req">*</span></label></div>
+          <div id="schools-multi" data-options={JSON.stringify(allSchools.map((s) => ({ key: s.key, label: s.title_zh })))}></div>
+        </div>
+        <div class="kpedit-field">
+          <div class="kpedit-field-h"><label class="kpedit-label">关联学者</label></div>
+          <div id="scholars-multi" data-options={JSON.stringify(allScholars.map((s) => ({ key: s.key, label: s.name_zh, sub: s.name_en ?? '' })))}></div>
+        </div>
       </section>
 
-      <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">学派 <span class="text-accent-warning">*（必选 ≥1）</span></label>
-        <div
-          id="schools-multi"
-          data-options={JSON.stringify(allSchools.map((s) => ({ key: s.key, label: s.title_zh })))}
-        ></div>
-      </section>
-
-      <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">学者（可空）</label>
-        <div
-          id="scholars-multi"
-          data-options={JSON.stringify(allScholars.map((s) => ({ key: s.key, label: s.name_zh, sub: s.name_en ?? '' })))}
-        ></div>
-      </section>
-
-      <section>
+      {/* body */}
+      <section id="sec-body" class="kpedit-C-sec">
+        <div class="kpedit-C-sec-h"><h3>正文</h3><span class="kpedit-C-sec-hint">中/日同结构，分别保存</span></div>
         <div id="body-editor-mount" class="border rounded-md p-3 bg-bg-primary"></div>
       </section>
 
-      <footer class="sticky bottom-0 bg-bg-primary py-3 border-t flex items-center gap-3">
-        <button type="submit" id="save-btn" class="px-4 py-2 rounded-md bg-accent-strategy text-white text-sm font-semibold disabled:opacity-50">
-          保存（commit + 部署）
-        </button>
-        <button
-          type="button"
-          id="delete-btn"
-          disabled
-          class="px-4 py-2 rounded-md bg-bg-primary border border-accent-warning text-accent-warning text-sm font-semibold ml-auto disabled:opacity-40 disabled:cursor-not-allowed"
-          title="加载中..."
-        >
-          硬删此 KP
-        </button>
-        <span id="save-status" class="text-xs text-tertiary"></span>
-      </footer>
+      {/* tags 评价 */}
+      <section id="sec-tags" class="kpedit-C-sec">
+        <div class="kpedit-C-sec-h"><h3>评价标签</h3>
+          <div class="kpedit-langseg" id="eval-langseg" role="tablist">
+            <button type="button" class="kpedit-langseg-b is-on" data-eval-lang="zh">中</button>
+            <button type="button" class="kpedit-langseg-b" data-eval-lang="ja">日</button>
+          </div>
+        </div>
+        <div class="kpedit-tagfields" id="eval-fields">
+          {EVAL_TAG_DEFS.map((d) => (
+            <div class="kpedit-tagrow" data-eval-glyph={d.glyph}>
+              <div class="kpedit-tagrow-l">
+                <span class="kpedit-tagrow-glyph">{d.glyph}</span>
+                <span class="kpedit-tagrow-name">{d.name}</span>
+              </div>
+              <textarea
+                class="kpedit-tagrow-input"
+                rows="2"
+                placeholder={`${d.name}的内容（留空则不显示）`}
+                data-eval-input={d.glyph}
+              ></textarea>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* meta 只读 */}
+      <section id="sec-meta" class="kpedit-C-sec">
+        <div class="kpedit-C-sec-h"><h3>元数据</h3></div>
+        <div class="kpedit-C-meta-grid">
+          <div><span class="t-quaternary">学科</span><div>{discipline}</div></div>
+          <div><span class="t-quaternary">创建于</span><div id="meta-created-detail">…</div></div>
+          <div><span class="t-quaternary">最后修改</span><div id="meta-updated-detail">…</div></div>
+          <div><span class="t-quaternary">最新提交</span><div id="meta-commit-detail"><code>—</code></div></div>
+        </div>
+      </section>
+
     </form>
-  </main>
+  </div>
 </Layout>
 
 <script>
-  // @ts-nocheck — DOM form 类型推断弱，runtime 已验证
-  // v0.4.11: multi-select typeahead 学派/学者
+  // @ts-nocheck — DOM 类型推断弱
   import { mountBodyEditor } from '~/lib/body-editor-client';
   import { mountMultiSelect } from '~/lib/multi-select-client';
   import { formatZodIssues } from '~/lib/zod-errors-zh';
   import { watchDeploy } from '~/lib/deploy-progress-client';
-  let _deployWatcher = null;
 
   const $ = (s) => document.querySelector(s);
-  const status = $('#editor-status');
+  const root = document.querySelector('.kpedit-C');
+  const kpId = root.dataset.kpId;
+  const discipline = root.dataset.discipline;
+  const fromPath = root.dataset.from;
+  const fromLbl = root.dataset.fromLabel;
+
   const form = $('#kp-edit-form');
   const saveBtn = $('#save-btn');
   const deleteBtn = $('#delete-btn');
   const saveStatus = $('#save-status');
   const editorMount = $('#body-editor-mount');
-  const kpId = form.dataset.kpId;
-  const discipline = form.dataset.discipline;
-  const fromPath = form.dataset.from;
-  const fromLbl = form.dataset.fromLabel;
+
   let baseSha = null;
   let originalCreatedAt = null;
   let cascadeMsg = '';
@@ -132,7 +215,11 @@ const allScholars = scholarsResult.results ?? [];
   let currentBodyZh = '';
   let currentBodyJa = '';
   let currentFormat = 'narrative';
+  let evalContent = { zh: {}, ja: {} };
+  let evalLang = 'zh';
+  let _deployWatcher = null;
 
+  // ========== Multi-selects ==========
   function initMultiSelects() {
     const schoolsMount = $('#schools-multi');
     const scholarsMount = $('#scholars-multi');
@@ -141,24 +228,22 @@ const allScholars = scholarsResult.results ?? [];
       options: JSON.parse(schoolsMount.dataset.options ?? '[]'),
       placeholder: '搜索学派（必选 ≥1）',
       required: true,
+      onChange: updateRelCount,
     });
     scholarsMS = mountMultiSelect(scholarsMount, {
       inputName: 'scholar',
       options: JSON.parse(scholarsMount.dataset.options ?? '[]'),
       placeholder: '搜索学者（可空）',
+      onChange: updateRelCount,
     });
   }
-  initMultiSelects();
-
-  function setStatus(msg, kind = 'info') {
-    status.textContent = msg;
-    status.className = `mb-4 p-3 rounded-md text-xs ${
-      kind === 'error' ? 'bg-badge-limit text-accent-warning' :
-      kind === 'success' ? 'bg-badge-meaning' : 'bg-bg-secondary text-tertiary'
-    }`;
-    status.classList.remove('hidden');
+  function updateRelCount() {
+    const s = schoolsMS?.getSelected().length ?? 0;
+    const sc = scholarsMS?.getSelected().length ?? 0;
+    $('#rel-count').textContent = `学派 ${s} · 学者 ${sc}`;
   }
 
+  // ========== Body editor ==========
   function initEditor(initFormat, initZh, initJa) {
     if (editor) editor.destroy();
     editor = mountBodyEditor(editorMount, {
@@ -169,16 +254,67 @@ const allScholars = scholarsResult.results ?? [];
         currentBodyZh = zh;
         currentBodyJa = ja;
         currentFormat = fmt;
+        $('#body-count').textContent = fmt;
       },
     });
+    $('#body-count').textContent = initFormat;
   }
 
+  // ========== Eval lang segmented + 写回 ==========
+  function refreshEvalFields() {
+    const dict = evalContent[evalLang] ?? {};
+    document.querySelectorAll('[data-eval-input]').forEach((ta) => {
+      const g = ta.getAttribute('data-eval-input');
+      ta.value = dict[g] ?? '';
+      ta.parentElement.classList.toggle('is-filled', !!ta.value.trim());
+    });
+    updateTagsCount();
+  }
+  function updateTagsCount() {
+    const filled = Object.values(evalContent[evalLang] ?? {}).filter((v) => v && v.trim()).length;
+    $('#tags-count').textContent = `${filled} / 6`;
+  }
+  document.querySelectorAll('[data-eval-input]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const g = ta.getAttribute('data-eval-input');
+      if (!evalContent[evalLang]) evalContent[evalLang] = {};
+      evalContent[evalLang][g] = ta.value;
+      ta.parentElement.classList.toggle('is-filled', !!ta.value.trim());
+      updateTagsCount();
+    });
+  });
+  document.querySelectorAll('[data-eval-lang]').forEach((b) => {
+    b.addEventListener('click', () => {
+      evalLang = b.getAttribute('data-eval-lang');
+      document.querySelectorAll('[data-eval-lang]').forEach((x) => x.classList.toggle('is-on', x === b));
+      refreshEvalFields();
+    });
+  });
+
+  // ========== Jump nav active state (scroll spy) ==========
+  function initJumpNavSpy() {
+    const sections = ['basic', 'rel', 'body', 'tags', 'meta']
+      .map((id) => document.getElementById('sec-' + id))
+      .filter(Boolean);
+    const observer = new IntersectionObserver((entries) => {
+      // Pick the topmost intersecting section
+      const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (visible.length === 0) return;
+      const id = visible[0].target.id.replace('sec-', '');
+      document.querySelectorAll('[data-jump]').forEach((el) => {
+        el.classList.toggle('is-active', el.getAttribute('data-jump') === id);
+      });
+    }, { rootMargin: '-100px 0px -60% 0px' });
+    sections.forEach((s) => observer.observe(s));
+  }
+
+  // ========== Load existing KP ==========
   async function load() {
-    setStatus('加载中...');
+    saveStatus.textContent = '加载中...';
     const res = await fetch(`/api/edit/kp/${kpId}`);
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      setStatus(`加载失败：${res.status} ${err.reason ?? ''}`, 'error');
+      saveStatus.innerHTML = `<span style="color:#FF3B30">加载失败 ${res.status} ${err.reason ?? ''}</span>`;
       return;
     }
     const { json: kp, base_sha, progress_count, note_count } = await res.json();
@@ -194,12 +330,24 @@ const allScholars = scholarsResult.results ?? [];
     initEditor(kp.format ?? 'narrative', kp.body?.zh ?? '', kp.body?.ja ?? '');
     schoolsMS?.setSelected(kp.schools ?? []);
     scholarsMS?.setSelected(kp.scholars ?? []);
+
+    evalContent = {
+      zh: kp.evalContent?.zh ?? {},
+      ja: kp.evalContent?.ja ?? {},
+    };
+    refreshEvalFields();
+
+    // meta
+    $('#meta-created').textContent = '创建于 ' + (kp.createdAt?.slice(0, 10) ?? '—');
+    $('#meta-updated').textContent = '修改于 ' + (kp.updatedAt?.slice(0, 10) ?? '—');
+    $('#meta-created-detail').textContent = kp.createdAt ?? '—';
+    $('#meta-updated-detail').textContent = kp.updatedAt ?? '—';
+
     deleteBtn.disabled = false;
     deleteBtn.title = cascadeMsg ? `删除会同时影响：${cascadeMsg.replace(/\n/g, ' / ')}` : '硬删此 KP（进 git history 可 revert，~90s 后线上消失）';
-    form.classList.remove('hidden');
-    status.classList.add('hidden');
+    saveStatus.textContent = '';
+    initJumpNavSpy();
   }
-
   function buildCascadeMsg(progressN, noteN) {
     const lines = [];
     if (progressN > 0) lines.push(`同时删除 ${progressN} 条学习进度（不可恢复）`);
@@ -207,6 +355,7 @@ const allScholars = scholarsResult.results ?? [];
     return lines.join('\n');
   }
 
+  // ========== Save / Delete ==========
   function buildI18n(zh, en, ja) {
     const o = { zh: zh.trim() };
     if (en?.trim()) o.en = en.trim();
@@ -218,9 +367,21 @@ const allScholars = scholarsResult.results ?? [];
     if (ja?.trim()) o.ja = ja;
     return o;
   }
+  function cleanEvalContent(dict) {
+    const out = {};
+    for (const [k, v] of Object.entries(dict ?? {})) {
+      if (v && v.trim()) out[k] = v;
+    }
+    return out;
+  }
   function collect() {
     const schools = schoolsMS?.getSelected() ?? [];
     const scholars = scholarsMS?.getSelected() ?? [];
+    const ec = {};
+    const zh = cleanEvalContent(evalContent.zh);
+    const ja = cleanEvalContent(evalContent.ja);
+    if (Object.keys(zh).length) ec.zh = zh;
+    if (Object.keys(ja).length) ec.ja = ja;
     return {
       id: kpId,
       discipline,
@@ -229,15 +390,15 @@ const allScholars = scholarsResult.results ?? [];
       year: form.year.value.trim(),
       title: buildI18n(form.title_zh.value, form.title_en.value, form.title_ja.value),
       body: buildBody(currentBodyZh, currentBodyJa),
-      tags: [], // v0.4.9 服务端自动从 body 推（deriveTagsFromBody）
+      tags: [],
       format: currentFormat,
+      ...(Object.keys(ec).length ? { evalContent: ec } : {}),
       createdAt: originalCreatedAt,
       updatedAt: new Date().toISOString(),
     };
   }
-
   async function save(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     const json = collect();
     if (json.schools.length === 0) {
       saveStatus.innerHTML = '<span style="color:#FF3B30">学派必选 ≥1（KP 不能成孤儿）</span>';
@@ -262,11 +423,10 @@ const allScholars = scholarsResult.results ?? [];
       const lines = formatZodIssues(data.detail);
       saveStatus.innerHTML = `<span style="color:#FF3B30">字段校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
     } else {
-      saveStatus.innerHTML = `<span style="color:#FF3B30">${res.status} ${data.reason ?? 'error'}: ${String(data.detail).slice(0, 80)}</span>`;
+      saveStatus.innerHTML = `<span style="color:#FF3B30">${res.status} ${data.reason ?? 'error'}: ${String(data.detail ?? '').slice(0, 80)}</span>`;
     }
     saveBtn.disabled = false;
   }
-
   async function del() {
     if (deleteBtn.disabled) return;
     const cascadeStr = cascadeMsg ? '\n\n级联影响：\n• ' + cascadeMsg.replace(/\n/g, '\n• ') : '';
@@ -285,11 +445,12 @@ const allScholars = scholarsResult.results ?? [];
     } else {
       alert(`删除失败：${res.status} ${data.reason ?? 'error'}`);
       deleteBtn.disabled = false;
-      deleteBtn.textContent = '硬删此 KP';
+      deleteBtn.textContent = '删除 KP';
     }
   }
 
-  form.addEventListener('submit', save);
+  saveBtn.addEventListener('click', save);
   deleteBtn.addEventListener('click', del);
+  initMultiSelects();
   load();
 </script>

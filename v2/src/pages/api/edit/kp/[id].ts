@@ -13,7 +13,6 @@
 import type { APIRoute } from 'astro';
 import { Kp } from '~/schemas/kp';
 import { getFile, putFile, deleteFile } from '~/lib/github';
-import { deriveTagsFromBody } from '~/lib/body-parser';
 
 interface SuccessBody {
   ok: true;
@@ -80,8 +79,9 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
 
   // updatedAt 强制刷为 now（防止前端伪造时间戳）
   kp.updatedAt = new Date().toISOString();
-  // v0.4.9: tags 服务端自动从 body 推（admin 不用重复劳动；body ◆评价 = 单源真理）
-  kp.tags = deriveTagsFromBody(kp.body.zh ?? '', kp.format) as typeof kp.tags;
+  // v0.5.1: kp.tags 语义已变（v0.5.0 → 颜色标签 ref discipline.tags 库），
+  //   旧的"从 body 自动推 ◆评价"逻辑已经不适用 — 评价改存到 evalContent 结构化字段
+  //   tags 由编辑器 UI 决定（当前为空 []，等专业 agent 配标签库后再启用）
 
   const path = `v2/data/${kp.discipline}/kp/${kp.id}.json`;
   const adminEmail = locals.user?.email ?? 'unknown@admin';

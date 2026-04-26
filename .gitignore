@@ -10,3 +10,5 @@ serve_dev.py
 serve.rb
 References/
 Main/demo_*.html
+_handover_extracted/
+_eval-extraction-preview.json

@@ -1,0 +1,839 @@
+/* === KP 编辑表单 — 共用 + 三方案样式 === */
+
+/* ---------- 共用 form 控件 ---------- */
+.kpedit-input{
+  width: 100%; padding: 9px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px; line-height: 1.4;
+  color: var(--color-text-primary);
+  outline: none; box-sizing: border-box;
+  transition: border-color .12s, box-shadow .12s;
+  font-family: inherit;
+}
+.kpedit-input:focus{
+  border-color: var(--accent-strategy);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent-strategy) 18%, transparent);
+}
+.kpedit-input.is-mono{ font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+.kpedit-input.is-lg{ font-size: 17px; padding: 11px 14px; font-weight: 500; }
+.kpedit-input.is-textarea{ min-height: 240px; line-height: 1.7; resize: vertical; }
+.kpedit-input::placeholder{ color: var(--color-text-quaternary); }
+
+.kpedit-label{
+  font-size: 12px; font-weight: 600;
+  color: var(--color-text-primary);
+  letter-spacing: 0.02em;
+}
+.kpedit-req{ color: var(--accent-warning); margin-left: 3px; }
+.kpedit-hint{
+  font-size: 11.5px; color: var(--color-text-quaternary);
+  font-weight: 400;
+}
+
+.kpedit-field{ display: flex; flex-direction: column; gap: 6px; }
+.kpedit-field-h{ display: flex; align-items: baseline; justify-content: space-between; gap: 12px; min-height: 16px; }
+.kpedit-field.is-inline{ flex-direction: column; }
+
+.kpedit-row{ display: grid; gap: 14px; }
+.kpedit-grid-2{ grid-template-columns: 1fr 1fr; }
+.kpedit-grid-3{ grid-template-columns: 140px 140px 1fr; }
+
+.kpedit-jp{
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: var(--color-bg-secondary);
+}
+.kpedit-jp summary{
+  cursor: pointer; font-size: 13px; color: var(--color-text-tertiary);
+  font-weight: 500; user-select: none; padding: 2px 0;
+}
+.kpedit-jp[open]{ background: #fff; }
+.kpedit-jp[open] summary{ margin-bottom: 8px; color: var(--color-text-primary); }
+
+/* ---------- ChipSelect (multi-select w/ autocomplete) ---------- */
+.kpedit-chips{ position: relative; }
+.kpedit-chips-row{
+  display: flex; flex-wrap: wrap; gap: 5px;
+  padding: 6px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: #fff;
+  min-height: 40px;
+  align-items: center;
+}
+.kpedit-chips:focus-within .kpedit-chips-row{
+  border-color: var(--accent-strategy);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent-strategy) 18%, transparent);
+}
+.kpedit-chip{
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 4px 3px 10px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  font-size: 12.5px;
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+.kpedit-chip-x{
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  border: 0; background: transparent;
+  border-radius: 9999px;
+  color: var(--color-text-quaternary);
+  font-size: 12px; cursor: pointer; padding: 0;
+  line-height: 1;
+}
+.kpedit-chip-x:hover{ background: rgba(0,0,0,0.06); color: var(--color-text-primary); }
+.kpedit-chip-input{
+  flex: 1; min-width: 100px;
+  border: 0; outline: 0; background: transparent;
+  font-size: 13.5px; padding: 4px 6px;
+  font-family: inherit; color: var(--color-text-primary);
+}
+.kpedit-chips-dd{
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  max-height: 240px; overflow-y: auto;
+  z-index: 50;
+  padding: 4px;
+}
+.kpedit-dd-item{
+  display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+  padding: 8px 10px; border-radius: 5px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.kpedit-dd-item.is-active,
+.kpedit-dd-item:hover{ background: var(--color-bg-secondary); }
+.kpedit-dd-label{ color: var(--color-text-primary); font-weight: 500; }
+.kpedit-dd-key{ font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: var(--color-text-quaternary); }
+
+/* ---------- Format pills ---------- */
+.kpedit-fmts{ display: flex; flex-wrap: wrap; gap: 6px; }
+.kpedit-fmt{
+  display: inline-flex; flex-direction: column; align-items: flex-start; gap: 0;
+  padding: 7px 12px;
+  border: 1px solid var(--color-border);
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.kpedit-fmt:hover{ background: var(--color-bg-secondary); }
+.kpedit-fmt.is-on{
+  background: color-mix(in oklab, var(--accent-strategy) 8%, #fff);
+  border-color: var(--accent-strategy);
+}
+.kpedit-fmt-label{ font-size: 13px; font-weight: 600; color: var(--color-text-primary); }
+.kpedit-fmt.is-on .kpedit-fmt-label{ color: var(--accent-strategy); }
+.kpedit-fmt-key{ font-family: ui-monospace, Menlo, monospace; font-size: 10px; color: var(--color-text-quaternary); margin-top: 1px; }
+
+/* ---------- Tag toggles (义/限/例/应/用/喻) ---------- */.kpedit-tags{ display: flex; flex-wrap: wrap; gap: 6px; }
+.kpedit-tag{
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px 5px 6px;
+  border: 1px solid var(--color-border);
+  background: #fff;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .12s;
+}
+.kpedit-tag:hover{ background: var(--color-bg-secondary); }
+.kpedit-tag.is-on{
+  background: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+.kpedit-tag-glyph{
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px;
+  background: var(--color-bg-secondary);
+  border-radius: 9999px;
+  font-size: 11px; font-weight: 600;
+  color: var(--color-text-tertiary);
+}
+.kpedit-tag.is-on .kpedit-tag-glyph{
+  background: #fff; color: var(--color-text-primary);
+}
+.kpedit-tag-name{ font-size: 12px; font-weight: 500; color: var(--color-text-secondary); }
+.kpedit-tag.is-on .kpedit-tag-name{ color: #fff; }
+
+/* ---------- Lang segmented (C 段头) + format bar ---------- */
+.kpedit-langseg{
+  display: inline-flex; gap: 2px;
+  background: var(--color-bg-secondary);
+  border-radius: 7px;
+  padding: 2px;
+}
+.kpedit-langseg-b{
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  height: 26px; min-width: 36px;
+  padding: 0 10px;
+  border: 0; border-radius: 5px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12.5px; font-weight: 500;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+}
+.kpedit-langseg-b:hover{ color: var(--color-text-primary); }
+.kpedit-langseg-b.is-on{
+  background: #fff;
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+.kpedit-langseg-dot{
+  width: 5px; height: 5px; border-radius: 9999px;
+  background: var(--accent-strategy);
+}
+
+.kpedit-fmt-bar{
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 12px;
+  background: var(--color-bg-secondary);
+  border-radius: 8px;
+  font-size: 12.5px;
+  flex-wrap: wrap;
+}
+.kpedit-fmt-bar-l{ color: var(--color-text-tertiary); }
+.kpedit-fmt-bar-l strong{ color: var(--color-text-primary); margin-left: 4px; }
+.kpedit-fmt-bar-spacer{ flex: 1; }
+.kpedit-fmt-hint{ color: var(--color-text-quaternary); font-size: 11.5px; font-style: italic; }
+.kpedit-fmt-change{ position: relative; }
+.kpedit-fmt-change > summary{
+  list-style: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  padding: 3px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--color-border);
+  background: #fff;
+  user-select: none;
+}
+.kpedit-fmt-change > summary::-webkit-details-marker{ display: none; }
+.kpedit-fmt-change > summary:hover{ color: var(--color-text-primary); }
+.kpedit-fmt-change[open] > summary{ background: var(--color-bg-secondary); }
+.kpedit-fmt-change-pop{
+  position: absolute; top: calc(100% + 6px); left: 0;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.10);
+  padding: 8px;
+  z-index: 20;
+  min-width: 480px;
+}
+
+.kpedit-langtab-aux{
+  align-self: center;
+  padding: 4px 10px;
+  border: 1px solid var(--color-border);
+  background: #fff;
+  border-radius: 6px;
+  font-family: inherit; font-size: 11.5px;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+}
+.kpedit-langtab-aux:hover{
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+/* ---------- Structured body editor ---------- */
+.kpedit-fmt-editor{
+  display: flex; flex-direction: column; gap: 16px;
+}
+.kpedit-fmt-block{
+  display: flex; flex-direction: column; gap: 6px;
+}
+.kpedit-fmt-blabel{
+  font-size: 11.5px; font-weight: 600;
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.04em;
+}
+.kpedit-fmt-items{
+  display: flex; flex-direction: column; gap: 6px;
+}
+.kpedit-fmt-item{
+  display: grid; grid-template-columns: 24px 1fr 28px;
+  gap: 4px; align-items: start;
+}
+.kpedit-fmt-bullet{
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 38px;
+  font-size: 13px; color: var(--accent-strategy);
+  font-weight: 600;
+}
+.kpedit-fmt-x{
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px;
+  margin-top: 6px;
+  border: 0; border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-quaternary);
+  font-size: 14px;
+  cursor: pointer;
+}
+.kpedit-fmt-x:hover{ background: color-mix(in oklab, #c8302c 10%, #fff); color: #c8302c; }
+.kpedit-fmt-add{
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 8px 12px;
+  border: 1px dashed var(--color-border);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--color-text-tertiary);
+  font-family: inherit; font-size: 12.5px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 2px;
+}
+.kpedit-fmt-add:hover{
+  border-color: var(--accent-strategy);
+  color: var(--accent-strategy);
+  background: color-mix(in oklab, var(--accent-strategy) 4%, #fff);
+}
+.kpedit-fmt-add.is-block{ padding: 12px; font-size: 13px; }
+
+/* accordion */
+.kpedit-fmt-group{
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-bg-secondary);
+  padding: 12px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.kpedit-fmt-grouph{
+  display: grid; grid-template-columns: 1fr 28px;
+  gap: 4px; align-items: center;
+}
+.kpedit-input.is-group-name{
+  background: #fff;
+  font-size: 14px; font-weight: 600;
+  color: var(--color-text-primary);
+}
+.kpedit-fmt-pair{
+  display: grid; grid-template-columns: 220px 1fr 28px;
+  gap: 6px; align-items: start;
+}
+.kpedit-input.is-pair-label{
+  background: #fff;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12.5px;
+}
+
+/* compare */
+.kpedit-fmt-row{
+  display: grid; gap: 6px; align-items: start;
+  margin-bottom: 6px;
+}
+.kpedit-cmp-cols{
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 10px;
+}
+.kpedit-cmp-col{
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-bg-secondary);
+  padding: 10px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.kpedit-cmp-colh{
+  display: grid; grid-template-columns: 24px 1fr 28px;
+  gap: 6px; align-items: center;
+}
+.kpedit-cmp-num{
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px;
+  background: var(--accent-strategy);
+  color: #fff;
+  border-radius: 9999px;
+  font-size: 11px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.kpedit-input.is-cmp-title{
+  background: #fff;
+  font-size: 14px; font-weight: 600;
+}
+.kpedit-cmp-fields{
+  display: flex; flex-direction: column; gap: 6px;
+}
+.kpedit-cmp-field{
+  display: flex; flex-direction: column; gap: 3px;
+  background: #fff;
+  border-radius: 6px;
+  padding: 6px 8px;
+  border: 1px solid var(--color-border);
+}
+.kpedit-cmp-field .kpedit-input{
+  border: 0; padding: 2px 0;
+  background: transparent;
+  font-size: 12.5px;
+}
+.kpedit-cmp-field .kpedit-input:focus{ box-shadow: none; }
+.kpedit-cmp-flabel{
+  font-size: 10.5px;
+  color: var(--color-text-quaternary);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* quad */
+.kpedit-fmt-quad{
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.kpedit-fmt-cell{
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: #fff;
+  padding: 10px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.kpedit-fmt-cell-h{
+  display: grid; grid-template-columns: 56px 1fr;
+  gap: 6px;
+}
+.kpedit-input.is-icon{
+  text-align: center;
+  font-size: 18px;
+  padding: 6px;
+}
+.kpedit-tagfields{
+  display: flex; flex-direction: column; gap: 8px;
+}
+.kpedit-tagrow{
+  display: grid; grid-template-columns: 92px 1fr;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+  transition: border-color .12s, background .12s;
+}
+.kpedit-tagrow:focus-within{
+  border-color: var(--accent-strategy);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent-strategy) 14%, transparent);
+}
+.kpedit-tagrow.is-filled{
+  background: color-mix(in oklab, var(--accent-strategy) 4%, #fff);
+  border-color: color-mix(in oklab, var(--accent-strategy) 30%, var(--color-border));
+}
+.kpedit-tagrow-l{
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px;
+  padding: 10px 6px;
+  background: var(--color-bg-secondary);
+  border-right: 1px solid var(--color-border);
+}
+.kpedit-tagrow.is-filled .kpedit-tagrow-l{
+  background: color-mix(in oklab, var(--accent-strategy) 10%, #fff);
+  border-right-color: color-mix(in oklab, var(--accent-strategy) 25%, var(--color-border));
+}
+.kpedit-tagrow-glyph{
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  font-size: 14px; font-weight: 600;
+  color: var(--color-text-primary);
+}
+.kpedit-tagrow.is-filled .kpedit-tagrow-glyph{
+  border-color: var(--accent-strategy);
+  color: var(--accent-strategy);
+}
+.kpedit-tagrow-name{
+  font-size: 11px; font-weight: 500;
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.04em;
+}
+.kpedit-tagrow.is-filled .kpedit-tagrow-name{ color: var(--accent-strategy); }
+.kpedit-tagrow-input{
+  border: 0; outline: 0;
+  padding: 10px 14px;
+  font-family: inherit;
+  font-size: 13px; line-height: 1.6;
+  color: var(--color-text-primary);
+  resize: vertical;
+  background: transparent;
+  min-height: 52px;
+}
+.kpedit-tagrow-input::placeholder{
+  color: var(--color-text-quaternary);
+  font-style: italic;
+}
+
+/* ---------- Section ---------- */
+.kpedit-sec{
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: #fff;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.kpedit-sec-h{
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  padding: 14px 18px 10px;
+  border-bottom: 1px solid var(--color-border);
+  background: color-mix(in oklab, var(--color-bg-secondary) 50%, #fff);
+}
+.kpedit-sec-title{
+  font-size: 13px; font-weight: 600; margin: 0;
+  color: var(--color-text-primary);
+  letter-spacing: 0.02em;
+}
+.kpedit-sec-hint{ font-size: 11.5px; color: var(--color-text-quaternary); }
+.kpedit-sec-body{
+  display: flex; flex-direction: column; gap: 14px;
+  padding: 16px 18px 18px;
+}
+
+/* =========================================================
+   方案 A · 双栏 · 表单 + 实时预览
+   ========================================================= */
+.kpedit-A{ display: flex; flex-direction: column; min-height: 100%; }
+.kpedit-A-bar{
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 12px 24px;
+  background: #fff;
+  border-bottom: 1px solid var(--color-border);
+  position: sticky; top: 0; z-index: 30;
+}
+.kpedit-A-bar-l{ display: flex; align-items: center; gap: 10px; }
+.kpedit-A-back{
+  font-size: 12px; color: var(--color-text-tertiary);
+  text-decoration: none; padding: 4px 8px; border-radius: 6px;
+}
+.kpedit-A-back:hover{ background: var(--color-bg-secondary); color: var(--color-text-primary); }
+.kpedit-A-divider{ color: var(--color-text-quaternary); }
+.kpedit-A-title{ font-size: 14px; font-weight: 600; color: var(--color-text-primary); }
+.kpedit-A-id{
+  font-family: ui-monospace, Menlo, monospace; font-size: 12px;
+  color: var(--color-text-tertiary);
+  background: var(--color-bg-secondary);
+  padding: 2px 6px; border-radius: 4px;
+}
+.kpedit-A-bar-r{ display: flex; align-items: center; gap: 8px; }
+.kpedit-A-saved{ font-size: 11.5px; color: var(--color-text-quaternary); margin-right: 8px; }
+.kpedit-A-btn-ghost,
+.kpedit-A-btn-danger,
+.kpedit-A-btn-primary{
+  padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 500;
+  font-family: inherit; cursor: pointer; border: 1px solid transparent;
+  transition: background .12s, border-color .12s;
+}
+.kpedit-A-btn-ghost{
+  background: transparent; color: var(--color-text-tertiary);
+  border-color: var(--color-border);
+}
+.kpedit-A-btn-ghost:hover{ background: var(--color-bg-secondary); color: var(--color-text-primary); }
+.kpedit-A-btn-danger{
+  background: transparent; color: #c8302c;
+  border-color: color-mix(in oklab, #c8302c 30%, var(--color-border));
+}
+.kpedit-A-btn-danger:hover{ background: color-mix(in oklab, #c8302c 8%, #fff); }
+.kpedit-A-btn-primary{
+  background: var(--accent-strategy); color: #fff;
+  border-color: var(--accent-strategy);
+  font-weight: 600;
+}
+.kpedit-A-btn-primary:hover{ background: color-mix(in oklab, var(--accent-strategy) 88%, #000); }
+
+.kpedit-A-body{
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0; flex: 1;
+}
+.kpedit-A-form{
+  padding: 24px;
+  background: var(--color-bg-secondary);
+  overflow-y: auto;
+}
+.kpedit-A-preview{
+  background: #fff;
+  border-left: 1px solid var(--color-border);
+  overflow-y: auto;
+}
+.kpedit-preview-inner{
+  max-width: 640px; padding: 32px 32px 48px; margin: 0 auto;
+}
+.kpedit-preview-eyebrow{
+  font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+  color: var(--color-text-quaternary); text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.kpedit-preview-title{
+  font-size: 24px; font-weight: 600; line-height: 1.25;
+  color: var(--color-text-primary); margin: 0 0 8px;
+}
+.kpedit-preview-meta{
+  font-size: 12.5px; color: var(--color-text-tertiary); margin-bottom: 4px;
+}
+.kpedit-preview-scholars{
+  font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 18px;
+  font-weight: 500;
+}
+.kpedit-preview-body{ margin-top: 24px; }
+
+/* =========================================================
+   方案 B · 单栏 · 沉浸式书写
+   ========================================================= */
+.kpedit-B{
+  max-width: 720px; margin: 0 auto;
+  padding: 36px 32px 120px;
+  position: relative;
+}
+.kpedit-B-head{ margin-bottom: 28px; }
+.kpedit-B-back{
+  font-size: 12px; color: var(--color-text-tertiary);
+  text-decoration: none; display: inline-block; margin-bottom: 14px;
+}
+.kpedit-B-back:hover{ text-decoration: underline; }
+.kpedit-B-eyebrow{
+  font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+  color: var(--color-text-quaternary); text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.kpedit-B-title-input{
+  font-size: 30px; font-weight: 700; line-height: 1.2;
+  width: 100%; border: 0; outline: 0; padding: 4px 0;
+  color: var(--color-text-primary);
+  font-family: inherit; background: transparent;
+  border-bottom: 1px dashed transparent;
+  transition: border-color .12s;
+}
+.kpedit-B-title-input:focus{ border-bottom-color: var(--color-border); }
+.kpedit-B-title-input::placeholder{ color: var(--color-text-quaternary); font-weight: 400; }
+
+.kpedit-B-meta-row{
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+  margin-top: 10px;
+}
+.kpedit-B-meta-inp{
+  border: 0; outline: 0; padding: 4px 6px;
+  font-size: 13px; color: var(--color-text-tertiary);
+  font-family: inherit; background: transparent;
+  border-radius: 4px;
+  min-width: 80px;
+}
+.kpedit-B-meta-inp.is-narrow{ min-width: 50px; max-width: 80px; }
+.kpedit-B-meta-inp:focus{ background: var(--color-bg-secondary); color: var(--color-text-primary); }
+.kpedit-B-dot{ color: var(--color-text-quaternary); }
+.kpedit-B-id{
+  font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+  color: var(--color-text-quaternary);
+  background: var(--color-bg-secondary);
+  padding: 2px 6px; border-radius: 4px;
+}
+
+.kpedit-B-main{ display: flex; flex-direction: column; gap: 24px; }
+.kpedit-B-body-h{
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+.kpedit-B-body-h h3{ font-size: 14px; font-weight: 600; margin: 0; color: var(--color-text-primary); }
+.kpedit-B-fmt-hint{
+  margin: 0; font-size: 12px; color: var(--color-text-quaternary);
+  font-style: italic;
+}
+.kpedit-B-textarea{
+  width: 100%; border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 13.5px; line-height: 1.8;
+  color: var(--color-text-primary);
+  outline: 0; resize: vertical;
+  min-height: 280px;
+  background: #fff; box-sizing: border-box;
+  transition: border-color .12s, box-shadow .12s;
+}
+.kpedit-B-textarea:focus{
+  border-color: var(--accent-strategy);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent-strategy) 14%, transparent);
+}
+.kpedit-B-tags-h{
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; margin-top: 4px;
+}
+.kpedit-B-tags-h h3{ font-size: 14px; font-weight: 600; margin: 0; color: var(--color-text-primary); }
+
+.kpedit-B-fab{
+  position: fixed; right: 24px; bottom: 24px;
+  display: flex; gap: 8px; padding: 8px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.05);
+  z-index: 50;
+}
+.kpedit-B-fab-btn{
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 36px; padding: 0 14px; border-radius: 8px;
+  font-size: 13px; font-weight: 500; font-family: inherit;
+  border: 0; cursor: pointer;
+  transition: background .12s;
+}
+.kpedit-B-fab-btn.is-ghost{ background: transparent; color: var(--color-text-tertiary); width: 36px; padding: 0; }
+.kpedit-B-fab-btn.is-ghost:hover{ background: var(--color-bg-secondary); color: var(--color-text-primary); }
+.kpedit-B-fab-btn.is-danger{ background: transparent; color: #c8302c; width: 36px; padding: 0; }
+.kpedit-B-fab-btn.is-danger:hover{ background: color-mix(in oklab, #c8302c 10%, #fff); }
+.kpedit-B-fab-btn.is-primary{
+  background: var(--accent-strategy); color: #fff; font-weight: 600;
+  padding: 0 16px;
+}
+.kpedit-B-fab-btn.is-primary:hover{ background: color-mix(in oklab, var(--accent-strategy) 88%, #000); }
+
+/* =========================================================
+   方案 C · 左 jump nav · 右长表单
+   ========================================================= */
+.kpedit-C{
+  display: grid; grid-template-columns: 280px 1fr;
+  min-height: 100%;
+}
+.kpedit-C-nav{
+  background: #fafafa;
+  border-right: 1px solid var(--color-border);
+  padding: 24px 20px;
+  position: sticky; top: 0;
+  height: 100vh;
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+.kpedit-C-back{
+  font-size: 12px; color: var(--color-text-tertiary);
+  text-decoration: none; margin-bottom: 18px;
+}
+.kpedit-C-back:hover{ text-decoration: underline; }
+.kpedit-C-eyebrow{
+  font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+  color: var(--color-text-quaternary); text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.kpedit-C-title{
+  font-size: 17px; font-weight: 600; line-height: 1.3;
+  color: var(--color-text-primary); margin: 0 0 6px;
+}
+.kpedit-C-id{
+  display: inline-block;
+  font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+  color: var(--color-text-quaternary);
+  background: #fff;
+  padding: 2px 6px; border-radius: 4px;
+  border: 1px solid var(--color-border);
+  margin-bottom: 22px;
+}
+.kpedit-C-jump{
+  display: flex; flex-direction: column; gap: 1px;
+  margin-bottom: 24px;
+}
+.kpedit-C-jump-i{
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  border-left: 2px solid transparent;
+}
+.kpedit-C-jump-i:hover{ background: rgba(0,0,0,0.04); }
+.kpedit-C-jump-i.is-active{
+  background: #fff;
+  border-left-color: var(--accent-strategy);
+}
+.kpedit-C-jump-l{
+  font-size: 13px; font-weight: 500;
+  color: var(--color-text-primary);
+}
+.kpedit-C-jump-i.is-active .kpedit-C-jump-l{ color: var(--accent-strategy); font-weight: 600; }
+.kpedit-C-jump-c{
+  font-size: 11px; color: var(--color-text-quaternary);
+  font-variant-numeric: tabular-nums;
+}
+.kpedit-C-actions{
+  display: flex; flex-direction: column; gap: 6px;
+  padding-top: 16px; border-top: 1px solid var(--color-border);
+  margin-bottom: 24px;
+}
+.kpedit-C-btn-primary,
+.kpedit-C-btn-ghost,
+.kpedit-C-btn-danger{
+  padding: 8px 12px; border-radius: 6px;
+  font-size: 13px; font-weight: 500;
+  font-family: inherit; cursor: pointer;
+  text-align: center;
+  border: 1px solid transparent;
+}
+.kpedit-C-btn-primary{
+  background: var(--accent-strategy); color: #fff;
+  border-color: var(--accent-strategy); font-weight: 600;
+}
+.kpedit-C-btn-primary:hover{ background: color-mix(in oklab, var(--accent-strategy) 88%, #000); }
+.kpedit-C-btn-ghost{
+  background: #fff; color: var(--color-text-tertiary);
+  border-color: var(--color-border);
+}
+.kpedit-C-btn-ghost:hover{ background: var(--color-bg-secondary); color: var(--color-text-primary); }
+.kpedit-C-btn-danger{
+  background: transparent; color: #c8302c;
+  border-color: transparent;
+  font-size: 12px;
+}
+.kpedit-C-btn-danger:hover{ background: color-mix(in oklab, #c8302c 8%, #fff); }
+.kpedit-C-meta{
+  font-size: 11px; color: var(--color-text-tertiary);
+  display: flex; flex-direction: column; gap: 6px;
+  padding-top: 14px; border-top: 1px solid var(--color-border);
+  margin-top: auto;
+}
+.kpedit-C-meta code{
+  font-family: ui-monospace, Menlo, monospace; font-size: 10.5px;
+  background: #fff; padding: 1px 5px; border-radius: 3px;
+  border: 1px solid var(--color-border);
+}
+
+.kpedit-C-form{
+  padding: 36px 48px 80px;
+  max-width: 880px;
+}
+.kpedit-C-sec{
+  display: flex; flex-direction: column; gap: 14px;
+  margin-bottom: 36px;
+}
+.kpedit-C-sec-h{
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 6px;
+}
+.kpedit-C-sec-h h3{
+  font-size: 16px; font-weight: 600; margin: 0;
+  color: var(--color-text-primary);
+  letter-spacing: 0.01em;
+}
+.kpedit-C-meta-grid{
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px 20px;
+  font-size: 13px; color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
+  padding: 14px 16px; border-radius: 8px;
+}
+.kpedit-C-meta-grid > div > span:first-child{
+  font-size: 11px; display: block; margin-bottom: 2px;
+}
+.kpedit-C-meta-grid code{
+  font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+  background: #fff; padding: 1px 5px; border-radius: 3px;
+  border: 1px solid var(--color-border);
+}

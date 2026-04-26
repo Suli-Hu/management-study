@@ -320,12 +320,14 @@ sqlLines.push('');
 setSection('02_kp');
 header('KP upsert + KP orphan cleanup');
 sqlLines.push('-- KPs');
-const kpCols = ['id','discipline','year','title_zh','title_en','title_ja','body_zh','body_ja','tags_json','format','created_at','updated_at'];
+// v0.5.1: 新增 eval_content_zh_json / eval_content_ja_json（评价结构化字段，迁移后所有 KP 都有）
+const kpCols = ['id','discipline','year','title_zh','title_en','title_ja','body_zh','body_ja','tags_json','eval_content_zh_json','eval_content_ja_json','format','created_at','updated_at'];
 for (const k of kps) {
   sqlLines.push(
     `INSERT INTO kp (${kpCols.join(', ')}) VALUES (` +
     `${q(k.id)}, ${q(k.discipline)}, ${q(k.year)}, ${q(k.title.zh)}, ${q(k.title.en)}, ${q(k.title.ja)}, ` +
-    `${q(k.body.zh)}, ${q(k.body.ja)}, ${jq(k.tags)}, ${q(k.format)}, ${q(k.createdAt)}, ${q(k.updatedAt)}) ` +
+    `${q(k.body.zh)}, ${q(k.body.ja)}, ${jq(k.tags)}, ${jq(k.evalContent?.zh ?? {})}, ${jq(k.evalContent?.ja ?? {})}, ` +
+    `${q(k.format)}, ${q(k.createdAt)}, ${q(k.updatedAt)}) ` +
     `ON CONFLICT(id) DO UPDATE SET ${updateSet(kpCols, 'id')};`
   );
 }

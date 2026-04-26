@@ -1,27 +1,43 @@
 ---
+/**
+ * 学派详情页 — OptionA「紧凑密度」(v0.5.1 设计稿落地)
+ *
+ * 布局：split [380-420px 左] [1fr 右]
+ *   左：optA-hero (3px accent border-left) → 概述(可折叠) → 代表学者(可折叠) → KP 列表
+ *   右：3px accent strip → kp-head-bar → renderBodyForSchool → renderEvalModule
+ *
+ * 兼容保留：
+ *   - split-pane.js (`.kp-list-item[data-kp-id]` + `[data-kp-link][data-kp-wide-href]`)
+ *   - admin-tools.js (`[data-kp-delete][data-kp-id][data-kp-title]`)
+ *   - drag-reorder-client (concepts 拖拽)
+ *   - star toggle (localStorage)
+ */
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
-import { renderBody } from '~/lib/render-body';
+import { renderBodyForSchool, renderEvalModule } from '~/lib/render-body';
 import { editHref } from '~/lib/nav';
 import { tagColor } from '~/lib/tag-color';
 import type { Tag } from '~/schemas/discipline';
+import type { EvalContent } from '~/lib/eval-tag-defs';
 
 const { discipline, school } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
 
-// 学科标签库（颜色解析单一来源）
+// 标签库 + 学派 + KP 列表
 const discRow = await db
   .prepare('SELECT tags_json FROM discipline WHERE key = ?')
   .bind(discipline)
   .first<{ tags_json: string }>();
-const tagLibrary = discRow?.tags_json ? JSON.parse(discRow.tags_json) as Tag[] : [];
+const tagLibrary: Tag[] = discRow?.tags_json ? JSON.parse(discRow.tags_json) : [];
 
 const sch = await db
   .prepare('SELECT key, title_zh, title_en, era, summary_zh, tags_json FROM school WHERE key = ? AND discipline = ?')
   .bind(school, discipline)
   .first<{ key: string; title_zh: string; title_en: string | null; era: string; summary_zh: string; tags_json: string }>();
-
 if (!sch) return Astro.redirect('/404');
+
+const schoolTags = JSON.parse(sch.tags_json) as string[];
+const accentHex = tagColor({ tags: schoolTags }, tagLibrary);
 
 const kpsResult = await db
   .prepare(`
@@ -36,47 +52,49 @@ const kpsResult = await db
   .all<{ id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string; scholars_csv: string | null }>();
 const kps = kpsResult.results ?? [];
 
+// 学者 lookup（KP meta 行用 EN 名）
 const scholarsLookupResult = await db
   .prepare('SELECT key, name_zh, name_en FROM scholar WHERE discipline = ?')
   .bind(discipline)
   .all<{ key: string; name_zh: string; name_en: string | null }>();
 const scholarByKey = new Map((scholarsLookupResult.results ?? []).map((s) => [s.key, s]));
 
-// 该学派的代表学者（v0.4.4 part 1：补 v1 who 字段对应 UI）
+// 该学派的代表学者（OptionA 用 row 形式展示）
 const schoolScholarsResult = await db
   .prepare(`
-    SELECT sc.key, sc.name_zh, sc.name_en
+    SELECT sc.key, sc.name_zh, sc.name_en, sc.name_ja
     FROM scholar sc
     INNER JOIN scholar_school ss ON ss.scholar_key = sc.key
     WHERE ss.school_key = ?
     ORDER BY ss.position, sc.key
   `)
   .bind(school)
-  .all<{ key: string; name_zh: string; name_en: string | null }>();
+  .all<{ key: string; name_zh: string; name_en: string | null; name_ja: string | null }>();
 const schoolScholars = schoolScholarsResult.results ?? [];
 
-const schoolTags = JSON.parse(sch.tags_json) as string[];
-const schoolAccentHex = tagColor({ tags: schoolTags }, tagLibrary);
-
-// 未指定 ?kp= 时默认选第一个（v0.3.13）
+// 选中 KP（?kp= 或 list[0]）
 const requestedKpId = Astro.url.searchParams.get('kp');
 const selectedKpId = requestedKpId ?? kps[0]?.id ?? null;
+
 type SelectedKp = {
   id: string; title_zh: string; title_en: string | null; title_ja: string | null;
-  year: string; body_zh: string; body_ja: string | null; tags_json: string;
+  year: string; body_zh: string; body_ja: string | null;
+  format: string;
+  eval_content_zh_json: string;
 };
 let selectedKp: SelectedKp | null = null;
 let selectedScholars: Array<{ key: string; name_zh: string; name_en: string | null }> = [];
-let selectedTags: string[] = [];
+let selectedEvalContent: EvalContent | null = null;
 
 if (selectedKpId) {
   const kpRow = await db
-    .prepare('SELECT id, title_zh, title_en, title_ja, year, body_zh, body_ja, tags_json FROM kp WHERE id = ? AND discipline = ?')
+    .prepare('SELECT id, title_zh, title_en, title_ja, year, body_zh, body_ja, format, eval_content_zh_json FROM kp WHERE id = ? AND discipline = ?')
     .bind(selectedKpId, discipline)
     .first() as SelectedKp | null;
   selectedKp = kpRow ?? null;
   if (selectedKp) {
-    selectedTags = JSON.parse(selectedKp.tags_json) as string[];
+    try { selectedEvalContent = JSON.parse(selectedKp.eval_content_zh_json) as EvalContent; }
+    catch { selectedEvalContent = null; }
     const scRes = await db
       .prepare(`
         SELECT sc.key, sc.name_zh, sc.name_en
@@ -90,6 +108,8 @@ if (selectedKpId) {
     selectedScholars = scRes.results ?? [];
   }
 }
+
+const canEdit = Astro.locals.canEdit(discipline);
 ---
 
 <Layout
@@ -98,32 +118,29 @@ if (selectedKpId) {
   currentSection="schools"
   fullHeight
 >
-  <main
-    class="h-full lg:h-full lg:grid lg:grid-cols-[minmax(440px,520px)_1fr]"
-    style={`--accent:${schoolAccentHex}`}
-  >
-    {/* 左栏：学派信息 + KP 列表 */}
-    <aside class="lg:h-full lg:overflow-y-auto lg:border-r px-4 py-6">
-      <section class="flex rounded-xl overflow-hidden border bg-bg-primary shadow-card mb-5">
-        <div class="w-1.5 shrink-0" style={`background:${schoolAccentHex}`}></div>
-        <div class="flex-1 p-5 flex items-start gap-3">
+  <div class="split" style={`--accent:${accentHex}`}>
+
+    {/* ========== 左栏 ========== */}
+    <aside class="left">
+
+      {/* Hero */}
+      <div class="optA-hero">
+        <div class="flex items-baseline justify-between gap-3">
           <div class="flex-1 min-w-0">
-            <h1 class="text-xl font-semibold leading-tight">{sch.title_zh}</h1>
-            <div class="text-xs text-tertiary mt-1">
-              {sch.title_en}
-              {sch.era && <span class="text-quaternary">　·　{sch.era}</span>}
+            <div class="optA-eyebrow">学派</div>
+            <h1 class="text-2xl font-semibold leading-tight">{sch.title_zh}</h1>
+            <div class="text-xs text-quaternary mt-1">
+              {sch.title_en}{sch.era ? ` · ${sch.era}` : ''}
             </div>
           </div>
-          <div class="shrink-0 -mr-1 -mt-1 flex items-center gap-0.5">
-            {Astro.locals.canEdit(discipline) && (
+          <div class="shrink-0 flex items-center gap-0.5">
+            {canEdit && (
               <a
                 href={editHref(`/${discipline}/${sch.key}/edit`, Astro.url.pathname)}
-                class="inline-flex w-9 h-9 rounded-full items-center justify-center text-base text-quaternary hover:text-accent-strategy hover:bg-bg-tertiary transition-colors opacity-60 hover:opacity-100"
+                class="hero-icon-btn"
                 aria-label="编辑此学派"
-                title="编辑此学派"
-              >
-                ✎
-              </a>
+                title="编辑"
+              >✎</a>
             )}
             <button
               id="school-star-toggle"
@@ -131,163 +148,184 @@ if (selectedKpId) {
               data-school-key={sch.key}
               aria-label="收藏学派"
               aria-pressed="false"
-              class="school-star w-9 h-9 rounded-full flex items-center justify-center text-xl leading-none text-quaternary hover:bg-bg-tertiary transition-colors"
-            >
-              <span aria-hidden="true">☆</span>
-            </button>
+              class="hero-icon-btn"
+              title="收藏"
+            ><span aria-hidden="true">☆</span></button>
           </div>
         </div>
-      </section>
+      </div>
 
-      <section class="mb-5 group">
-        <h2 class="text-xs font-semibold text-tertiary mb-2 flex items-center gap-2">
-          代表学者 ({schoolScholars.length})
-          {Astro.locals.canEdit(discipline) && (
-            <a
-              href={editHref(`/${discipline}/scholars/new?school=${sch.key}`, Astro.url.pathname)}
-              class="inline-flex opacity-50 hover:opacity-100 transition-opacity items-center px-2 py-0.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white"
-              title="新增学者并预选此学派"
-            >
-              + 新增
-            </a>
-          )}
-        </h2>
-        {schoolScholars.length > 0 ? (
-          <div class="flex flex-wrap gap-1.5">
-            {schoolScholars.map((s) => (
-              <a
-                href={`/${discipline}/scholars/${s.key}`}
-                class="inline-flex items-center px-2.5 py-1 rounded-full border bg-bg-primary text-xs hover:shadow-card transition-shadow"
-              >
-                {s.name_en ?? s.name_zh}
-              </a>
-            ))}
-          </div>
-        ) : (
-          <p class="text-xs text-quaternary">暂无关联学者。</p>
-        )}
-      </section>
-
+      {/* 概述（可折叠）*/}
       {sch.summary_zh && (
-        <section class="mb-5">
-          <h2 class="text-xs font-semibold text-tertiary mb-2">概述</h2>
-          <p class="text-xs text-secondary leading-relaxed">{sch.summary_zh}</p>
+        <section class="optA-summary-wrap" data-collapse-section="summary">
+          <button class="optA-section-head--btn" type="button" aria-expanded="true" data-collapse-toggle>
+            <h2>概述</h2>
+            <span class="optA-collapse-chev">▾</span>
+          </button>
+          <div class="optA-summary" data-collapse-body>{sch.summary_zh}</div>
         </section>
       )}
 
-      <section class="group">
-        <h2 class="text-xs font-semibold text-tertiary mb-3 flex items-center gap-2" data-count-label="核心概念" data-count={kps.length}>
-          核心概念 ({kps.length})
-          {Astro.locals.canEdit(discipline) && (
+      {/* 代表学者（可折叠）*/}
+      <section class="optA-block" data-collapse-section="scholars">
+        <button class="optA-section-head--btn" type="button" aria-expanded="true" data-collapse-toggle>
+          <h2>代表学者</h2>
+          <span class="optA-count">{schoolScholars.length}</span>
+          <span class="optA-collapse-chev">▾</span>
+          {canEdit && (
+            <a
+              href={editHref(`/${discipline}/scholars/new?school=${sch.key}`, Astro.url.pathname)}
+              class="ml-auto text-xs text-quaternary hover:text-accent-strategy"
+              onclick="event.stopPropagation()"
+              title="新增学者"
+            >+ 新增</a>
+          )}
+        </button>
+        <ul class="optA-scholars" data-collapse-body>
+          {schoolScholars.length === 0 ? (
+            <li class="text-xs text-quaternary px-2 py-1">暂无关联学者。</li>
+          ) : schoolScholars.map((s) => (
+            <li>
+              <a href={`/${discipline}/scholars/${s.key}`} class="optA-scholar-row">
+                <span class="optA-scholar-name">{s.name_en ?? s.name_zh}</span>
+                {s.name_en && <span class="optA-scholar-zh">{s.name_zh}</span>}
+                {s.name_ja && <span class="optA-scholar-ja">{s.name_ja}</span>}
+                <span class="optA-arrow">↗</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* 核心概念 */}
+      <section class="optA-block">
+        <div class="optA-section-head">
+          <h2>核心概念</h2>
+          <span class="optA-count">{kps.length}</span>
+          {canEdit && (
             <a
               href={editHref(`/${discipline}/kp/new?school=${sch.key}`, Astro.url.pathname)}
-              class="inline-flex opacity-50 hover:opacity-100 transition-opacity items-center px-2 py-0.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white"
-              title="新增 KP 并预选此学派"
-            >
-              + 新增
-            </a>
+              class="ml-auto text-xs text-quaternary hover:text-accent-strategy"
+              title="新增 KP"
+            >+ 新增</a>
           )}
-        </h2>
-        <ul class="drag-reorder space-y-2" data-reorder-kind="school-concepts" data-school-key={sch.key}>
-          {kps.map((k) => {
+        </div>
+        <ul class="optA-kps drag-reorder" data-reorder-kind="school-concepts" data-school-key={sch.key}>
+          {kps.map((k, i) => {
             const scholarKeys = (k.scholars_csv ?? '').split(',').filter(Boolean);
             const scholarLabel = scholarKeys
               .map((sk) => scholarByKey.get(sk)?.name_en ?? scholarByKey.get(sk)?.name_zh ?? sk)
-              .filter(Boolean)
               .join(' · ');
             const isActive = selectedKpId === k.id;
             return (
               <li
                 data-kp-id={k.id}
-                class:list={['kp-list-item group relative', isActive && 'is-active']}
-                style={`--accent:${schoolAccentHex}`}
+                class:list={['optA-kp kp-list-item', isActive && 'is-active']}
               >
                 <a
                   href={`/${discipline}/kp/${k.id}`}
                   data-kp-link
                   data-kp-wide-href={`?kp=${k.id}`}
-                  class="kp-list-item__link"
+                  class="contents"
                 >
-                  <h3 class="text-sm font-semibold text-primary">{k.title_zh}</h3>
-                  {(scholarLabel || k.year) && (
-                    <div class="text-xs text-quaternary mt-0.5">
-                      {scholarLabel}{scholarLabel && k.year ? ' · ' : ''}{k.year}
-                    </div>
-                  )}
-                  {k.title_ja && <div class="text-xs text-tertiary mt-0.5">{k.title_ja}</div>}
+                  <div class="optA-kp-num">{String(i + 1).padStart(2, '0')}</div>
+                  <div class="optA-kp-body">
+                    <div class="optA-kp-title">{k.title_zh}</div>
+                    {(scholarLabel || k.year) && (
+                      <div class="optA-kp-meta">
+                        {scholarLabel}{scholarLabel && k.year ? ' · ' : ''}{k.year}
+                      </div>
+                    )}
+                  </div>
+                  <span class="optA-kp-chev">›</span>
                 </a>
-                {Astro.locals.canEdit(discipline) && (
-                  <div class="kp-admin-tools hidden lg:flex absolute top-2 right-2 gap-1 opacity-40 hover:opacity-100 transition-opacity">
-                    <a
-                      href={editHref(`/${discipline}/kp/${k.id}/edit`, Astro.url.pathname)}
-                      class="w-6 h-6 rounded bg-bg-primary border flex items-center justify-center text-xs text-tertiary hover:text-accent-strategy hover:border-accent-strategy"
-                      aria-label={`编辑 ${k.title_zh}`}
-                      title="编辑"
-                      onclick="event.stopPropagation()"
-                    >
-                      ✎
-                    </a>
+                {canEdit && (
+                  <div class="kp-admin">
                     <button
+                      class="kp-admin-trigger"
                       type="button"
-                      data-kp-delete
-                      data-kp-id={k.id}
-                      data-kp-title={k.title_zh}
-                      class="w-6 h-6 rounded bg-bg-primary border flex items-center justify-center text-xs text-tertiary hover:text-accent-warning hover:border-accent-warning"
-                      aria-label={`删除 ${k.title_zh}`}
-                      title="删除（硬删，进 git history）"
-                    >
-                      ✗
-                    </button>
+                      aria-label="管理此 KP"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                      data-kp-menu-trigger
+                    >⋯</button>
+                    <div class="kp-admin-menu hidden" role="menu">
+                      <a
+                        class="kp-admin-mi"
+                        href={editHref(`/${discipline}/kp/${k.id}/edit`, Astro.url.pathname)}
+                        role="menuitem"
+                      >
+                        <span class="kp-admin-mi-ic">✎</span>编辑
+                      </a>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        class="kp-admin-mi is-danger"
+                        data-kp-delete
+                        data-kp-id={k.id}
+                        data-kp-title={k.title_zh}
+                      >
+                        <span class="kp-admin-mi-ic">✗</span>删除
+                      </button>
+                    </div>
                   </div>
                 )}
               </li>
             );
           })}
         </ul>
+        {kps.length === 0 && (
+          <p class="text-xs text-quaternary px-2 py-2">暂无核心概念。</p>
+        )}
       </section>
     </aside>
 
-    {/* 右栏：KP 详情 */}
-    <article
-      class="kp-detail-pane hidden lg:block lg:h-full lg:overflow-y-auto px-4 py-6"
-      id="kp-detail-pane"
-    >
-      {selectedKp ? (
-        <div class="max-w-reading mx-auto">
-          <header class="mb-6 pb-4 border-b">
-            <h2 class="text-xl font-semibold">{selectedKp.title_zh}</h2>
-            <div class="flex flex-wrap items-baseline gap-2 text-xs text-tertiary mt-2">
-              {selectedScholars.map((s) => (
-                <a href={`/${discipline}/scholars/${s.key}`} class="font-semibold hover:underline">
-                  {s.name_en ?? s.name_zh}
-                </a>
-              ))}
-              {selectedKp.year && <span class="text-quaternary">'{selectedKp.year}</span>}
-            </div>
-            {selectedKp.title_en && <div class="text-xs text-quaternary italic mt-1">{selectedKp.title_en}</div>}
-            {selectedKp.title_ja && <div class="text-xs text-tertiary mt-1">{selectedKp.title_ja}</div>}
-          </header>
-          <div class="kp-body text-secondary" set:html={renderBody(selectedKp.body_zh, schoolAccentHex)} />
-        </div>
-      ) : (
-        <div class="text-sm text-quaternary py-10 px-4 max-w-reading mx-auto">
-          <p>选中左侧 KP 查看详情，或按 <kbd class="px-1.5 py-0.5 text-xs rounded border bg-bg-secondary">↓</kbd> / <kbd class="px-1.5 py-0.5 text-xs rounded border bg-bg-secondary">↑</kbd> 切换</p>
-        </div>
-      )}
+    {/* ========== 右栏 ========== */}
+    <article class="right kp-detail-pane" id="kp-detail-pane" style="padding:0">
+      <div style={`height:3px;background:${accentHex}`}></div>
+      <div style="max-width:720px;margin:0 auto;padding:28px 28px 40px">
+        {selectedKp ? (
+          <>
+            <header class="kp-head-bar">
+              <span class="kp-head-bar-strip"></span>
+              <div class="kp-head-bar-body">
+                <h2 class="text-xl font-semibold leading-tight">{selectedKp.title_zh}</h2>
+                <div class="text-xs text-tertiary mt-2 flex flex-wrap items-baseline gap-2">
+                  {selectedScholars.map((s) => (
+                    <a href={`/${discipline}/scholars/${s.key}`} class="font-semibold hover:underline">
+                      {s.name_en ?? s.name_zh}
+                    </a>
+                  ))}
+                  {selectedKp.year && <span class="text-quaternary">'{selectedKp.year}</span>}
+                </div>
+                {selectedKp.title_en && <div class="text-xs text-quaternary italic mt-1">{selectedKp.title_en}</div>}
+                {selectedKp.title_ja && <div class="text-xs text-tertiary mt-1">{selectedKp.title_ja}</div>}
+              </div>
+            </header>
+            <div class="mt-6" set:html={renderBodyForSchool(selectedKp.format, selectedKp.body_zh, accentHex)} />
+            <div set:html={renderEvalModule(selectedEvalContent)} />
+          </>
+        ) : (
+          <div class="text-sm text-quaternary py-10">
+            <p>选中左侧 KP 查看详情。</p>
+          </div>
+        )}
+      </div>
     </article>
-  </main>
+
+  </div>
 </Layout>
 
 <script is:inline src="/split-pane.js"></script>
 <script is:inline src="/admin-tools.js"></script>
 
-{Astro.locals.canEdit(discipline) && (
+{canEdit && (
   <div data-reorder-bootstrap="school-concepts" class="hidden"></div>
 )}
 
 <script>
-  // @ts-nocheck — DOM 类型推断弱，runtime 已验证
-  // v0.4.26 KP 列表长按拖动重排（v0.4.30 改新 onReorder API 签名 — 单容器仍用 idsByContainer Map）
+  // @ts-nocheck — DOM 类型推断弱
+  // KP 列表长按拖动重排（保留 v0.4.26 行为）
   import { mountDragReorder } from '~/lib/drag-reorder-client';
   if (document.querySelector('[data-reorder-bootstrap="school-concepts"]')) {
     document.querySelectorAll('[data-reorder-kind="school-concepts"]').forEach((ul) => {
@@ -295,7 +333,7 @@ if (selectedKpId) {
       mountDragReorder(ul, {
         getId: (el) => el.getAttribute('data-kp-id'),
         getContainerKey: () => schoolKey,
-        skipSelector: 'a, button',
+        skipSelector: 'a, button, .kp-admin',
         onReorder: async (idsByContainer) => {
           const kpIds = idsByContainer.get(schoolKey) ?? [];
           if (kpIds.length === 0) return;
@@ -314,8 +352,8 @@ if (selectedKpId) {
   }
 </script>
 
-<script is:inline define:vars={{ schoolKey: sch.key, accentHex: schoolAccentHex }}>
-  // v0.3.15: 学派收藏星标（localStorage，访客/admin 同）
+<script is:inline define:vars={{ schoolKey: sch.key, accentHex: accentHex }}>
+  // ========== 学派收藏星标 ==========
   (function () {
     const btn = document.getElementById('school-star-toggle');
     if (!btn) return;
@@ -326,7 +364,7 @@ if (selectedKpId) {
       btn.setAttribute('aria-pressed', String(starred));
       if (iconSpan) iconSpan.textContent = starred ? '★' : '☆';
       btn.style.color = starred ? accentHex : '';
-      btn.setAttribute('aria-label', starred ? '已收藏学派（点击取消）' : '收藏学派');
+      btn.setAttribute('aria-label', starred ? '已收藏（点击取消）' : '收藏学派');
     }
     render();
     btn.addEventListener('click', () => {
@@ -334,5 +372,64 @@ if (selectedKpId) {
       else localStorage.setItem(KEY, '1');
       render();
     });
+  })();
+
+  // ========== OptionA 折叠（概述 / 代表学者，localStorage 持久化）==========
+  (function () {
+    const KEY = `optA:${schoolKey}:collapsed`;
+    let state = {};
+    try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { state = {}; }
+
+    document.querySelectorAll('[data-collapse-section]').forEach((sec) => {
+      const id = sec.getAttribute('data-collapse-section');
+      const btn = sec.querySelector('[data-collapse-toggle]');
+      const body = sec.querySelector('[data-collapse-body]');
+      if (!btn || !body) return;
+      function apply() {
+        const collapsed = !!state[id];
+        sec.classList.toggle('is-collapsed', collapsed);
+        btn.setAttribute('aria-expanded', String(!collapsed));
+        body.style.display = collapsed ? 'none' : '';
+      }
+      apply();
+      btn.addEventListener('click', () => {
+        state[id] = !state[id];
+        try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
+        apply();
+      });
+    });
+  })();
+
+  // ========== KP 卡片 ⋯ overflow 菜单 ==========
+  (function () {
+    let openTrigger = null;
+    function closeAll() {
+      document.querySelectorAll('[data-kp-menu-trigger]').forEach((t) => {
+        t.classList.remove('is-open');
+        t.setAttribute('aria-expanded', 'false');
+        const menu = t.nextElementSibling;
+        if (menu && menu.classList.contains('kp-admin-menu')) menu.classList.add('hidden');
+      });
+      openTrigger = null;
+    }
+    document.addEventListener('click', (e) => {
+      const trigger = e.target.closest && e.target.closest('[data-kp-menu-trigger]');
+      if (trigger) {
+        e.preventDefault();
+        e.stopPropagation();
+        const wasOpen = trigger === openTrigger;
+        closeAll();
+        if (!wasOpen) {
+          trigger.classList.add('is-open');
+          trigger.setAttribute('aria-expanded', 'true');
+          const menu = trigger.nextElementSibling;
+          if (menu) menu.classList.remove('hidden');
+          openTrigger = trigger;
+        }
+      } else if (!e.target.closest || !e.target.closest('.kp-admin-menu')) {
+        closeAll();
+      }
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
   })();
 </script>
