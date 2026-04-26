@@ -8,6 +8,15 @@
   "tagline": {
     "zh": "日本大学院入试备考"
   },
+  "tags": [
+    {
+      "key": "t_ejbdv3",
+      "label": {
+        "zh": "OB"
+      },
+      "color": "#10B981"
+    }
+  ],
   "themes": [
     {
       "key": "ob_individual",
@@ -17,14 +26,14 @@
       "desc": {
         "zh": "人格→态度→动机(内容→过程)→判断偏误"
       },
+      "tags": [],
       "schools": [
         "personality",
         "attitude_emotion",
         "ob",
         "behavioral",
         "beh_econ"
-      ],
-      "tags": []
+      ]
     },
     {
       "key": "ob_group",
@@ -34,12 +43,12 @@
       "desc": {
         "zh": "非正式组织→集团动力学→领导力→冲突管理"
       },
+      "tags": [],
       "schools": [
         "humanrel",
         "leadership_theory",
         "conflict"
-      ],
-      "tags": []
+      ]
     },
     {
       "key": "org_classic",
@@ -49,13 +58,13 @@
       "desc": {
         "zh": "作业层→管理职能→整体结构→形态分类"
       },
+      "tags": [],
       "schools": [
         "scientific",
         "process",
         "bureaucracy",
         "org_types"
-      ],
-      "tags": []
+      ]
     },
     {
       "key": "org_modern",
@@ -65,13 +74,13 @@
       "desc": {
         "zh": "协作系统→决策系统→学习主体→变革主体"
       },
+      "tags": [],
       "schools": [
         "systems",
         "org_learning",
         "decision_theory",
         "change"
-      ],
-      "tags": []
+      ]
     },
     {
       "key": "org_environment",
@@ -81,13 +90,13 @@
       "desc": {
         "zh": "权变→生态学→制度论→社会网络"
       },
+      "tags": [],
       "schools": [
         "contingency",
         "evolution_process",
         "institutional",
         "social_network"
-      ],
-      "tags": []
+      ]
     },
     {
       "key": "hr",
@@ -97,11 +106,11 @@
       "desc": {
         "zh": "英美HRM↔日本式经营的对照"
       },
+      "tags": [],
       "schools": [
         "hrm",
         "japanese_mgmt"
-      ],
-      "tags": []
+      ]
     },
     {
       "key": "strategy_internal",
@@ -111,14 +120,14 @@
       "desc": {
         "zh": "治理→资源(RBV)→动态能力→知识→创新"
       },
+      "tags": [],
       "schools": [
         "agency",
         "rbv",
         "dynamic",
         "km",
         "innovation"
-      ],
-      "tags": []
+      ]
     },
     {
       "key": "strategy_external",
@@ -128,14 +137,14 @@
       "desc": {
         "zh": "竞争定位→平台→CSR→交易费用→国际经营"
       },
+      "tags": [],
       "schools": [
         "io",
         "platform",
         "csr",
         "tce",
         "international_strategy"
-      ],
-      "tags": []
+      ]
     },
     {
       "key": "strategy_process",
@@ -145,6 +154,7 @@
       "desc": {
         "zh": "明茨伯格将战略形成归纳为十种学派，反映战略是理性设计的还是涌现学习的"
       },
+      "tags": [],
       "schools": [
         "design_s",
         "planning_s",
@@ -156,8 +166,7 @@
         "power_s",
         "culture_s",
         "configuration_s"
-      ],
-      "tags": []
+      ]
     },
     {
       "key": "scott_quadrant",
@@ -167,13 +176,13 @@
       "desc": {
         "zh": "封闭/开放 × 合理/自然 的2×2组织理论分类框架"
       },
+      "tags": [],
       "schools": [
         "static_structure",
         "equilibrium",
         "adaptive_design",
         "evolution_process"
-      ],
-      "tags": []
+      ]
     },
     {
       "key": "institutes",
@@ -183,6 +192,7 @@
       "desc": {
         "zh": "以大学为核心形成的学术传统与研究群体"
       },
+      "tags": [],
       "schools": [
         "harvard",
         "michigan",
@@ -194,11 +204,9 @@
         "aston",
         "stanford",
         "hitotsubashi"
-      ],
-      "tags": []
+      ]
     }
   ],
   "createdAt": "2026-04-24T16:44:30.409Z",
-  "updatedAt": "2026-04-26T08:00:00.000Z",
-  "tags": []
+  "updatedAt": "2026-04-26T10:03:11.053Z"
 }
