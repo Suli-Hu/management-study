@@ -17,10 +17,10 @@ const result = await db
 
 const disciplines = result.results ?? [];
 
-// 占位：未来其他学科（marketing 等）等加进 data/marketing/discipline.json 后自动出现
+// 占位：未来其他学科（learning 撒种后自动从 D1 出现）
 const upcoming = [
-  { key: 'marketing', title_zh: 'Marketing', title_en: 'Marketing' },
-  { key: 'finance',   title_zh: '金融',       title_en: 'Finance' },
+  { key: 'marketing', title_zh: '市场营销', title_en: 'Marketing' },
+  { key: 'sociology', title_zh: '社会学',   title_en: 'Sociology' },
 ];
 const upcomingFiltered = upcoming.filter((u) => !disciplines.some((d) => d.key === u.key));
 ---
@@ -45,16 +45,16 @@ const upcomingFiltered = upcoming.filter((u) => !disciplines.some((d) => d.key =
                 href={`/${d.key}`}
                 class="block p-4 rounded-lg border bg-bg-primary shadow-card transition-all hover:shadow-card-hover hover:-translate-y-px"
               >
-                <div class="flex items-baseline justify-between mb-1">
-                  <h3 class="text-lg flex items-baseline gap-2">
-                    {d.title_zh}
-                    {canEdit ? (
-                      <span class="text-xs px-1.5 py-0.5 rounded border border-accent-strategy text-accent-strategy">✎ 可编辑</span>
-                    ) : (
-                      <span class="text-xs px-1.5 py-0.5 rounded border border-bg-tertiary text-tertiary">👁 只读</span>
-                    )}
+                <div class="flex items-baseline justify-between mb-1 gap-3">
+                  <h3 class="text-lg flex items-baseline gap-2 min-w-0">
+                    <span class="truncate">{d.title_zh}</span>
+                    <span class="text-xs text-quaternary font-normal">{d.title_en}</span>
                   </h3>
-                  <span class="text-xs text-quaternary">{d.title_en}</span>
+                  {canEdit ? (
+                    <span class="shrink-0 text-xs px-1.5 py-0.5 rounded border border-accent-strategy text-accent-strategy">✎ 可编辑</span>
+                  ) : (
+                    <span class="shrink-0 text-xs px-1.5 py-0.5 rounded border border-bg-tertiary text-tertiary">👁 只读</span>
+                  )}
                 </div>
                 {d.tagline_zh && <div class="text-xs text-tertiary mb-1">{d.tagline_zh}</div>}
                 <div class="text-xs text-quaternary">
@@ -69,12 +69,12 @@ const upcomingFiltered = upcoming.filter((u) => !disciplines.some((d) => d.key =
               class="block p-4 rounded-lg border bg-bg-primary shadow-card opacity-40 cursor-not-allowed"
               title="无权限。联系管理员申请。"
             >
-              <div class="flex items-baseline justify-between mb-1">
-                <h3 class="text-lg flex items-baseline gap-2">
-                  {d.title_zh}
-                  <span class="text-xs px-1.5 py-0.5 rounded border border-bg-tertiary text-quaternary">🔒 无权限</span>
+              <div class="flex items-baseline justify-between mb-1 gap-3">
+                <h3 class="text-lg flex items-baseline gap-2 min-w-0">
+                  <span class="truncate">{d.title_zh}</span>
+                  <span class="text-xs text-quaternary font-normal">{d.title_en}</span>
                 </h3>
-                <span class="text-xs text-quaternary">{d.title_en}</span>
+                <span class="shrink-0 text-xs px-1.5 py-0.5 rounded border border-bg-tertiary text-quaternary">🔒 无权限</span>
               </div>
               <div class="text-xs text-quaternary">联系管理员申请</div>
             </div>
@@ -83,11 +83,13 @@ const upcomingFiltered = upcoming.filter((u) => !disciplines.some((d) => d.key =
 
         {upcomingFiltered.map((u) => (
           <div class="block p-4 rounded-lg border bg-bg-primary shadow-card opacity-50">
-            <div class="flex items-baseline justify-between mb-1">
-              <h3 class="text-lg">{u.title_zh}</h3>
-              <span class="text-xs text-quaternary">{u.title_en}</span>
+            <div class="flex items-baseline justify-between mb-1 gap-3">
+              <h3 class="text-lg flex items-baseline gap-2 min-w-0">
+                <span class="truncate">{u.title_zh}</span>
+                <span class="text-xs text-quaternary font-normal">{u.title_en}</span>
+              </h3>
+              <span class="shrink-0 text-xs px-1.5 py-0.5 rounded border border-bg-tertiary text-quaternary">即将上线</span>
             </div>
-            <div class="text-xs text-tertiary">即将上线</div>
           </div>
         ))}
       </div>
