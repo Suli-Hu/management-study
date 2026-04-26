@@ -54,3 +54,5 @@ data/*/kp/k[89][0-9][0-9][0-9].json
 data/.engineering/*
 !data/.engineering/README.md
 _eval-extraction-preview.json
+
+.claude/launch.json

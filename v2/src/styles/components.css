@@ -70,17 +70,21 @@ mark {
 .split {
   display: grid;
   grid-template-columns: minmax(380px, 420px) 1fr;
-  flex: 1; min-height: 0;
+  /* v0.5.3: 必须有 bounded height，否则两列共享 auto 高度 = 整页滚动 + 右栏 KP detail 被滚出视口 */
+  height: calc(100vh - 48px); /* 48px = nav.h-12 */
+  min-height: 0;
 }
 .split > .left {
   border-right: 1px solid var(--color-border);
   padding: 20px 18px;
   overflow-y: auto;
   background: var(--color-bg-primary);
+  min-height: 0;
 }
 .split > .right {
   overflow-y: auto;
   background: var(--color-bg-primary);
+  min-height: 0;
 }
 
 
