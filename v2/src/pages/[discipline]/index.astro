@@ -59,7 +59,12 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
     <div class="drag-reorder" data-reorder-kind="themes-order">
     {themed.map((t) => (
       <section class="mb-8" data-theme-key={t.key}>
-        <div class="mb-3 flex items-baseline justify-between gap-3 group">
+        <div
+          class="theme-header-row group mb-3 flex items-baseline justify-between gap-3 cursor-pointer rounded -mx-2 px-2 py-1 hover:bg-bg-tertiary/30 transition-colors"
+          data-theme-toggle={t.key}
+          role="button"
+          aria-expanded="true"
+        >
           <div class="flex items-baseline gap-2">
             {Astro.locals.canEdit(discipline) && (
               <span
@@ -70,18 +75,13 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
                 ≡
               </span>
             )}
-            <button
-              type="button"
-              class="theme-collapse-toggle inline-flex w-5 h-5 items-center justify-center text-quaternary hover:text-primary transition-transform"
-              data-theme-key={t.key}
-              aria-label={`折叠 ${t.title.zh}`}
-              aria-expanded="true"
-            >
-              ▼
-            </button>
+            <span
+              class="theme-chevron inline-flex w-3.5 h-3.5 items-center justify-center text-xs text-quaternary opacity-0 group-hover:opacity-50 transition-all duration-200"
+              aria-hidden="true"
+            >▾</span>
             <div>
-              <h2 class="text-base font-semibold cursor-pointer select-none" data-theme-title-toggle={t.key}>{t.title.zh}</h2>
-              {t.desc?.zh && <p class="text-xs text-tertiary mt-0.5">{t.desc.zh}</p>}
+              <h2 class="text-base font-semibold select-none">{t.title.zh}</h2>
+              {t.desc?.zh && <p class="text-xs text-tertiary mt-0.5 theme-desc">{t.desc.zh}</p>}
             </div>
           </div>
           {Astro.locals.canEdit(discipline) && (
@@ -230,7 +230,7 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
 </script>
 
 <script is:inline>
-  // v0.4.36 学派组折叠（所有用户都能折叠，per-discipline localStorage 持久化）
+  // v0.4.38 学派组折叠（方案 A：hover-reveal chevron + 整行可点）
   (function () {
     const path = window.location.pathname.split('/').filter(Boolean);
     const disc = path[0];
@@ -241,18 +241,14 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
 
     function applyState(themeKey, isCollapsed) {
       const content = document.querySelector(`[data-theme-content="${themeKey}"]`);
-      const toggle = document.querySelector(`.theme-collapse-toggle[data-theme-key="${themeKey}"]`);
-      if (!content || !toggle) return;
+      const row = document.querySelector(`[data-theme-toggle="${themeKey}"]`);
+      const section = document.querySelector(`section[data-theme-key="${themeKey}"]`);
+      if (!content || !row) return;
       content.style.display = isCollapsed ? 'none' : '';
-      toggle.style.transform = isCollapsed ? 'rotate(-90deg)' : '';
-      toggle.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+      row.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+      // is-collapsed class → CSS 控制 chevron 持续可见+旋转 + 标题压暗（见 global.css）
+      if (section) section.classList.toggle('is-collapsed', isCollapsed);
     }
-
-    document.querySelectorAll('.theme-collapse-toggle').forEach((btn) => {
-      const key = btn.getAttribute('data-theme-key');
-      if (!key) return;
-      if (collapsed.has(key)) applyState(key, true);
-    });
 
     function toggleTheme(key) {
       const next = !collapsed.has(key);
@@ -261,18 +257,18 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
       applyState(key, next);
     }
 
-    document.querySelectorAll('.theme-collapse-toggle').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const key = btn.getAttribute('data-theme-key');
-        if (key) toggleTheme(key);
-      });
+    // 初始化：根据 localStorage 应用折叠态
+    document.querySelectorAll('[data-theme-toggle]').forEach((row) => {
+      const key = row.getAttribute('data-theme-toggle');
+      if (key && collapsed.has(key)) applyState(key, true);
     });
-    // h2 标题点击同步触发折叠
-    document.querySelectorAll('[data-theme-title-toggle]').forEach((h) => {
-      h.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const key = h.getAttribute('data-theme-title-toggle');
+
+    // 整行点击触发（点 ≡ 拖排 / ⊕ 新增 / ✎ 编辑等子元素时不触发）
+    document.querySelectorAll('[data-theme-toggle]').forEach((row) => {
+      row.addEventListener('click', (e) => {
+        const target = e.target;
+        if (target && target.closest('a, button, .theme-drag-handle')) return;
+        const key = row.getAttribute('data-theme-toggle');
         if (key) toggleTheme(key);
       });
     });
