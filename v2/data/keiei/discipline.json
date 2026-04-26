@@ -186,8 +186,8 @@
       "accent": "strategy",
       "schools": [
         "harvard",
-        "chicago",
         "michigan",
+        "chicago",
         "carnegie",
         "ohio",
         "situational",
@@ -199,5 +199,5 @@
     }
   ],
   "createdAt": "2026-04-24T16:44:30.409Z",
-  "updatedAt": "2026-04-26T00:48:02.188Z"
+  "updatedAt": "2026-04-26T00:48:05.997Z"
 }
