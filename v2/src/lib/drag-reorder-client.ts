@@ -224,6 +224,12 @@ export function mountDragReorder(container: HTMLElement, opts: DragReorderOpts):
       if (child._dragInit) return;
       child._dragInit = true;
 
+      // 禁浏览器原生 HTML5 drag（<a> / <img> 默认会触发 dragstart 抢事件）
+      child.setAttribute('draggable', 'false');
+      child.querySelectorAll('a, img').forEach((el) => el.setAttribute('draggable', 'false'));
+      // 长按时也阻止 dragstart
+      child.addEventListener('dragstart', (e) => e.preventDefault());
+
       function onDown(clientX: number, clientY: number, e: Event) {
         if (drag.state !== 'idle') return;
         // 跳过特定元素（链接 / 按钮 / 用户指定）
