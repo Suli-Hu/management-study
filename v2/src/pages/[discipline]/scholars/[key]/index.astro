@@ -141,7 +141,7 @@ const canEdit = Astro.locals.canEdit(discipline);
         <div class="flex items-baseline justify-between gap-3">
           <div class="flex-1 min-w-0">
             <div class="optA-eyebrow">学者</div>
-            <h1 class="text-2xl font-semibold leading-tight">{scholar.name_en ?? scholar.name_zh}</h1>
+            <h1 class="optA-hero-title">{scholar.name_en ?? scholar.name_zh}</h1>
             <div class="text-xs text-tertiary mt-1">
               {scholar.name_zh}
               {scholar.name_ja && <span class="text-quaternary"> · {scholar.name_ja}</span>}

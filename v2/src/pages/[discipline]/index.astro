@@ -51,9 +51,9 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
 
 <Layout title={disc.title_zh} currentDiscipline={discipline} currentSection="schools">
   <main class="max-w-panel mx-auto px-4 py-6">
-    <header class="mb-8">
-      <h1 class="text-2xl mb-1">{disc.title_zh}</h1>
-      <p class="text-xs text-quaternary">{disc.title_en}{disc.tagline_zh ? ` · ${disc.tagline_zh}` : ''}</p>
+    <header class="page-hero">
+      <h1 class="page-hero-title">{disc.title_zh}</h1>
+      <p class="page-hero-sub">{disc.title_en}{disc.tagline_zh ? ` · ${disc.tagline_zh}` : ''}</p>
     </header>
 
     <div class="drag-reorder" data-reorder-kind="themes-order">
@@ -80,8 +80,8 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
               aria-hidden="true"
             >▾</span>
             <div>
-              <h2 class="text-base font-semibold select-none">{t.title.zh}</h2>
-              {t.desc?.zh && <p class="text-xs text-tertiary mt-0.5 theme-desc">{t.desc.zh}</p>}
+              <h2 class="section-eyebrow select-none">{t.title.zh}</h2>
+              {t.desc?.zh && <p class="text-xs text-quaternary mt-1 theme-desc">{t.desc.zh}</p>}
             </div>
           </div>
           {Astro.locals.canEdit(discipline) && (
@@ -155,7 +155,7 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
 
     {orphanSchools.length > 0 && (
       <section class="mb-8">
-        <h2 class="text-base font-semibold mb-3 text-tertiary">未分组</h2>
+        <h2 class="section-eyebrow mb-3">未分组</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
           {orphanSchools.map((s) => (
             <a href={`/${discipline}/${s.key}`} class="block p-3 rounded border bg-bg-primary hover:shadow-card transition-shadow">

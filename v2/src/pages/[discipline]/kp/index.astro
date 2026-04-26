@@ -89,10 +89,10 @@ for (const tk of byThemeBySchool.keys()) {
 
 <Layout title={`知识点 · ${disc.title_zh}`} currentDiscipline={discipline} currentSection="kps">
   <main class="max-w-panel mx-auto px-4 py-6">
-    <header class="mb-6 flex items-baseline justify-between gap-3 group">
+    <header class="page-hero flex items-baseline justify-between gap-3 group">
       <div>
-        <h1 class="text-2xl mb-1">知识点</h1>
-        <p class="text-xs text-quaternary">{disc.title_zh} · 共 {kps.length} 条</p>
+        <h1 class="page-hero-title">知识点</h1>
+        <p class="page-hero-sub">{disc.title_zh} · 共 {kps.length} 条</p>
       </div>
       {Astro.locals.canEdit(discipline) && (
         <a
@@ -105,6 +105,7 @@ for (const tk of byThemeBySchool.keys()) {
     </header>
 
     <nav class="mb-6 flex flex-wrap gap-1 text-xs">
+      <span class="text-quaternary mr-2">按学派组：</span>
       {orderedThemes.filter((t) => byThemeBySchool.has(t.key)).map((t) => (
         <a
           href={`#theme-${t.key}`}
@@ -122,26 +123,26 @@ for (const tk of byThemeBySchool.keys()) {
         ? [...t.schoolOrder.filter((sk) => schoolMap.has(sk)), ...Array.from(schoolMap.keys()).filter((sk) => !t.schoolOrder.includes(sk))]
         : Array.from(schoolMap.keys());
       return (
-        <section id={`theme-${t.key}`} class="mb-10 scroll-mt-16">
-          <h2 class="text-base font-semibold text-primary mb-4 sticky top-12 bg-bg-primary/90 backdrop-blur-sm py-1.5 -mx-1 px-1 border-b">
+        <section id={`theme-${t.key}`} class="mb-8 scroll-mt-16">
+          <h2 class="section-eyebrow is-sticky">
             {t.title}
           </h2>
           {schoolKeys.map((sk) => {
             const items = schoolMap.get(sk)!;
             const schoolTitle = items[0]?.school_title ?? sk;
             return (
-              <div class="mb-6">
-                <h3 class="text-sm font-semibold text-tertiary mb-2 flex items-baseline gap-2">
+              <div class="mb-5">
+                <h3 class="section-eyebrow is-sub mb-1">
                   {sk !== '_orphan' ? (
-                    <a href={`/${discipline}/${sk}`} class="text-tertiary hover:text-primary no-underline">
+                    <a href={`/${discipline}/${sk}`} class="hover:text-primary no-underline">
                       {schoolTitle}
                     </a>
                   ) : (
                     <span>未分组</span>
                   )}
-                  <span class="text-xs text-quaternary font-normal">{items.length}</span>
+                  <span class="eyebrow-count">{items.length}</span>
                 </h3>
-                <ul class="space-y-1">
+                <ul class="space-y-0">
                   {items.map((k) => {
                     const scholarKeys = (k.scholars_csv ?? '').split(',').filter(Boolean);
                     const scholarLabel = scholarKeys
@@ -151,11 +152,11 @@ for (const tk of byThemeBySchool.keys()) {
                       <li>
                         <a
                           href={`/${discipline}/kp/${k.id}`}
-                          class="block py-2 px-3 rounded hover:bg-bg-tertiary no-underline"
+                          class="block py-2 px-2 rounded hover:bg-bg-tertiary/40 no-underline transition-colors"
                         >
                           <div class="flex items-baseline justify-between gap-3">
                             <div class="min-w-0 flex-1">
-                              <span class="text-sm text-primary font-semibold">{k.title_zh}</span>
+                              <span class="text-[13.5px] text-primary font-semibold">{k.title_zh}</span>
                               {k.title_ja && <span class="text-xs text-tertiary ml-2">{k.title_ja}</span>}
                             </div>
                             <span class="text-xs text-quaternary whitespace-nowrap shrink-0">

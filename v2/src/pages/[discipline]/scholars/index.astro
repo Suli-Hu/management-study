@@ -58,10 +58,10 @@ const groupKeys = Array.from(grouped.keys()).sort((a, b) => {
 
 <Layout title={`学者 · ${disc.title_zh}`} currentDiscipline={discipline} currentSection="scholars">
   <main class="max-w-panel mx-auto px-4 py-6">
-    <header class="mb-6 flex items-baseline justify-between gap-3 group">
+    <header class="page-hero flex items-baseline justify-between gap-3 group">
       <div>
-        <h1 class="text-2xl mb-1">学者</h1>
-        <p class="text-xs text-quaternary">{disc.title_zh} · 共 {scholars.length} 位</p>
+        <h1 class="page-hero-title">学者</h1>
+        <p class="page-hero-sub">{disc.title_zh} · 共 {scholars.length} 位</p>
       </div>
       {Astro.locals.canEdit(discipline) && (
         <a
@@ -88,20 +88,18 @@ const groupKeys = Array.from(grouped.keys()).sort((a, b) => {
     )}
 
     {groupKeys.map((k) => (
-      <section id={`letter-${k}`} class="mb-8 scroll-mt-16">
-        <h2 class="text-sm font-semibold text-quaternary mb-3 sticky top-12 bg-bg-primary/90 backdrop-blur-sm py-1 -mx-1 px-1">
-          {k}
-        </h2>
-        <ul class="space-y-0.5">
+      <section id={`letter-${k}`} class="mb-6 scroll-mt-16">
+        <h2 class="section-eyebrow is-sticky">{k}</h2>
+        <ul class="space-y-0">
           {grouped.get(k)!.map((s) => (
             <li>
               <a
                 href={`/${discipline}/scholars/${s.key}`}
-                class="flex items-baseline justify-between gap-3 py-2 px-1 border-b border-bg-tertiary hover:bg-bg-tertiary rounded-sm no-underline"
+                class="flex items-baseline justify-between gap-3 py-2 px-2 border-b border-dashed border-bg-tertiary hover:bg-bg-tertiary/40 rounded-sm no-underline transition-colors"
               >
                 <div class="min-w-0 flex-1">
                   <div class="flex items-baseline gap-2 flex-wrap">
-                    <span class="text-base font-semibold text-primary">
+                    <span class="text-sm font-semibold text-primary">
                       {s.name_en ?? s.name_zh}
                     </span>
                     {s.name_en && s.name_zh && (
@@ -121,7 +119,7 @@ const groupKeys = Array.from(grouped.keys()).sort((a, b) => {
                     </div>
                   )}
                 </div>
-                <span class="text-xs text-quaternary whitespace-nowrap">{s.kp_count} KP</span>
+                <span class="text-xs text-quaternary whitespace-nowrap font-variant-tabular">{s.kp_count} KP</span>
               </a>
             </li>
           ))}

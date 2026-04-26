@@ -151,8 +151,8 @@ const totalHits = kpHits.length + scholarHits.length + schoolHits.length;
 
 <Layout title={rawQ ? `搜索：${rawQ}` : '搜索'} currentDiscipline={discipline} currentSection="search">
   <main class="max-w-panel mx-auto px-4 py-6">
-    <header class="mb-6">
-      <h1 class="text-2xl mb-3">搜索</h1>
+    <header class="page-hero">
+      <h1 class="page-hero-title mb-3">搜索</h1>
       <form method="get" action={`/${discipline}/search`} class="flex gap-2">
         <input
           type="search"
@@ -162,12 +162,12 @@ const totalHits = kpHits.length + scholarHits.length + schoolHits.length;
           placeholder={`在 ${disc.title_zh} 里搜知识点 / 学者 / 学派…`}
           class="flex-1 px-3 py-2 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
         />
-        <button type="submit" class="px-4 py-2 rounded-md bg-accent-strategy text-white text-sm font-semibold">
+        <button type="submit" class="btn-ghost-strategy">
           搜索
         </button>
       </form>
       {rawQ && (
-        <p class="text-xs text-quaternary mt-3">
+        <p class="page-hero-sub mt-3">
           共 {totalHits} 条结果（知识点 {kpHits.length} · 学者 {scholarHits.length} · 学派 {schoolHits.length}）
         </p>
       )}
@@ -181,7 +181,7 @@ const totalHits = kpHits.length + scholarHits.length + schoolHits.length;
 
     {scholarHits.length > 0 && (
       <section class="mb-8">
-        <h2 class="text-sm font-semibold text-tertiary mb-3">学者 ({scholarHits.length})</h2>
+        <h2 class="section-eyebrow mb-3">学者 ({scholarHits.length})</h2>
         <ul class="space-y-1">
           {scholarHits.map((s) => (
             <li>
@@ -203,7 +203,7 @@ const totalHits = kpHits.length + scholarHits.length + schoolHits.length;
 
     {schoolHits.length > 0 && (
       <section class="mb-8">
-        <h2 class="text-sm font-semibold text-tertiary mb-3">学派 ({schoolHits.length})</h2>
+        <h2 class="section-eyebrow mb-3">学派 ({schoolHits.length})</h2>
         <ul class="space-y-1">
           {schoolHits.map((s) => (
             <li>
@@ -225,7 +225,7 @@ const totalHits = kpHits.length + scholarHits.length + schoolHits.length;
 
     {kpHits.length > 0 && (
       <section>
-        <h2 class="text-sm font-semibold text-tertiary mb-3">知识点 ({kpHits.length})</h2>
+        <h2 class="section-eyebrow mb-3">知识点 ({kpHits.length})</h2>
         <ul class="space-y-2">
           {kpHits.map((k) => {
             const scholarKeys = (k.scholars_csv ?? '').split(',').filter(Boolean);
@@ -240,7 +240,7 @@ const totalHits = kpHits.length + scholarHits.length + schoolHits.length;
                   class="block p-3 rounded border bg-bg-primary hover:shadow-card transition-shadow no-underline"
                 >
                   <div class="flex items-baseline justify-between gap-3">
-                    <h3 class="text-base font-semibold text-primary">{k.title_zh}</h3>
+                    <h3 class="text-[15px] font-semibold text-primary">{k.title_zh}</h3>
                     <span class="text-xs text-quaternary whitespace-nowrap shrink-0">
                       {scholarLabel}{k.year && ` · ${shortYear(k.year)}`}
                     </span>
