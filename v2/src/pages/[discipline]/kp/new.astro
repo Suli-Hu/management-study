@@ -38,7 +38,7 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
 const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
 ---
 
-<Layout title="新增 KP" currentDiscipline={discipline} currentSection="kps" fullHeight>
+<Layout title="新增 KP" currentDiscipline={discipline} currentSection="kps">
   <div class="kpedit-C" data-discipline={discipline} data-from={fromPath} data-from-label={fromLbl}>
 
     <aside class="kpedit-C-nav">

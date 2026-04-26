@@ -40,7 +40,7 @@ const scholarsResult = await db
 const allScholars = scholarsResult.results ?? [];
 ---
 
-<Layout title={`编辑 · ${exists.title_zh}`} currentDiscipline={discipline} currentSection="kps" fullHeight>
+<Layout title={`编辑 · ${exists.title_zh}`} currentDiscipline={discipline} currentSection="kps">
   <div class="kpedit-C" data-kp-id={id} data-discipline={discipline} data-from={fromPath} data-from-label={fromLbl}>
 
     {/* ===== 左侧 sticky jump nav ===== */}

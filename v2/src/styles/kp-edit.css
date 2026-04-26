@@ -707,10 +707,14 @@
   background: #fafafa;
   border-right: 1px solid var(--color-border);
   padding: 24px 20px;
-  position: sticky; top: 0;
-  height: 100vh;
+  /* v0.5.4: 用 top: 48px (Nav 高度) 让 sticky 在固定 nav 下方对齐；
+     不再强制 height:100vh（会让 sticky 在 grid 父级末端提前 unstick），
+     改用 max-height + auto-scroll 防止超长 nav 撑出视口 */
+  position: sticky; top: 48px;
+  max-height: calc(100vh - 48px);
   display: flex; flex-direction: column;
   overflow-y: auto;
+  align-self: start;
 }
 .kpedit-C-back{
   font-size: 12px; color: var(--color-text-tertiary);
