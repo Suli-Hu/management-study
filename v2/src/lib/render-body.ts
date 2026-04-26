@@ -137,7 +137,7 @@ export function renderAccordion(body: string, accentHex: string): string {
           </div>
         `).join('');
     return `
-      <details class="acc-item"${open}>
+      <details class="acc-item"${open} id="acc-sec-${idx}">
         <summary class="acc-summary" style="${summaryStyle}">
           <span class="acc-bullet" style="${bulletStyle}"></span>
           <span class="acc-title">${s.name}</span>
@@ -155,6 +155,26 @@ export function renderAccordion(body: string, accentHex: string): string {
       <div class="accordion">${sectionsHtml}</div>
     </div>
   `;
+}
+
+/** 抽 accordion body 的目录（rail TOC 用），非 accordion → []。
+ *  与 renderAccordion 走同一切分逻辑，确保 idx 与 details#acc-sec-${idx} 对齐。 */
+export interface TocItem { id: string; title: string; count: number }
+export function extractAccordionToc(fmt: KpFormat | string, body: string): TocItem[] {
+  if (fmt !== 'accordion' || !body) return [];
+  const tokens = body.split(/(【[^】]+】)/);
+  const items: TocItem[] = [];
+  for (let i = 1; i < tokens.length; i += 2) {
+    const name = tokens[i].replace(/[【】]/g, '').trim();
+    const block = (tokens[i + 1] || '').trim();
+    const idx = (i - 1) / 2;
+    items.push({
+      id: `acc-sec-${idx}`,
+      title: name,
+      count: parseNumberedItems(block).length,
+    });
+  }
+  return items;
 }
 
 /** compare —— <compare>r1c1|r1c2||r2c1|r2c2</compare> 表格 */
