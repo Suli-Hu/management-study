@@ -533,12 +533,12 @@ mark {
 }
 .optA-scholar-row:hover .optA-arrow { opacity: 1; }
 
-/* ---- KP cards ---- */
-.optA-kps { display: flex; flex-direction: column; gap: 6px; padding: 0 0 12px; list-style: none; margin: 0; }
+/* ---- KP cards (v0.5.24: 删 01/02 编号 + 压成横条) ---- */
+.optA-kps { display: flex; flex-direction: column; gap: 4px; padding: 0 0 12px; list-style: none; margin: 0; }
 .optA-kp {
-  display: flex; gap: 12px; padding: 12px 12px; border-radius: 8px; cursor: pointer;
+  display: flex; gap: 0; padding: 8px 12px; border-radius: 6px; cursor: pointer;
   border: 1px solid var(--color-border); background: var(--color-bg-primary);
-  transition: background .12s, border-color .12s, box-shadow .12s, transform .12s;
+  transition: background .12s, border-color .12s;
   position: relative; align-items: flex-start;
   text-decoration: none; color: inherit;
 }
@@ -549,13 +549,7 @@ mark {
 .optA-kp.is-active {
   background: color-mix(in oklab, var(--accent, var(--color-text-quaternary)) 7%, var(--color-bg-primary));
   border-color: var(--accent, var(--color-text-quaternary));
-  box-shadow: 0 1px 0 color-mix(in oklab, var(--accent, var(--color-text-quaternary)) 20%, transparent);
-}
-.optA-kp.is-active .optA-kp-num { color: var(--accent, var(--color-text-quaternary)); }
-.optA-kp-num {
-  font-size: 11px; font-weight: 700; color: var(--color-text-quaternary);
-  font-variant-numeric: tabular-nums; min-width: 20px; padding-top: 2px;
-  letter-spacing: 0.04em;
+  box-shadow: inset 3px 0 0 var(--accent, var(--color-text-quaternary));
 }
 .optA-kp-body { flex: 1; min-width: 0; }
 .optA-kp-title {
