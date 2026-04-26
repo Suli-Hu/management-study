@@ -51,7 +51,7 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
             <input type="checkbox" name="remember" value="1" checked class="w-4 h-4 accent-accent-strategy cursor-pointer" />
             记住登录 30 天
           </label>
-          <button type="submit" class="w-full px-4 py-2 rounded-md bg-accent-strategy text-white text-sm font-semibold">
+          <button type="submit" class="btn-ghost-strategy w-full">
             登录
           </button>
           <p class="text-xs text-quaternary text-center mt-4">访客密码仅可浏览；管理员密码可编辑。</p>
@@ -93,7 +93,7 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
               />
             </div>
             <input type="hidden" name="remember" value="1" />
-            <button type="submit" class="w-full px-4 py-2.5 rounded-md bg-accent-strategy text-white text-sm font-semibold">
+            <button type="submit" class="btn-ghost-strategy w-full">
               继续
             </button>
             <p class="text-xs text-quaternary text-center mt-4">演示码 123 · 进入 guest 视角</p>
@@ -116,7 +116,7 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
               <input type="checkbox" name="remember" value="1" checked class="w-4 h-4 accent-accent-strategy cursor-pointer" />
               记住登录 30 天
             </label>
-            <button type="submit" class="w-full px-4 py-2.5 rounded-md bg-accent-strategy text-white text-sm font-semibold">
+            <button type="submit" class="btn-ghost-strategy w-full">
               发送验证码
             </button>
             <p class="text-xs text-quaternary text-center mt-4">白名单邮箱按既定权限进入</p>
