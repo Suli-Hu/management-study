@@ -57,21 +57,44 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
         <p class="text-xs text-quaternary">{disc.title_en}{disc.tagline_zh ? ` · ${disc.tagline_zh}` : ''}</p>
       </div>
       {Astro.locals.canEdit(discipline) && (
-        <a
-          href={editHref(`/${discipline}/schools/new`, Astro.url.pathname)}
-          class="inline-flex shrink-0 opacity-50 hover:opacity-100 transition-opacity items-center px-3 py-1.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white"
-          title="新增学派"
-        >
-          + 新增学派
-        </a>
+        <div class="shrink-0 flex items-center gap-2">
+          <a
+            href={editHref(`/${discipline}/themes/new`, Astro.url.pathname)}
+            class="inline-flex opacity-50 hover:opacity-100 transition-opacity items-center px-3 py-1.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white"
+            title="新增主题分组"
+          >
+            + 新增主题
+          </a>
+          <a
+            href={editHref(`/${discipline}/schools/new`, Astro.url.pathname)}
+            class="inline-flex opacity-50 hover:opacity-100 transition-opacity items-center px-3 py-1.5 rounded-full border border-accent-strategy text-accent-strategy text-xs no-underline hover:bg-accent-strategy hover:text-white"
+            title="新增学派"
+          >
+            + 新增学派
+          </a>
+        </div>
       )}
     </header>
 
-    {themed.map((t) => t.schoolList.length > 0 && (
+    {themed.map((t) => (
       <section class="mb-8">
-        <div class="mb-3">
-          <h2 class="text-base font-semibold">{t.title.zh}</h2>
-          {t.desc?.zh && <p class="text-xs text-tertiary mt-0.5">{t.desc.zh}</p>}
+        <div class="mb-3 flex items-baseline justify-between gap-3 group">
+          <div>
+            <h2 class="text-base font-semibold">{t.title.zh}</h2>
+            {t.desc?.zh && <p class="text-xs text-tertiary mt-0.5">{t.desc.zh}</p>}
+          </div>
+          {Astro.locals.canEdit(discipline) && (
+            <div class="shrink-0 flex items-center gap-1 opacity-30 group-hover:opacity-100 transition-opacity">
+              <a
+                href={editHref(`/${discipline}/themes/${t.key}/edit`, Astro.url.pathname)}
+                class="w-7 h-7 rounded border bg-bg-primary text-tertiary hover:text-accent-strategy hover:border-accent-strategy flex items-center justify-center text-xs no-underline"
+                title="编辑此主题"
+                aria-label={`编辑 ${t.title.zh}`}
+              >
+                ✎
+              </a>
+            </div>
+          )}
         </div>
         <div
           class="drag-reorder grid grid-cols-1 md:grid-cols-2 gap-2"
@@ -93,6 +116,9 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
             </a>
           ))}
         </div>
+        {t.schoolList.length === 0 && (
+          <p class="text-xs text-quaternary mt-2">暂无学派{Astro.locals.canEdit(discipline) ? '。Phase 2 上线后可拖学派进来。' : '。'}</p>
+        )}
       </section>
     ))}
 
