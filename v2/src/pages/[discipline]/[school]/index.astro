@@ -125,63 +125,45 @@ const canEdit = Astro.locals.canEdit(discipline);
 
       {/* Hero */}
       <div class="optA-hero">
-        <div class="flex items-baseline justify-between gap-3">
-          <div class="flex-1 min-w-0">
-            <div class="optA-eyebrow">学派</div>
-            <h1 class="text-2xl font-semibold leading-tight">{sch.title_zh}</h1>
-            <div class="text-xs text-quaternary mt-1">
-              {sch.title_en}{sch.era ? ` · ${sch.era}` : ''}
-            </div>
-          </div>
-          <div class="shrink-0 flex items-center gap-0.5">
-            {canEdit && (
-              <a
-                href={editHref(`/${discipline}/${sch.key}/edit`, Astro.url.pathname)}
-                class="hero-icon-btn"
-                aria-label="编辑此学派"
-                title="编辑"
-              >✎</a>
-            )}
-            <button
-              id="school-star-toggle"
-              type="button"
-              data-school-key={sch.key}
-              aria-label="收藏学派"
-              aria-pressed="false"
-              class="hero-icon-btn"
-              title="收藏"
-            ><span aria-hidden="true">☆</span></button>
-          </div>
+        {canEdit && (
+          <a
+            href={editHref(`/${discipline}/${sch.key}/edit`, Astro.url.pathname)}
+            class="hero-icon-btn optA-hero-edit"
+            aria-label="编辑此学派"
+            title="编辑"
+          >✎</a>
+        )}
+        <div class="optA-eyebrow">学派</div>
+        <h1 class="optA-hero-title">{sch.title_zh}</h1>
+        <div class="optA-hero-sub">
+          {sch.title_en}{sch.era ? ` · ${sch.era}` : ''}
         </div>
       </div>
 
-      {/* 概述（可折叠）*/}
+      {/* 概述 */}
       {sch.summary_zh && (
-        <section class="optA-summary-wrap" data-collapse-section="summary">
-          <button class="optA-section-head--btn" type="button" aria-expanded="true" data-collapse-toggle>
+        <section class="optA-summary-wrap">
+          <div class="optA-section-head">
             <h2>概述</h2>
-            <span class="optA-collapse-chev">▾</span>
-          </button>
-          <div class="optA-summary" data-collapse-body>{sch.summary_zh}</div>
+          </div>
+          <div class="optA-summary">{sch.summary_zh}</div>
         </section>
       )}
 
-      {/* 代表学者（可折叠）*/}
-      <section class="optA-block" data-collapse-section="scholars">
-        <button class="optA-section-head--btn" type="button" aria-expanded="true" data-collapse-toggle>
+      {/* 代表学者 */}
+      <section class="optA-block">
+        <div class="optA-section-head">
           <h2>代表学者</h2>
           <span class="optA-count">{schoolScholars.length}</span>
-          <span class="optA-collapse-chev">▾</span>
           {canEdit && (
             <a
               href={editHref(`/${discipline}/scholars/new?school=${sch.key}`, Astro.url.pathname)}
               class="optA-section-add"
-              onclick="event.stopPropagation()"
               title="新增学者"
             >+ 新增</a>
           )}
-        </button>
-        <ul class="optA-scholars" data-collapse-body>
+        </div>
+        <ul class="optA-scholars">
           {schoolScholars.length === 0 ? (
             <li class="text-xs text-quaternary px-2 py-1">暂无关联学者。</li>
           ) : schoolScholars.map((s) => (
@@ -328,53 +310,3 @@ const canEdit = Astro.locals.canEdit(discipline);
   }
 </script>
 
-<script is:inline define:vars={{ schoolKey: sch.key, accentHex: accentHex }}>
-  // ========== 学派收藏星标 ==========
-  (function () {
-    const btn = document.getElementById('school-star-toggle');
-    if (!btn) return;
-    const KEY = `school-starred:${schoolKey}`;
-    const iconSpan = btn.querySelector('span');
-    function render() {
-      const starred = localStorage.getItem(KEY) === '1';
-      btn.setAttribute('aria-pressed', String(starred));
-      if (iconSpan) iconSpan.textContent = starred ? '★' : '☆';
-      btn.style.color = starred ? accentHex : '';
-      btn.setAttribute('aria-label', starred ? '已收藏（点击取消）' : '收藏学派');
-    }
-    render();
-    btn.addEventListener('click', () => {
-      if (localStorage.getItem(KEY) === '1') localStorage.removeItem(KEY);
-      else localStorage.setItem(KEY, '1');
-      render();
-    });
-  })();
-
-  // ========== OptionA 折叠（概述 / 代表学者，localStorage 持久化）==========
-  (function () {
-    const KEY = `optA:${schoolKey}:collapsed`;
-    let state = {};
-    try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { state = {}; }
-
-    document.querySelectorAll('[data-collapse-section]').forEach((sec) => {
-      const id = sec.getAttribute('data-collapse-section');
-      const btn = sec.querySelector('[data-collapse-toggle]');
-      const body = sec.querySelector('[data-collapse-body]');
-      if (!btn || !body) return;
-      function apply() {
-        const collapsed = !!state[id];
-        sec.classList.toggle('is-collapsed', collapsed);
-        btn.setAttribute('aria-expanded', String(!collapsed));
-        body.style.display = collapsed ? 'none' : '';
-      }
-      apply();
-      btn.addEventListener('click', () => {
-        state[id] = !state[id];
-        try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
-        apply();
-      });
-    });
-  })();
-
-  // (v0.5.7: KP 卡片 ⋯ overflow 菜单已删除，改成直接 ✎ 链接到编辑页)
-</script>

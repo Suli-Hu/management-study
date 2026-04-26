@@ -27,6 +27,12 @@ const exists = await db
   .first<{ id: string; title_zh: string }>();
 if (!exists) return Astro.redirect('/404');
 
+const disciplineRow = await db
+  .prepare('SELECT title_zh FROM discipline WHERE key = ?')
+  .bind(discipline)
+  .first<{ title_zh: string }>();
+const disciplineLabel = disciplineRow?.title_zh ?? discipline;
+
 const schoolsResult = await db
   .prepare('SELECT key, title_zh FROM school WHERE discipline = ? ORDER BY title_zh')
   .bind(discipline)
@@ -46,7 +52,7 @@ const allScholars = scholarsResult.results ?? [];
     {/* ===== 左侧 sticky jump nav ===== */}
     <aside class="kpedit-C-nav">
       <a class="kpedit-C-back" href={fromPath}>← 返回{fromLbl}</a>
-      <div class="kpedit-C-eyebrow">编辑 KP</div>
+      <div class="kpedit-C-eyebrow">编辑知识点</div>
       <h2 class="kpedit-C-title" id="nav-title">{exists.title_zh}</h2>
 
       <nav class="kpedit-C-jump">
@@ -63,22 +69,18 @@ const allScholars = scholarsResult.results ?? [];
           <span class="kpedit-C-jump-c" id="body-count">叙事</span>
         </a>
         <a class="kpedit-C-jump-i" href="#sec-tags" data-jump="tags">
-          <span class="kpedit-C-jump-l">评价标签</span>
+          <span class="kpedit-C-jump-l">评价</span>
           <span class="kpedit-C-jump-c" id="tags-count">0 / 6</span>
-        </a>
-        <a class="kpedit-C-jump-i" href="#sec-meta" data-jump="meta">
-          <span class="kpedit-C-jump-l">元数据</span>
-          <span class="kpedit-C-jump-c">只读</span>
         </a>
       </nav>
 
       <div class="kpedit-C-actions">
         <button id="save-btn" class="kpedit-C-btn-ghost" type="button">保存</button>
-        <button id="delete-btn" class="kpedit-C-btn-danger" type="button" disabled>删除 KP</button>
+        <button id="delete-btn" class="kpedit-C-btn-danger" type="button" disabled>删除</button>
       </div>
 
       <div class="kpedit-C-meta" id="nav-meta">
-        <div><span class="t-quaternary">学科</span> {discipline}</div>
+        <div><span class="t-quaternary">学科</span> {disciplineLabel}</div>
         <div id="meta-created"><span class="t-quaternary">创建于</span> …</div>
         <div id="meta-updated"><span class="t-quaternary">修改于</span> …</div>
       </div>
@@ -139,7 +141,7 @@ const allScholars = scholarsResult.results ?? [];
 
       {/* tags 评价 */}
       <section id="sec-tags" class="kpedit-C-sec">
-        <div class="kpedit-C-sec-h"><h3>评价标签</h3>
+        <div class="kpedit-C-sec-h"><h3>评价</h3>
           <div class="kpedit-langseg" id="eval-langseg" role="tablist">
             <button type="button" class="kpedit-langseg-b is-on" data-eval-lang="zh">中</button>
             <button type="button" class="kpedit-langseg-b" data-eval-lang="ja">日</button>
@@ -160,17 +162,6 @@ const allScholars = scholarsResult.results ?? [];
               ></textarea>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* meta 只读 */}
-      <section id="sec-meta" class="kpedit-C-sec">
-        <div class="kpedit-C-sec-h"><h3>元数据</h3></div>
-        <div class="kpedit-C-meta-grid">
-          <div><span class="t-quaternary">学科</span><div>{discipline}</div></div>
-          <div><span class="t-quaternary">创建于</span><div id="meta-created-detail">…</div></div>
-          <div><span class="t-quaternary">最后修改</span><div id="meta-updated-detail">…</div></div>
-          <div><span class="t-quaternary">最新提交</span><div id="meta-commit-detail"><code>—</code></div></div>
         </div>
       </section>
 
@@ -232,7 +223,7 @@ const allScholars = scholarsResult.results ?? [];
   function updateRelCount() {
     const s = schoolsMS?.getSelected().length ?? 0;
     const sc = scholarsMS?.getSelected().length ?? 0;
-    $('#rel-count').textContent = `学派 ${s} · 学者 ${sc}`;
+    $('#rel-count').textContent = `${s}个学派 / ${sc}个学者`;
   }
 
   // ========== Body editor ==========
@@ -292,7 +283,7 @@ const allScholars = scholarsResult.results ?? [];
 
   // ========== Jump nav active state (scroll spy) ==========
   function initJumpNavSpy() {
-    const sections = ['basic', 'rel', 'body', 'tags', 'meta']
+    const sections = ['basic', 'rel', 'body', 'tags']
       .map((id) => document.getElementById('sec-' + id))
       .filter(Boolean);
     const observer = new IntersectionObserver((entries) => {
@@ -339,8 +330,6 @@ const allScholars = scholarsResult.results ?? [];
     // meta
     $('#meta-created').textContent = '创建于 ' + (kp.createdAt?.slice(0, 10) ?? '—');
     $('#meta-updated').textContent = '修改于 ' + (kp.updatedAt?.slice(0, 10) ?? '—');
-    $('#meta-created-detail').textContent = kp.createdAt ?? '—';
-    $('#meta-updated-detail').textContent = kp.updatedAt ?? '—';
 
     deleteBtn.disabled = false;
     deleteBtn.title = cascadeMsg ? `删除会同时影响：${cascadeMsg.replace(/\n/g, ' / ')}` : '硬删此 KP（进 git history 可 revert，~90s 后线上消失）';
@@ -444,7 +433,7 @@ const allScholars = scholarsResult.results ?? [];
     } else {
       alert(`删除失败：${res.status} ${data.reason ?? 'error'}`);
       deleteBtn.disabled = false;
-      deleteBtn.textContent = '删除 KP';
+      deleteBtn.textContent = '删除';
     }
   }
 
