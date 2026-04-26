@@ -263,12 +263,18 @@ describe('GET /api/edit/scholar/:key', () => {
 // ============================================================
 
 /** mockDb 按 SQL 模式分发 — 给 has_dependents / themes enrich 测试用 */
-function mockDbBySql(map: { discipline?: string; kpCountSchool?: number; kpCountScholar?: number; themesJson?: string }) {
+function mockDbBySql(map: { discipline?: string; kpCountSchool?: number; kpCountScholar?: number; themesJson?: string; tagsJson?: string }) {
   return mockDb((sql) => {
     if (sql.includes('SELECT discipline FROM')) return { rows: [{ discipline: map.discipline ?? 'keiei' }] };
     if (sql.includes('FROM kp_school WHERE school_key')) return { rows: [{ n: map.kpCountSchool ?? 0 }] };
     if (sql.includes('FROM kp_scholar WHERE scholar_key')) return { rows: [{ n: map.kpCountScholar ?? 0 }] };
-    if (sql.includes('themes_json FROM discipline')) return { rows: [{ themes_json: map.themesJson ?? '[]' }] };
+    // v0.5.20: discipline SELECT 可能拉 themes_json / tags_json / 两者，按 sql 内容动态返字段
+    if (sql.includes('FROM discipline WHERE key')) {
+      const row: Record<string, string> = {};
+      if (sql.includes('themes_json')) row.themes_json = map.themesJson ?? '[]';
+      if (sql.includes('tags_json')) row.tags_json = map.tagsJson ?? '[]';
+      return { rows: [row] };
+    }
     return { rows: [] };
   });
 }
