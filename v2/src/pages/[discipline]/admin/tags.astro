@@ -1,9 +1,10 @@
 ---
 /**
- * 标签库管理 · v0.5.18 Phase A
+ * 标签库管理 · v0.5.27
  *
  * /[discipline]/admin/tags
  * 整页全量 PUT discipline.tags[]，被引用的 tag 删不了（has_dependents 阻断）。
+ * UI: 折叠式 pill 列表（pill 本身就是预览 + 编辑器；色板走 popover）。
  */
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
@@ -43,56 +44,109 @@ if (!disc) return Astro.redirect('/404');
   </main>
 </Layout>
 
-<style>
-  /* card 风格 — 一行 label，下一行 color picker */
+<style is:global>
   .tag-row {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    grid-template-rows: auto auto;
-    grid-template-areas:
-      "label refs del"
-      "color color color";
+    display: flex;
     align-items: center;
-    column-gap: 12px;
-    row-gap: 8px;
-    padding: 12px 14px;
-    margin-bottom: 8px;
+    gap: 12px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
     border: 1px solid var(--color-border);
-    border-left: 3px solid var(--tag-accent, var(--color-border));
     border-radius: 8px;
     background: var(--color-bg-primary);
     transition: border-color .12s;
   }
   .tag-row:hover { border-color: var(--color-text-quaternary); }
-  .tag-row > [data-field="label_zh"] { grid-area: label; }
-  .tag-row > .ref-count { grid-area: refs; }
-  .tag-row > .del-btn { grid-area: del; }
-  .tag-row > .tag-cp { grid-area: color; }
 
-  .tag-row input[type="text"] {
+  /* pill input — 既是预览又是编辑器 */
+  .tag-pill-input {
+    flex: 0 0 auto;
+    width: 160px;
+    padding: 4px 14px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--tag-color);
+    color: #fff;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, .15);
+  }
+  .tag-pill-input::placeholder { color: rgba(255, 255, 255, .7); font-weight: 500; }
+  .tag-pill-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--tag-color) 32%, transparent);
+  }
+
+  /* color trigger — 显示当前色 + hex */
+  .cp-wrap { position: relative; flex: 0 0 auto; }
+  .cp-trigger {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 4px 10px;
+    border: 1px solid var(--color-border); border-radius: 6px;
+    background: var(--color-bg-primary); cursor: pointer;
+    font-size: 12px; font-variant-numeric: tabular-nums;
+    color: var(--color-text-tertiary);
+  }
+  .cp-trigger:hover { border-color: var(--color-text-quaternary); }
+  .cp-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--tag-color);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12);
+  }
+  .cp-chevron { color: var(--color-text-quaternary); font-size: 9px; }
+
+  /* popover */
+  .cp-popover {
+    position: absolute; top: calc(100% + 6px); left: 0; z-index: 20;
+    display: none;
+    padding: 10px;
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border); border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .10);
+    min-width: 220px;
+  }
+  .cp-popover.is-open { display: block; }
+  .cp-presets {
+    display: flex; gap: 8px; margin-bottom: 8px;
+  }
+  .cp-swatch {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: none; cursor: pointer; padding: 0;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12);
+  }
+  .cp-swatch.is-active {
+    box-shadow:
+      inset 0 0 0 1px rgba(0, 0, 0, .12),
+      0 0 0 2px var(--color-bg-primary),
+      0 0 0 4px var(--color-text-secondary);
+  }
+  .cp-hex-input {
     width: 100%;
-    padding: 6px 10px; border: 1px solid var(--color-border); border-radius: 4px;
-    font-size: 14px; background: var(--color-bg-primary); color: var(--color-text-primary);
+    padding: 4px 8px; border: 1px solid var(--color-border); border-radius: 4px;
+    font-size: 12px; font-variant-numeric: tabular-nums;
+    background: var(--color-bg-primary); color: var(--color-text-primary);
+    box-sizing: border-box;
   }
-  .tag-row input[type="text"]:focus {
-    outline: none; border-color: var(--accent-strategy);
-  }
-  .tag-row .ref-count {
+  .cp-hex-input:focus { outline: none; border-color: var(--accent-strategy); }
+
+  /* ref count + del */
+  .ref-count {
+    margin-left: auto;
     font-size: 11px; color: var(--color-text-quaternary);
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
+    white-space: nowrap; font-variant-numeric: tabular-nums;
   }
-  .tag-row .del-btn {
+  .del-btn {
     width: 28px; height: 28px; border-radius: 6px;
-    border: 1px solid var(--color-border);
-    background: transparent; color: var(--color-text-quaternary);
+    border: 1px solid var(--color-border); background: transparent;
+    color: var(--color-text-quaternary);
     font-size: 14px; line-height: 1; cursor: pointer;
+    flex: 0 0 auto;
   }
-  .tag-row .del-btn:hover:not(:disabled) {
-    border-color: var(--accent-warning);
-    color: var(--accent-warning);
+  .del-btn:hover:not(:disabled) {
+    border-color: var(--accent-warning); color: var(--accent-warning);
   }
-  .tag-row .del-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .del-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
   .empty-row {
     padding: 32px 12px; color: var(--color-text-quaternary);
     font-size: 13px; text-align: center;
@@ -102,7 +156,7 @@ if (!disc) return Astro.redirect('/404');
 
 <script>
   // @ts-nocheck — DOM 类型推断弱，runtime 已验证
-  import { mountColorPicker, TAG_COLOR_PRESETS } from '~/lib/color-picker-client';
+  import { TAG_COLOR_PRESETS } from '~/lib/color-picker-client';
   import { formatZodIssues } from '~/lib/zod-errors-zh';
   import { watchDeploy } from '~/lib/deploy-progress-client';
 
@@ -116,12 +170,22 @@ if (!disc) return Astro.redirect('/404');
 
   let baseSha = null;
   let refCounts = {};
-  // local model: { key, label_zh, color, _new?: true, _picker?: handle }
+  // local model: { key, label_zh, color, _new?: true }
   let rows = [];
   let _deployWatcher = null;
 
+  const HEX_RE = /^#[0-9A-Fa-f]{6}$/;
+  function normalizeHex(s) {
+    const v = (s || '').trim();
+    if (!HEX_RE.test(v)) return null;
+    return '#' + v.slice(1).toUpperCase();
+  }
+
+  function escAttr(s) {
+    return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  }
+
   // 自动生成 tag key（admin 不需要手填）：t_ + 6 base36 chars
-  // schema 要求 ^[a-z][a-z0-9_]*$，前缀 't_' 保证首字母合法。
   function genUniqueKey() {
     const existing = new Set(rows.map((r) => r.key).filter(Boolean));
     for (let i = 0; i < 100; i++) {
@@ -163,47 +227,85 @@ if (!disc) return Astro.redirect('/404');
     clearStatus();
   }
 
+  function rowHTML(r, i) {
+    const refs = r._new ? 0 : (refCounts[r.key] ?? 0);
+    const canDelete = refs === 0;
+    const delTitle = canDelete
+      ? '删除此标签'
+      : `还有 ${refs} 个引用。先把它们改掉再删。`;
+    const refLabel = r._new ? '新建' : `引用 ${refs}`;
+    const colorUpper = r.color.toUpperCase();
+    const swatches = TAG_COLOR_PRESETS.map((p) => `
+      <button type="button" class="cp-swatch ${p.hex.toUpperCase() === colorUpper ? 'is-active' : ''}"
+              data-cp-preset="${p.hex}" aria-label="${p.label} ${p.hex}" title="${p.label} ${p.hex}"
+              style="background:${p.hex}"></button>
+    `).join('');
+    return `
+      <div class="tag-row" data-row="${i}" style="--tag-color:${r.color}">
+        <input type="text" class="tag-pill-input" data-field="label_zh"
+               value="${escAttr(r.label_zh)}" placeholder="标签名" />
+        <div class="cp-wrap">
+          <button type="button" class="cp-trigger" data-action="cp-toggle" aria-haspopup="true">
+            <span class="cp-dot"></span>
+            <span data-cp-hex>${r.color}</span>
+            <span class="cp-chevron">▾</span>
+          </button>
+          <div class="cp-popover" data-cp-popover>
+            <div class="cp-presets">${swatches}</div>
+            <input type="text" class="cp-hex-input" data-cp-input
+                   value="${r.color}" maxlength="7" placeholder="#RRGGBB" />
+          </div>
+        </div>
+        <span class="ref-count">${refLabel}</span>
+        <button type="button" class="del-btn" data-action="del"
+                title="${delTitle}" ${canDelete ? '' : 'disabled'}>×</button>
+      </div>
+    `;
+  }
+
   function render() {
     if (rows.length === 0) {
       mount.innerHTML = `<div class="empty-row">还没有标签。点底部「+ 新建标签」开始。</div>`;
       return;
     }
-    mount.innerHTML = rows.map((r, i) => {
-      const refs = r._new ? 0 : (refCounts[r.key] ?? 0);
-      const canDelete = refs === 0;
-      const delTitle = canDelete
-        ? '删除此标签'
-        : `还有 ${refs} 个引用。先把它们改掉再删。`;
-      return `
-        <div class="tag-row" data-row="${i}" style="--tag-accent:${r.color}">
-          <input type="text" data-field="label_zh" value="${r.label_zh}" placeholder="中文名（如 OB 经典）" />
-          <span class="ref-count">${r._new ? '新建' : `引用 ${refs}`}</span>
-          <button type="button" class="del-btn" data-action="del" title="${delTitle}" ${canDelete ? '' : 'disabled'}>×</button>
-          <div class="tag-cp" data-cp-host></div>
-        </div>
-      `;
-    }).join('');
+    mount.innerHTML = rows.map((r, i) => rowHTML(r, i)).join('');
 
-    // 挂 color picker + 绑事件
     rows.forEach((r, i) => {
       const rowEl = mount.querySelector(`[data-row="${i}"]`);
       if (!rowEl) return;
-      const cpHost = rowEl.querySelector('[data-cp-host]');
-      if (cpHost && !r._picker) {
-        r._picker = mountColorPicker(cpHost, {
-          initial: r.color,
-          onChange: (hex) => {
-            r.color = hex;
-            rowEl.style.setProperty('--tag-accent', hex);
-          },
-        });
-      }
+
       const labelInput = rowEl.querySelector('[data-field="label_zh"]');
-      if (labelInput) {
-        labelInput.addEventListener('input', () => {
-          r.label_zh = labelInput.value;
+      labelInput?.addEventListener('input', () => { r.label_zh = labelInput.value; });
+
+      const cpTrigger = rowEl.querySelector('[data-action="cp-toggle"]');
+      const cpPopover = rowEl.querySelector('[data-cp-popover]');
+      cpTrigger?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('.cp-popover.is-open').forEach((p) => {
+          if (p !== cpPopover) p.classList.remove('is-open');
         });
-      }
+        cpPopover.classList.toggle('is-open');
+      });
+
+      cpPopover?.querySelectorAll('[data-cp-preset]').forEach((sw) => {
+        sw.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const hex = sw.getAttribute('data-cp-preset');
+          applyColor(r, rowEl, hex);
+          cpPopover.classList.remove('is-open');
+        });
+      });
+
+      const hexInput = cpPopover?.querySelector('[data-cp-input]');
+      hexInput?.addEventListener('click', (e) => e.stopPropagation());
+      hexInput?.addEventListener('input', () => {
+        const norm = normalizeHex(hexInput.value);
+        if (norm) applyColor(r, rowEl, norm);
+      });
+      hexInput?.addEventListener('blur', () => {
+        if (!normalizeHex(hexInput.value)) hexInput.value = r.color;
+      });
+
       const delBtn = rowEl.querySelector('[data-action="del"]');
       if (delBtn && !delBtn.disabled) {
         delBtn.addEventListener('click', () => {
@@ -211,6 +313,21 @@ if (!disc) return Astro.redirect('/404');
           render();
         });
       }
+    });
+  }
+
+  function applyColor(r, rowEl, hex) {
+    r.color = hex;
+    rowEl.style.setProperty('--tag-color', hex);
+    const hexLabel = rowEl.querySelector('[data-cp-hex]');
+    if (hexLabel) hexLabel.textContent = hex;
+    const cpInput = rowEl.querySelector('[data-cp-input]');
+    if (cpInput && cpInput.value.toUpperCase() !== hex.toUpperCase()) cpInput.value = hex;
+    rowEl.querySelectorAll('[data-cp-preset]').forEach((sw) => {
+      sw.classList.toggle(
+        'is-active',
+        (sw.getAttribute('data-cp-preset') || '').toUpperCase() === hex.toUpperCase(),
+      );
     });
   }
 
@@ -222,6 +339,9 @@ if (!disc) return Astro.redirect('/404');
       _new: true,
     });
     render();
+    // 自动聚焦新增行的 label input
+    const last = mount.querySelector(`[data-row="${rows.length - 1}"] [data-field="label_zh"]`);
+    last?.focus();
   }
 
   async function save() {
@@ -259,6 +379,13 @@ if (!disc) return Astro.redirect('/404');
     }
     saveBtn.disabled = false;
   }
+
+  // 点 popover 外部 → 关掉所有 popover
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.cp-wrap')) {
+      document.querySelectorAll('.cp-popover.is-open').forEach((p) => p.classList.remove('is-open'));
+    }
+  });
 
   addBtn.addEventListener('click', addRow);
   saveBtn.addEventListener('click', save);
