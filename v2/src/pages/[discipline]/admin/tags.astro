@@ -44,22 +44,38 @@ if (!disc) return Astro.redirect('/404');
 </Layout>
 
 <style>
+  /* card 风格 — 一行 label，下一行 color picker */
   .tag-row {
     display: grid;
-    grid-template-columns: 22px 1fr auto auto;
+    grid-template-columns: 1fr auto auto;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "label refs del"
+      "color color color";
     align-items: center;
-    gap: 12px;
-    padding: 10px 8px;
-    border-bottom: 1px dashed var(--color-border);
-  }
-  .tag-row:last-child { border-bottom: 0; }
-  .tag-row .swatch {
-    width: 18px; height: 18px; border-radius: 9999px;
+    column-gap: 12px;
+    row-gap: 8px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
     border: 1px solid var(--color-border);
+    border-left: 3px solid var(--tag-accent, var(--color-border));
+    border-radius: 8px;
+    background: var(--color-bg-primary);
+    transition: border-color .12s;
   }
+  .tag-row:hover { border-color: var(--color-text-quaternary); }
+  .tag-row > [data-field="label_zh"] { grid-area: label; }
+  .tag-row > .ref-count { grid-area: refs; }
+  .tag-row > .del-btn { grid-area: del; }
+  .tag-row > .tag-cp { grid-area: color; }
+
   .tag-row input[type="text"] {
-    padding: 4px 8px; border: 1px solid var(--color-border); border-radius: 4px;
-    font-size: 13px; background: var(--color-bg-primary); color: var(--color-text-primary);
+    width: 100%;
+    padding: 6px 10px; border: 1px solid var(--color-border); border-radius: 4px;
+    font-size: 14px; background: var(--color-bg-primary); color: var(--color-text-primary);
+  }
+  .tag-row input[type="text"]:focus {
+    outline: none; border-color: var(--accent-strategy);
   }
   .tag-row .ref-count {
     font-size: 11px; color: var(--color-text-quaternary);
@@ -67,7 +83,7 @@ if (!disc) return Astro.redirect('/404');
     font-variant-numeric: tabular-nums;
   }
   .tag-row .del-btn {
-    width: 26px; height: 26px; border-radius: 6px;
+    width: 28px; height: 28px; border-radius: 6px;
     border: 1px solid var(--color-border);
     background: transparent; color: var(--color-text-quaternary);
     font-size: 14px; line-height: 1; cursor: pointer;
@@ -76,13 +92,11 @@ if (!disc) return Astro.redirect('/404');
     border-color: var(--accent-warning);
     color: var(--accent-warning);
   }
-  .tag-row .del-btn:disabled {
-    opacity: 0.4; cursor: not-allowed;
-  }
-  .tag-cp { padding: 8px 0; grid-column: 1 / -1; }
+  .tag-row .del-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .empty-row {
-    padding: 24px 8px; color: var(--color-text-quaternary);
+    padding: 32px 12px; color: var(--color-text-quaternary);
     font-size: 13px; text-align: center;
+    border: 1px dashed var(--color-border); border-radius: 8px;
   }
 </style>
 
@@ -161,8 +175,7 @@ if (!disc) return Astro.redirect('/404');
         ? '删除此标签'
         : `还有 ${refs} 个引用。先把它们改掉再删。`;
       return `
-        <div class="tag-row" data-row="${i}">
-          <span class="swatch" style="background:${r.color}"></span>
+        <div class="tag-row" data-row="${i}" style="--tag-accent:${r.color}">
           <input type="text" data-field="label_zh" value="${r.label_zh}" placeholder="中文名（如 OB 经典）" />
           <span class="ref-count">${r._new ? '新建' : `引用 ${refs}`}</span>
           <button type="button" class="del-btn" data-action="del" title="${delTitle}" ${canDelete ? '' : 'disabled'}>×</button>
@@ -181,8 +194,7 @@ if (!disc) return Astro.redirect('/404');
           initial: r.color,
           onChange: (hex) => {
             r.color = hex;
-            const sw = rowEl.querySelector('.swatch');
-            if (sw) sw.style.background = hex;
+            rowEl.style.setProperty('--tag-accent', hex);
           },
         });
       }
