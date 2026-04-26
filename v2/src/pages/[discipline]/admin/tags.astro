@@ -46,7 +46,7 @@ if (!disc) return Astro.redirect('/404');
 <style>
   .tag-row {
     display: grid;
-    grid-template-columns: 22px 140px 1fr auto auto;
+    grid-template-columns: 22px 1fr auto auto;
     align-items: center;
     gap: 12px;
     padding: 10px 8px;
@@ -61,17 +61,10 @@ if (!disc) return Astro.redirect('/404');
     padding: 4px 8px; border: 1px solid var(--color-border); border-radius: 4px;
     font-size: 13px; background: var(--color-bg-primary); color: var(--color-text-primary);
   }
-  .tag-row .key-input {
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 12px;
-  }
-  .tag-row .key-input[readonly] {
-    background: var(--color-bg-secondary); color: var(--color-text-tertiary);
-    cursor: not-allowed;
-  }
   .tag-row .ref-count {
     font-size: 11px; color: var(--color-text-quaternary);
     white-space: nowrap;
+    font-variant-numeric: tabular-nums;
   }
   .tag-row .del-btn {
     width: 26px; height: 26px; border-radius: 6px;
@@ -109,9 +102,20 @@ if (!disc) return Astro.redirect('/404');
 
   let baseSha = null;
   let refCounts = {};
-  // local model: { key, label_zh, color, _new?: true, _expanded?: bool, _picker?: handle }
+  // local model: { key, label_zh, color, _new?: true, _picker?: handle }
   let rows = [];
   let _deployWatcher = null;
+
+  // 自动生成 tag key（admin 不需要手填）：t_ + 6 base36 chars
+  // schema 要求 ^[a-z][a-z0-9_]*$，前缀 't_' 保证首字母合法。
+  function genUniqueKey() {
+    const existing = new Set(rows.map((r) => r.key).filter(Boolean));
+    for (let i = 0; i < 100; i++) {
+      const k = 't_' + Math.random().toString(36).slice(2, 8).padEnd(6, '0');
+      if (!existing.has(k)) return k;
+    }
+    return 't_' + Date.now().toString(36);
+  }
 
   function setStatus(msg, kind = 'info') {
     statusEl.textContent = msg;
@@ -159,8 +163,7 @@ if (!disc) return Astro.redirect('/404');
       return `
         <div class="tag-row" data-row="${i}">
           <span class="swatch" style="background:${r.color}"></span>
-          <input type="text" class="key-input" data-field="key" value="${r.key}" ${r._new ? 'placeholder="ob_classic"' : 'readonly'} />
-          <input type="text" data-field="label_zh" value="${r.label_zh}" placeholder="中文名" />
+          <input type="text" data-field="label_zh" value="${r.label_zh}" placeholder="中文名（如 OB 经典）" />
           <span class="ref-count">${r._new ? '新建' : `引用 ${refs}`}</span>
           <button type="button" class="del-btn" data-action="del" title="${delTitle}" ${canDelete ? '' : 'disabled'}>×</button>
           <div class="tag-cp" data-cp-host></div>
@@ -183,12 +186,6 @@ if (!disc) return Astro.redirect('/404');
           },
         });
       }
-      const keyInput = rowEl.querySelector('[data-field="key"]');
-      if (keyInput && r._new) {
-        keyInput.addEventListener('input', () => {
-          r.key = keyInput.value.trim();
-        });
-      }
       const labelInput = rowEl.querySelector('[data-field="label_zh"]');
       if (labelInput) {
         labelInput.addEventListener('input', () => {
@@ -207,7 +204,7 @@ if (!disc) return Astro.redirect('/404');
 
   function addRow() {
     rows.push({
-      key: '',
+      key: genUniqueKey(),
       label_zh: '',
       color: TAG_COLOR_PRESETS[0].hex,
       _new: true,

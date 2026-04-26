@@ -503,28 +503,35 @@ mark {
   font-variant-numeric: tabular-nums;
 }
 
-/* ---- scholars ---- */
+/* ---- scholars (v0.5.22 designer spec) ---- */
 .optA-scholars { padding: 0 4px 8px; list-style: none; margin: 0; }
 .optA-scholars li { border-bottom: 1px dashed var(--color-border); }
 .optA-scholars li:last-child { border-bottom: 0; }
 .optA-scholar-row {
-  display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; row-gap: 2px;
-  padding: 7px 8px;
+  /* 单行优先：英 + 中 + 日 能塞一行就内联展示，不强制 ja 换行。
+     ja 太长时 flex-wrap 自然回行 + word-break 兜底。 */
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  column-gap: 6px; row-gap: 0;
+  padding: 3px 8px;
   border-radius: 6px; transition: background .12s;
   text-decoration: none; color: inherit;
 }
 .optA-scholar-row:hover { background: var(--color-bg-secondary); }
 .optA-scholar-name {
-  font-size: 13px; font-weight: 600; color: var(--color-text-primary);
+  font-size: 12px; font-weight: 600;
+  color: var(--color-text-primary); line-height: 1.5;
 }
 .optA-scholar-row:hover .optA-scholar-name { text-decoration: underline; }
-.optA-scholar-zh { font-size: 11.5px; color: var(--color-text-tertiary); }
+.optA-scholar-zh {
+  font-size: 10.5px; color: var(--color-text-tertiary); line-height: 1.5;
+}
 .optA-scholar-ja {
-  font-size: 11px; color: var(--color-text-quaternary);
-  flex-basis: 100%; min-width: 0; word-break: break-word;
+  font-size: 10px; color: var(--color-text-quaternary);
+  line-height: 1.5;
+  min-width: 0; word-break: break-word;
 }
 .optA-arrow {
-  font-size: 11px; color: var(--color-text-quaternary); opacity: 0;
+  font-size: 10px; color: var(--color-text-quaternary); opacity: 0;
   transition: opacity .12s; margin-left: auto;
 }
 .optA-scholar-row:hover .optA-arrow { opacity: 1; }
