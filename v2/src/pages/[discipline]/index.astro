@@ -8,9 +8,9 @@ const db = getDb(Astro.locals.runtime.env);
 
 // 学科信息
 const disc = await db
-  .prepare('SELECT * FROM discipline WHERE key = ?')
+  .prepare('SELECT key, title_zh, title_en, tagline_zh, themes_json FROM discipline WHERE key = ?')
   .bind(discipline)
-  .first<{ key: string; title_zh: string; title_en: string | null; tagline_zh: string | null; accent: string; themes_json: string }>();
+  .first<{ key: string; title_zh: string; title_en: string | null; tagline_zh: string | null; themes_json: string }>();
 
 if (!disc) {
   return Astro.redirect('/404');
@@ -20,20 +20,20 @@ const themes = JSON.parse(disc.themes_json) as Array<{
   key: string;
   title: { zh: string; en?: string; ja?: string };
   desc?: { zh?: string; en?: string; ja?: string };
-  accent: string;
+  tags: string[];
   schools: string[];
 }>;
 
 // 学派列表（按 theme_key 分组）
 const schoolsResult = await db
   .prepare(`
-    SELECT key, title_zh, title_en, era, theme_key, accent,
+    SELECT key, title_zh, title_en, era, theme_key,
       (SELECT COUNT(*) FROM kp_school WHERE school_key = school.key) as kp_count
     FROM school
     WHERE discipline = ?
   `)
   .bind(discipline)
-  .all<{ key: string; title_zh: string; title_en: string | null; era: string; theme_key: string; accent: string; kp_count: number }>();
+  .all<{ key: string; title_zh: string; title_en: string | null; era: string; theme_key: string; kp_count: number }>();
 
 const schools = schoolsResult.results ?? [];
 const schoolByKey = new Map(schools.map((s) => [s.key, s]));

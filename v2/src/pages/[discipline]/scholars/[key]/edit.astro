@@ -156,10 +156,11 @@ const allSchools = schoolsResult.results ?? [];
   });
   let baseSha = null;
   let originalCreatedAt = null;
-  // v0.4.19: lifespan/origin/accent 字段从 UI 移除但 schema 保留 — 用 originalXxx 持久化旧值避免数据流失
+  // v0.4.19: lifespan/origin 字段从 UI 移除但 schema 保留 — 用 originalXxx 持久化旧值避免数据流失
+  // v0.5.0: tags 同样从 UI 移除（待加专门 tag UI）
   let originalLifespan = '';
   let originalOrigin = '';
-  let originalAccent = '';
+  let originalTags = [];
 
   function applyDeleteGate(kpCount) {
     if (kpCount === 0) {
@@ -193,7 +194,7 @@ const allSchools = schoolsResult.results ?? [];
     originalCreatedAt = s.createdAt;
     originalLifespan = s.lifespan ?? '';
     originalOrigin = s.origin ?? '';
-    originalAccent = s.accent ?? '';
+    originalTags = Array.isArray(s.tags) ? s.tags : [];
     form.name_zh.value = s.name?.zh ?? '';
     form.name_en.value = s.name?.en ?? '';
     form.name_ja.value = s.name?.ja ?? '';
@@ -234,10 +235,10 @@ const allSchools = schoolsResult.results ?? [];
       name: buildI18n(form.name_zh.value, form.name_en.value, form.name_ja.value),
       schools,
       contribution: buildBody(form.contribution_zh.value, form.contribution_ja.value),
-      // lifespan/origin/accent 从 UI 移除（v0.4.19）— schema 字段保留，保旧值不动
+      // lifespan/origin/tags 从 UI 移除 — schema 字段保留，保旧值不动
       lifespan: originalLifespan,
       origin: originalOrigin,
-      accent: originalAccent,
+      tags: originalTags,
       institution: form.institution.value.trim(),
       born: form.born.value.trim(),
       died: form.died.value.trim(),

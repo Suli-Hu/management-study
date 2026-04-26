@@ -7,13 +7,13 @@ const db = getDb(Astro.locals.runtime.env);
 const result = await db
   .prepare(`
     SELECT
-      d.key, d.title_zh, d.title_en, d.tagline_zh, d.accent,
+      d.key, d.title_zh, d.title_en, d.tagline_zh,
       (SELECT COUNT(*) FROM school WHERE discipline = d.key) as school_count,
       (SELECT COUNT(*) FROM kp     WHERE discipline = d.key) as kp_count
     FROM discipline d
     ORDER BY d.key
   `)
-  .all<{ key: string; title_zh: string; title_en: string | null; tagline_zh: string | null; accent: string; school_count: number; kp_count: number }>();
+  .all<{ key: string; title_zh: string; title_en: string | null; tagline_zh: string | null; school_count: number; kp_count: number }>();
 
 const disciplines = result.results ?? [];
 

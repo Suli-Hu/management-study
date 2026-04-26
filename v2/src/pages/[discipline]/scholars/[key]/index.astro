@@ -3,22 +3,25 @@ import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
 import { renderBody } from '~/lib/render-body';
 import { editHref } from '~/lib/nav';
+import { tagColor } from '~/lib/tag-color';
+import type { Tag } from '~/schemas/discipline';
 
 const { discipline, key } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
 
 const disc = await db
-  .prepare('SELECT key, title_zh FROM discipline WHERE key = ?')
+  .prepare('SELECT key, title_zh, tags_json FROM discipline WHERE key = ?')
   .bind(discipline)
-  .first<{ key: string; title_zh: string }>();
+  .first<{ key: string; title_zh: string; tags_json: string }>();
 if (!disc) return Astro.redirect('/404');
+const tagLibrary = disc.tags_json ? JSON.parse(disc.tags_json) as Tag[] : [];
 
 const scholar = await db
   .prepare(`
     SELECT key, discipline, name_zh, name_en, name_ja,
       contribution_zh, contribution_ja,
       lifespan, institution,
-      born, died, nationality, flag, origin, field, accent,
+      born, died, nationality, flag, origin, field, tags_json,
       nobel_year, nobel_detail
     FROM scholar
     WHERE key = ? AND discipline = ?
@@ -29,7 +32,7 @@ const scholar = await db
     contribution_zh: string; contribution_ja: string | null;
     lifespan: string; institution: string;
     born: string | null; died: string | null; nationality: string | null; flag: string | null;
-    origin: string | null; field: string | null; accent: string | null;
+    origin: string | null; field: string | null; tags_json: string;
     nobel_year: string | null; nobel_detail: string | null;
   }>();
 
@@ -38,26 +41,19 @@ if (!scholar) return Astro.redirect('/404');
 // 关联学派
 const schoolsResult = await db
   .prepare(`
-    SELECT s.key, s.title_zh, s.accent, s.theme_key
+    SELECT s.key, s.title_zh, s.theme_key
     FROM school s
     INNER JOIN scholar_school ss ON ss.school_key = s.key
     WHERE ss.scholar_key = ?
     ORDER BY ss.position, s.key
   `)
   .bind(key)
-  .all<{ key: string; title_zh: string; accent: string; theme_key: string }>();
+  .all<{ key: string; title_zh: string; theme_key: string }>();
 const schools = schoolsResult.results ?? [];
 
-// Accent 色：scholar.accent > 主 school.accent > fallback
-const ACCENT_MAP: Record<string, string> = {
-  ob: '#34C759',
-  classic: '#FF9500',
-  strategy: '#007AFF',
-  warning: '#FF3B30',
-};
-const scholarAccentHex = (scholar.accent && scholar.accent.startsWith('#'))
-  ? scholar.accent
-  : (ACCENT_MAP[schools[0]?.accent ?? 'classic'] ?? '#8a7a6a');
+// 学者颜色 = scholar.tags[0] → discipline.tags 库 → color
+const scholarTags = JSON.parse(scholar.tags_json) as string[];
+const scholarAccentHex = tagColor({ tags: scholarTags }, tagLibrary);
 
 // 代表理论
 const kpsResult = await db

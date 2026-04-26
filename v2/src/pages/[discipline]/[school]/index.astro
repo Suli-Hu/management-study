@@ -3,14 +3,23 @@ import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
 import { renderBody } from '~/lib/render-body';
 import { editHref } from '~/lib/nav';
+import { tagColor } from '~/lib/tag-color';
+import type { Tag } from '~/schemas/discipline';
 
 const { discipline, school } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
 
+// 学科标签库（颜色解析单一来源）
+const discRow = await db
+  .prepare('SELECT tags_json FROM discipline WHERE key = ?')
+  .bind(discipline)
+  .first<{ tags_json: string }>();
+const tagLibrary = discRow?.tags_json ? JSON.parse(discRow.tags_json) as Tag[] : [];
+
 const sch = await db
-  .prepare('SELECT * FROM school WHERE key = ? AND discipline = ?')
+  .prepare('SELECT key, title_zh, title_en, era, summary_zh, tags_json FROM school WHERE key = ? AND discipline = ?')
   .bind(school, discipline)
-  .first<{ key: string; title_zh: string; title_en: string | null; era: string; summary_zh: string; accent: string }>();
+  .first<{ key: string; title_zh: string; title_en: string | null; era: string; summary_zh: string; tags_json: string }>();
 
 if (!sch) return Astro.redirect('/404');
 
@@ -46,13 +55,8 @@ const schoolScholarsResult = await db
   .all<{ key: string; name_zh: string; name_en: string | null }>();
 const schoolScholars = schoolScholarsResult.results ?? [];
 
-const ACCENT_MAP: Record<string, string> = {
-  ob: '#34C759',
-  classic: '#FF9500',
-  strategy: '#007AFF',
-  warning: '#FF3B30',
-};
-const schoolAccentHex = ACCENT_MAP[sch.accent] ?? '#8a7a6a';
+const schoolTags = JSON.parse(sch.tags_json) as string[];
+const schoolAccentHex = tagColor({ tags: schoolTags }, tagLibrary);
 
 // 未指定 ?kp= 时默认选第一个（v0.3.13）
 const requestedKpId = Astro.url.searchParams.get('kp');

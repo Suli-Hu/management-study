@@ -31,7 +31,6 @@ const PATH_LABELS: Record<string, string> = {
 
   // 学派
   themeKey: '学派组',
-  accent: 'accent',
   era: '时代',
   concepts: '核心概念列表',
 

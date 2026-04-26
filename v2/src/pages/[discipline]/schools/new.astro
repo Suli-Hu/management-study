@@ -7,7 +7,7 @@ if (!Astro.locals.canEdit(discipline)) return Astro.redirect(`/${discipline}`);
 
 const db = getDb(Astro.locals.runtime.env);
 const themesRow = await db.prepare('SELECT themes_json FROM discipline WHERE key = ?').bind(discipline).first<{ themes_json: string }>();
-const themes: Array<{ key: string; title: { zh?: string }; accent: string }> = themesRow?.themes_json
+const themes: Array<{ key: string; title: { zh?: string }; tags?: string[] }> = themesRow?.themes_json
   ? JSON.parse(themesRow.themes_json) : [];
 
 // v0.4.35：?theme=X 预选主题（从首页主题 header ⊕ 入口跳转携带）
@@ -52,10 +52,10 @@ const ctxTheme = Astro.url.searchParams.get('theme') ?? '';
           <select name="themeKey" required class="w-full px-3 py-2 rounded-md border text-sm bg-bg-primary">
             <option value="">— 请选择 —</option>
             {themes.map((t) => (
-              <option value={t.key} selected={t.key === ctxTheme}>{t.title?.zh ?? t.key}  ({t.accent})</option>
+              <option value={t.key} selected={t.key === ctxTheme}>{t.title?.zh ?? t.key}</option>
             ))}
           </select>
-          <p class="text-xs text-quaternary mt-1">决定首页所属章节 + 学派代表色（绿=OB / 橙=OT / 蓝=SM）</p>
+          <p class="text-xs text-quaternary mt-1">决定首页所属章节。学派颜色由 tags 决定，新建后再配置。</p>
         </div>
       </section>
 
@@ -113,7 +113,7 @@ const ctxTheme = Astro.url.searchParams.get('theme') ?? '';
       era: form.era.value.trim(),
       summary: buildBody(form.summary_zh.value, form.summary_ja.value),
       themeKey: form.themeKey.value.trim(),
-      accent: 'classic', // 占位 — sync 时按 themeKey 自动派生覆盖（v0.4.18）
+      tags: [],
       concepts: [],
       createdAt: now,
       updatedAt: now,

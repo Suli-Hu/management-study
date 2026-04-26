@@ -1,7 +1,7 @@
 /**
  * PUT / DELETE /api/edit/theme/[discipline]/[key]  (v0.4.29 Phase 1)
  *
- *   PUT  body: { title: I18n, desc?: I18n, accent }   — 改主题（key 不可改）
+ *   PUT  body: { title: I18n, desc?: I18n, tags?: string[] }   — 改主题（key 不可改）
  *   DELETE                                           — 删主题（schools[] > 0 时返 409 has_dependents）
  *
  *   学派组 themes 是 discipline.json 的嵌套字段，CRUD 都是 PATCH discipline.json themes[X]。

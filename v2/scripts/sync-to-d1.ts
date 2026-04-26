@@ -212,13 +212,14 @@ function updateSet(cols: string[], keyCol: string): string {
 }
 
 // === Disciplines (upsert) ===
+// v0.5.0：accent 列残留死字段（写空不读，待下次清理 migration DROP），新增 tags_json（标签库）
 sqlLines.push('-- Disciplines');
-const discCols = ['key','title_zh','title_en','title_ja','tagline_zh','tagline_ja','accent','themes_json','created_at','updated_at'];
+const discCols = ['key','title_zh','title_en','title_ja','tagline_zh','tagline_ja','accent','tags_json','themes_json','created_at','updated_at'];
 for (const d of disciplines) {
   sqlLines.push(
     `INSERT INTO discipline (${discCols.join(', ')}) VALUES (` +
     `${q(d.key)}, ${q(d.title.zh)}, ${q(d.title.en)}, ${q(d.title.ja)}, ` +
-    `${q(d.tagline?.zh)}, ${q(d.tagline?.ja)}, ${q(d.accent)}, ${jq(d.themes)}, ` +
+    `${q(d.tagline?.zh)}, ${q(d.tagline?.ja)}, ${q('')}, ${jq(d.tags ?? [])}, ${jq(d.themes)}, ` +
     `${q(d.createdAt)}, ${q(d.updatedAt)}) ` +
     `ON CONFLICT(key) DO UPDATE SET ${updateSet(discCols, 'key')};`
   );
@@ -226,21 +227,14 @@ for (const d of disciplines) {
 sqlLines.push('');
 
 // === Schools (upsert) ===
-// v0.4.18：accent 强制由 themeKey 派生（SM/OT/OB 三色体系是知识点属性，
-//   学派归属哪个主题分组就用哪个色，不再让学派自选）。
-//   school.accent JSON 字段保留但 sync 时被覆盖；孤儿 themeKey fallback 到 'classic'。
+// v0.5.0：accent 列残留死字段（写空不读），tags_json 直接从 school.tags 写
 sqlLines.push('-- Schools');
-const themeAccentMap = new Map<string, 'ob' | 'classic' | 'strategy' | 'warning'>();
-for (const d of disciplines) {
-  for (const t of d.themes) themeAccentMap.set(`${d.key}|${t.key}`, t.accent);
-}
-const schoolCols = ['key','discipline','title_zh','title_en','title_ja','era','summary_zh','summary_ja','theme_key','accent','created_at','updated_at'];
+const schoolCols = ['key','discipline','title_zh','title_en','title_ja','era','summary_zh','summary_ja','theme_key','accent','tags_json','created_at','updated_at'];
 for (const s of schools) {
-  const derivedAccent = themeAccentMap.get(`${s.discipline}|${s.themeKey}`) ?? 'classic';
   sqlLines.push(
     `INSERT INTO school (${schoolCols.join(', ')}) VALUES (` +
     `${q(s.key)}, ${q(s.discipline)}, ${q(s.title.zh)}, ${q(s.title.en)}, ${q(s.title.ja)}, ` +
-    `${q(s.era)}, ${q(s.summary.zh)}, ${q(s.summary.ja)}, ${q(s.themeKey)}, ${q(derivedAccent)}, ` +
+    `${q(s.era)}, ${q(s.summary.zh)}, ${q(s.summary.ja)}, ${q(s.themeKey)}, ${q('')}, ${jq(s.tags ?? [])}, ` +
     `${q(s.createdAt)}, ${q(s.updatedAt)}) ` +
     `ON CONFLICT(key) DO UPDATE SET ${updateSet(schoolCols, 'key')};`
   );
@@ -248,12 +242,12 @@ for (const s of schools) {
 sqlLines.push('');
 
 // === Scholars (upsert) ===
-// v0.4.19：accent 强制写空（学者颜色 = 主属学派颜色 = 主题分组色，公开页 fallback 链派生）
+// v0.5.0：accent 列残留死字段（写空不读），tags_json 直接从 scholar.tags 写
 sqlLines.push('-- Scholars');
 const scholarCols = [
   'key','discipline','name_zh','name_en','name_ja',
   'contribution_zh','contribution_ja','lifespan','institution',
-  'born','died','nationality','flag','origin','field','accent',
+  'born','died','nationality','flag','origin','field','accent','tags_json',
   'nobel_year','nobel_detail','created_at','updated_at',
 ];
 for (const sc of scholars) {
@@ -261,7 +255,7 @@ for (const sc of scholars) {
     `INSERT INTO scholar (${scholarCols.join(', ')}) VALUES (` +
     `${q(sc.key)}, ${q(sc.discipline)}, ${q(sc.name.zh)}, ${q(sc.name.en)}, ${q(sc.name.ja)}, ` +
     `${q(sc.contribution.zh)}, ${q(sc.contribution.ja)}, ${q(sc.lifespan)}, ${q(sc.institution)}, ` +
-    `${q(sc.born)}, ${q(sc.died)}, ${q(sc.nationality)}, ${q(sc.flag)}, ${q(sc.origin)}, ${q(sc.field)}, ${q('')}, ` +
+    `${q(sc.born)}, ${q(sc.died)}, ${q(sc.nationality)}, ${q(sc.flag)}, ${q(sc.origin)}, ${q(sc.field)}, ${q('')}, ${jq(sc.tags ?? [])}, ` +
     `${q(sc.nobel?.year)}, ${q(sc.nobel?.detail)}, ${q(sc.createdAt)}, ${q(sc.updatedAt)}) ` +
     `ON CONFLICT(key) DO UPDATE SET ${updateSet(scholarCols, 'key')};`
   );

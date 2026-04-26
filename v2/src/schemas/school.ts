@@ -19,8 +19,8 @@ export const School = z.object({
   /** v1 group 编号 1-12，定义在 v2 是显示分组的 key */
   themeKey: z.string().trim().min(1).describe('归属哪个主题分组，如 "individual" "change" "strategy_internal"'),
 
-  /** 学派代表色 — 必须用 Tailwind config 里 accent.* 之一 */
-  accent: z.enum(['ob', 'classic', 'strategy', 'warning']).default('classic'),
+  /** 标签 — 引用 discipline.tags[].key；第一个决定学派卡片色。空 = 中性灰 */
+  tags: z.array(z.string()).default([]),
 
   /** 该学派下 KP 的渲染顺序 */
   concepts: z.array(KpId).default([]),

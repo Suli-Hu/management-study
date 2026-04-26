@@ -304,10 +304,10 @@ function renderGroupedBody(lead: string, items: string[], accent: string, rgb: s
 }
 
 /**
- * Main entry point — 接受 body 字符串和 accent 色（from school.accent / discipline.accent），
+ * Main entry point — 接受 body 字符串和已解析好的 hex accent 色（来自 tagColor()），
  * 返回结构化 HTML。
  *
- * accent 默认 '#8a7a6a'（warm taupe, v1 legacy fallback）。
+ * accent 默认 '#8a7a6a'（warm taupe, fallback）。
  */
 export function renderBody(body: string, accent: string = '#8a7a6a'): string {
   const rgb = hexRgb(accent);

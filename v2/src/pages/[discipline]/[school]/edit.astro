@@ -108,7 +108,7 @@ if (!exists) return Astro.redirect('/404');
   let baseSha = null;
   let originalCreatedAt = null;
   let originalConcepts = [];
-  let originalAccent = 'classic';
+  let originalTags = [];
 
   function setStatus(msg, kind = 'info') {
     status.textContent = msg;
@@ -125,7 +125,7 @@ if (!exists) return Astro.redirect('/404');
     for (const t of themes ?? []) {
       const opt = document.createElement('option');
       opt.value = t.key;
-      opt.textContent = `${t.title?.zh ?? t.key}  (${t.accent})`;
+      opt.textContent = t.title?.zh ?? t.key;
       sel.appendChild(opt);
     }
   }
@@ -152,7 +152,7 @@ if (!exists) return Astro.redirect('/404');
     baseSha = base_sha;
     originalCreatedAt = s.createdAt;
     originalConcepts = s.concepts ?? [];
-    originalAccent = s.accent ?? 'classic';
+    originalTags = Array.isArray(s.tags) ? s.tags : [];
     populateThemeOptions(themes);
     form.title_zh.value = s.title?.zh ?? '';
     form.title_en.value = s.title?.en ?? '';
@@ -178,7 +178,7 @@ if (!exists) return Astro.redirect('/404');
     return o;
   }
   function collect() {
-    // accent 由 sync 时按 themeKey 自动派生（v0.4.18），这里保留 originalAccent 避免 schema 校验失败
+    // tags 编辑通过专门的 tag UI（待加），此处保留原值避免清空
     return {
       key: schoolKey,
       discipline,
@@ -186,7 +186,7 @@ if (!exists) return Astro.redirect('/404');
       era: form.era.value.trim(),
       summary: buildBody(form.summary_zh.value, form.summary_ja.value),
       themeKey: form.themeKey.value.trim(),
-      accent: originalAccent,
+      tags: originalTags,
       concepts: originalConcepts,
       createdAt: originalCreatedAt,
       updatedAt: new Date().toISOString(),

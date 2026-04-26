@@ -1,8 +1,15 @@
 {
   "id": "k562",
   "discipline": "keiei",
-  "schools": ["org_learning", "change", "innovation"],
-  "scholars": ["tushman", "march"],
+  "schools": [
+    "org_learning",
+    "change",
+    "innovation"
+  ],
+  "scholars": [
+    "tushman",
+    "march"
+  ],
   "year": "1991/2004",
   "title": {
     "zh": "双元组织",
@@ -13,7 +20,7 @@
     "zh": "<strong>James G. March</strong>（1991 Organization Science「Exploration and Exploitation in Organizational Learning」）提出概念起点——组织面临<strong>探索 vs 深化的根本矛盾</strong>。<strong>O'Reilly & Tushman</strong>（2004 HBR「The Ambidextrous Organization」）系统化为実务框架——組織同时具备両种能力。<br>【根本矛盾（March 1991）】<br>①<strong>Exploration（探索）</strong>——试错·实验·新领域。长期·高风险<br>②<strong>Exploitation（深化）</strong>——精炼·优化·规模化。短期·低风险<br>◆意义——组织变革·创新·学习领域的理论枢纽<br>◆局限——両模式实证上都难以长期持续",
     "ja": "<strong>ジェームズ・マーチ</strong>（1991 Organization Science）が概念の起点——組織は<strong>探索 vs 深化の根本的矛盾</strong>に直面する。<strong>オライリー & タッシュマン</strong>（2004 HBR）が実務フレームワークとして体系化——組織が両能力を同時に備える経営モデル。<br>【根本的矛盾】<br>①<strong>探索</strong>——試行錯誤・実験・新領域。長期・高リスク<br>②<strong>深化（活用）</strong>——精緻化・最適化・規模化。短期・低リスク<br>◆意義——組織変革・イノベーション・学習領域の理論的結節点<br>◆限界——両モデルとも実証上長期持続が困難"
   },
-  "tags": ["义", "限"],
+  "tags": [],
   "format": "narrative",
   "createdAt": "2026-04-21T00:00:00.000Z",
   "updatedAt": "2026-04-23T01:00:00.000Z"

@@ -74,7 +74,7 @@ const VALID_SCHOOL = {
   era: '1947–',
   summary: { zh: '...', ja: '...' },
   themeKey: 'change',
-  accent: 'classic',
+  tags: [],
   concepts: [],
   createdAt: '2026-04-24T00:00:00.000Z',
   updatedAt: '2026-04-24T00:00:00.000Z',
@@ -88,7 +88,7 @@ const VALID_SCHOLAR = {
   contribution: { zh: '...', ja: '...' },
   lifespan: '1890–1947',
   institution: 'MIT',
-  born: '', died: '', nationality: '', flag: '', origin: '', field: '', accent: '',
+  born: '', died: '', nationality: '', flag: '', origin: '', field: '', tags: [],
   nobel: null,
   createdAt: '2026-04-24T00:00:00.000Z',
   updatedAt: '2026-04-24T00:00:00.000Z',
@@ -127,7 +127,7 @@ describe('PUT /api/edit/school/:key', () => {
   });
 
   test('schema invalid → 422', async () => {
-    const bad = { ...VALID_SCHOOL, accent: 'badcolor' };
+    const bad = { ...VALID_SCHOOL, tags: 'not-an-array' as any };
     const res = await schPUT(makeCtx({
       paramKey: 'change', paramName: 'key', method: 'PUT',
       body: { json: bad, base_sha: 'x' }, env: baseEnv,
@@ -395,8 +395,8 @@ describe('GET /api/edit/school/:key — enrich themes + kp_count (v0.4.18)', () 
 
   test('返 themes 数组 + kp_count', async () => {
     const themes = [
-      { key: 'individual', title: { zh: '个体的世界' }, accent: 'ob' },
-      { key: 'change', title: { zh: '变革' }, accent: 'classic' },
+      { key: 'individual', title: { zh: '个体的世界' }, tags: [] },
+      { key: 'change', title: { zh: '变革' }, tags: [] },
     ];
     (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
       new Response(JSON.stringify({

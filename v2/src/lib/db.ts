@@ -74,7 +74,7 @@ export interface SchoolRow {
   summary_zh: string;
   summary_ja: string | null;
   theme_key: string;
-  accent: string;
+  tags_json: string;
   created_at: string;
   updated_at: string;
 }
@@ -89,6 +89,7 @@ export interface ScholarRow {
   contribution_ja: string | null;
   lifespan: string;
   institution: string;
+  tags_json: string;
   nobel_year: string | null;
   nobel_detail: string | null;
   created_at: string;

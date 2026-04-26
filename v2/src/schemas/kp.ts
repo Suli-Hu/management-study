@@ -37,8 +37,9 @@ export const Kp = z.object({
   title: I18nString,
   body: BilingualBody,
 
-  /** 评价标签可见性（义/限/例/应/用/喻），从 body 自动 parse 时也可硬声明 */
-  tags: z.array(z.enum(['义', '限', '例', '应', '用', '喻'])).default([]),
+  /** 标签 — 引用 discipline.tags[].key；第一个决定 KP 颜色。空 = 中性灰
+   *  v0.5.0 起语义彻底换：从 body 标记可见性（义/限/例…）→ 颜色标签 */
+  tags: z.array(z.string()).default([]),
 
   /** UI 渲染相关的 hint（可选） */
   format: z.enum(['narrative', 'flat-list', 'accordion', 'compare', 'quad']).default('narrative')

@@ -1,6 +1,6 @@
 /**
  * POST /api/new/theme  (v0.4.29 Phase 1)
- *   body: { discipline, key, title: I18n, desc?: I18n, accent }
+ *   body: { discipline, key, title: I18n, desc?: I18n, tags?: string[] }
  *   行为：读 discipline.json → 校验 key 不重复 → push 到 themes[] 末尾 → PUT 回 GitHub
  */
 

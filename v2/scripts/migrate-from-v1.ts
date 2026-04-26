@@ -247,7 +247,7 @@ const themes: ThemeGroup[] = THEME_ORDER.map((t: any) => {
     key,
     title: { zh: titleZh || key, en: undefined, ja: undefined },
     desc: t.desc ? { zh: clean(t.desc) } : undefined,
-    accent: toAccent(t.color),
+    tags: [],
     schools,
   };
 });
@@ -256,7 +256,7 @@ const discipline: Discipline = {
   key: 'keiei',
   title: { zh: '经营学', en: 'Management', ja: '経営学' },
   tagline: { zh: '日本大学院入试备考' },
-  accent: 'classic',
+  tags: [],
   themes,
   createdAt: NOW,
   updatedAt: NOW,
@@ -296,7 +296,7 @@ for (const key of Object.keys(DATA)) {
       ja: undefined, // v1 学派 summary 没有日文版
     },
     themeKey: themeKeyOf(d.group),
-    accent: toAccent(d.accent),
+    tags: [],
     concepts: (d.concepts ?? []) as string[],
     createdAt: NOW,
     updatedAt: NOW,
@@ -365,7 +365,7 @@ for (const key of Object.keys(SCHOLARS)) {
     flag: clean(s.flag ?? ''),
     origin: clean(s.origin ?? ''),
     field: clean(s.field ?? ''),
-    accent: clean(s.accent ?? ''),
+    tags: [],
     nobel: s.nobel_detail
       ? { year: clean(s.nobel_year ?? s.nobel ?? ''), detail: clean(s.nobel_detail) }
       : null,
