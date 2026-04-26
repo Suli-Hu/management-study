@@ -466,13 +466,10 @@ mark {
  * 右栏 KP head bar（学派详情右栏顶部）
  * ============================================================ */
 .kp-head-bar {
-  position: relative; padding: 14px 0 14px 18px;
+  /* v0.5.5: 设计稿无侧边色条 — 去掉 padding-left + .kp-head-bar-strip */
+  padding: 14px 0;
   border-bottom: 1px solid var(--color-border);
   margin-bottom: 0;
-}
-.kp-head-bar-strip {
-  position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; border-radius: 2px;
-  background: var(--accent, var(--color-text-quaternary));
 }
 .kp-head-bar-body h2 { margin: 0; }
 

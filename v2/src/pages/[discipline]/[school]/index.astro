@@ -283,11 +283,10 @@ const canEdit = Astro.locals.canEdit(discipline);
     {/* ========== 右栏 ========== */}
     <article class="right kp-detail-pane" id="kp-detail-pane" style="padding:0">
       <div style={`height:3px;background:${accentHex}`}></div>
-      <div style="max-width:720px;margin:0 auto;padding:28px 28px 40px">
+      <div style="max-width:720px;padding:28px 28px 40px">
         {selectedKp ? (
           <>
             <header class="kp-head-bar">
-              <span class="kp-head-bar-strip"></span>
               <div class="kp-head-bar-body">
                 <h2 class="text-xl font-semibold leading-tight">{selectedKp.title_zh}</h2>
                 <div class="text-xs text-tertiary mt-2 flex flex-wrap items-baseline gap-2">
