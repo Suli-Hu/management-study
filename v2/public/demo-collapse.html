@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>学派组折叠 — 3 方案高保真对比</title>
+<style>
+  /* 复刻 v2 设计 token（来自 src/styles/global.css + Tailwind config） */
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f7;
+    --bg-tertiary: #e5e5ea;
+    --text-primary: #1d1d1f;
+    --text-secondary: #2c2c2e;
+    --text-tertiary: #6e6e73;
+    --text-quaternary: #8e8e93;
+    --accent-strategy: #007AFF;
+    --accent-classic: #FF9500;
+    --accent-ob: #34C759;
+    --shadow-card: 0 1px 4px rgba(0,0,0,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #1c1c1e;
+      --bg-secondary: #2c2c2e;
+      --bg-tertiary: #3a3a3c;
+      --text-primary: #f5f5f7;
+      --text-secondary: #d1d1d6;
+      --text-tertiary: #98989d;
+      --text-quaternary: #6e6e73;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", sans-serif;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page { max-width: 1280px; margin: 0 auto; padding: 32px 24px; }
+  .page-header { margin-bottom: 32px; }
+  .page-header h1 { font-size: 24px; font-weight: 600; }
+  .page-header p { font-size: 13px; color: var(--text-tertiary); margin-top: 6px; }
+
+  .columns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+  @media (max-width: 1100px) { .columns { grid-template-columns: 1fr; } }
+
+  .col {
+    background: var(--bg-primary);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow-card);
+  }
+  .col-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .col-desc {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-bottom: 18px;
+    line-height: 1.6;
+  }
+
+  /* 共用 section 样式 */
+  .section { margin-bottom: 18px; }
+  .theme-header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .theme-header-left { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+  .theme-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .theme-desc { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+  .school-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    transition: opacity 200ms;
+  }
+  .school-card {
+    border: 1px solid var(--bg-tertiary);
+    border-radius: 6px;
+    padding: 10px 12px;
+    background: var(--bg-primary);
+  }
+  .school-name { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+  .school-meta { font-size: 11px; color: var(--text-quaternary); margin-top: 2px; }
+
+  /* === 方案 A: Hover-reveal chevron === */
+  .col-a .chevron {
+    width: 14px; height: 14px;
+    color: var(--text-quaternary);
+    opacity: 0;
+    transition: opacity 180ms, transform 280ms cubic-bezier(0.32, 0.72, 0, 1);
+    flex-shrink: 0;
+    align-self: center;
+  }
+  .col-a .theme-header:hover .chevron { opacity: 0.5; }
+  .col-a .theme-header:hover { background: rgba(0,0,0,.02); border-radius: 6px; padding: 4px 6px; margin: -4px -6px 6px -6px; }
+  .col-a .section.collapsed .chevron { opacity: 0.5; transform: rotate(-90deg); }
+  .col-a .section.collapsed .theme-title { opacity: 0.75; }
+  .col-a .section.collapsed .theme-desc { opacity: 0.55; }
+  .col-a .section.collapsed .school-grid { display: none; }
+
+  /* === 方案 B: Underline-only + count chip === */
+  .col-b .theme-title { transition: color 180ms; }
+  .col-b .theme-header:hover .theme-title {
+    color: var(--accent-strategy);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .col-b .count-chip {
+    font-size: 11px;
+    color: var(--text-quaternary);
+    margin-left: 8px;
+    font-weight: 400;
+  }
+  .col-b .count-chip { display: none; }
+  .col-b .section.collapsed .count-chip { display: inline; }
+  .col-b .section.collapsed .school-grid { display: none; }
+  .col-b .section.collapsed .theme-desc { display: none; }
+
+  /* === 方案 C: Side-bar indicator + count chip === */
+  .col-c .section { display: flex; gap: 12px; }
+  .col-c .indicator {
+    width: 2px;
+    background: var(--bg-tertiary);
+    border-radius: 2px;
+    flex-shrink: 0;
+    transition: background 180ms;
+    align-self: stretch;
+  }
+  .col-c .section-body { flex: 1; min-width: 0; }
+  .col-c .theme-header:hover ~ * .indicator,  /* 这个不是好的方式 */
+  .col-c .section:hover .indicator { background: var(--accent-strategy); }
+  .col-c .count-chip {
+    display: none;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    background: var(--bg-tertiary);
+    padding: 1px 6px;
+    border-radius: 8px;
+    margin-left: 8px;
+  }
+  .col-c .section.collapsed .count-chip { display: inline-block; }
+  .col-c .section.collapsed .school-grid { display: none; }
+  .col-c .section.collapsed .theme-desc { display: none; }
+
+  .hint {
+    font-size: 11px;
+    color: var(--text-quaternary);
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--bg-tertiary);
+    line-height: 1.7;
+  }
+  .hint b { color: var(--text-tertiary); }
+
+  .top-toggle {
+    display: flex; gap: 8px;
+    margin-bottom: 24px;
+    font-size: 12px;
+  }
+  .top-toggle button {
+    background: var(--bg-primary);
+    border: 1px solid var(--bg-tertiary);
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    color: var(--text-secondary);
+  }
+  .top-toggle button.active {
+    background: var(--accent-strategy);
+    color: white;
+    border-color: var(--accent-strategy);
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <h1>学派组折叠 · 3 方案高保真对比</h1>
+    <p>每列同样 3 个学派组（默认 2 个展开 / 第 2 个折叠）。点 header 切换状态。深色模式跟系统。</p>
+  </div>
+
+  <div class="top-toggle">
+    <span style="align-self:center;color:var(--text-tertiary)">全部状态：</span>
+    <button id="all-expanded" class="active">2 展开 + 1 折叠（默认对比）</button>
+    <button id="all-collapsed">全部折叠</button>
+    <button id="all-open">全部展开</button>
+  </div>
+
+  <div class="columns">
+
+    <!-- ========== 方案 A: Hover-reveal chevron ========== -->
+    <div class="col col-a">
+      <div class="col-title">A · Hover-reveal chevron</div>
+      <div class="col-desc">浏览态完全无指示。hover header 时浮现 ›（淡），整行可点。折叠态保留 ›（朝右）+ 标题压暗。</div>
+
+      <div class="section">
+        <div class="theme-header" onclick="toggle(this.parentElement)">
+          <div class="theme-header-left">
+            <span class="chevron">▼</span>
+            <div>
+              <div class="theme-title">个体的世界</div>
+              <div class="theme-desc">人格→态度→动机→判断偏误</div>
+            </div>
+          </div>
+        </div>
+        <div class="school-grid">
+          <div class="school-card"><div class="school-name">人格与知觉</div><div class="school-meta">1930s · 10 KP</div></div>
+          <div class="school-card"><div class="school-name">态度与情绪</div><div class="school-meta">1950s · 8 KP</div></div>
+          <div class="school-card"><div class="school-name">行为科学学派</div><div class="school-meta">1940s–60s · 19 KP</div></div>
+          <div class="school-card"><div class="school-name">组织行为学派</div><div class="school-meta">1960s · 38 KP</div></div>
+        </div>
+      </div>
+
+      <div class="section collapsed">
+        <div class="theme-header" onclick="toggle(this.parentElement)">
+          <div class="theme-header-left">
+            <span class="chevron">▼</span>
+            <div>
+              <div class="theme-title">人与人之间</div>
+              <div class="theme-desc">非正式组织→集团动力学→领导力</div>
+            </div>
+          </div>
+        </div>
+        <div class="school-grid">
+          <div class="school-card"><div class="school-name">人际关系学派</div><div class="school-meta">1930s · 5 KP</div></div>
+          <div class="school-card"><div class="school-name">领导力理论体系</div><div class="school-meta">1940s · 17 KP</div></div>
+          <div class="school-card"><div class="school-name">冲突管理论</div><div class="school-meta">1920s · 16 KP</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="theme-header" onclick="toggle(this.parentElement)">
+          <div class="theme-header-left">
+            <span class="chevron">▼</span>
+            <div>
+              <div class="theme-title">古典组织论</div>
+              <div class="theme-desc">作业层→管理职能→整体结构</div>
+            </div>
+          </div>
+        </div>
+        <div class="school-grid">
+          <div class="school-card"><div class="school-name">科学管理学派</div><div class="school-meta">1911 · 12 KP</div></div>
+          <div class="school-card"><div class="school-name">管理过程学派</div><div class="school-meta">1916 · 6 KP</div></div>
+        </div>
+      </div>
+
+      <div class="hint">
+        <b>优</b> · 浏览最干净；progressive disclosure 风格 <br>
+        <b>缺</b> · 移动端无 hover；新用户不知道能折叠
+      </div>
+    </div>
+
+    <!-- ========== 方案 B: Underline-only + count chip ========== -->
+    <div class="col col-b">
+      <div class="col-title">B · Underline-only + 折叠态显数量</div>
+      <div class="col-desc">无任何箭头/图标。hover 标题变蓝+下划线（像链接）。折叠时标题后接灰字"N 个学派已收起"。</div>
+
+      <div class="section">
+        <div class="theme-header" onclick="toggle(this.parentElement)">
+          <div class="theme-header-left">
+            <div>
+              <div class="theme-title">个体的世界<span class="count-chip">4 个学派已收起</span></div>
+              <div class="theme-desc">人格→态度→动机→判断偏误</div>
+            </div>
+          </div>
+        </div>
+        <div class="school-grid">
+          <div class="school-card"><div class="school-name">人格与知觉</div><div class="school-meta">1930s · 10 KP</div></div>
+          <div class="school-card"><div class="school-name">态度与情绪</div><div class="school-meta">1950s · 8 KP</div></div>
+          <div class="school-card"><div class="school-name">行为科学学派</div><div class="school-meta">1940s–60s · 19 KP</div></div>
+          <div class="school-card"><div class="school-name">组织行为学派</div><div class="school-meta">1960s · 38 KP</div></div>
+        </div>
+      </div>
+
+      <div class="section collapsed">
+        <div class="theme-header" onclick="toggle(this.parentElement)">
+          <div class="theme-header-left">
+            <div>
+              <div class="theme-title">人与人之间<span class="count-chip">3 个学派已收起</span></div>
+              <div class="theme-desc">非正式组织→集团动力学→领导力</div>
+            </div>
+          </div>
+        </div>
+        <div class="school-grid">
+          <div class="school-card"><div class="school-name">人际关系学派</div><div class="school-meta">1930s · 5 KP</div></div>
+          <div class="school-card"><div class="school-name">领导力理论体系</div><div class="school-meta">1940s · 17 KP</div></div>
+          <div class="school-card"><div class="school-name">冲突管理论</div><div class="school-meta">1920s · 16 KP</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="theme-header" onclick="toggle(this.parentElement)">
+          <div class="theme-header-left">
+            <div>
+              <div class="theme-title">古典组织论<span class="count-chip">2 个学派已收起</span></div>
+              <div class="theme-desc">作业层→管理职能→整体结构</div>
+            </div>
+          </div>
+        </div>
+        <div class="school-grid">
+          <div class="school-card"><div class="school-name">科学管理学派</div><div class="school-meta">1911 · 12 KP</div></div>
+          <div class="school-card"><div class="school-name">管理过程学派</div><div class="school-meta">1916 · 6 KP</div></div>
+        </div>
+      </div>
+
+      <div class="hint">
+        <b>优</b> · 极简风格（macOS Notes / iA Writer）；折叠态有信息（"已收起 N"）<br>
+        <b>缺</b> · 浏览态完全无 affordance，新用户不知能折叠
+      </div>
+    </div>
+
+    <!-- ========== 方案 C: Side-bar indicator + count chip ========== -->
+    <div class="col col-c">
+      <div class="col-title">C · 左侧 indicator 竖线 + 数字 chip</div>
+      <div class="col-desc">每个 section 左侧 2px 竖线（一直可见）。hover 变蓝。折叠时标题后接圆角数字 chip。</div>
+
+      <div class="section">
+        <div class="indicator"></div>
+        <div class="section-body">
+          <div class="theme-header" onclick="toggle(this.parentElement.parentElement)">
+            <div class="theme-header-left">
+              <div>
+                <div class="theme-title">个体的世界<span class="count-chip">4</span></div>
+                <div class="theme-desc">人格→态度→动机→判断偏误</div>
+              </div>
+            </div>
+          </div>
+          <div class="school-grid">
+            <div class="school-card"><div class="school-name">人格与知觉</div><div class="school-meta">1930s · 10 KP</div></div>
+            <div class="school-card"><div class="school-name">态度与情绪</div><div class="school-meta">1950s · 8 KP</div></div>
+            <div class="school-card"><div class="school-name">行为科学学派</div><div class="school-meta">1940s–60s · 19 KP</div></div>
+            <div class="school-card"><div class="school-name">组织行为学派</div><div class="school-meta">1960s · 38 KP</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section collapsed">
+        <div class="indicator"></div>
+        <div class="section-body">
+          <div class="theme-header" onclick="toggle(this.parentElement.parentElement)">
+            <div class="theme-header-left">
+              <div>
+                <div class="theme-title">人与人之间<span class="count-chip">3</span></div>
+                <div class="theme-desc">非正式组织→集团动力学→领导力</div>
+              </div>
+            </div>
+          </div>
+          <div class="school-grid">
+            <div class="school-card"><div class="school-name">人际关系学派</div><div class="school-meta">1930s · 5 KP</div></div>
+            <div class="school-card"><div class="school-name">领导力理论体系</div><div class="school-meta">1940s · 17 KP</div></div>
+            <div class="school-card"><div class="school-name">冲突管理论</div><div class="school-meta">1920s · 16 KP</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="indicator"></div>
+        <div class="section-body">
+          <div class="theme-header" onclick="toggle(this.parentElement.parentElement)">
+            <div class="theme-header-left">
+              <div>
+                <div class="theme-title">古典组织论<span class="count-chip">2</span></div>
+                <div class="theme-desc">作业层→管理职能→整体结构</div>
+              </div>
+            </div>
+          </div>
+          <div class="school-grid">
+            <div class="school-card"><div class="school-name">科学管理学派</div><div class="school-meta">1911 · 12 KP</div></div>
+            <div class="school-card"><div class="school-name">管理过程学派</div><div class="school-meta">1916 · 6 KP</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hint">
+        <b>优</b> · 移动端友好（始终可见 indicator）；视觉与 ≡ 拖动 handle 协同；Notion / Linear 同模式 <br>
+        <b>缺</b> · 每个 section 左多一根细线，密度略增
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function toggle(section) {
+    section.classList.toggle('collapsed');
+  }
+
+  document.getElementById('all-collapsed').addEventListener('click', () => {
+    document.querySelectorAll('.section').forEach(s => s.classList.add('collapsed'));
+    setActive('all-collapsed');
+  });
+  document.getElementById('all-open').addEventListener('click', () => {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('collapsed'));
+    setActive('all-open');
+  });
+  document.getElementById('all-expanded').addEventListener('click', () => {
+    document.querySelectorAll('.col').forEach(col => {
+      const sections = col.querySelectorAll('.section');
+      sections.forEach((s, i) => s.classList.toggle('collapsed', i === 1));
+    });
+    setActive('all-expanded');
+  });
+  function setActive(id) {
+    document.querySelectorAll('.top-toggle button').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+</script>
+</body>
+</html>
