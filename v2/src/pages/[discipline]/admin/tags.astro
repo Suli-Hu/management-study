@@ -1,0 +1,257 @@
+---
+/**
+ * 标签库管理 · v0.5.18 Phase A
+ *
+ * /[discipline]/admin/tags
+ * 整页全量 PUT discipline.tags[]，被引用的 tag 删不了（has_dependents 阻断）。
+ */
+import Layout from '~/layouts/Layout.astro';
+import { getDb } from '~/lib/db';
+
+const { discipline } = Astro.params;
+if (!Astro.locals.canEdit(discipline)) return Astro.redirect(`/${discipline}`);
+
+const db = getDb(Astro.locals.runtime.env);
+const disc = await db
+  .prepare('SELECT key, title_zh FROM discipline WHERE key = ?')
+  .bind(discipline)
+  .first<{ key: string; title_zh: string }>();
+if (!disc) return Astro.redirect('/404');
+---
+
+<Layout title={`标签库 · ${disc.title_zh}`} currentDiscipline={discipline} currentSection="schools">
+  <main class="max-w-reading mx-auto px-4 py-6">
+    <header class="mb-4">
+      <a href={`/${discipline}`} class="text-xs text-tertiary hover:underline">← 返回{disc.title_zh}</a>
+      <h1 class="text-2xl mt-2">标签库</h1>
+      <p class="text-xs text-quaternary mt-1">{disc.title_zh}</p>
+    </header>
+
+    <div id="status" class="hidden mb-4 p-3 rounded-md text-xs"></div>
+
+    <div id="tags-mount" data-discipline={discipline}></div>
+
+    <footer class="sticky bottom-0 bg-bg-primary py-3 border-t flex items-center gap-3 mt-6">
+      <button type="button" id="add-btn" class="px-4 py-2 rounded-md bg-bg-primary border text-sm font-semibold">
+        + 新建标签
+      </button>
+      <button type="button" id="save-btn" class="px-4 py-2 rounded-md bg-accent-strategy text-white text-sm font-semibold disabled:opacity-50 ml-auto">
+        保存
+      </button>
+      <span id="save-status" class="text-xs text-tertiary"></span>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  .tag-row {
+    display: grid;
+    grid-template-columns: 22px 140px 1fr auto auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 8px;
+    border-bottom: 1px dashed var(--color-border);
+  }
+  .tag-row:last-child { border-bottom: 0; }
+  .tag-row .swatch {
+    width: 18px; height: 18px; border-radius: 9999px;
+    border: 1px solid var(--color-border);
+  }
+  .tag-row input[type="text"] {
+    padding: 4px 8px; border: 1px solid var(--color-border); border-radius: 4px;
+    font-size: 13px; background: var(--color-bg-primary); color: var(--color-text-primary);
+  }
+  .tag-row .key-input {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+  }
+  .tag-row .key-input[readonly] {
+    background: var(--color-bg-secondary); color: var(--color-text-tertiary);
+    cursor: not-allowed;
+  }
+  .tag-row .ref-count {
+    font-size: 11px; color: var(--color-text-quaternary);
+    white-space: nowrap;
+  }
+  .tag-row .del-btn {
+    width: 26px; height: 26px; border-radius: 6px;
+    border: 1px solid var(--color-border);
+    background: transparent; color: var(--color-text-quaternary);
+    font-size: 14px; line-height: 1; cursor: pointer;
+  }
+  .tag-row .del-btn:hover:not(:disabled) {
+    border-color: var(--accent-warning);
+    color: var(--accent-warning);
+  }
+  .tag-row .del-btn:disabled {
+    opacity: 0.4; cursor: not-allowed;
+  }
+  .tag-cp { padding: 8px 0; grid-column: 1 / -1; }
+  .empty-row {
+    padding: 24px 8px; color: var(--color-text-quaternary);
+    font-size: 13px; text-align: center;
+  }
+</style>
+
+<script>
+  // @ts-nocheck — DOM 类型推断弱，runtime 已验证
+  import { mountColorPicker, TAG_COLOR_PRESETS } from '~/lib/color-picker-client';
+  import { formatZodIssues } from '~/lib/zod-errors-zh';
+  import { watchDeploy } from '~/lib/deploy-progress-client';
+
+  const $ = (s) => document.querySelector(s);
+  const mount = $('#tags-mount');
+  const discipline = mount.dataset.discipline;
+  const statusEl = $('#status');
+  const saveBtn = $('#save-btn');
+  const addBtn = $('#add-btn');
+  const saveStatus = $('#save-status');
+
+  let baseSha = null;
+  let refCounts = {};
+  // local model: { key, label_zh, color, _new?: true, _expanded?: bool, _picker?: handle }
+  let rows = [];
+  let _deployWatcher = null;
+
+  function setStatus(msg, kind = 'info') {
+    statusEl.textContent = msg;
+    statusEl.className = `mb-4 p-3 rounded-md text-xs ${
+      kind === 'error' ? 'bg-badge-limit text-accent-warning' :
+      kind === 'success' ? 'bg-badge-meaning' : 'bg-bg-secondary text-tertiary'
+    }`;
+    statusEl.classList.remove('hidden');
+  }
+
+  function clearStatus() { statusEl.classList.add('hidden'); }
+
+  async function load() {
+    setStatus('加载中...');
+    const res = await fetch(`/api/edit/discipline/${discipline}/tags`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      setStatus(`加载失败：${res.status} ${err.reason ?? ''}`, 'error');
+      return;
+    }
+    const { tags, base_sha, ref_counts } = await res.json();
+    baseSha = base_sha;
+    refCounts = ref_counts ?? {};
+    rows = (tags ?? []).map((t) => ({
+      key: t.key,
+      label_zh: t.label?.zh ?? t.key,
+      color: t.color,
+      _new: false,
+    }));
+    render();
+    clearStatus();
+  }
+
+  function render() {
+    if (rows.length === 0) {
+      mount.innerHTML = `<div class="empty-row">还没有标签。点底部「+ 新建标签」开始。</div>`;
+      return;
+    }
+    mount.innerHTML = rows.map((r, i) => {
+      const refs = r._new ? 0 : (refCounts[r.key] ?? 0);
+      const canDelete = refs === 0;
+      const delTitle = canDelete
+        ? '删除此标签'
+        : `还有 ${refs} 个引用。先把它们改掉再删。`;
+      return `
+        <div class="tag-row" data-row="${i}">
+          <span class="swatch" style="background:${r.color}"></span>
+          <input type="text" class="key-input" data-field="key" value="${r.key}" ${r._new ? 'placeholder="ob_classic"' : 'readonly'} />
+          <input type="text" data-field="label_zh" value="${r.label_zh}" placeholder="中文名" />
+          <span class="ref-count">${r._new ? '新建' : `引用 ${refs}`}</span>
+          <button type="button" class="del-btn" data-action="del" title="${delTitle}" ${canDelete ? '' : 'disabled'}>×</button>
+          <div class="tag-cp" data-cp-host></div>
+        </div>
+      `;
+    }).join('');
+
+    // 挂 color picker + 绑事件
+    rows.forEach((r, i) => {
+      const rowEl = mount.querySelector(`[data-row="${i}"]`);
+      if (!rowEl) return;
+      const cpHost = rowEl.querySelector('[data-cp-host]');
+      if (cpHost && !r._picker) {
+        r._picker = mountColorPicker(cpHost, {
+          initial: r.color,
+          onChange: (hex) => {
+            r.color = hex;
+            const sw = rowEl.querySelector('.swatch');
+            if (sw) sw.style.background = hex;
+          },
+        });
+      }
+      const keyInput = rowEl.querySelector('[data-field="key"]');
+      if (keyInput && r._new) {
+        keyInput.addEventListener('input', () => {
+          r.key = keyInput.value.trim();
+        });
+      }
+      const labelInput = rowEl.querySelector('[data-field="label_zh"]');
+      if (labelInput) {
+        labelInput.addEventListener('input', () => {
+          r.label_zh = labelInput.value;
+        });
+      }
+      const delBtn = rowEl.querySelector('[data-action="del"]');
+      if (delBtn && !delBtn.disabled) {
+        delBtn.addEventListener('click', () => {
+          rows.splice(i, 1);
+          render();
+        });
+      }
+    });
+  }
+
+  function addRow() {
+    rows.push({
+      key: '',
+      label_zh: '',
+      color: TAG_COLOR_PRESETS[0].hex,
+      _new: true,
+    });
+    render();
+  }
+
+  async function save() {
+    saveBtn.disabled = true;
+    saveStatus.textContent = '保存中...';
+    const body = {
+      tags: rows.map((r) => ({
+        key: r.key.trim(),
+        label: { zh: r.label_zh.trim() },
+        color: r.color,
+      })),
+      base_sha: baseSha,
+    };
+    const res = await fetch(`/api/edit/discipline/${discipline}/tags`, {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) {
+      if (_deployWatcher) _deployWatcher.stop();
+      _deployWatcher = watchDeploy({ statusEl: saveStatus, commitSha: data.commit_sha, savedAtIso: new Date().toISOString() });
+      baseSha = data.new_blob_sha;
+      // 保存后重新拉一次以刷新 ref_counts
+      setTimeout(() => { load(); }, 500);
+    } else if (res.status === 409 && data.reason === 'has_dependents') {
+      saveStatus.innerHTML = `<span style="color:#FF3B30">${data.detail}</span>`;
+    } else if (res.status === 409 && data.reason === 'sha_conflict') {
+      saveStatus.innerHTML = `<span style="color:#FF3B30">冲突：discipline.json 已被其它修改，请刷新</span>`;
+    } else if (res.status === 422) {
+      const lines = formatZodIssues(data.detail);
+      saveStatus.innerHTML = `<span style="color:#FF3B30">校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
+    } else {
+      saveStatus.innerHTML = `<span style="color:#FF3B30">${res.status} ${data.reason ?? 'error'}: ${String(data.detail ?? '').slice(0, 120)}</span>`;
+    }
+    saveBtn.disabled = false;
+  }
+
+  addBtn.addEventListener('click', addRow);
+  saveBtn.addEventListener('click', save);
+  load();
+</script>

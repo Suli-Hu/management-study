@@ -57,6 +57,40 @@ mark {
 }
 .hero-icon-btn:hover { background: var(--color-bg-secondary); color: var(--color-text-primary); }
 
+/* ============================================================
+ * v0.5.18 标签库 color picker（6 预设 + hex 兜底）
+ * ============================================================ */
+.cp-root { display: flex; flex-direction: column; gap: 6px; }
+.cp-presets { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+.cp-swatch {
+  width: 22px; height: 22px; border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  cursor: pointer; padding: 0;
+  transition: transform .12s, box-shadow .12s, border-color .12s;
+}
+.cp-swatch:hover { transform: scale(1.08); }
+.cp-swatch.is-active {
+  border-color: var(--color-text-primary);
+  box-shadow: 0 0 0 2px var(--color-bg-primary), 0 0 0 3px var(--color-text-primary);
+}
+.cp-hex {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px;
+}
+.cp-hex-dot {
+  width: 12px; height: 12px; border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+.cp-hex-input {
+  width: 96px; padding: 4px 8px;
+  border: 1px solid var(--color-border); border-radius: 4px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
 /* 学者列表 / KP 列表的「+」新增按钮（统一替代之前蓝色 pill） */
 .icon-add-btn {
   width: 32px; height: 32px; border-radius: 9999px;

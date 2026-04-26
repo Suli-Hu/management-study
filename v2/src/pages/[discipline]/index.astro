@@ -135,13 +135,20 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
     </div>
 
     {Astro.locals.canEdit(discipline) && (
-      <div class="mt-6 mb-4">
+      <div class="mt-6 mb-4 flex items-center gap-2">
         <a
           href={editHref(`/${discipline}/themes/new`, Astro.url.pathname)}
-          class="block py-3 rounded-lg border border-dashed border-bg-tertiary text-center text-xs text-quaternary hover:text-accent-strategy hover:border-accent-strategy no-underline opacity-60 hover:opacity-100 transition"
-          title="新增学派组分组"
+          class="flex-1 block py-3 rounded-lg border border-dashed border-bg-tertiary text-center text-xs text-quaternary hover:text-accent-strategy hover:border-accent-strategy no-underline opacity-60 hover:opacity-100 transition"
+          title="新增学派组"
         >
           + 新增学派组
+        </a>
+        <a
+          href={`/${discipline}/admin/tags`}
+          class="shrink-0 px-3 py-3 rounded-lg border border-dashed border-bg-tertiary text-xs text-quaternary hover:text-accent-strategy hover:border-accent-strategy no-underline opacity-60 hover:opacity-100 transition"
+          title="管理标签库"
+        >
+          标签库
         </a>
       </div>
     )}
