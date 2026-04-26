@@ -51,20 +51,9 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
 
 <Layout title={disc.title_zh} currentDiscipline={discipline} currentSection="schools">
   <main class="max-w-panel mx-auto px-4 py-6">
-    <header class="mb-8 flex items-baseline justify-between gap-3 group">
-      <div>
-        <h1 class="text-2xl mb-1">{disc.title_zh}</h1>
-        <p class="text-xs text-quaternary">{disc.title_en}{disc.tagline_zh ? ` · ${disc.tagline_zh}` : ''}</p>
-      </div>
-      {Astro.locals.canEdit(discipline) && (
-        <a
-          href={editHref(`/${discipline}/themes/new`, Astro.url.pathname)}
-          class="shrink-0 inline-flex items-center px-2.5 py-1 rounded text-xs text-tertiary hover:text-accent-strategy hover:bg-bg-tertiary no-underline opacity-50 hover:opacity-100 transition"
-          title="新增主题分组（低频）"
-        >
-          + 新增主题
-        </a>
-      )}
+    <header class="mb-8">
+      <h1 class="text-2xl mb-1">{disc.title_zh}</h1>
+      <p class="text-xs text-quaternary">{disc.title_en}{disc.tagline_zh ? ` · ${disc.tagline_zh}` : ''}</p>
     </header>
 
     <div class="drag-reorder" data-reorder-kind="themes-order">
@@ -81,8 +70,17 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
                 ≡
               </span>
             )}
+            <button
+              type="button"
+              class="theme-collapse-toggle inline-flex w-5 h-5 items-center justify-center text-quaternary hover:text-primary transition-transform"
+              data-theme-key={t.key}
+              aria-label={`折叠 ${t.title.zh}`}
+              aria-expanded="true"
+            >
+              ▼
+            </button>
             <div>
-              <h2 class="text-base font-semibold">{t.title.zh}</h2>
+              <h2 class="text-base font-semibold cursor-pointer select-none" data-theme-title-toggle={t.key}>{t.title.zh}</h2>
               {t.desc?.zh && <p class="text-xs text-tertiary mt-0.5">{t.desc.zh}</p>}
             </div>
           </div>
@@ -107,6 +105,7 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
             </div>
           )}
         </div>
+        <div data-theme-content={t.key}>
         <div
           class="drag-reorder grid grid-cols-1 md:grid-cols-2 gap-2"
           data-reorder-kind="discipline-schools"
@@ -130,9 +129,22 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
         {t.schoolList.length === 0 && (
           <p class="text-xs text-quaternary mt-2">暂无学派{Astro.locals.canEdit(discipline) ? '。从其他主题长按拖一个进来。' : '。'}</p>
         )}
+        </div>
       </section>
     ))}
     </div>
+
+    {Astro.locals.canEdit(discipline) && (
+      <div class="mt-6 mb-4">
+        <a
+          href={editHref(`/${discipline}/themes/new`, Astro.url.pathname)}
+          class="block py-3 rounded-lg border border-dashed border-bg-tertiary text-center text-xs text-quaternary hover:text-accent-strategy hover:border-accent-strategy no-underline opacity-60 hover:opacity-100 transition"
+          title="新增主题分组"
+        >
+          + 新增主题
+        </a>
+      </div>
+    )}
 
     {orphanSchools.length > 0 && (
       <section class="mb-8">
@@ -215,4 +227,54 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
       });
     }
   }
+</script>
+
+<script is:inline>
+  // v0.4.36 主题折叠（所有用户都能折叠，per-discipline localStorage 持久化）
+  (function () {
+    const path = window.location.pathname.split('/').filter(Boolean);
+    const disc = path[0];
+    if (!disc) return;
+    const STORAGE_KEY = `themes-collapsed:${disc}`;
+    let collapsed;
+    try { collapsed = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); } catch { collapsed = new Set(); }
+
+    function applyState(themeKey, isCollapsed) {
+      const content = document.querySelector(`[data-theme-content="${themeKey}"]`);
+      const toggle = document.querySelector(`.theme-collapse-toggle[data-theme-key="${themeKey}"]`);
+      if (!content || !toggle) return;
+      content.style.display = isCollapsed ? 'none' : '';
+      toggle.style.transform = isCollapsed ? 'rotate(-90deg)' : '';
+      toggle.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+    }
+
+    document.querySelectorAll('.theme-collapse-toggle').forEach((btn) => {
+      const key = btn.getAttribute('data-theme-key');
+      if (!key) return;
+      if (collapsed.has(key)) applyState(key, true);
+    });
+
+    function toggleTheme(key) {
+      const next = !collapsed.has(key);
+      if (next) collapsed.add(key); else collapsed.delete(key);
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...collapsed])); } catch {}
+      applyState(key, next);
+    }
+
+    document.querySelectorAll('.theme-collapse-toggle').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const key = btn.getAttribute('data-theme-key');
+        if (key) toggleTheme(key);
+      });
+    });
+    // h2 标题点击同步触发折叠
+    document.querySelectorAll('[data-theme-title-toggle]').forEach((h) => {
+      h.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const key = h.getAttribute('data-theme-title-toggle');
+        if (key) toggleTheme(key);
+      });
+    });
+  })();
 </script>
