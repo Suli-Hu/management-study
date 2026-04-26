@@ -2,8 +2,8 @@
   "key": "keiei",
   "title": {
     "zh": "经营学",
-    "en": "Management",
-    "ja": "経営学"
+    "ja": "経営学",
+    "en": "Management"
   },
   "tagline": {
     "zh": "日本大学院入试备考"
@@ -185,8 +185,8 @@
       },
       "accent": "strategy",
       "schools": [
-        "harvard",
         "chicago",
+        "harvard",
         "carnegie",
         "ohio",
         "michigan",
@@ -199,5 +199,5 @@
     }
   ],
   "createdAt": "2026-04-24T16:44:30.409Z",
-  "updatedAt": "2026-04-24T16:44:30.409Z"
+  "updatedAt": "2026-04-26T00:39:58.570Z"
 }
