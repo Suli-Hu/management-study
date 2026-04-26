@@ -10,6 +10,7 @@
 - [KP 生成 6 原则](feedback_kp_generation.md) — 先查重+demo 页选颗粒度+先样后批，详见 CONTRIBUTING.md §8
 - [经营学辅导工作流](feedback_tutoring_workflow.md) — 按学派推进·真题∪教材·6 步闭环（含用户答疑回合）·每 3–4 KP 一次 callback 综合回顾
 - [经营学备考教材位置](reference_study_materials.md) — References/ 下按 Org/Strategy/HRM/OB/Other 分类，过去问在 Other/
+- [🌐 v2 产品定位 + 4 层架构 + 用户模型](project_v2_product_model.md) — Anytime Study 多学科平台 / 学派组→学派→学者→KP / per-discipline RBAC / 邀请码 123
 - [v2 D1 + Astro 坑清单](project_v2_d1_gotchas.md) 🔧 _engineering-only_ — D1 IN 上限 ~100、本地 D1 跨 worktree 不共享、学者按姓氏排、v2 实际 URL
-- [v2 admin 权限边界](project_v2_admin_gate.md) 🔧 _engineering-only_ — husuli0623@gmail.com 是唯一 admin，写路径必 check locals.isAdmin
+- [v2 admin 权限边界](project_v2_admin_gate.md) 🔧 _engineering-only_ — husuli0623@gmail.com 是唯一 admin，写路径必 check locals.isAdmin（v0.4.25 后用 canEdit(d)）
 - [📜 Memory 作用域注册](SCOPES.md) — 哪些 memory 属 engineering-only / learning-only / shared
