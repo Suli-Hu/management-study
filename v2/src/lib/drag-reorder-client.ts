@@ -67,6 +67,9 @@ export function mountDragReorder(container: HTMLElement, opts: DragReorderOpts):
   };
   container.addEventListener('click', onClickCapture, true);
 
+  // FLIP 让位动画 transition — 用 inline style 强制 transform property（防 Tailwind transition-shadow 覆盖）
+  const FLIP_TRANSITION = 'transform 280ms cubic-bezier(0.32, 0.72, 0, 1)';
+
   function flipReorder(doReorder: () => void) {
     if (!drag.container) return;
     const children = Array.from(drag.container.children) as HTMLElement[];
@@ -85,7 +88,7 @@ export function mountDragReorder(container: HTMLElement, opts: DragReorderOpts):
       c.style.transition = 'none';
       c.style.transform = `translate(${dx}px, ${dy}px)`;
       requestAnimationFrame(() => {
-        c.style.transition = '';
+        c.style.transition = FLIP_TRANSITION;  // inline 优先级 > Tailwind class（transition-shadow）
         c.style.transform = '';
       });
     });
@@ -202,11 +205,10 @@ export function mountDragReorder(container: HTMLElement, opts: DragReorderOpts):
     drag.container = null;
 
     if (moved && ids.length > 0) {
-      try {
-        await opts.onReorder(ids);
-      } catch (err) {
+      // fire-and-forget（同 V1）— 不阻塞 endDrag，避免 alert/fetch 卡死手势状态
+      Promise.resolve(opts.onReorder(ids)).catch((err) => {
         console.error('[drag-reorder] onReorder failed:', err);
-      }
+      });
     }
   }
 
