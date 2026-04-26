@@ -237,38 +237,15 @@ const canEdit = Astro.locals.canEdit(discipline);
                       </div>
                     )}
                   </div>
-                  <span class="optA-kp-chev">›</span>
                 </a>
                 {canEdit && (
-                  <div class="kp-admin">
-                    <button
-                      class="kp-admin-trigger"
-                      type="button"
-                      aria-label="管理此 KP"
-                      aria-haspopup="true"
-                      aria-expanded="false"
-                      data-kp-menu-trigger
-                    >⋯</button>
-                    <div class="kp-admin-menu hidden" role="menu">
-                      <a
-                        class="kp-admin-mi"
-                        href={editHref(`/${discipline}/kp/${k.id}/edit`, Astro.url.pathname)}
-                        role="menuitem"
-                      >
-                        <span class="kp-admin-mi-ic">✎</span>编辑
-                      </a>
-                      <button
-                        type="button"
-                        role="menuitem"
-                        class="kp-admin-mi is-danger"
-                        data-kp-delete
-                        data-kp-id={k.id}
-                        data-kp-title={k.title_zh}
-                      >
-                        <span class="kp-admin-mi-ic">✗</span>删除
-                      </button>
-                    </div>
-                  </div>
+                  <a
+                    class="kp-admin-edit"
+                    href={editHref(`/${discipline}/kp/${k.id}/edit`, Astro.url.pathname)}
+                    aria-label={`编辑 ${k.title_zh}`}
+                    title="编辑"
+                    onclick="event.stopPropagation()"
+                  >✎</a>
                 )}
               </li>
             );
@@ -399,36 +376,5 @@ const canEdit = Astro.locals.canEdit(discipline);
     });
   })();
 
-  // ========== KP 卡片 ⋯ overflow 菜单 ==========
-  (function () {
-    let openTrigger = null;
-    function closeAll() {
-      document.querySelectorAll('[data-kp-menu-trigger]').forEach((t) => {
-        t.classList.remove('is-open');
-        t.setAttribute('aria-expanded', 'false');
-        const menu = t.nextElementSibling;
-        if (menu && menu.classList.contains('kp-admin-menu')) menu.classList.add('hidden');
-      });
-      openTrigger = null;
-    }
-    document.addEventListener('click', (e) => {
-      const trigger = e.target.closest && e.target.closest('[data-kp-menu-trigger]');
-      if (trigger) {
-        e.preventDefault();
-        e.stopPropagation();
-        const wasOpen = trigger === openTrigger;
-        closeAll();
-        if (!wasOpen) {
-          trigger.classList.add('is-open');
-          trigger.setAttribute('aria-expanded', 'true');
-          const menu = trigger.nextElementSibling;
-          if (menu) menu.classList.remove('hidden');
-          openTrigger = trigger;
-        }
-      } else if (!e.target.closest || !e.target.closest('.kp-admin-menu')) {
-        closeAll();
-      }
-    });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
-  })();
+  // (v0.5.7: KP 卡片 ⋯ overflow 菜单已删除，改成直接 ✎ 链接到编辑页)
 </script>

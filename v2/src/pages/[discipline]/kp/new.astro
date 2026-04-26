@@ -49,13 +49,12 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
       <nav class="kpedit-C-jump">
         <a class="kpedit-C-jump-i is-active" href="#sec-basic" data-jump="basic"><span class="kpedit-C-jump-l">基本信息</span><span class="kpedit-C-jump-c">5 字段</span></a>
         <a class="kpedit-C-jump-i" href="#sec-rel" data-jump="rel"><span class="kpedit-C-jump-l">关联</span><span class="kpedit-C-jump-c" id="rel-count">学派 0 · 学者 0</span></a>
-        <a class="kpedit-C-jump-i" href="#sec-body" data-jump="body"><span class="kpedit-C-jump-l">正文</span><span class="kpedit-C-jump-c" id="body-count">narrative</span></a>
+        <a class="kpedit-C-jump-i" href="#sec-body" data-jump="body"><span class="kpedit-C-jump-l">正文</span><span class="kpedit-C-jump-c" id="body-count">叙事</span></a>
         <a class="kpedit-C-jump-i" href="#sec-tags" data-jump="tags"><span class="kpedit-C-jump-l">评价标签</span><span class="kpedit-C-jump-c" id="tags-count">0 / 6</span></a>
       </nav>
 
       <div class="kpedit-C-actions">
-        <button id="save-btn" class="kpedit-C-btn-primary" type="button">创建并部署</button>
-        <a class="kpedit-C-btn-ghost" href={fromPath}>放弃</a>
+        <button id="save-btn" class="kpedit-C-btn-ghost" type="button">创建</button>
       </div>
 
       <div id="save-status" class="text-xs text-tertiary mt-2"></div>
@@ -148,6 +147,13 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
   let evalLang = 'zh';
 
   // body editor
+  const FMT_LABEL = {
+    'narrative': '叙事',
+    'flat-list': '条目',
+    'accordion': '折叠',
+    'compare': '对比',
+    'quad': '四象限',
+  };
   mountBodyEditor(editorMount, {
     initialFormat: 'narrative',
     initialZhBody: '',
@@ -156,7 +162,7 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
       currentBodyZh = zh;
       currentBodyJa = ja;
       currentFormat = fmt;
-      $('#body-count').textContent = fmt;
+      $('#body-count').textContent = FMT_LABEL[fmt] ?? fmt;
     },
   });
 

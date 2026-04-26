@@ -48,12 +48,11 @@ const allScholars = scholarsResult.results ?? [];
       <a class="kpedit-C-back" href={fromPath}>← 返回{fromLbl}</a>
       <div class="kpedit-C-eyebrow">编辑 KP</div>
       <h2 class="kpedit-C-title" id="nav-title">{exists.title_zh}</h2>
-      <code class="kpedit-C-id">{id}</code>
 
       <nav class="kpedit-C-jump">
         <a class="kpedit-C-jump-i is-active" href="#sec-basic" data-jump="basic">
           <span class="kpedit-C-jump-l">基本信息</span>
-          <span class="kpedit-C-jump-c">5 字段</span>
+          <span class="kpedit-C-jump-c">4 字段</span>
         </a>
         <a class="kpedit-C-jump-i" href="#sec-rel" data-jump="rel">
           <span class="kpedit-C-jump-l">关联</span>
@@ -61,7 +60,7 @@ const allScholars = scholarsResult.results ?? [];
         </a>
         <a class="kpedit-C-jump-i" href="#sec-body" data-jump="body">
           <span class="kpedit-C-jump-l">正文</span>
-          <span class="kpedit-C-jump-c" id="body-count">narrative</span>
+          <span class="kpedit-C-jump-c" id="body-count">叙事</span>
         </a>
         <a class="kpedit-C-jump-i" href="#sec-tags" data-jump="tags">
           <span class="kpedit-C-jump-l">评价标签</span>
@@ -74,8 +73,7 @@ const allScholars = scholarsResult.results ?? [];
       </nav>
 
       <div class="kpedit-C-actions">
-        <button id="save-btn" class="kpedit-C-btn-primary" type="button">保存并部署</button>
-        <a class="kpedit-C-btn-ghost" href={fromPath}>放弃</a>
+        <button id="save-btn" class="kpedit-C-btn-ghost" type="button">保存</button>
         <button id="delete-btn" class="kpedit-C-btn-danger" type="button" disabled>删除 KP</button>
       </div>
 
@@ -98,20 +96,14 @@ const allScholars = scholarsResult.results ?? [];
           <span class="kpedit-C-sec-hint">中文必填，其他可空</span>
         </div>
 
-        <div class="kpedit-row kpedit-grid-2">
-          <div class="kpedit-field">
-            <div class="kpedit-field-h"><label class="kpedit-label">ID</label><span class="kpedit-hint">不可改</span></div>
-            <input class="kpedit-input is-mono" value={id} disabled />
-          </div>
-          <div class="kpedit-field">
-            <div class="kpedit-field-h"><label class="kpedit-label">年份</label></div>
-            <input name="year" type="text" placeholder="1911" class="kpedit-input" />
-          </div>
-        </div>
-
         <div class="kpedit-field">
           <div class="kpedit-field-h"><label class="kpedit-label">中文标题<span class="kpedit-req">*</span></label></div>
           <input name="title_zh" type="text" required class="kpedit-input is-lg" />
+        </div>
+
+        <div class="kpedit-field">
+          <div class="kpedit-field-h"><label class="kpedit-label">年份</label></div>
+          <input name="year" type="text" placeholder="1911" class="kpedit-input w-48" style="width:200px" />
         </div>
 
         <div class="kpedit-row kpedit-grid-2">
@@ -244,6 +236,13 @@ const allScholars = scholarsResult.results ?? [];
   }
 
   // ========== Body editor ==========
+  const FMT_LABEL = {
+    'narrative': '叙事',
+    'flat-list': '条目',
+    'accordion': '折叠',
+    'compare': '对比',
+    'quad': '四象限',
+  };
   function initEditor(initFormat, initZh, initJa) {
     if (editor) editor.destroy();
     editor = mountBodyEditor(editorMount, {
@@ -254,10 +253,10 @@ const allScholars = scholarsResult.results ?? [];
         currentBodyZh = zh;
         currentBodyJa = ja;
         currentFormat = fmt;
-        $('#body-count').textContent = fmt;
+        $('#body-count').textContent = FMT_LABEL[fmt] ?? fmt;
       },
     });
-    $('#body-count').textContent = initFormat;
+    $('#body-count').textContent = FMT_LABEL[initFormat] ?? initFormat;
   }
 
   // ========== Eval lang segmented + 写回 ==========
