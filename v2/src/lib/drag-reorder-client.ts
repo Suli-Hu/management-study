@@ -291,6 +291,7 @@ async function endDrag(mgr: GroupManager) {
     ghost.style.transform = 'scale(1) rotate(0)';
     ghost.style.boxShadow = '0 2px 12px rgba(0,0,0,.06)';
     ghost.style.opacity = '1';
+    ghost.style.filter = 'none';  // 恢复压暗（落下确认 = 完整不透明）
     setTimeout(() => { if (ghost.parentNode) ghost.remove(); }, 200);
     drag.ghost = null;
   } else if (ghost) {

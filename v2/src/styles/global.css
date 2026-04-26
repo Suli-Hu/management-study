@@ -101,10 +101,13 @@ html.dark {
 .drag-ghost {
   position: fixed; z-index: 1001; pointer-events: none;
   box-shadow: 0 20px 40px rgba(0,0,0,.18);
-  transform: scale(1.05) rotate(2deg); opacity: .94;
+  transform: scale(1.03) rotate(1.5deg);
+  /* v0.4.32: 半透明 + 略压暗 — 表明"拖动预览中，松手才生效"（区别于下方 placeholder 让出的"目标位置"轮廓） */
+  opacity: 0.65;
+  filter: brightness(0.92) saturate(0.85);
   border-radius: 14px;
   background: var(--bg-primary, white);
-  transition: transform 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+  transition: transform 180ms ease, box-shadow 180ms ease, opacity 180ms ease, filter 180ms ease;
 }
 .drag-placeholder { opacity: 0; }
 /* FLIP 让位动画用的统一 transition（learn from V1 .cn-swipe-wrap） */
