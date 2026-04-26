@@ -129,7 +129,7 @@ export function renderAccordion(body: string, accentHex: string): string {
       ? `<div class="acc-prose">${s.block}</div>`
       : items.map((it, i) => `
           <div class="acc-row">
-            <span class="acc-circle" style="${circleStyle}">${it.mark || (i + 1)}</span>
+            <span class="acc-circle" style="${circleStyle}">${i + 1}</span>
             <div class="acc-text">
               ${it.name ? `<span class="acc-name">${it.name}</span>` : ''}
               <span class="acc-desc">${it.desc}</span>
