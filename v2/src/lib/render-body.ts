@@ -280,12 +280,18 @@ export function renderQuad(body: string, accentHex: string): string {
 // Dispatchers
 // ============================================================
 
-/** 主入口：按 format 派发到对应 renderer，compare → 表格版 */
-export function renderBody(
-  fmt: KpFormat | string,
-  body: string,
-  accentHex: string = FALLBACK_ACCENT,
-): string {
+/**
+ * 主入口：按 format 派发到对应 renderer，compare → 表格版
+ *
+ * 用对象参数而非位置参数：fmt/body/accentHex 都是 string，位置错位时 TS 无法察觉。
+ * 命名参数 + KpFormat 字面量类型，把"漏字段 / 字段错位 / fmt 传非法值"全部挪到编译期。
+ */
+export function renderBody(opts: {
+  fmt: KpFormat;
+  body: string;
+  accentHex?: string;
+}): string {
+  const { fmt, body, accentHex = FALLBACK_ACCENT } = opts;
   if (!body) return '';
   switch (fmt) {
     case 'flat-list': return renderFlatList(body, accentHex);
@@ -298,14 +304,15 @@ export function renderBody(
 }
 
 /** 学派详情页专用：compare → 卡片版（renderCompareCards） */
-export function renderBodyForSchool(
-  fmt: KpFormat | string,
-  body: string,
-  accentHex: string = FALLBACK_ACCENT,
-): string {
+export function renderBodyForSchool(opts: {
+  fmt: KpFormat;
+  body: string;
+  accentHex?: string;
+}): string {
+  const { fmt, body, accentHex = FALLBACK_ACCENT } = opts;
   if (!body) return '';
   if (fmt === 'compare') return renderCompareCards(body, accentHex);
-  return renderBody(fmt, body, accentHex);
+  return renderBody({ fmt, body, accentHex });
 }
 
 // ============================================================

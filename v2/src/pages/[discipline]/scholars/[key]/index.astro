@@ -13,7 +13,7 @@
 import Layout from '~/layouts/Layout.astro';
 import EmptyRight from '~/components/EmptyRight.astro';
 import { getDb } from '~/lib/db';
-import { renderBodyForSchool, renderEvalModule } from '~/lib/render-body';
+import { renderBodyForSchool, renderEvalModule, type KpFormat } from '~/lib/render-body';
 import { editHref } from '~/lib/nav';
 import { tagColor } from '~/lib/tag-color';
 import { shortYear } from '~/lib/format-year';
@@ -89,7 +89,7 @@ const selectedKpId = requestedKpId ?? kps[0]?.id ?? null;
 type SelectedKp = {
   id: string; title_zh: string; title_en: string | null; title_ja: string | null;
   year: string; body_zh: string; body_ja: string | null;
-  format: string;
+  format: KpFormat;
   eval_content_zh_json: string;
 };
 let selectedKp: SelectedKp | null = null;
@@ -352,7 +352,7 @@ const canEdit = Astro.locals.canEdit(discipline);
                 {selectedKp.title_ja && <div class="text-xs text-tertiary mt-1">{selectedKp.title_ja}</div>}
               </div>
             </header>
-            <div class="mt-6" set:html={renderBodyForSchool(selectedKp.format, selectedKp.body_zh, accentHex)} />
+            <div class="mt-6" set:html={renderBodyForSchool({ fmt: selectedKp.format, body: selectedKp.body_zh, accentHex })} />
             <div set:html={renderEvalModule(selectedEvalContent)} />
           </>
         ) : (

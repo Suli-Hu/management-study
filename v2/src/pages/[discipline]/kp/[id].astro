@@ -1,7 +1,7 @@
 ---
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
-import { renderBody } from '~/lib/render-body';
+import { renderBody, type KpFormat } from '~/lib/render-body';
 import { editHref } from '~/lib/nav';
 import { tagColor } from '~/lib/tag-color';
 import { shortYear } from '~/lib/format-year';
@@ -18,7 +18,7 @@ const kp = await db
     id: string; discipline: string; year: string;
     title_zh: string; title_en: string | null; title_ja: string | null;
     body_zh: string; body_ja: string | null;
-    tags_json: string; format: string;
+    tags_json: string; format: KpFormat;
   }>();
 
 if (!kp) return Astro.redirect('/404');
@@ -103,6 +103,6 @@ const title = lang === 'ja' ? (kp.title_ja ?? kp.title_zh) : kp.title_zh;
       </div>
     </header>
 
-    <article class="kp-body text-secondary" set:html={renderBody(body, accentHex)} />
+    <article class="kp-body text-secondary" set:html={renderBody({ fmt: kp.format, body, accentHex })} />
   </main>
 </Layout>
