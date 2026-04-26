@@ -184,7 +184,7 @@ if (selectedKpId) {
             </a>
           )}
         </h2>
-        <ul class="space-y-2">
+        <ul class="drag-reorder space-y-2" data-reorder-kind="school-concepts" data-school-key={sch.key}>
           {kps.map((k) => {
             const scholarKeys = (k.scholars_csv ?? '').split(',').filter(Boolean);
             const scholarLabel = scholarKeys
@@ -276,6 +276,36 @@ if (selectedKpId) {
 
 <script is:inline src="/split-pane.js"></script>
 <script is:inline src="/admin-tools.js"></script>
+
+{Astro.locals.canEdit(discipline) && (
+  <div data-reorder-bootstrap="school-concepts" class="hidden"></div>
+)}
+
+<script>
+  // @ts-nocheck — DOM 类型推断弱，runtime 已验证
+  // v0.4.26 KP 列表长按拖动重排（admin 才挂载）
+  import { mountDragReorder } from '~/lib/drag-reorder-client';
+  if (document.querySelector('[data-reorder-bootstrap="school-concepts"]')) {
+    document.querySelectorAll('[data-reorder-kind="school-concepts"]').forEach((ul) => {
+      const schoolKey = ul.dataset.schoolKey;
+      mountDragReorder(ul, {
+        getId: (el) => el.getAttribute('data-kp-id'),
+        skipSelector: 'a, button',
+        onReorder: async (kpIds) => {
+          const res = await fetch('/api/edit/reorder/school-concepts', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ schoolKey, kpIds }),
+          });
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            alert(`保存顺序失败：${res.status} ${data.reason ?? 'error'}`);
+          }
+        },
+      });
+    });
+  }
+</script>
 
 <script is:inline define:vars={{ schoolKey: sch.key, accentHex: schoolAccentHex }}>
   // v0.3.15: 学派收藏星标（localStorage，访客/admin 同）

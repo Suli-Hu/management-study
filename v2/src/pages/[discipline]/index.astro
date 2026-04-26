@@ -73,10 +73,15 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
           <h2 class="text-base font-semibold">{t.title.zh}</h2>
           {t.desc?.zh && <p class="text-xs text-tertiary mt-0.5">{t.desc.zh}</p>}
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div
+          class="drag-reorder grid grid-cols-1 md:grid-cols-2 gap-2"
+          data-reorder-kind="discipline-schools"
+          data-theme-key={t.key}
+        >
           {t.schoolList.map((s) => (
             <a
               href={`/${discipline}/${s.key}`}
+              data-school-key={s.key}
               class="block p-3 rounded border bg-bg-primary hover:shadow-card transition-shadow"
             >
               <div class="flex items-baseline justify-between">
@@ -108,3 +113,35 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
     )}
   </main>
 </Layout>
+
+{Astro.locals.canEdit(discipline) && (
+  <div data-reorder-bootstrap="discipline-schools" data-discipline={discipline} class="hidden"></div>
+)}
+
+<script>
+  // @ts-nocheck — DOM 类型推断弱，runtime 已验证
+  // v0.4.26 长按拖动重排（仅 admin 渲染了 bootstrap 标记才挂载）
+  import { mountDragReorder } from '~/lib/drag-reorder-client';
+  const bootstrap = document.querySelector('[data-reorder-bootstrap="discipline-schools"]');
+  if (bootstrap) {
+    const discipline = bootstrap.dataset.discipline;
+    document.querySelectorAll('[data-reorder-kind="discipline-schools"]').forEach((grid) => {
+      const themeKey = grid.dataset.themeKey;
+      mountDragReorder(grid, {
+        getId: (el) => el.getAttribute('data-school-key'),
+        skipSelector: 'button',
+        onReorder: async (schoolKeys) => {
+          const res = await fetch('/api/edit/reorder/discipline-schools', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ discipline, themeKey, schoolKeys }),
+          });
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            alert(`保存顺序失败：${res.status} ${data.reason ?? 'error'}`);
+          }
+        },
+      });
+    });
+  }
+</script>

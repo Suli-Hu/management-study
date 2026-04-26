@@ -94,3 +94,20 @@ html.dark {
   .badge-meaning { @apply bg-badge-meaning text-accent-classic; }
   .badge-limit   { @apply bg-badge-limit text-accent-warning; }
 }
+
+/* ============================================================
+ * v0.4.26 — 长按拖动重排（移植 V1 Main/index.html:1254-1265）
+ * ============================================================ */
+.drag-ghost {
+  position: fixed; z-index: 1001; pointer-events: none;
+  box-shadow: 0 20px 40px rgba(0,0,0,.18);
+  transform: scale(1.05) rotate(2deg); opacity: .94;
+  border-radius: 14px;
+  background: var(--bg-primary, white);
+  transition: transform 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+}
+.drag-placeholder { opacity: 0; }
+/* FLIP 让位动画用的统一 transition（learn from V1 .cn-swipe-wrap） */
+.drag-reorder > * { transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1); }
+body.dragging-active { user-select: none; -webkit-user-select: none; }
+body.dragging-active * { cursor: grabbing !important; }
