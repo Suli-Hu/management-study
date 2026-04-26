@@ -39,3 +39,20 @@ scholar JSON 的 `name.en` 存全名 "Abraham Harold Maslow"，按 name_en 排�
 ## 🌐 v2 Pages URL
 
 实际 URL = `https://management-study-v2.pages.dev/`（CF Pages 默认 `<project-name>.pages.dev`），**不是** `v2.management-study.pages.dev`（那是 custom subdomain，未配）。
+
+## 🪤 wrangler 3.x D1 import 间歇性 fail "Not currently importing anything"
+
+GitHub Actions deploy-v2 偶尔挂在 `Sync shard 01 meta+wipe`，错误：
+```
+🌀 Processed 534 queries.
+✘ [ERROR] Not currently importing anything.
+```
+
+**根因**：wrangler 3.114.17（pinned 在 `cloudflare/wrangler-action@v3` 默认）的 D1 import API 异步轮询时机 bug —— SQL 已经写入完成，但 finalize 调用没拿到 import handle 就 exit 1。**数据已落地**，只是 workflow 误标 fail → 后续 shards + deploy Pages 都跳过。
+
+**Why:** 2026-04-26 v0.4.36 deploy 挂这条，gh run rerun --failed 重跑就 OK。
+
+**How to apply:**
+- 临时：`gh run rerun <id> --failed` 重跑通常能成功
+- 长期：升级到 wrangler 4.x（log 自己提示），需测试 deploy-v2.yml 兼容性
+- 不要根据这条 fail 的 log 误判为代码 bug —— 先 rerun 看是否过
