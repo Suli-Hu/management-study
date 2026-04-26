@@ -6,9 +6,14 @@ const { discipline } = Astro.params;
 if (!Astro.locals.canEdit(discipline)) return Astro.redirect(`/${discipline}`);
 
 const db = getDb(Astro.locals.runtime.env);
-const themesRow = await db.prepare('SELECT themes_json FROM discipline WHERE key = ?').bind(discipline).first<{ themes_json: string }>();
-const themes: Array<{ key: string; title: { zh?: string }; tags?: string[] }> = themesRow?.themes_json
-  ? JSON.parse(themesRow.themes_json) : [];
+const discRow = await db
+  .prepare('SELECT themes_json, tags_json FROM discipline WHERE key = ?')
+  .bind(discipline)
+  .first<{ themes_json: string; tags_json: string }>();
+const themes: Array<{ key: string; title: { zh?: string }; tags?: string[] }> = discRow?.themes_json
+  ? JSON.parse(discRow.themes_json) : [];
+const tagLibrary: Array<{ key: string; label: { zh: string }; color: string }> = discRow?.tags_json
+  ? JSON.parse(discRow.tags_json) : [];
 
 // v0.4.35：?theme=X 预选主题（从首页主题 header ⊕ 入口跳转携带）
 const ctxTheme = Astro.url.searchParams.get('theme') ?? '';
@@ -59,6 +64,14 @@ const ctxTheme = Astro.url.searchParams.get('theme') ?? '';
       </section>
 
       <section>
+        <label class="block text-xs font-semibold text-tertiary mb-1">标签</label>
+        <div
+          id="tag-picker"
+          data-options={JSON.stringify(tagLibrary.map((t) => ({ key: t.key, label: t.label?.zh ?? t.key, color: t.color })))}
+        ></div>
+      </section>
+
+      <section>
         <label class="block text-xs font-semibold text-tertiary mb-1">概述 <span class="text-accent-warning">*</span></label>
         <textarea name="summary_zh" required rows="8" class="w-full px-3 py-2 rounded-md border text-sm leading-relaxed"></textarea>
       </section>
@@ -76,10 +89,17 @@ const ctxTheme = Astro.url.searchParams.get('theme') ?? '';
 <script>
   // @ts-nocheck — DOM form 类型推断弱，runtime 已验证
   import { formatZodIssues } from '~/lib/zod-errors-zh';
+  import { mountTagSinglePicker } from '~/lib/tag-single-picker-client';
   const form = document.getElementById('school-new-form');
   const discipline = form.dataset.discipline;
   const saveBtn = document.getElementById('save-btn');
   const saveStatus = document.getElementById('save-status');
+
+  const pickerMount = document.getElementById('tag-picker');
+  const tagPicker = mountTagSinglePicker(pickerMount, {
+    options: JSON.parse(pickerMount.dataset.options ?? '[]'),
+    initial: null,
+  });
 
   function buildI18n(zh, en, ja) {
     const o = { zh: zh.trim() };
@@ -89,6 +109,7 @@ const ctxTheme = Astro.url.searchParams.get('theme') ?? '';
   }
   function collect() {
     const now = new Date().toISOString();
+    const tagKey = tagPicker.getValue();
     return {
       key: form.key.value.trim(),
       discipline,
@@ -96,7 +117,7 @@ const ctxTheme = Astro.url.searchParams.get('theme') ?? '';
       era: form.era.value.trim(),
       summary: { zh: form.summary_zh.value },
       themeKey: form.themeKey.value.trim(),
-      tags: [],
+      tags: tagKey ? [tagKey] : [],
       concepts: [],
       createdAt: now,
       updatedAt: now,

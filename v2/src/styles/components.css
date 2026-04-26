@@ -58,6 +58,49 @@ mark {
 .hero-icon-btn:hover { background: var(--color-bg-secondary); color: var(--color-text-primary); }
 
 /* ============================================================
+ * v0.5.19 Tag single-picker（编辑器里选 0 或 1 个 tag）
+ * ============================================================ */
+.tsp-root { display: block; }
+.tsp-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.tsp-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-primary);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background .12s, color .12s, border-color .12s;
+}
+.tsp-chip:hover {
+  border-color: var(--color-text-quaternary);
+  color: var(--color-text-primary);
+}
+.tsp-chip.is-active {
+  border-color: var(--tsp-color, var(--color-text-primary));
+  color: var(--color-text-primary);
+  background: color-mix(in oklab, var(--tsp-color, var(--color-text-quaternary)) 12%, var(--color-bg-primary));
+}
+.tsp-chip--none.is-active {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-text-quaternary);
+}
+.tsp-dot {
+  width: 8px; height: 8px; border-radius: 9999px;
+  background: var(--tsp-color, var(--color-text-quaternary));
+  flex-shrink: 0;
+}
+.tsp-empty {
+  font-size: 12px; color: var(--color-text-quaternary);
+  padding: 8px 0;
+}
+.tsp-empty a {
+  color: var(--accent-strategy);
+  text-decoration: underline;
+}
+
+/* ============================================================
  * v0.5.18 标签库 color picker（6 预设 + hex 兜底）
  * ============================================================ */
 .cp-root { display: flex; flex-direction: column; gap: 6px; }

@@ -27,9 +27,10 @@ export const GET: APIRoute = (ctx) => handleGet({
   resolveDiscipline,
   urlIdentifier: () => ctx.params.key,
   enrich: async (key, discipline, db) => {
-    const themesRow = await db.prepare('SELECT themes_json FROM discipline WHERE key = ?').bind(discipline).first() as { themes_json: string } | null;
-    const themes = themesRow?.themes_json ? JSON.parse(themesRow.themes_json) : [];
-    return { themes, kp_count: await countKpsInSchool(db, key) };
+    const discRow = await db.prepare('SELECT themes_json, tags_json FROM discipline WHERE key = ?').bind(discipline).first() as { themes_json: string; tags_json: string } | null;
+    const themes = discRow?.themes_json ? JSON.parse(discRow.themes_json) : [];
+    const tag_library = discRow?.tags_json ? JSON.parse(discRow.tags_json) : [];
+    return { themes, tag_library, kp_count: await countKpsInSchool(db, key) };
   },
 });
 
