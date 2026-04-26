@@ -903,7 +903,7 @@ mark {
  * 之前 v0.5.29 试过右侧 rail（TOC + 前/后 KP），用户觉得没用，回退。
  * ============================================================ */
 .kp-pane-content {
-  max-width: 760px;
+  max-width: 840px;
   margin: 0 auto;
   padding: 28px 28px 40px;
 }
