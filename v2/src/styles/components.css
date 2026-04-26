@@ -262,7 +262,7 @@ mark {
 }
 .body-items { display: flex; flex-direction: column; }
 .body-card {
-  padding: 10px 0; display: flex; gap: 14px; align-items: flex-start;
+  padding: 14px 0; display: flex; gap: 14px; align-items: flex-start;
   border-bottom: 1px solid #e8e8ed;
 }
 .body-card:last-child { border-bottom: 0; }
@@ -277,20 +277,20 @@ mark {
   line-height: 1.5; margin-bottom: 4px;
 }
 .body-item-desc {
-  font-size: 12.5px; color: var(--color-text-tertiary); line-height: 1.7;
+  font-size: 12.5px; color: var(--color-text-tertiary); line-height: 1.9;
 }
 
 /* ---- narrative ---- */
 .body-narrative .narrative-p {
-  font-size: 13.5px; color: var(--color-text-secondary); line-height: 1.85;
-  margin: 0 0 10px 0;
+  font-size: 13.5px; color: var(--color-text-secondary); line-height: 2;
+  margin: 0 0 14px 0;
 }
 .body-narrative .narrative-p:last-child { margin-bottom: 0; }
 .body-narrative strong { color: var(--color-text-primary); font-weight: 600; }
 .body-narrative em { color: var(--color-text-tertiary); font-style: italic; }
 
 /* ---- accordion ---- */
-.accordion { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.accordion { display: flex; flex-direction: column; gap: 12px; margin-top: 6px; }
 .acc-item {
   border: 1px solid var(--color-border);
   border-radius: 10px; background: var(--color-bg-primary); overflow: hidden;
@@ -298,7 +298,7 @@ mark {
 }
 .acc-item[open] { box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
 .acc-summary {
-  list-style: none; cursor: pointer; padding: 12px 14px;
+  list-style: none; cursor: pointer; padding: 14px 16px;
   display: flex; align-items: center; gap: 10px;
   background: var(--color-bg-secondary);
 }
@@ -312,10 +312,10 @@ mark {
 }
 .acc-chev { color: var(--color-text-quaternary); font-size: 12px; transition: transform .15s; }
 .acc-item[open] .acc-chev { transform: rotate(180deg); }
-.acc-body { padding: 12px 16px 14px; }
+.acc-body { padding: 16px 18px 16px; }
 .acc-row {
   display: flex; gap: 12px; align-items: flex-start;
-  padding: 8px 0; border-bottom: 1px dashed var(--color-border);
+  padding: 10px 0; border-bottom: 1px dashed var(--color-border);
 }
 .acc-row:last-child { border-bottom: 0; padding-bottom: 0; }
 .acc-row:first-child { padding-top: 4px; }
@@ -327,13 +327,13 @@ mark {
   font-size: 11px; font-weight: 600; flex-shrink: 0; margin-top: 2px;
   font-variant-numeric: tabular-nums; background: var(--color-bg-primary);
 }
-.acc-text { flex: 1; min-width: 0; font-size: 12.5px; line-height: 1.75; color: var(--color-text-tertiary); }
+.acc-text { flex: 1; min-width: 0; font-size: 12.5px; line-height: 1.9; color: var(--color-text-tertiary); }
 .acc-name {
   display: inline-block; font-weight: 600; color: var(--color-text-primary);
   margin-right: 6px; font-size: 13px;
 }
 .acc-desc { color: var(--color-text-tertiary); }
-.acc-prose { font-size: 12.5px; color: var(--color-text-tertiary); line-height: 1.75; }
+.acc-prose { font-size: 12.5px; color: var(--color-text-tertiary); line-height: 1.9; }
 
 /* ---- compare table（默认渲染，非学派详情用）---- */
 .cmp-table {
@@ -521,8 +521,8 @@ mark {
 }
 
 .optA-summary {
-  padding: 0 14px 18px;
-  font-size: 13.5px; line-height: 1.75;
+  padding: 0 14px 22px;
+  font-size: 13.5px; line-height: 1.95;
   color: var(--color-text-secondary);
   border-bottom: 1px solid var(--color-border);
   text-wrap: pretty;
@@ -530,18 +530,18 @@ mark {
   text-indent: 1.6em;
 }
 
-.optA-block { padding: 0 8px 4px; }
+.optA-block { padding: 0 8px 8px; }
 /* v0.5.8: 同级 .optA-block / .optA-summary-wrap 之间用底部边框分割 */
 .optA-block + .optA-block,
 .optA-summary-wrap + .optA-block,
 .optA-block + .optA-summary-wrap {
   border-top: 1px solid var(--color-border);
-  padding-top: 4px;
-  margin-top: 4px;
+  padding-top: 8px;
+  margin-top: 8px;
 }
 .optA-section-head {
   display: flex; align-items: baseline; gap: 8px;
-  padding: 8px 8px;
+  padding: 12px 10px;
 }
 /* v0.5.8: section 头部的「+ 新增」按钮，默认 invisible，hover section 才显形 */
 .optA-section-add {
@@ -605,9 +605,9 @@ mark {
 .optA-scholar-row:hover .optA-arrow { opacity: 1; }
 
 /* ---- KP cards (v0.5.24: 删 01/02 编号 + 压成横条) ---- */
-.optA-kps { display: flex; flex-direction: column; gap: 4px; padding: 0 0 12px; list-style: none; margin: 0; }
+.optA-kps { display: flex; flex-direction: column; gap: 6px; padding: 0 0 12px; list-style: none; margin: 0; }
 .optA-kp {
-  display: flex; gap: 0; padding: 8px 12px; border-radius: 6px; cursor: pointer;
+  display: flex; gap: 0; padding: 10px 12px; border-radius: 6px; cursor: pointer;
   border: 1px solid var(--color-border); background: var(--color-bg-primary);
   transition: background .12s, border-color .12s;
   position: relative; align-items: flex-start;
@@ -656,18 +656,18 @@ mark {
 
 /* ---- summary wrapper ---- */
 .optA-summary-wrap {
-  padding: 0 8px 4px;
+  padding: 0 8px 8px;
 }
 .optA-summary-wrap.is-collapsed { padding-bottom: 0; }
 .optA-summary-wrap .optA-summary {
-  padding: 0 14px 16px;
+  padding: 0 14px 22px;
   border-bottom: 0;
   margin-bottom: 0;
 }
 /* 可折叠 button head（学派详情 + 学者详情共用） */
 .optA-section-head--btn {
   display: flex; align-items: baseline; gap: 8px;
-  padding: 8px 8px;
+  padding: 12px 10px;
   background: none; border: 0; cursor: pointer;
   text-align: left; width: 100%;
   border-radius: 6px;
@@ -785,7 +785,7 @@ mark {
 }
 /* 核心概念 head 不可折叠：保留普通 .optA-section-head 排版但加 sticky bg */
 .optA-stack .optA-section-head[data-d-stick="kps"] {
-  padding: 8px 8px;
+  padding: 12px 10px;
 }
 
 
@@ -794,7 +794,7 @@ mark {
  * ============================================================ */
 .kp-head-bar {
   /* v0.5.5: 设计稿无侧边色条 — 去掉 padding-left + .kp-head-bar-strip */
-  padding: 14px 0;
+  padding: 18px 0 22px;
   border-bottom: 1px solid var(--color-border);
   margin-bottom: 0;
 }
