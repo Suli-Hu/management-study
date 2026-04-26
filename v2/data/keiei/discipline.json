@@ -171,8 +171,8 @@
       "accent": "classic",
       "schools": [
         "static_structure",
-        "adaptive_design",
-        "equilibrium"
+        "equilibrium",
+        "adaptive_design"
       ]
     },
     {
@@ -199,5 +199,5 @@
     }
   ],
   "createdAt": "2026-04-24T16:44:30.409Z",
-  "updatedAt": "2026-04-26T00:48:05.997Z"
+  "updatedAt": "2026-04-26T00:48:12.798Z"
 }
