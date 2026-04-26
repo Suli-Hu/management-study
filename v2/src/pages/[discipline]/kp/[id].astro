@@ -4,6 +4,8 @@ import { getDb } from '~/lib/db';
 import { renderBody } from '~/lib/render-body';
 import { editHref } from '~/lib/nav';
 import { tagColor } from '~/lib/tag-color';
+import { shortYear } from '~/lib/format-year';
+import { lastName } from '~/lib/format-name';
 import type { Tag } from '~/schemas/discipline';
 
 const { discipline, id } = Astro.params;
@@ -80,10 +82,10 @@ const title = lang === 'ja' ? (kp.title_ja ?? kp.title_zh) : kp.title_zh;
       <div class="flex flex-wrap items-baseline gap-2 text-xs text-tertiary">
         {scholars.map((s) => (
           <a href={`/${discipline}/scholars/${s.key}`} class="font-semibold hover:underline">
-            {s.name_en ?? s.name_zh}
+            {lastName(s.name_en ?? s.name_zh)}
           </a>
         ))}
-        {kp.year && <span class="text-quaternary">'{kp.year}</span>}
+        {kp.year && <span class="text-quaternary">{shortYear(kp.year)}</span>}
       </div>
       {kp.title_en && <div class="text-xs text-quaternary italic mt-1">{kp.title_en}</div>}
       {kp.title_ja && lang === 'zh' && <div class="text-xs text-tertiary mt-1">{kp.title_ja}</div>}

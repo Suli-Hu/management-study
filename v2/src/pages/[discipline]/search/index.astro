@@ -1,6 +1,8 @@
 ---
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
+import { shortYear } from '~/lib/format-year';
+import { lastName } from '~/lib/format-name';
 
 const { discipline } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
@@ -228,7 +230,7 @@ const totalHits = kpHits.length + scholarHits.length + schoolHits.length;
           {kpHits.map((k) => {
             const scholarKeys = (k.scholars_csv ?? '').split(',').filter(Boolean);
             const scholarLabel = scholarKeys
-              .map((sk) => scholarByKey.get(sk)?.name_en ?? scholarByKey.get(sk)?.name_zh ?? sk)
+              .map((sk) => lastName(scholarByKey.get(sk)?.name_en ?? scholarByKey.get(sk)?.name_zh ?? sk))
               .join(' · ');
             const excerpt = k.excerpt_zh && k.excerpt_zh.length > 0 ? k.excerpt_zh : k.excerpt_ja;
             return (
@@ -240,7 +242,7 @@ const totalHits = kpHits.length + scholarHits.length + schoolHits.length;
                   <div class="flex items-baseline justify-between gap-3">
                     <h3 class="text-base font-semibold text-primary">{k.title_zh}</h3>
                     <span class="text-xs text-quaternary whitespace-nowrap shrink-0">
-                      {scholarLabel}{k.year && ` · ${k.year}`}
+                      {scholarLabel}{k.year && ` · ${shortYear(k.year)}`}
                     </span>
                   </div>
                   {k.title_ja && <div class="text-xs text-tertiary mt-0.5">{k.title_ja}</div>}

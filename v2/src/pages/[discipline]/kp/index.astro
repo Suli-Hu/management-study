@@ -2,6 +2,8 @@
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
 import { editHref } from '~/lib/nav';
+import { shortYear } from '~/lib/format-year';
+import { lastName } from '~/lib/format-name';
 
 const { discipline } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
@@ -143,7 +145,7 @@ for (const tk of byThemeBySchool.keys()) {
                   {items.map((k) => {
                     const scholarKeys = (k.scholars_csv ?? '').split(',').filter(Boolean);
                     const scholarLabel = scholarKeys
-                      .map((sk2) => scholarByKey.get(sk2)?.name_en ?? scholarByKey.get(sk2)?.name_zh ?? sk2)
+                      .map((sk2) => lastName(scholarByKey.get(sk2)?.name_en ?? scholarByKey.get(sk2)?.name_zh ?? sk2))
                       .join(' · ');
                     return (
                       <li>
@@ -157,7 +159,7 @@ for (const tk of byThemeBySchool.keys()) {
                               {k.title_ja && <span class="text-xs text-tertiary ml-2">{k.title_ja}</span>}
                             </div>
                             <span class="text-xs text-quaternary whitespace-nowrap shrink-0">
-                              {scholarLabel}{k.year && ` · ${k.year}`}
+                              {scholarLabel}{k.year && ` · ${shortYear(k.year)}`}
                             </span>
                           </div>
                         </a>
