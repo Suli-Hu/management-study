@@ -527,6 +527,74 @@ mark {
 }
 
 /* ============================================================
+ * v0.5.13 右栏空态 EmptyRight（split-pane 右栏 KP 列表为空时占位）
+ * ============================================================ */
+.empty-right {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+  padding: 56px 24px 40px;
+  max-width: 420px;
+  margin: 8% auto 0;
+}
+.empty-rings {
+  position: relative; width: 132px; height: 132px;
+  margin-bottom: 28px;
+}
+.empty-ring {
+  position: absolute; inset: 0;
+  border-radius: 9999px;
+  border: 1px solid var(--accent);
+}
+.empty-ring.r1 { opacity: .10; transform: scale(1); }
+.empty-ring.r2 { opacity: .18; transform: scale(.72); }
+.empty-ring.r3 { opacity: .32; transform: scale(.44); }
+.empty-dot {
+  position: absolute; left: 50%; top: 50%;
+  width: 14px; height: 14px; border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 6px var(--color-bg-primary);
+}
+.empty-meta { margin-bottom: 22px; }
+.empty-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.empty-eyebrow-dot {
+  width: 5px; height: 5px; border-radius: 9999px;
+  display: inline-block;
+}
+.empty-name {
+  font-size: 17px; font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 6px; letter-spacing: -0.01em;
+}
+.empty-tip {
+  font-size: 13px; color: var(--color-text-tertiary);
+  line-height: 1.7; margin: 0;
+}
+.empty-cta {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 34px; padding: 0 16px;
+  border-radius: 9999px;
+  border: 1px solid currentColor;
+  background: transparent;
+  font-size: 13px; font-weight: 500;
+  text-decoration: none;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.empty-cta:hover {
+  background: var(--accent);
+  color: #fff !important;
+  border-color: var(--accent);
+}
+.empty-cta-plus {
+  font-size: 16px; font-weight: 400;
+  line-height: 1; margin-top: -1px;
+}
+
+/* ============================================================
  * v0.5.12 累加 sticky：hero + 概述 + 代表学者 + 核心概念 全部钉顶
  * 关键：让 .optA-summary-wrap / .optA-block 不成为 sticky 限定容器，
  *      head 直接挂到 .optA-stack（= .left）上，sticky 才能跨 section 累加

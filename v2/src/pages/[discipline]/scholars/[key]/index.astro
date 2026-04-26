@@ -11,6 +11,7 @@
  * 右栏：3px 顶 strip + kp-head-bar + renderBodyForSchool + renderEvalModule
  */
 import Layout from '~/layouts/Layout.astro';
+import EmptyRight from '~/components/EmptyRight.astro';
 import { getDb } from '~/lib/db';
 import { renderBodyForSchool, renderEvalModule } from '~/lib/render-body';
 import { editHref } from '~/lib/nav';
@@ -327,7 +328,14 @@ const canEdit = Astro.locals.canEdit(discipline);
     <article class="right kp-detail-pane" id="kp-detail-pane" style="padding:0">
       <div style={`height:3px;background:${accentHex}`}></div>
       <div style="max-width:720px;padding:28px 28px 40px">
-        {selectedKp ? (
+        {kps.length === 0 ? (
+          <EmptyRight
+            accentHex={accentHex}
+            kind="scholar"
+            name={scholar.name_en ?? scholar.name_zh}
+            addHref={canEdit ? editHref(`/${discipline}/kp/new?scholar=${scholar.key}`, Astro.url.pathname) : undefined}
+          />
+        ) : selectedKp ? (
           <>
             <header class="kp-head-bar">
               <div class="kp-head-bar-body">
