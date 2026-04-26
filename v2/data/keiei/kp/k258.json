@@ -17,7 +17,9 @@
     "zh": "明茨伯格将组织结构归纳为理想型构型，各有核心协调机制和适用环境。1979年《The Structuring of Organizations》提出五种基本构型，1989年《Mintzberg on Management》增补两种：<br>① <strong>简单结构（Simple Structure）</strong>——权力集中于顶端一人，靠直接监督协调，适用于创业初期的小型组织<br>② <strong>机器官僚制（Machine Bureaucracy）</strong>——高度标准化的工作流程和正式规则，适用于大规模批量生产的稳定环境<br>③ <strong>专业官僚制（Professional Bureaucracy）</strong>——专业人员以标准化技能自主运作，如医院、大学等知识密集型组织<br>④ <strong>事业部制（Divisionalized Form）</strong>——按产品或市场划分半自治事业部，总部通过绩效控制系统管理<br>⑤ <strong>临时体制（Adhocracy）</strong>——打破常规结构的有机型组织，由跨学科团队应对复杂创新任务，靠相互调适协调<br>⑥ <strong>传教型（Missionary）</strong>【1989年增补】——以强烈的意识形态和共享信念为核心凝聚力，成员因对使命的认同而自发协调<br>⑦ <strong>政治型（Political）</strong>【1989年增补】——缺乏主导协调机制，组织内部充斥权力博弈和政治行为，通常是过渡性或病态状态",
     "ja": "——単純構造、機械的官僚制、専門的官僚制、事業部制、アドホクラシー、ミッショナリー型、ポリティカル型の七つの理想型"
   },
-  "tags": [],
+  "tags": [
+    "t_jg440q"
+  ],
   "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"

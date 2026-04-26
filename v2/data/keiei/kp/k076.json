@@ -17,7 +17,9 @@
     "zh": "将企业活动系统分解，识别竞争优势来源的分析框架：◆ 基本活动（Primary Activities）——采购物流（Inbound Logistics）→生产运营（Operations）→发货物流（Outbound Logistics）→市场营销与销售（Marketing & Sales）→售后服务（Service）◆ 支持活动（Support Activities）——企业基础设施（综合管理、财务、法务）、人力资源管理、技术开发、采购。通过分析各环节的成本与价值创造贡献，明确与竞争对手的差异，从而识别降本或差异化的战略机会。价值链不仅适用于单一企业分析，还可扩展至供应链整体的价值系统（Value System）",
     "ja": "——企業活動を体系的に分解し、競争優位の源泉を識別する分析枠組み：◆ 主活動（Primary Activities）——購買物流（Inbound Logistics）→製造（Operations）→出荷物流（Outbound Logistics）→マーケティング・販売（Marketing & Sales）→サービス（Service）◆ 支援活動（Support Activities）——企業インフラ（全般管理・財務・法務）、人的資源管理、技術開発、調達。各活動のコストと価値創造への貢献を分析し、競合他社との差異を明らかにすることで、コスト削減または差別化の戦略的機会を特定する。バリューチェーンは個別企業の分析に留まらず、サプライチェーン全体のバリューシステムへと拡張可能である"
   },
-  "tags": [],
+  "tags": [
+    "t_jg440q"
+  ],
   "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"

@@ -16,7 +16,9 @@
     "zh": "分析宏观环境四维度：政治（Political）、经济（Economic）、社会（Social）、技术（Technological）。后扩展为PESTEL（加Environmental和Legal）。源自Francis Aguilar的环境扫描研究",
     "ja": "——政治・経済・社会・技術の四次元マクロ環境分析"
   },
-  "tags": [],
+  "tags": [
+    "t_jg440q"
+  ],
   "format": "narrative",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"

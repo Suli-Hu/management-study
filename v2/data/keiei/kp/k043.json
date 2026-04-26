@@ -15,7 +15,9 @@
     "zh": "人格（Personality）是描述个体独特心理特质的稳定集合，具有独特性、稳定性、一致性、整体性、倾向性五大特征。主要评估框架：<br>①大五模型（Big Five / OCEAN，McCrae & Costa）——外倾性（Extraversion）、随和性（Agreeableness）、尽责性（Conscientiousness）、神经质（Neuroticism）、经验开放性（Openness to Experience）五维度，实证基础最强，可预测工作绩效；<br>②MBTI（Myers-Briggs Type Indicator）——E/I（外/内向）、S/N（感觉/直觉）、T/F（思维/情感）、J/P（判断/感知）四维16种类型，使用广泛但学术效度存疑；<br>③黑暗三特质（Dark Triad）——马基雅维利主义（Machiavellianism，为目标不择手段）、自恋（Narcissism，极度重视自我权力）、精神病态（Psychopathy，缺乏对他人关怀与愧疚），三者均与工作场所反生产行为（CWB）相关；<br>④四种气质（Temperament，先天神经系统特征）——多血质（Sanguine，活泼型）、胆汁质（Choleric，兴奋型）、黏液质（Phlegmatic，安静型）、抑郁质（Melancholic，抑郁型），无好坏之分",
     "ja": "——パーソナリティ（Personality）とは個人の独自の心理的特性の安定した集合であり、独自性・安定性・一貫性・全体性・傾向性の五大特徴を持つ。主要な評価フレームワーク：<br>①ビッグファイブモデル（Big Five / OCEAN、McCrae & Costa）——外向性（Extraversion）・協調性（Agreeableness）・誠実性（Conscientiousness）・神経症傾向（Neuroticism）・経験への開放性（Openness to Experience）の五次元。実証的基盤が最も強固であり、職務業績を予測可能；<br>②MBTI（Myers-Briggs Type Indicator）——E/I（外向/内向）・S/N（感覚/直観）・T/F（思考/感情）・J/P（判断/知覚）の四次元16類型。広く使用されているが学術的妥当性に疑問あり；<br>③ダークトライアド（Dark Triad）——マキャベリズム（Machiavellianism、目的のために手段を選ばない）・ナルシシズム（Narcissism、自己権力を極度に重視）・サイコパシー（Psychopathy、他者への配慮と罪悪感の欠如）。三者はいずれも職場における反生産的行動（CWB）と関連；<br>④四種の気質（Temperament、先天的神経系特性）——多血質（Sanguine、活発型）・胆汁質（Choleric、興奮型）・粘液質（Phlegmatic、沈着型）・憂鬱質（Melancholic、抑鬱型）。優劣の区別はない"
   },
-  "tags": [],
+  "tags": [
+    "t_ejbdv3"
+  ],
   "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"

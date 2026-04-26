@@ -17,7 +17,9 @@
     "zh": "Quality（品质）、Cost（成本）、Delivery（交货期）、Flexibility（生产灵活性），四维度构成制造现场核心竞争力的综合评估指标",
     "ja": "——Quality・Cost・Delivery・Flexibility。製造現場のコア競争力指標"
   },
-  "tags": [],
+  "tags": [
+    "t_jg440q"
+  ],
   "format": "narrative",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"

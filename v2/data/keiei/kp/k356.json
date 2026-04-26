@@ -15,7 +15,9 @@
     "zh": "以用户为中心的问题解决方法论。五步骤：共感（Empathize）→问题定义（Define）→创意生成（Ideate）→原型制作（Prototype）→测试（Test）。斯坦福d.school和IDEO推广，强调跨学科协作和快速迭代",
     "ja": "——共感→問題定義→アイデア創出→プロトタイプ→テスト。ユーザー中心の問題解決"
   },
-  "tags": [],
+  "tags": [
+    "t_jg440q"
+  ],
   "format": "narrative",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"

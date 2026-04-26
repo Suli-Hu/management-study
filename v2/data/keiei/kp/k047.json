@@ -15,7 +15,9 @@
     "zh": "群体（Group）结构由五要素构成：角色（Role，对占据特定位置成员期望的行为模式集合；角色冲突Role Conflict指遵守一个角色要求使另一角色难以实现）；规范（Norms，群体共同接受的行为标准，绩效规范是组织中最普遍的类型）；地位（Status，由驾驭权力/贡献能力/个人特征三来源决定，地位特征理论Status Characteristics Theory）；规模（小群体效率高、大群体资源多但凝聚力低）；凝聚力（Cohesiveness，成员相互吸引程度，与绩效的关系取决于绩效规范方向）。三种社会影响：社会惰化（Social Loafing / Ringelmann Effect，群体中个人努力减少，因责任分散与可辨识度低）；社会助长/抑制（Social Facilitation/Inhibition，他人在场促进简单熟练任务但干扰复杂任务）；从众（Conformity，群体压力下放弃个人判断趋向多数意见）",
     "ja": "——集団（Group）の構造は五つの要素から成る：役割（Role、特定の地位を占める成員に期待される行動パターンの集合；役割葛藤Role Conflictは一つの役割要求の遵守が他の役割の遂行を困難にすること）；規範（Norms、集団が共有する行動基準であり、業績規範が組織において最も普遍的な類型）；地位（Status、権力の掌握・貢献能力・個人的特性の三つの源泉により決定され、地位特性理論Status Characteristics Theory）；規模（小集団は効率が高く、大集団は資源が豊富だが凝集性が低い）；凝集性（Cohesiveness、成員間の相互吸引の程度であり、業績との関係は業績規範の方向に依存する）。三つの社会的影響：社会的手抜き（Social Loafing / Ringelmann Effect、集団内で個人の努力が減少する。責任の分散と識別可能性の低さに起因）；社会的促進/抑制（Social Facilitation/Inhibition、他者の存在が単純・熟練課題を促進するが複雑課題を妨害する）；同調（Conformity、集団圧力のもとで個人の判断を放棄し多数意見に従う）"
   },
-  "tags": [],
+  "tags": [
+    "t_ejbdv3"
+  ],
   "format": "narrative",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
