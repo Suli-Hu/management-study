@@ -502,7 +502,7 @@ mark {
   border-bottom: 0;
   margin-bottom: 0;
 }
-/* 学者详情页仍用 button 触发的可折叠 head（学派详情已改为 .optA-section-head 静态版） */
+/* 可折叠 button head（学派详情 + 学者详情共用） */
 .optA-section-head--btn {
   display: flex; align-items: baseline; gap: 8px;
   padding: 8px 8px;
@@ -524,6 +524,38 @@ mark {
 .optA-section-head--btn[aria-expanded="false"] .optA-collapse-chev,
 .optA-summary-wrap.is-collapsed .optA-collapse-chev {
   transform: rotate(-90deg);
+}
+
+/* ============================================================
+ * v0.5.12 累加 sticky：hero + 概述 + 代表学者 + 核心概念 全部钉顶
+ * 关键：让 .optA-summary-wrap / .optA-block 不成为 sticky 限定容器，
+ *      head 直接挂到 .optA-stack（= .left）上，sticky 才能跨 section 累加
+ * ============================================================ */
+.optA-stack .optA-summary-wrap,
+.optA-stack .optA-block {
+  display: contents;
+}
+.optA-stack [data-d-stick] {
+  position: sticky;
+  background: var(--color-bg-primary);
+  border-bottom: 1px solid var(--color-border);
+  margin: 0; border-radius: 0;
+}
+.optA-stack [data-d-stick="summary"] {
+  top: var(--hero-h, 80px);
+  z-index: 4;
+}
+.optA-stack [data-d-stick="scholars"] {
+  top: calc(var(--hero-h, 80px) + var(--head-h-summary, 0px));
+  z-index: 3;
+}
+.optA-stack [data-d-stick="kps"] {
+  top: calc(var(--hero-h, 80px) + var(--head-h-summary, 0px) + var(--head-h-scholars, 0px));
+  z-index: 2;
+}
+/* 核心概念 head 不可折叠：保留普通 .optA-section-head 排版但加 sticky bg */
+.optA-stack .optA-section-head[data-d-stick="kps"] {
+  padding: 8px 8px;
 }
 
 

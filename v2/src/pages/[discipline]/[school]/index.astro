@@ -122,7 +122,7 @@ const canEdit = Astro.locals.canEdit(discipline);
   <div class="split" style={`--accent:${accentHex}`}>
 
     {/* ========== 左栏 ========== */}
-    <aside class="left">
+    <aside class="left optA-stack">
 
       {/* Hero */}
       <div class="optA-hero">
@@ -141,30 +141,33 @@ const canEdit = Astro.locals.canEdit(discipline);
         </div>
       </div>
 
-      {/* 概述 */}
+      {/* 概述（可折叠 + sticky）*/}
       {sch.summary_zh && (
-        <section class="optA-summary-wrap">
-          <div class="optA-section-head">
+        <section class="optA-summary-wrap" data-collapse-section="summary">
+          <button class="optA-section-head--btn" type="button" aria-expanded="true" data-collapse-toggle data-d-stick="summary">
             <h2>概述</h2>
-          </div>
-          <div class="optA-summary">{sch.summary_zh}</div>
+            <span class="optA-collapse-chev">▾</span>
+          </button>
+          <div class="optA-summary" data-collapse-body>{sch.summary_zh}</div>
         </section>
       )}
 
-      {/* 代表学者 */}
-      <section class="optA-block">
-        <div class="optA-section-head">
+      {/* 代表学者（可折叠 + sticky）*/}
+      <section class="optA-block" data-collapse-section="scholars">
+        <button class="optA-section-head--btn" type="button" aria-expanded="true" data-collapse-toggle data-d-stick="scholars">
           <h2>代表学者</h2>
           <span class="optA-count">{schoolScholars.length}</span>
+          <span class="optA-collapse-chev">▾</span>
           {canEdit && (
             <a
               href={editHref(`/${discipline}/scholars/new?school=${sch.key}`, Astro.url.pathname)}
               class="optA-section-add"
+              onclick="event.stopPropagation()"
               title="新增学者"
             >+ 新增</a>
           )}
-        </div>
-        <ul class="optA-scholars">
+        </button>
+        <ul class="optA-scholars" data-collapse-body>
           {schoolScholars.length === 0 ? (
             <li class="text-xs text-quaternary px-2 py-1">暂无关联学者。</li>
           ) : schoolScholars.map((s) => (
@@ -180,9 +183,9 @@ const canEdit = Astro.locals.canEdit(discipline);
         </ul>
       </section>
 
-      {/* 核心概念 */}
+      {/* 核心概念（不折叠，但 sticky）*/}
       <section class="optA-block">
-        <div class="optA-section-head">
+        <div class="optA-section-head" data-d-stick="kps">
           <h2>核心概念</h2>
           <span class="optA-count">{kps.length}</span>
           {canEdit && (
@@ -287,6 +290,34 @@ const canEdit = Astro.locals.canEdit(discipline);
   // @ts-nocheck — DOM 类型推断弱
   // KP 列表长按拖动重排（保留 v0.4.26 行为）
   import { mountDragReorder } from '~/lib/drag-reorder-client';
+
+  // ========== 累加 sticky：测量 hero/head 高度，写到 CSS 变量 ==========
+  (function () {
+    const left = document.querySelector('.optA-stack');
+    if (!left) return;
+    function measure() {
+      const hero = left.querySelector('.optA-hero');
+      const sumHead = left.querySelector('[data-d-stick="summary"]');
+      const schHead = left.querySelector('[data-d-stick="scholars"]');
+      left.style.setProperty('--hero-h', (hero?.offsetHeight ?? 80) + 'px');
+      left.style.setProperty('--head-h-summary', (sumHead?.offsetHeight ?? 0) + 'px');
+      left.style.setProperty('--head-h-scholars', (schHead?.offsetHeight ?? 0) + 'px');
+    }
+    measure();
+    window.addEventListener('resize', measure);
+  })();
+
+  // ========== 概述/代表学者 折叠（默认全展开，不持久化）==========
+  document.querySelectorAll('[data-collapse-section]').forEach((sec) => {
+    const btn = sec.querySelector('[data-collapse-toggle]');
+    const body = sec.querySelector('[data-collapse-body]');
+    if (!btn || !body) return;
+    btn.addEventListener('click', () => {
+      const collapsed = sec.classList.toggle('is-collapsed');
+      btn.setAttribute('aria-expanded', String(!collapsed));
+      body.style.display = collapsed ? 'none' : '';
+    });
+  });
   if (document.querySelector('[data-reorder-bootstrap="school-concepts"]')) {
     document.querySelectorAll('[data-reorder-kind="school-concepts"]').forEach((ul) => {
       const schoolKey = ul.dataset.schoolKey;
