@@ -20,9 +20,9 @@
       },
       "accent": "ob",
       "schools": [
+        "personality",
         "ob",
         "attitude_emotion",
-        "personality",
         "behavioral",
         "beh_econ"
       ]
@@ -199,5 +199,5 @@
     }
   ],
   "createdAt": "2026-04-24T16:44:30.409Z",
-  "updatedAt": "2026-04-26T00:53:45.195Z"
+  "updatedAt": "2026-04-26T00:53:50.800Z"
 }
