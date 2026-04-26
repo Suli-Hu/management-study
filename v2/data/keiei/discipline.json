@@ -11,20 +11,6 @@
   "accent": "classic",
   "themes": [
     {
-      "key": "ob_group",
-      "title": {
-        "zh": "人与人之间"
-      },
-      "desc": {
-        "zh": "非正式组织→集团动力学→领导力→冲突管理"
-      },
-      "accent": "ob",
-      "schools": [
-        "leadership_theory",
-        "conflict"
-      ]
-    },
-    {
       "key": "ob_individual",
       "title": {
         "zh": "个体的世界"
@@ -40,6 +26,20 @@
         "behavioral",
         "beh_econ",
         "humanrel"
+      ]
+    },
+    {
+      "key": "ob_group",
+      "title": {
+        "zh": "人与人之间"
+      },
+      "desc": {
+        "zh": "非正式组织→集团动力学→领导力→冲突管理"
+      },
+      "accent": "ob",
+      "schools": [
+        "leadership_theory",
+        "conflict"
       ]
     },
     {
@@ -199,5 +199,5 @@
     }
   ],
   "createdAt": "2026-04-24T16:44:30.409Z",
-  "updatedAt": "2026-04-26T02:23:05.152Z"
+  "updatedAt": "2026-04-26T02:23:11.651Z"
 }
