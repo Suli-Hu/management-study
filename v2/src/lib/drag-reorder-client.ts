@@ -49,6 +49,8 @@ export interface DragReorderOpts {
   moveCancelPx?: number;
   hysteresisPx?: number;
   skipSelector?: string;
+  /** 长按起点必须在 child 内此 selector 匹配的元素上才触发（如 ≡ handle）。空 = 整个 child 都可起拖 */
+  dragHandleSelector?: string;
 }
 
 interface ContainerEntry {
@@ -341,6 +343,7 @@ function attachContainer(mgr: GroupManager, container: HTMLElement, opts: DragRe
   const longPressMs = opts.longPressMs ?? 500;
   const moveCancelPx = opts.moveCancelPx ?? 10;
   const skipSelector = opts.skipSelector ?? '';
+  const dragHandleSelector = opts.dragHandleSelector ?? '';
 
   const onClickCapture = (e: MouseEvent) => {
     if (mgr.drag.suppressClickUntil && Date.now() < mgr.drag.suppressClickUntil) {
@@ -363,6 +366,8 @@ function attachContainer(mgr: GroupManager, container: HTMLElement, opts: DragRe
       if (mgr.drag.state !== 'idle') return;
       const target = e.target as HTMLElement;
       if (skipSelector && target.closest(skipSelector)) return;
+      // 若指定了 dragHandleSelector，只有点在 handle 上才启动长按 timer
+      if (dragHandleSelector && !target.closest(dragHandleSelector)) return;
       mgr.drag.startX = clientX;
       mgr.drag.startY = clientY;
       mgr.drag.state = 'pending';

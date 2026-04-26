@@ -76,12 +76,24 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
       )}
     </header>
 
+    <div class="drag-reorder" data-reorder-kind="themes-order">
     {themed.map((t) => (
-      <section class="mb-8">
+      <section class="mb-8" data-theme-key={t.key}>
         <div class="mb-3 flex items-baseline justify-between gap-3 group">
-          <div>
-            <h2 class="text-base font-semibold">{t.title.zh}</h2>
-            {t.desc?.zh && <p class="text-xs text-tertiary mt-0.5">{t.desc.zh}</p>}
+          <div class="flex items-baseline gap-2">
+            {Astro.locals.canEdit(discipline) && (
+              <span
+                class="theme-drag-handle inline-flex w-5 h-5 items-center justify-center text-quaternary cursor-grab select-none opacity-30 group-hover:opacity-70 transition-opacity"
+                title="长按拖动调整主题顺序"
+                aria-label="拖动 handle"
+              >
+                ≡
+              </span>
+            )}
+            <div>
+              <h2 class="text-base font-semibold">{t.title.zh}</h2>
+              {t.desc?.zh && <p class="text-xs text-tertiary mt-0.5">{t.desc.zh}</p>}
+            </div>
           </div>
           {Astro.locals.canEdit(discipline) && (
             <div class="shrink-0 flex items-center gap-1 opacity-30 group-hover:opacity-100 transition-opacity">
@@ -117,10 +129,11 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
           ))}
         </div>
         {t.schoolList.length === 0 && (
-          <p class="text-xs text-quaternary mt-2">暂无学派{Astro.locals.canEdit(discipline) ? '。Phase 2 上线后可拖学派进来。' : '。'}</p>
+          <p class="text-xs text-quaternary mt-2">暂无学派{Astro.locals.canEdit(discipline) ? '。从其他主题长按拖一个进来。' : '。'}</p>
         )}
       </section>
     ))}
+    </div>
 
     {orphanSchools.length > 0 && (
       <section class="mb-8">
@@ -177,5 +190,30 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
         },
       });
     });
+
+    // v0.4.31 Phase 3 — themes 顺序拖排（独立 group，只在 ≡ handle 上长按触发）
+    const themesContainer = document.querySelector('[data-reorder-kind="themes-order"]');
+    if (themesContainer) {
+      mountDragReorder(themesContainer, {
+        group: `themes-order-${discipline}`,
+        getId: (el) => el.getAttribute('data-theme-key'),
+        getContainerKey: () => 'root',
+        dragHandleSelector: '.theme-drag-handle',
+        skipSelector: 'a, button, [data-reorder-kind="discipline-schools"]',
+        onReorder: async (idsByContainer) => {
+          const themeKeys = idsByContainer.get('root') ?? [];
+          if (themeKeys.length === 0) return;
+          const res = await fetch('/api/edit/reorder/themes-order', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ discipline, themeKeys }),
+          });
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            alert(`保存主题顺序失败：${res.status} ${data.reason ?? 'error'}`);
+          }
+        },
+      });
+    }
   }
 </script>
