@@ -56,8 +56,6 @@
         const newTitle = doc.querySelector('title')?.textContent;
         if (newTitle) document.title = newTitle;
         detailPane.scrollTop = 0;
-        // v0.5.29 rail：换 KP 后右栏新出现的 [data-kp-link]（前/后导航）需要重新绑定
-        bindKpLinks(detailPane);
       } catch (err) {
         if (err && err.name === 'AbortError') return;
         console.error('[split-pane] showKpInPane failed:', err);
@@ -66,27 +64,18 @@
       }
     }
 
-    function bindKpLinks(root) {
-      root.querySelectorAll('[data-kp-link]').forEach((a) => {
-        if (a.dataset.splitBound) return;
-        a.dataset.splitBound = '1';
-        a.addEventListener('click', (e) => {
-          if (!MQ.matches) return;
-          if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
-          e.preventDefault();
-          // 列表项用 closest [data-kp-id]，rail 链接用自身 data-kp-wide-href 末尾的 ?kp=X 解析
-          const li = a.closest('[data-kp-id]');
-          let id = li?.getAttribute('data-kp-id');
-          if (!id) {
-            const wide = a.getAttribute('data-kp-wide-href') || '';
-            const m = wide.match(/[?&]kp=([^&]+)/);
-            if (m) id = decodeURIComponent(m[1]);
-          }
-          if (id) showKpInPane(id);
-        });
+    document.querySelectorAll('[data-kp-link]').forEach((a) => {
+      if (a.dataset.splitBound) return;
+      a.dataset.splitBound = '1';
+      a.addEventListener('click', (e) => {
+        if (!MQ.matches) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+        e.preventDefault();
+        const li = a.closest('[data-kp-id]');
+        const id = li?.getAttribute('data-kp-id');
+        if (id) showKpInPane(id);
       });
-    }
-    bindKpLinks(document);
+    });
 
     document.addEventListener('keydown', (e) => {
       if (!MQ.matches) return;

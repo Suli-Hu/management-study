@@ -15,7 +15,7 @@
 import Layout from '~/layouts/Layout.astro';
 import EmptyRight from '~/components/EmptyRight.astro';
 import { getDb } from '~/lib/db';
-import { renderBodyForSchool, renderEvalModule, extractAccordionToc } from '~/lib/render-body';
+import { renderBodyForSchool, renderEvalModule } from '~/lib/render-body';
 import { editHref } from '~/lib/nav';
 import { tagColor } from '~/lib/tag-color';
 import { shortYear } from '~/lib/format-year';
@@ -113,12 +113,6 @@ if (selectedKpId) {
 }
 
 const canEdit = Astro.locals.canEdit(discipline);
-
-// Rail：当前 KP 的 accordion TOC + 学派内 前/后 KP（用于右栏导航）
-const tocItems = selectedKp ? extractAccordionToc(selectedKp.format, selectedKp.body_zh) : [];
-const selectedIdx = selectedKpId ? kps.findIndex((k) => k.id === selectedKpId) : -1;
-const prevKp = selectedIdx > 0 ? kps[selectedIdx - 1] : null;
-const nextKp = selectedIdx >= 0 && selectedIdx < kps.length - 1 ? kps[selectedIdx + 1] : null;
 ---
 
 <Layout
@@ -254,95 +248,38 @@ const nextKp = selectedIdx >= 0 && selectedIdx < kps.length - 1 ? kps[selectedId
     {/* ========== 右栏 ========== */}
     <article class="right kp-detail-pane" id="kp-detail-pane" style="padding:0">
       <div style={`height:3px;background:${accentHex}`}></div>
-      <div class="kp-pane-grid">
-        <div class="kp-pane-main">
-          {kps.length === 0 ? (
-            <EmptyRight
-              accentHex={accentHex}
-              kind="school"
-              name={sch.title_zh}
-              addHref={canEdit ? editHref(`/${discipline}/kp/new?school=${sch.key}`, Astro.url.pathname) : undefined}
-            />
-          ) : selectedKp ? (
-            <>
-              <header class="kp-head-bar">
-                <div class="kp-head-bar-body">
-                  <h2 class="text-xl font-semibold leading-tight">{selectedKp.title_zh}</h2>
-                  <div class="text-xs text-tertiary mt-2 flex flex-wrap items-baseline gap-2">
-                    {selectedScholars.map((s) => (
-                      <a href={`/${discipline}/scholars/${s.key}`} class="font-semibold hover:underline">
-                        {lastName(s.name_en ?? s.name_zh)}
-                      </a>
-                    ))}
-                    {selectedKp.year && <span class="text-quaternary">{shortYear(selectedKp.year)}</span>}
-                  </div>
-                  {selectedKp.title_en && <div class="text-xs text-quaternary italic mt-1">{selectedKp.title_en}</div>}
-                  {selectedKp.title_ja && <div class="text-xs text-tertiary mt-1">{selectedKp.title_ja}</div>}
-                </div>
-              </header>
-              <div class="mt-6" set:html={renderBodyForSchool(selectedKp.format, selectedKp.body_zh, accentHex)} />
-              <div set:html={renderEvalModule(selectedEvalContent)} />
-            </>
-          ) : (
-            <div class="text-sm text-quaternary py-10">
-              <p>选中左侧 KP 查看详情。</p>
-            </div>
-          )}
-        </div>
-
-        {selectedKp && (tocItems.length > 0 || prevKp || nextKp) && (
-          <aside class="kp-pane-rail" aria-label="本 KP 导航">
-            {tocItems.length > 0 && (
-              <nav class="kp-rail-section">
-                <div class="kp-rail-label">目录</div>
-                <ul class="kp-rail-toc">
-                  {tocItems.map((t) => (
-                    <li>
-                      <a href={`#${t.id}`} class="kp-rail-toc-link" data-toc-link={t.id}>
-                        <span class="kp-rail-toc-title">{t.title}</span>
-                        <span class="kp-rail-toc-count">{t.count}</span>
-                      </a>
-                    </li>
+      <div class="kp-pane-content">
+        {kps.length === 0 ? (
+          <EmptyRight
+            accentHex={accentHex}
+            kind="school"
+            name={sch.title_zh}
+            addHref={canEdit ? editHref(`/${discipline}/kp/new?school=${sch.key}`, Astro.url.pathname) : undefined}
+          />
+        ) : selectedKp ? (
+          <>
+            <header class="kp-head-bar">
+              <div class="kp-head-bar-body">
+                <h2 class="text-xl font-semibold leading-tight">{selectedKp.title_zh}</h2>
+                <div class="text-xs text-tertiary mt-2 flex flex-wrap items-baseline gap-2">
+                  {selectedScholars.map((s) => (
+                    <a href={`/${discipline}/scholars/${s.key}`} class="font-semibold hover:underline">
+                      {lastName(s.name_en ?? s.name_zh)}
+                    </a>
                   ))}
-                </ul>
-              </nav>
-            )}
-            {(prevKp || nextKp) && (
-              <nav class="kp-rail-section">
-                <div class="kp-rail-label">本学派内</div>
-                <div class="kp-rail-nav">
-                  {prevKp ? (
-                    <a
-                      href={`/${discipline}/kp/${prevKp.id}`}
-                      data-kp-link
-                      data-kp-wide-href={`?kp=${prevKp.id}`}
-                      class="kp-rail-nav-item"
-                    >
-                      <span class="kp-rail-nav-arrow">↑</span>
-                      <span class="kp-rail-nav-text">
-                        <span class="kp-rail-nav-eyebrow">前</span>
-                        <span class="kp-rail-nav-title">{prevKp.title_zh}</span>
-                      </span>
-                    </a>
-                  ) : <div class="kp-rail-nav-item is-disabled"><span class="kp-rail-nav-arrow">↑</span><span class="kp-rail-nav-text"><span class="kp-rail-nav-eyebrow">前</span><span class="kp-rail-nav-title">—</span></span></div>}
-                  {nextKp ? (
-                    <a
-                      href={`/${discipline}/kp/${nextKp.id}`}
-                      data-kp-link
-                      data-kp-wide-href={`?kp=${nextKp.id}`}
-                      class="kp-rail-nav-item"
-                    >
-                      <span class="kp-rail-nav-arrow">↓</span>
-                      <span class="kp-rail-nav-text">
-                        <span class="kp-rail-nav-eyebrow">后</span>
-                        <span class="kp-rail-nav-title">{nextKp.title_zh}</span>
-                      </span>
-                    </a>
-                  ) : <div class="kp-rail-nav-item is-disabled"><span class="kp-rail-nav-arrow">↓</span><span class="kp-rail-nav-text"><span class="kp-rail-nav-eyebrow">后</span><span class="kp-rail-nav-title">—</span></span></div>}
+                  {selectedKp.year && <span class="text-quaternary">{shortYear(selectedKp.year)}</span>}
                 </div>
-              </nav>
-            )}
-          </aside>
+                {selectedKp.title_en && <div class="text-xs text-quaternary italic mt-1">{selectedKp.title_en}</div>}
+                {selectedKp.title_ja && <div class="text-xs text-tertiary mt-1">{selectedKp.title_ja}</div>}
+              </div>
+            </header>
+            <div class="mt-6" set:html={renderBodyForSchool(selectedKp.format, selectedKp.body_zh, accentHex)} />
+            <div set:html={renderEvalModule(selectedEvalContent)} />
+          </>
+        ) : (
+          <div class="text-sm text-quaternary py-10">
+            <p>选中左侧 KP 查看详情。</p>
+          </div>
         )}
       </div>
     </article>
@@ -352,18 +289,6 @@ const nextKp = selectedIdx >= 0 && selectedIdx < kps.length - 1 ? kps[selectedId
 
 <script is:inline src="/split-pane.js"></script>
 <script is:inline src="/admin-tools.js"></script>
-
-<script is:inline>
-  // v0.5.29: TOC anchor 点击 → 自动展开目标 <details>（不然 collapsed section 跳过去看不到内容）
-  // 用 hashchange + 直接监听 click on .kp-rail-toc-link（事件委托，KP 切换后无需重新绑定）
-  document.addEventListener('click', (e) => {
-    const link = e.target.closest('.kp-rail-toc-link');
-    if (!link) return;
-    const id = link.getAttribute('data-toc-link');
-    const target = id && document.getElementById(id);
-    if (target && target.tagName === 'DETAILS') target.open = true;
-  });
-</script>
 
 {canEdit && (
   <div data-reorder-bootstrap="school-concepts" class="hidden"></div>
