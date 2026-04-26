@@ -154,9 +154,9 @@
         "entrepreneur_s",
         "cognitive_s",
         "learning_s",
+        "environment_s",
         "power_s",
         "culture_s",
-        "environment_s",
         "configuration_s"
       ]
     },
@@ -199,5 +199,5 @@
     }
   ],
   "createdAt": "2026-04-24T16:44:30.409Z",
-  "updatedAt": "2026-04-26T00:48:12.798Z"
+  "updatedAt": "2026-04-26T00:48:20.318Z"
 }
