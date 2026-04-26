@@ -12,6 +12,13 @@ const schoolsResult = await db
   .all<{ key: string; title_zh: string }>();
 const allSchools = schoolsResult.results ?? [];
 
+const tagsRow = await db
+  .prepare('SELECT tags_json FROM discipline WHERE key = ?')
+  .bind(discipline)
+  .first<{ tags_json: string }>();
+const tagLibrary: Array<{ key: string; label: { zh: string }; color: string }> = tagsRow?.tags_json
+  ? JSON.parse(tagsRow.tags_json) : [];
+
 const ctxSchool = Astro.url.searchParams.get('school') ?? '';
 ---
 
@@ -50,6 +57,14 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
           id="schools-multi"
           data-options={JSON.stringify(allSchools.map((s) => ({ key: s.key, label: s.title_zh })))}
           data-preselect={ctxSchool}
+        ></div>
+      </section>
+
+      <section>
+        <label class="block text-xs font-semibold text-tertiary mb-1">标签</label>
+        <div
+          id="tag-picker"
+          data-options={JSON.stringify(tagLibrary.map((t) => ({ key: t.key, label: t.label?.zh ?? t.key, color: t.color })))}
         ></div>
       </section>
 
@@ -109,6 +124,7 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
   // @ts-nocheck — DOM form 类型推断弱（HTMLElement vs HTMLInputElement），runtime 已验证
   // v0.4.11: multi-select typeahead for schools
   import { mountMultiSelect } from '~/lib/multi-select-client';
+  import { mountTagSinglePicker } from '~/lib/tag-single-picker-client';
   import { formatZodIssues } from '~/lib/zod-errors-zh';
   const form = document.getElementById('scholar-new-form');
   const saveBtn = document.getElementById('save-btn');
@@ -123,6 +139,12 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
     placeholder: '搜索学派',
   });
 
+  const tagPickerMount = document.getElementById('tag-picker');
+  const tagPicker = mountTagSinglePicker(tagPickerMount, {
+    options: JSON.parse(tagPickerMount.dataset.options ?? '[]'),
+    initial: null,
+  });
+
   function buildI18n(zh, en, ja) {
     const o = { zh: zh.trim() };
     if (en?.trim()) o.en = en.trim();
@@ -132,6 +154,7 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
   function collect() {
     const now = new Date().toISOString();
     const schools = schoolsMS.getSelected();
+    const tagKey = tagPicker.getValue();
     const nobelYear = form.nobel_year.value.trim();
     const nobel = nobelYear ? { year: nobelYear, detail: form.nobel_detail.value.trim() } : null;
     return {
@@ -140,10 +163,10 @@ const ctxSchool = Astro.url.searchParams.get('school') ?? '';
       name: buildI18n(form.name_zh.value, form.name_en.value, form.name_ja.value),
       schools,
       contribution: { zh: form.contribution_zh.value },
-      // lifespan/origin/accent UI 移除（v0.4.19）— schema 字段保留，新建时填空，sync 时 accent 由学派派生
+      // lifespan/origin UI 移除（v0.4.19）— schema 字段保留，新建时填空
       lifespan: '',
       origin: '',
-      accent: '',
+      tags: tagKey ? [tagKey] : [],
       institution: form.institution.value.trim(),
       born: form.born.value.trim(),
       died: form.died.value.trim(),

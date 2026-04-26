@@ -34,6 +34,13 @@ const scholarsResult = await db
   .all<{ key: string; name_zh: string; name_en: string | null }>();
 const allScholars = scholarsResult.results ?? [];
 
+const tagsRow = await db
+  .prepare('SELECT tags_json FROM discipline WHERE key = ?')
+  .bind(discipline)
+  .first<{ tags_json: string }>();
+const tagLibrary: Array<{ key: string; label: { zh: string }; color: string }> = tagsRow?.tags_json
+  ? JSON.parse(tagsRow.tags_json) : [];
+
 const ctxSchool = Astro.url.searchParams.get('school') ?? '';
 const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
 ---
@@ -48,9 +55,10 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
 
       <nav class="kpedit-C-jump">
         <a class="kpedit-C-jump-i is-active" href="#sec-basic" data-jump="basic"><span class="kpedit-C-jump-l">基本信息</span><span class="kpedit-C-jump-c">5 字段</span></a>
-        <a class="kpedit-C-jump-i" href="#sec-rel" data-jump="rel"><span class="kpedit-C-jump-l">关联</span><span class="kpedit-C-jump-c" id="rel-count">学派 0 · 学者 0</span></a>
+        <a class="kpedit-C-jump-i" href="#sec-rel" data-jump="rel"><span class="kpedit-C-jump-l">关联</span><span class="kpedit-C-jump-c" id="rel-count">0个学派 / 0个学者</span></a>
         <a class="kpedit-C-jump-i" href="#sec-body" data-jump="body"><span class="kpedit-C-jump-l">正文</span><span class="kpedit-C-jump-c" id="body-count">叙事</span></a>
-        <a class="kpedit-C-jump-i" href="#sec-tags" data-jump="tags"><span class="kpedit-C-jump-l">评价标签</span><span class="kpedit-C-jump-c" id="tags-count">0 / 6</span></a>
+        <a class="kpedit-C-jump-i" href="#sec-eval" data-jump="eval"><span class="kpedit-C-jump-l">评价</span><span class="kpedit-C-jump-c" id="tags-count">0 / 6</span></a>
+        <a class="kpedit-C-jump-i" href="#sec-tag" data-jump="tag"><span class="kpedit-C-jump-l">标签</span><span class="kpedit-C-jump-c" id="tag-count">无</span></a>
       </nav>
 
       <div class="kpedit-C-actions">
@@ -101,8 +109,8 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
         <div id="body-editor-mount" class="border rounded-md p-3 bg-bg-primary"></div>
       </section>
 
-      <section id="sec-tags" class="kpedit-C-sec">
-        <div class="kpedit-C-sec-h"><h3>评价标签</h3>
+      <section id="sec-eval" class="kpedit-C-sec">
+        <div class="kpedit-C-sec-h"><h3>评价</h3>
           <div class="kpedit-langseg" id="eval-langseg" role="tablist">
             <button type="button" class="kpedit-langseg-b is-on" data-eval-lang="zh">中</button>
             <button type="button" class="kpedit-langseg-b" data-eval-lang="ja">日</button>
@@ -121,6 +129,14 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
         </div>
       </section>
 
+      <section id="sec-tag" class="kpedit-C-sec">
+        <div class="kpedit-C-sec-h"><h3>标签</h3><span class="kpedit-C-sec-hint">单选，决定卡片色</span></div>
+        <div
+          id="tag-picker"
+          data-options={JSON.stringify(tagLibrary.map((t) => ({ key: t.key, label: t.label?.zh ?? t.key, color: t.color })))}
+        ></div>
+      </section>
+
     </form>
   </div>
 </Layout>
@@ -129,6 +145,7 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
   // @ts-nocheck
   import { mountBodyEditor } from '~/lib/body-editor-client';
   import { mountMultiSelect } from '~/lib/multi-select-client';
+  import { mountTagSinglePicker } from '~/lib/tag-single-picker-client';
   import { formatZodIssues } from '~/lib/zod-errors-zh';
 
   const $ = (s) => document.querySelector(s);
@@ -188,7 +205,7 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
   function updateRelCount() {
     const s = schoolsMS?.getSelected().length ?? 0;
     const sc = scholarsMS?.getSelected().length ?? 0;
-    $('#rel-count').textContent = `学派 ${s} · 学者 ${sc}`;
+    $('#rel-count').textContent = `${s}个学派 / ${sc}个学者`;
   }
 
   // eval
@@ -222,6 +239,18 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
     });
   });
 
+  // tag picker
+  const tagPickerMount = $('#tag-picker');
+  const tagPicker = mountTagSinglePicker(tagPickerMount, {
+    options: JSON.parse(tagPickerMount.dataset.options ?? '[]'),
+    initial: null,
+    onChange: updateTagCount,
+  });
+  function updateTagCount() {
+    const v = tagPicker?.getValue();
+    $('#tag-count').textContent = v ? '1 / 1' : '无';
+  }
+
   // Title shadow display in nav
   form.title_zh.addEventListener('input', () => {
     $('#nav-title').textContent = form.title_zh.value || '（未命名）';
@@ -229,7 +258,7 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
 
   // Jump nav scroll spy
   (function initSpy() {
-    const ids = ['basic','rel','body','tags'].map((s) => 'sec-' + s);
+    const ids = ['basic','rel','body','eval','tag'].map((s) => 'sec-' + s);
     const sections = ids.map((id) => document.getElementById(id)).filter(Boolean);
     const observer = new IntersectionObserver((entries) => {
       const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
@@ -263,6 +292,7 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
     const id = form.id.value.trim();
     const schools = schoolsMS.getSelected();
     const scholars = scholarsMS.getSelected();
+    const tagKey = tagPicker?.getValue();
     const now = new Date().toISOString();
     const ec = {};
     const zh = cleanEvalContent(evalContent.zh);
@@ -274,7 +304,7 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
       year: form.year.value.trim(),
       title: buildI18n(form.title_zh.value, form.title_en.value, form.title_ja.value),
       body: buildBody(currentBodyZh, currentBodyJa),
-      tags: [],
+      tags: tagKey ? [tagKey] : [],
       format: currentFormat,
       ...(Object.keys(ec).length ? { evalContent: ec } : {}),
       createdAt: now,

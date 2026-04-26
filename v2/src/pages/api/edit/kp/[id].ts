@@ -208,6 +208,9 @@ export const GET: APIRoute = async ({ params, locals }) => {
   // v0.4.22 Pack C M7: 返 user_progress / user_note 数量，给前端 confirm 文案显示级联范围
   const progressRow = await db.prepare('SELECT COUNT(*) as n FROM user_progress WHERE kp_id = ?').bind(id).first() as { n: number } | null;
   const noteRow = await db.prepare('SELECT COUNT(*) as n FROM user_note WHERE kp_id = ?').bind(id).first() as { n: number } | null;
+  // v0.5.20: 标签库给前端 picker 用
+  const tagsRow = await db.prepare('SELECT tags_json FROM discipline WHERE key = ?').bind(row.discipline).first() as { tags_json: string } | null;
+  const tag_library = tagsRow?.tags_json ? JSON.parse(tagsRow.tags_json) : [];
 
   return json(200, {
     ok: true,
@@ -215,5 +218,6 @@ export const GET: APIRoute = async ({ params, locals }) => {
     base_sha: res.data.sha,
     progress_count: progressRow?.n ?? 0,
     note_count: noteRow?.n ?? 0,
+    tag_library,
   });
 };

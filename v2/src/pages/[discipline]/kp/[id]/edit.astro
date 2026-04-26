@@ -68,9 +68,13 @@ const allScholars = scholarsResult.results ?? [];
           <span class="kpedit-C-jump-l">正文</span>
           <span class="kpedit-C-jump-c" id="body-count">叙事</span>
         </a>
-        <a class="kpedit-C-jump-i" href="#sec-tags" data-jump="tags">
+        <a class="kpedit-C-jump-i" href="#sec-eval" data-jump="eval">
           <span class="kpedit-C-jump-l">评价</span>
           <span class="kpedit-C-jump-c" id="tags-count">0 / 6</span>
+        </a>
+        <a class="kpedit-C-jump-i" href="#sec-tag" data-jump="tag">
+          <span class="kpedit-C-jump-l">标签</span>
+          <span class="kpedit-C-jump-c" id="tag-count">…</span>
         </a>
       </nav>
 
@@ -139,8 +143,8 @@ const allScholars = scholarsResult.results ?? [];
         <div id="body-editor-mount" class="border rounded-md p-3 bg-bg-primary"></div>
       </section>
 
-      {/* tags 评价 */}
-      <section id="sec-tags" class="kpedit-C-sec">
+      {/* eval 评价 */}
+      <section id="sec-eval" class="kpedit-C-sec">
         <div class="kpedit-C-sec-h"><h3>评价</h3>
           <div class="kpedit-langseg" id="eval-langseg" role="tablist">
             <button type="button" class="kpedit-langseg-b is-on" data-eval-lang="zh">中</button>
@@ -165,6 +169,12 @@ const allScholars = scholarsResult.results ?? [];
         </div>
       </section>
 
+      {/* tag 标签 */}
+      <section id="sec-tag" class="kpedit-C-sec">
+        <div class="kpedit-C-sec-h"><h3>标签</h3><span class="kpedit-C-sec-hint">单选，决定卡片色</span></div>
+        <div id="tag-picker"></div>
+      </section>
+
     </form>
   </div>
 </Layout>
@@ -173,6 +183,7 @@ const allScholars = scholarsResult.results ?? [];
   // @ts-nocheck — DOM 类型推断弱
   import { mountBodyEditor } from '~/lib/body-editor-client';
   import { mountMultiSelect } from '~/lib/multi-select-client';
+  import { mountTagSinglePicker } from '~/lib/tag-single-picker-client';
   import { formatZodIssues } from '~/lib/zod-errors-zh';
   import { watchDeploy } from '~/lib/deploy-progress-client';
 
@@ -200,6 +211,7 @@ const allScholars = scholarsResult.results ?? [];
   let currentFormat = 'narrative';
   let evalContent = { zh: {}, ja: {} };
   let evalLang = 'zh';
+  let tagPicker = null;
   let _deployWatcher = null;
 
   // ========== Multi-selects ==========
@@ -264,6 +276,10 @@ const allScholars = scholarsResult.results ?? [];
     const filled = Object.values(evalContent[evalLang] ?? {}).filter((v) => v && v.trim()).length;
     $('#tags-count').textContent = `${filled} / 6`;
   }
+  function updateTagCount() {
+    const v = tagPicker?.getValue();
+    $('#tag-count').textContent = v ? '1 / 1' : '无';
+  }
   document.querySelectorAll('[data-eval-input]').forEach((ta) => {
     ta.addEventListener('input', () => {
       const g = ta.getAttribute('data-eval-input');
@@ -283,7 +299,7 @@ const allScholars = scholarsResult.results ?? [];
 
   // ========== Jump nav active state (scroll spy) ==========
   function initJumpNavSpy() {
-    const sections = ['basic', 'rel', 'body', 'tags']
+    const sections = ['basic', 'rel', 'body', 'eval', 'tag']
       .map((id) => document.getElementById('sec-' + id))
       .filter(Boolean);
     const observer = new IntersectionObserver((entries) => {
@@ -307,10 +323,18 @@ const allScholars = scholarsResult.results ?? [];
       saveStatus.innerHTML = `<span style="color:#FF3B30">加载失败 ${res.status} ${err.reason ?? ''}</span>`;
       return;
     }
-    const { json: kp, base_sha, progress_count, note_count } = await res.json();
+    const { json: kp, base_sha, progress_count, note_count, tag_library } = await res.json();
     baseSha = base_sha;
     originalCreatedAt = kp.createdAt;
     cascadeMsg = buildCascadeMsg(progress_count ?? 0, note_count ?? 0);
+
+    const initialTag = Array.isArray(kp.tags) && kp.tags.length > 0 ? kp.tags[0] : null;
+    tagPicker = mountTagSinglePicker($('#tag-picker'), {
+      options: (tag_library ?? []).map((t) => ({ key: t.key, label: t.label?.zh ?? t.key, color: t.color })),
+      initial: initialTag,
+      onChange: updateTagCount,
+    });
+    updateTagCount();
 
     form.title_zh.value = kp.title?.zh ?? '';
     form.title_en.value = kp.title?.en ?? '';
@@ -365,6 +389,7 @@ const allScholars = scholarsResult.results ?? [];
   function collect() {
     const schools = schoolsMS?.getSelected() ?? [];
     const scholars = scholarsMS?.getSelected() ?? [];
+    const tagKey = tagPicker?.getValue();
     const ec = {};
     const zh = cleanEvalContent(evalContent.zh);
     const ja = cleanEvalContent(evalContent.ja);
@@ -378,7 +403,7 @@ const allScholars = scholarsResult.results ?? [];
       year: form.year.value.trim(),
       title: buildI18n(form.title_zh.value, form.title_en.value, form.title_ja.value),
       body: buildBody(currentBodyZh, currentBodyJa),
-      tags: [],
+      tags: tagKey ? [tagKey] : [],
       format: currentFormat,
       ...(Object.keys(ec).length ? { evalContent: ec } : {}),
       createdAt: originalCreatedAt,

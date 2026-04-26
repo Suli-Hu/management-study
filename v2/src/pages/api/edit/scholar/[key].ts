@@ -25,7 +25,11 @@ export const GET: APIRoute = (ctx) => handleGet({
   pathFor,
   resolveDiscipline,
   urlIdentifier: () => ctx.params.key,
-  enrich: async (key, _discipline, db) => ({ kp_count: await countKpsByScholar(db, key) }),
+  enrich: async (key, discipline, db) => {
+    const tagsRow = await db.prepare('SELECT tags_json FROM discipline WHERE key = ?').bind(discipline).first() as { tags_json: string } | null;
+    const tag_library = tagsRow?.tags_json ? JSON.parse(tagsRow.tags_json) : [];
+    return { tag_library, kp_count: await countKpsByScholar(db, key) };
+  },
 });
 
 export const PUT: APIRoute = (ctx) => handlePut({
