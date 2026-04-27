@@ -43,12 +43,6 @@ INVITE_GUEST_EMAIL = "invite-guest@anytime"
 # 设成 "keiei" → 邀请码 guest 只能看经营学，市场营销 / 社会学 / 心理学等都被 home 页降级 + 直接访问 redirect 回 /。
 INVITE_GUEST_DISCIPLINES = "keiei"
 
-# v0.5.76 程序友好后门（给"另一个 Claude"用）：发 X-Anytime-Token: <这个值> 的 GET 请求
-# → 当 invite-guest 处理（不查 cookie / 不要 Origin / 不会 redirect 到 /login）。
-# 仅 GET 和 HEAD，POST / PUT / DELETE 不接受（防写）。仍受 INVITE_GUEST_DISCIPLINES 限制。
-# 想旋转就改这里 push 一次。短码靠"自定义 header 名 + 只读 + 学科白名单"收窄风险。
-API_BACKDOOR_TOKEN = "321"
-
 # v0.5.45 邮箱 N 天免 code 信任：曾验证过的 email 在 N 天内任意设备直接登录（不发 code）
 # 安全 tradeoff：从"持有 email"降级成"知道 email 字符串"，靠 ADMIN_EMAILS 白名单收窄攻击面。
 # 0 = 关闭功能（恢复纯 magic link）。3 = 短窗口降低被滥用风险。
