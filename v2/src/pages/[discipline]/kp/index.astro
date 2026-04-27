@@ -104,12 +104,13 @@ for (const tk of byThemeBySchool.keys()) {
       )}
     </header>
 
-    <nav class="mb-6 flex flex-wrap gap-1 text-xs">
-      <span class="text-quaternary mr-2">按学派组：</span>
+    <nav class="kp-theme-nav mb-6 flex flex-wrap gap-1.5 text-xs items-center">
+      <span class="text-quaternary mr-1">按学派组：</span>
       {orderedThemes.filter((t) => byThemeBySchool.has(t.key)).map((t) => (
         <a
           href={`#theme-${t.key}`}
-          class="px-2 py-1 rounded text-tertiary hover:text-primary hover:bg-bg-tertiary no-underline"
+          class="theme-anchor-chip"
+          data-theme-anchor={t.key}
         >
           {t.title}
         </a>
@@ -180,3 +181,21 @@ for (const tk of byThemeBySchool.keys()) {
     )}
   </main>
 </Layout>
+
+<script is:inline>
+  // v0.5.41: scroll spy — 当前滚到的学派组在顶部 chip 高亮
+  (function () {
+    const chips = document.querySelectorAll('[data-theme-anchor]');
+    if (!chips.length) return;
+    const sections = document.querySelectorAll('section[id^="theme-"]');
+    if (!sections.length) return;
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const themeKey = entry.target.id.replace(/^theme-/, '');
+        chips.forEach((c) => c.classList.toggle('is-active', c.dataset.themeAnchor === themeKey));
+      }
+    }, { rootMargin: '-25% 0px -60% 0px' });
+    sections.forEach((s) => observer.observe(s));
+  })();
+</script>
