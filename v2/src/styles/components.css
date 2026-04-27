@@ -912,3 +912,20 @@ mark {
   opacity: 1;
 }
 .lang-toggle.is-pulse { transform: scale(1.2); transition: transform .08s ease-out; }
+
+
+/* ============================================================
+ * v0.5.38 响应式：< 1024px split 退化单栏（与 split-pane.js MQ 一致）
+ * 原因：tablet 768px 双栏导致右栏 KP cards 被压成单字竖排
+ * ============================================================ */
+@media (max-width: 1023px) {
+  .split { grid-template-columns: 1fr; }
+  .split > .right { display: none; }
+  .split > .left { border-right: 0; }
+}
+
+/* 触屏设备 hit area ≥ 44px (Apple HIG) — 视觉尺寸不变，仅扩点击区 */
+@media (pointer: coarse) {
+  .lang-toggle { min-height: 44px; }
+  .hero-icon-btn { min-width: 44px; min-height: 44px; }
+}
