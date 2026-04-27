@@ -69,13 +69,16 @@ const schoolsResult = await db
 const schools = schoolsResult.results ?? [];
 
 // 学者关联 KP
+// v0.5.33: ORDER BY ks.position 让 scholar.kpsOrder（拖动后保存）生效；
+// 没拖过的学者 sync 时 position = 1000+i（KP.scholars enumeration），
+// 同位置的 fallback 到 year/id 走稳定排序。
 const kpsResult = await db
   .prepare(`
     SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year
     FROM kp k
     INNER JOIN kp_scholar ks ON ks.kp_id = k.id
     WHERE ks.scholar_key = ?
-    ORDER BY
+    ORDER BY ks.position,
       CASE WHEN k.year = '' OR k.year IS NULL THEN 1 ELSE 0 END,
       k.year, k.id
   `)
@@ -282,7 +285,11 @@ const canEdit = Astro.locals.canEdit(discipline);
         {kps.length === 0 ? (
           <p class="text-xs text-quaternary px-2 py-2">暂无关联知识点。</p>
         ) : (
-          <ul class="optA-kps">
+          <ul
+            class:list={['optA-kps', canEdit && 'drag-reorder']}
+            data-reorder-kind={canEdit ? 'scholar-kps' : undefined}
+            data-scholar-key={canEdit ? scholar.key : undefined}
+          >
             {kps.map((k, i) => {
               const isActive = selectedKpId === k.id;
               const schoolHint = schools[0]?.title_zh ?? '';
@@ -368,6 +375,39 @@ const canEdit = Astro.locals.canEdit(discipline);
 
 <script is:inline src="/split-pane.js"></script>
 <script is:inline src="/admin-tools.js"></script>
+
+{canEdit && (
+  <div data-reorder-bootstrap="scholar-kps" class="hidden"></div>
+)}
+
+<script>
+  // @ts-nocheck — DOM 类型推断弱
+  // 学者页 KP 列表长按拖动重排（v0.5.33，姊妹于学派页 school-concepts）
+  import { mountDragReorder } from '~/lib/drag-reorder-client';
+  if (document.querySelector('[data-reorder-bootstrap="scholar-kps"]')) {
+    document.querySelectorAll('[data-reorder-kind="scholar-kps"]').forEach((ul) => {
+      const scholarKey = ul.dataset.scholarKey;
+      mountDragReorder(ul, {
+        getId: (el) => el.getAttribute('data-kp-id'),
+        getContainerKey: () => scholarKey,
+        skipSelector: 'a, button, .kp-admin, .kp-admin-edit',
+        onReorder: async (idsByContainer) => {
+          const kpIds = idsByContainer.get(scholarKey) ?? [];
+          if (kpIds.length === 0) return;
+          const res = await fetch('/api/edit/reorder/scholar-kps', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ scholarKey, kpIds }),
+          });
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            alert(`保存顺序失败：${res.status} ${data.reason ?? 'error'}`);
+          }
+        },
+      });
+    });
+  }
+</script>
 
 <script is:inline define:vars={{ scholarKey: scholar.key, accentHex: accentHex }}>
   // ========== 学者收藏星标 ==========

@@ -369,6 +369,7 @@ for (const key of Object.keys(SCHOLARS)) {
     nobel: s.nobel_detail
       ? { year: clean(s.nobel_year ?? s.nobel ?? ''), detail: clean(s.nobel_detail) }
       : null,
+    kpsOrder: [],
     createdAt: NOW,
     updatedAt: NOW,
   };

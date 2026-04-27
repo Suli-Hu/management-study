@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { I18nString, BilingualBody } from './i18n';
-import { ScholarKey, SchoolKey, IsoTimestamp, DisciplineKey } from './kp';
+import { ScholarKey, SchoolKey, KpId, IsoTimestamp, DisciplineKey } from './kp';
 
 /**
  * 学者 — 一个文件 = 一个学者。
@@ -34,6 +34,13 @@ export const Scholar = z.object({
     year: z.string(),
     detail: z.string(),
   }).nullable().default(null),
+
+  /**
+   * 该学者下 KP 的渲染顺序（v0.5.33 加，呼应 School.concepts）。
+   * 拖动重排后写回；空数组 = 未自定义，sync 时退回 KP.scholars 原序。
+   * 不要求是该学者全部 KP 的同集合（kpsOrder 之外的 KP 仍按 fallback 拼到尾部）。
+   */
+  kpsOrder: z.array(KpId).default([]),
 
   createdAt: IsoTimestamp,
   updatedAt: IsoTimestamp,

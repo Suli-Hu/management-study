@@ -369,11 +369,39 @@ for (const kp of kps) {
 sqlLines.push('');
 
 // === KP ↔ Scholar ===
+// v0.5.33: 优先用 scholar.kpsOrder（该学者拖动后保存的顺序）；
+// fallback：KP.scholars enumeration order（保留原行为）。
+// 两者合并去重，kpsOrder 优先，未列的 KP 拼到 1000+i 防被覆盖。
 sqlLines.push('-- kp_scholar');
+const kpScholarEmitted = new Set<string>();
+const kpsByScholar = new Map<string, string[]>();
+for (const kp of kps) {
+  for (const scKey of kp.scholars) {
+    if (!scholarKeys.has(scKey)) continue;
+    const arr = kpsByScholar.get(scKey) ?? [];
+    arr.push(kp.id);
+    kpsByScholar.set(scKey, arr);
+  }
+}
+for (const scholar of scholars) {
+  const ownKps = new Set(kpsByScholar.get(scholar.key) ?? []);
+  // 1) kpsOrder 里且确实是该学者 KP 的，按数组顺序拿前段
+  scholar.kpsOrder.forEach((kpId, position) => {
+    if (!ownKps.has(kpId)) return;
+    const k = `${kpId}|${scholar.key}`;
+    if (kpScholarEmitted.has(k)) return;
+    kpScholarEmitted.add(k);
+    sqlLines.push(`INSERT INTO kp_scholar (kp_id, scholar_key, position) VALUES (${q(kpId)}, ${q(scholar.key)}, ${position});`);
+  });
+}
+// 2) 走 KP.scholars 兜底剩下没出过的（含没 kpsOrder 的学者全部 KP）
 for (const kp of kps) {
   kp.scholars.forEach((scKey, i) => {
     if (!scholarKeys.has(scKey)) return;
-    sqlLines.push(`INSERT INTO kp_scholar (kp_id, scholar_key, position) VALUES (${q(kp.id)}, ${q(scKey)}, ${i});`);
+    const k = `${kp.id}|${scKey}`;
+    if (kpScholarEmitted.has(k)) return;
+    kpScholarEmitted.add(k);
+    sqlLines.push(`INSERT INTO kp_scholar (kp_id, scholar_key, position) VALUES (${q(kp.id)}, ${q(scKey)}, ${1000 + i});`);
   });
 }
 sqlLines.push('');
