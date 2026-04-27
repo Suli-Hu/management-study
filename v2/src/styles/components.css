@@ -1057,36 +1057,45 @@ details.eval {
 
 
 /* ============================================================
- * v0.5.44 学派列表 — group divider + 学派 tag accent strip
- * 修：(1) 学派组与学派分不清 (2) tag 颜色看不出 (3) 经常点空白
- * (1) → 组之间 40px + 居中弱分隔线
- * (2) → 学派卡左 3px border 用 tag color；KP 数 chip 用 tag 色淡背景
- * (3) → padding 3.5、gap 3、hover 改 bg 而非 shadow（视觉边界清楚）
+ * v0.5.50 学派列表（重设计 — 卡片群容器）
+ * 之前 v0.5.44：组之间用 hr + 学派卡左 3px tag color strip
+ * 现在改：每组 = 浅灰圆角容器，去掉学派卡左 strip，
+ *        tag 色只挂 KP 数字 chip 上（更克制）
  * ============================================================ */
-.theme-section {
-  margin-bottom: 40px;
+.theme-group-box {
+  background: var(--color-bg-secondary);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
 }
-.theme-section:last-child {
-  margin-bottom: 24px;
+.theme-group-box:last-child { margin-bottom: 24px; }
+
+.theme-group-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+  letter-spacing: -0.005em;
 }
-.theme-section-divider {
-  margin-top: 40px;
-  position: relative;
+.theme-group-desc {
+  font-size: 12px;
+  color: var(--color-text-quaternary);
+  margin-top: 3px;
+  line-height: 1.5;
 }
-.theme-section-divider::before {
-  content: '';
-  position: absolute;
-  top: -20px;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--color-border);
-  opacity: 0.6;
+.theme-group-count {
+  font-size: 11px;
+  color: var(--color-text-quaternary);
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
 }
-/* school 卡：默认 border 灰，左 strip 在 inline style 覆写 */
-.school-card {
-  border-left-color: var(--color-border);
+.theme-header-row[aria-expanded="false"] .theme-chevron {
+  transform: rotate(-90deg);
 }
+/* 折叠时 content hide（沿用现有 client toggle 机制 / data-theme-content 的 display:none） */
 
 /* ============================================================
  * v0.5.43 学者详情页 info-table（修"国/籍"竖排）
