@@ -393,7 +393,8 @@ const canEdit = Astro.locals.canEdit(discipline);
               </a>
             </div>
           )}
-          <div class="optA-summary-v2 optA-contribution" set:html={contribution} />
+          {/* v0.5.79: data-scholar-contribution 让 in-place lang swap 能精准 swap 这块 */}
+          <div class="optA-summary-v2 optA-contribution" data-scholar-contribution set:html={contribution} />
         </section>
       )}
 

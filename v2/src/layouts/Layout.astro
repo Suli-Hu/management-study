@@ -56,5 +56,12 @@ const fullTitle = title === '全科笔记' ? title : `${title} · 全科笔记`;
       <slot />
     </div>
     {!fullHeight && <Footer />}
+
+    {/* v0.5.79：lang-toggle 全局拦截 — 把 ?lang=ja 链接的 click 改成 fetch + DOM 选择性 swap，
+        保留滚动位置 + 已展开 <details>。FAB 与 Cmd+J 都 .click() anchor，自动经过此拦截。 */}
+    <script>
+      import { installLangToggleClickHook } from '~/lib/lang-toggle-client';
+      installLangToggleClickHook();
+    </script>
   </body>
 </html>
