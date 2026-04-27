@@ -27,6 +27,7 @@ import { join, resolve, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { Kp, School, Scholar, Discipline, type Kp as KpT, type School as SchoolT, type Scholar as ScholarT, type Discipline as DisciplineT } from '../src/schemas/index.js';
+import { View, type View as ViewT } from '../src/schemas/view.js';
 
 // ============================================================
 // 路径
@@ -50,6 +51,7 @@ const disciplines: DisciplineT[] = [];
 const schools: SchoolT[] = [];
 const scholars: ScholarT[] = [];
 const kps: KpT[] = [];
+const views: ViewT[] = [];
 
 if (!existsSync(DATA_ROOT)) {
   console.error(`✗ data/ not found at ${DATA_ROOT}. Run pnpm migrate:from-v1 first.`);
@@ -98,9 +100,19 @@ for (const discKey of readdirSync(DATA_ROOT)) {
       kps.push(kp);
     }
   }
+
+  // views/  (v0.5.66 视图系统)
+  const viewDir = join(discDir, 'views');
+  if (existsSync(viewDir)) {
+    for (const f of readdirSync(viewDir)) {
+      if (!f.endsWith('.json') || f.startsWith('_')) continue;
+      const v = View.parse(JSON.parse(readFileSync(join(viewDir, f), 'utf-8')));
+      views.push(v);
+    }
+  }
 }
 
-console.log(`  ✓ ${disciplines.length} disciplines / ${schools.length} schools / ${scholars.length} scholars / ${kps.length} KPs`);
+console.log(`  ✓ ${disciplines.length} disciplines / ${schools.length} schools / ${scholars.length} scholars / ${kps.length} KPs / ${views.length} views`);
 
 // ============================================================
 // 2. Cross-reference 校验（防 dangling reference）
@@ -146,6 +158,29 @@ for (const school of schools) {
   if (!validThemes.has(school.themeKey)) {
     errors.push(`School ${school.key}.themeKey "${school.themeKey}" not in discipline.themes (有效值: ${[...validThemes].join(', ')})`);
   }
+}
+
+// v0.5.66 view 校验：discipline 必须存在；group.schoolIds 必须是有效 school（容错：dangling 时记 warn 不 fail，
+// 因为视图是 presentational，dangling school 在渲染层会被过滤）
+const discKeySet = new Set(disciplines.map((d) => d.key));
+let danglingViewSchoolCount = 0;
+const seenViewIds = new Map<string, string>();   // discipline -> seen ids
+for (const v of views) {
+  if (!discKeySet.has(v.discipline)) {
+    errors.push(`View ${v.id} references unknown discipline "${v.discipline}"`);
+    continue;
+  }
+  const dedupKey = `${v.discipline}:${v.id}`;
+  if (seenViewIds.has(dedupKey)) errors.push(`Duplicate view id "${v.id}" in discipline "${v.discipline}"`);
+  seenViewIds.set(dedupKey, v.id);
+  for (const g of v.groups) {
+    for (const sid of g.schoolIds) {
+      if (!schoolKeys.has(sid)) danglingViewSchoolCount++;
+    }
+  }
+}
+if (danglingViewSchoolCount > 0) {
+  console.warn(`  ! ${danglingViewSchoolCount} dangling school refs in views (will be filtered at render)`);
 }
 
 if (errors.length) {
@@ -199,11 +234,12 @@ header('meta + wipe + discipline/school/scholar upsert');
 
 // Wipe 只清理关联表 + FTS（它们和 user 数据无关、完全由 JSON 决定）。
 // 内容表改 upsert，见下方。
-sqlLines.push('-- Wipe join tables + FTS (user/session/etc untouched)');
+sqlLines.push('-- Wipe join tables + FTS + views (user/session/etc untouched)');
 sqlLines.push('DELETE FROM kp_fts;');
 sqlLines.push('DELETE FROM kp_school;');
 sqlLines.push('DELETE FROM kp_scholar;');
 sqlLines.push('DELETE FROM scholar_school;');
+sqlLines.push('DELETE FROM view;');
 sqlLines.push('');
 
 /** 生成 ON CONFLICT DO UPDATE SET 子句（除 key 列外全部 overwrite） */
@@ -321,6 +357,21 @@ for (const kp of kps) {
   for (const sk of kp.schools) {
     for (const scKey of kp.scholars) emitDerivedScholarSchool(scKey, sk);
   }
+}
+sqlLines.push('');
+
+// === Views (v0.5.66) ===
+// 视图 wipe-reload（同 scholar_school）。每 discipline 至少 1 个 isDefault=true。
+sqlLines.push('-- Views');
+const viewCols = ['id','discipline','name','jp','icon','description','flow','scope','kind','is_default','position','groups_json','created_at','updated_at'];
+for (const v of views) {
+  sqlLines.push(
+    `INSERT INTO view (${viewCols.join(', ')}) VALUES (` +
+    `${q(v.id)}, ${q(v.discipline)}, ${q(v.name)}, ${q(v.jp)}, ${q(v.icon)}, ` +
+    `${q(v.description)}, ${q(v.flow)}, ${q(v.scope)}, ${q(v.kind)}, ` +
+    `${v.isDefault ? 1 : 0}, ${v.position}, ${jq(v.groups)}, ` +
+    `${q(v.createdAt)}, ${q(v.updatedAt)});`
+  );
 }
 sqlLines.push('');
 

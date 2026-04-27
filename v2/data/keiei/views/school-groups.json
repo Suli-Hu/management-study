@@ -1,0 +1,150 @@
+{
+  "id": "school-groups",
+  "discipline": "keiei",
+  "name": "学派组",
+  "jp": "学派グループ",
+  "icon": "📚",
+  "description": "默认视图。按论述题中的\"问题域\"把学派归成几大组——个体内、人与人、古典组织等。适合知识体系初识。",
+  "flow": "",
+  "scope": "public",
+  "kind": "manual",
+  "isDefault": true,
+  "position": 0,
+  "groups": [
+    {
+      "id": "ob_individual",
+      "title": "个体的世界",
+      "flow": "人格→态度→动机(内容→过程)→判断偏误",
+      "schoolIds": [
+        "personality",
+        "attitude_emotion",
+        "ob",
+        "behavioral",
+        "beh_econ"
+      ]
+    },
+    {
+      "id": "ob_group",
+      "title": "人与人之间",
+      "flow": "非正式组织→集团动力学→领导力→冲突管理",
+      "schoolIds": [
+        "humanrel",
+        "leadership_theory",
+        "conflict"
+      ]
+    },
+    {
+      "id": "org_classic",
+      "title": "古典组织论",
+      "flow": "作业层→管理职能→整体结构→形态分类",
+      "schoolIds": [
+        "scientific",
+        "process",
+        "bureaucracy",
+        "org_types"
+      ]
+    },
+    {
+      "id": "org_modern",
+      "title": "近代组织论",
+      "flow": "协作系统→决策系统→学习主体→变革主体",
+      "schoolIds": [
+        "systems",
+        "org_learning",
+        "decision_theory",
+        "change"
+      ]
+    },
+    {
+      "id": "org_environment",
+      "title": "组织与环境",
+      "flow": "权变→生态学→制度论→社会网络",
+      "schoolIds": [
+        "contingency",
+        "evolution_process",
+        "institutional",
+        "social_network"
+      ]
+    },
+    {
+      "id": "hr",
+      "title": "人材与雇用",
+      "flow": "英美HRM↔日本式经营的对照",
+      "schoolIds": [
+        "hrm",
+        "japanese_mgmt"
+      ]
+    },
+    {
+      "id": "strategy_internal",
+      "title": "战略论 内部视点",
+      "flow": "治理→资源(RBV)→动态能力→知识→创新",
+      "schoolIds": [
+        "agency",
+        "rbv",
+        "dynamic",
+        "km",
+        "innovation"
+      ]
+    },
+    {
+      "id": "strategy_external",
+      "title": "战略论 外部视点",
+      "flow": "竞争定位→平台→CSR→交易费用→国际经营",
+      "schoolIds": [
+        "io",
+        "platform",
+        "csr",
+        "tce",
+        "international_strategy"
+      ]
+    },
+    {
+      "id": "strategy_process",
+      "title": "战略形成过程（HOW）",
+      "flow": "明茨伯格将战略形成归纳为十种学派，反映战略是理性设计的还是涌现学习的",
+      "schoolIds": [
+        "design_s",
+        "planning_s",
+        "positioning_s",
+        "entrepreneur_s",
+        "cognitive_s",
+        "learning_s",
+        "environment_s",
+        "power_s",
+        "culture_s",
+        "configuration_s"
+      ]
+    },
+    {
+      "id": "scott_quadrant",
+      "title": "斯科特四象限",
+      "flow": "封闭/开放 × 合理/自然 的2×2组织理论分类框架",
+      "schoolIds": [
+        "static_structure",
+        "equilibrium",
+        "adaptive_design",
+        "evolution_process"
+      ]
+    },
+    {
+      "id": "institutes",
+      "title": "院校学派",
+      "flow": "以大学为核心形成的学术传统与研究群体",
+      "schoolIds": [
+        "harvard",
+        "michigan",
+        "chicago",
+        "carnegie",
+        "ohio",
+        "situational",
+        "tavistock",
+        "aston",
+        "stanford",
+        "hitotsubashi"
+      ]
+    }
+  ],
+  "createdAt": "2026-04-27T10:42:16.984Z",
+  "updatedAt": "2026-04-27T10:42:16.984Z"
+}

@@ -12,3 +12,4 @@ export * from './kp';
 export * from './school';
 export * from './scholar';
 export * from './discipline';
+export * from './view';
