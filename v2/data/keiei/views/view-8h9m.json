@@ -10,7 +10,43 @@
   "kind": "manual",
   "isDefault": false,
   "position": 9999,
-  "groups": [],
+  "groups": [
+    {
+      "id": "gmohhbft8",
+      "title": "理性系统",
+      "flow": "Rational System — 组织是追求目标的理性工具。目标明确、结构形式化、行为可规划。规则、层级、分工都是为效率服务的理性手段。",
+      "schoolIds": [
+        "scientific",
+        "process",
+        "bureaucracy",
+        "decision_theory"
+      ]
+    },
+    {
+      "id": "gmohhcd8g",
+      "title": "自然系统",
+      "flow": "Natural System — 组织是参与者构成的有机共同体。正式目标只是表面，真正驱动行为的是非正式结构、人际关系和组织生存本能。",
+      "schoolIds": [
+        "humanrel",
+        "equilibrium",
+        "behavioral"
+      ]
+    },
+    {
+      "id": "gmohhdchf",
+      "title": "开放系统",
+      "flow": "Open System — 组织是嵌入环境的松散耦合系统。与环境持续交换资源、信息和合法性，边界模糊可渗透，结构和行为由环境压力塑造。",
+      "schoolIds": [
+        "systems",
+        "contingency",
+        "ob",
+        "evolution_process",
+        "rbv",
+        "institutional",
+        "tce"
+      ]
+    }
+  ],
   "createdAt": "2026-04-27T17:34:20.404Z",
-  "updatedAt": "2026-04-27T17:35:54.312Z"
+  "updatedAt": "2026-04-27T17:39:29.999Z"
 }
