@@ -140,7 +140,7 @@ mark {
   display: flex; align-items: baseline; gap: 8px;
 }
 .section-eyebrow .eyebrow-count {
-  font-size: 10.5px; font-weight: 500;
+  font-size: 11px; font-weight: 500;
   letter-spacing: 0.04em;
   color: var(--color-text-quaternary);
   font-variant-numeric: tabular-nums;
@@ -163,13 +163,13 @@ mark {
 /* v0.5.25: 全站 page hero（discipline / list 页 h1 + subtitle 节奏） */
 .page-hero { margin-bottom: 24px; }
 .page-hero-eyebrow {
-  font-size: 10px; font-weight: 700;
+  font-size: 11px; font-weight: 700;
   letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--color-text-quaternary);
   margin-bottom: 6px;
 }
 .page-hero-title {
-  font-size: 22px; font-weight: 600; line-height: 1.2;
+  font-size: 24px; font-weight: 600; line-height: 1.2;
   letter-spacing: -0.005em;
   margin: 0 0 4px;
   color: var(--color-text-primary);
@@ -256,7 +256,7 @@ mark {
 
 /* ---- flat-list / 通用 body 卡片 ---- */
 .body-lead {
-  font-size: 13.5px; color: var(--color-text-secondary); line-height: 1.85;
+  font-size: 14px; color: var(--color-text-secondary); line-height: 1.85;
   margin-bottom: 12px; padding-bottom: 8px;
   border-bottom: 1px dashed #e0dcd4;
 }
@@ -273,16 +273,16 @@ mark {
 }
 .body-card-content { flex: 1; min-width: 0; }
 .body-item-name {
-  font-size: 13.5px; font-weight: 600; color: var(--color-text-primary);
+  font-size: 14px; font-weight: 600; color: var(--color-text-primary);
   line-height: 1.5; margin-bottom: 4px;
 }
 .body-item-desc {
-  font-size: 12.5px; color: var(--color-text-tertiary); line-height: 1.9;
+  font-size: 12px; color: var(--color-text-tertiary); line-height: 1.9;
 }
 
 /* ---- narrative ---- */
 .body-narrative .narrative-p {
-  font-size: 13.5px; color: var(--color-text-secondary); line-height: 2;
+  font-size: 13px; color: var(--color-text-secondary); line-height: 2;
   margin: 0 0 14px 0;
 }
 .body-narrative .narrative-p:last-child { margin-bottom: 0; }
@@ -304,7 +304,7 @@ mark {
 }
 .acc-summary::-webkit-details-marker { display: none; }
 .acc-bullet { width: 6px; height: 18px; border-radius: 3px; flex-shrink: 0; background: var(--accent, var(--color-text-quaternary)); }
-.acc-title { flex: 1; font-size: 13.5px; font-weight: 600; color: var(--color-text-primary); }
+.acc-title { flex: 1; font-size: 14px; font-weight: 600; color: var(--color-text-primary); }
 .acc-count {
   font-size: 11px; color: var(--color-text-quaternary); font-variant-numeric: tabular-nums;
   background: var(--color-bg-primary); border: 1px solid var(--color-border);
@@ -327,13 +327,13 @@ mark {
   font-size: 11px; font-weight: 600; flex-shrink: 0; margin-top: 2px;
   font-variant-numeric: tabular-nums; background: var(--color-bg-primary);
 }
-.acc-text { flex: 1; min-width: 0; font-size: 12.5px; line-height: 1.9; color: var(--color-text-tertiary); }
+.acc-text { flex: 1; min-width: 0; font-size: 12px; line-height: 1.9; color: var(--color-text-tertiary); }
 .acc-name {
   display: inline-block; font-weight: 600; color: var(--color-text-primary);
   margin-right: 6px; font-size: 13px;
 }
 .acc-desc { color: var(--color-text-tertiary); }
-.acc-prose { font-size: 12.5px; color: var(--color-text-tertiary); line-height: 1.9; }
+.acc-prose { font-size: 12px; color: var(--color-text-tertiary); line-height: 1.9; }
 
 /* ---- compare table（默认渲染，非学派详情用）---- */
 .cmp-table {
@@ -353,7 +353,7 @@ mark {
   height: fit-content; align-self: center;
 }
 .cmp-cells { display: flex; flex-direction: column; gap: 4px; }
-.cmp-cell { font-size: 12.5px; line-height: 1.7; color: var(--color-text-tertiary); }
+.cmp-cell { font-size: 12px; line-height: 1.7; color: var(--color-text-tertiary); }
 .cmp-cell-tight {
   display: inline-block; padding: 2px 8px; border-radius: 4px;
   background: var(--color-bg-tertiary); color: var(--color-text-secondary);
@@ -391,7 +391,7 @@ mark {
   color: var(--accent, var(--color-text-primary));
 }
 .cmpc-sub {
-  font-size: 12.5px; color: var(--color-text-tertiary);
+  font-size: 12px; color: var(--color-text-tertiary);
   line-height: 1.6; margin-bottom: 10px;
   padding-bottom: 12px; border-bottom: 1px dashed var(--color-border);
 }
@@ -476,7 +476,7 @@ mark {
 }
 .eval-body { flex: 1; min-width: 0; padding-top: 1px; }
 .eval-label {
-  font-size: 11.5px; font-weight: 600; color: var(--color-text-tertiary);
+  font-size: 11px; font-weight: 600; color: var(--color-text-tertiary);
   letter-spacing: 0.04em; margin-bottom: 4px;
 }
 .eval-text {
@@ -504,7 +504,7 @@ mark {
   position: absolute; top: 12px; right: 10px;
 }
 .optA-hero-title {
-  font-size: 22px; font-weight: 600; line-height: 1.2;
+  font-size: 24px; font-weight: 600; line-height: 1.2;
   color: var(--color-text-primary);
   margin: 0;
   word-break: break-word;
@@ -515,14 +515,14 @@ mark {
   word-break: break-word;
 }
 .optA-eyebrow {
-  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600;
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600;
   margin-bottom: 4px;
   color: var(--accent, var(--color-text-quaternary));
 }
 
 .optA-summary {
   padding: 0 14px 22px;
-  font-size: 13.5px; line-height: 1.95;
+  font-size: 13px; line-height: 1.95;
   color: var(--color-text-secondary);
   border-bottom: 1px solid var(--color-border);
   text-wrap: pretty;
@@ -546,7 +546,7 @@ mark {
 /* v0.5.8: section 头部的「+ 新增」按钮，默认 invisible，hover section 才显形 */
 .optA-section-add {
   margin-left: auto;
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--color-text-quaternary);
   text-decoration: none;
   opacity: 0;
@@ -591,15 +591,15 @@ mark {
 }
 .optA-scholar-row:hover .optA-scholar-name { text-decoration: underline; }
 .optA-scholar-zh {
-  font-size: 10.5px; color: var(--color-text-tertiary); line-height: 1.5;
+  font-size: 11px; color: var(--color-text-tertiary); line-height: 1.5;
 }
 .optA-scholar-ja {
-  font-size: 10px; color: var(--color-text-quaternary);
+  font-size: 11px; color: var(--color-text-quaternary);
   line-height: 1.5;
   min-width: 0; word-break: break-word;
 }
 .optA-arrow {
-  font-size: 10px; color: var(--color-text-quaternary); opacity: 0;
+  font-size: 11px; color: var(--color-text-quaternary); opacity: 0;
   transition: opacity .12s; margin-left: auto;
 }
 .optA-scholar-row:hover .optA-arrow { opacity: 1; }
@@ -624,16 +624,16 @@ mark {
 }
 .optA-kp-body { flex: 1; min-width: 0; }
 .optA-kp-title {
-  font-size: 13.5px; font-weight: 600; color: var(--color-text-primary); line-height: 1.45;
+  font-size: 14px; font-weight: 600; color: var(--color-text-primary); line-height: 1.45;
 }
 /* V1 风格 KP 卡片副标题：scholar/年份在标题行；ja/en 各占一行 */
 .optA-kp-scholar {
-  font-size: 11.5px; font-weight: 500;
+  font-size: 11px; font-weight: 500;
   color: var(--color-text-secondary);
   margin-left: 6px; vertical-align: baseline; white-space: nowrap;
 }
 .optA-kp-year {
-  font-size: 10px; color: var(--color-text-quaternary);
+  font-size: 11px; color: var(--color-text-quaternary);
   margin-left: 4px; font-weight: 400;
   font-variant-numeric: tabular-nums;
 }
@@ -679,7 +679,7 @@ mark {
   font-size: 13px; font-weight: 600; color: var(--color-text-primary); margin: 0;
 }
 .optA-collapse-chev {
-  font-size: 10px; color: var(--color-text-quaternary);
+  font-size: 11px; color: var(--color-text-quaternary);
   transition: transform .15s;
   display: inline-block;
 }
@@ -728,7 +728,7 @@ mark {
   display: inline-block;
 }
 .empty-name {
-  font-size: 17px; font-weight: 600;
+  font-size: 18px; font-weight: 600;
   color: var(--color-text-primary);
   margin-bottom: 6px; letter-spacing: -0.01em;
 }
@@ -878,7 +878,7 @@ mark {
 .kp-admin-mi {
   display: flex; align-items: center; gap: 8px;
   padding: 6px 10px;
-  font-size: 12.5px; line-height: 1.3;
+  font-size: 12px; line-height: 1.3;
   color: var(--color-text-primary);
   background: transparent;
   border: 0; border-radius: 5px;
