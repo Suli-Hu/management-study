@@ -1,299 +1,260 @@
 ---
+/**
+ * 学派列表页 — v0.5.66 视图系统重写
+ *
+ * 数据流：
+ *   views 表（D1） → 选当前视图（?view= 优先 / isDefault=true 兜底）
+ *   resolveView(view, schools) → groups[{ id,title,flow,schools[] }]
+ *   每 group 渲染 GroupCardCluster + SchoolCard
+ *
+ * 设计稿对齐：bundle/template App + 各子组件
+ *   - PageHeader：H1 fontSize 34 fontWeight 700 + 副标 fontSize 13 #737373
+ *   - ViewSwitcher chip 行
+ *   - ViewDescription 卡片
+ *   - 分组容器 GroupCardCluster
+ *
+ * 用户明确：视图只决定本页学派的渲染，学者详情/学者编辑/KP 编辑读全集 school 表，无变化。
+ */
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
-import { editHref } from '~/lib/nav';
+import ViewSwitcher from '~/components/ViewSwitcher.astro';
+import ViewDescription from '~/components/ViewDescription.astro';
+import GroupCardCluster from '~/components/GroupCardCluster.astro';
+import SchoolCard from '~/components/SchoolCard.astro';
+import { toneFromHex, NEUTRAL_TONE } from '~/lib/tag-tone';
+import type { ViewGroup } from '~/schemas/view';
 
 const { discipline } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
 
-// 学科信息
 const disc = await db
-  .prepare('SELECT key, title_zh, title_en, tagline_zh, themes_json, tags_json FROM discipline WHERE key = ?')
+  .prepare('SELECT key, title_zh, title_en, tagline_zh, tags_json FROM discipline WHERE key = ?')
   .bind(discipline)
-  .first<{ key: string; title_zh: string; title_en: string | null; tagline_zh: string | null; themes_json: string; tags_json: string }>();
+  .first<{ key: string; title_zh: string; title_en: string | null; tagline_zh: string | null; tags_json: string }>();
+if (!disc) return Astro.redirect('/404');
 
-if (!disc) {
-  return Astro.redirect('/404');
-}
-
-const themes = JSON.parse(disc.themes_json) as Array<{
-  key: string;
-  title: { zh: string; en?: string; ja?: string };
-  desc?: { zh?: string; en?: string; ja?: string };
-  tags: string[];
-  schools: string[];
-}>;
-
-// v0.5.44 tag 色板：tag_key → {label, color}（学派卡片左 strip + tag chip 用）
+// 标签库（key → color）
 const tagDefs = JSON.parse(disc.tags_json || '[]') as Array<{ key: string; label: { zh?: string }; color: string }>;
-const tagMap = new Map(tagDefs.map((t) => [t.key, t]));
+const tagByKey = new Map(tagDefs.map((t) => [t.key, t]));
 
-// 学派列表（按 theme_key 分组）
+// 全部视图（chip 行用）
+const viewsResult = await db
+  .prepare(`
+    SELECT id, name, jp, icon, description, flow, is_default, position, groups_json
+    FROM view
+    WHERE discipline = ?
+    ORDER BY position ASC, id ASC
+  `)
+  .bind(discipline)
+  .all<{
+    id: string; name: string; jp: string; icon: string; description: string; flow: string;
+    is_default: number; position: number; groups_json: string;
+  }>();
+const allViews = viewsResult.results ?? [];
+
+// 选当前视图（注意：requestedViewId && find 在 requestedViewId='' 时会落到 ''，
+// TS 会把 currentView 推断成 string|... — 用三元 + ?? 严格走对象 / null）
+const requestedViewId = Astro.url.searchParams.get('view');
+const requestedView = requestedViewId
+  ? allViews.find((v) => v.id === requestedViewId) ?? null
+  : null;
+const currentView =
+  requestedView ??
+  allViews.find((v) => v.is_default === 1) ??
+  allViews[0] ??
+  null;
+
+// 全部学派（discipline 下，含 kp_count + tag_key）
 const schoolsResult = await db
   .prepare(`
-    SELECT key, title_zh, title_en, era, theme_key, tags_json,
+    SELECT key, title_zh, title_en, era, tags_json,
       (SELECT COUNT(*) FROM kp_school WHERE school_key = school.key) as kp_count
     FROM school
     WHERE discipline = ?
   `)
   .bind(discipline)
-  .all<{ key: string; title_zh: string; title_en: string | null; era: string; theme_key: string; tags_json: string; kp_count: number }>();
+  .all<{
+    key: string; title_zh: string; title_en: string | null; era: string;
+    tags_json: string; kp_count: number;
+  }>();
 
 const schools = (schoolsResult.results ?? []).map((s) => {
   const tagKeys = JSON.parse(s.tags_json || '[]') as string[];
-  const primaryTag = tagKeys.length > 0 ? tagMap.get(tagKeys[0]) ?? null : null;
-  return { ...s, primaryTag };
+  const primary = tagKeys.length > 0 ? tagByKey.get(tagKeys[0]) : null;
+  return {
+    key: s.key,
+    cn: s.title_zh,
+    en: s.title_en,
+    meta: s.era,
+    count: s.kp_count,
+    tone: primary ? toneFromHex(primary.color) : NEUTRAL_TONE,
+  };
 });
 const schoolByKey = new Map(schools.map((s) => [s.key, s]));
+const totalSchools = schools.length;
 
-// 按 themes[].schools 顺序整理
-const themed = themes.map((t) => ({
-  ...t,
-  schoolList: t.schools.map((sk) => schoolByKey.get(sk)).filter(Boolean) as typeof schools,
+// 解析当前视图的 groups（manual kind only）
+type Resolved = { id: string; title: string; flow: string; schools: typeof schools };
+let resolvedGroups: Resolved[] = [];
+let viewSchoolCount = 0;
+if (currentView) {
+  const groups = JSON.parse(currentView.groups_json || '[]') as ViewGroup[];
+  resolvedGroups = groups.map((g) => ({
+    id: g.id,
+    title: g.title,
+    flow: g.flow ?? '',
+    schools: g.schoolIds.map((id) => schoolByKey.get(id)).filter((x): x is NonNullable<typeof x> => Boolean(x)),
+  }));
+  viewSchoolCount = resolvedGroups.reduce((sum, g) => sum + g.schools.length, 0);
+}
+
+const canEdit = Astro.locals.canEdit(discipline);
+
+// chip 行需要的轻数据
+const chipViews = allViews.map((v) => ({
+  id: v.id,
+  name: v.name,
+  icon: v.icon,
+  isDefault: v.is_default === 1,
+  position: v.position,
 }));
-
-// 兜底：themes 没列出的学派（数据迁移可能漏的）
-const accountedKeys = new Set(themes.flatMap((t) => t.schools));
-const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
 ---
 
 <Layout title={disc.title_zh} currentDiscipline={discipline} currentSection="schools">
-  <main class="max-w-panel mx-auto px-4 py-6">
-    <header class="page-hero">
-      <h1 class="page-hero-title">{disc.title_zh}</h1>
-      <p class="page-hero-sub">{disc.title_en}{disc.tagline_zh ? ` · ${disc.tagline_zh}` : ''}</p>
+  <main class="discipline-page">
+    {/* === Page header === */}
+    <header class="page-h">
+      <h1 class="page-h-title">{disc.title_zh}</h1>
+      <p class="page-h-sub">
+        {disc.title_en}{disc.tagline_zh ? ` · ${disc.tagline_zh}` : ''}
+      </p>
     </header>
 
-    <div class="drag-reorder" data-reorder-kind="themes-order">
-    {themed.map((t) => (
-      <section class="theme-group-box" data-theme-key={t.key}>
-        <div
-          class="theme-header-row group flex items-start justify-between gap-3 cursor-pointer transition-colors"
-          data-theme-toggle={t.key}
-          role="button"
-          aria-expanded="true"
-        >
-          <div class="flex items-start gap-2 min-w-0">
-            {Astro.locals.canEdit(discipline) && (
-              <span
-                class="theme-drag-handle inline-flex w-5 h-5 items-center justify-center text-quaternary cursor-grab select-none opacity-30 group-hover:opacity-70 transition-opacity mt-0.5"
-                title="长按拖动调整学派组顺序"
-                aria-label="拖动 handle"
-              >
-                ≡
-              </span>
-            )}
-            <div class="min-w-0">
-              <h2 class="theme-group-title">{t.title.zh}</h2>
-              {t.desc?.zh && <p class="theme-group-desc">{t.desc.zh}</p>}
-            </div>
-          </div>
-          <div class="shrink-0 flex items-center gap-2">
-            <span class="theme-group-count" title={`${t.schoolList.length} 个学派`}>{t.schoolList.length}</span>
-            {Astro.locals.canEdit(discipline) && (
-              <span class="hidden group-hover:flex items-center gap-1">
-                <a
-                  href={editHref(`/${discipline}/schools/new?theme=${t.key}`, Astro.url.pathname)}
-                  class="w-7 h-7 rounded border bg-bg-primary text-tertiary hover:text-accent-strategy hover:border-accent-strategy flex items-center justify-center text-base leading-none no-underline"
-                  title={`在「${t.title.zh}」下新增学派`}
-                  aria-label={`在 ${t.title.zh} 下新增学派`}
-                  onclick="event.stopPropagation()"
-                >⊕</a>
-                <a
-                  href={editHref(`/${discipline}/themes/${t.key}/edit`, Astro.url.pathname)}
-                  class="w-7 h-7 rounded border bg-bg-primary text-tertiary hover:text-accent-strategy hover:border-accent-strategy flex items-center justify-center text-xs no-underline"
-                  title="编辑此学派组"
-                  aria-label={`编辑 ${t.title.zh}`}
-                  onclick="event.stopPropagation()"
-                >✎</a>
-              </span>
-            )}
-          </div>
-        </div>
-        <div data-theme-content={t.key} class="mt-3">
-          <div
-            class="drag-reorder school-card-grid grid grid-cols-1 md:grid-cols-2 gap-2.5"
-            data-reorder-kind="discipline-schools"
-            data-theme-key={t.key}
-          >
-            {t.schoolList.map((s) => (
-              <a
-                href={`/${discipline}/${s.key}`}
-                data-school-key={s.key}
-                class="school-card group block p-3.5 rounded-md border bg-bg-primary hover:bg-bg-secondary hover:border-text-quaternary transition-colors no-underline"
-              >
-                <div class="flex items-baseline justify-between gap-2">
-                  <h3 class="text-sm font-semibold text-primary leading-snug">{s.title_zh}</h3>
-                  <span
-                    class="school-card-count shrink-0 inline-flex items-center justify-center min-w-[24px] h-[20px] px-2 rounded-md text-[11px] font-semibold tabular-nums"
-                    style={s.primaryTag ? `background:${s.primaryTag.color}1a;color:${s.primaryTag.color}` : 'background:var(--color-bg-tertiary);color:var(--color-text-quaternary)'}
-                    title={`${s.kp_count} 个核心概念`}
-                  >{s.kp_count}</span>
-                </div>
-                {s.title_en && <div class="text-xs text-tertiary mt-1">{s.title_en}</div>}
-                {s.era && <div class="text-[11px] text-quaternary mt-0.5">{s.era}</div>}
-              </a>
-            ))}
-          </div>
-          {t.schoolList.length === 0 && (
-            <p class="text-xs text-quaternary mt-2">暂无学派{Astro.locals.canEdit(discipline) ? '。从其他学派组长按拖一个进来。' : '。'}</p>
-          )}
-        </div>
-      </section>
-    ))}
-    </div>
+    {/* === ViewSwitcher chip 行 === */}
+    {chipViews.length > 0 ? (
+      <ViewSwitcher
+        views={chipViews}
+        currentId={currentView?.id ?? ''}
+        discipline={discipline!}
+        canEdit={canEdit}
+      />
+    ) : canEdit ? (
+      <div class="empty-views-cta">
+        还没有视图。<button type="button" data-view-new class="empty-views-link">+ 新建视图</button>
+      </div>
+    ) : null}
 
-    {Astro.locals.canEdit(discipline) && (
-      <div class="mt-6 mb-4 flex items-center gap-2">
-        <a
-          href={editHref(`/${discipline}/themes/new`, Astro.url.pathname)}
-          class="flex-1 block py-3 rounded-lg border border-dashed border-bg-tertiary text-center text-xs text-quaternary hover:text-accent-strategy hover:border-accent-strategy no-underline opacity-60 hover:opacity-100 transition"
-          title="新增学派组"
-        >
-          + 新增学派组
-        </a>
-        <a
-          href={`/${discipline}/admin/tags`}
-          class="shrink-0 px-3 py-3 rounded-lg border border-dashed border-bg-tertiary text-xs text-quaternary hover:text-accent-strategy hover:border-accent-strategy no-underline opacity-60 hover:opacity-100 transition"
-          title="管理标签库"
-        >
-          标签库
-        </a>
+    {/* === ViewDescription === */}
+    {currentView && (
+      <ViewDescription
+        view={{
+          id: currentView.id,
+          name: currentView.name,
+          icon: currentView.icon,
+          description: currentView.description,
+          flow: currentView.flow,
+        }}
+        count={viewSchoolCount}
+        totalSchools={totalSchools}
+        canEdit={canEdit}
+      />
+    )}
+
+    {/* === Resolved groups === */}
+    {currentView && resolvedGroups.length > 0 && (
+      <div class="groups-stack">
+        {resolvedGroups.map((g) => (
+          <GroupCardCluster
+            title={g.title}
+            flow={g.flow}
+            count={g.schools.length}
+            groupId={g.id}
+          >
+            {g.schools.map((s) => (
+              <SchoolCard
+                href={`/${discipline}/${s.key}`}
+                cn={s.cn}
+                en={s.en}
+                meta={s.meta}
+                count={s.count}
+                tone={s.tone}
+              />
+            ))}
+          </GroupCardCluster>
+        ))}
       </div>
     )}
 
-    {orphanSchools.length > 0 && (
-      <section class="mb-8">
-        <h2 class="section-eyebrow mb-3">未分组</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {orphanSchools.map((s) => (
-            <a
-              href={`/${discipline}/${s.key}`}
-              class="school-card block p-3.5 pl-3 rounded-md border border-l-[3px] bg-bg-primary hover:bg-bg-secondary transition-colors no-underline"
-              style={s.primaryTag ? `border-left-color:${s.primaryTag.color}` : ''}
-            >
-              <div class="flex items-baseline justify-between gap-2">
-                <h3 class="text-sm font-semibold text-primary">{s.title_zh}</h3>
-                <span
-                  class="shrink-0 inline-flex items-center justify-center min-w-[20px] h-[18px] px-1.5 rounded-full text-[10.5px] font-medium tabular-nums"
-                  style={s.primaryTag ? `background:${s.primaryTag.color}1a;color:${s.primaryTag.color}` : 'background:var(--color-bg-tertiary);color:var(--color-text-quaternary)'}
-                >{s.kp_count}</span>
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
+    {currentView && resolvedGroups.length === 0 && (
+      <div class="empty-groups">
+        当前视图暂无分组。{canEdit ? '点 chip 上 ··· 选择「编辑视图」开始建组。' : ''}
+      </div>
     )}
   </main>
 </Layout>
 
-{Astro.locals.canEdit(discipline) && (
-  <div data-reorder-bootstrap="discipline-schools" data-discipline={discipline} class="hidden"></div>
-)}
-
-<script>
-  // @ts-nocheck — DOM 类型推断弱，runtime 已验证
-  // v0.4.30 跨组拖动 — 11 grid 共享同一 group key 实现跨学派组拖学派
-  import { mountDragReorder } from '~/lib/drag-reorder-client';
-  const bootstrap = document.querySelector('[data-reorder-bootstrap="discipline-schools"]');
-  if (bootstrap) {
-    const discipline = bootstrap.dataset.discipline;
-    const groupKey = `discipline-themes-${discipline}`;
-    document.querySelectorAll('[data-reorder-kind="discipline-schools"]').forEach((grid) => {
-      mountDragReorder(grid, {
-        group: groupKey,
-        getId: (el) => el.getAttribute('data-school-key'),
-        getContainerKey: (el) => el.dataset.themeKey,
-        skipSelector: 'button',
-        onReorder: async (idsByContainer, movedInfo) => {
-          const themesSchools = Object.fromEntries(idsByContainer);
-          const body = { discipline, themesSchools };
-          // 跨组：附加 movedSchool 让后端同步 school.themeKey
-          if (movedInfo.fromKey !== movedInfo.toKey) {
-            body.movedSchool = { key: movedInfo.itemId, fromTheme: movedInfo.fromKey, toTheme: movedInfo.toKey };
-          }
-          const res = await fetch('/api/edit/reorder/discipline-schools', {
-            method: 'POST',
-            headers: { 'content-type': 'application/json' },
-            body: JSON.stringify(body),
-          });
-          if (!res.ok) {
-            const data = await res.json().catch(() => ({}));
-            alert(`保存顺序失败：${res.status} ${data.reason ?? 'error'}`);
-          }
-        },
-      });
-    });
-
-    // v0.4.31 Phase 3 — themes 顺序拖排（独立 group，只在 ≡ handle 上长按触发）
-    const themesContainer = document.querySelector('[data-reorder-kind="themes-order"]');
-    if (themesContainer) {
-      mountDragReorder(themesContainer, {
-        group: `themes-order-${discipline}`,
-        getId: (el) => el.getAttribute('data-theme-key'),
-        getContainerKey: () => 'root',
-        dragHandleSelector: '.theme-drag-handle',
-        skipSelector: 'a, button, [data-reorder-kind="discipline-schools"]',
-        onReorder: async (idsByContainer) => {
-          const themeKeys = idsByContainer.get('root') ?? [];
-          if (themeKeys.length === 0) return;
-          const res = await fetch('/api/edit/reorder/themes-order', {
-            method: 'POST',
-            headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({ discipline, themeKeys }),
-          });
-          if (!res.ok) {
-            const data = await res.json().catch(() => ({}));
-            alert(`保存学派组顺序失败：${res.status} ${data.reason ?? 'error'}`);
-          }
-        },
-      });
-    }
+<style>
+  .discipline-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 36px 32px 120px;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
   }
-</script>
+  @media (max-width: 720px) {
+    .discipline-page { padding: 24px 16px 80px; }
+  }
 
-<script is:inline>
-  // v0.4.38 学派组折叠（方案 A：hover-reveal chevron + 整行可点）
-  (function () {
-    const path = window.location.pathname.split('/').filter(Boolean);
-    const disc = path[0];
-    if (!disc) return;
-    const STORAGE_KEY = `themes-collapsed:${disc}`;
-    let collapsed;
-    try { collapsed = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); } catch { collapsed = new Set(); }
+  .page-h { margin-bottom: 8px; }
+  .page-h-title {
+    font-size: 34px;
+    font-weight: 700;
+    color: #0a0a0a;
+    margin: 0;
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+  }
+  :global(html.dark) .page-h-title { color: var(--color-text-primary); }
+  .page-h-sub {
+    font-size: 13px;
+    color: #737373;
+    margin: 6px 0 0;
+  }
+  :global(html.dark) .page-h-sub { color: var(--color-text-tertiary); }
 
-    function applyState(themeKey, isCollapsed) {
-      const content = document.querySelector(`[data-theme-content="${themeKey}"]`);
-      const row = document.querySelector(`[data-theme-toggle="${themeKey}"]`);
-      const section = document.querySelector(`section[data-theme-key="${themeKey}"]`);
-      if (!content || !row) return;
-      content.style.display = isCollapsed ? 'none' : '';
-      row.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
-      // is-collapsed class → CSS 控制 chevron 持续可见+旋转 + 标题压暗（见 global.css）
-      if (section) section.classList.toggle('is-collapsed', isCollapsed);
-    }
+  .groups-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 
-    function toggleTheme(key) {
-      const next = !collapsed.has(key);
-      if (next) collapsed.add(key); else collapsed.delete(key);
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...collapsed])); } catch {}
-      applyState(key, next);
-    }
+  .empty-views-cta {
+    background: #fafaf9;
+    border: 1px dashed #e5e5e5;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    font-size: 13px;
+    color: #525252;
+    margin: 18px 0;
+  }
+  :global(html.dark) .empty-views-cta {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-border);
+    color: var(--color-text-tertiary);
+  }
+  .empty-views-link {
+    all: unset;
+    cursor: pointer;
+    color: #171717;
+    font-weight: 500;
+    text-decoration: underline;
+  }
+  :global(html.dark) .empty-views-link { color: var(--color-text-primary); }
 
-    // 初始化：根据 localStorage 应用折叠态
-    document.querySelectorAll('[data-theme-toggle]').forEach((row) => {
-      const key = row.getAttribute('data-theme-toggle');
-      if (key && collapsed.has(key)) applyState(key, true);
-    });
-
-    // 整行点击触发（点 ≡ 拖排 / ⊕ 新增 / ✎ 编辑等子元素时不触发）
-    document.querySelectorAll('[data-theme-toggle]').forEach((row) => {
-      row.addEventListener('click', (e) => {
-        const target = e.target;
-        if (target && target.closest('a, button, .theme-drag-handle')) return;
-        const key = row.getAttribute('data-theme-toggle');
-        if (key) toggleTheme(key);
-      });
-    });
-  })();
-</script>
+  .empty-groups {
+    padding: 36px 16px;
+    text-align: center;
+    font-size: 13px;
+    color: #a3a3a3;
+  }
+</style>

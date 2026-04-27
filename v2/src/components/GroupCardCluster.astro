@@ -1,0 +1,111 @@
+---
+/**
+ * GroupCardCluster — 视图分组容器（设计稿 LAYOUT A · 软灰底卡）
+ *
+ * 设计稿对齐：bundle/8547ef6c GroupCardCluster
+ *   - 软灰底 #fafaf9 / border #f1f1f0 / radius 14 / padding 10 14 14
+ *   - GroupHeader：chevron + title 13/600 #262626 + flow 11 #a3a3a3 + count badge 11 #a3a3a3 / bg #f5f5f4
+ *   - 折叠用 grid-template-rows 0fr/1fr 过渡（保留 height 动画）
+ *   - 内部 grid 2 列 gap 10 paddingTop 10
+ *
+ * 折叠状态用 <details> 实现（无 JS），open 默认。
+ * Astro 静态 SSR：children = SchoolCard[]，由父页面拼好传入 slot。
+ */
+
+interface Props {
+  title: string;
+  flow?: string;
+  count: number;
+  groupId: string;
+  columns?: number;       // 默认 2
+}
+
+const { title, flow, count, groupId, columns = 2 } = Astro.props;
+---
+
+<details class="group-cluster" open data-group-id={groupId}>
+  <summary class="gc-header">
+    <svg class="gc-chev" width="12" height="12" viewBox="0 0 12 12" fill="none">
+      <path d="M4 2.5l3.5 3.5L4 9.5" stroke="#737373" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="gc-titles">
+      <div class="gc-title">{title}</div>
+      {flow && <div class="gc-flow">{flow}</div>}
+    </div>
+    <span class="gc-count">{count}</span>
+  </summary>
+  <div class="gc-body" style={`--cols:${columns}`}>
+    <slot />
+  </div>
+</details>
+
+<style>
+  .group-cluster {
+    background: #fafaf9;
+    border: 1px solid #f1f1f0;
+    border-radius: 14px;
+    padding: 10px 14px 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  }
+  :global(html.dark) .group-cluster {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-border);
+  }
+
+  /* 隐藏默认 ▶ 三角 */
+  .gc-header { list-style: none; cursor: pointer; }
+  .gc-header::-webkit-details-marker { display: none; }
+  .gc-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 4px;
+  }
+
+  /* chevron 旋转：合上=0deg, 展开=90deg */
+  .gc-chev {
+    flex-shrink: 0;
+    transform: rotate(0deg);
+    transition: transform .18s ease;
+  }
+  .group-cluster[open] .gc-chev { transform: rotate(90deg); }
+
+  .gc-titles { flex: 1; min-width: 0; }
+  .gc-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #262626;
+    letter-spacing: 0.02em;
+  }
+  :global(html.dark) .gc-title { color: var(--color-text-primary); }
+  .gc-flow {
+    font-size: 11px;
+    color: #a3a3a3;
+    margin-top: 2px;
+    font-weight: 400;
+  }
+  :global(html.dark) .gc-flow { color: var(--color-text-quaternary); }
+  .gc-count {
+    font-size: 11px;
+    color: #a3a3a3;
+    font-variant-numeric: tabular-nums;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #f5f5f4;
+  }
+  :global(html.dark) .gc-count {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-tertiary);
+  }
+
+  .gc-body {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 2), 1fr);
+    gap: 10px;
+    padding-top: 10px;
+  }
+  /* 窄屏单列 */
+  @media (max-width: 720px) {
+    .gc-body { grid-template-columns: 1fr; }
+  }
+</style>

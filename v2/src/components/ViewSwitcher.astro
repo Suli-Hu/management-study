@@ -1,0 +1,285 @@
+---
+/**
+ * ViewSwitcher — 视图切换器 chip 行
+ *
+ * 设计稿对齐：bundle/49edffcc
+ *   - 行间 padding 14 0 6 / borderBottom #f1f1f0 / marginBottom 18
+ *   - chip：radius 999 / 内 padding 6 4 6 12 / fontSize 13
+ *     · active: 黑底 #171717 / 白字
+ *     · inactive: 白底 / border #ececec / hover bg #fafaf9
+ *     · 内含 icon emoji（fontSize 12 opacity 0.85）+ name + ··· 按钮
+ *   - ··· 按钮 hover 显示，点击触发 onMenu
+ *   - 末尾 "+ 新建视图" chip 虚线边框
+ *   - 拖动重排（HTML5 drag/drop）：dragging opacity 0.4，dragOver translateX 4 + border #737373
+ *   - 用户要求："chip 行右侧不要任何说明文字" → 不渲染 hint
+ *
+ * 行为：
+ *   - chip 点击 → 切视图（更新 ?view= URL 参数 + push state，不全页跳转）
+ *   - ··· 按钮 → 触发 viewmenu CustomEvent（父页 ViewMenu 监听）
+ *   - + 新建 → 触发 newview CustomEvent
+ *   - 拖动 reorder → POST /api/edit/reorder/views（仅 canEdit 时 draggable=true）
+ */
+
+interface ViewChip {
+  id: string;
+  name: string;
+  icon: string;
+  isDefault: boolean;
+  position: number;
+}
+
+interface Props {
+  views: ViewChip[];
+  currentId: string;
+  discipline: string;
+  canEdit: boolean;
+}
+
+const { views, currentId, discipline, canEdit } = Astro.props;
+---
+
+<div class="view-switcher" data-view-switcher data-discipline={discipline} data-can-edit={canEdit ? '1' : '0'}>
+  <span class="vs-label">视图</span>
+  {views.map((v) => (
+    <div
+      class:list={['vs-chip', v.id === currentId && 'is-active']}
+      data-view-chip
+      data-view-id={v.id}
+      data-view-name={v.name}
+      data-view-default={v.isDefault ? '1' : '0'}
+      draggable={canEdit ? 'true' : 'false'}
+      title={canEdit ? '长按拖动可调整顺序' : undefined}
+    >
+      <span class="vs-chip-icon">{v.icon}</span>
+      <span class="vs-chip-name">{v.name}</span>
+      <button class="vs-chip-menu" data-view-chip-menu aria-label={`${v.name} 操作菜单`}>
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+          <circle cx="3"  cy="7" r="1.2" fill="currentColor"/>
+          <circle cx="7"  cy="7" r="1.2" fill="currentColor"/>
+          <circle cx="11" cy="7" r="1.2" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+  ))}
+  {canEdit && (
+    <button class="vs-new" data-view-new>
+      <span class="vs-new-plus">+</span>
+      <span>新建视图</span>
+    </button>
+  )}
+</div>
+
+<style>
+  .view-switcher {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 14px 0 6px;
+    border-bottom: 1px solid #f1f1f0;
+    margin-bottom: 18px;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  }
+  :global(html.dark) .view-switcher { border-bottom-color: var(--color-border); }
+
+  .vs-label {
+    font-size: 12px;
+    color: #a3a3a3;
+    margin-right: 4px;
+  }
+  :global(html.dark) .vs-label { color: var(--color-text-quaternary); }
+
+  .vs-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 4px 6px 12px;
+    border-radius: 999px;
+    border: 1px solid #ececec;
+    background: #ffffff;
+    color: #404040;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: grab;
+    transition: border-color .12s, transform .12s, background .12s;
+  }
+  .vs-chip:active { cursor: grabbing; }
+  .vs-chip:hover { background: #fafaf9; }
+  .vs-chip.is-active {
+    background: #171717;
+    color: #ffffff;
+    border-color: #171717;
+  }
+  .vs-chip.is-drag-over {
+    border-color: #737373;
+    transform: translateX(4px);
+  }
+  .vs-chip.is-dragging { opacity: 0.4; }
+
+  :global(html.dark) .vs-chip {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-border);
+    color: var(--color-text-secondary);
+  }
+  :global(html.dark) .vs-chip:hover { background: var(--color-bg-tertiary); }
+  :global(html.dark) .vs-chip.is-active {
+    background: #fafafa;
+    color: #171717;
+    border-color: #fafafa;
+  }
+
+  .vs-chip-icon { font-size: 12px; opacity: 0.85; line-height: 1; }
+  .vs-chip-name { line-height: 1; }
+  .vs-chip-menu {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    margin-left: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #a3a3a3;
+    opacity: 0.55;
+    transition: opacity .12s;
+  }
+  .vs-chip:hover .vs-chip-menu,
+  .vs-chip.is-active .vs-chip-menu { opacity: 1; }
+  .vs-chip.is-active .vs-chip-menu { color: #fafafa; }
+  :global(html.dark) .vs-chip.is-active .vs-chip-menu { color: #171717; }
+
+  .vs-new {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px dashed #d4d4d4;
+    color: #525252;
+    font-size: 13px;
+    font-weight: 500;
+    transition: border-color .12s, color .12s;
+  }
+  .vs-new:hover { border-color: #737373; color: #171717; }
+  :global(html.dark) .vs-new { border-color: var(--color-text-quaternary); color: var(--color-text-tertiary); }
+  :global(html.dark) .vs-new:hover { color: var(--color-text-primary); }
+  .vs-new-plus { font-size: 14px; line-height: 1; margin-top: -1px; }
+</style>
+
+<script>
+  // @ts-nocheck — 用 vanilla DOM 维护 chip 拖动 + 视图切换
+  (() => {
+    const root = document.querySelector('[data-view-switcher]');
+    if (!root) return;
+    const discipline = root.getAttribute('data-discipline');
+    const canEdit = root.getAttribute('data-can-edit') === '1';
+
+    function setUrlView(viewId) {
+      const url = new URL(location.href);
+      url.searchParams.set('view', viewId);
+      // 跳转：让页面 SSR 重新渲染（视图切换时分组结构变了，partial swap 复杂度大于 navigate）
+      location.href = url.toString();
+    }
+
+    // chip 点击切换视图（菜单按钮点击除外）
+    root.querySelectorAll('[data-view-chip]').forEach((chip) => {
+      chip.addEventListener('click', (e) => {
+        if (e.target.closest('[data-view-chip-menu]')) return;
+        const id = chip.getAttribute('data-view-id');
+        if (id) setUrlView(id);
+      });
+    });
+
+    // ··· 菜单按钮：触发自定义事件（让页面级 ViewMenu 接管）
+    root.querySelectorAll('[data-view-chip-menu]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const chip = btn.closest('[data-view-chip]');
+        if (!chip) return;
+        const r = chip.getBoundingClientRect();
+        document.dispatchEvent(new CustomEvent('view:menu', {
+          detail: {
+            viewId: chip.getAttribute('data-view-id'),
+            viewName: chip.getAttribute('data-view-name'),
+            isDefault: chip.getAttribute('data-view-default') === '1',
+            anchor: { top: r.bottom + 6, left: r.left - 80 },
+          },
+        }));
+      });
+    });
+
+    // + 新建视图
+    const newBtn = root.querySelector('[data-view-new]');
+    if (newBtn) {
+      newBtn.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('view:new'));
+      });
+    }
+
+    if (!canEdit) return;
+
+    // === HTML5 drag-to-reorder（仅 canEdit 时） ===
+    let dragId = null;
+    const chips = Array.from(root.querySelectorAll('[data-view-chip]'));
+    chips.forEach((chip) => {
+      chip.addEventListener('dragstart', (e) => {
+        dragId = chip.getAttribute('data-view-id');
+        chip.classList.add('is-dragging');
+        if (e.dataTransfer) {
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', dragId);
+        }
+      });
+      chip.addEventListener('dragend', () => {
+        chip.classList.remove('is-dragging');
+        chips.forEach((c) => c.classList.remove('is-drag-over'));
+        dragId = null;
+      });
+      chip.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (!dragId || chip.getAttribute('data-view-id') === dragId) return;
+        chips.forEach((c) => c.classList.toggle('is-drag-over', c === chip));
+      });
+      chip.addEventListener('dragleave', () => {
+        chip.classList.remove('is-drag-over');
+      });
+      chip.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        chip.classList.remove('is-drag-over');
+        const droppedOnId = chip.getAttribute('data-view-id');
+        if (!dragId || !droppedOnId || dragId === droppedOnId) return;
+        // 计算新顺序
+        const ids = chips.map((c) => c.getAttribute('data-view-id'));
+        const fromIdx = ids.indexOf(dragId);
+        const toIdx = ids.indexOf(droppedOnId);
+        if (fromIdx < 0 || toIdx < 0) return;
+        const next = [...ids];
+        const [moved] = next.splice(fromIdx, 1);
+        next.splice(toIdx, 0, moved);
+        // POST 给后端
+        try {
+          const res = await fetch('/api/edit/reorder/views', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ discipline, viewIds: next }),
+          });
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            alert(`视图顺序保存失败：${res.status} ${data.reason ?? 'error'}`);
+            return;
+          }
+          // 触发 toast + 刷新（拿新 position）
+          document.dispatchEvent(new CustomEvent('view:toast', { detail: '视图顺序已更新（~90s 后线上生效）' }));
+          // 不立即 reload，避免覆盖 toast；交给用户决定何时刷新（或用户也可立即刷新）
+        } catch (err) {
+          alert(`视图顺序保存失败：${err.message ?? err}`);
+        }
+      });
+    });
+  })();
+</script>

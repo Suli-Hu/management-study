@@ -1,4 +1,18 @@
 ---
+/**
+ * v0.5.66 TopNav — 视图系统 Phase 2 重设计
+ *
+ * 设计稿对齐：bundle/template TopNav
+ *   - 左：Logo（保留用户的 PNG Brand 组件）+ › + 当前学科名（fontSize 14 #171717）
+ *   - 中：三个 underline tab（学派/学者/知识点）
+ *     · 当前 #171717 fontWeight 600，下方 2px 黑短线
+ *     · 非当前 #737373 fontWeight 400
+ *   - 右：🔍 + ⚙ 管理（含子菜单：标签库 + 夜间模式切换） + 头像
+ *
+ * 设计稿原版只有 🔍/⚙/avatar — 把夜间模式 toggle 收进 ⚙ 菜单避免破坏 3-icon row。
+ *
+ * Spotlight modal、user-menu、theme toggle 逻辑沿用 v0.5.58/.59。
+ */
 import { getDb } from '~/lib/db';
 import Brand from '~/components/Brand.astro';
 import Spotlight from '~/components/Spotlight.astro';
@@ -32,140 +46,133 @@ const sections: Array<{ key: 'schools' | 'scholars' | 'kps'; label: string; href
   : [];
 
 const emailInitial = user?.email.charAt(0).toUpperCase() ?? '';
-
-// v0.5.58 #7：brand link 智能 — 在学科内点 logo 回到该学科 overview（/{key}）
-//                                 不在学科内（home）则保持 /
 const brandHref = currentDiscipline ? `/${currentDiscipline}` : '/';
+const isAdmin = currentDiscipline ? Astro.locals.canEdit(currentDiscipline) : false;
 ---
 
-<nav class="sticky top-0 z-50 bg-bg-primary/90 backdrop-blur-sm border-b border-bg-tertiary">
-  <div class="w-full pl-[18px] pr-4 h-12 flex items-center justify-between gap-3">
-    <div class="flex items-center gap-1.5 text-sm shrink-0">
+<nav class="topnav" data-topnav>
+  <div class="tn-row">
+    {/* 左：Logo + breadcrumb */}
+    <div class="tn-brand-wrap">
       <Brand href={brandHref} size="sm" />
-      {/* v0.5.58 #5: 移动端只留 logo，所有面包屑（chev + discipline + leaf）在 < sm 全 hide */}
       {currentDiscipline && disciplineTitle && (
         <Fragment>
-          <span class="text-quaternary text-xs hidden sm:inline">›</span>
+          <span class="tn-chev">›</span>
           <a
             href={`/${currentDiscipline}`}
-            class:list={[
-              'text-xs no-underline hidden sm:inline',
-              currentLeafTitle ? 'text-tertiary hover:text-primary' : 'text-primary font-medium',
-            ]}
-          >
-            {disciplineTitle}
-          </a>
+            class:list={['tn-disc', currentLeafTitle && 'is-not-leaf']}
+          >{disciplineTitle}</a>
         </Fragment>
       )}
       {currentLeafTitle && (
         <Fragment>
-          <span class="text-quaternary text-xs hidden sm:inline">›</span>
-          <span class="text-primary font-medium text-xs hidden sm:inline">
-            {currentLeafTitle}
-          </span>
+          <span class="tn-chev">›</span>
+          <span class="tn-leaf">{currentLeafTitle}</span>
         </Fragment>
       )}
     </div>
 
+    <div class="tn-spacer"></div>
+
+    {/* 中：三 tab underline */}
     {currentDiscipline && (
-      <div class="flex flex-1 items-center justify-center gap-0.5 text-xs">
+      <div class="tn-tabs">
         {sections.map((s) => (
           <a
             href={s.href}
-            class:list={[
-              'px-2 py-1 rounded transition-colors no-underline',
-              currentSection === s.key
-                ? 'text-primary font-semibold bg-bg-tertiary'
-                : 'text-tertiary hover:text-primary',
-            ]}
+            class:list={['tn-tab', currentSection === s.key && 'is-active']}
           >
-            {s.label}
+            <span class="tn-tab-label">{s.label}</span>
+            {currentSection === s.key && <span class="tn-tab-underline" />}
           </a>
         ))}
       </div>
     )}
 
-    <div class="flex items-center gap-1 text-xs shrink-0">
-      {/* v0.5.59 #SearchModal: 搜索图标移到右侧（夜间模式按钮左侧），点开 Spotlight modal */}
+    <div class="tn-spacer"></div>
+
+    {/* 右：🔍 ⚙ avatar */}
+    <div class="tn-right">
       {currentDiscipline && (
         <button
           type="button"
           id="spotlight-trigger"
+          class="tn-icon-btn"
           aria-label="搜索 (⌘K / Ctrl+K)"
           title="搜索 (⌘K)"
-          class="p-1 rounded text-tertiary hover:text-primary transition-colors"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="11" cy="11" r="7"></circle>
             <path d="m20 20-3.5-3.5"></path>
           </svg>
         </button>
       )}
-      <button
-        id="theme-toggle"
-        type="button"
-        aria-label="切换夜间模式"
-        class="p-1 rounded text-tertiary hover:text-primary transition-colors"
-        title="切换夜间模式"
-      >
-        <span data-theme-icon-light aria-hidden="true">☀︎</span>
-        <span data-theme-icon-dark aria-hidden="true" class="hidden">☾</span>
-      </button>
+
+      <div class="tn-mgmt-wrap" id="mgmt-menu-wrap">
+        <button
+          type="button"
+          id="mgmt-menu-trigger"
+          class="tn-icon-btn"
+          aria-label="管理菜单"
+          aria-haspopup="true"
+          aria-expanded="false"
+          title="管理"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+        <div id="mgmt-menu" role="menu" class="tn-menu hidden" aria-labelledby="mgmt-menu-trigger">
+          <div class="tn-menu-eyebrow">管理</div>
+          {isAdmin && currentDiscipline && (
+            <a href={`/${currentDiscipline}/admin/tags`} role="menuitem" class="tn-menu-item">
+              <div class="tn-menu-item-title">标签库</div>
+              <div class="tn-menu-item-sub">管理跨视图的学派标签</div>
+            </a>
+          )}
+          <button id="theme-toggle" type="button" role="menuitem" class="tn-menu-item tn-menu-item-btn">
+            <div class="tn-menu-item-title">
+              <span data-theme-icon-light>切换到夜间模式</span>
+              <span data-theme-icon-dark class="hidden">切换到日间模式</span>
+            </div>
+            <div class="tn-menu-item-sub">日 / 夜配色切换</div>
+          </button>
+        </div>
+      </div>
+
       {user ? (
-        <div class="relative" id="user-menu-wrap">
+        <div class="tn-user-wrap" id="user-menu-wrap">
           {isGuest ? (
             <button
               type="button"
               id="user-menu-trigger"
-              aria-label="账户菜单"
+              class="tn-guest-pill"
               aria-haspopup="true"
               aria-expanded="false"
               title="访客（只读）— 点击打开菜单"
-              class="inline-flex items-center px-2 py-0.5 rounded-full bg-bg-tertiary text-tertiary font-semibold cursor-pointer"
-            >
-              访客
-            </button>
+            >访客</button>
           ) : (
             <button
               type="button"
               id="user-menu-trigger"
-              aria-label={`账户菜单 — ${user.email}`}
+              class="tn-avatar"
               aria-haspopup="true"
               aria-expanded="false"
               title={`${user.email} — 点击打开菜单`}
-              class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-accent-strategy text-white font-semibold text-xs cursor-pointer"
-            >
-              {emailInitial}
-            </button>
+            >{emailInitial}</button>
           )}
-          <div
-            id="user-menu"
-            role="menu"
-            aria-labelledby="user-menu-trigger"
-            class="hidden absolute right-0 top-full mt-1.5 min-w-[140px] rounded-md border bg-bg-primary shadow-card-hover overflow-hidden z-50"
-          >
-            <a
-              href="/"
-              role="menuitem"
-              class="block px-3 py-2 text-xs text-secondary hover:bg-bg-secondary no-underline"
-            >学科选择</a>
-            <form method="POST" action="/api/auth/logout" class="block">
-              <button
-                type="submit"
-                role="menuitem"
-                class="block w-full text-left px-3 py-2 text-xs border-t border-bg-tertiary hover:bg-bg-secondary"
-                style="color:#FF3B30"
-              >退出登录</button>
+          <div id="user-menu" role="menu" class="tn-menu hidden" aria-labelledby="user-menu-trigger">
+            <a href="/" role="menuitem" class="tn-menu-item">学科选择</a>
+            <form method="POST" action="/api/auth/logout" class="tn-menu-form">
+              <button type="submit" role="menuitem" class="tn-menu-item tn-menu-item-btn tn-menu-danger">
+                退出登录
+              </button>
             </form>
           </div>
         </div>
       ) : (
-        <a
-          href="/login"
-          class="px-2 py-1 rounded text-tertiary hover:text-primary transition-colors no-underline"
-        >
-          登录
-        </a>
+        <a href="/login" class="tn-login">登录</a>
       )}
     </div>
   </div>
@@ -175,8 +182,254 @@ const brandHref = currentDiscipline ? `/${currentDiscipline}` : '/';
   <Spotlight discipline={currentDiscipline} disciplineTitle={disciplineTitle ?? undefined} />
 )}
 
+<style>
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: #ffffff;
+    border-bottom: 1px solid #f1f1f0;
+    font-size: 13px;
+    color: #525252;
+  }
+  :global(html.dark) .topnav {
+    background: var(--color-bg-primary);
+    border-bottom-color: var(--color-border);
+    color: var(--color-text-tertiary);
+  }
+  .tn-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 18px;
+    gap: 12px;
+  }
+  @media (min-width: 720px) {
+    .tn-row { padding: 12px 28px; gap: 18px; }
+  }
+
+  /* === Brand + breadcrumb === */
+  .tn-brand-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+    min-width: 0;
+  }
+  .tn-chev {
+    color: #d4d4d4;
+    font-size: 14px;
+    display: none;
+  }
+  @media (min-width: 720px) { .tn-chev { display: inline; } }
+  :global(html.dark) .tn-chev { color: var(--color-border); }
+  .tn-disc {
+    color: #171717;
+    font-size: 14px;
+    text-decoration: none;
+    display: none;
+  }
+  @media (min-width: 720px) { .tn-disc { display: inline; } }
+  .tn-disc.is-not-leaf {
+    color: #525252;
+  }
+  .tn-disc.is-not-leaf:hover { color: #171717; opacity: 1; }
+  :global(html.dark) .tn-disc { color: var(--color-text-primary); }
+  :global(html.dark) .tn-disc.is-not-leaf { color: var(--color-text-tertiary); }
+  :global(html.dark) .tn-disc.is-not-leaf:hover { color: var(--color-text-primary); }
+  .tn-leaf {
+    color: #171717;
+    font-weight: 500;
+    font-size: 14px;
+    display: none;
+  }
+  @media (min-width: 720px) { .tn-leaf { display: inline; } }
+  :global(html.dark) .tn-leaf { color: var(--color-text-primary); }
+
+  .tn-spacer { flex: 1; }
+
+  /* === Center underline tabs === */
+  .tn-tabs {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  @media (min-width: 720px) { .tn-tabs { gap: 24px; } }
+
+  .tn-tab {
+    position: relative;
+    padding: 6px 0;
+    color: #737373;
+    font-weight: 400;
+    text-decoration: none;
+    line-height: 1;
+  }
+  :global(html.dark) .tn-tab { color: var(--color-text-tertiary); }
+  .tn-tab:hover { color: #171717; opacity: 1; }
+  :global(html.dark) .tn-tab:hover { color: var(--color-text-primary); }
+  .tn-tab.is-active {
+    color: #171717;
+    font-weight: 600;
+  }
+  :global(html.dark) .tn-tab.is-active { color: var(--color-text-primary); }
+  .tn-tab-underline {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: -13px;     /* row padding 12 + 1 ≈ underlines at the nav border */
+    height: 2px;
+    background: #171717;
+    border-radius: 2px;
+  }
+  :global(html.dark) .tn-tab-underline { background: var(--color-text-primary); }
+
+  /* === Right cluster === */
+  .tn-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  @media (min-width: 720px) { .tn-right { gap: 16px; } }
+
+  .tn-icon-btn {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #737373;
+    transition: color .12s, background .12s;
+  }
+  .tn-icon-btn:hover {
+    color: #171717;
+    background: #fafaf9;
+  }
+  :global(html.dark) .tn-icon-btn { color: var(--color-text-tertiary); }
+  :global(html.dark) .tn-icon-btn:hover { color: var(--color-text-primary); background: var(--color-bg-secondary); }
+
+  .tn-mgmt-wrap, .tn-user-wrap { position: relative; }
+
+  /* === Avatar / guest pill === */
+  .tn-avatar {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background: #2563eb;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tn-guest-pill {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: #f5f5f4;
+    color: #525252;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  :global(html.dark) .tn-guest-pill { background: var(--color-bg-tertiary); color: var(--color-text-tertiary); }
+  .tn-login {
+    text-decoration: none;
+    color: #525252;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  .tn-login:hover { color: #171717; opacity: 1; }
+  :global(html.dark) .tn-login { color: var(--color-text-tertiary); }
+  :global(html.dark) .tn-login:hover { color: var(--color-text-primary); }
+
+  /* === Menus (mgmt + user) === */
+  .tn-menu {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: -8px;
+    background: #ffffff;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.10);
+    min-width: 220px;
+    padding: 6px;
+    z-index: 91;
+    font-size: 13px;
+  }
+  .tn-menu.hidden { display: none; }
+  :global(html.dark) .tn-menu {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-border);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  }
+
+  .tn-menu-eyebrow {
+    padding: 6px 10px 4px;
+    font-size: 11px;
+    color: #a3a3a3;
+    letter-spacing: 0.04em;
+  }
+  :global(html.dark) .tn-menu-eyebrow { color: var(--color-text-quaternary); }
+  .tn-menu-item {
+    display: block;
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    text-align: left;
+    text-decoration: none;
+    color: #171717;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+  :global(html.dark) .tn-menu-item { color: var(--color-text-primary); }
+  .tn-menu-item:hover {
+    background: #fafaf9;
+    opacity: 1;
+  }
+  :global(html.dark) .tn-menu-item:hover { background: var(--color-bg-tertiary); }
+  .tn-menu-item-btn {
+    all: unset;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .tn-menu-item-btn:hover { background: #fafaf9; }
+  :global(html.dark) .tn-menu-item-btn:hover { background: var(--color-bg-tertiary); }
+  .tn-menu-item-title { font-weight: 500; color: #171717; }
+  :global(html.dark) .tn-menu-item-title { color: var(--color-text-primary); }
+  .tn-menu-item-sub {
+    font-size: 11px;
+    color: #a3a3a3;
+    margin-top: 2px;
+  }
+  :global(html.dark) .tn-menu-item-sub { color: var(--color-text-quaternary); }
+  .tn-menu-danger {
+    color: #FF3B30;
+  }
+  .tn-menu-danger:hover { color: #FF3B30; }
+  .tn-menu-form { display: block; border-top: 1px solid #f1f1f0; margin-top: 4px; padding-top: 4px; }
+  :global(html.dark) .tn-menu-form { border-top-color: var(--color-border); }
+
+  .hidden { display: none; }
+</style>
+
 <script is:inline>
-  // v0.3.9 夜间模式 toggle
+  // 夜间模式（保留 v0.3.9 行为；按钮位置改进 mgmt 菜单内）
   (function () {
     const btn = document.getElementById('theme-toggle');
     if (!btn) return;
@@ -187,7 +440,6 @@ const brandHref = currentDiscipline ? `/${currentDiscipline}` : '/';
       const isDark = document.documentElement.classList.contains('dark');
       iconLight?.classList.toggle('hidden', isDark);
       iconDark?.classList.toggle('hidden', !isDark);
-      btn.setAttribute('aria-label', isDark ? '切换到日间模式' : '切换到夜间模式');
     }
     render();
 
@@ -199,7 +451,7 @@ const brandHref = currentDiscipline ? `/${currentDiscipline}` : '/';
     });
   })();
 
-  // v0.5.59 Spotlight 触发按钮 → window.openSpotlight()（在 Spotlight.astro 里挂载）
+  // Spotlight 触发
   (function () {
     const btn = document.getElementById('spotlight-trigger');
     if (!btn) return;
@@ -208,11 +460,11 @@ const brandHref = currentDiscipline ? `/${currentDiscipline}` : '/';
     });
   })();
 
-  // v0.5.58 #6 用户菜单（学科选择 / 退出登录）
-  (function () {
-    const wrap = document.getElementById('user-menu-wrap');
-    const trigger = document.getElementById('user-menu-trigger');
-    const menu = document.getElementById('user-menu');
+  // 通用菜单 toggle（mgmt + user）
+  function bindMenu(wrapId, triggerId, menuId) {
+    const wrap = document.getElementById(wrapId);
+    const trigger = document.getElementById(triggerId);
+    const menu = document.getElementById(menuId);
     if (!wrap || !trigger || !menu) return;
 
     function open() {
@@ -226,7 +478,6 @@ const brandHref = currentDiscipline ? `/${currentDiscipline}` : '/';
     function toggle() {
       if (menu.classList.contains('hidden')) open(); else close();
     }
-
     trigger.addEventListener('click', (e) => {
       e.stopPropagation();
       toggle();
@@ -237,5 +488,7 @@ const brandHref = currentDiscipline ? `/${currentDiscipline}` : '/';
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && !menu.classList.contains('hidden')) close();
     });
-  })();
+  }
+  bindMenu('mgmt-menu-wrap', 'mgmt-menu-trigger', 'mgmt-menu');
+  bindMenu('user-menu-wrap', 'user-menu-trigger', 'user-menu');
 </script>

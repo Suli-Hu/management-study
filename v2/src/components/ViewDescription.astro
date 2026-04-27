@@ -1,0 +1,184 @@
+---
+/**
+ * ViewDescription — 视图说明区
+ *
+ * 设计稿对齐：bundle/9661d5b3 区段 ViewDescription
+ *   - 浅灰底 #fafaf9 / border #f1f1f0 / radius 12 / padding 14 18 / mb 18
+ *   - 左 emoji（fontSize 22 #404040）/ 右文字
+ *     · name fontWeight 600 fontSize 14 #0a0a0a
+ *     · description fontSize 13 #525252 lineHeight 1.65
+ *   - admin 模式：
+ *     · description hover bg #f5f5f4，点击触发 view:editInfo 自定义事件
+ *     · 名称右出现 ! 圆角徽章（如有 orphan school），hover 显示 tooltip "未收录 N 个学派"
+ *
+ * 设计稿 flow（演进主线）单独显示在说明区底部小字。
+ */
+
+interface Props {
+  view: {
+    id: string;
+    name: string;
+    icon: string;
+    description: string;
+    flow: string;
+  };
+  /** 已显示的学派数（resolved view 总和）vs discipline 全集，差额 = 未收录 */
+  count: number;
+  totalSchools: number;
+  canEdit: boolean;
+}
+
+const { view, count, totalSchools, canEdit } = Astro.props;
+const orphan = Math.max(0, totalSchools - count);
+---
+
+<div class="view-desc">
+  <div class="vd-icon">{view.icon}</div>
+  <div class="vd-main">
+    <div class="vd-name-row">
+      <div class="vd-name">{view.name}</div>
+      {canEdit && orphan > 0 && (
+        <span class="vd-orphan" data-view-edit-info aria-label={`未收录 ${orphan} 个学派`}>
+          <button class="vd-orphan-btn" type="button">!</button>
+          <span class="vd-orphan-tip">未收录 {orphan} 个学派</span>
+        </span>
+      )}
+    </div>
+    {view.description ? (
+      <div
+        class="vd-desc"
+        data-view-edit-info={canEdit ? '1' : undefined}
+        title={canEdit ? '点击编辑视图说明' : undefined}
+      >{view.description}</div>
+    ) : canEdit ? (
+      <button class="vd-add-desc" type="button" data-view-edit-info>+ 添加视图说明</button>
+    ) : null}
+    {view.flow && (
+      <div class="vd-flow">{view.flow}</div>
+    )}
+  </div>
+</div>
+
+<style>
+  .view-desc {
+    background: #fafaf9;
+    border: 1px solid #f1f1f0;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  }
+  :global(html.dark) .view-desc {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-border);
+  }
+  .vd-icon {
+    font-size: 22px;
+    color: #404040;
+    line-height: 1;
+    margin-top: 2px;
+  }
+  .vd-main { flex: 1; min-width: 0; }
+  .vd-name-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .vd-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0a0a0a;
+  }
+  :global(html.dark) .vd-name { color: var(--color-text-primary); }
+
+  .vd-orphan {
+    position: relative;
+    display: inline-flex;
+  }
+  .vd-orphan-btn {
+    all: unset;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    transform: translateY(-1px);
+  }
+  .vd-orphan-tip {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #171717;
+    color: #fafafa;
+    font-size: 11px;
+    padding: 5px 9px;
+    border-radius: 5px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .12s ease;
+    z-index: 10;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+  }
+  .vd-orphan:hover .vd-orphan-tip { opacity: 1; }
+
+  .vd-desc {
+    font-size: 13px;
+    color: #525252;
+    margin-top: 6px;
+    line-height: 1.65;
+    border-radius: 4px;
+    cursor: default;
+    transition: background .12s;
+  }
+  :global(html.dark) .vd-desc { color: var(--color-text-tertiary); }
+  .vd-desc[data-view-edit-info] {
+    cursor: pointer;
+  }
+  .vd-desc[data-view-edit-info]:hover {
+    background: #f5f5f4;
+  }
+  :global(html.dark) .vd-desc[data-view-edit-info]:hover { background: var(--color-bg-tertiary); }
+
+  .vd-add-desc {
+    all: unset;
+    cursor: pointer;
+    margin-top: 6px;
+    font-size: 12px;
+    color: #a3a3a3;
+    font-style: italic;
+  }
+  .vd-add-desc:hover { color: #525252; }
+
+  .vd-flow {
+    font-size: 11px;
+    color: #a3a3a3;
+    margin-top: 8px;
+    letter-spacing: 0.02em;
+  }
+  :global(html.dark) .vd-flow { color: var(--color-text-quaternary); }
+</style>
+
+<script>
+  // @ts-nocheck
+  (() => {
+    document.querySelectorAll('[data-view-edit-info]').forEach((el) => {
+      el.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('view:editInfo'));
+      });
+    });
+  })();
+</script>
