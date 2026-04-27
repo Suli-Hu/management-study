@@ -1,11 +1,13 @@
 /**
- * POST /api/edit/reorder/school-concepts  (v0.4.26)
+ * POST /api/edit/reorder/school-concepts  (v0.4.26 / v0.5.37 校验改 D1)
  *   body: { schoolKey: string, kpIds: string[] }
- *   行为：读 school JSON → 校验 kpIds 必须是原 concepts[] 的同集合 →
- *         concepts = kpIds → PUT 回 GitHub（自动用 GET 拿到的 sha 防覆盖冲突）
+ *   行为：用 D1 kp_school 校验 kpIds 必须是该学派当前 KP 的同集合 →
+ *         读 school JSON → concepts = kpIds → PUT 回 GitHub
  *
- *   不需要前端传 base_sha：reorder 只改 concepts 数组，并发风险低；
- *   后端单次 GET+PUT 顺序操作。GitHub 自身 sha 锁挡并发覆盖。
+ *   v0.5.37 改：原本对比 school.concepts 集合，但 concepts 是显示顺序，
+ *   而真实归属由 KP.schools[] 决定（sync 进 kp_school）。如果 KP 加进新学派
+ *   但 school.json 没同步更新 concepts，rendered 列表（D1 驱动）会比 concepts 多，
+ *   拖动后保存就报 set_mismatch。改成对比 kp_school（= 渲染源），并照搬 scholar-kps.ts 模式。
  */
 
 import type { APIRoute } from 'astro';
@@ -31,10 +33,22 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return jsonRes<EditError>(400, { ok: false, reason: 'bad_request', detail: 'schoolKey + kpIds[] required' });
   }
 
-  // discipline lookup
+  // discipline lookup + admin gate
   const row = await env.DB.prepare('SELECT discipline FROM school WHERE key = ?').bind(schoolKey).first() as { discipline: string } | null;
   if (!row) return jsonRes<EditError>(404, { ok: false, reason: 'not_found' });
   if (!locals.canEdit(row.discipline)) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+
+  // 校验 kpIds 必须是该学派当前 KP 的同集合（用 D1 kp_school —— 渲染源）
+  const kpRows = await env.DB.prepare('SELECT kp_id FROM kp_school WHERE school_key = ?').bind(schoolKey).all<{ kp_id: string }>();
+  const currentKpIds = new Set((kpRows.results ?? []).map((r) => r.kp_id));
+  const next = new Set(kpIds);
+  if (currentKpIds.size !== next.size || [...currentKpIds].some((id) => !next.has(id))) {
+    return jsonRes(400, {
+      ok: false,
+      reason: 'concept_set_mismatch' as const,
+      detail: `kpIds 必须是该学派当前 KP 的同集合（仅允许重排，不能增删）`,
+    });
+  }
 
   const path = `v2/data/${row.discipline}/schools/${schoolKey}.json`;
   const fetched = await getFile({ pat: env.GITHUB_PAT, repo: env.GITHUB_REPO }, path);
@@ -51,17 +65,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return jsonRes<EditError>(422, { ok: false, reason: 'schema_invalid', detail: checked.error.issues });
   }
   const school = checked.data;
-
-  // 校验 kpIds 必须是 concepts 的同集合（防漏 / 防注入未关联 KP）
-  const orig = new Set(school.concepts);
-  const next = new Set(kpIds);
-  if (orig.size !== next.size || [...orig].some((id) => !next.has(id))) {
-    return jsonRes(400, {
-      ok: false,
-      reason: 'concept_set_mismatch' as const,
-      detail: `kpIds 必须是原 concepts[] 的同集合（仅允许重排，不能增删）`,
-    });
-  }
 
   school.concepts = kpIds;
   school.updatedAt = new Date().toISOString();
