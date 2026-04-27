@@ -940,6 +940,38 @@ mark {
 
 
 /* ============================================================
+ * v0.5.44 学派列表 — group divider + 学派 tag accent strip
+ * 修：(1) 学派组与学派分不清 (2) tag 颜色看不出 (3) 经常点空白
+ * (1) → 组之间 40px + 居中弱分隔线
+ * (2) → 学派卡左 3px border 用 tag color；KP 数 chip 用 tag 色淡背景
+ * (3) → padding 3.5、gap 3、hover 改 bg 而非 shadow（视觉边界清楚）
+ * ============================================================ */
+.theme-section {
+  margin-bottom: 40px;
+}
+.theme-section:last-child {
+  margin-bottom: 24px;
+}
+.theme-section-divider {
+  margin-top: 40px;
+  position: relative;
+}
+.theme-section-divider::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--color-border);
+  opacity: 0.6;
+}
+/* school 卡：默认 border 灰，左 strip 在 inline style 覆写 */
+.school-card {
+  border-left-color: var(--color-border);
+}
+
+/* ============================================================
  * v0.5.43 学者详情页 info-table（修"国/籍"竖排）
  * .info-table 之前在 .astro 里写了 class 但没 CSS，浏览器默认 td
  * 自动收窄，"国籍"两字被强制换行成竖排单字。

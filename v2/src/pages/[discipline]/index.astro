@@ -8,9 +8,9 @@ const db = getDb(Astro.locals.runtime.env);
 
 // 学科信息
 const disc = await db
-  .prepare('SELECT key, title_zh, title_en, tagline_zh, themes_json FROM discipline WHERE key = ?')
+  .prepare('SELECT key, title_zh, title_en, tagline_zh, themes_json, tags_json FROM discipline WHERE key = ?')
   .bind(discipline)
-  .first<{ key: string; title_zh: string; title_en: string | null; tagline_zh: string | null; themes_json: string }>();
+  .first<{ key: string; title_zh: string; title_en: string | null; tagline_zh: string | null; themes_json: string; tags_json: string }>();
 
 if (!disc) {
   return Astro.redirect('/404');
@@ -24,18 +24,26 @@ const themes = JSON.parse(disc.themes_json) as Array<{
   schools: string[];
 }>;
 
+// v0.5.44 tag 色板：tag_key → {label, color}（学派卡片左 strip + tag chip 用）
+const tagDefs = JSON.parse(disc.tags_json || '[]') as Array<{ key: string; label: { zh?: string }; color: string }>;
+const tagMap = new Map(tagDefs.map((t) => [t.key, t]));
+
 // 学派列表（按 theme_key 分组）
 const schoolsResult = await db
   .prepare(`
-    SELECT key, title_zh, title_en, era, theme_key,
+    SELECT key, title_zh, title_en, era, theme_key, tags_json,
       (SELECT COUNT(*) FROM kp_school WHERE school_key = school.key) as kp_count
     FROM school
     WHERE discipline = ?
   `)
   .bind(discipline)
-  .all<{ key: string; title_zh: string; title_en: string | null; era: string; theme_key: string; kp_count: number }>();
+  .all<{ key: string; title_zh: string; title_en: string | null; era: string; theme_key: string; tags_json: string; kp_count: number }>();
 
-const schools = schoolsResult.results ?? [];
+const schools = (schoolsResult.results ?? []).map((s) => {
+  const tagKeys = JSON.parse(s.tags_json || '[]') as string[];
+  const primaryTag = tagKeys.length > 0 ? tagMap.get(tagKeys[0]) ?? null : null;
+  return { ...s, primaryTag };
+});
 const schoolByKey = new Map(schools.map((s) => [s.key, s]));
 
 // 按 themes[].schools 顺序整理
@@ -57,10 +65,13 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
     </header>
 
     <div class="drag-reorder" data-reorder-kind="themes-order">
-    {themed.map((t) => (
-      <section class="mb-8" data-theme-key={t.key}>
+    {themed.map((t, themeIdx) => (
+      <section
+        class:list={['theme-section', themeIdx > 0 && 'theme-section-divider']}
+        data-theme-key={t.key}
+      >
         <div
-          class="theme-header-row group mb-3 flex items-baseline justify-between gap-3 cursor-pointer rounded -mx-2 px-2 py-1 hover:bg-bg-tertiary/30 transition-colors"
+          class="theme-header-row group mb-3.5 flex items-baseline justify-between gap-3 cursor-pointer rounded -mx-2 px-2 py-1.5 hover:bg-bg-tertiary/30 transition-colors"
           data-theme-toggle={t.key}
           role="button"
           aria-expanded="true"
@@ -107,7 +118,7 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
         </div>
         <div data-theme-content={t.key}>
         <div
-          class="drag-reorder grid grid-cols-1 md:grid-cols-2 gap-2"
+          class="drag-reorder school-card-grid grid grid-cols-1 md:grid-cols-2 gap-3"
           data-reorder-kind="discipline-schools"
           data-theme-key={t.key}
         >
@@ -115,14 +126,19 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
             <a
               href={`/${discipline}/${s.key}`}
               data-school-key={s.key}
-              class="block p-3 rounded border bg-bg-primary hover:shadow-card transition-shadow"
+              class="school-card group block p-3.5 pl-3 rounded-md border border-l-[3px] bg-bg-primary hover:bg-bg-secondary hover:border-text-quaternary transition-colors no-underline"
+              style={s.primaryTag ? `border-left-color:${s.primaryTag.color}` : ''}
             >
-              <div class="flex items-baseline justify-between">
-                <h3 class="text-sm font-semibold text-primary">{s.title_zh}</h3>
-                <span class="text-xs text-quaternary">{s.kp_count}</span>
+              <div class="flex items-baseline justify-between gap-2">
+                <h3 class="text-sm font-semibold text-primary leading-snug">{s.title_zh}</h3>
+                <span
+                  class="school-card-count shrink-0 inline-flex items-center justify-center min-w-[20px] h-[18px] px-1.5 rounded-full text-[10.5px] font-medium tabular-nums"
+                  style={s.primaryTag ? `background:${s.primaryTag.color}1a;color:${s.primaryTag.color}` : 'background:var(--color-bg-tertiary);color:var(--color-text-quaternary)'}
+                  title={`${s.kp_count} 个核心概念`}
+                >{s.kp_count}</span>
               </div>
-              {s.title_en && <div class="text-xs text-tertiary mt-0.5">{s.title_en}</div>}
-              {s.era && <div class="text-xs text-quaternary mt-0.5">{s.era}</div>}
+              {s.title_en && <div class="text-xs text-tertiary mt-1">{s.title_en}</div>}
+              {s.era && <div class="text-[11px] text-quaternary mt-0.5">{s.era}</div>}
             </a>
           ))}
         </div>
@@ -156,12 +172,19 @@ const orphanSchools = schools.filter((s) => !accountedKeys.has(s.key));
     {orphanSchools.length > 0 && (
       <section class="mb-8">
         <h2 class="section-eyebrow mb-3">未分组</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           {orphanSchools.map((s) => (
-            <a href={`/${discipline}/${s.key}`} class="block p-3 rounded border bg-bg-primary hover:shadow-card transition-shadow">
-              <div class="flex items-baseline justify-between">
+            <a
+              href={`/${discipline}/${s.key}`}
+              class="school-card block p-3.5 pl-3 rounded-md border border-l-[3px] bg-bg-primary hover:bg-bg-secondary transition-colors no-underline"
+              style={s.primaryTag ? `border-left-color:${s.primaryTag.color}` : ''}
+            >
+              <div class="flex items-baseline justify-between gap-2">
                 <h3 class="text-sm font-semibold text-primary">{s.title_zh}</h3>
-                <span class="text-xs text-quaternary">{s.kp_count}</span>
+                <span
+                  class="shrink-0 inline-flex items-center justify-center min-w-[20px] h-[18px] px-1.5 rounded-full text-[10.5px] font-medium tabular-nums"
+                  style={s.primaryTag ? `background:${s.primaryTag.color}1a;color:${s.primaryTag.color}` : 'background:var(--color-bg-tertiary);color:var(--color-text-quaternary)'}
+                >{s.kp_count}</span>
               </div>
             </a>
           ))}
