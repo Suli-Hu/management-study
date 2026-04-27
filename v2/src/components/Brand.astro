@@ -1,51 +1,141 @@
 ---
 /**
- * v0.5.61 Brand mark — 全科笔记 / POLYMATH NOTES logo
+ * v0.5.71 Brand — 全科笔记 mark + wordmark 体系
  *
- * 资源（v2/public/，已裁切：1090×440，content bbox + 30px 边距）：
- *   - logo-light.png — 浅底版本（黑字 + 灰副标）
- *   - logo-dark.png  — 深底版本（米白字 + 灰副标）
+ * 资源（v2/public/brand/）：
+ *   - quanke-mark.svg          浅底用（黑色 mark）
+ *   - quanke-mark-dark.svg     深底用（米白 mark）
+ *   - quanke-mark-{32..512}.png 多尺寸 PNG（外用 / PWA）
  *
- * 切换：class-based dark mode（html.dark）— 两张 <img> 用 dark:block / dark:hidden 切，
- *       同一时刻只显示 1 个，视觉上是 1 个 logo 位。
+ * 三种 variant（按设计 spec）：
+ *   1. compact — nav / 面包屑（mark + 全科笔记，无英文副标）
+ *   2. lockup  — 首页 hero / 登录 / about（mark + 全科笔记 + POLYMATH NOTES）
+ *   3. mark    — 仅 mark（favicon、空状态、折叠 nav；不在普通页面用）
  *
- * v0.5.61 修：之前 scoped style `.brand-img { display: block }` 比 Tailwind `.hidden`
- *            specificity 高（Astro 自动加 [data-astro-cid-*]）→ `hidden` 失效 → 两张并排显示。
- *            去掉冲突的 display 规则，flex container 已经处理布局。
+ * 深色模式：html.dark → 两张 <img> 通过 dark:hidden / hidden dark:block 切换。
  *
  * 用法：
- *   <Brand href="/" size="sm" />     ← Nav 顶（高 32px）
- *   <Brand href="/" size="lg" />     ← 首页 hero（高 80px）
+ *   <Brand href="/" variant="compact" />              ← nav（默认 26px mark + 16px 字）
+ *   <Brand href="/" variant="lockup" markSize={64} /> ← 首页 hero
+ *   <Brand variant="mark" markSize={20} />            ← 仅 mark（无文字）
+ *
+ * spec 验收：
+ *   - nav lockup 单行 ≤ 28px
+ *   - "POLYMATH NOTES" 仅 lockup 出现
+ *   - 深 / 浅背景 mark 颜色都对
  */
 
 interface Props {
   href?: string;
-  size?: 'sm' | 'lg';
+  variant?: 'compact' | 'lockup' | 'mark';
+  /** mark 边长 px。compact 默认 26 / lockup 默认 64 / mark 默认 24 */
+  markSize?: number;
   class?: string;
+  /** lockup 时把 wordmark 字号也给一个手动覆盖 */
+  wordmarkPx?: number;
 }
 
-const { href = '/', size = 'sm', class: classProp = '' } = Astro.props;
+const {
+  href,
+  variant = 'compact',
+  markSize,
+  class: classProp = '',
+  wordmarkPx,
+} = Astro.props;
 
-// 高度走 Tailwind size，宽度按 PNG 比例（裁切后 1090:440 ≈ 2.48:1）自动
-const heights: Record<typeof size, string> = {
-  sm: 'h-8',     // 32px — nav 48px 行高
-  lg: 'h-20',    // 80px — 首页 hero
-};
+const _markSize = markSize ?? (variant === 'lockup' ? 64 : variant === 'mark' ? 24 : 26);
+const _wordmarkPx = wordmarkPx ?? (variant === 'lockup' ? 36 : 16);
+
+// mark-only 时不渲染 <a> 包裹（避免空可点击区域）；mark 通常作 favicon / inline 装饰
+const Tag = href ? 'a' : 'span';
+const ariaLabel = variant === 'lockup' ? '全科笔记 · Polymath Notes' : '全科笔记';
 ---
 
-<a href={href} class:list={['brand-mark inline-flex items-center no-underline leading-none', classProp]} aria-label="全科笔记 · Polymath Notes" title="全科笔记">
+<Tag
+  {...(href ? { href } : {})}
+  class:list={[
+    'brand',
+    `brand-${variant}`,
+    classProp,
+  ]}
+  aria-label={ariaLabel}
+  title="全科笔记"
+>
   <img
-    src="/logo-light.png"
-    alt="全科笔记"
-    width="1090" height="440"
-    class:list={['w-auto dark:hidden', heights[size]]}
+    src="/brand/quanke-mark.svg"
+    alt={variant === 'mark' ? '全科笔记' : ''}
+    width={_markSize}
+    height={_markSize}
+    class="brand-mark dark:hidden"
     draggable="false"
   />
   <img
-    src="/logo-dark.png"
-    alt="全科笔记"
-    width="1090" height="440"
-    class:list={['w-auto hidden dark:block', heights[size]]}
+    src="/brand/quanke-mark-dark.svg"
+    alt={variant === 'mark' ? '全科笔记' : ''}
+    width={_markSize}
+    height={_markSize}
+    class="brand-mark hidden dark:block"
     draggable="false"
   />
-</a>
+  {variant !== 'mark' && (
+    <span class="brand-text">
+      <span class="brand-cn" style={`font-size:${_wordmarkPx}px`}>全科笔记</span>
+      {variant === 'lockup' && (
+        <span class="brand-en">POLYMATH NOTES</span>
+      )}
+    </span>
+  )}
+</Tag>
+
+<style>
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    line-height: 1;
+    color: inherit;
+  }
+  .brand:hover { opacity: 0.85; }
+
+  /* === Mark === */
+  .brand-mark { display: block; flex-shrink: 0; }
+
+  /* === Compact: nav / breadcrumb === */
+  .brand-compact { gap: 10px; }
+  .brand-compact .brand-text { display: inline-flex; }
+  .brand-compact .brand-cn {
+    font-family: "Noto Serif SC", "Songti SC", serif;
+    font-weight: 700;
+    color: #0a0a0a;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  :global(html.dark) .brand-compact .brand-cn { color: #fafaf9; }
+
+  /* === Lockup: hero / login / about === */
+  .brand-lockup { gap: 14px; align-items: center; }
+  .brand-lockup .brand-text {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 8px;
+    line-height: 1;
+  }
+  .brand-lockup .brand-cn {
+    font-family: "Noto Serif SC", "Songti SC", serif;
+    font-weight: 700;
+    color: #0a0a0a;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  :global(html.dark) .brand-lockup .brand-cn { color: #fafaf9; }
+  .brand-lockup .brand-en {
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    color: #a3a3a3;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", system-ui, sans-serif;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  :global(html.dark) .brand-lockup .brand-en { color: #a3a3a3; }
+</style>

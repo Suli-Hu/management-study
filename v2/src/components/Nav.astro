@@ -54,7 +54,7 @@ const isAdmin = currentDiscipline ? Astro.locals.canEdit(currentDiscipline) : fa
   <div class="tn-row">
     {/* 左：Logo + breadcrumb */}
     <div class="tn-brand-wrap">
-      <Brand href={brandHref} size="sm" />
+      <Brand href={brandHref} variant="compact" />
       {currentDiscipline && disciplineTitle && (
         <Fragment>
           <span class="tn-chev">›</span>

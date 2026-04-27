@@ -22,7 +22,7 @@ export const KpId = z.string().regex(/^[a-z]{1,3}\d+$/, 'KP id 必须是小写�
 
 export const SchoolKey  = z.string().regex(/^[a-z][a-z0-9_]*$/, '学派 key 必须是小写蛇形');
 export const ScholarKey = z.string().regex(/^[a-z][a-z0-9_]*$/, '学者 key 必须是小写蛇形');
-export const DisciplineKey = z.enum(['keiei', 'marketing', 'finance', 'hr', 'strategy_g', 'org_g', 'other'])
+export const DisciplineKey = z.enum(['keiei', 'marketing', 'sociology', 'finance', 'hr', 'strategy_g', 'org_g', 'other'])
   .describe('学科 key — 新增学科时在这里加 enum 值');
 
 /** ISO 8601 UTC timestamp（如 "2026-04-23T01:00:00.000Z"） */
