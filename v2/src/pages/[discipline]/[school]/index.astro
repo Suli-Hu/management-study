@@ -79,6 +79,9 @@ const schoolScholars = schoolScholarsResult.results ?? [];
 const requestedKpId = Astro.url.searchParams.get('kp');
 const selectedKpId = requestedKpId ?? kps[0]?.id ?? null;
 
+// 当前语言（?lang=ja 切日文，否则中文）
+const langParam = Astro.url.searchParams.get('lang');
+
 type SelectedKp = {
   id: string; title_zh: string; title_en: string | null; title_ja: string | null;
   year: string; body_zh: string; body_ja: string | null;
@@ -111,6 +114,23 @@ if (selectedKpId) {
     selectedScholars = scRes.results ?? [];
   }
 }
+
+// 选中 KP 的实际显示语言（仅当该 KP 有 body_ja 时 ?lang=ja 才生效）
+const selectedLang: 'zh' | 'ja' =
+  langParam === 'ja' && selectedKp?.body_ja ? 'ja' : 'zh';
+const selectedBody: string | null = selectedKp
+  ? (selectedLang === 'ja' ? selectedKp.body_ja! : selectedKp.body_zh)
+  : null;
+const selectedTitle: string | null = selectedKp
+  ? (selectedLang === 'ja' ? (selectedKp.title_ja ?? selectedKp.title_zh) : selectedKp.title_zh)
+  : null;
+
+// 切换 href（保留 ?kp= 等其他 query）
+const langToggleParams = new URLSearchParams(Astro.url.search);
+if (selectedLang === 'zh') langToggleParams.set('lang', 'ja');
+else langToggleParams.delete('lang');
+const langToggleQs = langToggleParams.toString();
+const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : Astro.url.pathname;
 
 const canEdit = Astro.locals.canEdit(discipline);
 ---
@@ -260,7 +280,21 @@ const canEdit = Astro.locals.canEdit(discipline);
           <>
             <header class="kp-head-bar">
               <div class="kp-head-bar-body">
-                <h2 class="text-xl font-semibold leading-tight">{selectedKp.title_zh}</h2>
+                <div class="flex items-start gap-3">
+                  <h2 class="text-xl font-semibold leading-tight flex-1">{selectedTitle}</h2>
+                  {selectedKp.body_ja && (
+                    <a
+                      href={langToggleHref}
+                      class:list={['lang-toggle shrink-0', selectedLang === 'ja' && 'is-active']}
+                      data-lang-toggle
+                      style={`--accent:${accentHex}`}
+                      title="切换日语 / 中文 (Cmd/Ctrl + J)"
+                      aria-pressed={selectedLang === 'ja'}
+                    >
+                      {selectedLang === 'zh' ? '日本語' : '中文'}
+                    </a>
+                  )}
+                </div>
                 <div class="text-xs text-tertiary mt-2 flex flex-wrap items-baseline gap-2">
                   {selectedScholars.map((s) => (
                     <a href={`/${discipline}/scholars/${s.key}`} class="font-semibold hover:underline">
@@ -270,10 +304,10 @@ const canEdit = Astro.locals.canEdit(discipline);
                   {selectedKp.year && <span class="text-quaternary">{shortYear(selectedKp.year)}</span>}
                 </div>
                 {selectedKp.title_en && <div class="text-xs text-quaternary italic mt-1">{selectedKp.title_en}</div>}
-                {selectedKp.title_ja && <div class="text-xs text-tertiary mt-1">{selectedKp.title_ja}</div>}
+                {selectedKp.title_ja && selectedLang === 'zh' && <div class="text-xs text-tertiary mt-1">{selectedKp.title_ja}</div>}
               </div>
             </header>
-            <div class="mt-6" set:html={renderBodyForSchool({ fmt: selectedKp.format, body: selectedKp.body_zh, accentHex })} />
+            <div class="mt-6" set:html={renderBodyForSchool({ fmt: selectedKp.format, body: selectedBody!, accentHex })} />
             <div set:html={renderEvalModule(selectedEvalContent)} />
           </>
         ) : (
@@ -289,6 +323,34 @@ const canEdit = Astro.locals.canEdit(discipline);
 
 <script is:inline src="/split-pane.js"></script>
 <script is:inline src="/admin-tools.js"></script>
+
+<script is:inline>
+  // Cmd/Ctrl + J：切换日语 / 中文（V1 search.js:344 移植）
+  (function () {
+    function isEditableTarget(t) {
+      if (!t) return false;
+      var tag = t.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+      if (t.isContentEditable) return true;
+      return false;
+    }
+    document.addEventListener('keydown', function (e) {
+      if (!(e.metaKey || e.ctrlKey)) return;
+      if (!e.key || e.key.toLowerCase() !== 'j') return;
+      if (isEditableTarget(e.target)) return;
+      // 优先右栏（学派详情 split-pane）
+      var btn = document.querySelector('.kp-detail-pane [data-lang-toggle]')
+        || document.querySelector('[data-lang-toggle]');
+      if (!btn) return;
+      e.preventDefault();
+      btn.classList.add('is-pulse');
+      setTimeout(function () {
+        btn.classList.remove('is-pulse');
+        btn.click();
+      }, 90);
+    });
+  })();
+</script>
 
 {canEdit && (
   <div data-reorder-bootstrap="school-concepts" class="hidden"></div>

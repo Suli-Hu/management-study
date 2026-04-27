@@ -61,6 +61,13 @@ const scholars = scholarsResult.results ?? [];
 const lang = (Astro.url.searchParams.get('lang') === 'ja' && kp.body_ja) ? 'ja' : 'zh';
 const body = lang === 'ja' ? kp.body_ja! : kp.body_zh;
 const title = lang === 'ja' ? (kp.title_ja ?? kp.title_zh) : kp.title_zh;
+
+// lang toggle href（保留其他 query 参数）
+const langToggleParams = new URLSearchParams(Astro.url.search);
+if (lang === 'zh') langToggleParams.set('lang', 'ja');
+else langToggleParams.delete('lang');
+const langToggleQs = langToggleParams.toString();
+const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : Astro.url.pathname;
 ---
 
 <Layout title={kp.title_zh} currentDiscipline={discipline} currentSection="kps">
@@ -88,11 +95,15 @@ const title = lang === 'ja' ? (kp.title_ja ?? kp.title_zh) : kp.title_zh;
       {kp.title_en && <div class="text-xs text-quaternary italic mt-1">{kp.title_en}</div>}
       {kp.title_ja && lang === 'zh' && <div class="text-xs text-tertiary mt-1">{kp.title_ja}</div>}
 
-      <div class="flex gap-2 mt-3">
+      <div class="flex gap-2 mt-3 items-center">
         {kp.body_ja && (
           <a
-            href={lang === 'zh' ? `?lang=ja` : Astro.url.pathname}
-            class="chip border-quaternary"
+            href={langToggleHref}
+            class:list={['lang-toggle', lang === 'ja' && 'is-active']}
+            data-lang-toggle
+            style={`--accent:${accentHex}`}
+            title="切换日语 / 中文 (Cmd/Ctrl + J)"
+            aria-pressed={lang === 'ja'}
           >
             {lang === 'zh' ? '日本語' : '中文'}
           </a>
@@ -106,3 +117,30 @@ const title = lang === 'ja' ? (kp.title_ja ?? kp.title_zh) : kp.title_zh;
     <article class="kp-body text-secondary" set:html={renderBody({ fmt: kp.format, body, accentHex })} />
   </main>
 </Layout>
+
+<script is:inline>
+  // Cmd/Ctrl + J：切换日语 / 中文（V1 search.js:344 移植）
+  (function () {
+    function isEditableTarget(t) {
+      if (!t) return false;
+      var tag = t.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+      if (t.isContentEditable) return true;
+      return false;
+    }
+    document.addEventListener('keydown', function (e) {
+      if (!(e.metaKey || e.ctrlKey)) return;
+      if (!e.key || e.key.toLowerCase() !== 'j') return;
+      if (isEditableTarget(e.target)) return;
+      var btn = document.querySelector('[data-lang-toggle]');
+      if (!btn) return;
+      e.preventDefault();
+      // 视觉反馈：脉冲一下再跳转（V1 jaBtn.style.transform scale(1.2)）
+      btn.classList.add('is-pulse');
+      setTimeout(function () {
+        btn.classList.remove('is-pulse');
+        btn.click();
+      }, 90);
+    });
+  })();
+</script>

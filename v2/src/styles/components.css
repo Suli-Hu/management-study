@@ -907,3 +907,36 @@ mark {
   margin: 0 auto;
   padding: 28px 28px 40px;
 }
+
+
+/* ============================================================
+ * 日语 / 中文 切换按钮（V1 .pill-btn.pill-sm.ja-toggle 移植）
+ * 用法：<a class="lang-toggle" data-lang-toggle ...>日本語|中文</a>
+ *   - 默认：accent 描边胶囊，opacity 0.65
+ *   - hover：opacity 1
+ *   - .is-active（lang === 'ja'）：accent 实底 + 白字
+ * 配套 Cmd/Ctrl+J 全局快捷键（详见各页 inline script）
+ * ============================================================ */
+.lang-toggle {
+  display: inline-flex; align-items: center;
+  padding: 3px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--accent, var(--color-text-tertiary));
+  background: transparent;
+  color: var(--accent, var(--color-text-tertiary));
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .03em;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+  opacity: 0.65;
+  transition: background .2s, color .2s, opacity .2s, transform .2s, border-color .2s;
+}
+.lang-toggle:hover { opacity: 1; }
+.lang-toggle.is-active {
+  background: var(--accent, var(--color-text-tertiary));
+  color: #fff;
+  opacity: 1;
+}
+.lang-toggle.is-pulse { transform: scale(1.2); transition: transform .08s ease-out; }
