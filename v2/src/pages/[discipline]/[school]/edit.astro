@@ -42,18 +42,13 @@ if (!exists) return Astro.redirect('/404');
           <input name="title_ja" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
         </div>
       </section>
-      <section class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">时代</label>
-          <input name="era" type="text" placeholder="1947– 变革管理理论传统" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">学派组</label>
-          <select name="themeKey" required class="w-full px-3 py-2 rounded-md border text-sm bg-bg-primary">
-            <option value="">— 请选择 —</option>
-          </select>
-        </div>
+      <section>
+        <label class="block text-xs font-semibold text-tertiary mb-1">时代</label>
+        <input name="era" type="text" placeholder="1947– 变革管理理论传统" class="w-full px-3 py-2 rounded-md border text-sm" />
       </section>
+      {/* v0.5.64: 学派组 (themeKey) 移出编辑表单 — schema 仍 required，
+          保存时从 originalThemeKey 透传，UI 不暴露给 admin 误改。
+          要重新分组学派组结构应该走 discipline.themes_json 编辑面板。 */}
 
       <section>
         <label class="block text-xs font-semibold text-tertiary mb-1">标签</label>
@@ -101,6 +96,7 @@ if (!exists) return Astro.redirect('/404');
   let baseSha = null;
   let originalCreatedAt = null;
   let originalConcepts = [];
+  let originalThemeKey = '';   // v0.5.64: themeKey 不再走 form input，加载时缓存、保存时透传
   let tagPicker = null;
 
   function setStatus(msg, kind = 'info') {
@@ -110,17 +106,6 @@ if (!exists) return Astro.redirect('/404');
       kind === 'success' ? 'bg-badge-meaning' : 'bg-bg-secondary text-tertiary'
     }`;
     status.classList.remove('hidden');
-  }
-
-  function populateThemeOptions(themes) {
-    const sel = form.themeKey;
-    while (sel.options.length > 1) sel.remove(1);
-    for (const t of themes ?? []) {
-      const opt = document.createElement('option');
-      opt.value = t.key;
-      opt.textContent = t.title?.zh ?? t.key;
-      sel.appendChild(opt);
-    }
   }
 
   function applyDeleteGate(kpCount) {
@@ -141,16 +126,15 @@ if (!exists) return Astro.redirect('/404');
       setStatus(`加载失败：${res.status} ${err.reason ?? ''}`, 'error');
       return;
     }
-    const { json: s, base_sha, themes, tag_library, kp_count } = await res.json();
+    const { json: s, base_sha, tag_library, kp_count } = await res.json();
     baseSha = base_sha;
     originalCreatedAt = s.createdAt;
     originalConcepts = s.concepts ?? [];
-    populateThemeOptions(themes);
+    originalThemeKey = s.themeKey ?? '';   // v0.5.64: 缓存原值，保存时透传
     form.title_zh.value = s.title?.zh ?? '';
     form.title_en.value = s.title?.en ?? '';
     form.title_ja.value = s.title?.ja ?? '';
     form.era.value = s.era ?? '';
-    form.themeKey.value = s.themeKey ?? '';
     form.summary_zh.value = s.summary?.zh ?? '';
 
     const initialTag = Array.isArray(s.tags) && s.tags.length > 0 ? s.tags[0] : null;
@@ -178,7 +162,7 @@ if (!exists) return Astro.redirect('/404');
       title: buildI18n(form.title_zh.value, form.title_en.value, form.title_ja.value),
       era: form.era.value.trim(),
       summary: { zh: form.summary_zh.value },
-      themeKey: form.themeKey.value.trim(),
+      themeKey: originalThemeKey,   // v0.5.64: 透传原值，UI 不再可改
       tags: tagKey ? [tagKey] : [],
       concepts: originalConcepts,
       createdAt: originalCreatedAt,
