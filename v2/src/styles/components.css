@@ -634,11 +634,14 @@ details.eval {
   border-bottom: 1px solid var(--color-border);
 }
 /* v0.5.54: 去 .optA-hero-v2-row + .optA-tag-badge（demo spec 反对顶部 chip）；
-   ✎ 改绝对定位右上角，与标题/en/meta 自然垂直流共存 */
-.optA-hero-edit-v2 {
+   v0.5.55: 学派页/学者页共用 .optA-hero-actions-v2 容器（学者页带 ✎ + ☆ 双按钮）*/
+.optA-hero-actions-v2 {
   position: absolute;
   top: 12px;
-  right: 14px;
+  right: 12px;
+  display: flex;
+  gap: 2px;
+  z-index: 1;
 }
 .optA-hero-v2-title {
   font-size: 26px; font-weight: 700;
@@ -646,8 +649,8 @@ details.eval {
   letter-spacing: -0.01em;
   line-height: 1.15;
   margin: 0 0 6px;
-  /* v0.5.54 ✎ 绝对定位 36px @ right:14 — 留 52px 防标题撞按钮 */
-  padding-right: 52px;
+  /* v0.5.55 hero-actions 绝对定位（学派 1 个 / 学者 2 个 36px hit + 12gap）— 留 84px 防标题撞按钮 */
+  padding-right: 84px;
   word-break: break-word;
 }
 .optA-hero-v2-en {
@@ -697,6 +700,30 @@ details.eval {
   color: var(--color-text-secondary);
   text-wrap: pretty;
 }
+
+/* v0.5.55 学者页 tab panel 专用 */
+.optA-profile-block { padding: 14px 18px 8px; }
+.optA-nobel-detail {
+  margin: 8px 18px 18px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--color-bg-warm);
+  font-size: 12.5px; line-height: 1.7;
+  color: var(--color-text-secondary);
+}
+.optA-nobel-title { font-weight: 600; margin-bottom: 4px; color: #b07d20; }
+.optA-lang-link {
+  font-size: 12px; color: var(--color-text-tertiary);
+  text-decoration: none;
+  padding: 4px 10px; border-radius: 6px;
+  transition: background .12s, color .12s;
+}
+.optA-lang-link:hover { background: var(--color-bg-secondary); color: var(--color-text-primary); }
+.optA-contribution :where(p, ul, ol) { margin: 0 0 0.8em; }
+.optA-contribution :where(ul, ol) { padding-left: 1.5em; }
+.optA-contribution :where(li) { margin-bottom: 0.3em; }
+.optA-contribution :where(strong, b) { color: var(--color-text-primary); font-weight: 600; }
+.optA-contribution :where(em, i) { font-style: italic; }
 
 /* ---- scholars (v0.5.51 重写 — designer spec) ----
    排版：first 灰小 + last 黑粗加重（扫读靠 last）+ cn 深灰 一行

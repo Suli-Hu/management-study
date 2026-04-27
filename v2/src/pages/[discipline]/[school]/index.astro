@@ -130,7 +130,7 @@ const canEdit = Astro.locals.canEdit(discipline);
   title={sch.title_zh}
   currentDiscipline={discipline}
   currentSection="schools"
-  currentSchoolTitle={sch.title_zh}
+  currentLeafTitle={sch.title_zh}
   fullHeight
 >
   <div class="split" style={`--accent:${accentHex};--tone-hex:${accentHex}`}>
@@ -138,15 +138,17 @@ const canEdit = Astro.locals.canEdit(discipline);
     {/* ========== 左栏 ========== */}
     <aside class="left optA-stack">
 
-      {/* v0.5.54 学派身份卡（demo spec）—— 大字 + en + meta；去 chip badge，✎ 绝对定位右上 */}
+      {/* v0.5.54 学派身份卡（demo spec）—— 大字 + en + meta；v0.5.55 ✎ 走共享 hero-actions */}
       <div class="optA-hero-v2">
         {canEdit && (
-          <a
-            href={editHref(`/${discipline}/${sch.key}/edit`, Astro.url.pathname)}
-            class="hero-icon-btn optA-hero-edit-v2"
-            aria-label="编辑此学派"
-            title="编辑"
-          >✎</a>
+          <div class="optA-hero-actions-v2">
+            <a
+              href={editHref(`/${discipline}/${sch.key}/edit`, Astro.url.pathname)}
+              class="hero-icon-btn"
+              aria-label="编辑此学派"
+              title="编辑"
+            >✎</a>
+          </div>
         )}
         <h1 class="optA-hero-v2-title">{sch.title_zh}</h1>
         {sch.title_en && <div class="optA-hero-v2-en">{sch.title_en}</div>}

@@ -1,14 +1,19 @@
 ---
 /**
- * 学者详情页 — OptionA「紧凑双栏」(v0.5.6 设计稿落地)
+ * 学者详情页 — v0.5.55 redesign（mirror 学派页 v0.5.54）
  *
- * 与学派详情同骨架（split + optA-* + kp-head-bar + EvalModule）。
- * 左栏：学者 hero（学者 eyebrow + H1 EN + 中日 + lifespan + ✎/☆）
- *      → 基本信息 table（国籍/领域/机构/出身/获奖）
- *      → 所属学派 N（chip + 学派 dot）
- *      → 主要贡献（可折叠 + lang switch）
- *      → 知识贡献 N（KP 卡片列表，active state）
- * 右栏：3px 顶 strip + kp-head-bar + renderBodyForSchool + renderEvalModule
+ * 左栏：optA-hero-v2（name 大字 + zh/ja + lifespan，✎+☆ 绝对右上）
+ *      → 4-tab nav sticky 顶部：个人资料 / 所属学派 / 学术成就 / 关联知识
+ *      → 4 tab panels（default = 个人资料）
+ *
+ * 右栏：3px 顶 strip + kp-head-bar + renderBodyForSchool + renderEvalModule（不变）
+ *
+ * 兼容保留：
+ *   - split-pane.js (`.kp-list-item[data-kp-id]` + `[data-kp-link][data-kp-wide-href]`)
+ *   - admin-tools.js
+ *   - drag-reorder-client (scholar-kps)
+ *   - star toggle (localStorage)
+ *   - ?lang=ja 同时控制 contribution + 选中 KP body
  */
 import Layout from '~/layouts/Layout.astro';
 import EmptyRight from '~/components/EmptyRight.astro';
@@ -55,7 +60,6 @@ if (!scholar) return Astro.redirect('/404');
 const scholarTags = JSON.parse(scholar.tags_json) as string[];
 const accentHex = tagColor({ tags: scholarTags }, tagLibrary);
 
-// 关联学派
 const schoolsResult = await db
   .prepare(`
     SELECT s.key, s.title_zh, s.title_en, s.theme_key
@@ -68,10 +72,7 @@ const schoolsResult = await db
   .all<{ key: string; title_zh: string; title_en: string | null; theme_key: string }>();
 const schools = schoolsResult.results ?? [];
 
-// 学者关联 KP
-// v0.5.33: ORDER BY ks.position 让 scholar.kpsOrder（拖动后保存）生效；
-// 没拖过的学者 sync 时 position = 1000+i（KP.scholars enumeration），
-// 同位置的 fallback 到 year/id 走稳定排序。
+// v0.5.33: ORDER BY ks.position 让 scholar.kpsOrder（拖动后保存）生效
 const kpsResult = await db
   .prepare(`
     SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year
@@ -86,7 +87,6 @@ const kpsResult = await db
   .all<{ id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string }>();
 const kps = kpsResult.results ?? [];
 
-// 选中 KP（?kp= 或 list[0]）
 const requestedKpId = Astro.url.searchParams.get('kp');
 const selectedKpId = requestedKpId ?? kps[0]?.id ?? null;
 type SelectedKp = {
@@ -123,7 +123,7 @@ const langParam = Astro.url.searchParams.get('lang');
 const lang = (langParam === 'ja' && scholar.contribution_ja) ? 'ja' : 'zh';
 const contribution = lang === 'ja' ? scholar.contribution_ja! : scholar.contribution_zh;
 
-// v0.5.39: 跟学派页同款，给选中 KP 也加 lang-toggle (?lang= 同时控制学者贡献 + 选中 KP)
+// v0.5.39: ?lang= 同时控制学者贡献 + 选中 KP body
 const selectedLang: 'zh' | 'ja' =
   langParam === 'ja' && selectedKp?.body_ja ? 'ja' : 'zh';
 const selectedBody: string | null = selectedKp
@@ -137,9 +137,17 @@ if (selectedLang === 'zh') langToggleParams.set('lang', 'ja');
 else langToggleParams.delete('lang');
 const langToggleQs = langToggleParams.toString();
 const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : Astro.url.pathname;
+
+// 学者贡献 lang 切换 href（独立于右栏 KP lang，因为 contribution 切换 ja 时 ?lang=ja
+// 也会反过来改右栏 selectedLang。复用 selectedLang 切换 href）
+const contributionLangHref = langToggleHref;
+
 const lifespanDisplay = (scholar.born && scholar.died)
   ? `${scholar.born} — ${scholar.died}`
   : (scholar.born || scholar.died || scholar.lifespan || '');
+
+const heroSubLine = [scholar.name_zh, scholar.name_ja].filter(Boolean).join(' · ');
+const hasProfileInfo = !!(scholar.nationality || scholar.flag || scholar.field || scholar.institution || scholar.origin || scholar.nobel_year || scholar.nobel_detail);
 
 const canEdit = Astro.locals.canEdit(discipline);
 ---
@@ -148,156 +156,180 @@ const canEdit = Astro.locals.canEdit(discipline);
   title={scholar.name_en ?? scholar.name_zh}
   currentDiscipline={discipline}
   currentSection="scholars"
+  currentLeafTitle={scholar.name_zh}
   fullHeight
 >
-  <div class="split" style={`--accent:${accentHex}`}>
+  <div class="split" style={`--accent:${accentHex};--tone-hex:${accentHex}`}>
 
     {/* ========== 左栏 ========== */}
-    <aside class="left">
+    <aside class="left optA-stack">
 
-      {/* Hero */}
-      <div class="optA-hero">
-        <div class="flex items-baseline justify-between gap-3">
-          <div class="flex-1 min-w-0">
-            <div class="optA-eyebrow">学者</div>
-            <h1 class="optA-hero-title">{scholar.name_en ?? scholar.name_zh}</h1>
-            <div class="text-xs text-tertiary mt-1">
-              {scholar.name_zh}
-              {scholar.name_ja && <span class="text-quaternary"> · {scholar.name_ja}</span>}
-            </div>
-            {lifespanDisplay && (
-              <div class="text-xs text-quaternary mt-1">{lifespanDisplay}</div>
-            )}
-          </div>
-          <div class="shrink-0 flex items-center gap-0.5">
-            {canEdit && (
-              <a
-                href={editHref(`/${discipline}/scholars/${scholar.key}/edit`, Astro.url.pathname)}
-                class="hero-icon-btn"
-                aria-label="编辑此学者"
-                title="编辑"
-              >✎</a>
-            )}
-            <button
-              id="scholar-star-toggle"
-              type="button"
-              data-scholar-key={scholar.key}
-              aria-label="收藏学者"
-              aria-pressed="false"
+      {/* v0.5.55 学者身份卡 — name_en 大字 + zh/ja + lifespan，✎ + ☆ 绝对右上 */}
+      <div class="optA-hero-v2">
+        <div class="optA-hero-actions-v2">
+          {canEdit && (
+            <a
+              href={editHref(`/${discipline}/scholars/${scholar.key}/edit`, Astro.url.pathname)}
               class="hero-icon-btn"
-              title="收藏"
-            ><span aria-hidden="true">☆</span></button>
-          </div>
+              aria-label="编辑此学者"
+              title="编辑"
+            >✎</a>
+          )}
+          <button
+            id="scholar-star-toggle"
+            type="button"
+            data-scholar-key={scholar.key}
+            aria-label="收藏学者"
+            aria-pressed="false"
+            class="hero-icon-btn"
+            title="收藏"
+          ><span aria-hidden="true">☆</span></button>
         </div>
+        <h1 class="optA-hero-v2-title">{scholar.name_en ?? scholar.name_zh}</h1>
+        {heroSubLine && <div class="optA-hero-v2-en">{heroSubLine}</div>}
+        {lifespanDisplay && <div class="optA-hero-v2-meta">{lifespanDisplay}</div>}
       </div>
 
-      {/* 基本信息 — info table */}
-      {(lifespanDisplay || scholar.nationality || scholar.field || scholar.institution || scholar.origin || scholar.nobel_year) && (
-        <section class="optA-block" style="padding:0 8px 12px">
-          <table class="info-table">
-            <tbody>
-              {(scholar.nationality || scholar.flag) && (
-                <tr>
-                  <td class="label">国籍</td>
-                  <td class="val">
-                    {scholar.flag && <span class="mr-1">{scholar.flag}</span>}
-                    {scholar.nationality}
-                  </td>
-                </tr>
-              )}
-              {scholar.field && (
-                <tr>
-                  <td class="label">领域</td>
-                  <td class="val">{scholar.field}</td>
-                </tr>
-              )}
-              {scholar.institution && (
-                <tr>
-                  <td class="label">机构</td>
-                  <td class="val">{scholar.institution}</td>
-                </tr>
-              )}
-              {scholar.origin && (
-                <tr>
-                  <td class="label">出身</td>
-                  <td class="val">{scholar.origin}</td>
-                </tr>
-              )}
-              {scholar.nobel_year && (
-                <tr>
-                  <td class="label">获奖</td>
-                  <td class="val" style="color:#b07d20;font-weight:600">🏅 {scholar.nobel_year}</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+      {/* v0.5.55 4-tab nav（mobile + PC 共用，sticky 顶部）*/}
+      <nav class="optA-tabs" role="tablist" aria-label="学者内容切换">
+        {hasProfileInfo && (
+          <button
+            class="optA-tab-btn"
+            type="button"
+            data-tab-btn="profile"
+            data-active
+            role="tab"
+            aria-selected="true"
+          >个人资料</button>
+        )}
+        <button
+          class="optA-tab-btn"
+          type="button"
+          data-tab-btn="schools"
+          role="tab"
+          aria-selected="false"
+        >
+          所属学派
+          {schools.length > 0 && <span class="optA-tab-count">{schools.length}</span>}
+        </button>
+        {contribution && (
+          <button
+            class="optA-tab-btn"
+            type="button"
+            data-tab-btn="contribution"
+            role="tab"
+            aria-selected="false"
+          >学术成就</button>
+        )}
+        <button
+          class="optA-tab-btn"
+          type="button"
+          data-tab-btn="kps"
+          role="tab"
+          aria-selected="false"
+        >
+          关联知识
+          {kps.length > 0 && <span class="optA-tab-count">{kps.length}</span>}
+        </button>
+      </nav>
+
+      {/* Tab Panel: 个人资料（default active）*/}
+      {hasProfileInfo && (
+        <section class="optA-tab-panel" data-tab-panel="profile">
+          <div class="optA-profile-block">
+            <table class="info-table">
+              <tbody>
+                {(scholar.nationality || scholar.flag) && (
+                  <tr>
+                    <td class="label">国籍</td>
+                    <td class="val">
+                      {scholar.flag && <span class="mr-1">{scholar.flag}</span>}
+                      {scholar.nationality}
+                    </td>
+                  </tr>
+                )}
+                {scholar.field && (
+                  <tr>
+                    <td class="label">领域</td>
+                    <td class="val">{scholar.field}</td>
+                  </tr>
+                )}
+                {scholar.institution && (
+                  <tr>
+                    <td class="label">机构</td>
+                    <td class="val">{scholar.institution}</td>
+                  </tr>
+                )}
+                {scholar.origin && (
+                  <tr>
+                    <td class="label">出身</td>
+                    <td class="val">{scholar.origin}</td>
+                  </tr>
+                )}
+                {scholar.nobel_year && (
+                  <tr>
+                    <td class="label">获奖</td>
+                    <td class="val" style="color:#b07d20;font-weight:600">🏅 {scholar.nobel_year}</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          {scholar.nobel_detail && (
+            <div class="optA-nobel-detail">
+              <div class="optA-nobel-title">🏅 诺贝尔奖授奖词</div>
+              <div class="whitespace-pre-line">{scholar.nobel_detail}</div>
+            </div>
+          )}
         </section>
       )}
 
-      {/* 所属学派 */}
-      {schools.length > 0 && (
-        <section class="optA-block">
-          <div class="optA-section-head">
-            <h2>所属学派</h2>
-            <span class="optA-count">{schools.length}</span>
-          </div>
-          <div class="flex flex-wrap gap-1.5 px-2 pb-3">
-            {schools.map((s) => (
+      {/* Tab Panel: 所属学派 */}
+      <section class="optA-tab-panel" data-tab-panel="schools" hidden={hasProfileInfo}>
+        <ul class="optA-scholars">
+          {schools.length === 0 ? (
+            <li class="text-xs text-quaternary px-2 py-3">暂无关联学派。</li>
+          ) : schools.map((s, i) => (
+            <li>
               <a
                 href={`/${discipline}/${s.key}`}
-                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border bg-bg-primary text-xs hover:bg-bg-secondary transition-colors no-underline"
+                class:list={['optA-scholar-row', i === schools.length - 1 && 'is-last']}
               >
-                <span class="inline-block w-1.5 h-1.5 rounded-full" style={`background:${accentHex}`}></span>
-                <span class="font-semibold text-primary">{s.title_zh}</span>
-                {s.title_en && <span class="text-quaternary">{s.title_en}</span>}
+                <div class="optA-scholar-line1">
+                  <span class="optA-scholar-last">{s.title_zh}</span>
+                  {s.title_en && <span class="optA-scholar-zh">{s.title_en}</span>}
+                </div>
               </a>
-            ))}
-          </div>
-        </section>
-      )}
+            </li>
+          ))}
+        </ul>
+      </section>
 
-      {/* 主要贡献（可折叠 + lang 切换）*/}
+      {/* Tab Panel: 学术成就（rich text + lang 切换）*/}
       {contribution && (
-        <section class="optA-summary-wrap" data-collapse-section="contribution">
-          <button class="optA-section-head--btn" type="button" aria-expanded="true" data-collapse-toggle>
-            <h2>主要贡献</h2>
-            {scholar.contribution_ja && (
-              <a
-                href={lang === 'zh'
-                  ? `?lang=ja${selectedKpId ? `&kp=${selectedKpId}` : ''}`
-                  : Astro.url.pathname + (selectedKpId ? `?kp=${selectedKpId}` : '')}
-                class="ml-2 text-xs text-accent-strategy"
-                onclick="event.stopPropagation()"
-              >{lang === 'zh' ? '日本語' : '中文'}</a>
-            )}
-            <span class="optA-collapse-chev">▾</span>
-          </button>
-          <div class="optA-summary" data-collapse-body set:html={contribution} />
+        <section class="optA-tab-panel" data-tab-panel="contribution" hidden>
+          {scholar.contribution_ja && (
+            <div class="optA-tab-panel-actions">
+              <a href={contributionLangHref} class="optA-lang-link">
+                {lang === 'zh' ? '日本語' : '中文'}
+              </a>
+            </div>
+          )}
+          <div class="optA-summary-v2 optA-contribution" set:html={contribution} />
         </section>
       )}
 
-      {scholar.nobel_detail && (
-        <section class="optA-block">
-          <div class="px-2 py-3 rounded-md bg-bg-warm text-xs leading-relaxed">
-            <div class="font-semibold mb-1" style="color:#b07d20">🏅 诺贝尔奖授奖词</div>
-            <div class="whitespace-pre-line">{scholar.nobel_detail}</div>
-          </div>
-        </section>
-      )}
-
-      {/* 知识贡献 */}
-      <section class="optA-block">
-        <div class="optA-section-head">
-          <h2>知识贡献</h2>
-          <span class="optA-count">{kps.length}</span>
-          {canEdit && (
+      {/* Tab Panel: 关联知识（KP flat list）*/}
+      <section class="optA-tab-panel" data-tab-panel="kps" hidden>
+        {canEdit && (
+          <div class="optA-tab-panel-actions">
             <a
               href={editHref(`/${discipline}/kp/new?scholar=${scholar.key}`, Astro.url.pathname)}
               class="optA-section-add"
               title="新增 KP"
             >+ 新增</a>
-          )}
-        </div>
+          </div>
+        )}
         {kps.length === 0 ? (
           <p class="text-xs text-quaternary px-2 py-2">暂无关联知识点。</p>
         ) : (
@@ -306,7 +338,7 @@ const canEdit = Astro.locals.canEdit(discipline);
             data-reorder-kind={canEdit ? 'scholar-kps' : undefined}
             data-scholar-key={canEdit ? scholar.key : undefined}
           >
-            {kps.map((k, i) => {
+            {kps.map((k) => {
               const isActive = selectedKpId === k.id;
               const schoolHint = schools[0]?.title_zh ?? '';
               return (
@@ -318,16 +350,18 @@ const canEdit = Astro.locals.canEdit(discipline);
                     href={`/${discipline}/kp/${k.id}`}
                     data-kp-link
                     data-kp-wide-href={`?kp=${k.id}`}
-                    class="contents"
+                    class="optA-kp-link"
                   >
-                    <div class="optA-kp-body">
-                      <div class="optA-kp-title">
-                        {k.title_zh}
-                        {schoolHint && <span class="optA-kp-scholar">{schoolHint}</span>}
-                        {k.year && <span class="optA-kp-year">{shortYear(k.year)}</span>}
+                    <div class="optA-kp-summary">
+                      <div class="optA-kp-body">
+                        <div class="optA-kp-title">
+                          {k.title_zh}
+                          {schoolHint && <span class="optA-kp-scholar">{schoolHint}</span>}
+                          {k.year && <span class="optA-kp-year">{shortYear(k.year)}</span>}
+                        </div>
+                        {k.title_ja && <div class="optA-kp-sub-ja">{k.title_ja}</div>}
+                        {k.title_en && <div class="optA-kp-sub-en">{k.title_en}</div>}
                       </div>
-                      {k.title_ja && <div class="optA-kp-sub-ja">{k.title_ja}</div>}
-                      {k.title_en && <div class="optA-kp-sub-en">{k.title_en}</div>}
                     </div>
                   </a>
                 </li>
@@ -411,8 +445,23 @@ const canEdit = Astro.locals.canEdit(discipline);
 
 <script>
   // @ts-nocheck — DOM 类型推断弱
-  // 学者页 KP 列表长按拖动重排（v0.5.33，姊妹于学派页 school-concepts）
   import { mountDragReorder } from '~/lib/drag-reorder-client';
+
+  // ========== v0.5.55 4-tab nav 切换（与学派页 v0.5.52 同款）==========
+  document.querySelectorAll('[data-tab-btn]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tabBtn;
+      document.querySelectorAll('[data-tab-panel]').forEach((p) => {
+        p.toggleAttribute('hidden', p.dataset.tabPanel !== target);
+      });
+      document.querySelectorAll('[data-tab-btn]').forEach((b) => {
+        b.toggleAttribute('data-active', b.dataset.tabBtn === target);
+        b.setAttribute('aria-selected', b.dataset.tabBtn === target ? 'true' : 'false');
+      });
+    });
+  });
+
+  // 学者页 KP 列表长按拖动重排（v0.5.33，姊妹于学派页 school-concepts）
   if (document.querySelector('[data-reorder-bootstrap="scholar-kps"]')) {
     document.querySelectorAll('[data-reorder-kind="scholar-kps"]').forEach((ul) => {
       const scholarKey = ul.dataset.scholarKey;
@@ -460,30 +509,28 @@ const canEdit = Astro.locals.canEdit(discipline);
     });
   })();
 
-  // ========== 主要贡献折叠 ==========
+  // Cmd/Ctrl + J: 切换日语/中文（与学派页同款，复用右栏 lang-toggle）
   (function () {
-    const KEY = `optA-scholar:${scholarKey}:collapsed`;
-    let state = {};
-    try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { state = {}; }
-    document.querySelectorAll('[data-collapse-section]').forEach((sec) => {
-      const id = sec.getAttribute('data-collapse-section');
-      const btn = sec.querySelector('[data-collapse-toggle]');
-      const body = sec.querySelector('[data-collapse-body]');
-      if (!btn || !body) return;
-      function apply() {
-        const collapsed = !!state[id];
-        sec.classList.toggle('is-collapsed', collapsed);
-        btn.setAttribute('aria-expanded', String(!collapsed));
-        body.style.display = collapsed ? 'none' : '';
-      }
-      apply();
-      btn.addEventListener('click', () => {
-        state[id] = !state[id];
-        try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
-        apply();
-      });
+    function isEditableTarget(t) {
+      if (!t) return false;
+      var tag = t.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+      if (t.isContentEditable) return true;
+      return false;
+    }
+    document.addEventListener('keydown', function (e) {
+      if (!(e.metaKey || e.ctrlKey)) return;
+      if (!e.key || e.key.toLowerCase() !== 'j') return;
+      if (isEditableTarget(e.target)) return;
+      var btn = document.querySelector('.kp-detail-pane [data-lang-toggle]')
+        || document.querySelector('[data-lang-toggle]');
+      if (!btn) return;
+      e.preventDefault();
+      btn.classList.add('is-pulse');
+      setTimeout(function () {
+        btn.classList.remove('is-pulse');
+        btn.click();
+      }, 90);
     });
   })();
-
-  // (v0.5.7: KP 卡片 ⋯ overflow 菜单已删除，改成直接 ✎ 链接到编辑页)
 </script>
