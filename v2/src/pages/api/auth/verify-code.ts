@@ -10,6 +10,8 @@ import {
   findOrCreateUser,
   buildSignedSessionCookie,
   getSessionSecret,
+  extendEmailTrust,
+  getEmailTrustDays,
 } from '~/lib/auth';
 import { buildFlashCookie } from '~/lib/flash';
 
@@ -65,6 +67,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   const user = await findOrCreateUser(db, consumed.email);
+  // v0.5.45 验证成功 → 续期邮箱信任窗口（默认 3 天，0 关闭）
+  await extendEmailTrust(db, user.id, getEmailTrustDays(env));
   const secret = getSessionSecret(env.SESSION_SECRET);
   const cookie = await buildSignedSessionCookie(user, consumed.remember, secret, isSecure);
 

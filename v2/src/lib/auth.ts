@@ -43,6 +43,37 @@ export interface User {
   display_name: string | null;
   created_at: string;
   email_verified_at: string | null;
+  /** v0.5.45 unix ms；> now 表示在 EMAIL_TRUST_DAYS 信任窗口内可免 code 登录。
+   *  optional：旧 D1 行为 NULL，SessionUser 不携带（middleware 不查 DB） */
+  trusted_until?: number | null;
+}
+
+/** v0.5.45 解析 EMAIL_TRUST_DAYS env（默认 3，0 = 关闭功能） */
+export function getEmailTrustDays(env: { EMAIL_TRUST_DAYS?: string }): number {
+  const raw = env.EMAIL_TRUST_DAYS;
+  if (raw === undefined) return 3;
+  const n = parseInt(raw, 10);
+  return Number.isFinite(n) && n >= 0 ? n : 3;
+}
+
+/** v0.5.45 该 user 是否仍在邮箱信任窗口内 */
+export function isEmailTrusted(user: Pick<User, 'trusted_until'> | null): boolean {
+  return !!user?.trusted_until && user.trusted_until > Date.now();
+}
+
+/** v0.5.45 验证成功后续期（找不到 user 直接静默 — 调用方应保证 user 已存在） */
+export async function extendEmailTrust(db: D1Database, userId: string, days: number): Promise<void> {
+  if (days <= 0) return;
+  const until = Date.now() + days * 24 * 60 * 60 * 1000;
+  await db.prepare('UPDATE user SET trusted_until = ? WHERE id = ?').bind(until, userId).run();
+}
+
+/** v0.5.45 按 email 查 user（用于 login 前判断 trust 状态，无 user 返回 null） */
+export async function findUserByEmail(db: D1Database, email: string): Promise<User | null> {
+  return db
+    .prepare('SELECT * FROM user WHERE email = ?')
+    .bind(email.toLowerCase().trim())
+    .first<User>();
 }
 
 /**

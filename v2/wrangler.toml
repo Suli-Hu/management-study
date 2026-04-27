@@ -40,6 +40,11 @@ GUEST_EMAIL = "guest@local"
 INVITE_CODE_GUEST = "123"
 INVITE_GUEST_EMAIL = "invite-guest@anytime"
 
+# v0.5.45 邮箱 N 天免 code 信任：曾验证过的 email 在 N 天内任意设备直接登录（不发 code）
+# 安全 tradeoff：从"持有 email"降级成"知道 email 字符串"，靠 ADMIN_EMAILS 白名单收窄攻击面。
+# 0 = 关闭功能（恢复纯 magic link）。3 = 短窗口降低被滥用风险。
+EMAIL_TRUST_DAYS = "3"
+
 # v0.4.1 编辑器：GitHub Contents API 目标仓库
 GITHUB_REPO = "Suli-Hu/management-study"
 

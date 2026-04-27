@@ -6,7 +6,13 @@
 
 import type { APIRoute } from 'astro';
 import { getDb } from '~/lib/db';
-import { createMagicLink } from '~/lib/auth';
+import {
+  createMagicLink,
+  findUserByEmail,
+  isEmailTrusted,
+  buildSignedSessionCookie,
+  getSessionSecret,
+} from '~/lib/auth';
 import { buildFlashCookie } from '~/lib/flash';
 import { sendEmail, renderMagicLinkEmail } from '~/lib/email';
 
@@ -41,10 +47,26 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response('Invalid email', { status: 400 });
   }
 
-  const { token, code } = await createMagicLink(db, email, remember);
   const reqUrl = new URL(request.url);
   const reqOrigin = reqUrl.origin;
   const isSecure = reqUrl.protocol === 'https:';
+
+  // v0.5.45 邮箱信任窗口：已存在的 user 在 EMAIL_TRUST_DAYS 内 → 直接 grant session
+  // 不延期 trusted_until（避免无限滚动），只在用户主动验证 code 时续期
+  const existingUser = await findUserByEmail(db, email);
+  if (isEmailTrusted(existingUser)) {
+    const secret = getSessionSecret(env.SESSION_SECRET);
+    const cookie = await buildSignedSessionCookie(existingUser!, remember, secret, isSecure);
+    return new Response(null, {
+      status: 303,
+      headers: {
+        Location: `${reqOrigin}/`,
+        'Set-Cookie': cookie,
+      },
+    });
+  }
+
+  const { token, code } = await createMagicLink(db, email, remember);
   // 邮件里的 verify 链接永远用 APP_URL（固定公网地址），否则 dev → 用户收到 localhost 链接
   const emailAppUrl = env.APP_URL ?? reqOrigin;
   const verifyUrl = `${emailAppUrl}/api/auth/verify?token=${encodeURIComponent(token)}`;
