@@ -1,0 +1,483 @@
+---
+/**
+ * v0.5.59 Spotlight 全局搜索 modal — 替代 v0.5.40 的独立 /search tab
+ *
+ * 设计契约：
+ *   - 仅在「学科页」内挂载（需要 discipline 参数定位 API）。
+ *   - 触发：点击 nav 右侧 🔍 图标 → window.openSpotlight()
+ *           或键盘 Cmd/Ctrl+K（在任何 input/textarea 外）。
+ *   - 关闭：Esc / 点击 overlay 背板 / 选中结果跳转。
+ *   - 数据：debounce 200ms 后 fetch /api/search/{discipline}?q=…
+ *           q 为空 → 不发请求，渲染空态 hint。
+ *   - 键盘：↑/↓ 在结果间移动；Enter 跳转；Esc 关闭。
+ *
+ * 风格继承 V1 spotlight（Main/index.html:1718-1830）但用 Tailwind tokens + dark mode。
+ */
+
+interface Props {
+  discipline: string;
+  disciplineTitle?: string;
+}
+
+const { discipline, disciplineTitle } = Astro.props;
+const placeholder = disciplineTitle
+  ? `在 ${disciplineTitle} 里搜索学派、学者、知识点…`
+  : '搜索学派、学者、知识点…';
+---
+
+<div
+  id="spotlight-overlay"
+  class="spotlight-overlay"
+  data-spotlight-discipline={discipline}
+  aria-hidden="true"
+>
+  <div class="spotlight-box" role="dialog" aria-modal="true" aria-label="全局搜索">
+    <div class="spotlight-input-wrap">
+      <span class="spotlight-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="m20 20-3.5-3.5"></path>
+        </svg>
+      </span>
+      <input
+        id="spotlight-input"
+        class="spotlight-input"
+        type="search"
+        placeholder={placeholder}
+        spellcheck="false"
+        autocomplete="off"
+        aria-label="搜索"
+      />
+      <button type="button" class="spotlight-esc-hint" data-spotlight-close aria-label="关闭搜索">
+        <span class="spotlight-kbd">esc</span> <span>关闭</span>
+      </button>
+    </div>
+    <div id="spotlight-results" class="spotlight-results" role="listbox" aria-label="搜索结果"></div>
+    <div class="spotlight-footer">
+      <div class="spotlight-footer-left">
+        <span><span class="spotlight-kbd">↑</span><span class="spotlight-kbd">↓</span> 选择</span>
+        <span><span class="spotlight-kbd">↵</span> 打开</span>
+      </div>
+      <div class="spotlight-footer-right" id="spotlight-count"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .spotlight-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.36);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: flex-start; justify-content: center;
+    padding: 12vh 20px 20px;
+    animation: spotlight-fade-in .18s ease;
+  }
+  :global(html.dark) .spotlight-overlay { background: rgba(0,0,0,0.55); }
+  .spotlight-overlay.is-open { display: flex; }
+  @keyframes spotlight-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+  .spotlight-box {
+    width: 100%; max-width: 640px;
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.22);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    max-height: 76vh;
+  }
+  :global(html.dark) .spotlight-box {
+    background: var(--color-bg-secondary);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .spotlight-input-wrap {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+  }
+  .spotlight-icon {
+    color: var(--color-text-quaternary);
+    display: inline-flex;
+  }
+  .spotlight-input {
+    flex: 1; min-width: 0;
+    border: none; background: transparent; outline: none;
+    font-size: 16px; font-family: inherit;
+    color: var(--color-text-primary);
+    font-weight: 400;
+  }
+  .spotlight-input::placeholder { color: var(--color-text-quaternary); font-weight: 300; }
+  /* iOS Safari search input 的 X 清除按钮太丑，去掉 */
+  .spotlight-input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+
+  .spotlight-esc-hint {
+    background: none; border: none; cursor: pointer;
+    font-size: 11px; color: var(--color-text-quaternary);
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 2px 4px;
+  }
+  .spotlight-esc-hint:hover { color: var(--color-text-secondary); }
+
+  .spotlight-kbd {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 22px; height: 20px; padding: 0 5px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-bg-tertiary);
+    font-family: inherit; font-size: 10px;
+    color: var(--color-text-secondary);
+    line-height: 1;
+  }
+
+  .spotlight-results {
+    flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    padding: 6px 0 10px;
+  }
+
+  .spotlight-footer {
+    padding: 8px 16px;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-bg-tertiary);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 11px; color: var(--color-text-quaternary);
+    flex-shrink: 0;
+  }
+  .spotlight-footer-left,
+  .spotlight-footer-right { display: flex; gap: 14px; align-items: center; }
+</style>
+
+<style is:global>
+  /* spotlight-results 的子结构（JS 注入），用 global 让 set:html 后样式生效 */
+  .sl-section { padding: 4px 8px 2px; }
+  .sl-section-header {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 10px 4px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    color: var(--color-text-quaternary);
+    text-transform: uppercase;
+  }
+  .sl-section-count {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-tertiary);
+    padding: 1px 6px; border-radius: 8px;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0;
+  }
+  .sl-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 12px; border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: background .1s;
+  }
+  .sl-item:hover { background: var(--color-bg-secondary); opacity: 1; }
+  .sl-item.is-active { background: rgba(0,122,255,0.10); }
+  :global(html.dark) .sl-item.is-active { background: rgba(0,122,255,0.18); }
+  .sl-emoji {
+    font-size: 18px; line-height: 1.2; flex-shrink: 0;
+    width: 22px; text-align: center;
+  }
+  .sl-main { flex: 1; min-width: 0; }
+  .sl-title {
+    font-size: 13.5px; font-weight: 500;
+    color: var(--color-text-primary);
+    line-height: 1.35;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .sl-title mark {
+    background: rgba(255,204,0,0.48); color: inherit;
+    padding: 0 1px; border-radius: 2px;
+  }
+  .sl-sub {
+    font-size: 11.5px;
+    color: var(--color-text-tertiary);
+    margin-top: 2px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .sl-sub mark {
+    background: rgba(255,204,0,0.35); color: inherit;
+    padding: 0 1px; border-radius: 2px;
+  }
+  .sl-meta {
+    font-size: 11px; color: var(--color-text-quaternary);
+    flex-shrink: 0; white-space: nowrap;
+    align-self: center;
+  }
+
+  .sl-empty {
+    padding: 36px 20px 24px; text-align: center;
+    color: var(--color-text-tertiary);
+    font-size: 13px;
+  }
+  .sl-empty-emoji { font-size: 30px; margin-bottom: 10px; opacity: 0.5; }
+  .sl-empty-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    max-width: 380px; margin: 16px auto 0;
+  }
+  .sl-empty-hint {
+    padding: 7px 11px;
+    background: var(--color-bg-tertiary);
+    border-radius: 7px;
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    text-align: left;
+  }
+  .sl-empty-hint b { color: var(--color-text-primary); font-weight: 600; }
+</style>
+
+<script is:inline define:vars={{ discipline }}>
+  (function () {
+    const overlay = document.getElementById('spotlight-overlay');
+    const input = document.getElementById('spotlight-input');
+    const results = document.getElementById('spotlight-results');
+    const countEl = document.getElementById('spotlight-count');
+    if (!overlay || !input || !results) return;
+
+    const apiBase = `/api/search/${encodeURIComponent(discipline)}`;
+    let activeIdx = 0;
+    let flat = [];          // 扁平结果（按渲染顺序）
+    let lastQ = '';
+    let debounceTimer = null;
+    let inflight = null;
+
+    function escapeHtml(s) {
+      return String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+    function escapeRegex(s) {
+      return String(s ?? '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+    function highlight(text, q) {
+      const safe = escapeHtml(text);
+      if (!q) return safe;
+      try {
+        const re = new RegExp('(' + escapeRegex(q) + ')', 'ig');
+        return safe.replace(re, '<mark>$1</mark>');
+      } catch (_) { return safe; }
+    }
+
+    function renderEmpty() {
+      results.innerHTML =
+        '<div class="sl-empty">' +
+          '<div class="sl-empty-emoji">🔍</div>' +
+          '<div>输入关键词搜索学派、学者、知识点</div>' +
+          '<div class="sl-empty-grid">' +
+            '<div class="sl-empty-hint">💡 支持 <b>中文 / 英文 / 日文</b></div>' +
+            '<div class="sl-empty-hint">💡 搜索 <b>标题、作者名、内容</b></div>' +
+            '<div class="sl-empty-hint">⌨️ <b>↑↓</b> 选择 · <b>↵</b> 打开</div>' +
+            '<div class="sl-empty-hint">⌨️ <b>esc</b> 或点击外部关闭</div>' +
+          '</div>' +
+        '</div>';
+      if (countEl) countEl.textContent = '';
+      flat = [];
+      activeIdx = 0;
+    }
+
+    function renderNoMatch(q) {
+      results.innerHTML =
+        '<div class="sl-empty">' +
+          '<div class="sl-empty-emoji">🌾</div>' +
+          '<div>没有匹配 "<strong>' + escapeHtml(q) + '</strong>" 的内容</div>' +
+          '<div style="font-size:11px;color:var(--color-text-quaternary);margin-top:8px">试试关键词片段、人名或英文名</div>' +
+        '</div>';
+      if (countEl) countEl.textContent = '';
+      flat = [];
+      activeIdx = 0;
+    }
+
+    function renderResults(data, q) {
+      const total = data.kps.length + data.scholars.length + data.schools.length;
+      if (total === 0) { renderNoMatch(q); return; }
+      flat = [];
+      let html = '';
+      // 学派
+      if (data.schools.length) {
+        html += '<div class="sl-section"><div class="sl-section-header">学派 <span class="sl-section-count">' + data.schools.length + '</span></div>';
+        data.schools.forEach((s) => {
+          const idx = flat.length;
+          flat.push({ href: `/${discipline}/${s.key}` });
+          const sub = s.title_en ? escapeHtml(s.title_en) : '';
+          html += '<a class="sl-item" data-idx="' + idx + '" href="/' + encodeURIComponent(discipline) + '/' + encodeURIComponent(s.key) + '">' +
+            '<span class="sl-emoji">🏛</span>' +
+            '<div class="sl-main">' +
+              '<div class="sl-title">' + highlight(s.title_zh, q) + '</div>' +
+              (sub ? '<div class="sl-sub">' + highlight(s.title_en, q) + '</div>' : '') +
+            '</div>' +
+            '<span class="sl-meta">' + s.kp_count + ' KP</span>' +
+          '</a>';
+        });
+        html += '</div>';
+      }
+      // 学者
+      if (data.scholars.length) {
+        html += '<div class="sl-section"><div class="sl-section-header">学者 <span class="sl-section-count">' + data.scholars.length + '</span></div>';
+        data.scholars.forEach((s) => {
+          const idx = flat.length;
+          flat.push({ href: `/${discipline}/scholars/${s.key}` });
+          const main = s.name_en || s.name_zh;
+          const sub = s.name_en ? s.name_zh : '';
+          html += '<a class="sl-item" data-idx="' + idx + '" href="/' + encodeURIComponent(discipline) + '/scholars/' + encodeURIComponent(s.key) + '">' +
+            '<span class="sl-emoji">👤</span>' +
+            '<div class="sl-main">' +
+              '<div class="sl-title">' + highlight(main, q) + '</div>' +
+              (sub ? '<div class="sl-sub">' + highlight(sub, q) + '</div>' : '') +
+            '</div>' +
+            '<span class="sl-meta">' + s.kp_count + ' KP</span>' +
+          '</a>';
+        });
+        html += '</div>';
+      }
+      // KP
+      if (data.kps.length) {
+        html += '<div class="sl-section"><div class="sl-section-header">知识点 <span class="sl-section-count">' + data.kps.length + '</span></div>';
+        data.kps.forEach((k) => {
+          const idx = flat.length;
+          flat.push({ href: `/${discipline}/kp/${k.id}` });
+          // excerpt 已含 <mark>（FTS snippet），不要再 escape
+          const sub = k.excerpt
+            ? k.excerpt
+            : (k.title_ja ? escapeHtml(k.title_ja) : '');
+          const meta = [k.scholar_label, k.year].filter(Boolean).join(' · ');
+          html += '<a class="sl-item" data-idx="' + idx + '" href="/' + encodeURIComponent(discipline) + '/kp/' + encodeURIComponent(k.id) + '">' +
+            '<span class="sl-emoji">📙</span>' +
+            '<div class="sl-main">' +
+              '<div class="sl-title">' + highlight(k.title_zh, q) + '</div>' +
+              (sub ? '<div class="sl-sub">' + sub + '</div>' : '') +
+            '</div>' +
+            (meta ? '<span class="sl-meta">' + escapeHtml(meta) + '</span>' : '') +
+          '</a>';
+        });
+        html += '</div>';
+      }
+      results.innerHTML = html;
+      if (countEl) countEl.textContent = '共 ' + total + ' 个结果';
+      activeIdx = 0;
+      updateActive();
+      // 鼠标悬停 = 选中（无需点击）
+      results.querySelectorAll('.sl-item').forEach((el) => {
+        el.addEventListener('mouseenter', () => {
+          activeIdx = parseInt(el.getAttribute('data-idx')) || 0;
+          updateActive();
+        });
+      });
+    }
+
+    function updateActive() {
+      const items = results.querySelectorAll('.sl-item');
+      items.forEach((el) => el.classList.remove('is-active'));
+      const target = results.querySelector('.sl-item[data-idx="' + activeIdx + '"]');
+      if (target) {
+        target.classList.add('is-active');
+        const r = target.getBoundingClientRect();
+        const br = results.getBoundingClientRect();
+        if (r.bottom > br.bottom || r.top < br.top) {
+          target.scrollIntoView({ block: 'nearest' });
+        }
+      }
+    }
+
+    async function doSearch(q) {
+      if (!q) { renderEmpty(); return; }
+      if (inflight) inflight.abort();
+      inflight = new AbortController();
+      try {
+        const res = await fetch(apiBase + '?q=' + encodeURIComponent(q), {
+          signal: inflight.signal,
+          headers: { 'accept': 'application/json' },
+        });
+        if (!res.ok) throw new Error('search ' + res.status);
+        const data = await res.json();
+        // 用户在等待时又改了输入 → 丢弃这次结果
+        if (q !== lastQ) return;
+        renderResults(data, q);
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;
+        console.error('[spotlight] fetch failed', err);
+      }
+    }
+
+    function onInput() {
+      const q = input.value.trim();
+      lastQ = q;
+      if (debounceTimer) clearTimeout(debounceTimer);
+      if (!q) { renderEmpty(); return; }
+      debounceTimer = setTimeout(() => doSearch(q), 200);
+    }
+
+    function open() {
+      overlay.classList.add('is-open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.documentElement.classList.add('spotlight-open');
+      // 先清空再聚焦（避免上次内容残留）
+      if (lastQ) {
+        // 保留上次查询：聚焦时全选
+        setTimeout(() => { input.focus(); input.select(); }, 30);
+      } else {
+        input.value = '';
+        renderEmpty();
+        setTimeout(() => input.focus(), 30);
+      }
+    }
+    function close() {
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.documentElement.classList.remove('spotlight-open');
+      if (inflight) { inflight.abort(); inflight = null; }
+    }
+
+    // 暴露给 Nav 按钮 + Cmd+K
+    window.openSpotlight = open;
+    window.closeSpotlight = close;
+
+    input.addEventListener('input', onInput);
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (!flat.length) return;
+        activeIdx = (activeIdx + 1) % flat.length;
+        updateActive();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (!flat.length) return;
+        activeIdx = (activeIdx - 1 + flat.length) % flat.length;
+        updateActive();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const item = flat[activeIdx];
+        if (item) {
+          close();
+          window.location.href = item.href;
+        }
+      }
+    });
+
+    // 点击 overlay 背板 = 关闭（不响应 box 内点击）
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) close();
+    });
+    // ESC 关闭按钮（input 失焦时仍可点）
+    overlay.querySelectorAll('[data-spotlight-close]').forEach((b) => {
+      b.addEventListener('click', close);
+    });
+
+    // Cmd+K / Ctrl+K 打开（在 input/textarea 外）
+    document.addEventListener('keydown', (e) => {
+      if (!(e.metaKey || e.ctrlKey)) return;
+      if (!e.key || e.key.toLowerCase() !== 'k') return;
+      e.preventDefault();
+      if (overlay.classList.contains('is-open')) close();
+      else open();
+    });
+
+    renderEmpty();
+  })();
+</script>

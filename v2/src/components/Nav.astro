@@ -1,6 +1,7 @@
 ---
 import { getDb } from '~/lib/db';
 import Brand from '~/components/Brand.astro';
+import Spotlight from '~/components/Spotlight.astro';
 
 interface Props {
   currentDiscipline?: string;
@@ -81,25 +82,25 @@ const brandHref = currentDiscipline ? `/${currentDiscipline}` : '/';
             {s.label}
           </a>
         ))}
-        <a
-          href={`/${currentDiscipline}/search`}
-          aria-label="搜索"
-          class:list={[
-            'ml-1 px-2 py-1 rounded transition-colors no-underline flex items-center',
-            currentSection === 'search'
-              ? 'text-primary font-semibold bg-bg-tertiary'
-              : 'text-tertiary hover:text-primary',
-          ]}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="m20 20-3.5-3.5"></path>
-          </svg>
-        </a>
       </div>
     )}
 
     <div class="flex items-center gap-1 text-xs shrink-0">
+      {/* v0.5.59 #SearchModal: 搜索图标移到右侧（夜间模式按钮左侧），点开 Spotlight modal */}
+      {currentDiscipline && (
+        <button
+          type="button"
+          id="spotlight-trigger"
+          aria-label="搜索 (⌘K / Ctrl+K)"
+          title="搜索 (⌘K)"
+          class="p-1 rounded text-tertiary hover:text-primary transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-3.5-3.5"></path>
+          </svg>
+        </button>
+      )}
       <button
         id="theme-toggle"
         type="button"
@@ -170,6 +171,10 @@ const brandHref = currentDiscipline ? `/${currentDiscipline}` : '/';
   </div>
 </nav>
 
+{currentDiscipline && (
+  <Spotlight discipline={currentDiscipline} disciplineTitle={disciplineTitle ?? undefined} />
+)}
+
 <script is:inline>
   // v0.3.9 夜间模式 toggle
   (function () {
@@ -191,6 +196,15 @@ const brandHref = currentDiscipline ? `/${currentDiscipline}` : '/';
       document.documentElement.classList.toggle('dark', next);
       localStorage.setItem('theme', next ? 'dark' : 'light');
       render();
+    });
+  })();
+
+  // v0.5.59 Spotlight 触发按钮 → window.openSpotlight()（在 Spotlight.astro 里挂载）
+  (function () {
+    const btn = document.getElementById('spotlight-trigger');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      if (typeof window.openSpotlight === 'function') window.openSpotlight();
     });
   })();
 

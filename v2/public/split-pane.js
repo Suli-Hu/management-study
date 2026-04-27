@@ -110,9 +110,17 @@
       a.addEventListener('click', (e) => {
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
         if (!MQ.matches) {
-          // v0.5.49 手机端：阻止 navigate 让 <details> 默认 toggle 接管 inline body
-          // （之前是 fallback 跳 standalone /kp/[id]，现 inline 展开取代）
-          e.preventDefault();
+          // v0.5.59 手机端 KP 点击修复：
+          // 此前 e.preventDefault() 后假设 <summary> 自身的 details-toggle 默认行为
+          // 会接管 → 但 preventDefault 标记会冒泡到 <summary>，UA 检查 defaultPrevented
+          // 后跳过 toggle，于是「navigate 与 toggle 都被吃掉」=> 用户体感「点不开」。
+          //   - 学派页（<details><summary><a>）：手动 toggle details.open
+          //   - 学者页（无 <details>）：保留 navigate，让 <a> 默认行为打开 standalone /kp/[id]
+          const details = a.closest('details');
+          if (details) {
+            e.preventDefault();
+            details.open = !details.open;
+          }
           return;
         }
         e.preventDefault();
