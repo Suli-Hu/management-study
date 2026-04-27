@@ -651,13 +651,20 @@ details.eval {
 
 /* ---- KP cards (v0.5.24: 删 01/02 编号 + 压成横条) ---- */
 .optA-kps { display: flex; flex-direction: column; gap: 6px; padding: 0 0 12px; list-style: none; margin: 0; }
+.optA-kp-li { list-style: none; }
+
+/* v0.5.49: .optA-kp 现在是 <details>（之前 <li>）—— 桌面行为不变（点 link swap 右栏，body 强制 hide），
+   手机展开 inline body 显示 KP 内容（V1 风格阅读体验）*/
 .optA-kp {
-  display: flex; gap: 0; padding: 10px 12px; border-radius: 6px; cursor: pointer;
-  border: 1px solid var(--color-border); background: var(--color-bg-primary);
-  transition: background .12s, border-color .12s;
-  position: relative; align-items: flex-start;
+  display: block;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-primary);
+  transition: background .12s, border-color .12s, box-shadow .12s;
+  position: relative;
   text-decoration: none; color: inherit;
 }
+.optA-kp[open] { box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
 .optA-kp:hover {
   background: var(--color-bg-secondary);
   border-color: color-mix(in oklab, var(--accent, var(--color-text-quaternary)) 30%, var(--color-border));
@@ -666,6 +673,31 @@ details.eval {
   background: color-mix(in oklab, var(--accent, var(--color-text-quaternary)) 7%, var(--color-bg-primary));
   border-color: var(--accent, var(--color-text-quaternary));
   box-shadow: inset 3px 0 0 var(--accent, var(--color-text-quaternary));
+}
+.optA-kp-summary {
+  display: grid;
+  grid-template-columns: 0 1fr;
+  gap: 0;
+  padding: 10px 12px;
+  list-style: none;
+  cursor: pointer;
+  align-items: flex-start;
+}
+.optA-kp-summary::-webkit-details-marker { display: none; }
+.optA-kp-chev {
+  font-size: 10px; color: var(--color-text-quaternary);
+  transition: transform .15s;
+  display: none;          /* 桌面隐藏 */
+  margin-top: 5px;
+}
+.optA-kp[open] > .optA-kp-summary > .optA-kp-chev { transform: rotate(90deg); }
+.optA-kp-link { color: inherit; text-decoration: none; display: block; min-width: 0; }
+.optA-kp-inline-body {
+  display: none;          /* 桌面强制 hide（split layout 右栏负责显示 KP detail） */
+  padding: 0 14px 14px;
+  border-top: 1px dashed var(--color-border);
+  margin-top: -1px;
+  font-size: 13px; color: var(--color-text-secondary);
 }
 .optA-kp-body { flex: 1; min-width: 0; }
 .optA-kp-title {
@@ -975,11 +1007,43 @@ details.eval {
   .split > .left { border-right: 0; }
   /* v0.5.48: 手机/平板右栏 hidden 时，左栏 KP 列表的 default-active state
      失去意义（用户根本看不到右栏 KP detail），却让"第一个 KP 永远高亮"
-     看起来像 bug。reset 视觉，点 KP 直接跳 standalone /kp/[id]。 */
+     看起来像 bug。reset 视觉，点 KP 直接展开 inline body（v0.5.49）。 */
   .optA-kp.is-active {
     background: var(--color-bg-primary);
     border-color: var(--color-border);
     box-shadow: none;
+  }
+  /* v0.5.49: 手机端 details 展开 inline body，summary 显示 chev */
+  .optA-kp-summary { grid-template-columns: 16px 1fr; gap: 8px; }
+  .optA-kp-chev { display: inline; }
+  .optA-kp[open] > .optA-kp-inline-body { display: block; }
+
+  /* compare row stack：grid 120/1fr 拍扁成竖排 */
+  .cmp-row { grid-template-columns: 1fr; gap: 6px; padding: 10px; }
+  .cmp-pill { align-self: start; height: auto; padding: 4px 10px; }
+
+  /* compare cards 强制 1 col（render-body inline 写了 grid-template-columns，需要 important）*/
+  .cmpc-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .cmpc-card { padding: 16px; }
+  .cmpc-headline { font-size: 18px; }
+
+  /* quad chart 强制 stack：去 axis 旋转 + 4 cells 一列 */
+  .quad-wrap {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .quad-axis-y, .quad-axis-x {
+    writing-mode: horizontal-tb;
+    transform: none;
+    font-size: 10.5px;
+    padding: 4px 10px;
+    background: var(--color-bg-secondary);
+    border-radius: 4px;
+    text-align: left;
+    grid-row: auto; grid-column: auto;
+  }
+  .quad-grid {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto !important;
   }
 }
 

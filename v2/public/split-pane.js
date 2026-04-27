@@ -68,8 +68,13 @@
       if (a.dataset.splitBound) return;
       a.dataset.splitBound = '1';
       a.addEventListener('click', (e) => {
-        if (!MQ.matches) return;
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+        if (!MQ.matches) {
+          // v0.5.49 手机端：阻止 navigate 让 <details> 默认 toggle 接管 inline body
+          // （之前是 fallback 跳 standalone /kp/[id]，现 inline 展开取代）
+          e.preventDefault();
+          return;
+        }
         e.preventDefault();
         const li = a.closest('[data-kp-id]');
         const id = li?.getAttribute('data-kp-id');

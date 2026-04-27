@@ -42,9 +42,13 @@ if (!sch) return Astro.redirect('/404');
 const schoolTags = JSON.parse(sch.tags_json) as string[];
 const accentHex = tagColor({ tags: schoolTags }, tagLibrary);
 
+// v0.5.49: list query 拿全 body/eval/format，让手机 inline 展开能 SSR pre-render KP body。
+// 同一份数据也供桌面右栏用（selectedKp = kps.find），省一次 D1 round trip。
 const kpsResult = await db
   .prepare(`
     SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year,
+      k.body_zh, k.body_ja, k.format,
+      k.eval_content_zh_json, k.eval_content_ja_json,
       (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id ORDER BY position) as scholars_csv
     FROM kp k
     INNER JOIN kp_school ks ON ks.kp_id = k.id
@@ -52,7 +56,12 @@ const kpsResult = await db
     ORDER BY ks.position, k.id
   `)
   .bind(school)
-  .all<{ id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string; scholars_csv: string | null }>();
+  .all<{
+    id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string;
+    body_zh: string; body_ja: string | null; format: KpFormat;
+    eval_content_zh_json: string; eval_content_ja_json: string;
+    scholars_csv: string | null;
+  }>();
 const kps = kpsResult.results ?? [];
 
 // 学者 lookup（KP meta 行用 EN 名）
@@ -82,38 +91,18 @@ const selectedKpId = requestedKpId ?? kps[0]?.id ?? null;
 // 当前语言（?lang=ja 切日文，否则中文）
 const langParam = Astro.url.searchParams.get('lang');
 
-type SelectedKp = {
-  id: string; title_zh: string; title_en: string | null; title_ja: string | null;
-  year: string; body_zh: string; body_ja: string | null;
-  format: KpFormat;
-  eval_content_zh_json: string;
-};
-let selectedKp: SelectedKp | null = null;
-let selectedScholars: Array<{ key: string; name_zh: string; name_en: string | null }> = [];
+// v0.5.49: selectedKp 从 list 找（不再单独 query），selectedScholars 用 scholarByKey lookup
+const selectedKp = selectedKpId ? (kps.find((k) => k.id === selectedKpId) ?? null) : null;
 let selectedEvalContent: EvalContent | null = null;
-
-if (selectedKpId) {
-  const kpRow = await db
-    .prepare('SELECT id, title_zh, title_en, title_ja, year, body_zh, body_ja, format, eval_content_zh_json FROM kp WHERE id = ? AND discipline = ?')
-    .bind(selectedKpId, discipline)
-    .first() as SelectedKp | null;
-  selectedKp = kpRow ?? null;
-  if (selectedKp) {
-    try { selectedEvalContent = JSON.parse(selectedKp.eval_content_zh_json) as EvalContent; }
-    catch { selectedEvalContent = null; }
-    const scRes = await db
-      .prepare(`
-        SELECT sc.key, sc.name_zh, sc.name_en
-        FROM scholar sc
-        INNER JOIN kp_scholar ks ON ks.scholar_key = sc.key
-        WHERE ks.kp_id = ?
-        ORDER BY ks.position
-      `)
-      .bind(selectedKpId)
-      .all<{ key: string; name_zh: string; name_en: string | null }>();
-    selectedScholars = scRes.results ?? [];
-  }
+if (selectedKp) {
+  try { selectedEvalContent = JSON.parse(selectedKp.eval_content_zh_json) as EvalContent; }
+  catch { selectedEvalContent = null; }
 }
+const selectedScholars = selectedKp
+  ? (selectedKp.scholars_csv ?? '').split(',').filter(Boolean)
+      .map((sk) => scholarByKey.get(sk))
+      .filter((s): s is NonNullable<typeof s> => Boolean(s))
+  : [];
 
 // 选中 KP 的实际显示语言（仅当该 KP 有 body_ja 时 ?lang=ja 才生效）
 const selectedLang: 'zh' | 'ja' =
@@ -219,33 +208,47 @@ const canEdit = Astro.locals.canEdit(discipline);
           )}
         </div>
         <ul class="optA-kps drag-reorder" data-reorder-kind="school-concepts" data-school-key={sch.key}>
-          {kps.map((k, i) => {
+          {kps.map((k) => {
             const scholarKeys = (k.scholars_csv ?? '').split(',').filter(Boolean);
             const scholarLabel = scholarKeys
               .map((sk) => lastName(scholarByKey.get(sk)?.name_en ?? scholarByKey.get(sk)?.name_zh ?? sk))
               .join(' · ');
             const isActive = selectedKpId === k.id;
+            // v0.5.49 SSR pre-render KP body + eval（手机 inline 展开用，桌面 CSS 强制 hidden）
+            const inlineBodyHtml = renderBodyForSchool({ fmt: k.format, body: k.body_zh, accentHex });
+            let kpEval: EvalContent | null = null;
+            try { kpEval = JSON.parse(k.eval_content_zh_json) as EvalContent; }
+            catch { kpEval = null; }
+            const inlineEvalHtml = renderEvalModule(kpEval);
             return (
-              <li
-                data-kp-id={k.id}
-                class:list={['optA-kp kp-list-item', isActive && 'is-active']}
-              >
-                <a
-                  href={`/${discipline}/kp/${k.id}`}
-                  data-kp-link
-                  data-kp-wide-href={`?kp=${k.id}`}
-                  class="contents"
+              <li class="optA-kp-li" data-kp-id={k.id}>
+                <details
+                  class:list={['optA-kp kp-list-item', isActive && 'is-active']}
                 >
-                  <div class="optA-kp-body">
-                    <div class="optA-kp-title">
-                      {k.title_zh}
-                      {scholarLabel && <span class="optA-kp-scholar">{scholarLabel}</span>}
-                      {k.year && <span class="optA-kp-year">{shortYear(k.year)}</span>}
-                    </div>
-                    {k.title_ja && <div class="optA-kp-sub-ja">{k.title_ja}</div>}
-                    {k.title_en && <div class="optA-kp-sub-en">{k.title_en}</div>}
+                  <summary class="optA-kp-summary">
+                    <span class="optA-kp-chev" aria-hidden="true">▶</span>
+                    <a
+                      href={`/${discipline}/kp/${k.id}`}
+                      data-kp-link
+                      data-kp-wide-href={`?kp=${k.id}`}
+                      class="optA-kp-link"
+                    >
+                      <div class="optA-kp-body">
+                        <div class="optA-kp-title">
+                          {k.title_zh}
+                          {scholarLabel && <span class="optA-kp-scholar">{scholarLabel}</span>}
+                          {k.year && <span class="optA-kp-year">{shortYear(k.year)}</span>}
+                        </div>
+                        {k.title_ja && <div class="optA-kp-sub-ja">{k.title_ja}</div>}
+                        {k.title_en && <div class="optA-kp-sub-en">{k.title_en}</div>}
+                      </div>
+                    </a>
+                  </summary>
+                  <div class="optA-kp-inline-body">
+                    <div set:html={inlineBodyHtml} />
+                    {inlineEvalHtml && <Fragment set:html={inlineEvalHtml} />}
                   </div>
-                </a>
+                </details>
               </li>
             );
           })}
