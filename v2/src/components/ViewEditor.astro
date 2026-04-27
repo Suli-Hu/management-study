@@ -1,22 +1,27 @@
 ---
 /**
- * ViewEditor — 视图编辑器（设计稿 bundle/25504af6 ViewEditor）
+ * ViewEditor — 视图编辑器（v0.5.80 重设计）
  *
- * 全屏 modal（inset 40），左右两栏：
- *   - 左：分组列表（每组：title 输入 + flow 输入 + 学派 chip 容器 + 移除按钮 + 添加分组按钮）
- *   - 右：未包含学派池子（拖动 ⋮⋮ 手柄）
- *   - HTML5 drag/drop（onDragStart / onDragOver / onDragLeave / onDrop / onDragEnd）
- *   - dragSchool（当前拖动的学派 id）+ dropTarget（hover 的 group id 或 'pool'）
+ * 修两件事：
+ * 1. CSS scope bug — Astro <style> 自动加 [data-astro-cid-XXX] 但 innerHTML 注入的元素
+ *    没有 cid → 所有动态创建的 chip / group card / pool row 全失样式。
+ *    解：<style is:global> + 用 .ve-root 前缀 namespace 防止泄漏。
+ * 2. 视觉设计：
+ *    - 输入框可见的下边框（不再像静态文字）
+ *    - chip / pool row 真正像 chip
+ *    - 重复的"拖动学派可在..."提示只在顶端显示一次
+ *    - 分组卡有明显边界 + 移除按钮改 × 图标小按钮
+ *    - 桌面/iPad split 1fr 360px；手机栈
  *
  * 触发：document.dispatchEvent('view:editor', { detail: { viewId } })
- *
  * 提交：PUT /api/edit/view/[discipline]/[id]
- *   - 用 GET 拿 base_sha + 完整 JSON → 改 groups + name/icon/desc → PUT
+ *
+ * 用户角度："编辑视图说明" 不再单独提供，因为本编辑器顶部就有图标 / 名称 / 说明三件，
+ *           跟 ViewMenu 里的 "编辑视图说明" 重复。
  */
 
 interface Props {
   discipline: string;
-  /** 全部 schools（key + cn）— 渲染池子 + chip 用 */
   allSchools: Array<{ key: string; cn: string }>;
 }
 const { discipline, allSchools } = Astro.props;
@@ -28,35 +33,39 @@ const { discipline, allSchools } = Astro.props;
   <div class="ve-modal">
     {/* === Header === */}
     <div class="ve-head">
-      <div class="ve-head-meta">
-        <div class="ve-eyebrow">编辑视图</div>
-        <div class="ve-name-row">
-          <button type="button" class="ve-icon-trigger" data-ve-icon-trigger title="点击更换图标">📚</button>
-          <input class="ve-name-input" data-ve-name placeholder="视图名称" />
-          <div class="ve-icon-pop hidden" data-ve-icon-pop>
-            {['📚','🗺️','⏳','🌏','⭐','🎯','🧭','🔬','💡','📖','🏛️','🔖'].map((emoji) => (
-              <button type="button" class="ve-icon-pick" data-ve-icon-pick={emoji}>{emoji}</button>
-            ))}
-          </div>
+      <div class="ve-head-row">
+        <button type="button" class="ve-icon-trigger" data-ve-icon-trigger title="点击更换图标" aria-label="选择图标">📚</button>
+        <div class="ve-head-name-block">
+          <div class="ve-eyebrow">视图名称</div>
+          <input class="ve-name-input" data-ve-name placeholder="例：组织论六阶段" />
         </div>
-        <div class="ve-desc-row">
-          <div class="ve-desc-label">视图说明</div>
-          <textarea class="ve-desc-input" data-ve-desc rows="2" placeholder="向学习者解释这个视图的用途和分类逻辑（其他想说明的也可以写在这里）"></textarea>
+        <div class="ve-head-actions">
+          <button type="button" class="ve-btn-ghost" data-ve-close>取消</button>
+          <button type="button" class="ve-btn-primary" data-ve-save>保存</button>
+        </div>
+        <div class="ve-icon-pop hidden" data-ve-icon-pop>
+          {['📚','🗺️','⏳','🌏','⭐','🎯','🧭','🔬','💡','📖','🏛️','🔖'].map((emoji) => (
+            <button type="button" class="ve-icon-pick" data-ve-icon-pick={emoji}>{emoji}</button>
+          ))}
         </div>
       </div>
-      <div class="ve-head-actions">
-        <button type="button" class="ve-btn-ghost" data-ve-close>取消</button>
-        <button type="button" class="ve-btn-primary" data-ve-save>保存</button>
+      <div class="ve-desc-block">
+        <div class="ve-eyebrow">视图说明</div>
+        <textarea class="ve-desc-input" data-ve-desc rows="2"
+          placeholder="一句话说明这个视图的用途 / 分类逻辑（如「按时代演进将组织论划分为六阶段」）"></textarea>
       </div>
     </div>
 
     {/* === Body: groups (left) | pool (right) === */}
     <div class="ve-body">
       <div class="ve-left">
+        <div class="ve-left-hint">拖动学派可在分组间移动 · 点学派的 × 移到右侧池子</div>
         <div class="ve-groups" data-ve-groups>
           {/* 动态注入 */}
         </div>
-        <button type="button" class="ve-add-group" data-ve-add-group>+ 添加分组</button>
+        <button type="button" class="ve-add-group" data-ve-add-group>
+          <span class="ve-add-group-plus">+</span> 添加分组
+        </button>
       </div>
       <div class="ve-right" data-ve-pool data-drop-target="pool">
         <div class="ve-pool-head">
@@ -71,142 +80,225 @@ const { discipline, allSchools } = Astro.props;
   </div>
 </div>
 
-<style>
-  .ve-root { position: fixed; inset: 0; z-index: 100; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif; }
+<style is:global>
+  /* === v0.5.80 全部 .ve-* 都走 is:global，因为 dynamic innerHTML 元素拿不到 Astro cid。
+     防泄漏靠 `.ve-root` 前缀 namespace。 === */
+
+  .ve-root {
+    position: fixed; inset: 0; z-index: 100;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  }
   .ve-root.hidden { display: none; }
-  .ve-overlay {
+  .ve-root .ve-overlay {
     position: absolute; inset: 0;
     background: rgba(10,10,10,0.45);
-    -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
   }
-  .ve-modal {
-    position: absolute;
-    inset: 40px;
+  .ve-root .ve-modal {
+    position: absolute; inset: 40px;
     background: #fafaf9;
     border-radius: 16px;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column;
     box-shadow: 0 30px 80px rgba(0,0,0,0.25);
   }
-  :global(html.dark) .ve-modal { background: var(--color-bg-secondary); }
+  html.dark .ve-root .ve-modal { background: var(--color-bg-secondary); }
   @media (max-width: 720px) {
-    .ve-modal { inset: 12px; border-radius: 12px; }
+    .ve-root .ve-modal { inset: 8px; border-radius: 12px; }
   }
 
-  .ve-head {
-    padding: 16px 24px;
+  /* === Header === */
+  .ve-root .ve-head {
+    padding: 14px 20px 16px;
     border-bottom: 1px solid #ececec;
     background: #fff;
-    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+    flex-shrink: 0;
   }
-  :global(html.dark) .ve-head { background: var(--color-bg-primary); border-bottom-color: var(--color-border); }
-  .ve-head-meta { flex: 1; min-width: 0; }
-  .ve-eyebrow { font-size: 12px; color: #a3a3a3; }
-  .ve-name-row {
-    display: flex; align-items: center; gap: 8px; margin-top: 4px; position: relative;
+  html.dark .ve-root .ve-head {
+    background: var(--color-bg-primary);
+    border-bottom-color: var(--color-border);
   }
-  .ve-icon-trigger {
-    all: unset;
-    cursor: pointer;
-    width: 32px; height: 32px;
-    border-radius: 6px;
-    display: inline-flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    border: 1px solid transparent;
+  .ve-root .ve-head-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
   }
-  .ve-icon-trigger.is-open {
+  .ve-root .ve-icon-trigger {
+    all: unset; cursor: pointer;
+    width: 44px; height: 44px;
+    border-radius: 10px;
     background: #fafaf9;
-    border-color: #ececec;
+    border: 1px solid #ececec;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    transition: background .12s, border-color .12s;
   }
-  .ve-name-input {
+  .ve-root .ve-icon-trigger:hover {
+    background: #f5f5f4;
+    border-color: #d4d4d4;
+  }
+  .ve-root .ve-icon-trigger.is-open {
+    background: #fff;
+    border-color: #171717;
+  }
+  html.dark .ve-root .ve-icon-trigger {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-border);
+  }
+
+  .ve-root .ve-head-name-block {
     flex: 1;
+    min-width: 0;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .ve-root .ve-eyebrow {
+    font-size: 11px;
+    color: #a3a3a3;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  html.dark .ve-root .ve-eyebrow { color: var(--color-text-quaternary); }
+
+  .ve-root .ve-name-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px 0;
     border: none;
-    outline: none;
-    padding: 0;
+    border-bottom: 1.5px solid transparent;
     background: transparent;
     font-family: inherit;
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 600;
     color: #0a0a0a;
-    max-width: 400px;
+    outline: none;
+    transition: border-color .14s;
   }
-  :global(html.dark) .ve-name-input { color: var(--color-text-primary); }
-  .ve-icon-pop {
+  html.dark .ve-root .ve-name-input { color: var(--color-text-primary); }
+  .ve-root .ve-name-input:hover { border-bottom-color: #ececec; }
+  .ve-root .ve-name-input:focus { border-bottom-color: #171717; }
+  html.dark .ve-root .ve-name-input:hover { border-bottom-color: var(--color-border); }
+  html.dark .ve-root .ve-name-input:focus { border-bottom-color: var(--color-text-primary); }
+
+  .ve-root .ve-head-actions {
+    display: flex; gap: 8px; flex-shrink: 0;
+  }
+  .ve-root .ve-btn-ghost {
+    all: unset; cursor: pointer; padding: 8px 14px; border-radius: 8px;
+    color: #525252; font-size: 13px;
+  }
+  .ve-root .ve-btn-ghost:hover { background: #f5f5f4; }
+  html.dark .ve-root .ve-btn-ghost { color: var(--color-text-tertiary); }
+  html.dark .ve-root .ve-btn-ghost:hover { background: var(--color-bg-tertiary); }
+
+  .ve-root .ve-btn-primary {
+    all: unset; cursor: pointer; padding: 8px 18px; border-radius: 8px;
+    background: #171717; color: #fff;
+    font-size: 13px; font-weight: 600;
+    transition: opacity .12s;
+  }
+  .ve-root .ve-btn-primary:hover { opacity: 0.88; }
+  html.dark .ve-root .ve-btn-primary {
+    background: var(--color-text-primary);
+    color: var(--color-bg-primary);
+  }
+
+  .ve-root .ve-icon-pop {
     position: absolute;
-    top: 100%; left: 0; margin-top: 6px; z-index: 10;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 10;
     background: #fff;
     border: 1px solid #ececec;
     border-radius: 10px;
     padding: 8px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     display: flex; flex-wrap: wrap; gap: 4px;
-    max-width: 280px;
+    max-width: 320px;
   }
-  .ve-icon-pop.hidden { display: none; }
-  :global(html.dark) .ve-icon-pop { background: var(--color-bg-secondary); border-color: var(--color-border); }
-  .ve-icon-pick {
-    all: unset;
-    cursor: pointer;
-    width: 32px; height: 32px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    border-radius: 6px;
-    background: #fff;
+  .ve-root .ve-icon-pop.hidden { display: none; }
+  html.dark .ve-root .ve-icon-pop {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-border);
+  }
+  .ve-root .ve-icon-pick {
+    all: unset; cursor: pointer;
+    width: 36px; height: 36px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    border-radius: 8px;
     border: 1px solid transparent;
     box-sizing: border-box;
   }
-  .ve-icon-pick:hover, .ve-icon-pick.is-selected { background: #fafaf9; border-color: #171717; }
-  :global(html.dark) .ve-icon-pick { background: var(--color-bg-primary); }
-  :global(html.dark) .ve-icon-pick:hover, :global(html.dark) .ve-icon-pick.is-selected { background: var(--color-bg-tertiary); border-color: var(--color-text-primary); }
+  .ve-root .ve-icon-pick:hover, .ve-root .ve-icon-pick.is-selected {
+    background: #fafaf9; border-color: #171717;
+  }
+  html.dark .ve-root .ve-icon-pick:hover, html.dark .ve-root .ve-icon-pick.is-selected {
+    background: var(--color-bg-tertiary); border-color: var(--color-text-primary);
+  }
 
-  .ve-desc-row { margin-top: 12px; }
-  .ve-desc-label { font-size: 11px; color: #737373; margin-bottom: 6px; letter-spacing: 0.3px; }
-  .ve-desc-input {
-    width: 100%; box-sizing: border-box;
-    padding: 8px 10px;
-    border: 1px solid #ececec;
-    border-radius: 6px;
-    font-size: 13px;
+  /* desc */
+  .ve-root .ve-desc-block {
+    margin-top: 12px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .ve-root .ve-desc-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 12px;
     font-family: inherit;
+    font-size: 13px;
+    line-height: 1.55;
+    border: 1px solid #ececec;
+    border-radius: 8px;
+    background: #fff;
     color: #171717;
     outline: none;
     resize: vertical;
-    line-height: 1.6;
-    background: #fff;
+    min-height: 56px;
+    transition: border-color .14s;
   }
-  :global(html.dark) .ve-desc-input { background: var(--color-bg-primary); border-color: var(--color-border); color: var(--color-text-primary); }
-
-  .ve-head-actions { display: flex; gap: 8px; margin-top: 18px; }
-  .ve-btn-ghost {
-    all: unset; cursor: pointer; padding: 8px 14px; border-radius: 8px; color: #525252; font-size: 13px;
+  .ve-root .ve-desc-input:focus { border-color: #171717; }
+  html.dark .ve-root .ve-desc-input {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-border);
+    color: var(--color-text-primary);
   }
-  .ve-btn-ghost:hover { background: #f5f5f4; }
-  .ve-btn-primary {
-    all: unset; cursor: pointer; padding: 8px 18px; border-radius: 8px; background: #171717; color: #fff; font-size: 13px; font-weight: 500;
-  }
-  :global(html.dark) .ve-btn-primary { background: var(--color-text-primary); color: var(--color-bg-primary); }
 
   /* === Body two-pane === */
-  .ve-body {
+  .ve-root .ve-body {
     flex: 1;
     display: grid;
-    grid-template-columns: 1fr 320px;
+    grid-template-columns: 1fr 360px;
     overflow: hidden;
   }
   @media (max-width: 720px) {
-    .ve-body { grid-template-columns: 1fr; }
+    .ve-root .ve-body { grid-template-columns: 1fr; }
   }
 
-  .ve-left {
-    padding: 20px 24px;
+  /* === Left rail === */
+  .ve-root .ve-left {
+    padding: 18px 20px 80px;
     overflow-y: auto;
   }
-  .ve-groups { display: flex; flex-direction: column; gap: 12px; }
-  .ve-add-group {
-    all: unset;
-    cursor: pointer;
-    display: block;
+  .ve-root .ve-left-hint {
+    font-size: 11px;
+    color: #a3a3a3;
+    margin-bottom: 12px;
+    letter-spacing: 0.02em;
+  }
+  .ve-root .ve-groups {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .ve-root .ve-add-group {
+    all: unset; cursor: pointer;
+    display: flex;
+    align-items: center; justify-content: center;
+    gap: 6px;
     width: 100%;
     text-align: center;
     padding: 14px;
@@ -216,112 +308,273 @@ const { discipline, allSchools } = Astro.props;
     font-size: 13px;
     margin-top: 12px;
     box-sizing: border-box;
+    transition: border-color .12s, color .12s, background .12s;
   }
-  .ve-add-group:hover { border-color: #737373; color: #171717; }
+  .ve-root .ve-add-group:hover {
+    border-color: #171717;
+    color: #171717;
+    background: #fafaf9;
+  }
+  .ve-root .ve-add-group-plus {
+    font-size: 15px; font-weight: 500; line-height: 1; margin-top: -1px;
+  }
+  html.dark .ve-root .ve-add-group { color: var(--color-text-tertiary); border-color: var(--color-border); }
+  html.dark .ve-root .ve-add-group:hover {
+    border-color: var(--color-text-primary);
+    color: var(--color-text-primary);
+    background: var(--color-bg-tertiary);
+  }
 
-  /* === group card === */
-  .ve-group {
+  /* === Group card === */
+  .ve-root .ve-group {
     background: #fff;
     border: 1px solid #ececec;
     border-radius: 12px;
-    padding: 12px 14px;
+    padding: 14px 16px;
+    transition: box-shadow .14s, border-color .14s;
   }
-  :global(html.dark) .ve-group { background: var(--color-bg-primary); border-color: var(--color-border); }
-  .ve-group-head {
-    display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px;
+  .ve-root .ve-group:hover { border-color: #d4d4d4; }
+  html.dark .ve-root .ve-group {
+    background: var(--color-bg-primary);
+    border-color: var(--color-border);
   }
-  .ve-group-titles { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-  .ve-group-title {
-    width: 100%; box-sizing: border-box;
-    border: none; outline: none; padding: 0; background: transparent; font-family: inherit;
-    font-size: 14px; font-weight: 600; color: #171717;
-  }
-  :global(html.dark) .ve-group-title { color: var(--color-text-primary); }
-  .ve-group-flow {
-    width: 100%; box-sizing: border-box;
-    border: none; outline: none; padding: 0; background: transparent; font-family: inherit;
-    font-size: 12px; color: #737373;
-  }
-  :global(html.dark) .ve-group-flow { color: var(--color-text-tertiary); }
-  .ve-group-remove {
-    all: unset;
-    cursor: pointer;
-    padding: 4px 8px;
-    font-size: 12px;
-    color: #a3a3a3;
-    border-radius: 6px;
-  }
-  .ve-group-remove:hover { background: #fef2f2; color: #dc2626; }
 
-  .ve-group-chips {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    padding: 8px;
+  .ve-root .ve-group-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .ve-root .ve-group-titles {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .ve-root .ve-group-title {
+    width: 100%; box-sizing: border-box;
+    border: none;
+    border-bottom: 1.5px solid transparent;
+    outline: none;
+    padding: 2px 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: #171717;
+    transition: border-color .14s;
+  }
+  .ve-root .ve-group-title:hover { border-bottom-color: #ececec; }
+  .ve-root .ve-group-title:focus { border-bottom-color: #171717; }
+  html.dark .ve-root .ve-group-title { color: var(--color-text-primary); }
+  html.dark .ve-root .ve-group-title:hover { border-bottom-color: var(--color-border); }
+  html.dark .ve-root .ve-group-title:focus { border-bottom-color: var(--color-text-primary); }
+
+  .ve-root .ve-group-flow {
+    width: 100%; box-sizing: border-box;
+    border: none; outline: none;
+    padding: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: 12px;
+    color: #737373;
+  }
+  .ve-root .ve-group-flow::placeholder { color: #d4d4d4; }
+  html.dark .ve-root .ve-group-flow { color: var(--color-text-tertiary); }
+
+  .ve-root .ve-group-remove {
+    all: unset; cursor: pointer;
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #a3a3a3;
+    flex-shrink: 0;
+    transition: background .12s, color .12s;
+  }
+  .ve-root .ve-group-remove:hover {
+    background: #fef2f2;
+    color: #dc2626;
+  }
+  html.dark .ve-root .ve-group-remove:hover {
+    background: rgba(239,68,68,0.15);
+    color: #ef4444;
+  }
+
+  /* chips container */
+  .ve-root .ve-group-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px;
     background: #fafaf9;
     border-radius: 8px;
-    min-height: 50px;
+    min-height: 56px;
     border: 1px dashed #ececec;
     transition: background .12s, border-color .12s;
   }
-  :global(html.dark) .ve-group-chips { background: var(--color-bg-secondary); border-color: var(--color-border); }
-  .ve-group-chips.is-drop-over {
+  html.dark .ve-root .ve-group-chips {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-border);
+  }
+  .ve-root .ve-group-chips.is-drop-over {
     background: #f0f9ff;
     border-color: #60a5fa;
-    border-style: dashed;
+    border-style: solid;
   }
-  .ve-group-chips-empty {
-    font-size: 11px;
+  html.dark .ve-root .ve-group-chips.is-drop-over {
+    background: rgba(96,165,250,0.12);
+    border-color: #60a5fa;
+  }
+  .ve-root .ve-group-chips-empty {
+    font-size: 12px;
     color: #a3a3a3;
     align-self: center;
-    padding: 6px 4px;
+    padding: 4px 6px;
+    width: 100%;
+    text-align: center;
   }
 
-  .ve-group-hint { margin-top: 8px; font-size: 11px; color: #a3a3a3; }
-
-  .ve-school-chip {
-    cursor: pointer;
+  /* school chip */
+  .ve-root .ve-school-chip {
+    cursor: grab;
     display: inline-flex;
     align-items: center;
-    padding: 4px 8px;
-    border-radius: 6px;
+    gap: 4px;
+    padding: 5px 6px 5px 10px;
+    border-radius: 999px;
     background: #fff;
     border: 1px solid #ececec;
-    font-size: 12px;
-    color: #262626;
+    font-size: 12.5px;
+    color: #171717;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: border-color .12s, background .12s, transform .12s;
   }
-  :global(html.dark) .ve-school-chip { background: var(--color-bg-primary); border-color: var(--color-border); color: var(--color-text-primary); }
-  .ve-school-chip.is-dragging { opacity: 0.4; }
-  .ve-school-chip-x { color: #a3a3a3; margin-left: 4px; }
+  .ve-root .ve-school-chip:active { cursor: grabbing; }
+  .ve-root .ve-school-chip:hover {
+    border-color: #d4d4d4;
+    background: #fafaf9;
+  }
+  .ve-root .ve-school-chip.is-dragging {
+    opacity: 0.4;
+    transform: scale(0.96);
+  }
+  html.dark .ve-root .ve-school-chip {
+    background: var(--color-bg-primary);
+    border-color: var(--color-border);
+    color: var(--color-text-primary);
+  }
+  html.dark .ve-root .ve-school-chip:hover {
+    background: var(--color-bg-tertiary);
+    border-color: var(--color-text-quaternary);
+  }
+  .ve-root .ve-school-chip-x {
+    width: 18px; height: 18px;
+    border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #a3a3a3;
+    font-size: 14px;
+    line-height: 1;
+    margin-left: 2px;
+    transition: background .12s, color .12s;
+  }
+  .ve-root .ve-school-chip:hover .ve-school-chip-x {
+    background: #f5f5f4;
+    color: #525252;
+  }
 
-  /* === Pool === */
-  .ve-right {
+  /* === Pool (right rail) === */
+  .ve-root .ve-right {
     border-left: 1px solid #ececec;
     background: #fff;
     display: flex;
     flex-direction: column;
     transition: background .12s;
   }
-  :global(html.dark) .ve-right { background: var(--color-bg-primary); border-left-color: var(--color-border); }
-  .ve-right.is-drop-over { background: #f0f9ff; }
-  .ve-pool-head { padding: 14px 16px; border-bottom: 1px solid #f1f1f0; }
-  :global(html.dark) .ve-pool-head { border-bottom-color: var(--color-border); }
-  .ve-pool-title { font-size: 13px; font-weight: 600; color: #171717; }
-  :global(html.dark) .ve-pool-title { color: var(--color-text-primary); }
-  .ve-pool-sub { font-size: 11px; color: #a3a3a3; margin-top: 2px; }
-  .ve-pool-list { flex: 1; overflow-y: auto; padding: 10px 14px; }
-  .ve-pool-row {
-    display: flex; align-items: center; gap: 6px;
-    padding: 7px 8px;
-    margin-bottom: 2px;
-    border-radius: 6px;
-    border-bottom: 1px dashed #f5f5f4;
-    cursor: grab;
+  html.dark .ve-root .ve-right {
+    background: var(--color-bg-primary);
+    border-left-color: var(--color-border);
   }
-  :global(html.dark) .ve-pool-row { border-bottom-color: var(--color-border); }
-  .ve-pool-row.is-dragging { opacity: 0.4; background: #f5f5f4; }
-  .ve-pool-handle { color: #d4d4d4; font-size: 12px; margin-right: 2px; }
-  .ve-pool-name { flex: 1; font-size: 13px; color: #262626; }
-  :global(html.dark) .ve-pool-name { color: var(--color-text-primary); }
-  .ve-pool-empty { font-size: 12px; color: #a3a3a3; padding: 8px; }
+  @media (max-width: 720px) {
+    .ve-root .ve-right {
+      border-left: none;
+      border-top: 1px solid #ececec;
+    }
+    html.dark .ve-root .ve-right { border-top-color: var(--color-border); }
+  }
+  .ve-root .ve-right.is-drop-over { background: #f0f9ff; }
+  html.dark .ve-root .ve-right.is-drop-over { background: rgba(96,165,250,0.12); }
+
+  .ve-root .ve-pool-head {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f1f1f0;
+    flex-shrink: 0;
+  }
+  html.dark .ve-root .ve-pool-head { border-bottom-color: var(--color-border); }
+  .ve-root .ve-pool-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #171717;
+  }
+  html.dark .ve-root .ve-pool-title { color: var(--color-text-primary); }
+  .ve-root .ve-pool-sub {
+    font-size: 11px;
+    color: #a3a3a3;
+    margin-top: 3px;
+  }
+
+  .ve-root .ve-pool-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+  }
+
+  /* pool row — chip-style with drag handle */
+  .ve-root .ve-pool-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    margin-bottom: 3px;
+    border-radius: 8px;
+    background: transparent;
+    cursor: grab;
+    border: 1px solid transparent;
+    transition: background .1s, border-color .1s;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .ve-root .ve-pool-row:hover {
+    background: #fafaf9;
+    border-color: #ececec;
+  }
+  .ve-root .ve-pool-row:active { cursor: grabbing; }
+  .ve-root .ve-pool-row.is-dragging {
+    opacity: 0.4;
+    background: #f5f5f4;
+  }
+  html.dark .ve-root .ve-pool-row:hover {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-border);
+  }
+
+  .ve-root .ve-pool-handle {
+    color: #d4d4d4;
+    font-size: 13px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .ve-root .ve-pool-name {
+    flex: 1;
+    font-size: 13px;
+    color: #262626;
+  }
+  html.dark .ve-root .ve-pool-name { color: var(--color-text-primary); }
+
+  .ve-root .ve-pool-empty {
+    font-size: 12px;
+    color: #a3a3a3;
+    padding: 12px;
+    text-align: center;
+  }
 </style>
 
 <script is:inline>
@@ -343,11 +596,11 @@ const { discipline, allSchools } = Astro.props;
     const saveBtn = root.querySelector('[data-ve-save]');
 
     let baseSha = null;
-    let snapshot = null;             // 完整原 JSON（PUT 时塞回 schema-required 字段）
-    let groups = [];                 // [{ id, title, flow, schoolIds }]
-    let pool = [];                   // [schoolId, ...]
+    let snapshot = null;
+    let groups = [];
+    let pool = [];
     let icon = '📚';
-    let dragSchool = null;           // 当前拖动的 schoolId
+    let dragSchool = null;
 
     function setIcon(v) {
       icon = v;
@@ -359,7 +612,9 @@ const { discipline, allSchools } = Astro.props;
 
     function close() { root.classList.add('hidden'); }
     root.querySelectorAll('[data-ve-close]').forEach((b) => b.addEventListener('click', close));
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !root.classList.contains('hidden')) close(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !root.classList.contains('hidden')) close();
+    });
 
     iconTrigger && iconTrigger.addEventListener('click', () => {
       if (!iconPop) return;
@@ -374,38 +629,75 @@ const { discipline, allSchools } = Astro.props;
       });
     });
 
+    function makeChip(s) {
+      const chip = document.createElement('div');
+      chip.className = 've-school-chip';
+      chip.setAttribute('draggable', 'true');
+      chip.setAttribute('data-school-id', s.key);
+      chip.title = '拖到其他分组 · 点击移到右侧池子';
+      chip.innerHTML = `<span>${s.cn}</span><span class="ve-school-chip-x">×</span>`;
+      chip.addEventListener('dragstart', (e) => {
+        dragSchool = s.key;
+        chip.classList.add('is-dragging');
+        if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+      });
+      chip.addEventListener('dragend', () => {
+        chip.classList.remove('is-dragging');
+        dragSchool = null;
+        clearDropTargets();
+      });
+      chip.addEventListener('click', () => moveToPool(s.key));
+      return chip;
+    }
+
     function renderGroups() {
       groupsEl.innerHTML = '';
       groups.forEach((g) => {
         const card = document.createElement('div');
         card.className = 've-group';
         card.setAttribute('data-group-id', g.id);
-        card.innerHTML = `
-          <div class="ve-group-head">
-            <div class="ve-group-titles">
-              <input class="ve-group-title" data-ve-group-title placeholder="分组标题" />
-              <input class="ve-group-flow"  data-ve-group-flow  placeholder="子流程描述（可选）" />
-            </div>
-            <button type="button" class="ve-group-remove" data-ve-group-remove>移除</button>
-          </div>
-          <div class="ve-group-chips" data-ve-group-chips data-drop-target="${g.id}"></div>
-          <div class="ve-group-hint">拖动学派可在分组间移动 · 点学派 × 移除</div>
-        `;
-        const titleInp = card.querySelector('[data-ve-group-title]');
-        const flowInp = card.querySelector('[data-ve-group-flow]');
+
+        const head = document.createElement('div');
+        head.className = 've-group-head';
+        const titles = document.createElement('div');
+        titles.className = 've-group-titles';
+
+        const titleInp = document.createElement('input');
+        titleInp.className = 've-group-title';
         titleInp.value = g.title || '';
-        flowInp.value = g.flow || '';
+        titleInp.placeholder = '分组标题';
         titleInp.addEventListener('input', (e) => { g.title = e.target.value; });
+        titles.appendChild(titleInp);
+
+        const flowInp = document.createElement('input');
+        flowInp.className = 've-group-flow';
+        flowInp.value = g.flow || '';
+        flowInp.placeholder = '子流程描述（可选）';
         flowInp.addEventListener('input', (e) => { g.flow = e.target.value; });
-        card.querySelector('[data-ve-group-remove]').addEventListener('click', () => {
-          // 把 schoolIds 退回 pool
+        titles.appendChild(flowInp);
+
+        head.appendChild(titles);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 've-group-remove';
+        removeBtn.title = '移除此分组（学派回到右侧池子）';
+        removeBtn.setAttribute('aria-label', '移除分组');
+        removeBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+        removeBtn.addEventListener('click', () => {
           pool = [...pool, ...g.schoolIds];
           groups = groups.filter((x) => x !== g);
           renderGroups();
           renderPool();
         });
-        const chipsEl = card.querySelector('[data-ve-group-chips]');
-        // chips
+        head.appendChild(removeBtn);
+
+        card.appendChild(head);
+
+        const chipsEl = document.createElement('div');
+        chipsEl.className = 've-group-chips';
+        chipsEl.setAttribute('data-ve-group-chips', '');
+        chipsEl.setAttribute('data-drop-target', g.id);
         if (g.schoolIds.length === 0) {
           const empty = document.createElement('div');
           empty.className = 've-group-chips-empty';
@@ -415,28 +707,12 @@ const { discipline, allSchools } = Astro.props;
           g.schoolIds.forEach((sid) => {
             const s = schoolByKey[sid];
             if (!s) return;
-            const chip = document.createElement('div');
-            chip.className = 've-school-chip';
-            chip.setAttribute('draggable', 'true');
-            chip.setAttribute('data-school-id', sid);
-            chip.title = '拖到其他分组 · 点击移到右侧池子';
-            chip.innerHTML = `<span>${s.cn}</span><span class="ve-school-chip-x">×</span>`;
-            chip.addEventListener('dragstart', (e) => {
-              dragSchool = sid;
-              chip.classList.add('is-dragging');
-              if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
-            });
-            chip.addEventListener('dragend', () => {
-              chip.classList.remove('is-dragging');
-              dragSchool = null;
-              clearDropTargets();
-            });
-            chip.addEventListener('click', () => moveToPool(sid));
-            chipsEl.appendChild(chip);
+            chipsEl.appendChild(makeChip(s));
           });
         }
-        // chips 容器作为 drop target
         bindDropTarget(chipsEl, g.id);
+        card.appendChild(chipsEl);
+
         groupsEl.appendChild(card);
       });
     }
@@ -459,7 +735,14 @@ const { discipline, allSchools } = Astro.props;
         row.setAttribute('draggable', 'true');
         row.setAttribute('data-school-id', sid);
         row.title = '拖到左侧分组放入';
-        row.innerHTML = `<span class="ve-pool-handle">⋮⋮</span><div class="ve-pool-name">${s.cn}</div>`;
+        const handle = document.createElement('span');
+        handle.className = 've-pool-handle';
+        handle.textContent = '⋮⋮';
+        const name = document.createElement('div');
+        name.className = 've-pool-name';
+        name.textContent = s.cn;
+        row.appendChild(handle);
+        row.appendChild(name);
         row.addEventListener('dragstart', (e) => {
           dragSchool = sid;
           row.classList.add('is-dragging');
@@ -497,13 +780,10 @@ const { discipline, allSchools } = Astro.props;
       });
     }
 
-    // 池子整体作为 drop target
     if (poolEl) bindDropTarget(poolEl, 'pool');
 
     function moveToGroup(schoolId, targetGid) {
-      // 从所有分组移除
       groups = groups.map((g) => ({ ...g, schoolIds: g.schoolIds.filter((id) => id !== schoolId) }));
-      // 从 pool 移除
       pool = pool.filter((id) => id !== schoolId);
       if (targetGid === 'pool') {
         if (!pool.includes(schoolId)) pool = [...pool, schoolId];
@@ -521,17 +801,17 @@ const { discipline, allSchools } = Astro.props;
       renderPool();
     }
 
-    // 添加分组
     root.querySelector('[data-ve-add-group]').addEventListener('click', () => {
       const id = 'g' + Date.now().toString(36);
       groups.push({ id, title: '新分组', flow: '', schoolIds: [] });
       renderGroups();
-      // focus 新建组的标题输入
-      const last = groupsEl.querySelector('.ve-group:last-child [data-ve-group-title]');
-      last && last.focus();
+      const last = groupsEl.querySelector('.ve-group:last-child .ve-group-title');
+      if (last) {
+        last.focus();
+        last.select && last.select();
+      }
     });
 
-    // 触发器：拉视图 + 渲染
     document.addEventListener('view:editor', async (e) => {
       const viewId = e && e.detail && e.detail.viewId;
       if (!viewId) return;
@@ -557,7 +837,6 @@ const { discipline, allSchools } = Astro.props;
       root.classList.remove('hidden');
     });
 
-    // 保存
     saveBtn && saveBtn.addEventListener('click', async () => {
       if (!snapshot) return;
       const next = {
@@ -565,7 +844,6 @@ const { discipline, allSchools } = Astro.props;
         icon,
         name: (nameEl?.value || '').trim(),
         description: (descEl?.value || '').trim(),
-        // 注意：title trim 在每组上做，避免空白 title 通过校验
         groups: groups.map((g) => ({
           id: g.id,
           title: (g.title || '').trim() || '（未命名）',

@@ -32,13 +32,13 @@ const { view, count, totalSchools, canEdit } = Astro.props;
 const orphan = Math.max(0, totalSchools - count);
 ---
 
-<div class="view-desc">
+<div class="view-desc" data-view-id={view.id}>
   <div class="vd-icon">{view.icon}</div>
   <div class="vd-main">
     <div class="vd-name-row">
       <div class="vd-name">{view.name}</div>
       {canEdit && orphan > 0 && (
-        <span class="vd-orphan" data-view-edit-info aria-label={`未收录 ${orphan} 个学派`}>
+        <span class="vd-orphan" data-view-edit aria-label={`未收录 ${orphan} 个学派`}>
           <button class="vd-orphan-btn" type="button">!</button>
           <span class="vd-orphan-tip">未收录 {orphan} 个学派</span>
         </span>
@@ -47,11 +47,11 @@ const orphan = Math.max(0, totalSchools - count);
     {view.description ? (
       <div
         class="vd-desc"
-        data-view-edit-info={canEdit ? '1' : undefined}
-        title={canEdit ? '点击编辑视图说明' : undefined}
+        data-view-edit={canEdit ? '1' : undefined}
+        title={canEdit ? '点击编辑视图' : undefined}
       >{view.description}</div>
     ) : canEdit ? (
-      <button class="vd-add-desc" type="button" data-view-edit-info>+ 添加视图说明</button>
+      <button class="vd-add-desc" type="button" data-view-edit>+ 添加视图说明</button>
     ) : null}
     {view.flow && (
       <div class="vd-flow">{view.flow}</div>
@@ -145,13 +145,13 @@ const orphan = Math.max(0, totalSchools - count);
     transition: background .12s;
   }
   :global(html.dark) .vd-desc { color: var(--color-text-tertiary); }
-  .vd-desc[data-view-edit-info] {
+  .vd-desc[data-view-edit] {
     cursor: pointer;
   }
-  .vd-desc[data-view-edit-info]:hover {
+  .vd-desc[data-view-edit]:hover {
     background: #f5f5f4;
   }
-  :global(html.dark) .vd-desc[data-view-edit-info]:hover { background: var(--color-bg-tertiary); }
+  :global(html.dark) .vd-desc[data-view-edit]:hover { background: var(--color-bg-tertiary); }
 
   .vd-add-desc {
     all: unset;
@@ -174,10 +174,15 @@ const orphan = Math.max(0, totalSchools - count);
 
 <script>
   // @ts-nocheck
+  // v0.5.80：description 点击 / orphan 徽章点击 → 直接进 ViewEditor
+  // 之前还有独立的 ViewInfoEditor，这版砍了，统一用主编辑器编辑 icon/name/desc
   (() => {
-    document.querySelectorAll('[data-view-edit-info]').forEach((el) => {
+    const wrap = document.querySelector('.view-desc[data-view-id]');
+    if (!wrap) return;
+    const viewId = wrap.getAttribute('data-view-id');
+    document.querySelectorAll('[data-view-edit]').forEach((el) => {
       el.addEventListener('click', () => {
-        document.dispatchEvent(new CustomEvent('view:editInfo'));
+        document.dispatchEvent(new CustomEvent('view:editor', { detail: { viewId } }));
       });
     });
   })();

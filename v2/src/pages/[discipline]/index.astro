@@ -24,7 +24,6 @@ import SchoolCard from '~/components/SchoolCard.astro';
 import ViewToast from '~/components/ViewToast.astro';
 import ViewMenu from '~/components/ViewMenu.astro';
 import NewViewDrawer from '~/components/NewViewDrawer.astro';
-import ViewInfoEditor from '~/components/ViewInfoEditor.astro';
 import ViewEditor from '~/components/ViewEditor.astro';
 import { toneFromHex, NEUTRAL_TONE } from '~/lib/tag-tone';
 import type { ViewGroup } from '~/schemas/view';
@@ -205,7 +204,6 @@ const chipViews = allViews.map((v) => ({
         discipline={discipline!}
         existingViews={allViews.map((v) => ({ id: v.id, name: v.name, icon: v.icon, description: v.description }))}
       />
-      <ViewInfoEditor discipline={discipline!} />
       <ViewEditor
         discipline={discipline!}
         allSchools={schools.map((s) => ({ key: s.key, cn: s.cn }))}

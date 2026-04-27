@@ -23,7 +23,6 @@ const { discipline } = Astro.props;
   <div class="vm-overlay" data-vm-close></div>
   <div class="vm-card" role="menu" aria-labelledby="vm-card-label">
     <button type="button" class="vm-item" data-vm-action="edit">编辑视图</button>
-    <button type="button" class="vm-item" data-vm-action="editInfo">编辑视图说明</button>
     <button type="button" class="vm-item" data-vm-action="duplicate">复制为新视图</button>
     <div class="vm-sep"></div>
     <button type="button" class="vm-item vm-danger" data-vm-action="delete">删除视图</button>
@@ -99,15 +98,13 @@ const { discipline } = Astro.props;
       card.style.left = detail.anchor.left + 'px';
       // 设置项目可用状态
       const editBtn = card.querySelector('[data-vm-action="edit"]');
-      const editInfoBtn = card.querySelector('[data-vm-action="editInfo"]');
       const dupBtn = card.querySelector('[data-vm-action="duplicate"]');
       const delBtn = card.querySelector('[data-vm-action="delete"]');
       if (delBtn) {
         delBtn.toggleAttribute('disabled', !!detail.isDefault);
         delBtn.title = detail.isDefault ? '默认视图不能删除' : '';
       }
-      // editInfo / edit / duplicate 都允许（auto kind 暂不存在）
-      [editBtn, editInfoBtn, dupBtn].forEach((b) => b && b.removeAttribute('disabled'));
+      [editBtn, dupBtn].forEach((b) => b && b.removeAttribute('disabled'));
       root.classList.remove('hidden');
     }
     function close() {
@@ -133,8 +130,6 @@ const { discipline } = Astro.props;
         close();
         if (action === 'edit') {
           document.dispatchEvent(new CustomEvent('view:editor', { detail: { viewId } }));
-        } else if (action === 'editInfo') {
-          document.dispatchEvent(new CustomEvent('view:infoEditor', { detail: { viewId } }));
         } else if (action === 'duplicate') {
           await duplicateView(viewId, viewName);
         } else if (action === 'delete') {
