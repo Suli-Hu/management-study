@@ -1,0 +1,96 @@
+---
+/**
+ * v0.5.78 LangFab — 移动端日语切换悬浮球
+ *
+ * 调用：
+ *   <LangFab lang={selectedLang} accentHex={accentHex} />
+ *
+ *   - lang: 当前语言（'zh' | 'ja'）— 决定球面字（中 / 日）+ 配色
+ *   - accentHex: 学派 / 学者 accent 色（可选，默认品牌橙 #FF9500）
+ *
+ * 仅在 mobile/平板（< 1024px）显示；桌面用 head-bar 内 chip。
+ * 父页面应仅在 KP 有 body_ja 时挂 — 否则点击没行为。
+ *
+ * 行为见 lang-fab-client.ts：拖动 + 边缘吸附 + localStorage 持久化 + 委托点 [data-lang-toggle]
+ */
+
+interface Props {
+  lang: 'zh' | 'ja';
+  accentHex?: string;
+}
+const { lang, accentHex = '#FF9500' } = Astro.props;
+---
+
+<button
+  type="button"
+  class:list={['lang-fab', lang === 'ja' && 'is-ja']}
+  data-lang-fab
+  aria-label="切换日语 / 中文"
+  aria-pressed={lang === 'ja' ? 'true' : 'false'}
+  style={`--fab-accent:${accentHex}`}
+  tabindex="0"
+>{lang === 'ja' ? '日' : '中'}</button>
+
+<style>
+  .lang-fab {
+    /* 桌面默认隐藏；mobile/平板才显示 */
+    display: none;
+    position: fixed;
+    /* 初始位置 — JS 加载后会用 localStorage 恢复或锚到 maxX/maxY */
+    bottom: max(16px, env(safe-area-inset-bottom));
+    right: 16px;
+    z-index: 40;
+    width: 52px; height: 52px;
+    border-radius: 999px;
+    background: var(--fab-accent, #FF9500);
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 700;
+    border: 1.5px solid var(--fab-accent, #FF9500);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18), 0 2px 4px rgba(0,0,0,0.12);
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform;
+    touch-action: none;       /* 关键：阻止 page scroll 抢 touch */
+    font-family: inherit;
+    line-height: 1;
+    align-items: center;
+    justify-content: center;
+    /* transitions */
+    transition:
+      box-shadow .18s,
+      transform .14s,
+      left .28s cubic-bezier(.34,1.4,.64,1),
+      top  .28s cubic-bezier(.34,1.4,.64,1),
+      background .18s,
+      color .18s,
+      border-color .18s;
+  }
+  @media (max-width: 1023px) {
+    .lang-fab { display: inline-flex; }
+  }
+  .lang-fab.is-ja {
+    background: #ffffff;
+    color: var(--fab-accent, #FF9500);
+  }
+  .lang-fab.is-dragging {
+    cursor: grabbing;
+    box-shadow: 0 14px 40px rgba(0,0,0,0.30), 0 6px 12px rgba(0,0,0,0.18);
+    transition: none;
+  }
+  .lang-fab:active:not(.is-dragging) { transform: scale(0.94); }
+
+  :global(html.dark) .lang-fab {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.45), 0 2px 4px rgba(0,0,0,0.30);
+  }
+  :global(html.dark) .lang-fab.is-ja {
+    background: #1a1a1c;
+  }
+</style>
+
+<script>
+  import { mountLangFab } from '~/lib/lang-fab-client';
+  document.querySelectorAll<HTMLElement>('[data-lang-fab]').forEach(mountLangFab);
+</script>

@@ -1,5 +1,6 @@
 ---
 import Layout from '~/layouts/Layout.astro';
+import LangFab from '~/components/LangFab.astro';
 import { getDb } from '~/lib/db';
 import { renderBody, renderEvalModule, type KpFormat } from '~/lib/render-body';
 import type { EvalContent } from '~/lib/eval-tag-defs';
@@ -128,6 +129,9 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
     <article class="kp-body text-secondary" set:html={renderBody({ fmt: kp.format, body, accentHex })} />
     {evalContent && <div set:html={renderEvalModule(evalContent)} />}
   </main>
+
+  {/* v0.5.78：mobile 日语切换悬浮球（仅 KP 有 body_ja 时挂） */}
+  {kp.body_ja && <LangFab lang={lang} accentHex={accentHex} />}
 </Layout>
 
 <script is:inline>

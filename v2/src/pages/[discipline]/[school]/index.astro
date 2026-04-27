@@ -14,6 +14,7 @@
  */
 import Layout from '~/layouts/Layout.astro';
 import EmptyRight from '~/components/EmptyRight.astro';
+import LangFab from '~/components/LangFab.astro';
 import { getDb } from '~/lib/db';
 import { renderBodyForSchool, renderEvalModule, type KpFormat } from '~/lib/render-body';
 import { editHref } from '~/lib/nav';
@@ -121,9 +122,12 @@ if (selectedKpId) {
   }
 }
 
+// v0.5.78: evalContent 也跟 lang 切（之前永远 zh 是 bug）
+const selectedUseJa = !!(langParam === 'ja' && selectedKp?.body_ja);
 let selectedEvalContent: EvalContent | null = null;
 if (selectedKp) {
-  try { selectedEvalContent = JSON.parse(selectedKp.eval_content_zh_json) as EvalContent; }
+  const raw = selectedUseJa ? selectedKp.eval_content_ja_json : selectedKp.eval_content_zh_json;
+  try { selectedEvalContent = JSON.parse(raw) as EvalContent; }
   catch { selectedEvalContent = null; }
 }
 
@@ -344,10 +348,13 @@ const canEdit = Astro.locals.canEdit(discipline);
               .map((sk) => lastName(scholarByKey.get(sk)?.name_en ?? scholarByKey.get(sk)?.name_zh ?? sk))
               .join(' · ');
             const isActive = selectedKpId === k.id;
-            // v0.5.49 SSR pre-render KP body + eval（手机 inline 展开用，桌面 CSS 强制 hidden）
-            const inlineBodyHtml = renderBodyForSchool({ fmt: k.format, body: k.body_zh, accentHex });
+            // v0.5.78: inline body 跟随页面 ?lang=；该 KP 没 ja → 退回 zh
+            const useJa = selectedLang === 'ja' && !!k.body_ja;
+            const inlineBody = useJa ? k.body_ja! : k.body_zh;
+            const inlineBodyHtml = renderBodyForSchool({ fmt: k.format, body: inlineBody, accentHex });
+            const evalRaw = useJa ? k.eval_content_ja_json : k.eval_content_zh_json;
             let kpEval: EvalContent | null = null;
-            try { kpEval = JSON.parse(k.eval_content_zh_json) as EvalContent; }
+            try { kpEval = JSON.parse(evalRaw) as EvalContent; }
             catch { kpEval = null; }
             const inlineEvalHtml = renderEvalModule(kpEval);
             return (
@@ -450,6 +457,9 @@ const canEdit = Astro.locals.canEdit(discipline);
     </article>
 
   </div>
+
+  {/* v0.5.78：mobile 日语切换悬浮球 — 仅当当前选中 KP 有 body_ja 时挂 */}
+  {selectedKp?.body_ja && <LangFab lang={selectedLang} accentHex={accentHex} />}
 </Layout>
 
 <script is:inline src="/split-pane.js"></script>

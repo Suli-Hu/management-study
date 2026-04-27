@@ -17,6 +17,7 @@
  */
 import Layout from '~/layouts/Layout.astro';
 import EmptyRight from '~/components/EmptyRight.astro';
+import LangFab from '~/components/LangFab.astro';
 import { getDb } from '~/lib/db';
 import { renderBodyForSchool, renderEvalModule, type KpFormat } from '~/lib/render-body';
 import { editHref } from '~/lib/nav';
@@ -67,7 +68,7 @@ let schools: Array<{ key: string; title_zh: string; title_en: string | null; the
 type KpListItem = {
   id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string;
   body_zh: string; body_ja: string | null; format: KpFormat;
-  eval_content_zh_json: string;
+  eval_content_zh_json: string; eval_content_ja_json: string;
 };
 let kps: KpListItem[] = [];
 
@@ -89,7 +90,8 @@ if (!isPartial) {
   const kpsResult = await db
     .prepare(`
       SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year,
-        k.body_zh, k.body_ja, k.format, k.eval_content_zh_json
+        k.body_zh, k.body_ja, k.format,
+        k.eval_content_zh_json, k.eval_content_ja_json
       FROM kp k
       INNER JOIN kp_scholar ks ON ks.kp_id = k.id
       WHERE ks.scholar_key = ?
@@ -108,20 +110,19 @@ type SelectedKp = {
   id: string; title_zh: string; title_en: string | null; title_ja: string | null;
   year: string; body_zh: string; body_ja: string | null;
   format: KpFormat;
-  eval_content_zh_json: string;
+  eval_content_zh_json: string; eval_content_ja_json: string;
 };
 let selectedKp: SelectedKp | null = null;
 let selectedScholars: Array<{ key: string; name_zh: string; name_en: string | null }> = [];
 let selectedEvalContent: EvalContent | null = null;
 if (selectedKpId) {
   const kpRow = await db
-    .prepare('SELECT id, title_zh, title_en, title_ja, year, body_zh, body_ja, format, eval_content_zh_json FROM kp WHERE id = ? AND discipline = ?')
+    .prepare('SELECT id, title_zh, title_en, title_ja, year, body_zh, body_ja, format, eval_content_zh_json, eval_content_ja_json FROM kp WHERE id = ? AND discipline = ?')
     .bind(selectedKpId, discipline)
     .first() as SelectedKp | null;
   selectedKp = kpRow ?? null;
   if (selectedKp) {
-    try { selectedEvalContent = JSON.parse(selectedKp.eval_content_zh_json) as EvalContent; }
-    catch { selectedEvalContent = null; }
+    // selectedEvalContent 推迟到下面 selectedLang 计算之后，按 lang 选 zh/ja json
     const scRes = await db
       .prepare(`
         SELECT sc.key, sc.name_zh, sc.name_en
@@ -141,6 +142,12 @@ const contribution = lang === 'ja' ? scholar.contribution_ja! : scholar.contribu
 // v0.5.39: ?lang= 同时控制学者贡献 + 选中 KP body
 const selectedLang: 'zh' | 'ja' =
   langParam === 'ja' && selectedKp?.body_ja ? 'ja' : 'zh';
+// v0.5.78: evalContent 也跟 lang 切（之前永远 zh 是 bug）
+if (selectedKp) {
+  const evalRaw = selectedLang === 'ja' ? selectedKp.eval_content_ja_json : selectedKp.eval_content_zh_json;
+  try { selectedEvalContent = JSON.parse(evalRaw) as EvalContent; }
+  catch { selectedEvalContent = null; }
+}
 const selectedBody: string | null = selectedKp
   ? (selectedLang === 'ja' ? selectedKp.body_ja! : selectedKp.body_zh)
   : null;
@@ -414,9 +421,13 @@ const canEdit = Astro.locals.canEdit(discipline);
               const schoolHint = schools[0]?.title_zh ?? '';
               // v0.5.75：跟学派页一致 — <details>/<summary> 包裹，手机 inline 展开
               // 桌面 split-pane.js MQ ≥1024px 拦截点击改 fetch swap，inline body 由 CSS 隐藏
-              const inlineBodyHtml = renderBodyForSchool({ fmt: k.format, body: k.body_zh, accentHex });
+              // v0.5.78: inline body 跟随页面 ?lang=；该 KP 没 ja → 退回 zh
+              const useJa = selectedLang === 'ja' && !!k.body_ja;
+              const inlineBody = useJa ? k.body_ja! : k.body_zh;
+              const inlineBodyHtml = renderBodyForSchool({ fmt: k.format, body: inlineBody, accentHex });
+              const evalRaw = useJa ? k.eval_content_ja_json : k.eval_content_zh_json;
               let kpEval: EvalContent | null = null;
-              try { kpEval = JSON.parse(k.eval_content_zh_json) as EvalContent; }
+              try { kpEval = JSON.parse(evalRaw) as EvalContent; }
               catch { kpEval = null; }
               const inlineEvalHtml = renderEvalModule(kpEval);
               return (
@@ -517,6 +528,9 @@ const canEdit = Astro.locals.canEdit(discipline);
     </article>
 
   </div>
+
+  {/* v0.5.78：mobile 日语切换悬浮球 — 仅当当前选中 KP 有 body_ja 时挂 */}
+  {selectedKp?.body_ja && <LangFab lang={selectedLang} accentHex={accentHex} />}
 </Layout>
 
 <script is:inline src="/split-pane.js"></script>
