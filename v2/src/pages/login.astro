@@ -58,37 +58,19 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
         </form>
       ) : (
         <div>
-          {/* tab 切换：邀请码 / 邮箱验证码 */}
-          <div class="flex bg-bg-secondary rounded-full p-1 mb-6" role="tablist">
-            <button
-              type="button"
-              role="tab"
-              data-login-tab="invite"
-              data-active
-              class="flex-1 px-4 py-2 rounded-full text-sm font-semibold transition-colors data-[active]:bg-bg-primary data-[active]:shadow-card text-tertiary data-[active]:text-primary"
-            >
-              邀请码
-            </button>
-            <button
-              type="button"
-              role="tab"
-              data-login-tab="email"
-              class="flex-1 px-4 py-2 rounded-full text-sm font-semibold transition-colors data-[active]:bg-bg-primary data-[active]:shadow-card text-tertiary data-[active]:text-primary"
-            >
-              邮箱验证码
-            </button>
-          </div>
+          {/* v0.5.82: 默认只显示密码（邀请码）表单，邮箱验证码 tab 收起来；
+              入口在 footer 区域的小字 "邮箱登录" 链接（仅 admin 知道路径） */}
 
-          {/* 邀请码 tab */}
+          {/* 密码（前身：邀请码）表单 */}
           <form method="POST" action="/api/auth/invite-code" data-login-pane="invite" class="space-y-3">
             <div>
-              <label class="block text-xs text-tertiary mb-1">邀请码</label>
+              <label class="block text-xs text-tertiary mb-1">密码</label>
               <input
-                type="text"
+                type="password"
                 name="code"
                 required
-                autocomplete="off"
-                placeholder="请输入邀请码"
+                autocomplete="current-password"
+                placeholder="请输入密码"
                 class="w-full px-3 py-2.5 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
               />
             </div>
@@ -98,7 +80,7 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
             </button>
           </form>
 
-          {/* 邮箱验证码 tab */}
+          {/* 邮箱验证码表单（默认隐藏，靠 footer 区域链接切到这里） */}
           <form method="POST" action="/api/auth/login" data-login-pane="email" class="space-y-3 hidden">
             <div>
               <label class="block text-xs text-tertiary mb-1">邮箱</label>
@@ -120,6 +102,22 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
             </button>
             <p class="text-xs text-quaternary text-center mt-4">白名单邮箱按既定权限进入</p>
           </form>
+
+          {/* 模式切换 — 极简文字按钮，跟 footer 同视觉权重 */}
+          <div class="mt-8 text-center text-xs text-quaternary">
+            <span data-login-footer-prompt="invite">个人笔记，仅云端存储，非公开 · </span>
+            <span data-login-footer-prompt="email" class="hidden">个人笔记，仅云端存储，非公开 · </span>
+            <button
+              type="button"
+              data-login-switch="email"
+              class="text-tertiary hover:text-primary underline-offset-2 hover:underline"
+            >邮箱登录</button>
+            <button
+              type="button"
+              data-login-switch="invite"
+              class="hidden text-tertiary hover:text-primary underline-offset-2 hover:underline"
+            >返回密码登录</button>
+          </div>
         </div>
       )}
     </div>
@@ -127,12 +125,23 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
 </Layout>
 
 <script is:inline>
-  // tab 切换
-  document.querySelectorAll('[data-login-tab]').forEach((b) => {
+  // v0.5.82: 模式切换 — invite/email 表单 + footer prompt 同步
+  document.querySelectorAll('[data-login-switch]').forEach((b) => {
     b.addEventListener('click', () => {
-      const tab = b.getAttribute('data-login-tab');
-      document.querySelectorAll('[data-login-tab]').forEach((x) => x.toggleAttribute('data-active', x === b));
-      document.querySelectorAll('[data-login-pane]').forEach((p) => p.classList.toggle('hidden', p.getAttribute('data-login-pane') !== tab));
+      const target = b.getAttribute('data-login-switch');   // 'invite' | 'email'
+      document.querySelectorAll('[data-login-pane]').forEach((p) => {
+        p.classList.toggle('hidden', p.getAttribute('data-login-pane') !== target);
+      });
+      document.querySelectorAll('[data-login-switch]').forEach((x) => {
+        x.classList.toggle('hidden', x.getAttribute('data-login-switch') === target);
+      });
+      document.querySelectorAll('[data-login-footer-prompt]').forEach((s) => {
+        s.classList.toggle('hidden', s.getAttribute('data-login-footer-prompt') === target);
+      });
+      // 焦点放进新 pane 的第一个 input
+      const newPane = document.querySelector(`[data-login-pane="${target}"]`);
+      const firstInput = newPane && newPane.querySelector('input:not([type=hidden]):not([type=checkbox])');
+      if (firstInput) firstInput.focus();
     });
   });
 </script>
