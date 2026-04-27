@@ -1,0 +1,16 @@
+{
+  "id": "view-98xv",
+  "discipline": "keiei",
+  "name": "日本版四象限框架",
+  "jp": "",
+  "icon": "📚",
+  "description": "日本经营学界将斯科特的三视角简化为两轴交叉的四象限：横轴「合理性 vs 自然系统」区分组织本质，纵轴「封闭 vs 开放」区分与环境的关系。",
+  "flow": "",
+  "scope": "public",
+  "kind": "manual",
+  "isDefault": false,
+  "position": 9999,
+  "groups": [],
+  "createdAt": "2026-04-27T17:34:56.246Z",
+  "updatedAt": "2026-04-27T17:34:56.246Z"
+}
