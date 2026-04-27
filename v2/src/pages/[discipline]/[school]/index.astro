@@ -246,15 +246,6 @@ const canEdit = Astro.locals.canEdit(discipline);
                     {k.title_en && <div class="optA-kp-sub-en">{k.title_en}</div>}
                   </div>
                 </a>
-                {canEdit && (
-                  <a
-                    class="kp-admin-edit"
-                    href={editHref(`/${discipline}/kp/${k.id}/edit`, Astro.url.pathname)}
-                    aria-label={`编辑 ${k.title_zh}`}
-                    title="编辑"
-                    onclick="event.stopPropagation()"
-                  >✎</a>
-                )}
               </li>
             );
           })}
@@ -293,6 +284,14 @@ const canEdit = Astro.locals.canEdit(discipline);
                     >
                       {selectedLang === 'zh' ? '日本語' : '中文'}
                     </a>
+                  )}
+                  {canEdit && (
+                    <a
+                      href={editHref(`/${discipline}/kp/${selectedKp.id}/edit`, Astro.url.pathname)}
+                      class="hero-icon-btn shrink-0"
+                      aria-label={`编辑 ${selectedTitle}`}
+                      title="编辑"
+                    >✎</a>
                   )}
                 </div>
                 <div class="text-xs text-tertiary mt-2 flex flex-wrap items-baseline gap-2">

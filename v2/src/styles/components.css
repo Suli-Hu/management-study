@@ -802,34 +802,6 @@ mark {
 
 
 /* ============================================================
- * KP 卡片 ✎ 编辑入口（admin only，hover 显形 — v0.5.7 替代 ⋯ 菜单）
- * ============================================================ */
-.kp-admin-edit {
-  flex-shrink: 0;
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 26px; height: 26px;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--color-text-tertiary);
-  font-size: 13px; line-height: 1;
-  text-decoration: none;
-  opacity: 0;
-  transition: opacity .12s, background .12s, color .12s, border-color .12s;
-  margin-left: 4px;
-}
-.optA-kp:hover .kp-admin-edit,
-.kp-admin-edit:focus {
-  opacity: 1;
-}
-.kp-admin-edit:hover {
-  background: var(--color-bg-secondary);
-  color: var(--color-text-primary);
-  border-color: var(--color-border);
-}
-
-
-/* ============================================================
  * KP 卡片 ⋯ overflow 菜单（admin only）— v0.5.7 后只在 KP 详情独立页用
  * ============================================================ */
 .kp-admin {
