@@ -10,7 +10,66 @@
   "kind": "manual",
   "isDefault": false,
   "position": 9999,
-  "groups": [],
+  "groups": [
+    {
+      "id": "gmohh0jdj",
+      "title": "古典組織論",
+      "flow": "合理性の追求",
+      "schoolIds": [
+        "scientific",
+        "bureaucracy",
+        "process"
+      ]
+    },
+    {
+      "id": "gmohh1ef5",
+      "title": "新古典組織論",
+      "flow": "",
+      "schoolIds": [
+        "humanrel",
+        "behavioral",
+        "ob"
+      ]
+    },
+    {
+      "id": "gmohh22w5",
+      "title": "近代組織論",
+      "flow": "システム性の追求",
+      "schoolIds": [
+        "systems",
+        "carnegie",
+        "equilibrium"
+      ]
+    },
+    {
+      "id": "gmohh2szi",
+      "title": "適応組織論",
+      "flow": "条件適応性の追求",
+      "schoolIds": [
+        "contingency",
+        "evolution_process"
+      ]
+    },
+    {
+      "id": "gmohh38pp",
+      "title": "戦略組織論",
+      "flow": "戦略性の追求",
+      "schoolIds": [
+        "rbv",
+        "dynamic"
+      ]
+    },
+    {
+      "id": "gmohh50u0",
+      "title": "社会組織論",
+      "flow": "社会性の追求",
+      "schoolIds": [
+        "institutional",
+        "csr",
+        "social_network"
+      ]
+    }
+  ],
   "createdAt": "2026-04-27T17:04:13.218Z",
-  "updatedAt": "2026-04-27T17:04:13.218Z"
+  "updatedAt": "2026-04-27T17:32:16.541Z"
 }
