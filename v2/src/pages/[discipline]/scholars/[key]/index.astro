@@ -29,6 +29,9 @@ import type { EvalContent } from '~/lib/eval-tag-defs';
 const { discipline, key } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
 
+// v0.5.57 partial=1 fast path（同 school 页）— 跳左栏 schools/kps 重 query，只 query selectedKp
+const isPartial = Astro.url.searchParams.get('partial') === '1';
+
 const disc = await db
   .prepare('SELECT key, title_zh, tags_json FROM discipline WHERE key = ?')
   .bind(discipline)
@@ -60,32 +63,37 @@ if (!scholar) return Astro.redirect('/404');
 const scholarTags = JSON.parse(scholar.tags_json) as string[];
 const accentHex = tagColor({ tags: scholarTags }, tagLibrary);
 
-const schoolsResult = await db
-  .prepare(`
-    SELECT s.key, s.title_zh, s.title_en, s.theme_key
-    FROM school s
-    INNER JOIN scholar_school ss ON ss.school_key = s.key
-    WHERE ss.scholar_key = ?
-    ORDER BY ss.position, s.key
-  `)
-  .bind(key)
-  .all<{ key: string; title_zh: string; title_en: string | null; theme_key: string }>();
-const schools = schoolsResult.results ?? [];
+let schools: Array<{ key: string; title_zh: string; title_en: string | null; theme_key: string }> = [];
+let kps: Array<{ id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string }> = [];
 
-// v0.5.33: ORDER BY ks.position 让 scholar.kpsOrder（拖动后保存）生效
-const kpsResult = await db
-  .prepare(`
-    SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year
-    FROM kp k
-    INNER JOIN kp_scholar ks ON ks.kp_id = k.id
-    WHERE ks.scholar_key = ?
-    ORDER BY ks.position,
-      CASE WHEN k.year = '' OR k.year IS NULL THEN 1 ELSE 0 END,
-      k.year, k.id
-  `)
-  .bind(key)
-  .all<{ id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string }>();
-const kps = kpsResult.results ?? [];
+if (!isPartial) {
+  const schoolsResult = await db
+    .prepare(`
+      SELECT s.key, s.title_zh, s.title_en, s.theme_key
+      FROM school s
+      INNER JOIN scholar_school ss ON ss.school_key = s.key
+      WHERE ss.scholar_key = ?
+      ORDER BY ss.position, s.key
+    `)
+    .bind(key)
+    .all<{ key: string; title_zh: string; title_en: string | null; theme_key: string }>();
+  schools = schoolsResult.results ?? [];
+
+  // v0.5.33: ORDER BY ks.position 让 scholar.kpsOrder（拖动后保存）生效
+  const kpsResult = await db
+    .prepare(`
+      SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year
+      FROM kp k
+      INNER JOIN kp_scholar ks ON ks.kp_id = k.id
+      WHERE ks.scholar_key = ?
+      ORDER BY ks.position,
+        CASE WHEN k.year = '' OR k.year IS NULL THEN 1 ELSE 0 END,
+        k.year, k.id
+    `)
+    .bind(key)
+    .all<{ id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string }>();
+  kps = kpsResult.results ?? [];
+}
 
 const requestedKpId = Astro.url.searchParams.get('kp');
 const selectedKpId = requestedKpId ?? kps[0]?.id ?? null;
@@ -152,6 +160,62 @@ const hasProfileInfo = !!(scholar.nationality || scholar.flag || scholar.field |
 const canEdit = Astro.locals.canEdit(discipline);
 ---
 
+{/* v0.5.57 partial=1：只输出 <article> 右栏片段（无 Layout/Nav/Footer/scripts），split-pane.js 用 */}
+{isPartial && (
+  <article class="right kp-detail-pane" id="kp-detail-pane" style="padding:0">
+    <div style={`height:3px;background:${accentHex}`}></div>
+    <div class="kp-pane-content">
+      {selectedKp ? (
+        <>
+          <header class="kp-head-bar">
+            <div class="kp-head-bar-body">
+              <div class="flex items-center gap-3">
+                <h2 class="text-xl font-semibold leading-tight flex-1">{selectedTitle}</h2>
+                {selectedKp.body_ja && (
+                  <a
+                    href={langToggleHref}
+                    class:list={['lang-toggle shrink-0', selectedLang === 'ja' && 'is-active']}
+                    data-lang-toggle
+                    style={`--accent:${accentHex}`}
+                    title="切换日语 / 中文 (Cmd/Ctrl + J)"
+                    aria-pressed={selectedLang === 'ja'}
+                  >
+                    {selectedLang === 'zh' ? '日本語' : '中文'}
+                  </a>
+                )}
+                {canEdit && (
+                  <a
+                    href={editHref(`/${discipline}/kp/${selectedKp.id}/edit`, Astro.url.pathname)}
+                    class="hero-icon-btn shrink-0"
+                    aria-label={`编辑 ${selectedTitle}`}
+                    title="编辑"
+                  >✎</a>
+                )}
+              </div>
+              <div class="text-xs text-tertiary mt-2 flex flex-wrap items-baseline gap-2">
+                {selectedScholars.map((s) => (
+                  <a href={`/${discipline}/scholars/${s.key}`} class="font-semibold hover:underline">
+                    {lastName(s.name_en ?? s.name_zh)}
+                  </a>
+                ))}
+                {selectedKp.year && <span class="text-quaternary">{shortYear(selectedKp.year)}</span>}
+              </div>
+              {selectedKp.title_en && <div class="text-xs text-quaternary italic mt-1">{selectedKp.title_en}</div>}
+              {selectedKp.title_ja && selectedLang === 'zh' && <div class="text-xs text-tertiary mt-1">{selectedKp.title_ja}</div>}
+            </div>
+          </header>
+          <div class="mt-6" set:html={renderBodyForSchool({ fmt: selectedKp.format, body: selectedBody!, accentHex })} />
+          <div set:html={renderEvalModule(selectedEvalContent)} />
+        </>
+      ) : (
+        <div class="text-sm text-quaternary py-10"><p>选中左侧 KP 查看详情。</p></div>
+      )}
+    </div>
+  </article>
+)}
+
+{!isPartial && (
+<Fragment>
 <Layout
   title={scholar.name_en ?? scholar.name_zh}
   currentDiscipline={discipline}
@@ -534,3 +598,5 @@ const canEdit = Astro.locals.canEdit(discipline);
     });
   })();
 </script>
+</Fragment>
+)}

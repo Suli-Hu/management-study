@@ -9,53 +9,93 @@
 //   - is-active toggle 改成 click 时立即执行（之前等 fetch 完成再切，~150ms 延迟）
 //   - AbortController 取消上一个未完成的 fetch（快速点击不会卡住）
 //   - history.pushState 也立即执行，UI 状态先到位
+// v0.5.57 性能：
+//   - fetch 用 ?partial=1 → server 跳过左栏/学者重 query（响应 5KB vs 144KB）
+//   - LRU 缓存（最多 16 个 KP），重复点击立即 swap 无 fetch
+//   - aria-busy="true" + CSS loading bar 给视觉反馈
 
 (function () {
+  const PARTIAL_QS = 'partial=1';
+  const CACHE_MAX = 16;
+
   function initSplitPane() {
     const MQ = window.matchMedia('(min-width: 1024px)');
     const detailPane = document.getElementById('kp-detail-pane');
     if (!detailPane) return;
 
     let inflight = null;          // 当前 AbortController
+    const cache = new Map();      // key: pathname + ':' + kpId → fragment HTML（LRU via Map insertion order）
+
     // 从 URL ?kp= 或 .kp-list-item.is-active 初始化（避免点击当前 KP 时 no-op）
+    // v0.5.57: 兼容 school 页的 <li data-kp-id><details class="kp-list-item"> 嵌套
     let activeKpId = new URLSearchParams(location.search).get('kp')
-      || document.querySelector('.kp-list-item.is-active')?.getAttribute('data-kp-id')
+      || document.querySelector('.kp-list-item.is-active')?.closest('[data-kp-id]')?.getAttribute('data-kp-id')
       || null;
 
     function setActiveImmediate(kpId) {
       if (activeKpId === kpId) return false;
       activeKpId = kpId;
       const url = location.pathname + '?kp=' + encodeURIComponent(kpId);
-      // 立即切 active class（用户视觉反馈）
-      document.querySelectorAll('.kp-list-item').forEach((li) => {
-        li.classList.toggle('is-active', li.getAttribute('data-kp-id') === kpId);
+      // 立即切 active class（用户视觉反馈）— 兼容两种 DOM：
+      //   1. scholar 页：<li class="kp-list-item" data-kp-id>
+      //   2. school 页：<li data-kp-id><details class="kp-list-item">
+      document.querySelectorAll('[data-kp-id]').forEach((wrap) => {
+        const target = wrap.classList.contains('kp-list-item')
+          ? wrap
+          : wrap.querySelector('.kp-list-item');
+        if (target) {
+          target.classList.toggle('is-active', wrap.getAttribute('data-kp-id') === kpId);
+        }
       });
       // 立即更新 URL（按浏览器后退键回到上一个 KP）
       try { history.pushState(null, '', url); } catch (_) {}
       return true;
     }
 
+    function swapPane(html) {
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = html;
+      const newPane = wrapper.querySelector('#kp-detail-pane');
+      if (!newPane) throw new Error('no detail pane in response');
+      detailPane.innerHTML = newPane.innerHTML;
+      detailPane.scrollTop = 0;
+    }
+
+    function cacheKey(kpId) { return location.pathname + ':' + kpId; }
+    function rememberInCache(kpId, html) {
+      const key = cacheKey(kpId);
+      cache.delete(key);             // 删后 set → 移到末尾（LRU 标记 fresh）
+      cache.set(key, html);
+      while (cache.size > CACHE_MAX) {
+        const oldest = cache.keys().next().value;
+        cache.delete(oldest);
+      }
+    }
+
     async function showKpInPane(kpId) {
       // 立即视觉反馈（不等 fetch）
       if (!setActiveImmediate(kpId)) return;
+
+      // 缓存命中：立即 swap，无网络往返
+      const cached = cache.get(cacheKey(kpId));
+      if (cached) {
+        swapPane(cached);
+        return;
+      }
+
       // 取消上一个未完成的 fetch
       if (inflight) inflight.abort();
       inflight = new AbortController();
-      const url = location.pathname + '?kp=' + encodeURIComponent(kpId);
+      const url = location.pathname + '?kp=' + encodeURIComponent(kpId) + '&' + PARTIAL_QS;
       detailPane.setAttribute('aria-busy', 'true');
       try {
-        const res = await fetch(url, { signal: inflight.signal });
+        const res = await fetch(url, { signal: inflight.signal, headers: { accept: 'text/html' } });
         if (!res.ok) throw new Error('fetch failed: ' + res.status);
         const html = await res.text();
-        // 如果在 fetch 期间用户又切到另一个 KP，丢弃这次结果
+        // 如果在 fetch 期间用户又切到另一个 KP，丢弃这次结果（缓存留着备用）
+        rememberInCache(kpId, html);
         if (activeKpId !== kpId) return;
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        const newPane = doc.getElementById('kp-detail-pane');
-        if (!newPane) throw new Error('no detail pane in response');
-        detailPane.innerHTML = newPane.innerHTML;
-        const newTitle = doc.querySelector('title')?.textContent;
-        if (newTitle) document.title = newTitle;
-        detailPane.scrollTop = 0;
+        swapPane(html);
       } catch (err) {
         if (err && err.name === 'AbortError') return;
         console.error('[split-pane] showKpInPane failed:', err);

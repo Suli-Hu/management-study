@@ -26,7 +26,11 @@ import type { EvalContent } from '~/lib/eval-tag-defs';
 const { discipline, school } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
 
-// 标签库 + 学派 + KP 列表
+// v0.5.57: ?partial=1 fast path — split-pane.js KP swap fetch 用，跳过左栏/学者重 query，
+// 只 query selectedKp 完整 row，返回 raw <article> fragment（无 Layout/Nav/Footer）
+const isPartial = Astro.url.searchParams.get('partial') === '1';
+
+// 标签库 + 学派（公共，partial 也需要 — accentHex 给右栏顶 strip 染色）
 const discRow = await db
   .prepare('SELECT tags_json FROM discipline WHERE key = ?')
   .bind(discipline)
@@ -42,49 +46,54 @@ if (!sch) return Astro.redirect('/404');
 const schoolTags = JSON.parse(sch.tags_json) as string[];
 const accentHex = tagColor({ tags: schoolTags }, tagLibrary);
 
-// v0.5.49: list query 拿全 body/eval/format，让手机 inline 展开能 SSR pre-render KP body。
-// 同一份数据也供桌面右栏用（selectedKp = kps.find），省一次 D1 round trip。
-const kpsResult = await db
-  .prepare(`
-    SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year,
-      k.body_zh, k.body_ja, k.format,
-      k.eval_content_zh_json, k.eval_content_ja_json,
-      (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id ORDER BY position) as scholars_csv
-    FROM kp k
-    INNER JOIN kp_school ks ON ks.kp_id = k.id
-    WHERE ks.school_key = ?
-    ORDER BY ks.position, k.id
-  `)
-  .bind(school)
-  .all<{
-    id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string;
-    body_zh: string; body_ja: string | null; format: KpFormat;
-    eval_content_zh_json: string; eval_content_ja_json: string;
-    scholars_csv: string | null;
-  }>();
-const kps = kpsResult.results ?? [];
+type KpListItem = {
+  id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string;
+  body_zh: string; body_ja: string | null; format: KpFormat;
+  eval_content_zh_json: string; eval_content_ja_json: string;
+  scholars_csv: string | null;
+};
 
-// 学者 lookup（KP meta 行用 EN 名）
-const scholarsLookupResult = await db
-  .prepare('SELECT key, name_zh, name_en FROM scholar WHERE discipline = ?')
-  .bind(discipline)
-  .all<{ key: string; name_zh: string; name_en: string | null }>();
-const scholarByKey = new Map((scholarsLookupResult.results ?? []).map((s) => [s.key, s]));
+// 完整页用：list query（v0.5.49 的 fat 查询，给左栏 + mobile inline expand 用）
+let kps: KpListItem[] = [];
+let scholarByKey = new Map<string, { key: string; name_zh: string; name_en: string | null }>();
+let schoolScholars: Array<{ key: string; name_zh: string; name_en: string | null; name_ja: string | null; first: string; last: string }> = [];
 
-// 该学派的代表学者 — v0.5.51 改成按 last name A→Z 排（ss.position 自然顺序作为同姓 fallback）
-const schoolScholarsResult = await db
-  .prepare(`
-    SELECT sc.key, sc.name_zh, sc.name_en, sc.name_ja
-    FROM scholar sc
-    INNER JOIN scholar_school ss ON ss.scholar_key = sc.key
-    WHERE ss.school_key = ?
-    ORDER BY ss.position, sc.key
-  `)
-  .bind(school)
-  .all<{ key: string; name_zh: string; name_en: string | null; name_ja: string | null }>();
-const schoolScholars = (schoolScholarsResult.results ?? [])
-  .map((s) => ({ ...s, ...splitName(s.name_en ?? s.name_zh) }))
-  .sort((a, b) => a.last.localeCompare(b.last, 'en') || a.first.localeCompare(b.first, 'en'));
+if (!isPartial) {
+  const kpsResult = await db
+    .prepare(`
+      SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year,
+        k.body_zh, k.body_ja, k.format,
+        k.eval_content_zh_json, k.eval_content_ja_json,
+        (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id ORDER BY position) as scholars_csv
+      FROM kp k
+      INNER JOIN kp_school ks ON ks.kp_id = k.id
+      WHERE ks.school_key = ?
+      ORDER BY ks.position, k.id
+    `)
+    .bind(school)
+    .all<KpListItem>();
+  kps = kpsResult.results ?? [];
+
+  const scholarsLookupResult = await db
+    .prepare('SELECT key, name_zh, name_en FROM scholar WHERE discipline = ?')
+    .bind(discipline)
+    .all<{ key: string; name_zh: string; name_en: string | null }>();
+  scholarByKey = new Map((scholarsLookupResult.results ?? []).map((s) => [s.key, s]));
+
+  const schoolScholarsResult = await db
+    .prepare(`
+      SELECT sc.key, sc.name_zh, sc.name_en, sc.name_ja
+      FROM scholar sc
+      INNER JOIN scholar_school ss ON ss.scholar_key = sc.key
+      WHERE ss.school_key = ?
+      ORDER BY ss.position, sc.key
+    `)
+    .bind(school)
+    .all<{ key: string; name_zh: string; name_en: string | null; name_ja: string | null }>();
+  schoolScholars = (schoolScholarsResult.results ?? [])
+    .map((s) => ({ ...s, ...splitName(s.name_en ?? s.name_zh) }))
+    .sort((a, b) => a.last.localeCompare(b.last, 'en') || a.first.localeCompare(b.first, 'en'));
+}
 
 // 选中 KP（?kp= 或 list[0]）
 const requestedKpId = Astro.url.searchParams.get('kp');
@@ -93,18 +102,51 @@ const selectedKpId = requestedKpId ?? kps[0]?.id ?? null;
 // 当前语言（?lang=ja 切日文，否则中文）
 const langParam = Astro.url.searchParams.get('lang');
 
-// v0.5.49: selectedKp 从 list 找（不再单独 query），selectedScholars 用 scholarByKey lookup
-const selectedKp = selectedKpId ? (kps.find((k) => k.id === selectedKpId) ?? null) : null;
+// selectedKp：完整页用 kps.find（v0.5.49）；partial 单独 query（kps 是空数组）
+let selectedKp: KpListItem | null = null;
+if (selectedKpId) {
+  if (isPartial) {
+    selectedKp = await db
+      .prepare(`
+        SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year,
+          k.body_zh, k.body_ja, k.format,
+          k.eval_content_zh_json, k.eval_content_ja_json,
+          (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id ORDER BY position) as scholars_csv
+        FROM kp k WHERE k.id = ? AND k.discipline = ?
+      `)
+      .bind(selectedKpId, discipline)
+      .first<KpListItem>();
+  } else {
+    selectedKp = kps.find((k) => k.id === selectedKpId) ?? null;
+  }
+}
+
 let selectedEvalContent: EvalContent | null = null;
 if (selectedKp) {
   try { selectedEvalContent = JSON.parse(selectedKp.eval_content_zh_json) as EvalContent; }
   catch { selectedEvalContent = null; }
 }
-const selectedScholars = selectedKp
-  ? (selectedKp.scholars_csv ?? '').split(',').filter(Boolean)
-      .map((sk) => scholarByKey.get(sk))
-      .filter((s): s is NonNullable<typeof s> => Boolean(s))
-  : [];
+
+// selectedScholars：完整页走 scholarByKey lookup；partial 单独 query（key IN ?）
+let selectedScholars: Array<{ key: string; name_zh: string; name_en: string | null }> = [];
+if (selectedKp) {
+  const scholarKeys = (selectedKp.scholars_csv ?? '').split(',').filter(Boolean);
+  if (scholarKeys.length > 0) {
+    if (isPartial) {
+      const placeholders = scholarKeys.map(() => '?').join(',');
+      const scRes = await db
+        .prepare(`SELECT key, name_zh, name_en FROM scholar WHERE key IN (${placeholders})`)
+        .bind(...scholarKeys)
+        .all<{ key: string; name_zh: string; name_en: string | null }>();
+      const lookup = new Map((scRes.results ?? []).map((s) => [s.key, s]));
+      selectedScholars = scholarKeys.map((sk) => lookup.get(sk)).filter((s): s is NonNullable<typeof s> => Boolean(s));
+    } else {
+      selectedScholars = scholarKeys
+        .map((sk) => scholarByKey.get(sk))
+        .filter((s): s is NonNullable<typeof s> => Boolean(s));
+    }
+  }
+}
 
 // 选中 KP 的实际显示语言（仅当该 KP 有 body_ja 时 ?lang=ja 才生效）
 const selectedLang: 'zh' | 'ja' =
@@ -126,6 +168,62 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
 const canEdit = Astro.locals.canEdit(discipline);
 ---
 
+{/* v0.5.57 partial=1：只输出 <article> 右栏片段（无 Layout/Nav/Footer/scripts），split-pane.js 用 */}
+{isPartial && (
+  <article class="right kp-detail-pane" id="kp-detail-pane" style="padding:0">
+    <div style={`height:3px;background:${accentHex}`}></div>
+    <div class="kp-pane-content">
+      {selectedKp ? (
+        <>
+          <header class="kp-head-bar">
+            <div class="kp-head-bar-body">
+              <div class="flex items-center gap-3">
+                <h2 class="text-xl font-semibold leading-tight flex-1">{selectedTitle}</h2>
+                {selectedKp.body_ja && (
+                  <a
+                    href={langToggleHref}
+                    class:list={['lang-toggle shrink-0', selectedLang === 'ja' && 'is-active']}
+                    data-lang-toggle
+                    style={`--accent:${accentHex}`}
+                    title="切换日语 / 中文 (Cmd/Ctrl + J)"
+                    aria-pressed={selectedLang === 'ja'}
+                  >
+                    {selectedLang === 'zh' ? '日本語' : '中文'}
+                  </a>
+                )}
+                {canEdit && (
+                  <a
+                    href={editHref(`/${discipline}/kp/${selectedKp.id}/edit`, Astro.url.pathname)}
+                    class="hero-icon-btn shrink-0"
+                    aria-label={`编辑 ${selectedTitle}`}
+                    title="编辑"
+                  >✎</a>
+                )}
+              </div>
+              <div class="text-xs text-tertiary mt-2 flex flex-wrap items-baseline gap-2">
+                {selectedScholars.map((s) => (
+                  <a href={`/${discipline}/scholars/${s.key}`} class="font-semibold hover:underline">
+                    {lastName(s.name_en ?? s.name_zh)}
+                  </a>
+                ))}
+                {selectedKp.year && <span class="text-quaternary">{shortYear(selectedKp.year)}</span>}
+              </div>
+              {selectedKp.title_en && <div class="text-xs text-quaternary italic mt-1">{selectedKp.title_en}</div>}
+              {selectedKp.title_ja && selectedLang === 'zh' && <div class="text-xs text-tertiary mt-1">{selectedKp.title_ja}</div>}
+            </div>
+          </header>
+          <div class="mt-6" set:html={renderBodyForSchool({ fmt: selectedKp.format, body: selectedBody!, accentHex })} />
+          <div set:html={renderEvalModule(selectedEvalContent)} />
+        </>
+      ) : (
+        <div class="text-sm text-quaternary py-10"><p>选中左侧 KP 查看详情。</p></div>
+      )}
+    </div>
+  </article>
+)}
+
+{!isPartial && (
+<Fragment>
 <Layout
   title={sch.title_zh}
   currentDiscipline={discipline}
@@ -432,4 +530,5 @@ const canEdit = Astro.locals.canEdit(discipline);
     });
   }
 </script>
-
+</Fragment>
+)}

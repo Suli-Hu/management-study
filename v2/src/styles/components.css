@@ -780,6 +780,10 @@ details.eval {
   text-decoration: none; color: inherit;
 }
 .optA-kp:hover { background: var(--color-bg-secondary); }
+/* v0.5.57 active 加 5% accent bg tint，让点击立刻看见反馈（之前只有 strip 太弱）*/
+.optA-kp.is-active {
+  background: color-mix(in oklab, var(--accent, var(--color-text-quaternary)) 5%, var(--color-bg-primary));
+}
 .optA-kp.is-active::before {
   content: '';
   position: absolute;
@@ -1062,6 +1066,34 @@ details.eval {
   max-width: 840px;
   margin: 0 auto;
   padding: 28px 28px 40px;
+}
+
+/* v0.5.57 KP swap loading：fetch 中右栏顶 2px 进度条扫光 + 内容微 dim
+   触发：split-pane.js 给 .kp-detail-pane 加 aria-busy="true"，fetch 完成 remove */
+.kp-detail-pane {
+  position: relative;
+}
+.kp-detail-pane[aria-busy="true"] .kp-pane-content {
+  opacity: 0.6;
+  transition: opacity .15s;
+}
+.kp-detail-pane[aria-busy="true"]::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent,
+    var(--accent, var(--color-text-quaternary)),
+    transparent);
+  background-size: 50% 100%;
+  background-repeat: no-repeat;
+  animation: kp-loading-sweep .9s ease-in-out infinite;
+  z-index: 5;
+  pointer-events: none;
+}
+@keyframes kp-loading-sweep {
+  0%   { background-position: -50% 0; }
+  100% { background-position: 150% 0; }
 }
 
 
