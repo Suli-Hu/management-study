@@ -35,11 +35,12 @@ describe('renderBody — dispatch by format', () => {
     expect(out).toContain('任务管理');
   });
 
-  test('accordion → details/acc-item with sections', () => {
+  test('accordion → details/acc-block with sections', () => {
+    // v0.5.46 重命名：.accordion → .acc / .acc-item → .acc-block / 去掉 .acc-bullet 装饰
     const out = renderBody({ fmt: 'accordion', body: '【组1】<br>①A——a<br>②B——b<br>【组2】<br>①C——c', accentHex: ACCENT });
-    expect(out).toContain('class="accordion"');
-    expect((out.match(/class="acc-item"/g) ?? []).length).toBe(2);
-    expect(out).toContain('class="acc-bullet"');
+    expect(out).toContain('class="acc"');
+    expect((out.match(/class="acc-block"/g) ?? []).length).toBe(2);
+    expect(out).toContain('class="acc-li-name"');
   });
 
   test('compare → cmp-table table form', () => {
@@ -95,7 +96,17 @@ describe('individual renderers — direct call', () => {
   test('renderAccordion preserves lead before first 【】', () => {
     const out = renderAccordion('lead text<br>【sec1】<br>①item——desc', ACCENT);
     expect(out).toContain('class="body-narrative"'); // lead 用 narrative 包
-    expect(out).toContain('class="acc-item"');
+    expect(out).toContain('class="acc-block"');      // v0.5.46 新命名（旧 .acc-item）
+    expect(out).toContain('class="acc-li-name"');    // numbered item name
+    expect(out).toContain('class="acc-li-desc"');    // numbered item desc 缩进新行
+  });
+
+  test('renderAccordion parses name（alt）——desc into name + alt + desc', () => {
+    // v0.5.46 parser 升级：日语/英文 alt 自动从 name 后括号抽出
+    const out = renderAccordion('【sec】<br>①战略性变革（戦略的変革）——对事业的重新审视', ACCENT);
+    expect(out).toContain('>战略性变革</span>');     // name 不含括号 alt
+    expect(out).not.toContain('戦略的変革');         // alt 默认不渲染（暂存 parser 字段）
+    expect(out).toContain('对事业的重新审视');       // desc 干净不带 inline ——
   });
 
   test('renderCompare without <compare> tag → falls back to narrative', () => {
@@ -121,14 +132,18 @@ describe('renderEvalModule', () => {
     expect(renderEvalModule({})).toBe('');
   });
 
-  test('with content → eval-mod section + rows in glyph order', () => {
+  test('with content → eval section + rows in glyph order', () => {
+    // v0.5.46 重写：<details class="eval"> + .eval-pill 双字 label（去 glyph 圆圈）
     const out = renderEvalModule({ '限': 'limit text', '义': 'meaning text', '例': 'example' });
-    expect(out).toContain('class="eval-mod"');
+    expect(out).toContain('class="eval"');           // 新结构（旧 .eval-mod）
     expect((out.match(/class="eval-row"/g) ?? []).length).toBe(3);
+    expect(out).toContain('class="eval-pill">意义'); // 双字 pill label
+    expect(out).toContain('class="eval-pill">局限');
+    expect(out).toContain('class="eval-pill">例子');
     // 顺序应按 EVAL_TAG_DEFS 定义（义→限→例→...）而非传入顺序
-    const yi = out.indexOf('>义<');
-    const xian = out.indexOf('>限<');
-    const li = out.indexOf('>例<');
+    const yi = out.indexOf('>意义<');
+    const xian = out.indexOf('>局限<');
+    const li = out.indexOf('>例子<');
     expect(yi).toBeLessThan(xian);
     expect(xian).toBeLessThan(li);
   });
