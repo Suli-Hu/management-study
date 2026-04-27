@@ -19,7 +19,7 @@ import { renderBodyForSchool, renderEvalModule, type KpFormat } from '~/lib/rend
 import { editHref } from '~/lib/nav';
 import { tagColor } from '~/lib/tag-color';
 import { shortYear } from '~/lib/format-year';
-import { lastName } from '~/lib/format-name';
+import { lastName, splitName } from '~/lib/format-name';
 import type { Tag } from '~/schemas/discipline';
 import type { EvalContent } from '~/lib/eval-tag-defs';
 
@@ -71,7 +71,7 @@ const scholarsLookupResult = await db
   .all<{ key: string; name_zh: string; name_en: string | null }>();
 const scholarByKey = new Map((scholarsLookupResult.results ?? []).map((s) => [s.key, s]));
 
-// 该学派的代表学者（OptionA 用 row 形式展示）
+// 该学派的代表学者 — v0.5.51 改成按 last name A→Z 排（ss.position 自然顺序作为同姓 fallback）
 const schoolScholarsResult = await db
   .prepare(`
     SELECT sc.key, sc.name_zh, sc.name_en, sc.name_ja
@@ -82,7 +82,9 @@ const schoolScholarsResult = await db
   `)
   .bind(school)
   .all<{ key: string; name_zh: string; name_en: string | null; name_ja: string | null }>();
-const schoolScholars = schoolScholarsResult.results ?? [];
+const schoolScholars = (schoolScholarsResult.results ?? [])
+  .map((s) => ({ ...s, ...splitName(s.name_en ?? s.name_zh) }))
+  .sort((a, b) => a.last.localeCompare(b.last, 'en') || a.first.localeCompare(b.first, 'en'));
 
 // 选中 KP（?kp= 或 list[0]）
 const requestedKpId = Astro.url.searchParams.get('kp');
@@ -181,13 +183,18 @@ const canEdit = Astro.locals.canEdit(discipline);
         <ul class="optA-scholars" data-collapse-body style="display:none">
           {schoolScholars.length === 0 ? (
             <li class="text-xs text-quaternary px-2 py-1">暂无关联学者。</li>
-          ) : schoolScholars.map((s) => (
+          ) : schoolScholars.map((s, i) => (
             <li>
-              <a href={`/${discipline}/scholars/${s.key}`} class="optA-scholar-row">
-                <span class="optA-scholar-name">{s.name_en ?? s.name_zh}</span>
-                {s.name_en && <span class="optA-scholar-zh">{s.name_zh}</span>}
-                {s.name_ja && <span class="optA-scholar-ja">{s.name_ja}</span>}
-                <span class="optA-arrow">↗</span>
+              <a
+                href={`/${discipline}/scholars/${s.key}`}
+                class:list={['optA-scholar-row', i === schoolScholars.length - 1 && 'is-last']}
+              >
+                <div class="optA-scholar-line1">
+                  {s.first && <span class="optA-scholar-first">{s.first}</span>}
+                  <span class="optA-scholar-last">{s.last}</span>
+                  {s.name_zh && <span class="optA-scholar-zh">{s.name_zh}</span>}
+                </div>
+                {s.name_ja && <div class="optA-scholar-ja">{s.name_ja}</div>}
               </a>
             </li>
           ))}

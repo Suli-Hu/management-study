@@ -124,23 +124,35 @@ export function renderFlatList(body: string, accentHex: string): string {
 }
 
 /**
+ * v0.5.51 把 section name 中尾部括号（中文/英文括号）拆出当 sub 副标题
+ *   "4种变革类型（变革对象维度）" → { name: "4种变革类型", sub: "变革对象维度" }
+ *   "Bass 4I（核心维度）"        → { name: "Bass 4I", sub: "核心维度" }
+ *   "增强效应"                   → { name: "增强效应", sub: "" }
+ */
+function splitSectionName(raw: string): { name: string; sub: string } {
+  const m = raw.match(/^(.*?)\s*[（(]([^）)]+)[）)]\s*$/);
+  if (m && m[1].trim()) return { name: m[1].trim(), sub: m[2].trim() };
+  return { name: raw, sub: '' };
+}
+
+/**
  * accordion —— lead<br>【section1】<br>①...②...<br>【section2】<br>①...
  *
- * v0.5.46 重写：
- *   - 全部 sections 默认 open（之前只前 2 张展开）
- *   - 去 left strip 装饰（圆圈编号本身已是视觉锚点，strip 喧宾夺主）
- *   - section title 一行底 1px hr 分隔；折叠态自动 hide hr 避免跟 eval top hr 重影
- *   - numbered item 改两段式：name 加粗一行 + desc 缩进新行（去 inline `——` 连接）
- *   - 圆圈编号用 accent 色（其他 chrome 中性灰）
+ * v0.5.46 重写：去 left strip + name/desc 两段 + 全部 default open
+ * v0.5.51 升级：
+ *   - section name 拆 sub（小灰 inline 副标题）
+ *   - 去掉 count 数字（用户反馈"4/5"灰色计数没必要）
+ *   - sub-section 仍用 <details open> 可点折叠
  */
 export function renderAccordion(body: string, accentHex: string): string {
   const tokens = body.split(/(【[^】]+】)/);
   const lead = (tokens[0] || '').trim();
-  const sections: Array<{ name: string; block: string }> = [];
+  const sections: Array<{ name: string; sub: string; block: string }> = [];
   for (let i = 1; i < tokens.length; i += 2) {
-    const name = tokens[i].replace(/[【】]/g, '').trim();
+    const raw = tokens[i].replace(/[【】]/g, '').trim();
+    const { name, sub } = splitSectionName(raw);
     const block = (tokens[i + 1] || '').trim();
-    sections.push({ name, block });
+    sections.push({ name, sub, block });
   }
 
   const circleStyle = `border-color:${accentHex};color:${accentHex}`;
@@ -161,8 +173,7 @@ export function renderAccordion(body: string, accentHex: string): string {
     return `
       <details class="acc-block" open>
         <summary class="acc-head">
-          <h3 class="acc-title">${s.name}</h3>
-          <span class="acc-count">${items.length}</span>
+          <h3 class="acc-title">${s.name}${s.sub ? `<span class="acc-sub">${s.sub}</span>` : ''}</h3>
           <span class="acc-chev">▾</span>
         </summary>
         ${inner}

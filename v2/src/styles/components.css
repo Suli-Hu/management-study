@@ -311,6 +311,11 @@ details.acc-block {
 .acc-head:hover { background: var(--color-bg-secondary); margin: 0 -8px 8px; padding: 6px 8px; }
 .acc-head::-webkit-details-marker { display: none; }
 .acc-title { flex: 1; font-size: 13.5px; font-weight: 600; color: var(--color-text-primary); margin: 0; letter-spacing: -0.005em; }
+.acc-sub {
+  /* v0.5.51 section name 后括号副标题（"变革对象维度"等）—— 浅灰小字 inline */
+  font-size: 12px; color: var(--color-text-quaternary);
+  font-weight: 400; margin-left: 8px; letter-spacing: 0;
+}
 .acc-count {
   font-size: 10.5px; color: var(--color-text-quaternary);
   font-variant-numeric: tabular-nums;
@@ -616,38 +621,46 @@ details.eval {
   font-variant-numeric: tabular-nums;
 }
 
-/* ---- scholars (v0.5.22 designer spec) ---- */
-.optA-scholars { padding: 0 4px 8px; list-style: none; margin: 0; }
-.optA-scholars li { border-bottom: 1px dashed var(--color-border); }
-.optA-scholars li:last-child { border-bottom: 0; }
+/* ---- scholars (v0.5.51 重写 — designer spec) ----
+   排版：first 灰小 + last 黑粗加重（扫读靠 last）+ cn 深灰 一行
+        ja 第二行浅灰最小字号
+   排序：按 last name localeCompare A→Z（server 端 sort）
+   行间：1px dashed 分隔，最后一行 .is-last 去 border */
+.optA-scholars { padding: 0; list-style: none; margin: 0; }
+.optA-scholars li { display: block; }
 .optA-scholar-row {
-  /* 单行优先：英 + 中 + 日 能塞一行就内联展示，不强制 ja 换行。
-     ja 太长时 flex-wrap 自然回行 + word-break 兜底。 */
-  display: flex; flex-wrap: wrap; align-items: baseline;
-  column-gap: 6px; row-gap: 0;
-  padding: 3px 8px;
-  border-radius: 6px; transition: background .12s;
+  display: block;
+  padding: 14px 18px;
+  border-bottom: 1px dashed var(--color-border);
   text-decoration: none; color: inherit;
+  transition: background .12s;
 }
 .optA-scholar-row:hover { background: var(--color-bg-secondary); }
-.optA-scholar-name {
-  font-size: 12px; font-weight: 600;
-  color: var(--color-text-primary); line-height: 1.5;
+.optA-scholar-row.is-last { border-bottom: 0; }
+.optA-scholar-line1 {
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  column-gap: 10px; row-gap: 2px;
 }
-.optA-scholar-row:hover .optA-scholar-name { text-decoration: underline; }
+.optA-scholar-first {
+  font-size: 14px; color: var(--color-text-quaternary); font-weight: 400;
+}
+.optA-scholar-last {
+  font-size: 15px; font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.005em;
+  margin-left: 6px;
+}
+.optA-scholar-row:not(:has(.optA-scholar-first)) .optA-scholar-last { margin-left: 0; }
 .optA-scholar-zh {
-  font-size: 11px; color: var(--color-text-tertiary); line-height: 1.5;
+  font-size: 13.5px;
+  color: var(--color-text-tertiary);
+  margin-left: 4px;
 }
 .optA-scholar-ja {
-  font-size: 11px; color: var(--color-text-quaternary);
-  line-height: 1.5;
-  min-width: 0; word-break: break-word;
+  font-size: 11.5px; color: var(--color-text-muted, #a3a3a3);
+  margin-top: 3px; line-height: 1.4;
+  word-break: break-word;
 }
-.optA-arrow {
-  font-size: 11px; color: var(--color-text-quaternary); opacity: 0;
-  transition: opacity .12s; margin-left: auto;
-}
-.optA-scholar-row:hover .optA-arrow { opacity: 1; }
 
 /* ---- KP cards (v0.5.24: 删 01/02 编号 + 压成横条) ---- */
 .optA-kps { display: flex; flex-direction: column; gap: 6px; padding: 0 0 12px; list-style: none; margin: 0; }
@@ -1017,6 +1030,13 @@ details.eval {
   .optA-kp-summary { grid-template-columns: 16px 1fr; gap: 8px; }
   .optA-kp-chev { display: inline; }
   .optA-kp[open] > .optA-kp-inline-body { display: block; }
+  /* v0.5.51 手机端 KP open 视觉浮起：阴影 + 10px gap 推开下一张 KP 的 head
+     解决"展开评价末尾 vs 下一张 KP head 边界弱"问题 */
+  .optA-kp[open] {
+    box-shadow: 0 4px 12px -2px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.025);
+    margin-bottom: 10px;
+    transition: margin-bottom .24s ease, box-shadow .24s ease;
+  }
 
   /* compare row stack：grid 120/1fr 拍扁成竖排 */
   .cmp-row { grid-template-columns: 1fr; gap: 6px; padding: 10px; }
