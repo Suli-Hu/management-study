@@ -289,51 +289,76 @@ mark {
 .body-narrative strong { color: var(--color-text-primary); font-weight: 600; }
 .body-narrative em { color: var(--color-text-tertiary); font-style: italic; }
 
-/* ---- accordion ---- */
-.accordion { display: flex; flex-direction: column; gap: 12px; margin-top: 6px; }
-.acc-item {
-  border: 1px solid var(--color-border);
-  border-radius: 10px; background: var(--color-bg-primary); overflow: hidden;
-  transition: box-shadow .15s;
+/* ---- accordion (v0.5.46 重写) ----
+ * 设计：去 left strip 装饰；section 之间靠 28px margin + summary 行底 1px hr 区分；
+ *       折叠态自动 hide hr 避免跟下一段顶 hr 重影；
+ *       numbered item 改两段式（name 加粗一行 + desc 缩进新行，去 inline `——`）。
+ * 圆圈编号用 inline style 注入 accent 色，其他 chrome 中性灰。 */
+.acc { margin-top: 6px; }
+details.acc-block {
+  scroll-margin-top: 64px;
+  margin-bottom: 28px;
 }
-.acc-item[open] { box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
-.acc-summary {
-  list-style: none; cursor: pointer; padding: 14px 16px;
-  display: flex; align-items: center; gap: 10px;
-  background: var(--color-bg-secondary);
+.acc-head {
+  display: flex; align-items: baseline; gap: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  list-style: none;
+  padding: 6px 0;
+  user-select: none;
+  border-bottom: 1px solid var(--color-border);
 }
-.acc-summary::-webkit-details-marker { display: none; }
-.acc-bullet { width: 6px; height: 18px; border-radius: 3px; flex-shrink: 0; background: var(--accent, var(--color-text-quaternary)); }
-.acc-title { flex: 1; font-size: 14px; font-weight: 600; color: var(--color-text-primary); }
+.acc-head:hover { background: var(--color-bg-secondary); margin: 0 -8px 8px; padding: 6px 8px; }
+.acc-head::-webkit-details-marker { display: none; }
+.acc-title { flex: 1; font-size: 13.5px; font-weight: 600; color: var(--color-text-primary); margin: 0; letter-spacing: -0.005em; }
 .acc-count {
-  font-size: 11px; color: var(--color-text-quaternary); font-variant-numeric: tabular-nums;
-  background: var(--color-bg-primary); border: 1px solid var(--color-border);
-  padding: 1px 7px; border-radius: 9999px;
+  font-size: 10.5px; color: var(--color-text-quaternary);
+  font-variant-numeric: tabular-nums;
+  background: var(--color-bg-tertiary);
+  padding: 1px 6px; border-radius: 999px;
 }
-.acc-chev { color: var(--color-text-quaternary); font-size: 12px; transition: transform .15s; }
-.acc-item[open] .acc-chev { transform: rotate(180deg); }
-.acc-body { padding: 16px 18px 16px; }
-.acc-row {
-  display: flex; gap: 12px; align-items: flex-start;
-  padding: 10px 0; border-bottom: 1px dashed var(--color-border);
+.acc-chev {
+  font-size: 11px; color: var(--color-text-quaternary);
+  transition: transform .15s;
 }
-.acc-row:last-child { border-bottom: 0; padding-bottom: 0; }
-.acc-row:first-child { padding-top: 4px; }
-.acc-circle {
-  width: 22px; height: 22px; border-radius: 11px;
-  border: 1.5px solid var(--accent, var(--color-text-quaternary));
+details.acc-block[open] > .acc-head .acc-chev,
+details.eval[open] > .eval-h .eval-chev { transform: rotate(180deg); }
+details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6px; border-bottom: 0; }
+
+.acc-numbered {
+  display: flex; flex-direction: column; gap: 10px;
+  margin: 0; padding: 0; list-style: none;
+}
+.acc-li {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 12px;
+  padding: 6px 0;
+}
+.acc-li-n {
+  font-size: 11px; font-weight: 600;
   color: var(--accent, var(--color-text-quaternary));
+  border: 1.5px solid var(--accent, var(--color-text-quaternary));
+  font-variant-numeric: tabular-nums;
+  width: 22px; height: 22px;
+  border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 600; flex-shrink: 0; margin-top: 2px;
-  font-variant-numeric: tabular-nums; background: var(--color-bg-primary);
+  background: var(--color-bg-primary);
+  margin-top: 1px;
 }
-.acc-text { flex: 1; min-width: 0; font-size: 12px; line-height: 1.9; color: var(--color-text-tertiary); }
-.acc-name {
-  display: inline-block; font-weight: 600; color: var(--color-text-primary);
-  margin-right: 6px; font-size: 13px;
+.acc-li-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.acc-li-name {
+  color: var(--color-text-primary); font-weight: 600;
+  font-size: 13.5px; line-height: 1.6;
 }
-.acc-desc { color: var(--color-text-tertiary); }
-.acc-prose { font-size: 12px; color: var(--color-text-tertiary); line-height: 1.9; }
+.acc-li-name strong, .acc-li-name b { font-weight: 600; }  /* name 内嵌 strong 不重复加粗 */
+.acc-li-desc {
+  color: var(--color-text-tertiary);
+  font-size: 13px; line-height: 1.85;
+}
+.acc-li-desc strong, .acc-li-desc b { color: var(--color-text-primary); font-weight: 600; }
+
+.acc-prose { font-size: 13px; color: var(--color-text-tertiary); line-height: 1.85; }
 
 /* ---- compare table（默认渲染，非学派详情用）---- */
 .cmp-table {
@@ -441,50 +466,70 @@ mark {
 
 
 /* ============================================================
- * Evaluation tags module（义/限/例/应/用/喻）
- * 6 种 tone 是写死的语义色，与学派 accent 无关。每行注入 --tone CSS var。
+ * Evaluation tags module（义/限/例/应/用/喻）— v0.5.46 重写
+ *
+ * 设计：
+ *   - <details open> 默认展开 + 可折叠
+ *   - 去 row card（border-left strip + bg tint），改 hanging indent 布局
+ *   - "意义/局限/例子/应对/应用/比喻" 双字 pill label（去单字 glyph 圆圈重复）
+ *   - tone 色（Z 三组：积极绿/警告红/中性灰）只挂在 pill 上（10% bg + 100% text）
+ *   - 整体灰白干净，行间 1px 弱 hr 分隔
  * ============================================================ */
-.eval-mod {
-  margin-top: 28px; padding-top: 20px;
-  border-top: 1px solid var(--color-border);
+details.eval {
+  margin-top: 32px;
+  scroll-margin-top: 64px;
 }
-.eval-mod-h {
-  display: flex; align-items: baseline; gap: 8px; margin-bottom: 14px;
+.eval-h {
+  display: flex; align-items: baseline; gap: 8px;
   font-size: 13px; font-weight: 600; color: var(--color-text-primary);
-  letter-spacing: 0.02em;
+  cursor: pointer;
+  list-style: none;
+  padding: 6px 0;
+  user-select: none;
+  border-top: 1px solid var(--color-border);
+  padding-top: 20px;
+  margin-bottom: 6px;
 }
-.eval-mod-count {
+.eval-h:hover { background: var(--color-bg-secondary); margin: 0 -8px 6px; padding: 20px 8px 6px; }
+.eval-h::-webkit-details-marker { display: none; }
+.eval-count {
   font-size: 11px; color: var(--color-text-quaternary);
-  font-variant-numeric: tabular-nums; font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  background: var(--color-bg-tertiary);
+  padding: 1px 6px; border-radius: 999px;
 }
-.eval-mod-list { display: flex; flex-direction: column; gap: 10px; }
+.eval-chev {
+  font-size: 11px; color: var(--color-text-quaternary);
+  margin-left: auto;
+  transition: transform .15s;
+}
+
+.eval-list { display: flex; flex-direction: column; }
 .eval-row {
-  display: flex; gap: 12px; padding: 12px 14px;
-  border-radius: 10px;
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-left: 3px solid var(--tone, var(--color-border));
+  display: grid;
+  grid-template-columns: 56px 1fr;  /* pill 列固定宽，多行 text 自动 hang */
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+  align-items: baseline;
 }
-.eval-glyph {
-  width: 24px; height: 24px; flex-shrink: 0;
-  border-radius: 9999px;
-  background: color-mix(in oklab, var(--tone, currentColor) 12%, var(--color-bg-primary));
+.eval-row:last-child { border-bottom: 0; }
+.eval-pill {
+  font-size: 11px; font-weight: 600;
   color: var(--tone, var(--color-text-tertiary));
-  border: 1px solid color-mix(in oklab, var(--tone, currentColor) 35%, transparent);
-  display: inline-flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 700;
-}
-.eval-body { flex: 1; min-width: 0; padding-top: 1px; }
-.eval-label {
-  font-size: 11px; font-weight: 600; color: var(--color-text-tertiary);
-  letter-spacing: 0.04em; margin-bottom: 4px;
+  background: color-mix(in oklab, var(--tone, currentColor) 10%, transparent);
+  padding: 3px 0;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  text-align: center;
+  line-height: 1.4;
 }
 .eval-text {
-  font-size: 13px; line-height: 1.7;
-  color: var(--color-text-secondary);
+  font-size: 12.5px; line-height: 1.9;
+  color: var(--color-text-tertiary);
   text-wrap: pretty;
 }
-.eval-text strong { color: var(--color-text-primary); }
+.eval-text strong, .eval-text b { color: var(--color-text-primary); font-weight: 600; }
 
 
 /* ============================================================

@@ -49,9 +49,24 @@ function renderParas(text: string, wrapperStyle = ''): string {
   }</div>`;
 }
 
-/** 把 ①xxx ②xxx ③xxx 风格内容拆成 [{mark, name, desc}, ...] */
+/**
+ * 把 ①xxx ②xxx ③xxx 风格内容拆成 [{mark, name, alt?, desc}, ...]
+ *
+ * v0.5.46 regex 升级：支持 `name（alt）——desc` 形式（之前只支持 `name——desc`）
+ *   - name 部分（必有）：`<strong>foo</strong>` 包裹也算 name 一部分
+ *   - alt 部分（可选）：name 后紧跟 `（…）` 中括号内容（多为日语 alt 或英文原文）
+ *   - 分隔符：`——` 或 `：`/`:`
+ *   - desc：分隔符之后到末尾
+ *
+ * alt 保留在返回字段（暂不渲染，未来 lang-toggle 可读）。
+ *
+ * 边界：
+ *   - 无分隔符 → fallback name='' desc=整段
+ *   - 括号未闭合 → alt 不匹配，回到 `name——desc` 模式
+ *   - desc 内可包含 `（中文括号说明）` — 不影响（只取 name 后第一个括号当 alt）
+ */
 const CIRCLE_NUMS = '①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳';
-function parseNumberedItems(text: string): Array<{ mark: string; name: string; desc: string }> {
+function parseNumberedItems(text: string): Array<{ mark: string; name: string; alt?: string; desc: string }> {
   if (!text) return [];
   const re = new RegExp(`[${CIRCLE_NUMS}]`);
   if (!re.test(text)) return [];
@@ -61,12 +76,12 @@ function parseNumberedItems(text: string): Array<{ mark: string; name: string; d
   const parts = trimmed.split(splitRe).map((s) => s.trim()).filter(Boolean);
   return parts.map((p) => {
     const mark = p[0];
-    let rest = p.slice(1).trim()
+    const rest = p.slice(1).trim()
       .replace(/^(?:<br\s*\/?>\s*)+/i, '')
       .replace(/(?:\s*<br\s*\/?>)+$/i, '')
       .trim();
-    const m = rest.match(/^([^—:：(（]+?)(?:——|：|:)(.*)$/s);
-    if (m) return { mark, name: m[1].trim(), desc: m[2].trim() };
+    const m = rest.match(/^([^—:：(（]+?)(?:[（(]([^）)]+)[）)])?\s*(?:——|：|:)\s*(.*)$/s);
+    if (m) return { mark, name: m[1].trim(), alt: m[2]?.trim(), desc: m[3].trim() };
     return { mark, name: '', desc: rest };
   });
 }
@@ -108,7 +123,16 @@ export function renderFlatList(body: string, accentHex: string): string {
   return `<div>${lead ? `<div class="body-lead">${lead}</div>` : ''}<div class="body-items">${cards}</div></div>`;
 }
 
-/** accordion —— lead<br>【section1】<br>①...②...<br>【section2】<br>①... */
+/**
+ * accordion —— lead<br>【section1】<br>①...②...<br>【section2】<br>①...
+ *
+ * v0.5.46 重写：
+ *   - 全部 sections 默认 open（之前只前 2 张展开）
+ *   - 去 left strip 装饰（圆圈编号本身已是视觉锚点，strip 喧宾夺主）
+ *   - section title 一行底 1px hr 分隔；折叠态自动 hide hr 避免跟 eval top hr 重影
+ *   - numbered item 改两段式：name 加粗一行 + desc 缩进新行（去 inline `——` 连接）
+ *   - 圆圈编号用 accent 色（其他 chrome 中性灰）
+ */
 export function renderAccordion(body: string, accentHex: string): string {
   const tokens = body.split(/(【[^】]+】)/);
   const lead = (tokens[0] || '').trim();
@@ -119,32 +143,29 @@ export function renderAccordion(body: string, accentHex: string): string {
     sections.push({ name, block });
   }
 
-  const sectionsHtml = sections.map((s, idx) => {
+  const circleStyle = `border-color:${accentHex};color:${accentHex}`;
+
+  const sectionsHtml = sections.map((s) => {
     const items = parseNumberedItems(s.block);
-    const open = idx < 2 ? ' open' : '';
-    const summaryStyle = `--accent:${accentHex}`;
-    const bulletStyle = `background:${accentHex}`;
-    const circleStyle = `border-color:${accentHex};color:${accentHex}`;
     const inner = items.length === 0
       ? `<div class="acc-prose">${s.block}</div>`
-      : items.map((it, i) => `
-          <div class="acc-row">
-            <span class="acc-circle" style="${circleStyle}">${i + 1}</span>
-            <div class="acc-text">
-              ${it.name ? `<span class="acc-name">${it.name}</span>` : ''}
-              <span class="acc-desc">${it.desc}</span>
+      : `<ol class="acc-numbered">${items.map((it, i) => `
+          <li class="acc-li">
+            <span class="acc-li-n" style="${circleStyle}">${i + 1}</span>
+            <div class="acc-li-body">
+              ${it.name ? `<span class="acc-li-name">${it.name}</span>` : ''}
+              ${it.desc ? `<div class="acc-li-desc">${it.desc}</div>` : ''}
             </div>
-          </div>
-        `).join('');
+          </li>
+        `).join('')}</ol>`;
     return `
-      <details class="acc-item"${open}>
-        <summary class="acc-summary" style="${summaryStyle}">
-          <span class="acc-bullet" style="${bulletStyle}"></span>
-          <span class="acc-title">${s.name}</span>
+      <details class="acc-block" open>
+        <summary class="acc-head">
+          <h3 class="acc-title">${s.name}</h3>
           <span class="acc-count">${items.length}</span>
           <span class="acc-chev">▾</span>
         </summary>
-        <div class="acc-body">${inner}</div>
+        ${inner}
       </details>
     `;
   }).join('');
@@ -152,7 +173,7 @@ export function renderAccordion(body: string, accentHex: string): string {
   return `
     <div>
       ${lead ? renderParas(lead, 'margin-bottom:8px') : ''}
-      <div class="accordion">${sectionsHtml}</div>
+      <div class="acc">${sectionsHtml}</div>
     </div>
   `;
 }
@@ -319,10 +340,18 @@ export function renderBodyForSchool(opts: {
 // EvalTagsModule —— 评价标签渲染（独立 6 色 tone, 不随学派变）
 // ============================================================
 
-/** 把 EvalContent dict 渲染成 .eval-mod section（自动跳过空字段） */
+/**
+ * 把 EvalContent dict 渲染成 evaluation section（自动跳过空字段）
+ *
+ * v0.5.46 重写：
+ *   - <details open> 默认展开 + 可折叠
+ *   - 去 row card（border-left strip + bg tint），改 hanging indent 布局
+ *   - "意义/局限/例子/应对/应用/比喻" 双字 pill label（去单字 glyph 圆圈重复）
+ *   - tone 色只挂在 pill 上（10% bg + 100% text），整体灰白干净
+ *   - 行间 1px 弱 hr 分隔
+ */
 export function renderEvalModule(content: EvalContent | null | undefined): string {
   if (!content) return '';
-  // 按 EVAL_TAG_DEFS 顺序输出（义/限/例/应/用/喻）
   const rows = EVAL_TAG_DEFS
     .map((d) => ({ def: d, text: content[d.glyph]?.trim() }))
     .filter((x) => Boolean(x.text));
@@ -330,21 +359,19 @@ export function renderEvalModule(content: EvalContent | null | undefined): strin
 
   const rowsHtml = rows.map(({ def, text }) => `
     <div class="eval-row" style="--tone:${def.tone}">
-      <span class="eval-glyph">${def.glyph}</span>
-      <div class="eval-body">
-        <div class="eval-label">${def.name}</div>
-        <div class="eval-text">${text}</div>
-      </div>
+      <span class="eval-pill">${def.name}</span>
+      <div class="eval-text">${text}</div>
     </div>
   `).join('');
 
   return `
-    <section class="eval-mod">
-      <div class="eval-mod-h">
+    <details class="eval" open>
+      <summary class="eval-h">
         <span>评价</span>
-        <span class="eval-mod-count">${rows.length}</span>
-      </div>
-      <div class="eval-mod-list">${rowsHtml}</div>
-    </section>
+        <span class="eval-count">${rows.length}</span>
+        <span class="eval-chev">▾</span>
+      </summary>
+      <div class="eval-list">${rowsHtml}</div>
+    </details>
   `;
 }
