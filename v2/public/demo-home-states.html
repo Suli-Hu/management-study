@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>首页 · 学科卡 4 状态 + lock 视觉变体</title>
+<style>
+  /* v2 design tokens（来自 src/styles/global.css）*/
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f7;
+    --bg-tertiary: #e5e5ea;
+    --text-primary: #1d1d1f;
+    --text-secondary: #2c2c2e;
+    --text-tertiary: #6e6e73;
+    --text-quaternary: #8e8e93;
+    --accent-strategy: #007AFF;
+    --accent-warm: #b07d20;
+    --border: #e5e5ea;
+    --shadow-card: 0 1px 4px rgba(0,0,0,.06);
+    --shadow-card-hover: 0 6px 20px -4px rgba(0,0,0,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #1a1a1c;
+      --bg-secondary: #202022;
+      --bg-tertiary: #2a2a2e;
+      --text-primary: #f5f5f7;
+      --text-secondary: #d1d1d6;
+      --text-tertiary: #98989d;
+      --text-quaternary: #6e6e73;
+      --border: #38383a;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", sans-serif;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    padding: 32px 24px 80px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+  .lede { font-size: 13px; color: var(--text-tertiary); margin-bottom: 28px; line-height: 1.7; }
+  h2 {
+    font-size: 14px; font-weight: 600;
+    color: var(--text-secondary);
+    margin: 36px 0 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.02em;
+  }
+
+  /* state-row：左 tag + 中 card + 右 notes */
+  .state-row {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    column-gap: 18px;
+    row-gap: 6px;
+    margin-bottom: 16px;
+    align-items: start;
+  }
+  .state-tag {
+    font-size: 11px; color: var(--text-quaternary);
+    font-family: ui-monospace, SF Mono, Menlo, monospace;
+    line-height: 1.6;
+    padding-top: 16px;
+  }
+  .state-notes {
+    grid-column: 2;
+    font-size: 11.5px; color: var(--text-quaternary);
+    line-height: 1.7;
+    padding: 4px 0 0 4px;
+  }
+
+  /* === 卡片 base === */
+  .d-card {
+    display: block;
+    padding: 16px 18px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg-primary);
+    box-shadow: var(--shadow-card);
+    text-decoration: none; color: inherit;
+    transition: box-shadow .15s, transform .15s, border-color .15s;
+  }
+  .d-card[href]:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-1px);
+  }
+  .d-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 12px; margin-bottom: 4px;
+  }
+  .d-title-row {
+    display: flex; align-items: baseline; gap: 8px; min-width: 0; flex: 1;
+  }
+  .d-title-zh { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+  .d-title-en { font-size: 12px; color: var(--text-quaternary); font-weight: 400; }
+  .d-tagline { font-size: 12px; color: var(--text-tertiary); margin-bottom: 2px; }
+  .d-count { font-size: 11.5px; color: var(--text-quaternary); font-variant-numeric: tabular-nums; }
+
+  /* badge base */
+  .d-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    flex-shrink: 0;
+    line-height: 1.4;
+  }
+
+  /* === A · 可编辑 === */
+  .d-badge--editable {
+    color: var(--accent-strategy);
+    border-color: color-mix(in oklab, var(--accent-strategy) 35%, transparent);
+    background: color-mix(in oklab, var(--accent-strategy) 8%, var(--bg-primary));
+  }
+
+  /* === B · 只读 === */
+  .d-badge--readonly {
+    color: var(--text-tertiary);
+    border-color: var(--border);
+    background: var(--bg-primary);
+  }
+
+  /* === C · 无权限 — 3 个 lock 视觉变体 === */
+
+  /* C1: opacity dim（最低视觉权重，sober）*/
+  .d-card--lock-v1 {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  .d-card--lock-v1 .d-badge { color: var(--text-quaternary); border-color: var(--border); }
+
+  /* C2: gray bg overlay（用户截图风，重一点 但有质感）*/
+  .d-card--lock-v2 {
+    background: var(--bg-tertiary);
+    border-color: transparent;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  .d-card--lock-v2 .d-title-zh,
+  .d-card--lock-v2 .d-title-en,
+  .d-card--lock-v2 .d-tagline,
+  .d-card--lock-v2 .d-count { color: var(--text-tertiary); }
+  .d-card--lock-v2 .d-badge {
+    color: var(--text-tertiary);
+    background: var(--bg-primary);
+    border-color: transparent;
+  }
+  .d-card--lock-v2 .lock-emoji { font-size: 22px; line-height: 1; }
+
+  /* C3: dashed border + flat bg（最轻，几乎像占位 placeholder）*/
+  .d-card--lock-v3 {
+    background: var(--bg-secondary);
+    border: 1px dashed var(--bg-tertiary);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  .d-card--lock-v3 .d-title-zh,
+  .d-card--lock-v3 .d-title-en,
+  .d-card--lock-v3 .d-tagline,
+  .d-card--lock-v3 .d-count { color: var(--text-quaternary); }
+  .d-card--lock-v3 .d-badge {
+    color: var(--text-quaternary);
+    background: transparent;
+    border-color: var(--border);
+  }
+
+  /* === D · 即将上线（不在 D1）—— 跟 lock 视觉同源但 copy 不同 === */
+  .d-badge--upcoming {
+    color: var(--accent-warm);
+    border-color: color-mix(in oklab, var(--accent-warm) 30%, transparent);
+    background: color-mix(in oklab, var(--accent-warm) 9%, var(--bg-primary));
+  }
+
+  /* legend block */
+  .legend {
+    margin-top: 20px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    font-size: 12px; color: var(--text-tertiary); line-height: 1.8;
+  }
+  .legend code {
+    font-family: ui-monospace, SF Mono, Menlo, monospace;
+    background: var(--bg-secondary);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+  .legend b { color: var(--text-primary); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>首页 · 学科卡 4 状态对比</h1>
+  <p class="lede">
+    每张卡 = 一个学科。状态由 <code>(user, discipline)</code> 权限矩阵 + 学科是否在 D1 决定。<br>
+    A/B 是有数据 + 有权限的两档；C/D 都是「不可点」，区别在数据是否存在。<br>
+    <b>讨论焦点</b>：C 「无权限」用 v1/v2/v3 哪种视觉？D 是否要单独列 card（vs 现在的底部 inline 文字）？
+  </p>
+
+  <h2>状态 A · 可编辑（canEdit = true）</h2>
+  <div class="state-row">
+    <div class="state-tag">A</div>
+    <a class="d-card" href="#">
+      <div class="d-head">
+        <div class="d-title-row">
+          <span class="d-title-zh">经营学</span>
+          <span class="d-title-en">Management</span>
+        </div>
+        <span class="d-badge d-badge--editable">✎ 可编辑</span>
+      </div>
+      <div class="d-tagline">日本大学院入试备考</div>
+      <div class="d-count">55 学派 · 514 知识点</div>
+    </a>
+    <div class="state-notes">superAdmin 或 per-discipline admin。点 → /key。hover 抬升 + shadow。</div>
+  </div>
+
+  <h2>状态 B · 只读（canRead && !canEdit）</h2>
+  <div class="state-row">
+    <div class="state-tag">B</div>
+    <a class="d-card" href="#">
+      <div class="d-head">
+        <div class="d-title-row">
+          <span class="d-title-zh">市场营销</span>
+          <span class="d-title-en">Marketing</span>
+        </div>
+        <span class="d-badge d-badge--readonly">👁 只读</span>
+      </div>
+      <div class="d-tagline">日本大学院入试备考</div>
+      <div class="d-count">28 学派 · 312 知识点</div>
+    </a>
+    <div class="state-notes">guest（邀请码 123）或被授 read-only 权限。点 → /key 浏览，写按钮全不显示。</div>
+  </div>
+
+  <h2>状态 C · 无权限（canRead = false，但 D1 已有数据）</h2>
+  <div class="state-row">
+    <div class="state-tag">C · v1<br><span style="color:var(--accent-strategy)">opacity dim</span></div>
+    <div class="d-card d-card--lock-v1" title="无权限。联系管理员申请。">
+      <div class="d-head">
+        <div class="d-title-row">
+          <span class="d-title-zh">社会学</span>
+          <span class="d-title-en">Sociology</span>
+        </div>
+        <span class="d-badge">🔒 无权限</span>
+      </div>
+      <div class="d-tagline">日本大学院入试备考</div>
+      <div class="d-count">42 学派 · 287 知识点</div>
+    </div>
+    <div class="state-notes">opacity 0.5 整张压暗。最 sober，但跟 disabled-button 视觉同源 → 看起来像「坏」而不是「锁」。</div>
+  </div>
+
+  <div class="state-row">
+    <div class="state-tag">C · v2<br><span style="color:var(--accent-strategy)">gray bg</span></div>
+    <div class="d-card d-card--lock-v2" title="无权限。联系管理员申请。">
+      <div class="d-head">
+        <div class="d-title-row">
+          <span class="d-title-zh">社会学</span>
+          <span class="d-title-en">Sociology</span>
+        </div>
+        <span class="d-badge"><span class="lock-emoji">🔒</span></span>
+      </div>
+      <div class="d-tagline">日本大学院入试备考</div>
+      <div class="d-count">42 学派 · 287 知识点</div>
+    </div>
+    <div class="state-notes">背景换 bg-tertiary，文字降一档。<b>跟你截图同款</b>。视觉重，存在感强 → 看起来像「内容存在，要等」。锁 emoji 大字像贴纸。</div>
+  </div>
+
+  <div class="state-row">
+    <div class="state-tag">C · v3<br><span style="color:var(--accent-strategy)">dashed</span></div>
+    <div class="d-card d-card--lock-v3" title="无权限。联系管理员申请。">
+      <div class="d-head">
+        <div class="d-title-row">
+          <span class="d-title-zh">社会学</span>
+          <span class="d-title-en">Sociology</span>
+        </div>
+        <span class="d-badge">🔒 无权限</span>
+      </div>
+      <div class="d-tagline">日本大学院入试备考</div>
+      <div class="d-count">42 学派 · 287 知识点</div>
+    </div>
+    <div class="state-notes">dashed border + 浅灰底，像 placeholder。最轻，但跟 D「即将上线」难区分 → 不推。</div>
+  </div>
+
+  <h2>状态 D · 即将上线（不在 D1）</h2>
+  <div class="state-row">
+    <div class="state-tag">D · 卡片</div>
+    <div class="d-card d-card--lock-v3">
+      <div class="d-head">
+        <div class="d-title-row">
+          <span class="d-title-zh">心理学</span>
+          <span class="d-title-en">Psychology</span>
+        </div>
+        <span class="d-badge d-badge--upcoming">🌱 即将上线</span>
+      </div>
+      <div class="d-tagline">数据准备中</div>
+    </div>
+    <div class="state-notes">upcoming 在 src/pages/index.astro 是个 const（marketing/sociology）。<b>不显示 N 学派 / N 知识点</b>。视觉用 v3（dashed）+ 暖色 badge 区分于 C 的「锁」。</div>
+  </div>
+
+  <div class="state-row">
+    <div class="state-tag">D · 文字</div>
+    <div style="padding: 14px 0; font-size: 11.5px; color: var(--text-quaternary); text-align: center;">
+      更多学科即将上线 · 心理学 · 教育学
+    </div>
+    <div class="state-notes"><b>当前线上 v0.5.40 的写法</b>。空间占用最小，但视觉权重低，新用户可能漏掉。</div>
+  </div>
+
+  <div class="legend">
+    <b>状态判定逻辑（src/middleware.ts）</b>：<br>
+    • <code>canEdit(d)</code> = <code>isSuperAdmin || permissions[d] === 'admin'</code><br>
+    • <code>canRead(d)</code> = <code>isSuperAdmin || isInviteGuest || permissions.has(d)</code><br>
+    • 学科存在性 = D1 <code>discipline</code> 表查询<br><br>
+
+    <b>映射</b>：<br>
+    • A：D1 ✓ + canEdit ✓<br>
+    • B：D1 ✓ + canRead ✓ + canEdit ✗<br>
+    • C：D1 ✓ + canRead ✗（少见 — 当前 guest 邀请码绕过此分支，只有 email 用户被显式拒才会到这）<br>
+    • D：D1 ✗（学科未撒种，靠 const upcoming 列）
+  </div>
+
+  <h2>问你拍板</h2>
+  <div class="legend">
+    1. <b>C 选哪个变体</b>？<br>
+    &nbsp;&nbsp;&nbsp;v1 opacity / <b>v2 gray-bg（你截图）</b> / v3 dashed<br><br>
+    2. <b>D 上 card 还是留文字</b>？<br>
+    &nbsp;&nbsp;&nbsp;upgrade 到 D-卡片 / 留 v0.5.40 底部文字<br><br>
+    3. <b>copy 微调</b>？<br>
+    &nbsp;&nbsp;&nbsp;C 当前 "🔒 无权限"，要改 "🔒 受限" / "🔒 联系管理员" 吗？<br>
+    &nbsp;&nbsp;&nbsp;D 当前 "🌱 即将上线"，要改 "🚧 准备中" / "📅 上线时间 TBD" 吗？<br><br>
+    4. <b>hover 行为</b>？<br>
+    &nbsp;&nbsp;&nbsp;C/D 不可点，鼠标悬停要不要 tooltip？现在用 <code>title=...</code> 原生 tooltip。
+  </div>
+
+</div>
+
+</body>
+</html>

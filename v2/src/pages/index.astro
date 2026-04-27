@@ -17,10 +17,10 @@ const result = await db
 
 const disciplines = result.results ?? [];
 
-// 占位：未来其他学科（learning 撒种后自动从 D1 出现）
+// v0.5.56: upcoming 学科改成 D-状态卡（dashed border + warm 🌱 即将上线 badge）
+// 当前只有心理学（marketing/sociology 已撒种到 D1）
 const upcoming = [
-  { key: 'marketing', title_zh: '市场营销', title_en: 'Marketing' },
-  { key: 'sociology', title_zh: '社会学',   title_en: 'Sociology' },
+  { key: 'psychology', title_zh: '心理学', title_en: 'Psychology', tagline_zh: '数据准备中' },
 ];
 const upcomingFiltered = upcoming.filter((u) => !disciplines.some((d) => d.key === u.key));
 ---
@@ -36,7 +36,7 @@ const upcomingFiltered = upcoming.filter((u) => !disciplines.some((d) => d.key =
       <h2 class="text-xl mb-4">学科</h2>
       <div class="space-y-3">
         {disciplines.map((d) => {
-          // v0.4.25 RBAC：按权限渲染 — admin 可写 / guest 只读 / 无权限灰锁
+          // v0.4.25 RBAC：A canEdit / B canRead-only / C !canRead（v0.5.56 visual = opacity dim）
           const canEdit = Astro.locals.canEdit(d.key);
           const canRead = Astro.locals.canRead(d.key);
           if (canRead) {
@@ -51,7 +51,7 @@ const upcomingFiltered = upcoming.filter((u) => !disciplines.some((d) => d.key =
                     <span class="text-xs text-quaternary font-normal">{d.title_en}</span>
                   </h3>
                   {canEdit ? (
-                    <span class="shrink-0 text-xs px-1.5 py-0.5 rounded border border-accent-strategy text-accent-strategy">✎ 可编辑</span>
+                    <span class="shrink-0 text-xs px-1.5 py-0.5 rounded border border-accent-strategy text-accent-strategy">🖋️ 编辑</span>
                   ) : (
                     <span class="shrink-0 text-xs px-1.5 py-0.5 rounded border border-bg-tertiary text-tertiary">👁 只读</span>
                   )}
@@ -63,10 +63,10 @@ const upcomingFiltered = upcoming.filter((u) => !disciplines.some((d) => d.key =
               </a>
             );
           }
-          // 无权限：灰锁卡片（不能点）
+          // C: 无权限 — v0.5.56 改 v1 opacity dim 风格（demo 拍板）
           return (
             <div
-              class="block p-4 rounded-lg border bg-bg-primary shadow-card opacity-40 cursor-not-allowed"
+              class="block p-4 rounded-lg border bg-bg-primary opacity-50 cursor-not-allowed"
               title="无权限。联系管理员申请。"
             >
               <div class="flex items-baseline justify-between mb-1 gap-3">
@@ -81,13 +81,26 @@ const upcomingFiltered = upcoming.filter((u) => !disciplines.some((d) => d.key =
           );
         })}
 
+        {/* D: 即将上线（不在 D1）— v0.5.56 改 dashed card（demo 拍板）*/}
+        {upcomingFiltered.map((u) => (
+          <div
+            class="block p-4 rounded-lg border border-dashed border-bg-tertiary bg-bg-secondary cursor-not-allowed"
+            title="即将上线"
+          >
+            <div class="flex items-baseline justify-between mb-1 gap-3">
+              <h3 class="text-lg flex items-baseline gap-2 min-w-0">
+                <span class="truncate text-quaternary">{u.title_zh}</span>
+                <span class="text-xs text-quaternary font-normal">{u.title_en}</span>
+              </h3>
+              <span
+                class="shrink-0 text-xs px-1.5 py-0.5 rounded border"
+                style="border-color: color-mix(in oklab, #b07d20 30%, transparent); color: #b07d20; background: color-mix(in oklab, #b07d20 9%, var(--color-bg-primary));"
+              >🌱 即将上线</span>
+            </div>
+            {u.tagline_zh && <div class="text-xs text-quaternary">{u.tagline_zh}</div>}
+          </div>
+        ))}
       </div>
-      {/* v0.5.40: upcoming 学科改成单行弱提示，不再跟 active 学科卡视觉权重持平 */}
-      {upcomingFiltered.length > 0 && (
-        <p class="text-xs text-quaternary text-center mt-6">
-          更多学科即将上线 · {upcomingFiltered.map((u) => u.title_zh).join(' · ')}
-        </p>
-      )}
     </section>
 
   </main>
