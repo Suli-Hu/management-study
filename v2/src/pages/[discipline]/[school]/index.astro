@@ -393,7 +393,7 @@ const canEdit = Astro.locals.canEdit(discipline);
       mountDragReorder(ul, {
         getId: (el) => el.getAttribute('data-kp-id'),
         getContainerKey: () => schoolKey,
-        skipSelector: 'a, button, .kp-admin',
+        skipSelector: '.kp-admin-edit, .kp-admin, button',
         onReorder: async (idsByContainer) => {
           const kpIds = idsByContainer.get(schoolKey) ?? [];
           if (kpIds.length === 0) return;
