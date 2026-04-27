@@ -1,7 +1,8 @@
 ---
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
-import { renderBody, type KpFormat } from '~/lib/render-body';
+import { renderBody, renderEvalModule, type KpFormat } from '~/lib/render-body';
+import type { EvalContent } from '~/lib/eval-tag-defs';
 import { editHref } from '~/lib/nav';
 import { tagColor } from '~/lib/tag-color';
 import { shortYear } from '~/lib/format-year';
@@ -19,6 +20,7 @@ const kp = await db
     title_zh: string; title_en: string | null; title_ja: string | null;
     body_zh: string; body_ja: string | null;
     tags_json: string; format: KpFormat;
+    eval_content_zh_json: string; eval_content_ja_json: string;
   }>();
 
 if (!kp) return Astro.redirect('/404');
@@ -61,6 +63,15 @@ const scholars = scholarsResult.results ?? [];
 const lang = (Astro.url.searchParams.get('lang') === 'ja' && kp.body_ja) ? 'ja' : 'zh';
 const body = lang === 'ja' ? kp.body_ja! : kp.body_zh;
 const title = lang === 'ja' ? (kp.title_ja ?? kp.title_zh) : kp.title_zh;
+
+// v0.5.47 evaluation 内容（义/限/例/应/用/喻）— 之前 standalone /kp/[id] 漏渲染，
+// 手机/平板 < 1024px 右栏 hidden 时只能走 standalone 页，导致看不到评价。
+let evalContent: EvalContent | null = null;
+const evalRaw = lang === 'ja' ? kp.eval_content_ja_json : kp.eval_content_zh_json;
+if (evalRaw) {
+  try { evalContent = JSON.parse(evalRaw) as EvalContent; }
+  catch { evalContent = null; }
+}
 
 // lang toggle href（保留其他 query 参数）
 const langToggleParams = new URLSearchParams(Astro.url.search);
@@ -115,6 +126,7 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
     </header>
 
     <article class="kp-body text-secondary" set:html={renderBody({ fmt: kp.format, body, accentHex })} />
+    {evalContent && <div set:html={renderEvalModule(evalContent)} />}
   </main>
 </Layout>
 
