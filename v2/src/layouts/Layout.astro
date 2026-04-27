@@ -15,14 +15,14 @@ interface Props {
 }
 
 const {
-  title = '全学科学习笔记',
+  title = '全科笔记',
   description = '日本大学院入试备考知识库',
   currentDiscipline,
   currentSection,
   currentLeafTitle,
   fullHeight = false,
 } = Astro.props;
-const fullTitle = title === '全学科学习笔记' ? title : `${title} · 全学科学习笔记`;
+const fullTitle = title === '全科笔记' ? title : `${title} · 全科笔记`;
 ---
 
 <!doctype html>

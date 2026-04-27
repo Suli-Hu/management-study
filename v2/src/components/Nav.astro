@@ -1,5 +1,6 @@
 ---
 import { getDb } from '~/lib/db';
+import Brand from '~/components/Brand.astro';
 
 interface Props {
   currentDiscipline?: string;
@@ -30,17 +31,20 @@ const sections: Array<{ key: 'schools' | 'scholars' | 'kps'; label: string; href
   : [];
 
 const emailInitial = user?.email.charAt(0).toUpperCase() ?? '';
+
+// v0.5.58 #7：brand link 智能 — 在学科内点 logo 回到该学科 overview（/{key}）
+//                                 不在学科内（home）则保持 /
+const brandHref = currentDiscipline ? `/${currentDiscipline}` : '/';
 ---
 
 <nav class="sticky top-0 z-50 bg-bg-primary/90 backdrop-blur-sm border-b border-bg-tertiary">
   <div class="w-full pl-[18px] pr-4 h-12 flex items-center justify-between gap-3">
     <div class="flex items-center gap-1.5 text-sm shrink-0">
-      <a href="/" class="font-semibold text-primary no-underline" title="返回学科索引">
-        全学科笔记
-      </a>
+      <Brand href={brandHref} size="sm" />
+      {/* v0.5.58 #5: 移动端只留 logo，所有面包屑（chev + discipline + leaf）在 < sm 全 hide */}
       {currentDiscipline && disciplineTitle && (
-        <>
-          <span class="text-quaternary text-xs">›</span>
+        <Fragment>
+          <span class="text-quaternary text-xs hidden sm:inline">›</span>
           <a
             href={`/${currentDiscipline}`}
             class:list={[
@@ -50,15 +54,15 @@ const emailInitial = user?.email.charAt(0).toUpperCase() ?? '';
           >
             {disciplineTitle}
           </a>
-        </>
+        </Fragment>
       )}
       {currentLeafTitle && (
-        <>
-          <span class="text-quaternary text-xs">›</span>
+        <Fragment>
+          <span class="text-quaternary text-xs hidden sm:inline">›</span>
           <span class="text-primary font-medium text-xs hidden sm:inline">
             {currentLeafTitle}
           </span>
-        </>
+        </Fragment>
       )}
     </div>
 
@@ -107,33 +111,53 @@ const emailInitial = user?.email.charAt(0).toUpperCase() ?? '';
         <span data-theme-icon-dark aria-hidden="true" class="hidden">☾</span>
       </button>
       {user ? (
-        <>
+        <div class="relative" id="user-menu-wrap">
           {isGuest ? (
-            <span
-              aria-label="访客"
-              title="访客（只读，无记忆）"
-              class="inline-flex items-center px-2 py-0.5 rounded-full bg-bg-tertiary text-tertiary font-semibold"
+            <button
+              type="button"
+              id="user-menu-trigger"
+              aria-label="账户菜单"
+              aria-haspopup="true"
+              aria-expanded="false"
+              title="访客（只读）— 点击打开菜单"
+              class="inline-flex items-center px-2 py-0.5 rounded-full bg-bg-tertiary text-tertiary font-semibold cursor-pointer"
             >
               访客
-            </span>
+            </button>
           ) : (
-            <span
-              aria-label={user.email}
-              title={user.email}
-              class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-accent-strategy text-white font-semibold text-xs"
+            <button
+              type="button"
+              id="user-menu-trigger"
+              aria-label={`账户菜单 — ${user.email}`}
+              aria-haspopup="true"
+              aria-expanded="false"
+              title={`${user.email} — 点击打开菜单`}
+              class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-accent-strategy text-white font-semibold text-xs cursor-pointer"
             >
               {emailInitial}
-            </span>
-          )}
-          <form method="POST" action="/api/auth/logout" class="inline">
-            <button
-              type="submit"
-              class="px-2 py-1 rounded text-tertiary hover:text-primary transition-colors"
-            >
-              退出
             </button>
-          </form>
-        </>
+          )}
+          <div
+            id="user-menu"
+            role="menu"
+            aria-labelledby="user-menu-trigger"
+            class="hidden absolute right-0 top-full mt-1.5 min-w-[140px] rounded-md border bg-bg-primary shadow-card-hover overflow-hidden z-50"
+          >
+            <a
+              href="/"
+              role="menuitem"
+              class="block px-3 py-2 text-xs text-secondary hover:bg-bg-secondary no-underline"
+            >学科选择</a>
+            <form method="POST" action="/api/auth/logout" class="block">
+              <button
+                type="submit"
+                role="menuitem"
+                class="block w-full text-left px-3 py-2 text-xs border-t border-bg-tertiary hover:bg-bg-secondary"
+                style="color:#FF3B30"
+              >退出登录</button>
+            </form>
+          </div>
+        </div>
       ) : (
         <a
           href="/login"
@@ -147,7 +171,7 @@ const emailInitial = user?.email.charAt(0).toUpperCase() ?? '';
 </nav>
 
 <script is:inline>
-  // v0.3.9 夜间模式 toggle。初始状态由 Layout head 的 inline script 已应用（无闪烁）。
+  // v0.3.9 夜间模式 toggle
   (function () {
     const btn = document.getElementById('theme-toggle');
     if (!btn) return;
@@ -167,6 +191,37 @@ const emailInitial = user?.email.charAt(0).toUpperCase() ?? '';
       document.documentElement.classList.toggle('dark', next);
       localStorage.setItem('theme', next ? 'dark' : 'light');
       render();
+    });
+  })();
+
+  // v0.5.58 #6 用户菜单（学科选择 / 退出登录）
+  (function () {
+    const wrap = document.getElementById('user-menu-wrap');
+    const trigger = document.getElementById('user-menu-trigger');
+    const menu = document.getElementById('user-menu');
+    if (!wrap || !trigger || !menu) return;
+
+    function open() {
+      menu.classList.remove('hidden');
+      trigger.setAttribute('aria-expanded', 'true');
+    }
+    function close() {
+      menu.classList.add('hidden');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+    function toggle() {
+      if (menu.classList.contains('hidden')) open(); else close();
+    }
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggle();
+    });
+    document.addEventListener('click', (e) => {
+      if (!menu.classList.contains('hidden') && !wrap.contains(e.target)) close();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.classList.contains('hidden')) close();
     });
   })();
 </script>
