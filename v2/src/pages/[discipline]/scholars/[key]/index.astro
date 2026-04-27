@@ -64,7 +64,12 @@ const scholarTags = JSON.parse(scholar.tags_json) as string[];
 const accentHex = tagColor({ tags: scholarTags }, tagLibrary);
 
 let schools: Array<{ key: string; title_zh: string; title_en: string | null; theme_key: string }> = [];
-let kps: Array<{ id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string }> = [];
+type KpListItem = {
+  id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string;
+  body_zh: string; body_ja: string | null; format: KpFormat;
+  eval_content_zh_json: string;
+};
+let kps: KpListItem[] = [];
 
 if (!isPartial) {
   const schoolsResult = await db
@@ -80,9 +85,11 @@ if (!isPartial) {
   schools = schoolsResult.results ?? [];
 
   // v0.5.33: ORDER BY ks.position 让 scholar.kpsOrder（拖动后保存）生效
+  // v0.5.75: pull body/format/eval 同 school 页 → 手机 inline 展开（替代之前点击跳转）
   const kpsResult = await db
     .prepare(`
-      SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year
+      SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year,
+        k.body_zh, k.body_ja, k.format, k.eval_content_zh_json
       FROM kp k
       INNER JOIN kp_scholar ks ON ks.kp_id = k.id
       WHERE ks.scholar_key = ?
@@ -91,7 +98,7 @@ if (!isPartial) {
         k.year, k.id
     `)
     .bind(key)
-    .all<{ id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string }>();
+    .all<KpListItem>();
   kps = kpsResult.results ?? [];
 }
 
@@ -405,29 +412,41 @@ const canEdit = Astro.locals.canEdit(discipline);
             {kps.map((k) => {
               const isActive = selectedKpId === k.id;
               const schoolHint = schools[0]?.title_zh ?? '';
+              // v0.5.75：跟学派页一致 — <details>/<summary> 包裹，手机 inline 展开
+              // 桌面 split-pane.js MQ ≥1024px 拦截点击改 fetch swap，inline body 由 CSS 隐藏
+              const inlineBodyHtml = renderBodyForSchool({ fmt: k.format, body: k.body_zh, accentHex });
+              let kpEval: EvalContent | null = null;
+              try { kpEval = JSON.parse(k.eval_content_zh_json) as EvalContent; }
+              catch { kpEval = null; }
+              const inlineEvalHtml = renderEvalModule(kpEval);
               return (
-                <li
-                  data-kp-id={k.id}
-                  class:list={['optA-kp kp-list-item', isActive && 'is-active']}
-                >
-                  <a
-                    href={`/${discipline}/kp/${k.id}`}
-                    data-kp-link
-                    data-kp-wide-href={`?kp=${k.id}`}
-                    class="optA-kp-link"
+                <li class="optA-kp-li" data-kp-id={k.id}>
+                  <details
+                    class:list={['optA-kp kp-list-item', isActive && 'is-active']}
                   >
-                    <div class="optA-kp-summary">
-                      <div class="optA-kp-body">
-                        <div class="optA-kp-title">
-                          {k.title_zh}
-                          {schoolHint && <span class="optA-kp-scholar">{schoolHint}</span>}
-                          {k.year && <span class="optA-kp-year">{shortYear(k.year)}</span>}
+                    <summary class="optA-kp-summary">
+                      <a
+                        href={`/${discipline}/kp/${k.id}`}
+                        data-kp-link
+                        data-kp-wide-href={`?kp=${k.id}`}
+                        class="optA-kp-link"
+                      >
+                        <div class="optA-kp-body">
+                          <div class="optA-kp-title">
+                            {k.title_zh}
+                            {schoolHint && <span class="optA-kp-scholar">{schoolHint}</span>}
+                            {k.year && <span class="optA-kp-year">{shortYear(k.year)}</span>}
+                          </div>
+                          {k.title_ja && <div class="optA-kp-sub-ja">{k.title_ja}</div>}
+                          {k.title_en && <div class="optA-kp-sub-en">{k.title_en}</div>}
                         </div>
-                        {k.title_ja && <div class="optA-kp-sub-ja">{k.title_ja}</div>}
-                        {k.title_en && <div class="optA-kp-sub-en">{k.title_en}</div>}
-                      </div>
+                      </a>
+                    </summary>
+                    <div class="optA-kp-inline-body">
+                      <div set:html={inlineBodyHtml} />
+                      {inlineEvalHtml && <Fragment set:html={inlineEvalHtml} />}
                     </div>
-                  </a>
+                  </details>
                 </li>
               );
             })}
