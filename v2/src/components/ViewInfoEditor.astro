@@ -1,0 +1,248 @@
+---
+/**
+ * ViewInfoEditor — 视图信息编辑抽屉（设计稿 bundle/25504af6 ViewInfoEditor）
+ *
+ * 编辑视图的 icon / name / jp / description / flow，不动 groups。
+ * 触发：document.dispatchEvent('view:infoEditor', { detail: { viewId } })
+ *
+ * 提交：PUT /api/edit/view/[discipline]/[id]
+ *   - 用 GET 拿 base_sha + 完整 JSON → 改 5 个字段 → PUT
+ */
+
+interface Props {
+  discipline: string;
+}
+const { discipline } = Astro.props;
+---
+
+<div id="view-info-editor" class="vie-root hidden" data-discipline={discipline}>
+  <div class="vie-overlay" data-vie-close></div>
+  <div class="vie-drawer">
+    <div class="vie-head">
+      <div>
+        <div class="vie-title">编辑视图信息</div>
+        <div class="vie-sub">修改名称 / 说明 / 演进主线 · 不影响分组结构</div>
+      </div>
+      <button type="button" class="vie-close-btn" data-vie-close aria-label="关闭">
+        <svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="vie-body">
+      <div class="vie-field">
+        <label class="vie-label">图标</label>
+        <div class="vie-icons">
+          {['📚','🗺️','⏳','🌏','⭐','🎯','🧭','🔬','💡','📖','🏛️','🔖'].map((emoji) => (
+            <button type="button" class="vie-icon-btn" data-vie-icon={emoji}>{emoji}</button>
+          ))}
+        </div>
+      </div>
+      <div class="vie-field">
+        <label class="vie-label">视图名称</label>
+        <input class="vie-input" data-vie-name placeholder="例：组织论六阶段" />
+      </div>
+      <div class="vie-field">
+        <label class="vie-label">日文副名（可选）</label>
+        <input class="vie-input" data-vie-jp placeholder="例：組織論の発展 · 6つの段階" />
+      </div>
+      <div class="vie-field">
+        <label class="vie-label">说明</label>
+        <textarea class="vie-input vie-textarea" data-vie-desc rows="4" placeholder="向学习者解释这个视图的用途和分类逻辑"></textarea>
+        <div class="vie-hint" data-vie-desc-counter>0 / 200 字 · 建议简短一句话</div>
+      </div>
+      <div class="vie-field">
+        <label class="vie-label">演进主线（可选）</label>
+        <input class="vie-input" data-vie-flow placeholder="例：效率 → 人间性 → システム → 适应 → 战略 → 社会性" />
+        <div class="vie-hint">显示在说明区底部 · 用 → 分隔阶段</div>
+      </div>
+    </div>
+    <div class="vie-foot">
+      <button type="button" class="vie-btn-ghost" data-vie-close>取消</button>
+      <button type="button" class="vie-btn-primary" data-vie-save>保存</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .vie-root { position: fixed; inset: 0; z-index: 100; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif; }
+  .vie-root.hidden { display: none; }
+  .vie-overlay {
+    position: absolute; inset: 0;
+    background: rgba(10,10,10,0.32);
+    -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+  }
+  .vie-drawer {
+    position: absolute; top: 0; right: 0; bottom: 0;
+    width: 520px; max-width: 95vw;
+    background: #fff;
+    box-shadow: -8px 0 32px rgba(0,0,0,0.08);
+    display: flex; flex-direction: column;
+    animation: vie-slide-in .22s ease;
+  }
+  :global(html.dark) .vie-drawer { background: var(--color-bg-secondary); }
+  @keyframes vie-slide-in { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  .vie-head {
+    padding: 20px 24px 14px;
+    border-bottom: 1px solid #f1f1f0;
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  :global(html.dark) .vie-head { border-bottom-color: var(--color-border); }
+  .vie-title { font-size: 16px; font-weight: 600; color: #0a0a0a; }
+  :global(html.dark) .vie-title { color: var(--color-text-primary); }
+  .vie-sub { font-size: 12px; color: #737373; margin-top: 4px; }
+  :global(html.dark) .vie-sub { color: var(--color-text-tertiary); }
+  .vie-close-btn { all: unset; cursor: pointer; padding: 4px; border-radius: 6px; color: #737373; }
+  .vie-close-btn:hover { background: #fafaf9; }
+
+  .vie-body { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+
+  .vie-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: #737373;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .vie-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid #ececec;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #171717;
+    outline: none;
+    background: #fff;
+  }
+  :global(html.dark) .vie-input { background: var(--color-bg-primary); border-color: var(--color-border); color: var(--color-text-primary); }
+  .vie-input:focus { border-color: #171717; }
+  :global(html.dark) .vie-input:focus { border-color: var(--color-text-primary); }
+  .vie-textarea { resize: vertical; line-height: 1.6; }
+  .vie-hint { font-size: 11px; color: #a3a3a3; margin-top: 4px; }
+
+  .vie-icons { display: flex; flex-wrap: wrap; gap: 6px; }
+  .vie-icon-btn {
+    all: unset;
+    cursor: pointer;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    border-radius: 6px;
+    border: 1px solid #ececec;
+    background: #fff;
+    box-sizing: border-box;
+  }
+  :global(html.dark) .vie-icon-btn { background: var(--color-bg-primary); border-color: var(--color-border); }
+  .vie-icon-btn.is-selected { border-color: #171717; background: #fafaf9; }
+  :global(html.dark) .vie-icon-btn.is-selected { border-color: var(--color-text-primary); background: var(--color-bg-tertiary); }
+
+  .vie-foot {
+    padding: 14px 24px;
+    border-top: 1px solid #f1f1f0;
+    background: #fafaf9;
+    display: flex; justify-content: flex-end; gap: 10px;
+  }
+  :global(html.dark) .vie-foot { border-top-color: var(--color-border); background: var(--color-bg-tertiary); }
+  .vie-btn-ghost {
+    all: unset; cursor: pointer; padding: 8px 14px; border-radius: 7px;
+    background: #fff; border: 1px solid #ececec; font-size: 13px; color: #525252;
+    box-sizing: border-box;
+  }
+  :global(html.dark) .vie-btn-ghost { background: var(--color-bg-secondary); border-color: var(--color-border); color: var(--color-text-tertiary); }
+  .vie-btn-primary {
+    all: unset; cursor: pointer; padding: 8px 14px; border-radius: 7px;
+    background: #171717; color: #fff; font-size: 13px; font-weight: 500;
+    box-sizing: border-box;
+  }
+  :global(html.dark) .vie-btn-primary { background: var(--color-text-primary); color: var(--color-bg-primary); }
+  .vie-btn-primary[disabled] { opacity: 0.4; cursor: not-allowed; }
+</style>
+
+<script is:inline>
+  (() => {
+    const root = document.getElementById('view-info-editor');
+    if (!root) return;
+    const discipline = root.getAttribute('data-discipline');
+    let baseSha = null;
+    let viewSnapshot = null;       // 完整 JSON（PUT 时塞回除 5 个字段外的所有原值）
+
+    const iconBtns = root.querySelectorAll('[data-vie-icon]');
+    const nameEl = root.querySelector('[data-vie-name]');
+    const jpEl = root.querySelector('[data-vie-jp]');
+    const descEl = root.querySelector('[data-vie-desc]');
+    const flowEl = root.querySelector('[data-vie-flow]');
+    const counterEl = root.querySelector('[data-vie-desc-counter]');
+    const saveBtn = root.querySelector('[data-vie-save]');
+
+    function setSelectedIcon(emoji) {
+      iconBtns.forEach((b) => b.classList.toggle('is-selected', b.getAttribute('data-vie-icon') === emoji));
+    }
+    function getSelectedIcon() {
+      const sel = root.querySelector('[data-vie-icon].is-selected');
+      return sel ? sel.getAttribute('data-vie-icon') : '📚';
+    }
+    function updateCounter() {
+      if (counterEl && descEl) counterEl.textContent = `${descEl.value.length} / 200 字 · 建议简短一句话`;
+    }
+
+    iconBtns.forEach((b) => b.addEventListener('click', () => setSelectedIcon(b.getAttribute('data-vie-icon'))));
+    descEl && descEl.addEventListener('input', updateCounter);
+
+    function close() { root.classList.add('hidden'); }
+    root.querySelectorAll('[data-vie-close]').forEach((b) => b.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !root.classList.contains('hidden')) close(); });
+
+    document.addEventListener('view:infoEditor', async (e) => {
+      const viewId = e && e.detail && e.detail.viewId;
+      if (!viewId) return;
+      // 拉
+      const r = await fetch(`/api/edit/view/${discipline}/${viewId}`);
+      if (!r.ok) {
+        const data = await r.json().catch(() => ({}));
+        alert(`加载视图失败：${r.status} ${data.reason ?? ''}`);
+        return;
+      }
+      const { json: v, base_sha } = await r.json();
+      baseSha = base_sha;
+      viewSnapshot = v;
+      setSelectedIcon(v.icon || '📚');
+      if (nameEl) nameEl.value = v.name || '';
+      if (jpEl) jpEl.value = v.jp || '';
+      if (descEl) descEl.value = v.description || '';
+      if (flowEl) flowEl.value = v.flow || '';
+      updateCounter();
+      root.classList.remove('hidden');
+    });
+
+    saveBtn && saveBtn.addEventListener('click', async () => {
+      if (!viewSnapshot) return;
+      const next = {
+        ...viewSnapshot,
+        icon: getSelectedIcon(),
+        name: (nameEl?.value || '').trim(),
+        jp: (jpEl?.value || '').trim(),
+        description: (descEl?.value || '').trim(),
+        flow: (flowEl?.value || '').trim(),
+      };
+      if (!next.name) {
+        alert('视图名称不能为空');
+        return;
+      }
+      const r = await fetch(`/api/edit/view/${discipline}/${viewSnapshot.id}`, {
+        method: 'PUT',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ json: next, base_sha: baseSha }),
+      });
+      if (!r.ok) {
+        const data = await r.json().catch(() => ({}));
+        alert(`保存失败：${r.status} ${data.reason ?? ''} ${typeof data.detail === 'string' ? data.detail : ''}`);
+        return;
+      }
+      close();
+      document.dispatchEvent(new CustomEvent('view:toast', { detail: '视图说明已保存（~90s 后线上生效）' }));
+    });
+  })();
+</script>

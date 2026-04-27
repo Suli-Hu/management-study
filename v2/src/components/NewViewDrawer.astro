@@ -1,0 +1,504 @@
+---
+/**
+ * NewViewDrawer — 新建视图抽屉（设计稿 bundle/25504af6 NewViewDrawer）
+ *
+ * v0.5.66 简化：用户确认 auto kind 暂不要 + private scope 暂不要 →
+ *   - 模板只剩 manual / copy
+ *   - scope 永远 public（不展示选项）
+ *
+ * 步骤：
+ *   1) 选模板（manual / copy）
+ *   2a) copy: 选源视图
+ *   2b) manual: 提示文字 "下一步命名后将进入视图编辑器"
+ *   3) 命名 + 说明
+ *
+ * 创建：POST /api/new/view，成功后 toast；manual 模板成功后再触发 view:editor 打开编辑器
+ *
+ * 设计：右侧滑入 drawer / 宽 520 / 背板 rgba(10,10,10,0.32) blur(2)
+ */
+
+interface Props {
+  discipline: string;
+  existingViews: Array<{ id: string; name: string; icon: string; description: string }>;
+}
+const { discipline, existingViews } = Astro.props;
+---
+
+<div id="new-view-drawer" class="nvd-root hidden" data-discipline={discipline} data-existing={JSON.stringify(existingViews)}>
+  <div class="nvd-overlay" data-nvd-close></div>
+  <div class="nvd-drawer">
+    <div class="nvd-head">
+      <div>
+        <div class="nvd-title">新建视图</div>
+        <div class="nvd-sub">视图是同一批学派的不同看法 · 创建后所有学习者都能切换到这个视图</div>
+      </div>
+      <button type="button" class="nvd-close-btn" data-nvd-close aria-label="关闭">
+        <svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="nvd-body" data-nvd-step="0">
+      {/* Step 1 — choose template */}
+      <section class="nvd-step nvd-step-0">
+        <div class="nvd-step-label">第 1 步 · 选择创建方式</div>
+        <div class="nvd-options">
+          <button type="button" class="nvd-option" data-nvd-template="manual">
+            <span class="nvd-option-icon">◯</span>
+            <span class="nvd-option-text">
+              <span class="nvd-option-title">从空白开始</span>
+              <span class="nvd-option-desc">手动建分组 · 把学派拖进来</span>
+            </span>
+            <span class="nvd-option-radio"></span>
+          </button>
+          <button type="button" class="nvd-option" data-nvd-template="copy" disabled={existingViews.length === 0}>
+            <span class="nvd-option-icon">⎘</span>
+            <span class="nvd-option-text">
+              <span class="nvd-option-title">基于现有视图复制</span>
+              <span class="nvd-option-desc">复制后修改 · 适合做局部调整</span>
+            </span>
+            <span class="nvd-option-radio"></span>
+          </button>
+        </div>
+      </section>
+
+      {/* Step 2a — copy source */}
+      <section class="nvd-step nvd-step-1-copy hidden">
+        <div class="nvd-step-label">第 2 步 · 选择基础视图</div>
+        <div class="nvd-options">
+          {existingViews.map((v) => (
+            <button type="button" class="nvd-option" data-nvd-source={v.id}>
+              <span class="nvd-option-icon">{v.icon}</span>
+              <span class="nvd-option-text">
+                <span class="nvd-option-title">{v.name}</span>
+                {v.description && <span class="nvd-option-desc">{v.description}</span>}
+              </span>
+              <span class="nvd-option-radio"></span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Step 2b — manual: skip note */}
+      <section class="nvd-step nvd-step-1-manual hidden">
+        <div class="nvd-step-label">第 2 步 · 跳过</div>
+        <div class="nvd-skip">
+          从空白开始的视图，没有预填分组，下一步命名后将进入<strong>视图编辑器</strong>，在那里把学派拖进自定义分组里。
+        </div>
+      </section>
+
+      {/* Step 3 — name + desc + icon */}
+      <section class="nvd-step nvd-step-2 hidden">
+        <div class="nvd-step-label">第 3 步 · 命名 · 说明 · 图标</div>
+        <div class="nvd-field">
+          <label class="nvd-label">图标</label>
+          <div class="nvd-icons">
+            {['📚','🗺️','⏳','🌏','⭐','🎯','🧭','🔬','💡','📖','🏛️','🔖'].map((emoji) => (
+              <button type="button" class="nvd-icon-btn" data-nvd-icon={emoji}>{emoji}</button>
+            ))}
+          </div>
+        </div>
+        <div class="nvd-field">
+          <label class="nvd-label">视图名称</label>
+          <input class="nvd-input" data-nvd-name placeholder="例：答题框架精选 / 我的复习地图" maxlength="40" />
+          <div class="nvd-hint">必填 · 不超过 40 字</div>
+        </div>
+        <div class="nvd-field">
+          <label class="nvd-label">说明（推荐）</label>
+          <textarea class="nvd-input nvd-textarea" data-nvd-desc rows="4" placeholder="告诉学习者这个视图的用途和分类逻辑——会显示在视图说明区"></textarea>
+          <div class="nvd-hint">建议简短一句话</div>
+        </div>
+        <div class="nvd-note">视图为学科级 · 创建后所有学习者都能切换到这个视图。</div>
+      </section>
+    </div>
+    <div class="nvd-foot">
+      <button type="button" class="nvd-btn-ghost" data-nvd-back>取消</button>
+      <button type="button" class="nvd-btn-primary" data-nvd-next disabled>下一步</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .nvd-root { position: fixed; inset: 0; z-index: 100; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif; }
+  .nvd-root.hidden { display: none; }
+  .nvd-overlay {
+    position: absolute; inset: 0;
+    background: rgba(10,10,10,0.32);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+  }
+  .nvd-drawer {
+    position: absolute; top: 0; right: 0; bottom: 0;
+    width: 520px; max-width: 95vw;
+    background: #fff;
+    box-shadow: -8px 0 32px rgba(0,0,0,0.08);
+    display: flex; flex-direction: column;
+    animation: nvd-slide-in .22s ease;
+  }
+  :global(html.dark) .nvd-drawer { background: var(--color-bg-secondary); }
+  @keyframes nvd-slide-in {
+    from { transform: translateX(20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  .nvd-head {
+    padding: 20px 24px 14px;
+    border-bottom: 1px solid #f1f1f0;
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  :global(html.dark) .nvd-head { border-bottom-color: var(--color-border); }
+  .nvd-title { font-size: 16px; font-weight: 600; color: #0a0a0a; }
+  :global(html.dark) .nvd-title { color: var(--color-text-primary); }
+  .nvd-sub { font-size: 12px; color: #737373; margin-top: 4px; }
+  :global(html.dark) .nvd-sub { color: var(--color-text-tertiary); }
+  .nvd-close-btn {
+    all: unset;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    color: #737373;
+  }
+  .nvd-close-btn:hover { background: #fafaf9; }
+  :global(html.dark) .nvd-close-btn:hover { background: var(--color-bg-tertiary); }
+
+  .nvd-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+  }
+  .nvd-step.hidden { display: none; }
+
+  .nvd-step-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #a3a3a3;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .nvd-options { display: flex; flex-direction: column; gap: 10px; }
+  .nvd-option {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #ececec;
+    background: #fff;
+  }
+  :global(html.dark) .nvd-option { background: var(--color-bg-primary); border-color: var(--color-border); }
+  .nvd-option:hover { background: #fafaf9; }
+  :global(html.dark) .nvd-option:hover { background: var(--color-bg-tertiary); }
+  .nvd-option.is-selected {
+    border-color: #171717;
+    background: #fafaf9;
+  }
+  :global(html.dark) .nvd-option.is-selected { border-color: var(--color-text-primary); background: var(--color-bg-tertiary); }
+  .nvd-option[disabled] { opacity: 0.4; cursor: not-allowed; }
+  .nvd-option-icon { font-size: 22px; color: #404040; line-height: 1; }
+  .nvd-option-text { flex: 1; text-align: left; display: flex; flex-direction: column; gap: 3px; }
+  .nvd-option-title { font-size: 14px; font-weight: 600; color: #171717; }
+  :global(html.dark) .nvd-option-title { color: var(--color-text-primary); }
+  .nvd-option-desc { font-size: 12px; color: #737373; }
+  :global(html.dark) .nvd-option-desc { color: var(--color-text-tertiary); }
+  .nvd-option-radio {
+    width: 16px; height: 16px;
+    border-radius: 999px;
+    border: 1px solid #d4d4d4;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .nvd-option.is-selected .nvd-option-radio {
+    border-color: #171717;
+    background: #171717;
+  }
+  .nvd-option.is-selected .nvd-option-radio::after {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 999px;
+    background: #fff;
+  }
+
+  .nvd-skip {
+    padding: 12px 14px;
+    background: #fafaf9;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #525252;
+    line-height: 1.6;
+  }
+  :global(html.dark) .nvd-skip { background: var(--color-bg-tertiary); color: var(--color-text-tertiary); }
+
+  .nvd-field { margin-bottom: 16px; }
+  .nvd-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: #737373;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .nvd-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 12px;
+    font-size: 13px;
+    border: 1px solid #ececec;
+    border-radius: 8px;
+    font-family: inherit;
+    background: #fff;
+    color: #171717;
+    outline: none;
+  }
+  :global(html.dark) .nvd-input { background: var(--color-bg-primary); border-color: var(--color-border); color: var(--color-text-primary); }
+  .nvd-input:focus { border-color: #171717; }
+  :global(html.dark) .nvd-input:focus { border-color: var(--color-text-primary); }
+  .nvd-textarea { resize: vertical; line-height: 1.6; }
+  .nvd-hint { font-size: 11px; color: #a3a3a3; margin-top: 4px; }
+
+  .nvd-icons { display: flex; flex-wrap: wrap; gap: 6px; }
+  .nvd-icon-btn {
+    all: unset;
+    cursor: pointer;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    border-radius: 6px;
+    border: 1px solid #ececec;
+    background: #fff;
+    box-sizing: border-box;
+  }
+  :global(html.dark) .nvd-icon-btn { background: var(--color-bg-primary); border-color: var(--color-border); }
+  .nvd-icon-btn.is-selected {
+    border-color: #171717;
+    background: #fafaf9;
+  }
+  :global(html.dark) .nvd-icon-btn.is-selected { border-color: var(--color-text-primary); background: var(--color-bg-tertiary); }
+
+  .nvd-note {
+    padding: 10px 12px;
+    background: #fafaf9;
+    border: 1px solid #f1f1f0;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #737373;
+    line-height: 1.6;
+  }
+  :global(html.dark) .nvd-note { background: var(--color-bg-tertiary); border-color: var(--color-border); color: var(--color-text-tertiary); }
+
+  .nvd-foot {
+    padding: 14px 24px;
+    border-top: 1px solid #f1f1f0;
+    background: #fafaf9;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  :global(html.dark) .nvd-foot { border-top-color: var(--color-border); background: var(--color-bg-tertiary); }
+  .nvd-btn-ghost {
+    all: unset;
+    cursor: pointer;
+    padding: 8px 14px;
+    border-radius: 8px;
+    color: #525252;
+    font-size: 13px;
+  }
+  .nvd-btn-ghost:hover { background: #f5f5f4; }
+  :global(html.dark) .nvd-btn-ghost { color: var(--color-text-tertiary); }
+  :global(html.dark) .nvd-btn-ghost:hover { background: var(--color-bg-secondary); }
+  .nvd-btn-primary {
+    all: unset;
+    cursor: pointer;
+    padding: 8px 18px;
+    border-radius: 8px;
+    background: #171717;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  :global(html.dark) .nvd-btn-primary { background: var(--color-text-primary); color: var(--color-bg-primary); }
+  .nvd-btn-primary[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const root = document.getElementById('new-view-drawer');
+    if (!root) return;
+    const discipline = root.getAttribute('data-discipline');
+    const existingViews = JSON.parse(root.getAttribute('data-existing') || '[]');
+    const body = root.querySelector('.nvd-body');
+    const nextBtn = root.querySelector('[data-nvd-next]');
+    const backBtn = root.querySelector('[data-nvd-back]');
+
+    const state = {
+      step: 0,
+      template: null,        // 'manual' | 'copy'
+      source: null,          // view id 当 template==='copy'
+      icon: '📚',
+      name: '',
+      desc: '',
+    };
+
+    function open() {
+      Object.assign(state, { step: 0, template: null, source: null, icon: '📚', name: '', desc: '' });
+      const nameEl = root.querySelector('[data-nvd-name]'); if (nameEl) nameEl.value = '';
+      const descEl = root.querySelector('[data-nvd-desc]'); if (descEl) descEl.value = '';
+      root.classList.remove('hidden');
+      render();
+    }
+    function close() { root.classList.add('hidden'); }
+
+    function setNextEnabled(enabled) { nextBtn && nextBtn.toggleAttribute('disabled', !enabled); }
+
+    function render() {
+      // 切 step
+      root.querySelectorAll('.nvd-step').forEach((el) => el.classList.add('hidden'));
+      const showSelector =
+        state.step === 0 ? '.nvd-step-0' :
+        state.step === 1 ? (state.template === 'copy' ? '.nvd-step-1-copy' : '.nvd-step-1-manual') :
+        '.nvd-step-2';
+      const cur = root.querySelector(showSelector);
+      if (cur) cur.classList.remove('hidden');
+
+      // 选项 selected 状态
+      root.querySelectorAll('[data-nvd-template]').forEach((el) => {
+        el.classList.toggle('is-selected', el.getAttribute('data-nvd-template') === state.template);
+      });
+      root.querySelectorAll('[data-nvd-source]').forEach((el) => {
+        el.classList.toggle('is-selected', el.getAttribute('data-nvd-source') === state.source);
+      });
+      root.querySelectorAll('[data-nvd-icon]').forEach((el) => {
+        el.classList.toggle('is-selected', el.getAttribute('data-nvd-icon') === state.icon);
+      });
+
+      // 按钮态 + label
+      if (backBtn) backBtn.textContent = state.step === 0 ? '取消' : '← 上一步';
+      if (nextBtn) {
+        if (state.step === 0) {
+          nextBtn.textContent = '下一步';
+          setNextEnabled(state.template !== null);
+        } else if (state.step === 1) {
+          nextBtn.textContent = '下一步';
+          if (state.template === 'copy') setNextEnabled(state.source !== null);
+          else setNextEnabled(true);
+        } else {
+          nextBtn.textContent = '创建视图';
+          setNextEnabled(state.name.trim().length > 0);
+        }
+      }
+    }
+
+    // 模板选择
+    root.querySelectorAll('[data-nvd-template]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (btn.hasAttribute('disabled')) return;
+        state.template = btn.getAttribute('data-nvd-template');
+        render();
+      });
+    });
+    // 复制源选择
+    root.querySelectorAll('[data-nvd-source]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state.source = btn.getAttribute('data-nvd-source');
+        render();
+      });
+    });
+    // 图标选择
+    root.querySelectorAll('[data-nvd-icon]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state.icon = btn.getAttribute('data-nvd-icon');
+        render();
+      });
+    });
+    // 名称 / 说明
+    const nameInput = root.querySelector('[data-nvd-name]');
+    if (nameInput) nameInput.addEventListener('input', (e) => { state.name = e.target.value; render(); });
+    const descInput = root.querySelector('[data-nvd-desc]');
+    if (descInput) descInput.addEventListener('input', (e) => { state.desc = e.target.value; });
+
+    // 上一步 / 取消
+    backBtn && backBtn.addEventListener('click', () => {
+      if (state.step === 0) close();
+      else { state.step -= 1; render(); }
+    });
+
+    // 下一步 / 创建
+    nextBtn && nextBtn.addEventListener('click', async () => {
+      if (state.step < 2) {
+        state.step += 1;
+        render();
+        return;
+      }
+      // 创建
+      const name = state.name.trim();
+      if (!name) return;
+      const id = slugify(name) + '-' + Date.now().toString(36).slice(-4);
+      let groups = [];
+      if (state.template === 'copy' && state.source) {
+        // 拉源视图
+        const r = await fetch(`/api/edit/view/${discipline}/${state.source}`);
+        if (!r.ok) {
+          alert(`复制源拉取失败：${r.status}`);
+          return;
+        }
+        const { json: src } = await r.json();
+        groups = (src.groups || []).map((g) => ({ ...g, schoolIds: [...(g.schoolIds || [])] }));
+      }
+      const now = new Date().toISOString();
+      const view = {
+        id,
+        discipline,
+        name,
+        jp: '',
+        icon: state.icon,
+        description: state.desc.trim(),
+        flow: '',
+        scope: 'public',
+        kind: 'manual',
+        isDefault: false,
+        position: 9999,    // 排尾，用户可拖动调整
+        groups,
+        createdAt: now,
+        updatedAt: now,
+      };
+      const post = await fetch('/api/new/view', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ json: view }),
+      });
+      if (!post.ok) {
+        const data = await post.json().catch(() => ({}));
+        alert(`创建失败：${post.status} ${data.reason ?? ''} ${typeof data.detail === 'string' ? data.detail : ''}`);
+        return;
+      }
+      close();
+      document.dispatchEvent(new CustomEvent('view:toast', { detail: '视图已创建（~90s 后线上生效）' }));
+      // manual 模板：直接跳到当前 view 编辑界面（用户可立即拖学派建分组）
+      // 由于 sync 还没跑，view 表里没这条，编辑只能等 deploy 后；先静默不弹编辑器
+    });
+
+    // 关闭
+    root.querySelectorAll('[data-nvd-close]').forEach((b) => b.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !root.classList.contains('hidden')) close();
+    });
+
+    // 触发器
+    document.addEventListener('view:new', open);
+
+    function slugify(s) {
+      // 仅 ASCII：schema 要求 ^[a-z][a-z0-9_-]*$。中文名会被去掉，落到 'view' 兜底
+      let v = String(s).trim().toLowerCase()
+        .replace(/[^a-z0-9_-]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 24);
+      if (!v || !/^[a-z]/.test(v)) v = 'view';
+      return v;
+    }
+  })();
+</script>

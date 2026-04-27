@@ -1,0 +1,594 @@
+---
+/**
+ * ViewEditor — 视图编辑器（设计稿 bundle/25504af6 ViewEditor）
+ *
+ * 全屏 modal（inset 40），左右两栏：
+ *   - 左：分组列表（每组：title 输入 + flow 输入 + 学派 chip 容器 + 移除按钮 + 添加分组按钮）
+ *   - 右：未包含学派池子（拖动 ⋮⋮ 手柄）
+ *   - HTML5 drag/drop（onDragStart / onDragOver / onDragLeave / onDrop / onDragEnd）
+ *   - dragSchool（当前拖动的学派 id）+ dropTarget（hover 的 group id 或 'pool'）
+ *
+ * 触发：document.dispatchEvent('view:editor', { detail: { viewId } })
+ *
+ * 提交：PUT /api/edit/view/[discipline]/[id]
+ *   - 用 GET 拿 base_sha + 完整 JSON → 改 groups + name/icon/desc → PUT
+ */
+
+interface Props {
+  discipline: string;
+  /** 全部 schools（key + cn）— 渲染池子 + chip 用 */
+  allSchools: Array<{ key: string; cn: string }>;
+}
+const { discipline, allSchools } = Astro.props;
+---
+
+<div id="view-editor" class="ve-root hidden" data-discipline={discipline}
+     data-all-schools={JSON.stringify(allSchools)}>
+  <div class="ve-overlay" data-ve-close></div>
+  <div class="ve-modal">
+    {/* === Header === */}
+    <div class="ve-head">
+      <div class="ve-head-meta">
+        <div class="ve-eyebrow">编辑视图</div>
+        <div class="ve-name-row">
+          <button type="button" class="ve-icon-trigger" data-ve-icon-trigger title="点击更换图标">📚</button>
+          <input class="ve-name-input" data-ve-name placeholder="视图名称" />
+          <div class="ve-icon-pop hidden" data-ve-icon-pop>
+            {['📚','🗺️','⏳','🌏','⭐','🎯','🧭','🔬','💡','📖','🏛️','🔖'].map((emoji) => (
+              <button type="button" class="ve-icon-pick" data-ve-icon-pick={emoji}>{emoji}</button>
+            ))}
+          </div>
+        </div>
+        <div class="ve-desc-row">
+          <div class="ve-desc-label">视图说明</div>
+          <textarea class="ve-desc-input" data-ve-desc rows="2" placeholder="向学习者解释这个视图的用途和分类逻辑（其他想说明的也可以写在这里）"></textarea>
+        </div>
+      </div>
+      <div class="ve-head-actions">
+        <button type="button" class="ve-btn-ghost" data-ve-close>取消</button>
+        <button type="button" class="ve-btn-primary" data-ve-save>保存</button>
+      </div>
+    </div>
+
+    {/* === Body: groups (left) | pool (right) === */}
+    <div class="ve-body">
+      <div class="ve-left">
+        <div class="ve-groups" data-ve-groups>
+          {/* 动态注入 */}
+        </div>
+        <button type="button" class="ve-add-group" data-ve-add-group>+ 添加分组</button>
+      </div>
+      <div class="ve-right" data-ve-pool data-drop-target="pool">
+        <div class="ve-pool-head">
+          <div class="ve-pool-title">未包含学派</div>
+          <div class="ve-pool-sub" data-ve-pool-count>0 个 · 拖到左侧分组放入</div>
+        </div>
+        <div class="ve-pool-list" data-ve-pool-list>
+          {/* 动态注入 */}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .ve-root { position: fixed; inset: 0; z-index: 100; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif; }
+  .ve-root.hidden { display: none; }
+  .ve-overlay {
+    position: absolute; inset: 0;
+    background: rgba(10,10,10,0.45);
+    -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+  }
+  .ve-modal {
+    position: absolute;
+    inset: 40px;
+    background: #fafaf9;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+  }
+  :global(html.dark) .ve-modal { background: var(--color-bg-secondary); }
+  @media (max-width: 720px) {
+    .ve-modal { inset: 12px; border-radius: 12px; }
+  }
+
+  .ve-head {
+    padding: 16px 24px;
+    border-bottom: 1px solid #ececec;
+    background: #fff;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  }
+  :global(html.dark) .ve-head { background: var(--color-bg-primary); border-bottom-color: var(--color-border); }
+  .ve-head-meta { flex: 1; min-width: 0; }
+  .ve-eyebrow { font-size: 12px; color: #a3a3a3; }
+  .ve-name-row {
+    display: flex; align-items: center; gap: 8px; margin-top: 4px; position: relative;
+  }
+  .ve-icon-trigger {
+    all: unset;
+    cursor: pointer;
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    border: 1px solid transparent;
+  }
+  .ve-icon-trigger.is-open {
+    background: #fafaf9;
+    border-color: #ececec;
+  }
+  .ve-name-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    color: #0a0a0a;
+    max-width: 400px;
+  }
+  :global(html.dark) .ve-name-input { color: var(--color-text-primary); }
+  .ve-icon-pop {
+    position: absolute;
+    top: 100%; left: 0; margin-top: 6px; z-index: 10;
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 10px;
+    padding: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    display: flex; flex-wrap: wrap; gap: 4px;
+    max-width: 280px;
+  }
+  .ve-icon-pop.hidden { display: none; }
+  :global(html.dark) .ve-icon-pop { background: var(--color-bg-secondary); border-color: var(--color-border); }
+  .ve-icon-pick {
+    all: unset;
+    cursor: pointer;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    border-radius: 6px;
+    background: #fff;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+  }
+  .ve-icon-pick:hover, .ve-icon-pick.is-selected { background: #fafaf9; border-color: #171717; }
+  :global(html.dark) .ve-icon-pick { background: var(--color-bg-primary); }
+  :global(html.dark) .ve-icon-pick:hover, :global(html.dark) .ve-icon-pick.is-selected { background: var(--color-bg-tertiary); border-color: var(--color-text-primary); }
+
+  .ve-desc-row { margin-top: 12px; }
+  .ve-desc-label { font-size: 11px; color: #737373; margin-bottom: 6px; letter-spacing: 0.3px; }
+  .ve-desc-input {
+    width: 100%; box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid #ececec;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #171717;
+    outline: none;
+    resize: vertical;
+    line-height: 1.6;
+    background: #fff;
+  }
+  :global(html.dark) .ve-desc-input { background: var(--color-bg-primary); border-color: var(--color-border); color: var(--color-text-primary); }
+
+  .ve-head-actions { display: flex; gap: 8px; margin-top: 18px; }
+  .ve-btn-ghost {
+    all: unset; cursor: pointer; padding: 8px 14px; border-radius: 8px; color: #525252; font-size: 13px;
+  }
+  .ve-btn-ghost:hover { background: #f5f5f4; }
+  .ve-btn-primary {
+    all: unset; cursor: pointer; padding: 8px 18px; border-radius: 8px; background: #171717; color: #fff; font-size: 13px; font-weight: 500;
+  }
+  :global(html.dark) .ve-btn-primary { background: var(--color-text-primary); color: var(--color-bg-primary); }
+
+  /* === Body two-pane === */
+  .ve-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    overflow: hidden;
+  }
+  @media (max-width: 720px) {
+    .ve-body { grid-template-columns: 1fr; }
+  }
+
+  .ve-left {
+    padding: 20px 24px;
+    overflow-y: auto;
+  }
+  .ve-groups { display: flex; flex-direction: column; gap: 12px; }
+  .ve-add-group {
+    all: unset;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 14px;
+    border: 1px dashed #d4d4d4;
+    border-radius: 12px;
+    color: #737373;
+    font-size: 13px;
+    margin-top: 12px;
+    box-sizing: border-box;
+  }
+  .ve-add-group:hover { border-color: #737373; color: #171717; }
+
+  /* === group card === */
+  .ve-group {
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  :global(html.dark) .ve-group { background: var(--color-bg-primary); border-color: var(--color-border); }
+  .ve-group-head {
+    display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px;
+  }
+  .ve-group-titles { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .ve-group-title {
+    width: 100%; box-sizing: border-box;
+    border: none; outline: none; padding: 0; background: transparent; font-family: inherit;
+    font-size: 14px; font-weight: 600; color: #171717;
+  }
+  :global(html.dark) .ve-group-title { color: var(--color-text-primary); }
+  .ve-group-flow {
+    width: 100%; box-sizing: border-box;
+    border: none; outline: none; padding: 0; background: transparent; font-family: inherit;
+    font-size: 12px; color: #737373;
+  }
+  :global(html.dark) .ve-group-flow { color: var(--color-text-tertiary); }
+  .ve-group-remove {
+    all: unset;
+    cursor: pointer;
+    padding: 4px 8px;
+    font-size: 12px;
+    color: #a3a3a3;
+    border-radius: 6px;
+  }
+  .ve-group-remove:hover { background: #fef2f2; color: #dc2626; }
+
+  .ve-group-chips {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 8px;
+    background: #fafaf9;
+    border-radius: 8px;
+    min-height: 50px;
+    border: 1px dashed #ececec;
+    transition: background .12s, border-color .12s;
+  }
+  :global(html.dark) .ve-group-chips { background: var(--color-bg-secondary); border-color: var(--color-border); }
+  .ve-group-chips.is-drop-over {
+    background: #f0f9ff;
+    border-color: #60a5fa;
+    border-style: dashed;
+  }
+  .ve-group-chips-empty {
+    font-size: 11px;
+    color: #a3a3a3;
+    align-self: center;
+    padding: 6px 4px;
+  }
+
+  .ve-group-hint { margin-top: 8px; font-size: 11px; color: #a3a3a3; }
+
+  .ve-school-chip {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: #fff;
+    border: 1px solid #ececec;
+    font-size: 12px;
+    color: #262626;
+  }
+  :global(html.dark) .ve-school-chip { background: var(--color-bg-primary); border-color: var(--color-border); color: var(--color-text-primary); }
+  .ve-school-chip.is-dragging { opacity: 0.4; }
+  .ve-school-chip-x { color: #a3a3a3; margin-left: 4px; }
+
+  /* === Pool === */
+  .ve-right {
+    border-left: 1px solid #ececec;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    transition: background .12s;
+  }
+  :global(html.dark) .ve-right { background: var(--color-bg-primary); border-left-color: var(--color-border); }
+  .ve-right.is-drop-over { background: #f0f9ff; }
+  .ve-pool-head { padding: 14px 16px; border-bottom: 1px solid #f1f1f0; }
+  :global(html.dark) .ve-pool-head { border-bottom-color: var(--color-border); }
+  .ve-pool-title { font-size: 13px; font-weight: 600; color: #171717; }
+  :global(html.dark) .ve-pool-title { color: var(--color-text-primary); }
+  .ve-pool-sub { font-size: 11px; color: #a3a3a3; margin-top: 2px; }
+  .ve-pool-list { flex: 1; overflow-y: auto; padding: 10px 14px; }
+  .ve-pool-row {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 8px;
+    margin-bottom: 2px;
+    border-radius: 6px;
+    border-bottom: 1px dashed #f5f5f4;
+    cursor: grab;
+  }
+  :global(html.dark) .ve-pool-row { border-bottom-color: var(--color-border); }
+  .ve-pool-row.is-dragging { opacity: 0.4; background: #f5f5f4; }
+  .ve-pool-handle { color: #d4d4d4; font-size: 12px; margin-right: 2px; }
+  .ve-pool-name { flex: 1; font-size: 13px; color: #262626; }
+  :global(html.dark) .ve-pool-name { color: var(--color-text-primary); }
+  .ve-pool-empty { font-size: 12px; color: #a3a3a3; padding: 8px; }
+</style>
+
+<script is:inline>
+  (() => {
+    const root = document.getElementById('view-editor');
+    if (!root) return;
+    const discipline = root.getAttribute('data-discipline');
+    const allSchools = JSON.parse(root.getAttribute('data-all-schools') || '[]');
+    const schoolByKey = Object.fromEntries(allSchools.map((s) => [s.key, s]));
+
+    const groupsEl = root.querySelector('[data-ve-groups]');
+    const poolListEl = root.querySelector('[data-ve-pool-list]');
+    const poolCountEl = root.querySelector('[data-ve-pool-count]');
+    const poolEl = root.querySelector('[data-ve-pool]');
+    const nameEl = root.querySelector('[data-ve-name]');
+    const descEl = root.querySelector('[data-ve-desc]');
+    const iconTrigger = root.querySelector('[data-ve-icon-trigger]');
+    const iconPop = root.querySelector('[data-ve-icon-pop]');
+    const saveBtn = root.querySelector('[data-ve-save]');
+
+    let baseSha = null;
+    let snapshot = null;             // 完整原 JSON（PUT 时塞回 schema-required 字段）
+    let groups = [];                 // [{ id, title, flow, schoolIds }]
+    let pool = [];                   // [schoolId, ...]
+    let icon = '📚';
+    let dragSchool = null;           // 当前拖动的 schoolId
+
+    function setIcon(v) {
+      icon = v;
+      if (iconTrigger) iconTrigger.textContent = v;
+      iconPop && iconPop.querySelectorAll('[data-ve-icon-pick]').forEach((b) => {
+        b.classList.toggle('is-selected', b.getAttribute('data-ve-icon-pick') === v);
+      });
+    }
+
+    function close() { root.classList.add('hidden'); }
+    root.querySelectorAll('[data-ve-close]').forEach((b) => b.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !root.classList.contains('hidden')) close(); });
+
+    iconTrigger && iconTrigger.addEventListener('click', () => {
+      if (!iconPop) return;
+      iconPop.classList.toggle('hidden');
+      iconTrigger.classList.toggle('is-open');
+    });
+    iconPop && iconPop.querySelectorAll('[data-ve-icon-pick]').forEach((b) => {
+      b.addEventListener('click', () => {
+        setIcon(b.getAttribute('data-ve-icon-pick'));
+        iconPop.classList.add('hidden');
+        iconTrigger && iconTrigger.classList.remove('is-open');
+      });
+    });
+
+    function renderGroups() {
+      groupsEl.innerHTML = '';
+      groups.forEach((g) => {
+        const card = document.createElement('div');
+        card.className = 've-group';
+        card.setAttribute('data-group-id', g.id);
+        card.innerHTML = `
+          <div class="ve-group-head">
+            <div class="ve-group-titles">
+              <input class="ve-group-title" data-ve-group-title placeholder="分组标题" />
+              <input class="ve-group-flow"  data-ve-group-flow  placeholder="子流程描述（可选）" />
+            </div>
+            <button type="button" class="ve-group-remove" data-ve-group-remove>移除</button>
+          </div>
+          <div class="ve-group-chips" data-ve-group-chips data-drop-target="${g.id}"></div>
+          <div class="ve-group-hint">拖动学派可在分组间移动 · 点学派 × 移除</div>
+        `;
+        const titleInp = card.querySelector('[data-ve-group-title]');
+        const flowInp = card.querySelector('[data-ve-group-flow]');
+        titleInp.value = g.title || '';
+        flowInp.value = g.flow || '';
+        titleInp.addEventListener('input', (e) => { g.title = e.target.value; });
+        flowInp.addEventListener('input', (e) => { g.flow = e.target.value; });
+        card.querySelector('[data-ve-group-remove]').addEventListener('click', () => {
+          // 把 schoolIds 退回 pool
+          pool = [...pool, ...g.schoolIds];
+          groups = groups.filter((x) => x !== g);
+          renderGroups();
+          renderPool();
+        });
+        const chipsEl = card.querySelector('[data-ve-group-chips]');
+        // chips
+        if (g.schoolIds.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 've-group-chips-empty';
+          empty.textContent = '从右侧拖学派进来 →';
+          chipsEl.appendChild(empty);
+        } else {
+          g.schoolIds.forEach((sid) => {
+            const s = schoolByKey[sid];
+            if (!s) return;
+            const chip = document.createElement('div');
+            chip.className = 've-school-chip';
+            chip.setAttribute('draggable', 'true');
+            chip.setAttribute('data-school-id', sid);
+            chip.title = '拖到其他分组 · 点击移到右侧池子';
+            chip.innerHTML = `<span>${s.cn}</span><span class="ve-school-chip-x">×</span>`;
+            chip.addEventListener('dragstart', (e) => {
+              dragSchool = sid;
+              chip.classList.add('is-dragging');
+              if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+            });
+            chip.addEventListener('dragend', () => {
+              chip.classList.remove('is-dragging');
+              dragSchool = null;
+              clearDropTargets();
+            });
+            chip.addEventListener('click', () => moveToPool(sid));
+            chipsEl.appendChild(chip);
+          });
+        }
+        // chips 容器作为 drop target
+        bindDropTarget(chipsEl, g.id);
+        groupsEl.appendChild(card);
+      });
+    }
+
+    function renderPool() {
+      poolListEl.innerHTML = '';
+      poolCountEl.textContent = `${pool.length} 个 · 拖到左侧分组放入`;
+      if (pool.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 've-pool-empty';
+        empty.textContent = '所有学派都已加入视图';
+        poolListEl.appendChild(empty);
+        return;
+      }
+      pool.forEach((sid) => {
+        const s = schoolByKey[sid];
+        if (!s) return;
+        const row = document.createElement('div');
+        row.className = 've-pool-row';
+        row.setAttribute('draggable', 'true');
+        row.setAttribute('data-school-id', sid);
+        row.title = '拖到左侧分组放入';
+        row.innerHTML = `<span class="ve-pool-handle">⋮⋮</span><div class="ve-pool-name">${s.cn}</div>`;
+        row.addEventListener('dragstart', (e) => {
+          dragSchool = sid;
+          row.classList.add('is-dragging');
+          if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+        });
+        row.addEventListener('dragend', () => {
+          row.classList.remove('is-dragging');
+          dragSchool = null;
+          clearDropTargets();
+        });
+        poolListEl.appendChild(row);
+      });
+    }
+
+    function clearDropTargets() {
+      root.querySelectorAll('[data-drop-target]').forEach((el) => {
+        el.classList.remove('is-drop-over');
+      });
+    }
+    function bindDropTarget(el, groupId) {
+      el.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (!dragSchool) return;
+        clearDropTargets();
+        el.classList.add('is-drop-over');
+      });
+      el.addEventListener('dragleave', () => {
+        el.classList.remove('is-drop-over');
+      });
+      el.addEventListener('drop', (e) => {
+        e.preventDefault();
+        clearDropTargets();
+        if (!dragSchool) return;
+        moveToGroup(dragSchool, groupId);
+      });
+    }
+
+    // 池子整体作为 drop target
+    if (poolEl) bindDropTarget(poolEl, 'pool');
+
+    function moveToGroup(schoolId, targetGid) {
+      // 从所有分组移除
+      groups = groups.map((g) => ({ ...g, schoolIds: g.schoolIds.filter((id) => id !== schoolId) }));
+      // 从 pool 移除
+      pool = pool.filter((id) => id !== schoolId);
+      if (targetGid === 'pool') {
+        if (!pool.includes(schoolId)) pool = [...pool, schoolId];
+      } else {
+        const target = groups.find((g) => g.id === targetGid);
+        if (target) target.schoolIds.push(schoolId);
+      }
+      renderGroups();
+      renderPool();
+    }
+    function moveToPool(schoolId) {
+      groups = groups.map((g) => ({ ...g, schoolIds: g.schoolIds.filter((id) => id !== schoolId) }));
+      if (!pool.includes(schoolId)) pool = [...pool, schoolId];
+      renderGroups();
+      renderPool();
+    }
+
+    // 添加分组
+    root.querySelector('[data-ve-add-group]').addEventListener('click', () => {
+      const id = 'g' + Date.now().toString(36);
+      groups.push({ id, title: '新分组', flow: '', schoolIds: [] });
+      renderGroups();
+      // focus 新建组的标题输入
+      const last = groupsEl.querySelector('.ve-group:last-child [data-ve-group-title]');
+      last && last.focus();
+    });
+
+    // 触发器：拉视图 + 渲染
+    document.addEventListener('view:editor', async (e) => {
+      const viewId = e && e.detail && e.detail.viewId;
+      if (!viewId) return;
+      const r = await fetch(`/api/edit/view/${discipline}/${viewId}`);
+      if (!r.ok) {
+        const data = await r.json().catch(() => ({}));
+        alert(`加载视图失败：${r.status} ${data.reason ?? ''}`);
+        return;
+      }
+      const { json: v, base_sha } = await r.json();
+      baseSha = base_sha;
+      snapshot = v;
+      groups = (v.groups || []).map((g) => ({
+        id: g.id, title: g.title, flow: g.flow || '', schoolIds: [...(g.schoolIds || [])],
+      }));
+      const used = new Set(groups.flatMap((g) => g.schoolIds));
+      pool = allSchools.filter((s) => !used.has(s.key)).map((s) => s.key);
+      setIcon(v.icon || '📚');
+      if (nameEl) nameEl.value = v.name || '';
+      if (descEl) descEl.value = v.description || '';
+      renderGroups();
+      renderPool();
+      root.classList.remove('hidden');
+    });
+
+    // 保存
+    saveBtn && saveBtn.addEventListener('click', async () => {
+      if (!snapshot) return;
+      const next = {
+        ...snapshot,
+        icon,
+        name: (nameEl?.value || '').trim(),
+        description: (descEl?.value || '').trim(),
+        // 注意：title trim 在每组上做，避免空白 title 通过校验
+        groups: groups.map((g) => ({
+          id: g.id,
+          title: (g.title || '').trim() || '（未命名）',
+          flow: (g.flow || '').trim(),
+          schoolIds: [...g.schoolIds],
+        })),
+      };
+      if (!next.name) {
+        alert('视图名称不能为空');
+        return;
+      }
+      const r = await fetch(`/api/edit/view/${discipline}/${snapshot.id}`, {
+        method: 'PUT',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ json: next, base_sha: baseSha }),
+      });
+      if (!r.ok) {
+        const data = await r.json().catch(() => ({}));
+        alert(`保存失败：${r.status} ${data.reason ?? ''} ${typeof data.detail === 'string' ? data.detail : ''}`);
+        return;
+      }
+      close();
+      document.dispatchEvent(new CustomEvent('view:toast', { detail: '视图已保存（~90s 后线上生效）' }));
+    });
+  })();
+</script>

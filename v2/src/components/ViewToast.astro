@@ -1,0 +1,56 @@
+---
+/**
+ * ViewToast — 全局 toast 通知（v0.5.68 视图系统）
+ *
+ * 设计稿对齐：bundle/template App toast
+ *   - bottom: 32, 居中
+ *   - bg #171717 / 白字 / fontSize 13 / radius 999 / padding 10×18
+ *   - shadow 0 8px 24px rgba(0,0,0,0.18)
+ *   - 1.6s/2.2s 自动消失（设计稿 2.2s）
+ *
+ * 触发方式：document.dispatchEvent(new CustomEvent('view:toast', { detail: '消息' }))
+ * 任何组件都能广播。
+ */
+---
+
+<div id="view-toast" class="view-toast" role="status" aria-live="polite"></div>
+
+<style>
+  .view-toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: #171717;
+    color: #fafafa;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  }
+  .view-toast.is-visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const el = document.getElementById('view-toast');
+    if (!el) return;
+    let hideTimer = null;
+    document.addEventListener('view:toast', (e) => {
+      const msg = (e && e.detail) || '';
+      if (!msg) return;
+      el.textContent = String(msg);
+      el.classList.add('is-visible');
+      if (hideTimer) clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => el.classList.remove('is-visible'), 2200);
+    });
+  })();
+</script>
