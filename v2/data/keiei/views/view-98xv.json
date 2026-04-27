@@ -10,7 +10,38 @@
   "kind": "manual",
   "isDefault": false,
   "position": 9999,
-  "groups": [],
+  "groups": [
+    {
+      "id": "gmohhggur",
+      "title": "合理x封闭",
+      "flow": "静态结构学派：环境 --组织 → 人 环境稳定，组织设计决定人的工作方式。人是被动执行者。",
+      "schoolIds": [
+        "scientific",
+        "process",
+        "bureaucracy"
+      ]
+    },
+    {
+      "id": "gmohhh9xi",
+      "title": "自然x封闭",
+      "flow": "均衡学派：环境 → 组织 ← 人 人的需求与环境压力共同作用于组织，组织在两者间维持均衡。",
+      "schoolIds": [
+        "humanrel",
+        "equilibrium",
+        "institutional",
+        "adaptive_design",
+        "rbv"
+      ]
+    },
+    {
+      "id": "gmohhi4og",
+      "title": "合理x开放",
+      "flow": "进化过程学派：环境 ← 组织 ← 人 箭头反转：人的解释塑造组织，组织反过来建构「环境」。战略是事后涌现的，非预先规划。",
+      "schoolIds": [
+        "evolution_process"
+      ]
+    }
+  ],
   "createdAt": "2026-04-27T17:34:56.246Z",
-  "updatedAt": "2026-04-27T17:40:04.719Z"
+  "updatedAt": "2026-04-27T17:42:56.992Z"
 }
