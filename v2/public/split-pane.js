@@ -130,23 +130,40 @@
       });
     });
 
+    // v0.5.61 键位语义重排：
+    //   ←/→  切 KP（前一/后一，到头/到尾即停，不循环）
+    //   ↑/↓  滚右栏 detailPane（KP 阅读区），不再切 KP
+    // 之前 ↑/↓ 切 KP 与读长内容的滚动需求冲突；←/→ 在原始设计里没用上，正好挪过来。
     document.addEventListener('keydown', (e) => {
       if (!MQ.matches) return;
-      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
       const tag = e.target?.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target?.isContentEditable) return;
-      const items = Array.from(document.querySelectorAll('.kp-list-item'));
-      if (!items.length) return;
-      e.preventDefault();
-      const current = new URLSearchParams(location.search).get('kp');
-      let idx = items.findIndex((el) => el.getAttribute('data-kp-id') === current);
-      if (idx < 0) idx = e.key === 'ArrowDown' ? -1 : 0;
-      idx += e.key === 'ArrowDown' ? 1 : -1;
-      idx = Math.max(0, Math.min(items.length - 1, idx));
-      const nextId = items[idx].getAttribute('data-kp-id');
-      if (nextId && nextId !== current) {
-        showKpInPane(nextId);
-        items[idx].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+
+      // ←/→ 切 KP（边界 stop，不 wrap）
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        const items = Array.from(document.querySelectorAll('.kp-list-item'));
+        if (!items.length) return;
+        const current = new URLSearchParams(location.search).get('kp');
+        const curIdx = items.findIndex((el) => el.getAttribute('data-kp-id') === current);
+        // 找不到 current（首次进页且没 ?kp= 参数）— 把 ← 当作"留在第 0 个"，→ 当作"去 1"
+        const baseIdx = curIdx < 0 ? (e.key === 'ArrowRight' ? -1 : 0) : curIdx;
+        const next = baseIdx + (e.key === 'ArrowRight' ? 1 : -1);
+        if (next < 0 || next >= items.length) return;   // 到头/到尾，吃掉键但不动
+        e.preventDefault();
+        const nextId = items[next].getAttribute('data-kp-id');
+        if (nextId && nextId !== current) {
+          showKpInPane(nextId);
+          items[next].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+        return;
+      }
+
+      // ↑/↓ 滚右栏（detailPane 自身 overflow-y:auto）
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        if (!detailPane) return;
+        e.preventDefault();
+        const step = e.key === 'ArrowDown' ? 80 : -80;
+        detailPane.scrollBy({ top: step, behavior: 'smooth' });
       }
     });
 
