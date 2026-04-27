@@ -1,16 +1,21 @@
 ---
 /**
- * v0.5.58 Brand mark — 全科笔记 / POLYMATH NOTES logo
+ * v0.5.61 Brand mark — 全科笔记 / POLYMATH NOTES logo
  *
- * 资源（用户存到 v2/public/）：
+ * 资源（v2/public/，已裁切：1090×440，content bbox + 30px 边距）：
  *   - logo-light.png — 浅底版本（黑字 + 灰副标）
  *   - logo-dark.png  — 深底版本（米白字 + 灰副标）
  *
- * 切换：用 v2 class-based dark mode（html.dark）— 两张 <img> 用 dark:block / dark:hidden 切。
+ * 切换：class-based dark mode（html.dark）— 两张 <img> 用 dark:block / dark:hidden 切，
+ *       同一时刻只显示 1 个，视觉上是 1 个 logo 位。
+ *
+ * v0.5.61 修：之前 scoped style `.brand-img { display: block }` 比 Tailwind `.hidden`
+ *            specificity 高（Astro 自动加 [data-astro-cid-*]）→ `hidden` 失效 → 两张并排显示。
+ *            去掉冲突的 display 规则，flex container 已经处理布局。
  *
  * 用法：
- *   <Brand href="/" size="sm" />     ← Nav 顶（高 24~28px）
- *   <Brand href="/" size="lg" />     ← 首页 hero（高 80~120px）
+ *   <Brand href="/" size="sm" />     ← Nav 顶（高 32px）
+ *   <Brand href="/" size="lg" />     ← 首页 hero（高 80px）
  */
 
 interface Props {
@@ -21,29 +26,26 @@ interface Props {
 
 const { href = '/', size = 'sm', class: classProp = '' } = Astro.props;
 
-// 高度走 token 化值，宽度自动按 PNG 比例（design 约 16:9）
+// 高度走 Tailwind size，宽度按 PNG 比例（裁切后 1090:440 ≈ 2.48:1）自动
 const heights: Record<typeof size, string> = {
-  sm: 'h-7',     // 28px — 卡 nav 48px 行高
+  sm: 'h-8',     // 32px — nav 48px 行高
   lg: 'h-20',    // 80px — 首页 hero
 };
 ---
 
-<a href={href} class:list={['brand-mark inline-flex items-center no-underline', classProp]} aria-label="全科笔记 · Polymath Notes" title="全科笔记">
+<a href={href} class:list={['brand-mark inline-flex items-center no-underline leading-none', classProp]} aria-label="全科笔记 · Polymath Notes" title="全科笔记">
   <img
     src="/logo-light.png"
     alt="全科笔记"
-    class:list={['brand-img dark:hidden', heights[size]]}
+    width="1090" height="440"
+    class:list={['w-auto dark:hidden', heights[size]]}
     draggable="false"
   />
   <img
     src="/logo-dark.png"
     alt="全科笔记"
-    class:list={['brand-img hidden dark:block', heights[size]]}
+    width="1090" height="440"
+    class:list={['w-auto hidden dark:block', heights[size]]}
     draggable="false"
   />
 </a>
-
-<style>
-  .brand-mark { line-height: 0; }
-  .brand-img { width: auto; display: block; }
-</style>
