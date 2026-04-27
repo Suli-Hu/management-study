@@ -20,8 +20,12 @@ describe('Data presence', () => {
   it('has at least one discipline', () => {
     expect(data.disciplines.length).toBeGreaterThan(0);
   });
-  it('has at least one school per discipline', () => {
+  it('has at least one school per discipline (skipped for empty placeholder disciplines)', () => {
+    // v0.5.71: marketing / sociology 暂时是空 placeholder（admin 还没建学派）→ 跳过这条对它们的硬性要求。
+    // 等首批学派落地后从这里删掉它们或直接砍此规则。
+    const PLACEHOLDER = new Set(['marketing', 'sociology']);
     for (const d of data.disciplines) {
+      if (PLACEHOLDER.has(d.key)) continue;
       const has = data.schools.some((s) => s.discipline === d.key);
       expect(has, `discipline ${d.key} should have ≥ 1 school`).toBe(true);
     }
