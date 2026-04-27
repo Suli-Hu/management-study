@@ -173,6 +173,21 @@ const totalHits = kpHits.length + scholarHits.length + schoolHits.length;
       )}
     </header>
 
+    {/* v0.5.40: 空状态引导，避免空白页给用户"不知道能搜什么"的负担 */}
+    {!rawQ && (
+      <section class="mt-2">
+        <p class="text-xs text-tertiary mb-3">试试搜索：</p>
+        <div class="flex flex-wrap gap-2">
+          {['Maslow', '期望理论', '霍桑实验', '组织变革', 'Drucker', 'OB', 'Festinger'].map((q) => (
+            <a
+              href={`/${discipline}/search?q=${encodeURIComponent(q)}`}
+              class="text-xs px-3 py-1.5 rounded-full border border-bg-tertiary text-tertiary hover:bg-bg-tertiary hover:text-primary no-underline transition-colors"
+            >{q}</a>
+          ))}
+        </div>
+      </section>
+    )}
+
     {rawQ && totalHits === 0 && (
       <p class="text-sm text-tertiary">
         没找到匹配「<span class="font-semibold text-secondary">{rawQ}</span>」的内容。

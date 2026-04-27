@@ -81,18 +81,13 @@ const upcomingFiltered = upcoming.filter((u) => !disciplines.some((d) => d.key =
           );
         })}
 
-        {upcomingFiltered.map((u) => (
-          <div class="block p-4 rounded-lg border bg-bg-primary shadow-card opacity-50">
-            <div class="flex items-baseline justify-between mb-1 gap-3">
-              <h3 class="text-lg flex items-baseline gap-2 min-w-0">
-                <span class="truncate">{u.title_zh}</span>
-                <span class="text-xs text-quaternary font-normal">{u.title_en}</span>
-              </h3>
-              <span class="shrink-0 text-xs px-1.5 py-0.5 rounded border border-bg-tertiary text-quaternary">即将上线</span>
-            </div>
-          </div>
-        ))}
       </div>
+      {/* v0.5.40: upcoming 学科改成单行弱提示，不再跟 active 学科卡视觉权重持平 */}
+      {upcomingFiltered.length > 0 && (
+        <p class="text-xs text-quaternary text-center mt-6">
+          更多学科即将上线 · {upcomingFiltered.map((u) => u.title_zh).join(' · ')}
+        </p>
+      )}
     </section>
 
   </main>
