@@ -1,7 +1,7 @@
 {
   "name": "management-study-v2",
   "type": "module",
-  "version": "0.5.33",
+  "version": "0.5.34",
   "private": true,
   "description": "Multi-discipline study notes SaaS — v2 (Astro + D1 + Tailwind)",
   "scripts": {
