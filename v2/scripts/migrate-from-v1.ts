@@ -370,6 +370,7 @@ for (const key of Object.keys(SCHOLARS)) {
       ? { year: clean(s.nobel_year ?? s.nobel ?? ''), detail: clean(s.nobel_detail) }
       : null,
     kpsOrder: [],
+    schoolsExplicit: false,   // v0.5.65: 迁移产物默认 false，保留 KP 派生 fallback
     createdAt: NOW,
     updatedAt: NOW,
   };

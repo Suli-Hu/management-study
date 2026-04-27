@@ -14,6 +14,12 @@ export const Scholar = z.object({
   discipline: DisciplineKey,
   name: I18nString,
   schools: z.array(SchoolKey).default([]).describe('属于哪些学派 — 可空（独立学者）'),
+  /**
+   * v0.5.65：admin 通过 edit UI 保存时强制设 true → schools[] 是真源，
+   * sync-to-d1 跳过 KP 反向派生（path 2/3）。legacy 未编辑过的 scholar 默认 false，
+   * 继续走三路并集（v0.4.17 行为），保住 52 个 schools=[] 的迁移 fallback。
+   */
+  schoolsExplicit: z.boolean().default(false).describe('schools[] 由 admin 显式设定 → sync 跳过 KP 派生'),
   contribution: BilingualBody,
   lifespan: z.string().trim().default('').describe('合并展示兜底；优先用 born/died'),
   institution: z.string().trim().default('').describe('代表性机构，如 "Harvard Business School"'),

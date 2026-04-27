@@ -281,8 +281,15 @@ sqlLines.push('');
 //   1) scholar.schools[]              — 学者主属机构 / 暂无 KP 的占位声明
 //   2) school.concepts[] × kp.scholars — 学派显式列出的 KP，其学者
 //   3) kp.schools[]   × kp.scholars   — KP 自己声明的学派，其学者
+//
+// v0.5.65：admin 通过 edit UI 保存的 scholar 标记 schoolsExplicit=true →
+//          schools[] 是真源，path 2/3 跳过派生，避免「我清空了还冒出来」。
+//          legacy（schoolsExplicit=false 默认）保留三路并集，不破坏历史 fallback。
 sqlLines.push('-- scholar_school');
 const scholarSchoolEmitted = new Set<string>();
+const explicitScholars = new Set<string>(
+  scholars.filter((sc) => sc.schoolsExplicit).map((sc) => sc.key),
+);
 // 1) 学者声明优先（保留 schools[] 的 position 语义）
 for (const sc of scholars) {
   sc.schools.forEach((sk, i) => {
@@ -297,6 +304,7 @@ for (const sc of scholars) {
 const kpById = new Map(kps.map((k) => [k.id, k]));
 function emitDerivedScholarSchool(scKey: string, schoolKey: string) {
   if (!scholarKeys.has(scKey) || !schoolKeys.has(schoolKey)) return;
+  if (explicitScholars.has(scKey)) return;   // v0.5.65: admin 已显式定夺，不再 backfill
   const k = `${scKey}|${schoolKey}`;
   if (scholarSchoolEmitted.has(k)) return;
   scholarSchoolEmitted.add(k);

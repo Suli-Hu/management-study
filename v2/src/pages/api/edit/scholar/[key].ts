@@ -39,7 +39,8 @@ export const PUT: APIRoute = (ctx) => handlePut({
   objectLabel: (obj) => `scholar/${obj.key}`,
   identifierMatch: (urlKey, obj) => obj.key === urlKey,
   urlIdentifier: () => ctx.params.key,
-  forceFields: () => ({ updatedAt: new Date().toISOString() }),
+  // v0.5.65: 任何 admin 保存 → schoolsExplicit=true，sync 时跳过 KP 派生覆盖
+  forceFields: () => ({ updatedAt: new Date().toISOString(), schoolsExplicit: true }),
 });
 
 export const DELETE: APIRoute = async (ctx) => {
