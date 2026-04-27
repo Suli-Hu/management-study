@@ -97,8 +97,11 @@ const ariaLabel = variant === 'lockup' ? '全科笔记 · Polymath Notes' : '全
   }
   .brand:hover { opacity: 0.85; }
 
-  /* === Mark === */
-  .brand-mark { display: block; flex-shrink: 0; }
+  /* === Mark ===
+     v0.5.73：不能写 `display: block` —— Astro 自动加 [data-astro-cid-*] 后
+     specificity 比 Tailwind `.hidden`（0,1,0）高 → dark:hidden 失效 → 两张并显。
+     flex 父级已经处理布局，img 自身不需要 display 规则。只保留 flex-shrink。 */
+  .brand-mark { flex-shrink: 0; }
 
   /* === Compact: nav / breadcrumb === */
   .brand-compact { gap: 10px; }
