@@ -73,6 +73,30 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const payload = await verifySessionCookie(cookieValue, secret);
   context.locals.user = payload ? sessionUserFromPayload(payload) : null;
 
+  // v0.5.76 API backdoor：另一个 Claude / 程序客户端友好入口。
+  // header X-Anytime-Token 匹配 env API_BACKDOOR_TOKEN → 当 invite-guest 处理（不查 cookie）。
+  // 限制：仅 GET / HEAD（read-only），其它方法拒绝防写。
+  // 后续 isInviteGuest 路径生效 → 读权限受 INVITE_GUEST_DISCIPLINES 白名单限制（目前 keiei）。
+  const backdoorToken = env?.API_BACKDOOR_TOKEN?.trim();
+  const inviteEmailForBackdoor = env?.INVITE_GUEST_EMAIL;
+  if (
+    !context.locals.user &&
+    backdoorToken &&
+    inviteEmailForBackdoor &&
+    context.request.headers.get('x-anytime-token') === backdoorToken
+  ) {
+    if (context.request.method !== 'GET' && context.request.method !== 'HEAD') {
+      return new Response('Forbidden: API token is read-only (GET/HEAD)', { status: 403 });
+    }
+    context.locals.user = {
+      id: '__api_backdoor__',
+      email: inviteEmailForBackdoor,
+      display_name: null,
+      created_at: new Date(0).toISOString(),
+      email_verified_at: null,
+    };
+  }
+
   // v0.2.8 / v0.4.25: super-admin = ADMIN_EMAILS 命中（god mode，所有学科可写）
   context.locals.isSuperAdmin = isAdmin(context.locals.user, env?.ADMIN_EMAILS);
   // 兼容字段（旧代码可能仍读 isAdmin）— 在 RBAC 改造完成前保留

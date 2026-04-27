@@ -35,6 +35,10 @@ export interface Env {
   INVITE_GUEST_EMAIL?: string;
   // v0.5.74 邀请码访客可读 discipline 白名单（逗号分隔）。空 / 未设 = 全学科可读。
   INVITE_GUEST_DISCIPLINES?: string;
+  // v0.5.76 程序友好后门：客户端发 X-Anytime-Token: <这个值> → 当 invite-guest 处理。
+  // 只允许 GET / HEAD（read-only），仍受 INVITE_GUEST_DISCIPLINES 限制。
+  // 暗号短意味着安全靠"非常规 header 名 + 受限读取范围 + 易随时旋转"。
+  API_BACKDOOR_TOKEN?: string;
 
   // v0.5.45 邮箱 N 天免 code 信任：白名单 email 在 N 天内任意设备直接登录（不发 code）
   // 默认 3 天，0 = 关闭（恢复纯 magic link 流程）。仅作用于已存在的 user 行。
