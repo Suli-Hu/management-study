@@ -130,59 +130,87 @@ const canEdit = Astro.locals.canEdit(discipline);
   title={sch.title_zh}
   currentDiscipline={discipline}
   currentSection="schools"
+  currentSchoolTitle={sch.title_zh}
   fullHeight
 >
-  <div class="split" style={`--accent:${accentHex}`}>
+  <div class="split" style={`--accent:${accentHex};--tone-hex:${accentHex}`}>
 
     {/* ========== 左栏 ========== */}
     <aside class="left optA-stack">
 
-      {/* Hero */}
-      <div class="optA-hero">
-        {canEdit && (
-          <a
-            href={editHref(`/${discipline}/${sch.key}/edit`, Astro.url.pathname)}
-            class="hero-icon-btn optA-hero-edit"
-            aria-label="编辑此学派"
-            title="编辑"
-          >✎</a>
-        )}
-        <div class="optA-eyebrow">学派</div>
-        <h1 class="optA-hero-title">{sch.title_zh}</h1>
-        <div class="optA-hero-sub">
-          {sch.title_en}{sch.era ? ` · ${sch.era}` : ''}
+      {/* v0.5.52 学派身份卡（demo spec）—— 顶 tag 徽章 + 大字 + en + meta */}
+      <div class="optA-hero-v2">
+        <div class="optA-hero-v2-row">
+          <span class="optA-tag-badge">学派</span>
+          {canEdit && (
+            <a
+              href={editHref(`/${discipline}/${sch.key}/edit`, Astro.url.pathname)}
+              class="hero-icon-btn optA-hero-edit-v2"
+              aria-label="编辑此学派"
+              title="编辑"
+            >✎</a>
+          )}
         </div>
+        <h1 class="optA-hero-v2-title">{sch.title_zh}</h1>
+        {sch.title_en && <div class="optA-hero-v2-en">{sch.title_en}</div>}
+        {sch.era && <div class="optA-hero-v2-meta">{sch.era}</div>}
       </div>
 
-      {/* 概述（默认折叠 — v0.5.48）*/}
+      {/* v0.5.52 3 tab nav（mobile + PC 共用，sticky 顶部）*/}
+      <nav class="optA-tabs" role="tablist" aria-label="学派内容切换">
+        {sch.summary_zh && (
+          <button
+            class="optA-tab-btn"
+            type="button"
+            data-tab-btn="overview"
+            role="tab"
+            aria-selected="false"
+          >概述</button>
+        )}
+        <button
+          class="optA-tab-btn"
+          type="button"
+          data-tab-btn="scholars"
+          role="tab"
+          aria-selected="false"
+        >
+          代表学者
+          {schoolScholars.length > 0 && <span class="optA-tab-count">{schoolScholars.length}</span>}
+        </button>
+        <button
+          class="optA-tab-btn"
+          type="button"
+          data-tab-btn="concepts"
+          data-active
+          role="tab"
+          aria-selected="true"
+        >
+          核心概念
+          {kps.length > 0 && <span class="optA-tab-count">{kps.length}</span>}
+        </button>
+      </nav>
+
+      {/* Tab Panel: 概述 */}
       {sch.summary_zh && (
-        <section class="optA-summary-wrap is-collapsed" data-collapse-section="summary">
-          <button class="optA-section-head--btn" type="button" aria-expanded="false" data-collapse-toggle data-d-stick="summary">
-            <h2>概述</h2>
-            <span class="optA-collapse-chev">▾</span>
-          </button>
-          <div class="optA-summary" data-collapse-body style="display:none">{sch.summary_zh}</div>
+        <section class="optA-tab-panel" data-tab-panel="overview" hidden>
+          <div class="optA-summary-v2">{sch.summary_zh}</div>
         </section>
       )}
 
-      {/* 代表学者（默认折叠 — v0.5.48）*/}
-      <section class="optA-block is-collapsed" data-collapse-section="scholars">
-        <button class="optA-section-head--btn" type="button" aria-expanded="false" data-collapse-toggle data-d-stick="scholars">
-          <h2>代表学者</h2>
-          <span class="optA-count">{schoolScholars.length}</span>
-          <span class="optA-collapse-chev">▾</span>
-          {canEdit && (
+      {/* Tab Panel: 代表学者 */}
+      <section class="optA-tab-panel" data-tab-panel="scholars" hidden>
+        {canEdit && (
+          <div class="optA-tab-panel-actions">
             <a
               href={editHref(`/${discipline}/scholars/new?school=${sch.key}`, Astro.url.pathname)}
               class="optA-section-add"
-              onclick="event.stopPropagation()"
               title="新增学者"
             >+ 新增</a>
-          )}
-        </button>
-        <ul class="optA-scholars" data-collapse-body style="display:none">
+          </div>
+        )}
+        <ul class="optA-scholars">
           {schoolScholars.length === 0 ? (
-            <li class="text-xs text-quaternary px-2 py-1">暂无关联学者。</li>
+            <li class="text-xs text-quaternary px-2 py-3">暂无关联学者。</li>
           ) : schoolScholars.map((s, i) => (
             <li>
               <a
@@ -201,19 +229,17 @@ const canEdit = Astro.locals.canEdit(discipline);
         </ul>
       </section>
 
-      {/* 核心概念（不折叠，但 sticky）*/}
-      <section class="optA-block">
-        <div class="optA-section-head" data-d-stick="kps">
-          <h2>核心概念</h2>
-          <span class="optA-count">{kps.length}</span>
-          {canEdit && (
+      {/* Tab Panel: 核心概念（默认 active）*/}
+      <section class="optA-tab-panel" data-tab-panel="concepts">
+        {canEdit && (
+          <div class="optA-tab-panel-actions">
             <a
               href={editHref(`/${discipline}/kp/new?school=${sch.key}`, Astro.url.pathname)}
               class="optA-section-add"
               title="新增 KP"
             >+ 新增</a>
-          )}
-        </div>
+          </div>
+        )}
         <ul class="optA-kps drag-reorder" data-reorder-kind="school-concepts" data-school-key={sch.key}>
           {kps.map((k) => {
             const scholarKeys = (k.scholars_csv ?? '').split(',').filter(Boolean);
@@ -370,31 +396,18 @@ const canEdit = Astro.locals.canEdit(discipline);
   // KP 列表长按拖动重排（保留 v0.4.26 行为）
   import { mountDragReorder } from '~/lib/drag-reorder-client';
 
-  // ========== 累加 sticky：测量 hero/head 高度，写到 CSS 变量 ==========
-  (function () {
-    const left = document.querySelector('.optA-stack');
-    if (!left) return;
-    function measure() {
-      const hero = left.querySelector('.optA-hero');
-      const sumHead = left.querySelector('[data-d-stick="summary"]');
-      const schHead = left.querySelector('[data-d-stick="scholars"]');
-      left.style.setProperty('--hero-h', (hero?.offsetHeight ?? 80) + 'px');
-      left.style.setProperty('--head-h-summary', (sumHead?.offsetHeight ?? 0) + 'px');
-      left.style.setProperty('--head-h-scholars', (schHead?.offsetHeight ?? 0) + 'px');
-    }
-    measure();
-    window.addEventListener('resize', measure);
-  })();
-
-  // ========== 概述/代表学者 折叠（默认全展开，不持久化）==========
-  document.querySelectorAll('[data-collapse-section]').forEach((sec) => {
-    const btn = sec.querySelector('[data-collapse-toggle]');
-    const body = sec.querySelector('[data-collapse-body]');
-    if (!btn || !body) return;
+  // ========== v0.5.52 tab nav 切换 ==========
+  // 替代 v0.5.48 的概述/代表学者 collapse 机制 —— 现 3 段切 tab，默认 "concepts"
+  document.querySelectorAll('[data-tab-btn]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const collapsed = sec.classList.toggle('is-collapsed');
-      btn.setAttribute('aria-expanded', String(!collapsed));
-      body.style.display = collapsed ? 'none' : '';
+      const target = btn.dataset.tabBtn;
+      document.querySelectorAll('[data-tab-panel]').forEach((p) => {
+        p.toggleAttribute('hidden', p.dataset.tabPanel !== target);
+      });
+      document.querySelectorAll('[data-tab-btn]').forEach((b) => {
+        b.toggleAttribute('data-active', b.dataset.tabBtn === target);
+        b.setAttribute('aria-selected', b.dataset.tabBtn === target ? 'true' : 'false');
+      });
     });
   });
   if (document.querySelector('[data-reorder-bootstrap="school-concepts"]')) {

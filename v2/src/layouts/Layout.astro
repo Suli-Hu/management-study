@@ -8,6 +8,8 @@ interface Props {
   description?: string;
   currentDiscipline?: string;
   currentSection?: 'schools' | 'scholars' | 'kps' | 'search';
+  /** v0.5.52 学派详情/学者详情页用：第三段面包屑 */
+  currentSchoolTitle?: string;
   /** 宽屏 split-pane 页用：让 main 独占视口剩余高度，右栏能真的占满。窄屏自动回退到正常滚动。 */
   fullHeight?: boolean;
 }
@@ -17,6 +19,7 @@ const {
   description = '日本大学院入试备考知识库',
   currentDiscipline,
   currentSection,
+  currentSchoolTitle,
   fullHeight = false,
 } = Astro.props;
 const fullTitle = title === '全学科学习笔记' ? title : `${title} · 全学科学习笔记`;
@@ -48,7 +51,7 @@ const fullTitle = title === '全学科学习笔记' ? title : `${title} · 全�
     'flex flex-col bg-bg-primary text-secondary',
     fullHeight ? 'h-screen lg:overflow-hidden' : 'min-h-screen',
   ]}>
-    <Nav currentDiscipline={currentDiscipline} currentSection={currentSection} />
+    <Nav currentDiscipline={currentDiscipline} currentSection={currentSection} currentSchoolTitle={currentSchoolTitle} />
     <div class:list={['flex-1', fullHeight && 'lg:min-h-0 lg:overflow-hidden']}>
       <slot />
     </div>

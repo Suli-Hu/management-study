@@ -621,6 +621,100 @@ details.eval {
   font-variant-numeric: tabular-nums;
 }
 
+/* ============================================================
+ * v0.5.52 学派详情页 redesign — tag-badge hero + 3 tab nav
+ *
+ * 改动只针对学派页（[discipline]/[school]/index.astro），学者页仍用旧 .optA-hero。
+ * tag 三档色派生：--tone-hex 在 .split inline style 注入，soft/deep 用 color-mix。
+ * ============================================================ */
+.optA-hero-v2 {
+  --tone-soft: color-mix(in oklab, var(--tone-hex, var(--color-text-quaternary)) 22%, white);
+  --tone-deep: color-mix(in oklab, var(--tone-hex, var(--color-text-quaternary)) 60%, #2a1a05);
+
+  position: relative;
+  background: var(--color-bg-primary);
+  padding: 18px 18px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+html.dark .optA-hero-v2 {
+  --tone-soft: color-mix(in oklab, var(--tone-hex, var(--color-text-quaternary)) 22%, #1a1308);
+  --tone-deep: color-mix(in oklab, var(--tone-hex, var(--color-text-quaternary)) 70%, white);
+}
+.optA-hero-v2-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 12px;
+}
+.optA-tag-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--tone-soft);
+  color: var(--tone-deep);
+  font-size: 11.5px; font-weight: 600;
+}
+.optA-tag-badge::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--tone-hex, var(--color-text-quaternary));
+}
+.optA-hero-edit-v2 { margin-left: auto; }
+.optA-hero-v2-title {
+  font-size: 26px; font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  margin: 0 0 6px;
+  word-break: break-word;
+}
+.optA-hero-v2-en {
+  font-size: 12px; color: var(--color-text-tertiary);
+  margin-bottom: 4px;
+}
+.optA-hero-v2-meta { font-size: 11px; color: var(--color-text-quaternary); }
+
+.optA-tabs {
+  position: sticky; top: 0; z-index: 4;
+  background: var(--color-bg-primary);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0 18px;
+  display: flex; gap: 22px;
+}
+.optA-tab-btn {
+  all: unset; cursor: pointer;
+  display: inline-flex; align-items: baseline; gap: 6px;
+  padding: 10px 0;
+  font-size: 13px; font-weight: 500;
+  color: var(--color-text-quaternary);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.optA-tab-btn:hover { color: var(--color-text-secondary); }
+.optA-tab-btn[data-active] {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  border-bottom-color: var(--tone-hex, var(--color-text-primary));
+}
+.optA-tab-count {
+  font-size: 11px;
+  color: var(--color-text-quaternary);
+  font-variant-numeric: tabular-nums;
+}
+.optA-tab-btn[data-active] .optA-tab-count { color: var(--color-text-tertiary); }
+
+.optA-tab-panel { padding: 8px 0 24px; }
+.optA-tab-panel[hidden] { display: none; }
+.optA-tab-panel-actions {
+  display: flex; justify-content: flex-end;
+  padding: 6px 18px 4px;
+}
+.optA-summary-v2 {
+  padding: 14px 18px 22px;
+  font-size: 14.5px; line-height: 1.85;
+  color: var(--color-text-secondary);
+  text-wrap: pretty;
+}
+
 /* ---- scholars (v0.5.51 重写 — designer spec) ----
    排版：first 灰小 + last 黑粗加重（扫读靠 last）+ cn 深灰 一行
         ja 第二行浅灰最小字号

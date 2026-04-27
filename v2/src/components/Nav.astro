@@ -4,9 +4,10 @@ import { getDb } from '~/lib/db';
 interface Props {
   currentDiscipline?: string;
   currentSection?: 'schools' | 'scholars' | 'kps' | 'search';
+  currentSchoolTitle?: string;
 }
 
-const { currentDiscipline, currentSection } = Astro.props;
+const { currentDiscipline, currentSection, currentSchoolTitle } = Astro.props;
 const user = Astro.locals.user;
 const isGuest = Astro.locals.isGuest;
 
@@ -42,10 +43,21 @@ const emailInitial = user?.email.charAt(0).toUpperCase() ?? '';
           <span class="text-quaternary text-xs">›</span>
           <a
             href={`/${currentDiscipline}`}
-            class="text-tertiary hover:text-primary text-xs no-underline hidden sm:inline"
+            class:list={[
+              'text-xs no-underline hidden sm:inline',
+              currentSchoolTitle ? 'text-tertiary hover:text-primary' : 'text-primary font-medium',
+            ]}
           >
             {disciplineTitle}
           </a>
+        </>
+      )}
+      {currentSchoolTitle && (
+        <>
+          <span class="text-quaternary text-xs">›</span>
+          <span class="text-primary font-medium text-xs hidden sm:inline">
+            {currentSchoolTitle}
+          </span>
         </>
       )}
     </div>
