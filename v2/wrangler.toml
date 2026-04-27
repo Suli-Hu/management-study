@@ -35,10 +35,13 @@ AUTH_MODE = "email"
 # password 模式下，访客共用这条 user 记录（所有 123 登录指向同一 user_id）
 GUEST_EMAIL = "guest@local"
 
-# v0.4.33 邀请码登录（无需邮箱）：输 INVITE_CODE_GUEST → 共用 INVITE_GUEST_EMAIL user → 全学科 guest 视角
+# v0.4.33 邀请码登录（无需邮箱）：输 INVITE_CODE_GUEST → 共用 INVITE_GUEST_EMAIL user → guest 视角
 # 共用 user_id：所有邀请码登录指向同一 user（无 user_progress / user_note 区分），便利分享只读
 INVITE_CODE_GUEST = "123"
 INVITE_GUEST_EMAIL = "invite-guest@anytime"
+# v0.5.74：邀请码访客只能 read 这里列出的 discipline（逗号分隔）。空 / 未设 = 全学科可读（旧默认）。
+# 设成 "keiei" → 邀请码 guest 只能看经营学，市场营销 / 社会学 / 心理学等都被 home 页降级 + 直接访问 redirect 回 /。
+INVITE_GUEST_DISCIPLINES = "keiei"
 
 # v0.5.45 邮箱 N 天免 code 信任：曾验证过的 email 在 N 天内任意设备直接登录（不发 code）
 # 安全 tradeoff：从"持有 email"降级成"知道 email 字符串"，靠 ADMIN_EMAILS 白名单收窄攻击面。

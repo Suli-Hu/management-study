@@ -33,6 +33,8 @@ export interface Env {
   // v0.4.33 邀请码登录（共用 user，全学科 guest 视角）
   INVITE_CODE_GUEST?: string;
   INVITE_GUEST_EMAIL?: string;
+  // v0.5.74 邀请码访客可读 discipline 白名单（逗号分隔）。空 / 未设 = 全学科可读。
+  INVITE_GUEST_DISCIPLINES?: string;
 
   // v0.5.45 邮箱 N 天免 code 信任：白名单 email 在 N 天内任意设备直接登录（不发 code）
   // 默认 3 天，0 = 关闭（恢复纯 magic link 流程）。仅作用于已存在的 user 行。

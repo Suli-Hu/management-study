@@ -81,10 +81,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // v0.2.9: guest flag（password 模式 GUEST_PASSWORD 登录者；未来 user_progress 写入要跳过）
   context.locals.isGuest = isGuest(context.locals.user, env?.GUEST_EMAIL);
 
-  // v0.4.33: invite-code guest（共用 INVITE_GUEST_EMAIL user）→ 全学科只读访问
+  // v0.4.33: invite-code guest（共用 INVITE_GUEST_EMAIL user）
+  // v0.5.74: 默认全学科 read，可由 INVITE_GUEST_DISCIPLINES 收窄到指定 discipline 集合
   const inviteEmail = env?.INVITE_GUEST_EMAIL;
   context.locals.isInviteGuest =
     !!context.locals.user && !!inviteEmail && context.locals.user.email.toLowerCase() === inviteEmail.toLowerCase();
+
+  const inviteAllowedRaw = env?.INVITE_GUEST_DISCIPLINES?.trim() ?? '';
+  const inviteAllowed = inviteAllowedRaw
+    ? new Set(inviteAllowedRaw.split(',').map((s) => s.trim()).filter(Boolean))
+    : null;   // null = 旧行为，全学科可读
 
   // v0.4.25 RBAC：load 该 user 的 per-discipline permissions（super-admin / invite-guest 跳过查询）
   context.locals.permissions = new Map();
@@ -99,8 +105,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
   context.locals.canEdit = (d: string | undefined) =>
     !!d && (context.locals.isSuperAdmin || context.locals.permissions.get(d) === 'admin');
-  context.locals.canRead = (d: string | undefined) =>
-    !!d && (context.locals.isSuperAdmin || context.locals.isInviteGuest || context.locals.permissions.has(d));
+  context.locals.canRead = (d: string | undefined) => {
+    if (!d) return false;
+    if (context.locals.isSuperAdmin) return true;
+    if (context.locals.isInviteGuest) {
+      // 白名单收窄：未配置 = 全学科可读；配置了就只读白名单内的
+      return inviteAllowed === null || inviteAllowed.has(d);
+    }
+    return context.locals.permissions.has(d);
+  };
 
   // Gate: 未登录 + 非公开路径 → 跳 /login
   if (!context.locals.user && !isPublicPath(url.pathname)) {
