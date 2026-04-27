@@ -119,8 +119,24 @@ if (selectedKpId) {
   }
 }
 
-const lang = (Astro.url.searchParams.get('lang') === 'ja' && scholar.contribution_ja) ? 'ja' : 'zh';
+const langParam = Astro.url.searchParams.get('lang');
+const lang = (langParam === 'ja' && scholar.contribution_ja) ? 'ja' : 'zh';
 const contribution = lang === 'ja' ? scholar.contribution_ja! : scholar.contribution_zh;
+
+// v0.5.39: 跟学派页同款，给选中 KP 也加 lang-toggle (?lang= 同时控制学者贡献 + 选中 KP)
+const selectedLang: 'zh' | 'ja' =
+  langParam === 'ja' && selectedKp?.body_ja ? 'ja' : 'zh';
+const selectedBody: string | null = selectedKp
+  ? (selectedLang === 'ja' ? selectedKp.body_ja! : selectedKp.body_zh)
+  : null;
+const selectedTitle: string | null = selectedKp
+  ? (selectedLang === 'ja' ? (selectedKp.title_ja ?? selectedKp.title_zh) : selectedKp.title_zh)
+  : null;
+const langToggleParams = new URLSearchParams(Astro.url.search);
+if (selectedLang === 'zh') langToggleParams.set('lang', 'ja');
+else langToggleParams.delete('lang');
+const langToggleQs = langToggleParams.toString();
+const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : Astro.url.pathname;
 const lifespanDisplay = (scholar.born && scholar.died)
   ? `${scholar.born} — ${scholar.died}`
   : (scholar.born || scholar.died || scholar.lifespan || '');
@@ -325,7 +341,7 @@ const canEdit = Astro.locals.canEdit(discipline);
     {/* ========== 右栏 ========== */}
     <article class="right kp-detail-pane" id="kp-detail-pane" style="padding:0">
       <div style={`height:3px;background:${accentHex}`}></div>
-      <div style="max-width:720px;padding:28px 28px 40px">
+      <div class="kp-pane-content">
         {kps.length === 0 ? (
           <EmptyRight
             accentHex={accentHex}
@@ -337,13 +353,25 @@ const canEdit = Astro.locals.canEdit(discipline);
           <>
             <header class="kp-head-bar">
               <div class="kp-head-bar-body">
-                <div class="flex items-start gap-3">
-                  <h2 class="text-xl font-semibold leading-tight flex-1">{selectedKp.title_zh}</h2>
+                <div class="flex items-center gap-3">
+                  <h2 class="text-xl font-semibold leading-tight flex-1">{selectedTitle}</h2>
+                  {selectedKp.body_ja && (
+                    <a
+                      href={langToggleHref}
+                      class:list={['lang-toggle shrink-0', selectedLang === 'ja' && 'is-active']}
+                      data-lang-toggle
+                      style={`--accent:${accentHex}`}
+                      title="切换日语 / 中文 (Cmd/Ctrl + J)"
+                      aria-pressed={selectedLang === 'ja'}
+                    >
+                      {selectedLang === 'zh' ? '日本語' : '中文'}
+                    </a>
+                  )}
                   {canEdit && (
                     <a
                       href={editHref(`/${discipline}/kp/${selectedKp.id}/edit`, Astro.url.pathname)}
                       class="hero-icon-btn shrink-0"
-                      aria-label={`编辑 ${selectedKp.title_zh}`}
+                      aria-label={`编辑 ${selectedTitle}`}
                       title="编辑"
                     >✎</a>
                   )}
@@ -357,10 +385,10 @@ const canEdit = Astro.locals.canEdit(discipline);
                   {selectedKp.year && <span class="text-quaternary">{shortYear(selectedKp.year)}</span>}
                 </div>
                 {selectedKp.title_en && <div class="text-xs text-quaternary italic mt-1">{selectedKp.title_en}</div>}
-                {selectedKp.title_ja && <div class="text-xs text-tertiary mt-1">{selectedKp.title_ja}</div>}
+                {selectedKp.title_ja && selectedLang === 'zh' && <div class="text-xs text-tertiary mt-1">{selectedKp.title_ja}</div>}
               </div>
             </header>
-            <div class="mt-6" set:html={renderBodyForSchool({ fmt: selectedKp.format, body: selectedKp.body_zh, accentHex })} />
+            <div class="mt-6" set:html={renderBodyForSchool({ fmt: selectedKp.format, body: selectedBody!, accentHex })} />
             <div set:html={renderEvalModule(selectedEvalContent)} />
           </>
         ) : (

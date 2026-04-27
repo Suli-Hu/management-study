@@ -794,11 +794,17 @@ mark {
  * ============================================================ */
 .kp-head-bar {
   /* v0.5.5: 设计稿无侧边色条 — 去掉 padding-left + .kp-head-bar-strip */
-  padding: 18px 0 22px;
+  /* v0.5.39: 上下 padding 对称 (原 18 / 22 无明确视觉理由) */
+  padding: 20px 0;
   border-bottom: 1px solid var(--color-border);
   margin-bottom: 0;
 }
 .kp-head-bar-body h2 { margin: 0; }
+/* v0.5.39: head bar 内的 hero-icon-btn 缩到 28px 跟 lang-toggle (22px) 视觉协调 */
+.kp-head-bar .hero-icon-btn {
+  width: 28px; height: 28px;
+  font-size: 14px;
+}
 
 
 /* ============================================================
@@ -928,4 +934,6 @@ mark {
 @media (pointer: coarse) {
   .lang-toggle { min-height: 44px; }
   .hero-icon-btn { min-width: 44px; min-height: 44px; }
+  /* head bar 桌面 28px，触屏覆盖回 44 (R1 视觉协调被 a11y override) */
+  .kp-head-bar .hero-icon-btn { min-width: 44px; min-height: 44px; }
 }
