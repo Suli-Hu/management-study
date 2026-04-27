@@ -138,19 +138,16 @@ const canEdit = Astro.locals.canEdit(discipline);
     {/* ========== 左栏 ========== */}
     <aside class="left optA-stack">
 
-      {/* v0.5.52 学派身份卡（demo spec）—— 顶 tag 徽章 + 大字 + en + meta */}
+      {/* v0.5.54 学派身份卡（demo spec）—— 大字 + en + meta；去 chip badge，✎ 绝对定位右上 */}
       <div class="optA-hero-v2">
-        <div class="optA-hero-v2-row">
-          <span class="optA-tag-badge">学派</span>
-          {canEdit && (
-            <a
-              href={editHref(`/${discipline}/${sch.key}/edit`, Astro.url.pathname)}
-              class="hero-icon-btn optA-hero-edit-v2"
-              aria-label="编辑此学派"
-              title="编辑"
-            >✎</a>
-          )}
-        </div>
+        {canEdit && (
+          <a
+            href={editHref(`/${discipline}/${sch.key}/edit`, Astro.url.pathname)}
+            class="hero-icon-btn optA-hero-edit-v2"
+            aria-label="编辑此学派"
+            title="编辑"
+          >✎</a>
+        )}
         <h1 class="optA-hero-v2-title">{sch.title_zh}</h1>
         {sch.title_en && <div class="optA-hero-v2-en">{sch.title_en}</div>}
         {sch.era && <div class="optA-hero-v2-meta">{sch.era}</div>}
@@ -259,7 +256,6 @@ const canEdit = Astro.locals.canEdit(discipline);
                   class:list={['optA-kp kp-list-item', isActive && 'is-active']}
                 >
                   <summary class="optA-kp-summary">
-                    <span class="optA-kp-chev" aria-hidden="true">▶</span>
                     <a
                       href={`/${discipline}/kp/${k.id}`}
                       data-kp-link

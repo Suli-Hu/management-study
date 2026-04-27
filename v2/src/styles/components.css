@@ -628,43 +628,26 @@ details.eval {
  * tag 三档色派生：--tone-hex 在 .split inline style 注入，soft/deep 用 color-mix。
  * ============================================================ */
 .optA-hero-v2 {
-  --tone-soft: color-mix(in oklab, var(--tone-hex, var(--color-text-quaternary)) 22%, white);
-  --tone-deep: color-mix(in oklab, var(--tone-hex, var(--color-text-quaternary)) 60%, #2a1a05);
-
   position: relative;
   background: var(--color-bg-primary);
   padding: 18px 18px 16px;
   border-bottom: 1px solid var(--color-border);
 }
-html.dark .optA-hero-v2 {
-  --tone-soft: color-mix(in oklab, var(--tone-hex, var(--color-text-quaternary)) 22%, #1a1308);
-  --tone-deep: color-mix(in oklab, var(--tone-hex, var(--color-text-quaternary)) 70%, white);
+/* v0.5.54: 去 .optA-hero-v2-row + .optA-tag-badge（demo spec 反对顶部 chip）；
+   ✎ 改绝对定位右上角，与标题/en/meta 自然垂直流共存 */
+.optA-hero-edit-v2 {
+  position: absolute;
+  top: 12px;
+  right: 14px;
 }
-.optA-hero-v2-row {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 12px;
-}
-.optA-tag-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: var(--tone-soft);
-  color: var(--tone-deep);
-  font-size: 11.5px; font-weight: 600;
-}
-.optA-tag-badge::before {
-  content: '';
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--tone-hex, var(--color-text-quaternary));
-}
-.optA-hero-edit-v2 { margin-left: auto; }
 .optA-hero-v2-title {
   font-size: 26px; font-weight: 700;
   color: var(--color-text-primary);
   letter-spacing: -0.01em;
   line-height: 1.15;
   margin: 0 0 6px;
+  /* v0.5.54 ✎ 绝对定位 36px @ right:14 — 留 52px 防标题撞按钮 */
+  padding-right: 52px;
   word-break: break-word;
 }
 .optA-hero-v2-en {
@@ -756,53 +739,39 @@ html.dark .optA-hero-v2 {
   word-break: break-word;
 }
 
-/* ---- KP cards (v0.5.24: 删 01/02 编号 + 压成横条) ---- */
-.optA-kps { display: flex; flex-direction: column; gap: 6px; padding: 0 0 12px; list-style: none; margin: 0; }
+/* ---- KP cards (v0.5.54: flat list per demo spec)
+   去 border / radius / shadow，1px solid 分隔；active 用左 3px tone strip（top/bottom 内缩 14px） ---- */
+.optA-kps { display: flex; flex-direction: column; gap: 0; padding: 0 0 12px; list-style: none; margin: 0; }
 .optA-kp-li { list-style: none; }
 
-/* v0.5.49: .optA-kp 现在是 <details>（之前 <li>）—— 桌面行为不变（点 link swap 右栏，body 强制 hide），
-   手机展开 inline body 显示 KP 内容（V1 风格阅读体验）*/
 .optA-kp {
   display: block;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
   background: var(--color-bg-primary);
-  transition: background .12s, border-color .12s, box-shadow .12s;
+  border-bottom: 1px solid var(--color-border);
+  transition: background .12s;
   position: relative;
   text-decoration: none; color: inherit;
 }
-.optA-kp[open] { box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
-.optA-kp:hover {
-  background: var(--color-bg-secondary);
-  border-color: color-mix(in oklab, var(--accent, var(--color-text-quaternary)) 30%, var(--color-border));
-}
-.optA-kp.is-active {
-  background: color-mix(in oklab, var(--accent, var(--color-text-quaternary)) 7%, var(--color-bg-primary));
-  border-color: var(--accent, var(--color-text-quaternary));
-  box-shadow: inset 3px 0 0 var(--accent, var(--color-text-quaternary));
+.optA-kp:hover { background: var(--color-bg-secondary); }
+.optA-kp.is-active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 14px; bottom: 14px;
+  width: 3px;
+  background: var(--accent, var(--color-text-quaternary));
+  border-radius: 2px;
 }
 .optA-kp-summary {
-  /* v0.5.52 改 flex（之前 grid 在桌面 chev display:none 时 1fr 列没人占，
-     a.optA-kp-link 被压到 0px 导致中文一字一行）*/
   display: flex;
   align-items: flex-start;
-  gap: 0;
-  padding: 10px 12px;
+  padding: 12px 14px;
   list-style: none;
   cursor: pointer;
 }
 .optA-kp-summary::-webkit-details-marker { display: none; }
-.optA-kp-chev {
-  font-size: 10px; color: var(--color-text-quaternary);
-  transition: transform .15s;
-  display: none;          /* 桌面隐藏 */
-  margin-top: 5px;
-  flex-shrink: 0;
-}
-.optA-kp[open] > .optA-kp-summary > .optA-kp-chev { transform: rotate(90deg); }
 .optA-kp-link {
   color: inherit; text-decoration: none; display: block;
-  flex: 1; min-width: 0;   /* flex:1 占满剩余 + min-width:0 让 child 能 shrink */
+  flex: 1; min-width: 0;
 }
 .optA-kp-inline-body {
   display: none;          /* 桌面强制 hide（split layout 右栏负责显示 KP detail） */
@@ -815,7 +784,6 @@ html.dark .optA-hero-v2 {
 .optA-kp-title {
   font-size: 14px; font-weight: 600; color: var(--color-text-primary); line-height: 1.45;
 }
-/* V1 风格 KP 卡片副标题：scholar/年份在标题行；ja/en 各占一行 */
 .optA-kp-scholar {
   font-size: 11px; font-weight: 500;
   color: var(--color-text-secondary);
@@ -836,12 +804,6 @@ html.dark .optA-hero-v2 {
   margin-top: 1px; font-weight: 400; font-style: italic; letter-spacing: 0.15px;
   word-break: break-word;
 }
-.optA-kp-chev {
-  font-size: 18px; color: var(--color-text-quaternary); opacity: 0;
-  transition: opacity .12s, transform .12s; line-height: 1; padding-top: 1px;
-}
-.optA-kp:hover .optA-kp-chev { opacity: .6; }
-.optA-kp.is-active .optA-kp-chev { opacity: 1; color: var(--accent, var(--color-text-quaternary)); transform: translateX(2px); }
 
 /* ---- summary wrapper ---- */
 .optA-summary-wrap {
@@ -1118,23 +1080,15 @@ html.dark .optA-hero-v2 {
   .split > .right { display: none; }
   .split > .left { border-right: 0; }
   /* v0.5.48: 手机/平板右栏 hidden 时，左栏 KP 列表的 default-active state
-     失去意义（用户根本看不到右栏 KP detail），却让"第一个 KP 永远高亮"
-     看起来像 bug。reset 视觉，点 KP 直接展开 inline body（v0.5.49）。 */
-  .optA-kp.is-active {
-    background: var(--color-bg-primary);
-    border-color: var(--color-border);
-    box-shadow: none;
-  }
-  /* v0.5.49: 手机端 details 展开 inline body，summary 显示 chev */
-  .optA-kp-summary { gap: 8px; }
-  .optA-kp-chev { display: inline; }
+     失去意义（reset 视觉），点 KP 直接展开 inline body（v0.5.49）。
+     v0.5.54: flat list — 只需抑制 active 左侧 strip pseudo */
+  .optA-kp.is-active::before { display: none; }
+  /* v0.5.49: 手机端 details 展开 inline body */
   .optA-kp[open] > .optA-kp-inline-body { display: block; }
-  /* v0.5.51 手机端 KP open 视觉浮起：阴影 + 10px gap 推开下一张 KP 的 head
-     解决"展开评价末尾 vs 下一张 KP head 边界弱"问题 */
+  /* v0.5.54: 手机端 KP open 视觉提示（demo flat list 风格 — 用 bg 替代 shadow lift）*/
   .optA-kp[open] {
-    box-shadow: 0 4px 12px -2px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.025);
-    margin-bottom: 10px;
-    transition: margin-bottom .24s ease, box-shadow .24s ease;
+    background: var(--color-bg-secondary);
+    transition: background .2s ease;
   }
 
   /* compare row stack：grid 120/1fr 拍扁成竖排 */
