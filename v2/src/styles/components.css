@@ -940,6 +940,34 @@ mark {
 
 
 /* ============================================================
+ * v0.5.43 学者详情页 info-table（修"国/籍"竖排）
+ * .info-table 之前在 .astro 里写了 class 但没 CSS，浏览器默认 td
+ * 自动收窄，"国籍"两字被强制换行成竖排单字。
+ * 修：label 列固定宽 + nowrap，val 自由扩展。
+ * ============================================================ */
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.info-table .label {
+  width: 1%;
+  white-space: nowrap;
+  color: var(--color-text-quaternary);
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 5px 14px 5px 0;
+  vertical-align: top;
+}
+.info-table .val {
+  color: var(--color-text-secondary);
+  padding: 5px 0;
+  vertical-align: top;
+  word-break: break-word;
+}
+
+/* ============================================================
  * v0.5.41 KP 列表页学派组锚点 chip（替代之前无 active state 的弱样式）
  * 配套 inline script 用 IntersectionObserver 做 scroll spy
  * ============================================================ */

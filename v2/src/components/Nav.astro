@@ -34,7 +34,7 @@ const emailInitial = user?.email.charAt(0).toUpperCase() ?? '';
 <nav class="sticky top-0 z-50 bg-bg-primary/90 backdrop-blur-sm border-b border-bg-tertiary">
   <div class="w-full pl-[18px] pr-4 h-12 flex items-center justify-between gap-3">
     <div class="flex items-center gap-1.5 text-sm shrink-0">
-      <a href={currentDiscipline ? `/${currentDiscipline}` : '/'} class="font-semibold text-primary no-underline">
+      <a href="/" class="font-semibold text-primary no-underline" title="返回学科索引">
         全学科笔记
       </a>
       {currentDiscipline && disciplineTitle && (
