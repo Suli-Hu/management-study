@@ -1,23 +1,22 @@
 ---
 /**
- * ViewEditor — 视图编辑器（v0.5.80 重设计）
+ * ViewEditor — 视图编辑器（v0.5.81 重设计：select-group + search-check 模式）
  *
- * 修两件事：
- * 1. CSS scope bug — Astro <style> 自动加 [data-astro-cid-XXX] 但 innerHTML 注入的元素
- *    没有 cid → 所有动态创建的 chip / group card / pool row 全失样式。
- *    解：<style is:global> + 用 .ve-root 前缀 namespace 防止泄漏。
- * 2. 视觉设计：
- *    - 输入框可见的下边框（不再像静态文字）
- *    - chip / pool row 真正像 chip
- *    - 重复的"拖动学派可在..."提示只在顶端显示一次
- *    - 分组卡有明显边界 + 移除按钮改 × 图标小按钮
- *    - 桌面/iPad split 1fr 360px；手机栈
+ * 旧模式：左分组 + 右"未包含"池子，HTML5 drag-drop 学派进分组。
+ * 用户反馈：拖拽不直观、搜不了、移动端难操作。
+ * 新模式：
+ *   1. 左侧分组卡，点击选中（is-selected 高亮）。
+ *   2. 右侧根据 selectedGroup 显示「向 X 添加学派」+ 搜索框 + 全 schools checkbox 列表。
+ *   3. 勾选 → 学派进当前分组（如果已在另一分组，会自动从那移过来）；取消勾选 → 学派回到"未包含"。
+ *   4. 列表项右侧 hint 显示状态：已加入 / 在 OO 分组 / 未包含。
+ *   5. 分组卡内 chip 仍可见 + 单个 × 移除。
  *
- * 触发：document.dispatchEvent('view:editor', { detail: { viewId } })
- * 提交：PUT /api/edit/view/[discipline]/[id]
+ * 同时保留：
+ *   - icon / 视图名 / 视图说明 编辑（顶部 head）
+ *   - 添加分组 / 移除分组 按钮
+ *   - Esc 关闭 / 取消保存
  *
- * 用户角度："编辑视图说明" 不再单独提供，因为本编辑器顶部就有图标 / 名称 / 说明三件，
- *           跟 ViewMenu 里的 "编辑视图说明" 重复。
+ * Astro scope 防呆：所有 .ve-* 走 <style is:global> 配 `.ve-root` 前缀。
  */
 
 interface Props {
@@ -56,10 +55,10 @@ const { discipline, allSchools } = Astro.props;
       </div>
     </div>
 
-    {/* === Body: groups (left) | pool (right) === */}
+    {/* === Body: groups (left) | search-check (right) === */}
     <div class="ve-body">
       <div class="ve-left">
-        <div class="ve-left-hint">拖动学派可在分组间移动 · 点学派的 × 移到右侧池子</div>
+        <div class="ve-left-hint">点选左侧分组 → 在右侧搜索勾选学派</div>
         <div class="ve-groups" data-ve-groups>
           {/* 动态注入 */}
         </div>
@@ -67,13 +66,26 @@ const { discipline, allSchools } = Astro.props;
           <span class="ve-add-group-plus">+</span> 添加分组
         </button>
       </div>
-      <div class="ve-right" data-ve-pool data-drop-target="pool">
-        <div class="ve-pool-head">
-          <div class="ve-pool-title">未包含学派</div>
-          <div class="ve-pool-sub" data-ve-pool-count>0 个 · 拖到左侧分组放入</div>
+      <div class="ve-right">
+        <div class="ve-right-empty" data-ve-right-empty>
+          <div class="ve-right-empty-icon">←</div>
+          <div class="ve-right-empty-text">选中左侧分组开始添加学派</div>
         </div>
-        <div class="ve-pool-list" data-ve-pool-list>
-          {/* 动态注入 */}
+        <div class="ve-right-active hidden" data-ve-right-active>
+          <div class="ve-right-head">
+            <div class="ve-eyebrow">向以下分组添加学派</div>
+            <div class="ve-right-name" data-ve-right-name></div>
+            <div class="ve-right-stat" data-ve-right-stat></div>
+          </div>
+          <div class="ve-right-search-wrap">
+            <span class="ve-right-search-icon" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            </span>
+            <input class="ve-right-search" data-ve-right-search type="search" placeholder="搜索学派名（中文 / key）..." autocomplete="off" />
+          </div>
+          <div class="ve-right-list" data-ve-right-list>
+            {/* 动态注入：checkbox 行列表 */}
+          </div>
         </div>
       </div>
     </div>
@@ -81,7 +93,7 @@ const { discipline, allSchools } = Astro.props;
 </div>
 
 <style is:global>
-  /* === v0.5.80 全部 .ve-* 都走 is:global，因为 dynamic innerHTML 元素拿不到 Astro cid。
+  /* === v0.5.81：所有 .ve-* 走 is:global，因 dynamic innerHTML 元素拿不到 Astro cid。
      防泄漏靠 `.ve-root` 前缀 namespace。 === */
 
   .ve-root {
@@ -137,24 +149,11 @@ const { discipline, allSchools } = Astro.props;
     flex-shrink: 0;
     transition: background .12s, border-color .12s;
   }
-  .ve-root .ve-icon-trigger:hover {
-    background: #f5f5f4;
-    border-color: #d4d4d4;
-  }
-  .ve-root .ve-icon-trigger.is-open {
-    background: #fff;
-    border-color: #171717;
-  }
-  html.dark .ve-root .ve-icon-trigger {
-    background: var(--color-bg-secondary);
-    border-color: var(--color-border);
-  }
+  .ve-root .ve-icon-trigger:hover { background: #f5f5f4; border-color: #d4d4d4; }
+  .ve-root .ve-icon-trigger.is-open { background: #fff; border-color: #171717; }
+  html.dark .ve-root .ve-icon-trigger { background: var(--color-bg-secondary); border-color: var(--color-border); }
 
-  .ve-root .ve-head-name-block {
-    flex: 1;
-    min-width: 0;
-    display: flex; flex-direction: column; gap: 4px;
-  }
+  .ve-root .ve-head-name-block { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
   .ve-root .ve-eyebrow {
     font-size: 11px;
     color: #a3a3a3;
@@ -165,8 +164,7 @@ const { discipline, allSchools } = Astro.props;
   html.dark .ve-root .ve-eyebrow { color: var(--color-text-quaternary); }
 
   .ve-root .ve-name-input {
-    width: 100%;
-    box-sizing: border-box;
+    width: 100%; box-sizing: border-box;
     padding: 4px 0;
     border: none;
     border-bottom: 1.5px solid transparent;
@@ -184,9 +182,7 @@ const { discipline, allSchools } = Astro.props;
   html.dark .ve-root .ve-name-input:hover { border-bottom-color: var(--color-border); }
   html.dark .ve-root .ve-name-input:focus { border-bottom-color: var(--color-text-primary); }
 
-  .ve-root .ve-head-actions {
-    display: flex; gap: 8px; flex-shrink: 0;
-  }
+  .ve-root .ve-head-actions { display: flex; gap: 8px; flex-shrink: 0; }
   .ve-root .ve-btn-ghost {
     all: unset; cursor: pointer; padding: 8px 14px; border-radius: 8px;
     color: #525252; font-size: 13px;
@@ -202,10 +198,7 @@ const { discipline, allSchools } = Astro.props;
     transition: opacity .12s;
   }
   .ve-root .ve-btn-primary:hover { opacity: 0.88; }
-  html.dark .ve-root .ve-btn-primary {
-    background: var(--color-text-primary);
-    color: var(--color-bg-primary);
-  }
+  html.dark .ve-root .ve-btn-primary { background: var(--color-text-primary); color: var(--color-bg-primary); }
 
   .ve-root .ve-icon-pop {
     position: absolute;
@@ -221,10 +214,7 @@ const { discipline, allSchools } = Astro.props;
     max-width: 320px;
   }
   .ve-root .ve-icon-pop.hidden { display: none; }
-  html.dark .ve-root .ve-icon-pop {
-    background: var(--color-bg-secondary);
-    border-color: var(--color-border);
-  }
+  html.dark .ve-root .ve-icon-pop { background: var(--color-bg-secondary); border-color: var(--color-border); }
   .ve-root .ve-icon-pick {
     all: unset; cursor: pointer;
     width: 36px; height: 36px;
@@ -241,14 +231,9 @@ const { discipline, allSchools } = Astro.props;
     background: var(--color-bg-tertiary); border-color: var(--color-text-primary);
   }
 
-  /* desc */
-  .ve-root .ve-desc-block {
-    margin-top: 12px;
-    display: flex; flex-direction: column; gap: 4px;
-  }
+  .ve-root .ve-desc-block { margin-top: 12px; display: flex; flex-direction: column; gap: 4px; }
   .ve-root .ve-desc-input {
-    width: 100%;
-    box-sizing: border-box;
+    width: 100%; box-sizing: border-box;
     padding: 8px 12px;
     font-family: inherit;
     font-size: 13px;
@@ -273,7 +258,7 @@ const { discipline, allSchools } = Astro.props;
   .ve-root .ve-body {
     flex: 1;
     display: grid;
-    grid-template-columns: 1fr 360px;
+    grid-template-columns: 1fr 380px;
     overflow: hidden;
   }
   @media (max-width: 720px) {
@@ -282,7 +267,7 @@ const { discipline, allSchools } = Astro.props;
 
   /* === Left rail === */
   .ve-root .ve-left {
-    padding: 18px 20px 80px;
+    padding: 16px 20px 80px;
     overflow-y: auto;
   }
   .ve-root .ve-left-hint {
@@ -291,16 +276,12 @@ const { discipline, allSchools } = Astro.props;
     margin-bottom: 12px;
     letter-spacing: 0.02em;
   }
-  .ve-root .ve-groups {
-    display: flex; flex-direction: column; gap: 12px;
-  }
+  .ve-root .ve-groups { display: flex; flex-direction: column; gap: 12px; }
+
   .ve-root .ve-add-group {
     all: unset; cursor: pointer;
-    display: flex;
-    align-items: center; justify-content: center;
-    gap: 6px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
     width: 100%;
-    text-align: center;
     padding: 14px;
     border: 1px dashed #d4d4d4;
     border-radius: 12px;
@@ -311,9 +292,7 @@ const { discipline, allSchools } = Astro.props;
     transition: border-color .12s, color .12s, background .12s;
   }
   .ve-root .ve-add-group:hover {
-    border-color: #171717;
-    color: #171717;
-    background: #fafaf9;
+    border-color: #171717; color: #171717; background: #fafaf9;
   }
   .ve-root .ve-add-group-plus {
     font-size: 15px; font-weight: 500; line-height: 1; margin-top: -1px;
@@ -328,22 +307,29 @@ const { discipline, allSchools } = Astro.props;
   /* === Group card === */
   .ve-root .ve-group {
     background: #fff;
-    border: 1px solid #ececec;
+    border: 1.5px solid #ececec;
     border-radius: 12px;
     padding: 14px 16px;
-    transition: box-shadow .14s, border-color .14s;
+    cursor: pointer;
+    transition: border-color .14s, background .14s, box-shadow .14s;
   }
   .ve-root .ve-group:hover { border-color: #d4d4d4; }
+  .ve-root .ve-group.is-selected {
+    border-color: #171717;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(23,23,23,0.04);
+  }
   html.dark .ve-root .ve-group {
     background: var(--color-bg-primary);
     border-color: var(--color-border);
   }
+  html.dark .ve-root .ve-group.is-selected {
+    border-color: var(--color-text-primary);
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.06);
+  }
 
   .ve-root .ve-group-head {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 10px;
+    display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px;
   }
   .ve-root .ve-group-titles {
     flex: 1; min-width: 0;
@@ -361,6 +347,7 @@ const { discipline, allSchools } = Astro.props;
     font-weight: 600;
     color: #171717;
     transition: border-color .14s;
+    cursor: text;
   }
   .ve-root .ve-group-title:hover { border-bottom-color: #ececec; }
   .ve-root .ve-group-title:focus { border-bottom-color: #171717; }
@@ -376,6 +363,7 @@ const { discipline, allSchools } = Astro.props;
     font-family: inherit;
     font-size: 12px;
     color: #737373;
+    cursor: text;
   }
   .ve-root .ve-group-flow::placeholder { color: #d4d4d4; }
   html.dark .ve-root .ve-group-flow { color: var(--color-text-tertiary); }
@@ -389,192 +377,226 @@ const { discipline, allSchools } = Astro.props;
     flex-shrink: 0;
     transition: background .12s, color .12s;
   }
-  .ve-root .ve-group-remove:hover {
-    background: #fef2f2;
-    color: #dc2626;
-  }
-  html.dark .ve-root .ve-group-remove:hover {
-    background: rgba(239,68,68,0.15);
-    color: #ef4444;
-  }
+  .ve-root .ve-group-remove:hover { background: #fef2f2; color: #dc2626; }
+  html.dark .ve-root .ve-group-remove:hover { background: rgba(239,68,68,0.15); color: #ef4444; }
 
-  /* chips container */
+  /* chips inside group card — read-only-ish, click × to remove */
   .ve-root .ve-group-chips {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    padding: 10px;
-    background: #fafaf9;
-    border-radius: 8px;
-    min-height: 56px;
-    border: 1px dashed #ececec;
-    transition: background .12s, border-color .12s;
-  }
-  html.dark .ve-root .ve-group-chips {
-    background: var(--color-bg-secondary);
-    border-color: var(--color-border);
-  }
-  .ve-root .ve-group-chips.is-drop-over {
-    background: #f0f9ff;
-    border-color: #60a5fa;
-    border-style: solid;
-  }
-  html.dark .ve-root .ve-group-chips.is-drop-over {
-    background: rgba(96,165,250,0.12);
-    border-color: #60a5fa;
+    min-height: 0;
   }
   .ve-root .ve-group-chips-empty {
     font-size: 12px;
     color: #a3a3a3;
-    align-self: center;
-    padding: 4px 6px;
-    width: 100%;
-    text-align: center;
+    padding: 6px 0;
   }
 
-  /* school chip */
   .ve-root .ve-school-chip {
-    cursor: grab;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 5px 6px 5px 10px;
+    gap: 2px;
+    padding: 4px 4px 4px 10px;
     border-radius: 999px;
-    background: #fff;
-    border: 1px solid #ececec;
+    background: #f5f5f4;
+    border: 1px solid transparent;
     font-size: 12.5px;
     color: #171717;
     user-select: none;
     -webkit-user-select: none;
-    transition: border-color .12s, background .12s, transform .12s;
+    transition: background .12s, border-color .12s;
   }
-  .ve-root .ve-school-chip:active { cursor: grabbing; }
-  .ve-root .ve-school-chip:hover {
-    border-color: #d4d4d4;
+  .ve-root .ve-group.is-selected .ve-school-chip {
     background: #fafaf9;
+    border-color: #ececec;
   }
-  .ve-root .ve-school-chip.is-dragging {
-    opacity: 0.4;
-    transform: scale(0.96);
-  }
-  html.dark .ve-root .ve-school-chip {
-    background: var(--color-bg-primary);
-    border-color: var(--color-border);
-    color: var(--color-text-primary);
-  }
-  html.dark .ve-root .ve-school-chip:hover {
-    background: var(--color-bg-tertiary);
-    border-color: var(--color-text-quaternary);
-  }
+  html.dark .ve-root .ve-school-chip { background: var(--color-bg-tertiary); color: var(--color-text-primary); }
+  html.dark .ve-root .ve-group.is-selected .ve-school-chip { background: var(--color-bg-secondary); border-color: var(--color-border); }
+
   .ve-root .ve-school-chip-x {
-    width: 18px; height: 18px;
+    all: unset; cursor: pointer;
+    width: 20px; height: 20px;
     border-radius: 999px;
     display: inline-flex; align-items: center; justify-content: center;
     color: #a3a3a3;
     font-size: 14px;
     line-height: 1;
-    margin-left: 2px;
     transition: background .12s, color .12s;
   }
-  .ve-root .ve-school-chip:hover .ve-school-chip-x {
-    background: #f5f5f4;
-    color: #525252;
+  .ve-root .ve-school-chip-x:hover {
+    background: rgba(239,68,68,0.12);
+    color: #dc2626;
   }
 
-  /* === Pool (right rail) === */
+  /* === Right rail === */
   .ve-root .ve-right {
     border-left: 1px solid #ececec;
     background: #fff;
     display: flex;
     flex-direction: column;
-    transition: background .12s;
+    overflow: hidden;
   }
   html.dark .ve-root .ve-right {
     background: var(--color-bg-primary);
     border-left-color: var(--color-border);
   }
   @media (max-width: 720px) {
-    .ve-root .ve-right {
-      border-left: none;
-      border-top: 1px solid #ececec;
-    }
+    .ve-root .ve-right { border-left: none; border-top: 1px solid #ececec; min-height: 320px; }
     html.dark .ve-root .ve-right { border-top-color: var(--color-border); }
   }
-  .ve-root .ve-right.is-drop-over { background: #f0f9ff; }
-  html.dark .ve-root .ve-right.is-drop-over { background: rgba(96,165,250,0.12); }
 
-  .ve-root .ve-pool-head {
-    padding: 14px 16px;
+  /* empty state */
+  .ve-root .ve-right-empty {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 24px;
+    color: #a3a3a3;
+    text-align: center;
+  }
+  .ve-root .ve-right-empty.hidden { display: none; }
+  .ve-root .ve-right-empty-icon { font-size: 24px; margin-bottom: 8px; opacity: 0.5; }
+  .ve-root .ve-right-empty-text { font-size: 13px; }
+
+  /* active state */
+  .ve-root .ve-right-active {
+    display: flex; flex-direction: column; flex: 1; min-height: 0;
+  }
+  .ve-root .ve-right-active.hidden { display: none; }
+
+  .ve-root .ve-right-head {
+    padding: 14px 16px 12px;
     border-bottom: 1px solid #f1f1f0;
     flex-shrink: 0;
   }
-  html.dark .ve-root .ve-pool-head { border-bottom-color: var(--color-border); }
-  .ve-root .ve-pool-title {
-    font-size: 13px;
+  html.dark .ve-root .ve-right-head { border-bottom-color: var(--color-border); }
+  .ve-root .ve-right-name {
+    margin-top: 4px;
+    font-size: 14px;
     font-weight: 600;
     color: #171717;
+    word-wrap: break-word;
   }
-  html.dark .ve-root .ve-pool-title { color: var(--color-text-primary); }
-  .ve-root .ve-pool-sub {
+  html.dark .ve-root .ve-right-name { color: var(--color-text-primary); }
+  .ve-root .ve-right-stat {
+    margin-top: 4px;
     font-size: 11px;
     color: #a3a3a3;
-    margin-top: 3px;
   }
 
-  .ve-root .ve-pool-list {
-    flex: 1;
+  /* search */
+  .ve-root .ve-right-search-wrap {
+    position: relative;
+    padding: 10px 12px;
+    flex-shrink: 0;
+  }
+  .ve-root .ve-right-search-icon {
+    position: absolute;
+    left: 22px; top: 50%;
+    transform: translateY(-50%);
+    color: #a3a3a3;
+    pointer-events: none;
+  }
+  .ve-root .ve-right-search {
+    width: 100%; box-sizing: border-box;
+    padding: 7px 10px 7px 32px;
+    font-family: inherit;
+    font-size: 13px;
+    border: 1px solid #ececec;
+    border-radius: 8px;
+    background: #fafaf9;
+    color: #171717;
+    outline: none;
+    transition: border-color .14s, background .14s;
+  }
+  .ve-root .ve-right-search::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+  .ve-root .ve-right-search:focus {
+    border-color: #171717; background: #fff;
+  }
+  html.dark .ve-root .ve-right-search {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-border);
+    color: var(--color-text-primary);
+  }
+  html.dark .ve-root .ve-right-search:focus { background: var(--color-bg-primary); border-color: var(--color-text-primary); }
+
+  /* checklist */
+  .ve-root .ve-right-list {
+    flex: 1; min-height: 0;
     overflow-y: auto;
-    padding: 8px;
+    padding: 4px 8px 16px;
+  }
+  .ve-root .ve-right-list-empty {
+    padding: 24px 16px;
+    font-size: 12px;
+    color: #a3a3a3;
+    text-align: center;
   }
 
-  /* pool row — chip-style with drag handle */
-  .ve-root .ve-pool-row {
+  .ve-root .ve-check-row {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 7px 10px;
-    margin-bottom: 3px;
-    border-radius: 8px;
-    background: transparent;
-    cursor: grab;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    cursor: pointer;
     border: 1px solid transparent;
     transition: background .1s, border-color .1s;
     user-select: none;
     -webkit-user-select: none;
   }
-  .ve-root .ve-pool-row:hover {
+  .ve-root .ve-check-row:hover {
     background: #fafaf9;
-    border-color: #ececec;
   }
-  .ve-root .ve-pool-row:active { cursor: grabbing; }
-  .ve-root .ve-pool-row.is-dragging {
-    opacity: 0.4;
-    background: #f5f5f4;
+  html.dark .ve-root .ve-check-row:hover { background: var(--color-bg-secondary); }
+  .ve-root .ve-check-row.is-checked {
+    background: rgba(23,23,23,0.04);
   }
-  html.dark .ve-root .ve-pool-row:hover {
-    background: var(--color-bg-secondary);
-    border-color: var(--color-border);
+  html.dark .ve-root .ve-check-row.is-checked { background: rgba(255,255,255,0.04); }
+
+  .ve-root .ve-check-mark {
+    width: 18px; height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid #d4d4d4;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+    background: #fff;
+    transition: background .14s, border-color .14s;
+  }
+  .ve-root .ve-check-row.is-checked .ve-check-mark {
+    background: #171717;
+    border-color: #171717;
+  }
+  html.dark .ve-root .ve-check-mark { background: var(--color-bg-primary); border-color: var(--color-text-quaternary); }
+  html.dark .ve-root .ve-check-row.is-checked .ve-check-mark {
+    background: var(--color-text-primary);
+    border-color: var(--color-text-primary);
+    color: var(--color-bg-primary);
   }
 
-  .ve-root .ve-pool-handle {
-    color: #d4d4d4;
-    font-size: 13px;
-    line-height: 1;
-    flex-shrink: 0;
-  }
-  .ve-root .ve-pool-name {
+  .ve-root .ve-check-name {
     flex: 1;
     font-size: 13px;
-    color: #262626;
+    color: #171717;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  html.dark .ve-root .ve-pool-name { color: var(--color-text-primary); }
+  html.dark .ve-root .ve-check-name { color: var(--color-text-primary); }
 
-  .ve-root .ve-pool-empty {
-    font-size: 12px;
+  .ve-root .ve-check-hint {
+    font-size: 11px;
     color: #a3a3a3;
-    padding: 12px;
-    text-align: center;
+    flex-shrink: 0;
+    white-space: nowrap;
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
+  .ve-root .ve-check-hint.is-already { color: #15803d; }
+  .ve-root .ve-check-hint.is-elsewhere { color: #a16207; }
+  html.dark .ve-root .ve-check-hint.is-already { color: #4ade80; }
+  html.dark .ve-root .ve-check-hint.is-elsewhere { color: #fbbf24; }
 </style>
 
 <script is:inline>
@@ -586,9 +608,12 @@ const { discipline, allSchools } = Astro.props;
     const schoolByKey = Object.fromEntries(allSchools.map((s) => [s.key, s]));
 
     const groupsEl = root.querySelector('[data-ve-groups]');
-    const poolListEl = root.querySelector('[data-ve-pool-list]');
-    const poolCountEl = root.querySelector('[data-ve-pool-count]');
-    const poolEl = root.querySelector('[data-ve-pool]');
+    const rightEmpty = root.querySelector('[data-ve-right-empty]');
+    const rightActive = root.querySelector('[data-ve-right-active]');
+    const rightName = root.querySelector('[data-ve-right-name]');
+    const rightStat = root.querySelector('[data-ve-right-stat]');
+    const rightList = root.querySelector('[data-ve-right-list]');
+    const rightSearch = root.querySelector('[data-ve-right-search]');
     const nameEl = root.querySelector('[data-ve-name]');
     const descEl = root.querySelector('[data-ve-desc]');
     const iconTrigger = root.querySelector('[data-ve-icon-trigger]');
@@ -600,7 +625,8 @@ const { discipline, allSchools } = Astro.props;
     let groups = [];
     let pool = [];
     let icon = '📚';
-    let dragSchool = null;
+    let selectedGroupId = null;
+    let searchQ = '';
 
     function setIcon(v) {
       icon = v;
@@ -629,32 +655,11 @@ const { discipline, allSchools } = Astro.props;
       });
     });
 
-    function makeChip(s) {
-      const chip = document.createElement('div');
-      chip.className = 've-school-chip';
-      chip.setAttribute('draggable', 'true');
-      chip.setAttribute('data-school-id', s.key);
-      chip.title = '拖到其他分组 · 点击移到右侧池子';
-      chip.innerHTML = `<span>${s.cn}</span><span class="ve-school-chip-x">×</span>`;
-      chip.addEventListener('dragstart', (e) => {
-        dragSchool = s.key;
-        chip.classList.add('is-dragging');
-        if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
-      });
-      chip.addEventListener('dragend', () => {
-        chip.classList.remove('is-dragging');
-        dragSchool = null;
-        clearDropTargets();
-      });
-      chip.addEventListener('click', () => moveToPool(s.key));
-      return chip;
-    }
-
     function renderGroups() {
       groupsEl.innerHTML = '';
       groups.forEach((g) => {
         const card = document.createElement('div');
-        card.className = 've-group';
+        card.className = 've-group' + (g.id === selectedGroupId ? ' is-selected' : '');
         card.setAttribute('data-group-id', g.id);
 
         const head = document.createElement('div');
@@ -666,7 +671,9 @@ const { discipline, allSchools } = Astro.props;
         titleInp.className = 've-group-title';
         titleInp.value = g.title || '';
         titleInp.placeholder = '分组标题';
-        titleInp.addEventListener('input', (e) => { g.title = e.target.value; });
+        titleInp.addEventListener('input', (e) => { g.title = e.target.value; syncRightName(g); });
+        titleInp.addEventListener('click', (e) => e.stopPropagation());   // 不切选
+        titleInp.addEventListener('focus', () => selectGroup(g.id));
         titles.appendChild(titleInp);
 
         const flowInp = document.createElement('input');
@@ -674,6 +681,8 @@ const { discipline, allSchools } = Astro.props;
         flowInp.value = g.flow || '';
         flowInp.placeholder = '子流程描述（可选）';
         flowInp.addEventListener('input', (e) => { g.flow = e.target.value; });
+        flowInp.addEventListener('click', (e) => e.stopPropagation());
+        flowInp.addEventListener('focus', () => selectGroup(g.id));
         titles.appendChild(flowInp);
 
         head.appendChild(titles);
@@ -684,127 +693,183 @@ const { discipline, allSchools } = Astro.props;
         removeBtn.title = '移除此分组（学派回到右侧池子）';
         removeBtn.setAttribute('aria-label', '移除分组');
         removeBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
-        removeBtn.addEventListener('click', () => {
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
           pool = [...pool, ...g.schoolIds];
           groups = groups.filter((x) => x !== g);
-          renderGroups();
-          renderPool();
+          if (selectedGroupId === g.id) selectedGroupId = null;
+          renderAll();
         });
         head.appendChild(removeBtn);
-
         card.appendChild(head);
 
+        // chips
         const chipsEl = document.createElement('div');
         chipsEl.className = 've-group-chips';
-        chipsEl.setAttribute('data-ve-group-chips', '');
-        chipsEl.setAttribute('data-drop-target', g.id);
         if (g.schoolIds.length === 0) {
           const empty = document.createElement('div');
           empty.className = 've-group-chips-empty';
-          empty.textContent = '从右侧拖学派进来 →';
+          empty.textContent = g.id === selectedGroupId ? '右侧搜索勾选学派 →' : '点选此卡 → 右侧添加学派';
           chipsEl.appendChild(empty);
         } else {
           g.schoolIds.forEach((sid) => {
             const s = schoolByKey[sid];
             if (!s) return;
-            chipsEl.appendChild(makeChip(s));
+            const chip = document.createElement('span');
+            chip.className = 've-school-chip';
+            chip.innerHTML = `<span></span><button type="button" class="ve-school-chip-x" aria-label="从分组移除">×</button>`;
+            chip.firstElementChild.textContent = s.cn;
+            chip.querySelector('.ve-school-chip-x').addEventListener('click', (ev) => {
+              ev.stopPropagation();
+              g.schoolIds = g.schoolIds.filter((id) => id !== sid);
+              if (!pool.includes(sid)) pool.push(sid);
+              renderAll();
+            });
+            chipsEl.appendChild(chip);
           });
         }
-        bindDropTarget(chipsEl, g.id);
         card.appendChild(chipsEl);
+
+        // 整卡点击 = 选中
+        card.addEventListener('click', () => selectGroup(g.id));
 
         groupsEl.appendChild(card);
       });
     }
 
-    function renderPool() {
-      poolListEl.innerHTML = '';
-      poolCountEl.textContent = `${pool.length} 个 · 拖到左侧分组放入`;
-      if (pool.length === 0) {
-        const empty = document.createElement('div');
-        empty.className = 've-pool-empty';
-        empty.textContent = '所有学派都已加入视图';
-        poolListEl.appendChild(empty);
+    function selectGroup(id) {
+      if (selectedGroupId === id) {
+        renderRight();   // 已选中 → 仅刷新右栏（如分组刚 rename 时）
         return;
       }
-      pool.forEach((sid) => {
-        const s = schoolByKey[sid];
-        if (!s) return;
-        const row = document.createElement('div');
-        row.className = 've-pool-row';
-        row.setAttribute('draggable', 'true');
-        row.setAttribute('data-school-id', sid);
-        row.title = '拖到左侧分组放入';
-        const handle = document.createElement('span');
-        handle.className = 've-pool-handle';
-        handle.textContent = '⋮⋮';
-        const name = document.createElement('div');
-        name.className = 've-pool-name';
-        name.textContent = s.cn;
-        row.appendChild(handle);
-        row.appendChild(name);
-        row.addEventListener('dragstart', (e) => {
-          dragSchool = sid;
-          row.classList.add('is-dragging');
-          if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
-        });
-        row.addEventListener('dragend', () => {
-          row.classList.remove('is-dragging');
-          dragSchool = null;
-          clearDropTargets();
-        });
-        poolListEl.appendChild(row);
+      selectedGroupId = id;
+      // 切 is-selected 类不全 re-render（避免 input 失焦）
+      groupsEl.querySelectorAll('.ve-group').forEach((card) => {
+        card.classList.toggle('is-selected', card.getAttribute('data-group-id') === id);
       });
+      // 重置搜索
+      searchQ = '';
+      if (rightSearch) rightSearch.value = '';
+      renderRight();
     }
 
-    function clearDropTargets() {
-      root.querySelectorAll('[data-drop-target]').forEach((el) => {
-        el.classList.remove('is-drop-over');
-      });
-    }
-    function bindDropTarget(el, groupId) {
-      el.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        if (!dragSchool) return;
-        clearDropTargets();
-        el.classList.add('is-drop-over');
-      });
-      el.addEventListener('dragleave', () => {
-        el.classList.remove('is-drop-over');
-      });
-      el.addEventListener('drop', (e) => {
-        e.preventDefault();
-        clearDropTargets();
-        if (!dragSchool) return;
-        moveToGroup(dragSchool, groupId);
-      });
-    }
-
-    if (poolEl) bindDropTarget(poolEl, 'pool');
-
-    function moveToGroup(schoolId, targetGid) {
-      groups = groups.map((g) => ({ ...g, schoolIds: g.schoolIds.filter((id) => id !== schoolId) }));
-      pool = pool.filter((id) => id !== schoolId);
-      if (targetGid === 'pool') {
-        if (!pool.includes(schoolId)) pool = [...pool, schoolId];
-      } else {
-        const target = groups.find((g) => g.id === targetGid);
-        if (target) target.schoolIds.push(schoolId);
+    function syncRightName(g) {
+      // 标题改了，右栏 head 同步
+      if (selectedGroupId === g.id && rightName) {
+        rightName.textContent = g.title || '（未命名分组）';
       }
-      renderGroups();
-      renderPool();
     }
-    function moveToPool(schoolId) {
-      groups = groups.map((g) => ({ ...g, schoolIds: g.schoolIds.filter((id) => id !== schoolId) }));
-      if (!pool.includes(schoolId)) pool = [...pool, schoolId];
-      renderGroups();
-      renderPool();
+
+    function renderRight() {
+      const g = groups.find((x) => x.id === selectedGroupId);
+      if (!g) {
+        rightEmpty.classList.remove('hidden');
+        rightActive.classList.add('hidden');
+        return;
+      }
+      rightEmpty.classList.add('hidden');
+      rightActive.classList.remove('hidden');
+      rightName.textContent = g.title || '（未命名分组）';
+      rightStat.textContent = `已加入 ${g.schoolIds.length} 个 / 共 ${allSchools.length} 个学派`;
+
+      const q = (searchQ || '').trim().toLowerCase();
+      const matches = allSchools.filter((s) => {
+        if (!q) return true;
+        return s.cn.toLowerCase().includes(q) || s.key.toLowerCase().includes(q);
+      });
+
+      rightList.innerHTML = '';
+      if (matches.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 've-right-list-empty';
+        empty.textContent = '没有匹配的学派';
+        rightList.appendChild(empty);
+        return;
+      }
+
+      matches.forEach((s) => {
+        const inThis = g.schoolIds.includes(s.key);
+        const otherGroup = groups.find((gg) => gg.id !== g.id && gg.schoolIds.includes(s.key));
+
+        const row = document.createElement('div');
+        row.className = 've-check-row' + (inThis ? ' is-checked' : '');
+        row.setAttribute('role', 'checkbox');
+        row.setAttribute('aria-checked', inThis ? 'true' : 'false');
+        row.setAttribute('tabindex', '0');
+
+        const mark = document.createElement('span');
+        mark.className = 've-check-mark';
+        mark.innerHTML = inThis
+          ? '<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+          : '';
+        row.appendChild(mark);
+
+        const name = document.createElement('div');
+        name.className = 've-check-name';
+        name.textContent = s.cn;
+        row.appendChild(name);
+
+        const hint = document.createElement('div');
+        hint.className = 've-check-hint';
+        if (inThis) {
+          hint.classList.add('is-already');
+          hint.textContent = '已加入';
+        } else if (otherGroup) {
+          hint.classList.add('is-elsewhere');
+          hint.textContent = `在「${otherGroup.title || '未命名'}」`;
+        } else {
+          hint.textContent = '未分配';
+        }
+        row.appendChild(hint);
+
+        row.addEventListener('click', () => toggleInSelectedGroup(s.key));
+        row.addEventListener('keydown', (ev) => {
+          if (ev.key === ' ' || ev.key === 'Enter') {
+            ev.preventDefault();
+            toggleInSelectedGroup(s.key);
+          }
+        });
+        rightList.appendChild(row);
+      });
     }
+
+    function toggleInSelectedGroup(schoolId) {
+      const g = groups.find((x) => x.id === selectedGroupId);
+      if (!g) return;
+      if (g.schoolIds.includes(schoolId)) {
+        // 取消勾选 → 移到 pool
+        g.schoolIds = g.schoolIds.filter((id) => id !== schoolId);
+        if (!pool.includes(schoolId)) pool.push(schoolId);
+      } else {
+        // 勾选 → 加入此分组（若在其它分组 / pool 也清掉）
+        groups.forEach((gg) => { gg.schoolIds = gg.schoolIds.filter((id) => id !== schoolId); });
+        pool = pool.filter((id) => id !== schoolId);
+        g.schoolIds.push(schoolId);
+      }
+      // 只 re-render 右栏 + 当前分组的 chips（保 input focus 在右栏 search）
+      renderGroups();
+      renderRight();
+      // 保 search input 焦点
+      if (document.activeElement !== rightSearch && rightSearch) {
+        // 不强制夺焦，让用户继续点
+      }
+    }
+
+    function renderAll() {
+      renderGroups();
+      renderRight();
+    }
+
+    rightSearch && rightSearch.addEventListener('input', (e) => {
+      searchQ = e.target.value || '';
+      renderRight();
+    });
 
     root.querySelector('[data-ve-add-group]').addEventListener('click', () => {
       const id = 'g' + Date.now().toString(36);
       groups.push({ id, title: '新分组', flow: '', schoolIds: [] });
-      renderGroups();
+      selectedGroupId = id;
+      renderAll();
       const last = groupsEl.querySelector('.ve-group:last-child .ve-group-title');
       if (last) {
         last.focus();
@@ -832,8 +897,11 @@ const { discipline, allSchools } = Astro.props;
       setIcon(v.icon || '📚');
       if (nameEl) nameEl.value = v.name || '';
       if (descEl) descEl.value = v.description || '';
-      renderGroups();
-      renderPool();
+      // 默认选中第一个分组（用户来直接能用）
+      selectedGroupId = groups[0]?.id ?? null;
+      searchQ = '';
+      if (rightSearch) rightSearch.value = '';
+      renderAll();
       root.classList.remove('hidden');
     });
 
