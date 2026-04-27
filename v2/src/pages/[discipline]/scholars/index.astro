@@ -92,10 +92,11 @@ const groupKeys = Array.from(grouped.keys()).sort((a, b) => {
         <h2 class="section-eyebrow is-sticky">{k}</h2>
         <ul class="space-y-0">
           {grouped.get(k)!.map((s) => (
-            <li>
+            <li class:list={[s.kp_count === 0 && 'opacity-50']}>
               <a
                 href={`/${discipline}/scholars/${s.key}`}
                 class="flex items-baseline justify-between gap-3 py-2 px-2 border-b border-dashed border-bg-tertiary hover:bg-bg-tertiary/40 rounded-sm no-underline transition-colors"
+                title={s.kp_count === 0 ? '暂无关联知识点' : undefined}
               >
                 <div class="min-w-0 flex-1">
                   <div class="flex items-baseline gap-2 flex-wrap">
@@ -119,7 +120,16 @@ const groupKeys = Array.from(grouped.keys()).sort((a, b) => {
                     </div>
                   )}
                 </div>
-                <span class="text-xs text-quaternary whitespace-nowrap font-variant-tabular">{s.kp_count} KP</span>
+                <span
+                  class:list={[
+                    'text-xs whitespace-nowrap font-variant-tabular shrink-0 px-2 py-0.5 rounded-full',
+                    s.kp_count === 0
+                      ? 'bg-bg-tertiary text-quaternary'
+                      : s.kp_count >= 5
+                        ? 'bg-badge-meaning text-accent-classic'
+                        : 'bg-bg-secondary text-tertiary',
+                  ]}
+                >{s.kp_count} KP</span>
               </a>
             </li>
           ))}

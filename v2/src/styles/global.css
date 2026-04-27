@@ -32,8 +32,8 @@ html.dark {
   color-scheme: dark;
   --color-text-primary: #f2f2f7;
   --color-text-secondary: #d1d1d6;
-  --color-text-tertiary: #98989d;
-  --color-text-quaternary: #6d6d72;
+  --color-text-tertiary: #a8a8ad;
+  --color-text-quaternary: #85858a;
   --color-bg-primary: #1a1a1c;
   --color-bg-secondary: #202022;
   --color-bg-tertiary: #2a2a2e;
@@ -78,6 +78,13 @@ html.dark {
   /* strong 在正文里作为"加粗关键词"使用（v1 设计语言） */
   strong {
     @apply text-primary font-semibold;
+  }
+
+  /* v0.5.42 全局 focus ring（键盘 nav / iPad 蓝牙键盘可见焦点）*/
+  :focus-visible {
+    outline: 2px solid var(--accent-strategy, #3b82f6);
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 }
 
