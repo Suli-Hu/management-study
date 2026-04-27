@@ -973,6 +973,14 @@ details.eval {
   .split { grid-template-columns: 1fr; }
   .split > .right { display: none; }
   .split > .left { border-right: 0; }
+  /* v0.5.48: 手机/平板右栏 hidden 时，左栏 KP 列表的 default-active state
+     失去意义（用户根本看不到右栏 KP detail），却让"第一个 KP 永远高亮"
+     看起来像 bug。reset 视觉，点 KP 直接跳 standalone /kp/[id]。 */
+  .optA-kp.is-active {
+    background: var(--color-bg-primary);
+    border-color: var(--color-border);
+    box-shadow: none;
+  }
 }
 
 /* 触屏设备 hit area ≥ 44px (Apple HIG) — 视觉尺寸不变，仅扩点击区 */

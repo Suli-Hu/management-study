@@ -163,20 +163,20 @@ const canEdit = Astro.locals.canEdit(discipline);
         </div>
       </div>
 
-      {/* 概述（可折叠 + sticky）*/}
+      {/* 概述（默认折叠 — v0.5.48）*/}
       {sch.summary_zh && (
-        <section class="optA-summary-wrap" data-collapse-section="summary">
-          <button class="optA-section-head--btn" type="button" aria-expanded="true" data-collapse-toggle data-d-stick="summary">
+        <section class="optA-summary-wrap is-collapsed" data-collapse-section="summary">
+          <button class="optA-section-head--btn" type="button" aria-expanded="false" data-collapse-toggle data-d-stick="summary">
             <h2>概述</h2>
             <span class="optA-collapse-chev">▾</span>
           </button>
-          <div class="optA-summary" data-collapse-body>{sch.summary_zh}</div>
+          <div class="optA-summary" data-collapse-body style="display:none">{sch.summary_zh}</div>
         </section>
       )}
 
-      {/* 代表学者（可折叠 + sticky）*/}
-      <section class="optA-block" data-collapse-section="scholars">
-        <button class="optA-section-head--btn" type="button" aria-expanded="true" data-collapse-toggle data-d-stick="scholars">
+      {/* 代表学者（默认折叠 — v0.5.48）*/}
+      <section class="optA-block is-collapsed" data-collapse-section="scholars">
+        <button class="optA-section-head--btn" type="button" aria-expanded="false" data-collapse-toggle data-d-stick="scholars">
           <h2>代表学者</h2>
           <span class="optA-count">{schoolScholars.length}</span>
           <span class="optA-collapse-chev">▾</span>
@@ -189,7 +189,7 @@ const canEdit = Astro.locals.canEdit(discipline);
             >+ 新增</a>
           )}
         </button>
-        <ul class="optA-scholars" data-collapse-body>
+        <ul class="optA-scholars" data-collapse-body style="display:none">
           {schoolScholars.length === 0 ? (
             <li class="text-xs text-quaternary px-2 py-1">暂无关联学者。</li>
           ) : schoolScholars.map((s) => (
