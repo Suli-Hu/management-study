@@ -782,13 +782,14 @@ html.dark .optA-hero-v2 {
   box-shadow: inset 3px 0 0 var(--accent, var(--color-text-quaternary));
 }
 .optA-kp-summary {
-  display: grid;
-  grid-template-columns: 0 1fr;
+  /* v0.5.52 改 flex（之前 grid 在桌面 chev display:none 时 1fr 列没人占，
+     a.optA-kp-link 被压到 0px 导致中文一字一行）*/
+  display: flex;
+  align-items: flex-start;
   gap: 0;
   padding: 10px 12px;
   list-style: none;
   cursor: pointer;
-  align-items: flex-start;
 }
 .optA-kp-summary::-webkit-details-marker { display: none; }
 .optA-kp-chev {
@@ -796,9 +797,13 @@ html.dark .optA-hero-v2 {
   transition: transform .15s;
   display: none;          /* 桌面隐藏 */
   margin-top: 5px;
+  flex-shrink: 0;
 }
 .optA-kp[open] > .optA-kp-summary > .optA-kp-chev { transform: rotate(90deg); }
-.optA-kp-link { color: inherit; text-decoration: none; display: block; min-width: 0; }
+.optA-kp-link {
+  color: inherit; text-decoration: none; display: block;
+  flex: 1; min-width: 0;   /* flex:1 占满剩余 + min-width:0 让 child 能 shrink */
+}
 .optA-kp-inline-body {
   display: none;          /* 桌面强制 hide（split layout 右栏负责显示 KP detail） */
   padding: 0 14px 14px;
@@ -1121,7 +1126,7 @@ html.dark .optA-hero-v2 {
     box-shadow: none;
   }
   /* v0.5.49: 手机端 details 展开 inline body，summary 显示 chev */
-  .optA-kp-summary { grid-template-columns: 16px 1fr; gap: 8px; }
+  .optA-kp-summary { gap: 8px; }
   .optA-kp-chev { display: inline; }
   .optA-kp[open] > .optA-kp-inline-body { display: block; }
   /* v0.5.51 手机端 KP open 视觉浮起：阴影 + 10px gap 推开下一张 KP 的 head
