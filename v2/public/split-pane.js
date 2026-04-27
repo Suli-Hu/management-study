@@ -130,10 +130,16 @@
       });
     });
 
-    // v0.5.61 键位语义重排：
+    // v0.5.62 键位语义重排：
     //   ←/→  切 KP（前一/后一，到头/到尾即停，不循环）
     //   ↑/↓  滚右栏 detailPane（KP 阅读区），不再切 KP
-    // 之前 ↑/↓ 切 KP 与读长内容的滚动需求冲突；←/→ 在原始设计里没用上，正好挪过来。
+    //
+    // v0.5.63 修两 bug：
+    //   1) 选择器：`.kp-list-item` 在 school 页是 <details>，没有 data-kp-id（在 <li> 父上）→
+    //      getAttribute 返回 null。改用 `.left [data-kp-id]` 直接抓 <li>。
+    //   2) current source：以前用 URLSearchParams ?kp=（首次进页 URL 里没 ?kp=）→
+    //      curIdx=-1，baseIdx=-1，next=0，但 activeKpId 内部已是 items[0].id →
+    //      setActiveImmediate 走 early-return → 无反应。改用 closure activeKpId（真源）。
     document.addEventListener('keydown', (e) => {
       if (!MQ.matches) return;
       const tag = e.target?.tagName;
@@ -141,20 +147,18 @@
 
       // ←/→ 切 KP（边界 stop，不 wrap）
       if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-        const items = Array.from(document.querySelectorAll('.kp-list-item'));
+        const items = Array.from(document.querySelectorAll('.left [data-kp-id]'));
         if (!items.length) return;
-        const current = new URLSearchParams(location.search).get('kp');
-        const curIdx = items.findIndex((el) => el.getAttribute('data-kp-id') === current);
-        // 找不到 current（首次进页且没 ?kp= 参数）— 把 ← 当作"留在第 0 个"，→ 当作"去 1"
+        const curIdx = items.findIndex((el) => el.getAttribute('data-kp-id') === activeKpId);
+        // 找不到 active（防御 fallback，正常应该有）— ← 留 0，→ 去 1
         const baseIdx = curIdx < 0 ? (e.key === 'ArrowRight' ? -1 : 0) : curIdx;
         const next = baseIdx + (e.key === 'ArrowRight' ? 1 : -1);
-        if (next < 0 || next >= items.length) return;   // 到头/到尾，吃掉键但不动
-        e.preventDefault();
+        if (next < 0 || next >= items.length) return;   // 到头/到尾，让默认行为 / no-op
         const nextId = items[next].getAttribute('data-kp-id');
-        if (nextId && nextId !== current) {
-          showKpInPane(nextId);
-          items[next].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-        }
+        if (!nextId || nextId === activeKpId) return;
+        e.preventDefault();
+        showKpInPane(nextId);
+        items[next].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         return;
       }
 
