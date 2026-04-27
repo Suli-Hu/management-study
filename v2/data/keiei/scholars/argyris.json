@@ -3,12 +3,10 @@
   "discipline": "keiei",
   "name": {
     "zh": "克里斯·阿吉里斯",
-    "en": "Chris Argyris",
-    "ja": "クリス・アージリス"
+    "ja": "クリス・アージリス",
+    "en": "Chris Argyris"
   },
-  "schools": [
-    "org_learning"
-  ],
+  "schools": [],
   "contribution": {
     "zh": "阿吉里斯是组织学习领域最重要的思想家之一。他与肖恩（Donald Schön）合著《组织学习》（Organizational Learning，1978），提出单环/双环学习区分，揭示了为什么聪明人和成功组织往往陷入学习失灵——正是防御性推理阻止了真正的双环学习。他对「行动理论」（奉行理论 vs 使用理论）的区分至今仍是组织诊断和管理培训的重要工具。他在哈佛工作超过40年，对塞格（Senge）的学习型组织理论产生了直接影响。是経営学大学院組織学習論的核心考点之一。"
   },
@@ -20,10 +18,11 @@
   "flag": "🇺🇸",
   "origin": "美国纽约",
   "field": "组织学习 · 行动科学 · 防御性推理",
-  "nobel": null,
-  "createdAt": "2026-04-24T16:21:30.256Z",
-  "updatedAt": "2026-04-24T16:21:30.256Z",
   "tags": [
     "t_93nqjd"
-  ]
+  ],
+  "nobel": null,
+  "kpsOrder": [],
+  "createdAt": "2026-04-24T16:21:30.256Z",
+  "updatedAt": "2026-04-27T10:05:26.784Z"
 }
