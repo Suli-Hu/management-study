@@ -1,7 +1,7 @@
 {
   "id": "school-groups",
   "discipline": "keiei",
-  "name": "学派组",
+  "name": "全集",
   "jp": "学派グループ",
   "icon": "📚",
   "description": "默认视图。所有学派全集。",
@@ -146,5 +146,5 @@
     }
   ],
   "createdAt": "2026-04-27T10:42:16.984Z",
-  "updatedAt": "2026-04-27T17:05:41.152Z"
+  "updatedAt": "2026-04-27T17:32:49.851Z"
 }
