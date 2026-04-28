@@ -62,6 +62,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const env = context.locals.runtime?.env;
   const url = new URL(context.request.url);
 
+  // v0.6.4 域名规范化：旧 management-study-v2.pages.dev → 301 study.sususu.org
+  //   仅页面路径 redirect，/api/* 保留两边可用（webhook + agent token 调用）
+  //   POST/PUT 等 state-changing 走 redirect 会变 GET，所以 API 不动
+  if (url.host === 'management-study-v2.pages.dev' && !url.pathname.startsWith('/api/')) {
+    url.host = 'study.sususu.org';
+    url.protocol = 'https:';
+    return Response.redirect(url.toString(), 301);
+  }
+
   // === CSRF Origin check（state-changing 请求） ===
   if (!isOriginAllowed(context.request, url, env?.APP_URL)) {
     return new Response('Forbidden: bad Origin', { status: 403 });
