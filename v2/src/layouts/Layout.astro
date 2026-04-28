@@ -63,6 +63,15 @@ const fullTitle = title === '全科笔记' ? title : `${title} · 全科笔记`;
       mountToastSystem();
     </script>
 
+    {/* v0.5.91：编辑后两个 UX 收尾
+        1) 编辑按钮 cooldown 拦截 — 90s 内同 KP 再点 → toast 阻断 + 倒计时
+        2) just-edited 高亮 — 跳回带 ?just-edited=<id> 时，找卡 → 触发 ring 动效 */}
+    <script>
+      import { installEditButtonCooldownInterceptor, highlightJustEditedKp } from '~/lib/just-edited-client';
+      installEditButtonCooldownInterceptor();
+      highlightJustEditedKp();
+    </script>
+
     {/* v0.5.79：lang-toggle 全局拦截 — 把 ?lang=ja 链接的 click 改成 fetch + DOM 选择性 swap，
         保留滚动位置 + 已展开 <details>。FAB 与 Cmd+J 都 .click() anchor，自动经过此拦截。 */}
     <script>

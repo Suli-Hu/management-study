@@ -805,6 +805,32 @@ details.eval {
   flex: 1; min-width: 0;
 }
 /* v0.5.87 加的 :focus-visible accent ring 已被 v0.5.90 全局 outline:none 覆盖，无需保留 */
+
+/* === v0.5.91 just-edited ring 动效 ===
+   编辑保存后跳回 list/view 页时，由 just-edited-client.ts 给目标卡加
+   .is-just-edited class，触发 1.6s 脉冲。颜色用 KP 自己的 tag 色
+   (--tag-color, 由 client 注入；默认走 quaternary 灰兜底)。 */
+.is-just-edited {
+  --tag-color: var(--color-text-quaternary);
+  position: relative;
+  z-index: 2;            /* box-shadow ring 不被相邻卡遮挡 */
+  animation: kp-just-edited-ring 1600ms ease-out;
+  border-radius: 8px;    /* 让 box-shadow 形成 rounded ring（list 页 .optA-kp 无 radius，view 页 main 也是） */
+}
+@keyframes kp-just-edited-ring {
+  0% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  25% {
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--tag-color) 22%, transparent);
+  }
+  60% {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--tag-color) 12%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
 .optA-kp-inline-body {
   display: none;          /* 桌面强制 hide（split layout 右栏负责显示 KP detail） */
   padding: 0 14px 14px;

@@ -198,6 +198,7 @@ const canEdit = Astro.locals.canEdit(discipline);
                 {canEdit && (
                   <a
                     href={editHref(`/${discipline}/kp/${selectedKp.id}/edit`, Astro.url.pathname)}
+                    data-edit-kp-link={selectedKp.id}
                     class="hero-icon-btn shrink-0"
                     aria-label={`编辑 ${selectedTitle}`}
                     title="编辑"
@@ -427,6 +428,7 @@ const canEdit = Astro.locals.canEdit(discipline);
                   {canEdit && (
                     <a
                       href={editHref(`/${discipline}/kp/${selectedKp.id}/edit`, Astro.url.pathname)}
+                      data-edit-kp-link={selectedKp.id}
                       class="hero-icon-btn shrink-0"
                       aria-label={`编辑 ${selectedTitle}`}
                       title="编辑"

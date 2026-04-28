@@ -33,11 +33,12 @@ interface ToastOpts {
   showClose?: boolean;
 }
 
+// v0.5.91 Style C：info 用极弱的「·」（视觉几乎消失），其它类型保留语义 icon
 const ICONS: Record<ToastType, string> = {
   success: '✓',
   error: '✗',
   warning: '⏱',
-  info: 'ℹ',
+  info: '·',
 };
 
 const DEFAULT_DURATION: Record<ToastType, number> = {

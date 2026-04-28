@@ -83,13 +83,15 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
 ---
 
 <Layout title={kp.title_zh} currentDiscipline={discipline} currentSection="kps">
-  <main class="max-w-reading mx-auto px-4 py-6">
+  {/* v0.5.91: data-kp-id 让 just-edited highlight client 能定位到这页（保存后跳回有 ?just-edited） */}
+  <main class="max-w-reading mx-auto px-4 py-6" data-kp-id={kp.id}>
     <header class="mb-6 pb-4 border-b">
       <div class="flex items-start gap-3">
         <h1 class="page-hero-title flex-1 mb-2">{title}</h1>
         {Astro.locals.canEdit(discipline) && (
           <a
             href={editHref(`/${discipline}/kp/${kp.id}/edit`, Astro.url.pathname)}
+            data-edit-kp-link={kp.id}
             class="hero-icon-btn shrink-0"
             aria-label="编辑此 KP"
             title="编辑"

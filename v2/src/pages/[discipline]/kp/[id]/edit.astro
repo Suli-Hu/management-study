@@ -185,7 +185,7 @@ const allScholars = scholarsResult.results ?? [];
   import { mountMultiSelect } from '~/lib/multi-select-client';
   import { mountTagSinglePicker } from '~/lib/tag-single-picker-client';
   import { formatZodIssues } from '~/lib/zod-errors-zh';
-  import { watchDeploy } from '~/lib/deploy-progress-client';
+  import { setKpCooldown } from '~/lib/just-edited-client';
 
   const $ = (s) => document.querySelector(s);
   const root = document.querySelector('.kpedit-C');
@@ -212,7 +212,6 @@ const allScholars = scholarsResult.results ?? [];
   let evalContent = { zh: {}, ja: {} };
   let evalLang = 'zh';
   let tagPicker = null;
-  let _deployWatcher = null;
 
   // ========== Multi-selects ==========
   function initMultiSelects() {
@@ -414,7 +413,7 @@ const allScholars = scholarsResult.results ?? [];
     if (e) e.preventDefault();
     const json = collect();
     if (json.schools.length === 0) {
-      saveStatus.innerHTML = '<span style="color:#FF3B30">学派必选 ≥1（KP 不能成孤儿）</span>';
+      window.toast?.error('学派必选 ≥1（KP 不能成孤儿）');
       return;
     }
     saveBtn.disabled = true;
@@ -426,24 +425,33 @@ const allScholars = scholarsResult.results ?? [];
     });
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
-      if (_deployWatcher) _deployWatcher.stop();
-      _deployWatcher = watchDeploy({ statusEl: saveStatus, commitSha: data.commit_sha, savedAtIso: new Date().toISOString() });
-      saveStatus.insertAdjacentHTML('beforeend', ` · <a href="${fromPath}" class="text-accent-strategy hover:underline">完成 → 返回${fromLbl}</a>`);
-      baseSha = data.new_blob_sha;
+      // v0.5.91：API 双写 D1 已让数据立即生效。
+      //   1) toast 反馈 → 2) 写 cooldown → 3) 1.5s 后跳回 fromPath?just-edited=<kpId>
+      //   跳转用 location.href 强制 SSR 重拉（拿到刚 D1 直写的新数据）
+      window.toast?.success('已保存');
+      setKpCooldown(kpId);
+      saveStatus.textContent = '已保存，跳回上一页…';
+      const target = fromPath + (fromPath.includes('?') ? '&' : '?') + 'just-edited=' + encodeURIComponent(kpId);
+      setTimeout(() => { location.href = target; }, 1500);
     } else if (res.status === 409) {
-      saveStatus.innerHTML = `<span style="color:#FF3B30">冲突：文件已被其它修改（current_sha=${data.current_sha?.slice(0, 7)}），请刷新</span>`;
+      window.toast?.error(`冲突：文件已被其它修改（current_sha=${data.current_sha?.slice(0, 7) ?? '?'}），请刷新`);
+      saveStatus.textContent = '';
+      saveBtn.disabled = false;
     } else if (res.status === 422) {
       const lines = formatZodIssues(data.detail);
-      saveStatus.innerHTML = `<span style="color:#FF3B30">字段校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
+      window.toast?.error(`字段校验失败：${lines.join('；')}`);
+      saveStatus.textContent = '';
+      saveBtn.disabled = false;
     } else {
-      saveStatus.innerHTML = `<span style="color:#FF3B30">${res.status} ${data.reason ?? 'error'}: ${String(data.detail ?? '').slice(0, 80)}</span>`;
+      window.toast?.error(`${res.status} ${data.reason ?? 'error'}: ${String(data.detail ?? '').slice(0, 80)}`);
+      saveStatus.textContent = '';
+      saveBtn.disabled = false;
     }
-    saveBtn.disabled = false;
   }
   async function del() {
     if (deleteBtn.disabled) return;
     const cascadeStr = cascadeMsg ? '\n\n级联影响：\n• ' + cascadeMsg.replace(/\n/g, '\n• ') : '';
-    if (!confirm(`确认硬删除 KP「${kpId}」？\n\n• 进 git history 可 revert\n• ~90 秒后线上消失${cascadeStr}`)) return;
+    if (!confirm(`确认硬删除 KP「${kpId}」？\n\n• 进 git history 可 revert${cascadeStr}`)) return;
     deleteBtn.disabled = true;
     deleteBtn.textContent = '删除中...';
     const res = await fetch(`/api/edit/kp/${kpId}`, {
@@ -453,10 +461,11 @@ const allScholars = scholarsResult.results ?? [];
     });
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
-      alert(`✓ 已删除 KP/${kpId}\ncommit ${data.commit_sha?.slice(0, 7)}`);
-      location.href = fromPath;
+      // v0.5.91：D1 双删已让 KP 立刻消失，toast + 1s 后跳回 fromPath（不带 just-edited）
+      window.toast?.success(`已删除 KP/${kpId}`);
+      setTimeout(() => { location.href = fromPath; }, 1000);
     } else {
-      alert(`删除失败：${res.status} ${data.reason ?? 'error'}`);
+      window.toast?.error(`删除失败：${res.status} ${data.reason ?? 'error'}`);
       deleteBtn.disabled = false;
       deleteBtn.textContent = '删除';
     }
