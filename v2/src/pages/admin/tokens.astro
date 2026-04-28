@@ -317,6 +317,9 @@ const disciplines = (await db
     justify-content: center;
     padding: 20px;
   }
+  /* v0.5.97: 修 CSS specificity bug — Tailwind .hidden 是 utility layer，
+     被本 layer 的 display:flex 覆盖。加 .reveal-overlay.hidden 拉高 specificity 显式 none */
+  .reveal-overlay.hidden { display: none; }
   .reveal-card {
     background: var(--color-bg-primary);
     border-radius: 12px;
