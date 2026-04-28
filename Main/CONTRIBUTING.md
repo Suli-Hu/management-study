@@ -114,17 +114,21 @@
 
 KP / 学者 / 学派 各自一个 JSON 文件，存在 `v2/data/{discipline}/{kp,scholars,schools}/{key}.json`。
 
-**两条等价的写路径**：
+**两条等价的写路径**（v0.5.92 起两条都 ~3s 生效）：
 
-1. **本地编辑 JSON + git commit**（learning agent 推荐）
+1. **本地编辑 JSON + git commit + sync API**（learning agent 路径） ⭐
    - 直接编辑 `v2/data/keiei/kp/k627.json`
    - 跑 `cd v2 && pnpm validate`（zod schema + cross-ref 校验，含 themeKey 必须 ∈ discipline.themes[].key）
-   - `git add v2/data/.../k627.json && git commit -m "..."` → push 到 main → GitHub Actions 自动 sync 到 D1
-   - ~90s 后线上生效
+   - `git add v2/data/.../k627.json && git commit -m "..." && git push origin main`
+   - **必须调** `curl -X POST -H "Cookie: <admin>" .../api/sync-kp-from-git/keiei/k627`
+     → 服务端从 GitHub 拉文件 + 直写 D1，**~3s 线上生效**
+   - 不调 sync API → 数据要等 GitHub Actions 跑完 (~90s)
+   - **完整 step-by-step 见 `v2/LEARNING_KP_GUIDE.md`**
 
 2. **admin UI 编辑器**（用户日常用）
    - 访问 `/keiei/kp/new` 或 `/keiei/kp/{id}/edit`
-   - 表单 → POST/PUT `/api/edit/...` → 后端 schema 校验 → GitHub commit → 自动部署
+   - 表单 → POST/PUT `/api/edit/...` → 后端 schema 校验 → GitHub commit + D1 双写（v0.5.89）→ ~3s 生效
+   - 编辑成功 toast → 跳回 fromPath?just-edited=<id> → ring 高亮（v0.5.91）
    - 删学派/学者前 0-KP gate（v0.4.18/19）
 
 ### KP / 学者 / 学派 三类的字段（v2 schema）
@@ -152,27 +156,27 @@ V2: `scholars: ["cyert", "march"]` 数组（V1 是 `scholar: "cyert,march"` 逗�
 
 ---
 
-## 4. 卡片表（CardTable）组件
+## 4. KP body 5 种 format（v2 完整体系）
 
-| 组件 | 语法 | 描述 |
-|---|---|---|
-| 对比卡片 | `<compare>col1\|\|col2\|\|col3</compare>` | 翻转卡片，列数自动适配 |
-| 四象限 | `<quad>Y轴,X轴\|\|cell1\|\|cell2\|\|cell3\|\|cell4</quad>` | 支持二分和连续两种模式 |
-| 手风琴 | `<br>【标题】<br>①...` | 折叠分组 |
-| 平铺列表 | `◆item1◆item2` | 自动编号 |
+> **⚠️ v1 时代的"卡片表组件"语法已迭代到 v2 的 5 种 format 体系**。
+> learning agent 写 KP 一律走以下 5 种 format。每种都有完整 example：
+> `v2/data/keiei/kp/_template.<format>.json`（直接 copy 起手）
+> 详细字段说明 + 写法见 `v2/LEARNING_KP_GUIDE.md` §3。
 
-### compare字段格式
-```
-title|keyword|desc|type|theories|detail(翻面)
-```
+| format | 适用场景 | body 结构 | 模板 |
+|---|---|---|---|
+| **narrative** | 连续叙事的概念解释 | 自由文本 + `<strong>` 加粗 | `_template.narrative.json` |
+| **flat-list** | 并列要点 | `lead：◆name1——desc1◆name2——desc2` | `_template.flat-list.json` |
+| **accordion** | 多组多要点 | `lead：<br>【组1】<br>①...<br>②...<br>【组2】<br>...` | `_template.accordion.json` |
+| **compare** | 多对象横向对比 | `lead：<compare>title\|kw\|desc\|type\|theories\|detail\|\|...</compare>` | `_template.compare.json` |
+| **quad** | 二维矩阵（BCG / SWOT） | `lead：<quad>yAxis,xAxis\|\|name\|emoji\|sub\|detail\|\|...</quad>` | `_template.quad.json` |
 
-### quad二分模式
-- 轴格式用 `/` 分隔：`优势/劣势,威胁/机会`
-- 每格只有一个字段（纯文本，不翻面）
+### 评价段两种写法（推荐 evalContent 字段）
 
-### quad连续模式
-- 轴格式用 `→` 分隔：`市場成長率 低→高`
-- 每格4字段：`name|emoji|sub|detail`（有翻面）
+老写法（兼容）：body 末尾写 `◆意义——XX◆局限——YY`
+新写法（推荐）：单独 `evalContent.zh.{义,限,例,应,用,喻}` 字段，body 干净
+
+详见 `v2/LEARNING_KP_GUIDE.md` §4。
 
 ### 卡片视觉规范（compare / quad 通用）
 

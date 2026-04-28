@@ -49,13 +49,20 @@
 
 ## 开始工作前
 
-> **⚠️ V1（Main/data.js）已停用读写。线上是 v2/。learning agent 写新 KP 走 v2/data/keiei/kp/{id}.json + git commit。**
+> **⚠️ V1（Main/data.js）已停用读写。线上是 v2/。learning agent 写新 KP 走 v2/data/keiei/kp/{id}.json + git commit + 调 sync API。**
 
 每次修改数据/UI 之前，先读取 `CONTRIBUTING.md` §3 V2 数据流程 + §8 KP 生成 6 原则，特别是：
 - KP 三层信息架构（导语→核心内容→评价标签）
 - 日文版学术用语对照表（不能直接翻译中文）
-- V2 数据流程（编辑 v2/data/.../*.json + pnpm validate + git commit）
+- V2 数据流程（编辑 v2/data/.../*.json + pnpm validate + git commit + curl sync API）
 - 学派 themeKey 必须 ∈ discipline.themes[].key（sync 时 fail-fast 校验）
+
+**learning agent 写 KP 必读** ⭐ — `v2/LEARNING_KP_GUIDE.md`：
+- 7 步上传流程（含 sync API 调用，让线上 ~3s 生效而非等 90s）
+- 5 种 body format 的 example 文件（v2/data/keiei/kp/_template.{format}.json）
+- evalContent 结构化字段写法
+- 跨 discipline 推 KP 的复用方式（API 已通用）
+- 失败时给用户的反馈话术
 
 ## 核心规则
 

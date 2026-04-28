@@ -72,6 +72,12 @@ const fullTitle = title === '全科笔记' ? title : `${title} · 全科笔记`;
       highlightJustEditedKp();
     </script>
 
+    {/* v0.5.92：站点更新感知 — 30s/次 polling sync_log，发现新版 toast 提示 */}
+    <script>
+      import { mountUpdateWatcher } from '~/lib/update-watcher-client';
+      mountUpdateWatcher();
+    </script>
+
     {/* v0.5.79：lang-toggle 全局拦截 — 把 ?lang=ja 链接的 click 改成 fetch + DOM 选择性 swap，
         保留滚动位置 + 已展开 <details>。FAB 与 Cmd+J 都 .click() anchor，自动经过此拦截。 */}
     <script>
