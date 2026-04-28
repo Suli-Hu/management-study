@@ -81,11 +81,13 @@ html.dark {
     @apply text-primary font-semibold;
   }
 
-  /* v0.5.42 全局 focus ring（键盘 nav / iPad 蓝牙键盘可见焦点）*/
-  :focus-visible {
-    outline: 2px solid var(--accent-strategy, #3b82f6);
-    outline-offset: 2px;
-    border-radius: 2px;
+  /* v0.5.90 全站取消 focus outline — 单人 admin / iPad 主力，
+     键盘 Tab nav 视觉是噪音（与极简风格冲突，且与 selected 态如
+     accent ring/left bar 视觉打架）。a11y trade-off 由用户场景决定。
+     之前 v0.5.42 的全局蓝色 focus ring + v0.5.87 .optA-kp-link 的
+     accent ring 都按本规则统一去掉。 */
+  :focus, :focus-visible {
+    outline: none;
   }
 }
 
