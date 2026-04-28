@@ -103,21 +103,6 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
             <p class="text-xs text-quaternary text-center mt-4">白名单邮箱按既定权限进入</p>
           </form>
 
-          {/* 模式切换 — 极简文字按钮，跟 footer 同视觉权重 */}
-          <div class="mt-8 text-center text-xs text-quaternary">
-            <span data-login-footer-prompt="invite">个人笔记，仅云端存储，非公开 · </span>
-            <span data-login-footer-prompt="email" class="hidden">个人笔记，仅云端存储，非公开 · </span>
-            <button
-              type="button"
-              data-login-switch="email"
-              class="text-tertiary hover:text-primary underline-offset-2 hover:underline"
-            >邮箱登录</button>
-            <button
-              type="button"
-              data-login-switch="invite"
-              class="hidden text-tertiary hover:text-primary underline-offset-2 hover:underline"
-            >返回密码登录</button>
-          </div>
         </div>
       )}
     </div>
@@ -125,23 +110,23 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
 </Layout>
 
 <script is:inline>
-  // v0.5.82: 模式切换 — invite/email 表单 + footer prompt 同步
-  document.querySelectorAll('[data-login-switch]').forEach((b) => {
-    b.addEventListener('click', () => {
-      const target = b.getAttribute('data-login-switch');   // 'invite' | 'email'
-      document.querySelectorAll('[data-login-pane]').forEach((p) => {
-        p.classList.toggle('hidden', p.getAttribute('data-login-pane') !== target);
-      });
-      document.querySelectorAll('[data-login-switch]').forEach((x) => {
-        x.classList.toggle('hidden', x.getAttribute('data-login-switch') === target);
-      });
-      document.querySelectorAll('[data-login-footer-prompt]').forEach((s) => {
-        s.classList.toggle('hidden', s.getAttribute('data-login-footer-prompt') === target);
-      });
-      // 焦点放进新 pane 的第一个 input
-      const newPane = document.querySelector(`[data-login-pane="${target}"]`);
-      const firstInput = newPane && newPane.querySelector('input:not([type=hidden]):not([type=checkbox])');
-      if (firstInput) firstInput.focus();
+  // v0.5.83: 模式切换入口隐到全局 Footer 文案上（"个人笔记，仅云端存储，非公开"）
+  // 点击 footer 文字 → 切换 invite ↔ email 表单。其它页面 footer 仍是普通文本。
+  (function () {
+    const invitePane = document.querySelector('[data-login-pane="invite"]');
+    const emailPane = document.querySelector('[data-login-pane="email"]');
+    if (!invitePane || !emailPane) return;
+    const footerText = document.querySelector('[data-app-footer-text]');
+    if (!footerText) return;
+    footerText.style.cursor = 'pointer';
+    footerText.setAttribute('title', '点击切换登录方式');
+    footerText.addEventListener('click', () => {
+      const inviteVisible = !invitePane.classList.contains('hidden');
+      invitePane.classList.toggle('hidden', inviteVisible);
+      emailPane.classList.toggle('hidden', !inviteVisible);
+      const newPane = inviteVisible ? emailPane : invitePane;
+      const input = newPane.querySelector('input:not([type=hidden]):not([type=checkbox])');
+      if (input) input.focus();
     });
-  });
+  })();
 </script>

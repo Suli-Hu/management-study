@@ -5,6 +5,7 @@ import { APP_VERSION, GIT_SHA } from '~/lib/version';
 <footer class="mt-16 py-4 border-t border-bg-tertiary">
   <div class="max-w-panel mx-auto px-4 text-xs text-quaternary flex justify-between gap-3">
     <span>v{APP_VERSION} · <span class="font-mono">{GIT_SHA}</span></span>
-    <span>个人笔记，仅云端存储，非公开</span>
+    {/* v0.5.83: 登录页脚本会把这里挂上 click → 切邮箱模式（其它页就是普通文本） */}
+    <span data-app-footer-text>个人笔记，仅云端存储，非公开</span>
   </div>
 </footer>
