@@ -1,0 +1,558 @@
+---
+/**
+ * /admin/tokens — API Token 管理 (v0.5.96)
+ * super-admin only。SSR gate；UI client-rendered。
+ *
+ * 设计 (frontend-design skill):
+ *   - 顶部 inline 创建表单（不开 modal，少跳层）+ 下方 token 列表
+ *   - 创建后 fullscreen 半透 overlay 显示一次性明文 token，必须主动按"我已保存"才关闭
+ *   - 列表行：name · ●user accent 头像 · scope chips · last_used 相对时间 · revoke
+ *   - 撤销 = soft delete (revoked_at = now)，已撤销 token 灰显
+ *   - SF Mono 等宽字体给所有技术字段 (token / id / 时间戳)
+ */
+import Layout from '~/layouts/Layout.astro';
+import { getDb } from '~/lib/db';
+
+if (!Astro.locals.user) return Astro.redirect('/login');
+if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
+
+// SSR: 拉 user 列表 + discipline 列表给创建表单的 select
+const db = getDb(Astro.locals.runtime.env);
+const users = (await db
+  .prepare('SELECT id, email FROM user ORDER BY email')
+  .all<{ id: string; email: string }>()).results ?? [];
+const disciplines = (await db
+  .prepare('SELECT key, title_zh FROM discipline ORDER BY key')
+  .all<{ key: string; title_zh: string }>()).results ?? [];
+---
+
+<Layout title="API Tokens">
+  <main class="max-w-reading mx-auto px-4 py-6">
+    <header class="mb-6">
+      <a href="/" class="text-xs text-tertiary hover:underline">← 返回首页</a>
+      <div class="flex items-baseline gap-3 mt-2">
+        <h1 class="text-2xl font-semibold">API Tokens</h1>
+        <span class="text-xs text-quaternary" id="token-count"></span>
+      </div>
+      <p class="text-xs text-tertiary mt-1">为 user 生成 API token，给 Claude / GPT 等 agent 用 (Bearer auth)</p>
+    </header>
+
+    {/* 创建表单 — inline，不 modal */}
+    <section class="tokens-create" id="create-section">
+      <h2 class="tokens-create-h">创建 token</h2>
+      <div class="tokens-create-form">
+        <div class="tokens-form-row">
+          <label>
+            <div class="tokens-form-label">名称</div>
+            <input type="text" id="form-name" placeholder='如 "GPT for marketing"' class="tokens-input" />
+          </label>
+          <label>
+            <div class="tokens-form-label">关联 user</div>
+            <select id="form-user" class="tokens-input">
+              <option value="">— 选择 —</option>
+              {users.map((u) => <option value={u.id}>{u.email}</option>)}
+            </select>
+          </label>
+          <label>
+            <div class="tokens-form-label">过期</div>
+            <select id="form-expires" class="tokens-input">
+              <option value="90" selected>90 天</option>
+              <option value="30">30 天</option>
+              <option value="180">180 天</option>
+              <option value="365">365 天</option>
+              <option value="">永不过期</option>
+            </select>
+          </label>
+        </div>
+        <div class="tokens-form-row">
+          <div style="flex:1">
+            <div class="tokens-form-label">学科 scope（不勾 = 该 user 全部权限；勾选 = 仅这些学科）</div>
+            <div class="tokens-scope-chips">
+              {disciplines.map((d) => (
+                <label class="tokens-scope-chip">
+                  <input type="checkbox" name="scope" value={d.key} />
+                  <span>{d.title_zh} <span class="tokens-scope-key">{d.key}</span></span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <button type="button" id="create-btn" class="tokens-create-btn">生成 token</button>
+        </div>
+      </div>
+    </section>
+
+    {/* 列表 */}
+    <section class="mt-8">
+      <h2 class="tokens-list-h">已有 tokens</h2>
+      <div id="loading" class="space-y-2">
+        {[1,2].map(() => <div class="h-16 rounded-md bg-bg-secondary animate-pulse"></div>)}
+      </div>
+      <div id="content" class="hidden">
+        <div class="tokens-list" id="tokens-list"></div>
+        <div id="empty-state" class="tokens-empty hidden">
+          <div class="tokens-empty-icon">⌑</div>
+          <div class="tokens-empty-text">还没有 token</div>
+          <div class="tokens-empty-sub">用上面表单创建第一个</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  {/* 一次性 token 显示 overlay */}
+  <div id="reveal-overlay" class="reveal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="reveal-title">
+    <div class="reveal-card">
+      <div class="reveal-warn">
+        <div class="reveal-warn-icon">⚠</div>
+        <div>
+          <div class="reveal-warn-title" id="reveal-title">仅本次显示</div>
+          <div class="reveal-warn-sub">关闭后无法再次查看，请立即复制保存</div>
+        </div>
+      </div>
+
+      <div class="reveal-meta" id="reveal-meta"></div>
+
+      <div class="reveal-token" id="reveal-token"></div>
+
+      <div class="reveal-actions">
+        <button type="button" id="copy-btn" class="reveal-btn-primary">复制 token</button>
+        <button type="button" id="confirm-btn" class="reveal-btn-secondary">我已保存</button>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style is:global>
+  /* === 创建表单 === */
+  .tokens-create {
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-bg-primary);
+    padding: 16px 18px;
+  }
+  .tokens-create-h {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-quaternary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0 0 12px;
+  }
+  .tokens-list-h {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-quaternary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0 0 12px;
+  }
+  .tokens-create-form { display: flex; flex-direction: column; gap: 14px; }
+  .tokens-form-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+  .tokens-form-row label { flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 4px; }
+  .tokens-form-label {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+  }
+  .tokens-input {
+    padding: 7px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+  }
+  .tokens-input:focus { border-color: var(--color-text-primary); }
+
+  .tokens-scope-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tokens-scope-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px 4px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-primary);
+    user-select: none;
+    transition: background 100ms;
+  }
+  .tokens-scope-chip:hover { background: var(--color-bg-secondary); }
+  .tokens-scope-chip input { margin: 0; cursor: pointer; }
+  .tokens-scope-chip:has(input:checked) {
+    background: color-mix(in srgb, var(--color-text-primary) 8%, transparent);
+    border-color: var(--color-text-primary);
+  }
+  .tokens-scope-key {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 10px;
+    color: var(--color-text-quaternary);
+    margin-left: 2px;
+  }
+
+  .tokens-create-btn {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border: 1px solid var(--color-text-primary);
+    border-radius: 6px;
+    background: var(--color-text-primary);
+    color: var(--color-bg-primary);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    align-self: flex-end;
+    height: 34px;
+  }
+  .tokens-create-btn:hover { background: var(--color-text-secondary); }
+  .tokens-create-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* === 列表 === */
+  .tokens-list { display: flex; flex-direction: column; gap: 8px; }
+  .token-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-bg-primary);
+    align-items: center;
+  }
+  .token-row.is-revoked {
+    opacity: 0.5;
+    background: var(--color-bg-secondary);
+  }
+  .token-main {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .token-row-1 { display: flex; align-items: center; gap: 10px; }
+  .token-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .token-user-avatar {
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    border-radius: 999px;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .token-user-email {
+    font-size: 12px;
+    color: var(--color-text-tertiary);
+  }
+  .token-scope-chip {
+    display: inline-block;
+    padding: 1px 8px;
+    border: 1px solid var(--color-bg-tertiary);
+    border-radius: 999px;
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    margin-right: 4px;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+  .token-scope-all {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    color: var(--color-text-quaternary);
+    background: var(--color-bg-tertiary);
+  }
+  .token-meta {
+    font-size: 11px;
+    color: var(--color-text-quaternary);
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .token-revoke-btn {
+    padding: 5px 11px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-bg-primary);
+    color: var(--color-text-tertiary);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .token-revoke-btn:hover {
+    border-color: #FF3B30;
+    color: #FF3B30;
+  }
+
+  /* === 空态 === */
+  .tokens-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--color-text-quaternary);
+    border: 1px dashed var(--color-border);
+    border-radius: 10px;
+  }
+  .tokens-empty-icon { font-size: 24px; margin-bottom: 6px; }
+  .tokens-empty-text { font-size: 13px; color: var(--color-text-tertiary); }
+  .tokens-empty-sub { font-size: 11.5px; margin-top: 4px; }
+
+  /* === 一次性 token 显示 overlay === */
+  .reveal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 20, 22, 0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .reveal-card {
+    background: var(--color-bg-primary);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    max-width: 600px;
+    width: 100%;
+    padding: 24px 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .reveal-warn {
+    display: flex;
+    gap: 12px;
+    padding: 12px 14px;
+    background: color-mix(in srgb, #FF9500 9%, var(--color-bg-primary));
+    border: 1px solid color-mix(in srgb, #FF9500 35%, transparent);
+    border-radius: 8px;
+    align-items: flex-start;
+  }
+  .reveal-warn-icon { font-size: 16px; line-height: 1.2; color: #c46e00; }
+  .reveal-warn-title { font-size: 13px; font-weight: 600; color: #8a5200; }
+  .reveal-warn-sub { font-size: 12px; color: #8a5200; opacity: 0.9; margin-top: 2px; }
+  .reveal-meta {
+    font-size: 12px;
+    color: var(--color-text-tertiary);
+    line-height: 1.7;
+  }
+  .reveal-meta strong { color: var(--color-text-primary); font-weight: 500; }
+  .reveal-token {
+    padding: 14px;
+    background: var(--color-bg-tertiary);
+    border-radius: 8px;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 13px;
+    word-break: break-all;
+    user-select: all;
+    -webkit-user-select: all;
+    color: var(--color-text-primary);
+    line-height: 1.5;
+  }
+  .reveal-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+  .reveal-btn-primary {
+    flex-shrink: 0;
+    padding: 9px 18px;
+    border: 1px solid var(--color-text-primary);
+    border-radius: 6px;
+    background: var(--color-text-primary);
+    color: var(--color-bg-primary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .reveal-btn-primary.is-copied {
+    background: #34C759;
+    border-color: #34C759;
+  }
+  .reveal-btn-secondary {
+    padding: 9px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-bg-primary);
+    color: var(--color-text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .reveal-btn-secondary:hover { background: var(--color-bg-secondary); }
+</style>
+
+<script>
+  // @ts-nocheck
+  const $ = (s) => document.querySelector(s);
+  const ACCENT_PALETTE = ['#34C759', '#FF9500', '#007AFF'];
+  function pickAccent(email) {
+    let h = 0;
+    for (let i = 0; i < email.length; i++) h = ((h << 5) - h + email.charCodeAt(i)) | 0;
+    return ACCENT_PALETTE[Math.abs(h) % ACCENT_PALETTE.length];
+  }
+  function relTime(iso) {
+    if (!iso) return '从未';
+    const ms = Date.now() - new Date(iso).getTime();
+    const s = Math.round(ms / 1000);
+    if (s < 60) return `${s}s 前`;
+    const m = Math.round(s / 60);
+    if (m < 60) return `${m}m 前`;
+    const h = Math.round(m / 60);
+    if (h < 24) return `${h}h 前`;
+    const d = Math.round(h / 24);
+    return `${d}d 前`;
+  }
+  function fmtDate(iso) {
+    if (!iso) return '永不';
+    const d = new Date(iso);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  let tokens = [];
+
+  async function loadTokens() {
+    const res = await fetch('/api/admin/tokens');
+    if (!res.ok) {
+      window.toast?.error('加载失败：' + res.status);
+      return;
+    }
+    const data = await res.json();
+    tokens = data.tokens;
+    renderList();
+    $('#loading').classList.add('hidden');
+    $('#content').classList.remove('hidden');
+  }
+
+  function renderList() {
+    $('#token-count').textContent = `共 ${tokens.length} 条`;
+    if (tokens.length === 0) {
+      $('#tokens-list').classList.add('hidden');
+      $('#empty-state').classList.remove('hidden');
+      return;
+    }
+    $('#tokens-list').classList.remove('hidden');
+    $('#empty-state').classList.add('hidden');
+
+    $('#tokens-list').innerHTML = tokens.map((t) => {
+      const accent = pickAccent(t.user_email);
+      const initial = (t.user_email[0] ?? '?').toUpperCase();
+      const scopesHtml = t.scopes.length === 0
+        ? `<span class="token-scope-all">全 user 权限</span>`
+        : t.scopes.map((s) => `<span class="token-scope-chip">${s}</span>`).join('');
+      const revokedNote = t.revoked_at ? ` · 已撤销 ${fmtDate(t.revoked_at)}` : '';
+      return `
+        <div class="token-row ${t.revoked_at ? 'is-revoked' : ''}">
+          <div class="token-main">
+            <div class="token-row-1">
+              <span class="token-user-avatar" style="background:${accent}">${initial}</span>
+              <span class="token-name">${escapeHtml(t.name)}</span>
+              <span class="token-user-email">${escapeHtml(t.user_email)}</span>
+            </div>
+            <div>${scopesHtml}</div>
+            <div class="token-meta">
+              <span>id ${t.id}</span>
+              <span>created ${fmtDate(t.created_at)}</span>
+              <span>expires ${fmtDate(t.expires_at)}</span>
+              <span>last used ${relTime(t.last_used_at)}${revokedNote}</span>
+            </div>
+          </div>
+          ${t.revoked_at ? '' : `<button type="button" class="token-revoke-btn" data-revoke="${t.id}">撤销</button>`}
+        </div>
+      `;
+    }).join('');
+
+    document.querySelectorAll('[data-revoke]').forEach((btn) => {
+      btn.addEventListener('click', () => revoke(btn.dataset.revoke));
+    });
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  }
+
+  async function revoke(id) {
+    if (!confirm('撤销此 token？此后任何用此 token 的请求都会被拒绝。')) return;
+    const res = await fetch(`/api/admin/tokens/${encodeURIComponent(id)}`, { method: 'DELETE' });
+    if (res.ok) {
+      window.toast?.success('已撤销');
+      loadTokens();
+    } else {
+      const d = await res.json().catch(() => ({}));
+      window.toast?.error(`撤销失败：${d.reason ?? res.status}`);
+    }
+  }
+
+  $('#create-btn').addEventListener('click', async () => {
+    const name = $('#form-name').value.trim();
+    const userId = $('#form-user').value;
+    const expiresVal = $('#form-expires').value;
+    const expiresDays = expiresVal === '' ? null : parseInt(expiresVal, 10);
+    const scopes = Array.from(document.querySelectorAll('input[name="scope"]:checked'))
+      .map((el) => el.value);
+
+    if (!name) { window.toast?.error('名称必填'); return; }
+    if (!userId) { window.toast?.error('请选择 user'); return; }
+
+    const btn = $('#create-btn');
+    btn.disabled = true;
+    btn.textContent = '生成中...';
+
+    const res = await fetch('/api/admin/tokens', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ name, user_id: userId, scopes, expires_days: expiresDays }),
+    });
+    const data = await res.json().catch(() => ({}));
+    btn.disabled = false;
+    btn.textContent = '生成 token';
+
+    if (!res.ok) {
+      window.toast?.error(`${data.reason ?? 'error'}: ${data.detail ?? ''}`.slice(0, 80));
+      return;
+    }
+
+    // 弹一次性 token overlay
+    showRevealOverlay(data);
+    // 重置表单
+    $('#form-name').value = '';
+    $('#form-user').value = '';
+    document.querySelectorAll('input[name="scope"]:checked').forEach((el) => { el.checked = false; });
+    loadTokens();
+  });
+
+  function showRevealOverlay(data) {
+    $('#reveal-token').textContent = data.token;
+    $('#reveal-meta').innerHTML = `
+      <strong>${escapeHtml(data.name)}</strong> ·
+      ${escapeHtml(data.user_email)} ·
+      ${data.scopes.length === 0 ? '全 user 权限' : data.scopes.map(escapeHtml).join(', ')} ·
+      ${data.expires_at ? `过期 ${fmtDate(data.expires_at)}` : '永不过期'}
+    `;
+    $('#reveal-overlay').classList.remove('hidden');
+    $('#copy-btn').classList.remove('is-copied');
+    $('#copy-btn').textContent = '复制 token';
+  }
+
+  $('#copy-btn').addEventListener('click', async () => {
+    const txt = $('#reveal-token').textContent || '';
+    try {
+      await navigator.clipboard.writeText(txt);
+      $('#copy-btn').classList.add('is-copied');
+      $('#copy-btn').textContent = '✓ 已复制';
+    } catch {
+      window.toast?.error('复制失败，请手动选中复制');
+    }
+  });
+  $('#confirm-btn').addEventListener('click', () => {
+    $('#reveal-overlay').classList.add('hidden');
+  });
+  // overlay 不能点空白关闭，不能 ESC（防误操作）
+
+  loadTokens();
+</script>

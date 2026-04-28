@@ -67,11 +67,35 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return new Response('Forbidden: bad Origin', { status: 403 });
   }
 
-  // === Auth：signed cookie → locals.user（stateless，不查 D1） ===
-  const cookieValue = parseCookieSession(context.request.headers.get('cookie'));
-  const secret = getSessionSecret(env?.SESSION_SECRET);
-  const payload = await verifySessionCookie(cookieValue, secret);
-  context.locals.user = payload ? sessionUserFromPayload(payload) : null;
+  // === Auth：先 Bearer API token，再 signed cookie ===
+  // v0.5.96: API token 路径 (Authorization: Bearer ms_v1_xxx)
+  //   优先于 cookie，方便 agent 用 token 调 API 时不必带 cookie
+  context.locals.user = null;
+  context.locals.apiTokenScopes = null;
+  const authHeader = context.request.headers.get('authorization');
+  if (authHeader && authHeader.startsWith('Bearer ') && env?.DB) {
+    const rawToken = authHeader.slice(7).trim();
+    const { findValidToken } = await import('~/lib/api-token');
+    const verified = await findValidToken(env.DB, rawToken);
+    if (verified.ok) {
+      // 从 D1 user 表查出完整 user 字段（token 没携带）
+      const userRow = await env.DB
+        .prepare('SELECT id, email, display_name, created_at, email_verified_at FROM user WHERE id = ?')
+        .bind(verified.row.user_id)
+        .first<{ id: string; email: string; display_name: string | null; created_at: string; email_verified_at: string | null }>();
+      if (userRow) {
+        context.locals.user = userRow;
+        context.locals.apiTokenScopes = verified.scopes; // [] = 等同 user 全学科权限；否则 token 内部再收窄
+      }
+    }
+  }
+  // Cookie session fallback（如果没 Bearer 或 Bearer 无效）
+  if (!context.locals.user) {
+    const cookieValue = parseCookieSession(context.request.headers.get('cookie'));
+    const secret = getSessionSecret(env?.SESSION_SECRET);
+    const payload = await verifySessionCookie(cookieValue, secret);
+    context.locals.user = payload ? sessionUserFromPayload(payload) : null;
+  }
 
   // v0.2.8 / v0.4.25: super-admin = ADMIN_EMAILS 命中（god mode，所有学科可写）
   context.locals.isSuperAdmin = isAdmin(context.locals.user, env?.ADMIN_EMAILS);
@@ -103,13 +127,23 @@ export const onRequest = defineMiddleware(async (context, next) => {
       context.locals.permissions.set(r.discipline_key, r.role);
     }
   }
-  context.locals.canEdit = (d: string | undefined) =>
-    !!d && (context.locals.isSuperAdmin || context.locals.permissions.get(d) === 'admin');
+  // v0.5.96: API token scope 收窄检查 — 非空 scope = 必须在白名单内
+  const tokenScopes = context.locals.apiTokenScopes;
+  const tokenAllowsDiscipline = (d: string): boolean => {
+    if (!tokenScopes || tokenScopes.length === 0) return true; // [] 不收窄
+    return tokenScopes.includes(d);
+  };
+
+  context.locals.canEdit = (d: string | undefined) => {
+    if (!d) return false;
+    if (!tokenAllowsDiscipline(d)) return false;
+    return context.locals.isSuperAdmin || context.locals.permissions.get(d) === 'admin';
+  };
   context.locals.canRead = (d: string | undefined) => {
     if (!d) return false;
+    if (!tokenAllowsDiscipline(d)) return false;
     if (context.locals.isSuperAdmin) return true;
     if (context.locals.isInviteGuest) {
-      // 白名单收窄：未配置 = 全学科可读；配置了就只读白名单内的
       return inviteAllowed === null || inviteAllowed.has(d);
     }
     return context.locals.permissions.has(d);
