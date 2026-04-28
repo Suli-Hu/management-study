@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sususu logo — CSS demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Homemade+Apple&family=Kalam:wght@300;400;700&family=Shadows+Into+Light&family=Architects+Daughter&family=Reenie+Beanie&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --grid-size: 32px;
+    --grid-color: #d6d6d6;
+    --grid-color-dark: #2a2a2a;
+    --ink: #111;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", system-ui, sans-serif;
+    background: #fafaf9;
+    color: #171717;
+    padding: 32px;
+  }
+
+  h1 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: #0a0a0a;
+  }
+  h2 {
+    font-size: 13px;
+    font-weight: 500;
+    color: #737373;
+    margin: 0 0 12px;
+    letter-spacing: 0.02em;
+  }
+  .note {
+    font-size: 12px;
+    color: #a3a3a3;
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+
+  /* 网格纸背景 */
+  .grid-stage {
+    background-color: #fff;
+    background-image:
+      linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+    background-size: var(--grid-size) var(--grid-size);
+    border-radius: 8px;
+    padding: 60px 48px;
+    margin-bottom: 16px;
+    border: 1px solid #e5e5e5;
+    overflow: hidden;
+  }
+
+  .candidate-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 24px;
+  }
+
+  .candidate {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 32px 24px 20px;
+    text-align: center;
+  }
+  .candidate-label {
+    font-size: 11px;
+    color: #a3a3a3;
+    margin-top: 16px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .candidate-meta {
+    font-size: 11px;
+    color: #737373;
+    margin-top: 4px;
+  }
+  .candidate.is-selected {
+    border-color: #0a0a0a;
+    box-shadow: 0 0 0 3px rgba(10,10,10,0.06);
+  }
+  .candidate.is-selected .candidate-label::after {
+    content: " ✓";
+    color: #0a0a0a;
+  }
+
+  /* === sususu wordmark === */
+  .sususu {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    line-height: 1;
+    color: var(--ink);
+    user-select: none;
+  }
+  .sususu .word {
+    font-size: 96px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+  .sususu .underline {
+    width: 92%;
+    height: 14px;
+    margin-top: -8px;
+  }
+  .sususu .underline path {
+    stroke: var(--ink);
+    stroke-width: 4;
+    stroke-linecap: round;
+    fill: none;
+  }
+
+  .v-caveat .word { font-family: "Caveat", cursive; font-weight: 700; letter-spacing: -0.01em; }
+  .v-homemade .word { font-family: "Homemade Apple", cursive; font-weight: 400; font-size: 72px; letter-spacing: 0.03em; }
+  .v-kalam .word { font-family: "Kalam", cursive; font-weight: 700; }
+  .v-shadows .word { font-family: "Shadows Into Light", cursive; font-weight: 400; }
+  .v-architects .word { font-family: "Architects Daughter", cursive; font-weight: 400; font-size: 80px; }
+  .v-reenie .word { font-family: "Reenie Beanie", cursive; font-weight: 400; font-size: 130px; }
+  .v-patrick .word { font-family: "Patrick Hand", cursive; font-weight: 400; font-size: 84px; }
+
+  /* === 实际尺寸预览 === */
+  .preview-row {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 24px 32px;
+    margin-bottom: 12px;
+  }
+  .preview-row .label {
+    font-size: 11px;
+    color: #a3a3a3;
+    width: 80px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .nav-size .word { font-size: 28px; }
+  .nav-size .underline { height: 6px; margin-top: -3px; }
+  .nav-size .underline path { stroke-width: 1.8; }
+
+  .hero-size .word { font-size: 72px; }
+  .hero-size .underline { height: 12px; margin-top: -6px; }
+  .hero-size .underline path { stroke-width: 3; }
+
+  .xl-size .word { font-size: 140px; }
+  .xl-size .underline { height: 20px; margin-top: -10px; }
+  .xl-size .underline path { stroke-width: 5; }
+
+  /* === 暗色完整 stage === */
+  .dark-stage-full {
+    background: #0a0a0a;
+    background-image:
+      linear-gradient(to right, var(--grid-color-dark) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-color-dark) 1px, transparent 1px);
+    background-size: var(--grid-size) var(--grid-size);
+    color: #fafaf9;
+    border: 1px solid #1f1f1f;
+    border-radius: 8px;
+    padding: 32px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 16px;
+  }
+  .dark-row {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    padding: 24px 0;
+    border-bottom: 1px solid #1f1f1f;
+  }
+  .dark-row:last-child { border-bottom: none; }
+  .dark-row .label {
+    font-size: 11px;
+    color: #737373;
+    width: 80px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .dark-stage-full .sususu { color: #fafaf9; }
+  .dark-stage-full .sususu .underline path { stroke: #fafaf9; }
+
+  /* === SU favicon === */
+  .favicon-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .favicon-row.on-dark {
+    background: #0a0a0a;
+    border-color: #1f1f1f;
+  }
+  .row-meta {
+    font-size: 11px;
+    color: #a3a3a3;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-right: 12px;
+    width: 90px;
+  }
+  .favicon-row.on-dark .row-meta { color: #737373; }
+
+  .su-tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .su-tile.shape-rounded { border-radius: 22%; }
+  .su-tile.shape-circle { border-radius: 50%; }
+  .su-tile.shape-square { border-radius: 0; }
+
+  .su-tile.color-dark { background: #0a0a0a; color: #fafaf9; }
+  .su-tile.color-light {
+    background: #fafaf9;
+    color: #0a0a0a;
+    box-shadow: inset 0 0 0 1px #e5e5e5;
+  }
+
+  .su-tile.size-16 { width: 16px; height: 16px; }
+  .su-tile.size-32 { width: 32px; height: 32px; }
+  .su-tile.size-64 { width: 64px; height: 64px; }
+  .su-tile.size-128 { width: 128px; height: 128px; }
+
+  .su-content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-family: "Kalam", cursive;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  .su-content .su-text {
+    line-height: 1;
+    display: inline-block;
+    /* 视觉居中：Kalam 字形上方留白比下方多，整体往下偏一点点 */
+    transform: translateY(-2%);
+  }
+
+  .size-16 .su-content { font-size: 9px; }
+  .size-32 .su-content { font-size: 18px; }
+  .size-64 .su-content { font-size: 38px; }
+  .size-128 .su-content { font-size: 76px; }
+
+  .su-tile.case-upper .su-text { text-transform: uppercase; }
+  .su-tile.case-lower .su-text { text-transform: lowercase; }
+
+  /* === Lockup（红框替换） === */
+  .lockup-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+  }
+  .lockup-size .word { font-size: 80px; }
+  .lockup-size .underline { height: 14px; margin-top: -8px; }
+  .lockup-size .underline path { stroke-width: 3.5; }
+
+  .lockup-compact .word { font-size: 56px; }
+  .lockup-compact .underline { height: 10px; margin-top: -5px; }
+  .lockup-compact .underline path { stroke-width: 2.6; }
+
+  .tagline {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", system-ui, sans-serif;
+    font-size: 13px;
+    color: #a3a3a3;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    line-height: 1;
+  }
+  .tagline-dark { color: #737373; }
+
+  /* 登录页模拟 */
+  .login-mock {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 56px 48px 40px;
+    max-width: 520px;
+    margin: 0 auto 16px;
+  }
+  .login-mock .input-fake {
+    margin-top: 36px;
+    height: 44px;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    color: #a3a3a3;
+    font-size: 14px;
+  }
+  .login-mock .btn-fake {
+    margin-top: 18px;
+    text-align: center;
+    color: #0a0a0a;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .login-mock.dark {
+    background: #0a0a0a;
+    border-color: #1f1f1f;
+  }
+  .login-mock.dark .input-fake { border-color: #1f1f1f; color: #525252; }
+  .login-mock.dark .btn-fake { color: #fafaf9; }
+  .login-mock.dark .sususu { color: #fafaf9; }
+  .login-mock.dark .sususu .underline path { stroke: #fafaf9; }
+
+  /* === 浏览器 tab 模拟 === */
+  .browser-tab-mock {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px 8px 0 0;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #374151;
+  }
+  .browser-tab-mock .close {
+    margin-left: 16px;
+    color: #9ca3af;
+    font-size: 14px;
+  }
+
+  /* === 调参面板 === */
+  .controls {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .control { display: flex; flex-direction: column; gap: 6px; font-size: 12px; }
+  .control label { color: #737373; }
+  .control input[type=range] { width: 100%; }
+  .control output { color: #0a0a0a; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .play-stage {
+    background-color: #fff;
+    background-image:
+      linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+    background-size: var(--grid-size) var(--grid-size);
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 80px 48px;
+    text-align: center;
+  }
+
+  section { margin-bottom: 56px; }
+</style>
+</head>
+<body>
+
+<h1>sususu logo — CSS demo</h1>
+<p class="note">
+  ✅ <strong>Kalam 700</strong>。SU favicon 三尺寸 / 无下划线 / 居中。Lockup 替换为 sususu wordmark + 灰色副标 "AI 学习云笔记工具"。
+</p>
+
+<!-- ============ 1. 候选字体（保留参考） ============ -->
+<section>
+  <h2>① 候选字体（96px @ 网格纸）— Kalam ✓</h2>
+  <div class="grid-stage">
+    <div class="candidate-grid">
+
+      <div class="candidate">
+        <div class="sususu v-caveat">
+          <span class="word">sususu</span>
+          <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+            <path d="M 3 8 Q 50 0, 97 6" />
+          </svg>
+        </div>
+        <div class="candidate-label">Caveat 700</div>
+        <div class="candidate-meta">连笔 cursive / 偏倾斜</div>
+      </div>
+
+      <div class="candidate">
+        <div class="sususu v-homemade">
+          <span class="word">sususu</span>
+          <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+            <path d="M 3 8 Q 50 0, 97 6" />
+          </svg>
+        </div>
+        <div class="candidate-label">Homemade Apple</div>
+        <div class="candidate-meta">铅笔感最强 / 不连笔</div>
+      </div>
+
+      <div class="candidate is-selected">
+        <div class="sususu v-kalam">
+          <span class="word">sususu</span>
+          <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+            <path d="M 3 8 Q 50 0, 97 6" />
+          </svg>
+        </div>
+        <div class="candidate-label">Kalam 700</div>
+        <div class="candidate-meta">圆润粗体 / 不连笔</div>
+      </div>
+
+      <div class="candidate">
+        <div class="sususu v-shadows">
+          <span class="word">sususu</span>
+          <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+            <path d="M 3 8 Q 50 0, 97 6" />
+          </svg>
+        </div>
+        <div class="candidate-label">Shadows Into Light</div>
+        <div class="candidate-meta">细体 / 偏可爱</div>
+      </div>
+
+      <div class="candidate">
+        <div class="sususu v-architects">
+          <span class="word">sususu</span>
+          <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+            <path d="M 3 8 Q 50 0, 97 6" />
+          </svg>
+        </div>
+        <div class="candidate-label">Architects Daughter</div>
+        <div class="candidate-meta">建筑师手写 / 字距大</div>
+      </div>
+
+      <div class="candidate">
+        <div class="sususu v-reenie">
+          <span class="word">sususu</span>
+          <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+            <path d="M 3 8 Q 50 0, 97 6" />
+          </svg>
+        </div>
+        <div class="candidate-label">Reenie Beanie</div>
+        <div class="candidate-meta">细线 / 长款</div>
+      </div>
+
+      <div class="candidate">
+        <div class="sususu v-patrick">
+          <span class="word">sususu</span>
+          <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+            <path d="M 3 8 Q 50 0, 97 6" />
+          </svg>
+        </div>
+        <div class="candidate-label">Patrick Hand</div>
+        <div class="candidate-meta">圆润 / 中性</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. 浅色实际尺寸 ============ -->
+<section>
+  <h2>② 浅色 — 实际尺寸（Kalam 700）</h2>
+
+  <div class="preview-row">
+    <span class="label">Nav 28px</span>
+    <div class="sususu v-kalam nav-size">
+      <span class="word">sususu</span>
+      <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+        <path d="M 3 8 Q 50 0, 97 6" />
+      </svg>
+    </div>
+    <span style="color:#a3a3a3; font-size:12px;">— 替换 nav 当前 wordmark</span>
+  </div>
+
+  <div class="preview-row">
+    <span class="label">Hero 72px</span>
+    <div class="sususu v-kalam hero-size">
+      <span class="word">sususu</span>
+      <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+        <path d="M 3 8 Q 50 0, 97 6" />
+      </svg>
+    </div>
+  </div>
+
+  <div class="preview-row">
+    <span class="label">XL 140px</span>
+    <div class="sususu v-kalam xl-size">
+      <span class="word">sususu</span>
+      <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+        <path d="M 3 8 Q 50 0, 97 6" />
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. 暗色完整 stage ============ -->
+<section>
+  <h2>③ 暗色 — 实际尺寸完整预览（深夜模式）</h2>
+  <div class="dark-stage-full">
+
+    <div class="dark-row">
+      <span class="label">Nav 28px</span>
+      <div class="sususu v-kalam nav-size">
+        <span class="word">sususu</span>
+        <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+          <path d="M 3 8 Q 50 0, 97 6" />
+        </svg>
+      </div>
+    </div>
+
+    <div class="dark-row">
+      <span class="label">Hero 72px</span>
+      <div class="sususu v-kalam hero-size">
+        <span class="word">sususu</span>
+        <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+          <path d="M 3 8 Q 50 0, 97 6" />
+        </svg>
+      </div>
+    </div>
+
+    <div class="dark-row">
+      <span class="label">XL 140px</span>
+      <div class="sususu v-kalam xl-size">
+        <span class="word">sususu</span>
+        <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+          <path d="M 3 8 Q 50 0, 97 6" />
+        </svg>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 4. Lockup 替换（红框） ============ -->
+<section>
+  <h2>④ Lockup 替换 — 替换登录页红框里的整体</h2>
+  <p class="note" style="margin-top:-8px;">
+    原【螺旋 quanke-mark + 全科笔记 + POLYMATH NOTES】 → 【sususu wordmark + 灰色副标 "AI 学习云笔记工具"】。
+  </p>
+
+  <h2 style="margin-top:24px;">浅色 / 网格纸</h2>
+  <div class="grid-stage" style="padding: 80px 48px;">
+    <div class="lockup-block">
+      <div class="sususu v-kalam lockup-size">
+        <span class="word">sususu</span>
+        <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+          <path d="M 3 8 Q 50 0, 97 6" />
+        </svg>
+      </div>
+      <div class="tagline">AI 学习云笔记工具</div>
+    </div>
+  </div>
+
+  <h2 style="margin-top:24px;">深色 / 网格纸</h2>
+  <div class="dark-stage-full" style="padding: 80px 48px; align-items:center;">
+    <div class="lockup-block">
+      <div class="sususu v-kalam lockup-size">
+        <span class="word">sususu</span>
+        <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+          <path d="M 3 8 Q 50 0, 97 6" />
+        </svg>
+      </div>
+      <div class="tagline tagline-dark">AI 学习云笔记工具</div>
+    </div>
+  </div>
+
+  <h2 style="margin-top:24px;">登录页实景模拟（浅色）</h2>
+  <div class="login-mock">
+    <div class="lockup-block">
+      <div class="sususu v-kalam lockup-compact">
+        <span class="word">sususu</span>
+        <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+          <path d="M 3 8 Q 50 0, 97 6" />
+        </svg>
+      </div>
+      <div class="tagline">AI 学习云笔记工具</div>
+    </div>
+    <div class="input-fake">请输入密码</div>
+    <div class="btn-fake">继续</div>
+  </div>
+
+  <h2 style="margin-top:24px;">登录页实景模拟（深色）</h2>
+  <div class="login-mock dark">
+    <div class="lockup-block">
+      <div class="sususu v-kalam lockup-compact">
+        <span class="word">sususu</span>
+        <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none">
+          <path d="M 3 8 Q 50 0, 97 6" />
+        </svg>
+      </div>
+      <div class="tagline tagline-dark">AI 学习云笔记工具</div>
+    </div>
+    <div class="input-fake">请输入密码</div>
+    <div class="btn-fake">继续</div>
+  </div>
+</section>
+
+<!-- ============ 5. SU favicon ============ -->
+<section>
+  <h2>⑤ SU 方块 favicon — 圆形 / 黑底 / 大写 SU / 无下划线 / 居中</h2>
+  <p class="note" style="margin-top:-8px;">
+    替换当前螺旋 quanke-mark。三尺寸 32 / 64 / 128 px。浏览器 tab 实际渲染 16px 单独模拟。
+  </p>
+
+  <div class="favicon-row">
+    <span class="row-meta">浅色环境</span>
+    <div class="su-tile shape-circle color-dark size-32 case-upper">
+      <div class="su-content"><span class="su-text">SU</span></div>
+    </div>
+    <div class="su-tile shape-circle color-dark size-64 case-upper">
+      <div class="su-content"><span class="su-text">SU</span></div>
+    </div>
+    <div class="su-tile shape-circle color-dark size-128 case-upper">
+      <div class="su-content"><span class="su-text">SU</span></div>
+    </div>
+    <span style="color:#a3a3a3; font-size:11px;">32 / 64 / 128 px</span>
+  </div>
+
+  <div class="favicon-row on-dark">
+    <span class="row-meta">深色环境</span>
+    <div class="su-tile shape-circle color-light size-32 case-upper">
+      <div class="su-content"><span class="su-text">SU</span></div>
+    </div>
+    <div class="su-tile shape-circle color-light size-64 case-upper">
+      <div class="su-content"><span class="su-text">SU</span></div>
+    </div>
+    <div class="su-tile shape-circle color-light size-128 case-upper">
+      <div class="su-content"><span class="su-text">SU</span></div>
+    </div>
+    <span style="color:#737373; font-size:11px;">深色 nav / dark mode</span>
+  </div>
+
+  <h2 style="margin-top:24px;">浏览器 tab 实景（16px favicon）</h2>
+  <div style="display:flex; gap:24px; align-items:flex-start;">
+    <div class="browser-tab-mock">
+      <div class="su-tile shape-circle color-dark size-16 case-upper">
+        <div class="su-content"><span class="su-text">SU</span></div>
+      </div>
+      sususu — AI 学习云笔记工具
+      <span class="close">✕</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. 调参 playground ============ -->
+<section>
+  <h2>⑥ 调参 — wordmark 微调（改完告诉我值）</h2>
+  <div class="controls">
+    <div class="control">
+      <label>字号 <output id="o-size">120</output> px</label>
+      <input type="range" id="r-size" min="40" max="240" value="120">
+    </div>
+    <div class="control">
+      <label>字重 <output id="o-weight">700</output></label>
+      <input type="range" id="r-weight" min="400" max="700" step="100" value="700">
+    </div>
+    <div class="control">
+      <label>字距 <output id="o-spacing">0.02</output> em</label>
+      <input type="range" id="r-spacing" min="-0.05" max="0.15" step="0.01" value="0.02">
+    </div>
+    <div class="control">
+      <label>下划线粗细 <output id="o-stroke">4</output></label>
+      <input type="range" id="r-stroke" min="1" max="10" step="0.5" value="4">
+    </div>
+    <div class="control">
+      <label>下划线弧度 <output id="o-curve">8</output></label>
+      <input type="range" id="r-curve" min="0" max="20" step="0.5" value="8">
+    </div>
+    <div class="control">
+      <label>下划线宽度 <output id="o-width">92</output>%</label>
+      <input type="range" id="r-width" min="50" max="120" step="1" value="92">
+    </div>
+    <div class="control">
+      <label>下划线-字间距 <output id="o-gap">-8</output> px</label>
+      <input type="range" id="r-gap" min="-30" max="20" step="1" value="-8">
+    </div>
+  </div>
+
+  <div class="play-stage">
+    <div class="sususu v-kalam" id="play">
+      <span class="word" id="play-word">sususu</span>
+      <svg class="underline" id="play-svg" viewBox="0 0 100 20" preserveAspectRatio="none">
+        <path id="play-path" d="M 3 16 Q 50 0, 97 12" />
+      </svg>
+    </div>
+  </div>
+</section>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const word = $('play-word');
+  const svg = $('play-svg');
+  const path = $('play-path');
+
+  function update() {
+    const size = +$('r-size').value;
+    const weight = +$('r-weight').value;
+    const spacing = +$('r-spacing').value;
+    const stroke = +$('r-stroke').value;
+    const curve = +$('r-curve').value;
+    const width = +$('r-width').value;
+    const gap = +$('r-gap').value;
+
+    $('o-size').value = size;
+    $('o-weight').value = weight;
+    $('o-spacing').value = spacing.toFixed(2);
+    $('o-stroke').value = stroke;
+    $('o-curve').value = curve;
+    $('o-width').value = width;
+    $('o-gap').value = gap;
+
+    word.style.fontSize = size + 'px';
+    word.style.fontWeight = weight;
+    word.style.letterSpacing = spacing + 'em';
+
+    const vbH = curve + 12;
+    const startY = curve + 8;
+    const endY = curve + 4;
+    svg.setAttribute('viewBox', `0 0 100 ${vbH}`);
+    svg.style.height = (vbH * size / 100 * 0.5) + 'px';
+    svg.style.width = width + '%';
+    svg.style.marginTop = gap + 'px';
+    path.setAttribute('d', `M 3 ${startY} Q 50 0, 97 ${endY}`);
+    path.setAttribute('stroke-width', stroke);
+  }
+
+  ['r-size','r-weight','r-spacing','r-stroke','r-curve','r-width','r-gap'].forEach(id => {
+    $(id).addEventListener('input', update);
+  });
+  update();
+</script>
+
+</body>
+</html>

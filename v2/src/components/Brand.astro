@@ -1,144 +1,147 @@
 ---
 /**
- * v0.5.71 Brand — 全科笔记 mark + wordmark 体系
+ * Brand — sususu wordmark 体系（v0.5.98 重做，替换原 quanke-mark / 全科笔记 / POLYMATH NOTES）
  *
- * 资源（v2/public/brand/）：
- *   - quanke-mark.svg          浅底用（黑色 mark）
- *   - quanke-mark-dark.svg     深底用（米白 mark）
- *   - quanke-mark-{32..512}.png 多尺寸 PNG（外用 / PWA）
+ * 三种 variant：
+ *   1. compact — nav / breadcrumb（28px sususu wordmark，无副标）
+ *   2. lockup  — 首页 hero / 登录页（56px sususu wordmark + 灰色副标 "AI 学习云笔记工具"）
+ *   3. mark    — 仅 SU 圆形 mark（favicon 同款，用于空状态 / 折叠 nav）
  *
- * 三种 variant（按设计 spec）：
- *   1. compact — nav / 面包屑（mark + 全科笔记，无英文副标）
- *   2. lockup  — 首页 hero / 登录 / about（mark + 全科笔记 + POLYMATH NOTES）
- *   3. mark    — 仅 mark（favicon、空状态、折叠 nav；不在普通页面用）
- *
- * 深色模式：html.dark → 两张 <img> 通过 dark:hidden / hidden dark:block 切换。
+ * 字体：Kalam 700（Google Font，Layout.astro 全站 preload）。fallback Trebuchet MS / system-ui。
+ * 下划线：SVG quadratic bezier (M 3 8 Q 50 0, 97 6) 模拟手绘弧度。
+ * 深色模式：html.dark → 文字 / mark 背景反色。
  *
  * 用法：
- *   <Brand href="/" variant="compact" />              ← nav（默认 26px mark + 16px 字）
- *   <Brand href="/" variant="lockup" markSize={64} /> ← 首页 hero
- *   <Brand variant="mark" markSize={20} />            ← 仅 mark（无文字）
- *
- * spec 验收：
- *   - nav lockup 单行 ≤ 28px
- *   - "POLYMATH NOTES" 仅 lockup 出现
- *   - 深 / 浅背景 mark 颜色都对
+ *   <Brand href="/" variant="compact" />              ← nav
+ *   <Brand href="/" variant="lockup" />               ← 首页 / 登录
+ *   <Brand href="/" variant="lockup" wordmarkPx={80} /> ← hero 大字
+ *   <Brand variant="mark" markSize={20} />            ← 仅 mark
  */
 
 interface Props {
   href?: string;
   variant?: 'compact' | 'lockup' | 'mark';
-  /** mark 边长 px。compact 默认 26 / lockup 默认 64 / mark 默认 24 */
+  /** lockup wordmark 字号 px。默认 56 */
+  wordmarkPx?: number;
+  /** mark 边长 px（仅 variant=mark 用）。默认 24 */
   markSize?: number;
   class?: string;
-  /** lockup 时把 wordmark 字号也给一个手动覆盖 */
-  wordmarkPx?: number;
 }
 
 const {
   href,
   variant = 'compact',
-  markSize,
-  class: classProp = '',
   wordmarkPx,
+  markSize = 24,
+  class: classProp = '',
 } = Astro.props;
 
-const _markSize = markSize ?? (variant === 'lockup' ? 64 : variant === 'mark' ? 24 : 26);
-const _wordmarkPx = wordmarkPx ?? (variant === 'lockup' ? 36 : 16);
+const _wordmarkPx = wordmarkPx ?? (variant === 'lockup' ? 56 : 28);
 
-// mark-only 时不渲染 <a> 包裹（避免空可点击区域）；mark 通常作 favicon / inline 装饰
 const Tag = href ? 'a' : 'span';
-const ariaLabel = variant === 'lockup' ? '全科笔记 · Polymath Notes' : '全科笔记';
+const ariaLabel = variant === 'lockup' ? 'sususu · AI 学习云笔记工具' : 'sususu';
 ---
 
 <Tag
   {...(href ? { href } : {})}
-  class:list={[
-    'brand',
-    `brand-${variant}`,
-    classProp,
-  ]}
+  class:list={['brand', `brand-${variant}`, classProp]}
   aria-label={ariaLabel}
-  title="全科笔记"
+  title="sususu"
 >
-  <img
-    src="/brand/quanke-mark.svg"
-    alt={variant === 'mark' ? '全科笔记' : ''}
-    width={_markSize}
-    height={_markSize}
-    class="brand-mark dark:hidden"
-    draggable="false"
-  />
-  <img
-    src="/brand/quanke-mark-dark.svg"
-    alt={variant === 'mark' ? '全科笔记' : ''}
-    width={_markSize}
-    height={_markSize}
-    class="brand-mark hidden dark:block"
-    draggable="false"
-  />
-  {variant !== 'mark' && (
-    <span class="brand-text">
-      <span class="brand-cn" style={`font-size:${_wordmarkPx}px`}>全科笔记</span>
-      {variant === 'lockup' && (
-        <span class="brand-en">POLYMATH NOTES</span>
-      )}
+  {variant === 'mark' ? (
+    <span class="su-mark" style={`width:${markSize}px; height:${markSize}px; font-size:${Math.round(markSize * 0.55)}px;`}>
+      <span class="su-text">SU</span>
     </span>
+  ) : (
+    <span class="brand-wordmark" style={`font-size:${_wordmarkPx}px;`}>
+      <span class="word">sususu</span>
+      <svg class="underline" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M 3 8 Q 50 0, 97 6" />
+      </svg>
+    </span>
+  )}
+  {variant === 'lockup' && (
+    <span class="brand-tagline">AI 学习云笔记工具</span>
   )}
 </Tag>
 
 <style>
   .brand {
     display: inline-flex;
+    flex-direction: column;
     align-items: center;
     text-decoration: none;
     line-height: 1;
     color: inherit;
+    gap: 14px;
   }
+  .brand-compact { gap: 0; }
   .brand:hover { opacity: 0.85; }
 
-  /* === Mark ===
-     v0.5.73：不能写 `display: block` —— Astro 自动加 [data-astro-cid-*] 后
-     specificity 比 Tailwind `.hidden`（0,1,0）高 → dark:hidden 失效 → 两张并显。
-     flex 父级已经处理布局，img 自身不需要 display 规则。只保留 flex-shrink。 */
-  .brand-mark { flex-shrink: 0; }
-
-  /* === Compact: nav / breadcrumb === */
-  .brand-compact { gap: 10px; }
-  .brand-compact .brand-text { display: inline-flex; }
-  .brand-compact .brand-cn {
-    font-family: "Noto Serif SC", "Songti SC", serif;
-    font-weight: 700;
-    color: #0a0a0a;
-    letter-spacing: -0.01em;
-    line-height: 1;
-  }
-  :global(html.dark) .brand-compact .brand-cn { color: #fafaf9; }
-
-  /* === Lockup: hero / login / about === */
-  .brand-lockup { gap: 14px; align-items: center; }
-  .brand-lockup .brand-text {
+  /* === wordmark === */
+  .brand-wordmark {
     display: inline-flex;
     flex-direction: column;
-    gap: 8px;
+    align-items: center;
+    gap: 4px;
     line-height: 1;
-  }
-  .brand-lockup .brand-cn {
-    font-family: "Noto Serif SC", "Songti SC", serif;
-    font-weight: 700;
     color: #0a0a0a;
-    letter-spacing: -0.01em;
-    line-height: 1;
   }
-  :global(html.dark) .brand-lockup .brand-cn { color: #fafaf9; }
-  .brand-lockup .brand-en {
-    font-size: 11px;
-    letter-spacing: 0.32em;
-    color: #a3a3a3;
+  :global(html.dark) .brand-wordmark { color: #fafaf9; }
+
+  .brand-wordmark .word {
+    font-family: "Kalam", "Trebuchet MS", system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    font-size: inherit;
+  }
+
+  /* underline 跟着 font-size 走 — 用 em 单位让它响应式缩放 */
+  .brand-wordmark .underline {
+    width: 92%;
+    height: 0.18em;
+    margin-top: -0.1em;
+    overflow: visible;
+  }
+  .brand-wordmark .underline path {
+    stroke: currentColor;
+    stroke-width: 4;
+    stroke-linecap: round;
+    fill: none;
+  }
+
+  /* === lockup tagline === */
+  .brand-tagline {
     font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", system-ui, sans-serif;
+    font-size: 13px;
+    color: #a3a3a3;
+    letter-spacing: 0.06em;
     font-weight: 500;
-    text-transform: uppercase;
     line-height: 1;
   }
-  :global(html.dark) .brand-lockup .brand-en { color: #a3a3a3; }
+  :global(html.dark) .brand-tagline { color: #737373; }
+
+  /* === SU mark (圆形) === */
+  .su-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #0a0a0a;
+    color: #fafaf9;
+    flex-shrink: 0;
+    font-family: "Kalam", "Trebuchet MS", system-ui, sans-serif;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  :global(html.dark) .su-mark {
+    background: #fafaf9;
+    color: #0a0a0a;
+  }
+  .su-mark .su-text {
+    transform: translateY(-2%);
+    text-transform: uppercase;
+  }
 </style>

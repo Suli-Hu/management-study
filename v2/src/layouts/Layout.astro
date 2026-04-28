@@ -15,14 +15,14 @@ interface Props {
 }
 
 const {
-  title = '全科笔记',
+  title = 'sususu',
   description = '日本大学院入试备考知识库',
   currentDiscipline,
   currentSection,
   currentLeafTitle,
   fullHeight = false,
 } = Astro.props;
-const fullTitle = title === '全科笔记' ? title : `${title} · 全科笔记`;
+const fullTitle = title === 'sususu' ? title : `${title} · sususu`;
 ---
 
 <!doctype html>
@@ -35,6 +35,10 @@ const fullTitle = title === '全科笔记' ? title : `${title} · 全科笔记`;
     <meta name="theme-color" content="#1a1a1c" media="(prefers-color-scheme: dark)" />
     <title>{fullTitle}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {/* v0.5.98：sususu wordmark 用 Kalam 700 — 全站 preload 一次 */}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@700&display=swap" rel="stylesheet" />
     <script is:inline>
       // v0.3.9 夜间模式：无闪烁初始化（在 body 渲染前确定 html.dark）
       (function () {
