@@ -134,6 +134,10 @@ const isSuperAdmin = Astro.locals.isSuperAdmin;
           )}
           {isSuperAdmin && (
             <>
+              <a href="/admin/disciplines" role="menuitem" class="tn-menu-item">
+                <div class="tn-menu-item-title">学科管理 <span style="font-size:11px;opacity:0.5;margin-left:4px">👑</span></div>
+                <div class="tn-menu-item-sub">创建 / 编辑 / 删除学科</div>
+              </a>
               <a href="/admin/users" role="menuitem" class="tn-menu-item">
                 <div class="tn-menu-item-title">用户权限管理 <span style="font-size:11px;opacity:0.5;margin-left:4px">👑</span></div>
                 <div class="tn-menu-item-sub">配置 per-discipline 编辑 / 只读权限</div>

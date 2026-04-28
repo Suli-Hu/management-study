@@ -18,12 +18,10 @@ const result = await db
 
 const disciplines = result.results ?? [];
 
-// v0.5.56: upcoming 学科改成 D-状态卡（dashed border + warm 🌱 即将上线 badge）
-// 当前只有心理学（marketing/sociology 已撒种到 D1）
-const upcoming = [
-  { key: 'psychology', title_zh: '心理学', title_en: 'Psychology', tagline_zh: '数据准备中' },
-];
-const upcomingFiltered = upcoming.filter((u) => !disciplines.some((d) => d.key === u.key));
+// v0.5.98: 删除 hard-coded upcoming 列表 — 所有学科都从 D1 拉
+//   "🌱 即将上线" = 用户对该 discipline 没 read 权限的视觉
+//   super-admin 永远 canRead，所以他不会看到"即将上线"卡（看到的全是正常卡）
+//   通过 /admin/disciplines 创建的学科只要 user 没 user_permission 行就自动显示"即将上线"
 ---
 
 <Layout title="sususu">
@@ -65,43 +63,28 @@ const upcomingFiltered = upcoming.filter((u) => !disciplines.some((d) => d.key =
               </a>
             );
           }
-          // C: 无权限 — v0.5.56 改 v1 opacity dim 风格（demo 拍板）
+          // v0.5.98: 无权限 = "🌱 即将上线" 统一视觉
+          //   含义：该学科存在（D1 中有），但你（普通 user）还没被授予 read 权限。
+          //   super-admin 不会走到这里（他永远 canRead）。
           return (
             <div
-              class="block p-4 rounded-lg border bg-bg-primary opacity-50 cursor-not-allowed"
-              title="无权限。联系管理员申请。"
+              class="block p-4 rounded-lg border border-dashed border-bg-tertiary bg-bg-secondary cursor-not-allowed"
+              title="即将上线 — 还没开放给你访问，联系管理员申请"
             >
               <div class="flex items-baseline justify-between mb-1 gap-3">
                 <h3 class="text-lg flex items-baseline gap-2 min-w-0">
-                  <span class="truncate">{d.title_zh}</span>
+                  <span class="truncate text-quaternary">{d.title_zh}</span>
                   <span class="text-xs text-quaternary font-normal">{d.title_en}</span>
                 </h3>
-                <span class="shrink-0 text-xs px-1.5 py-0.5 rounded border border-bg-tertiary text-quaternary">🔒 无权限</span>
+                <span
+                  class="shrink-0 text-xs px-1.5 py-0.5 rounded border"
+                  style="border-color: color-mix(in oklab, #b07d20 30%, transparent); color: #b07d20; background: color-mix(in oklab, #b07d20 9%, var(--color-bg-primary));"
+                >🌱 即将上线</span>
               </div>
-              <div class="text-xs text-quaternary">联系管理员申请</div>
+              {d.tagline_zh && <div class="text-xs text-quaternary">{d.tagline_zh}</div>}
             </div>
           );
         })}
-
-        {/* D: 即将上线（不在 D1）— v0.5.56 改 dashed card（demo 拍板）*/}
-        {upcomingFiltered.map((u) => (
-          <div
-            class="block p-4 rounded-lg border border-dashed border-bg-tertiary bg-bg-secondary cursor-not-allowed"
-            title="即将上线"
-          >
-            <div class="flex items-baseline justify-between mb-1 gap-3">
-              <h3 class="text-lg flex items-baseline gap-2 min-w-0">
-                <span class="truncate text-quaternary">{u.title_zh}</span>
-                <span class="text-xs text-quaternary font-normal">{u.title_en}</span>
-              </h3>
-              <span
-                class="shrink-0 text-xs px-1.5 py-0.5 rounded border"
-                style="border-color: color-mix(in oklab, #b07d20 30%, transparent); color: #b07d20; background: color-mix(in oklab, #b07d20 9%, var(--color-bg-primary));"
-              >🌱 即将上线</span>
-            </div>
-            {u.tagline_zh && <div class="text-xs text-quaternary">{u.tagline_zh}</div>}
-          </div>
-        ))}
       </div>
     </section>
 

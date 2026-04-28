@@ -1,0 +1,588 @@
+---
+/**
+ * /admin/disciplines — 学科管理 (v0.5.98)
+ * super-admin only。SSR gate；UI client-rendered。
+ *
+ * 设计 (frontend-design skill):
+ *   - 列表卡片，每行显示 4 count: 视角/学派/学者/KP
+ *     * 全 0 → 整组 dim 灰（视觉单读"灰=可删"）
+ *     * 非 0 → 数字 SF Mono 黑，单位 quaternary 灰
+ *   - 删除按钮:
+ *     * 可删: [🗑 删除] warning ghost
+ *     * 不可删: [🔒 含内容] hover tooltip 给具体障碍数
+ *   - 创建: 顶部 [+ 新建学科] → drawer 从右滑入（沿用 NewViewDrawer 模式）
+ *   - 编辑: 行点击 inline 展开 (改 title/tagline)
+ */
+import Layout from '~/layouts/Layout.astro';
+
+if (!Astro.locals.user) return Astro.redirect('/login');
+if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
+---
+
+<Layout title="学科管理">
+  <main class="max-w-reading mx-auto px-4 py-6">
+    <header class="mb-6 flex items-baseline justify-between gap-3 flex-wrap">
+      <div>
+        <a href="/" class="text-xs text-tertiary hover:underline">← 返回首页</a>
+        <div class="flex items-baseline gap-3 mt-2">
+          <h1 class="text-2xl font-semibold">学科管理</h1>
+          <span class="text-xs text-quaternary" id="disc-count"></span>
+        </div>
+        <p class="text-xs text-tertiary mt-1">创建 / 编辑学科元数据 — themes / tags 在各学科内部管理</p>
+      </div>
+      <button type="button" id="open-create-btn" class="disc-create-btn">+ 新建学科</button>
+    </header>
+
+    <div id="loading" class="space-y-2">
+      {[1, 2].map(() => <div class="h-24 rounded-md bg-bg-secondary animate-pulse"></div>)}
+    </div>
+
+    <div id="content" class="hidden">
+      <div id="disc-list" class="disc-list"></div>
+      <div id="empty-state" class="disc-empty hidden">
+        <div class="disc-empty-icon">∅</div>
+        <div class="disc-empty-text">还没有学科</div>
+        <div class="disc-empty-sub">点 [+ 新建学科] 创建第一个</div>
+      </div>
+    </div>
+  </main>
+
+  {/* 创建 drawer */}
+  <div id="create-drawer" class="disc-drawer hidden" role="dialog" aria-modal="true">
+    <div class="disc-drawer-overlay" data-close></div>
+    <div class="disc-drawer-panel">
+      <div class="disc-drawer-head">
+        <div>
+          <div class="disc-drawer-title">新建学科</div>
+          <div class="disc-drawer-sub">key 不可改，建后锁死。Themes / tags 在学科内 admin 配。</div>
+        </div>
+        <button type="button" class="disc-drawer-close" data-close aria-label="关闭">
+          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="disc-drawer-body">
+        <label class="disc-field">
+          <div class="disc-label">key <span class="disc-req">*</span></div>
+          <input type="text" id="form-key" placeholder="例 finance / hrm" class="disc-input disc-input-mono" autocomplete="off" maxlength="31" />
+          <div class="disc-hint">小写字母开头 + 字母/数字/下划线，长度 2-31。建后不可改。</div>
+        </label>
+        <label class="disc-field">
+          <div class="disc-label">中文名 <span class="disc-req">*</span></div>
+          <input type="text" id="form-title-zh" placeholder="例 财务管理" class="disc-input" />
+        </label>
+        <div class="disc-field-row">
+          <label class="disc-field">
+            <div class="disc-label">English</div>
+            <input type="text" id="form-title-en" placeholder="Finance" class="disc-input" />
+          </label>
+          <label class="disc-field">
+            <div class="disc-label">日本語</div>
+            <input type="text" id="form-title-ja" placeholder="財務" class="disc-input" />
+          </label>
+        </div>
+        <label class="disc-field">
+          <div class="disc-label">中文一句话定位</div>
+          <input type="text" id="form-tagline-zh" placeholder="日本大学院入试备考" class="disc-input" />
+        </label>
+        <label class="disc-field">
+          <div class="disc-label">日本語一句タグライン</div>
+          <input type="text" id="form-tagline-ja" placeholder="可空" class="disc-input" />
+        </label>
+      </div>
+      <div class="disc-drawer-foot">
+        <button type="button" class="disc-btn-ghost" data-close>取消</button>
+        <button type="button" id="create-submit-btn" class="disc-btn-primary">创建</button>
+      </div>
+    </div>
+  </div>
+
+  {/* 编辑 drawer (复用同 drawer 容器) */}
+  <div id="edit-drawer" class="disc-drawer hidden" role="dialog" aria-modal="true">
+    <div class="disc-drawer-overlay" data-close-edit></div>
+    <div class="disc-drawer-panel">
+      <div class="disc-drawer-head">
+        <div>
+          <div class="disc-drawer-title">编辑学科</div>
+          <div class="disc-drawer-sub" id="edit-sub"></div>
+        </div>
+        <button type="button" class="disc-drawer-close" data-close-edit aria-label="关闭">
+          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="disc-drawer-body">
+        <div class="disc-field">
+          <div class="disc-label">key</div>
+          <div class="disc-input disc-input-mono disc-input-readonly" id="edit-key-display"></div>
+          <div class="disc-hint">key 不可改</div>
+        </div>
+        <label class="disc-field">
+          <div class="disc-label">中文名 <span class="disc-req">*</span></div>
+          <input type="text" id="edit-title-zh" class="disc-input" />
+        </label>
+        <div class="disc-field-row">
+          <label class="disc-field">
+            <div class="disc-label">English</div>
+            <input type="text" id="edit-title-en" class="disc-input" />
+          </label>
+          <label class="disc-field">
+            <div class="disc-label">日本語</div>
+            <input type="text" id="edit-title-ja" class="disc-input" />
+          </label>
+        </div>
+        <label class="disc-field">
+          <div class="disc-label">中文一句话定位</div>
+          <input type="text" id="edit-tagline-zh" class="disc-input" />
+        </label>
+        <label class="disc-field">
+          <div class="disc-label">日本語一句タグライン</div>
+          <input type="text" id="edit-tagline-ja" class="disc-input" />
+        </label>
+      </div>
+      <div class="disc-drawer-foot">
+        <button type="button" class="disc-btn-ghost" data-close-edit>取消</button>
+        <button type="button" id="edit-submit-btn" class="disc-btn-primary">保存</button>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style is:global>
+  /* === 列表 === */
+  .disc-list { display: flex; flex-direction: column; gap: 8px; }
+  .disc-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    padding: 14px 18px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-bg-primary);
+    align-items: center;
+  }
+  .disc-row.is-empty {
+    /* 视觉提示：空学科可删 */
+    background: var(--color-bg-secondary);
+  }
+  .disc-row-main { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+  .disc-name {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .disc-title-zh {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+  .disc-title-en {
+    font-size: 12px;
+    color: var(--color-text-quaternary);
+  }
+  .disc-key {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 11px;
+    color: var(--color-text-quaternary);
+    padding: 1px 6px;
+    background: var(--color-bg-tertiary);
+    border-radius: 4px;
+  }
+  .disc-tagline {
+    font-size: 12px;
+    color: var(--color-text-tertiary);
+  }
+
+  /* 4 个 count 数字 */
+  .disc-counts {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    margin-top: 2px;
+  }
+  .disc-counts.is-all-zero {
+    /* 全 0 时整组 dim → 视觉单读"灰=可删" */
+    opacity: 0.45;
+  }
+  .disc-count {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+  .disc-count-n {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+  .disc-count-label {
+    font-size: 11px;
+    color: var(--color-text-quaternary);
+  }
+
+  /* 操作 */
+  .disc-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .disc-btn-edit, .disc-btn-delete {
+    padding: 6px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-bg-primary);
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    font-family: inherit;
+    transition: border-color 100ms, color 100ms;
+  }
+  .disc-btn-edit:hover { border-color: var(--color-text-primary); color: var(--color-text-primary); }
+  .disc-btn-delete.is-can {
+    color: #FF3B30;
+    border-color: color-mix(in srgb, #FF3B30 30%, var(--color-border));
+  }
+  .disc-btn-delete.is-can:hover {
+    background: color-mix(in srgb, #FF3B30 8%, transparent);
+    border-color: #FF3B30;
+  }
+  .disc-btn-delete.is-locked {
+    cursor: not-allowed;
+    color: var(--color-text-quaternary);
+  }
+  .disc-btn-delete.is-locked:hover { background: var(--color-bg-secondary); }
+
+  /* 创建按钮 */
+  .disc-create-btn {
+    padding: 7px 14px;
+    border: 1px solid var(--color-text-primary);
+    border-radius: 6px;
+    background: var(--color-text-primary);
+    color: var(--color-bg-primary);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    flex-shrink: 0;
+  }
+  .disc-create-btn:hover { background: var(--color-text-secondary); }
+
+  /* 空态 */
+  .disc-empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--color-text-quaternary);
+    border: 1px dashed var(--color-border);
+    border-radius: 10px;
+  }
+  .disc-empty-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.4; }
+  .disc-empty-text { font-size: 13px; color: var(--color-text-tertiary); }
+  .disc-empty-sub { font-size: 11.5px; margin-top: 4px; }
+
+  /* === Drawer (沿用 NewViewDrawer 视觉) === */
+  .disc-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .disc-drawer.hidden { display: none; }
+  .disc-drawer-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 10, 10, 0.32);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+  .disc-drawer-panel {
+    position: relative;
+    width: min(520px, 100vw);
+    height: 100%;
+    background: var(--color-bg-primary);
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.18);
+    display: flex;
+    flex-direction: column;
+    animation: drawer-in 220ms ease-out;
+  }
+  @keyframes drawer-in {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+  }
+  .disc-drawer-head {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--color-bg-tertiary);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .disc-drawer-title { font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+  .disc-drawer-sub { font-size: 12px; color: var(--color-text-tertiary); margin-top: 4px; line-height: 1.5; }
+  .disc-drawer-close {
+    background: none;
+    border: 0;
+    cursor: pointer;
+    color: var(--color-text-quaternary);
+    padding: 4px;
+    border-radius: 4px;
+  }
+  .disc-drawer-close:hover { background: var(--color-bg-secondary); color: var(--color-text-primary); }
+  .disc-drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .disc-drawer-foot {
+    padding: 14px 22px;
+    border-top: 1px solid var(--color-bg-tertiary);
+    background: var(--color-bg-secondary);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .disc-field { display: flex; flex-direction: column; gap: 4px; }
+  .disc-field-row { display: flex; gap: 12px; }
+  .disc-field-row .disc-field { flex: 1; }
+  .disc-label { font-size: 11px; color: var(--color-text-tertiary); font-weight: 500; }
+  .disc-req { color: #FF3B30; }
+  .disc-input {
+    padding: 8px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+  }
+  .disc-input:focus { border-color: var(--color-text-primary); }
+  .disc-input-mono { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12.5px; }
+  .disc-input-readonly {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-tertiary);
+    cursor: default;
+  }
+  .disc-hint { font-size: 11px; color: var(--color-text-quaternary); margin-top: 2px; }
+
+  .disc-btn-primary {
+    padding: 8px 18px;
+    border: 1px solid var(--color-text-primary);
+    border-radius: 6px;
+    background: var(--color-text-primary);
+    color: var(--color-bg-primary);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .disc-btn-primary:hover { background: var(--color-text-secondary); }
+  .disc-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .disc-btn-ghost {
+    padding: 8px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-bg-primary);
+    color: var(--color-text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .disc-btn-ghost:hover { background: var(--color-bg-secondary); }
+</style>
+
+<script>
+  // @ts-nocheck
+  const $ = (s) => document.querySelector(s);
+  let disciplines = [];
+
+  async function load() {
+    const res = await fetch('/api/admin/disciplines');
+    if (!res.ok) {
+      window.toast?.error('加载失败：' + res.status);
+      return;
+    }
+    const data = await res.json();
+    disciplines = data.disciplines;
+    render();
+    $('#loading').classList.add('hidden');
+    $('#content').classList.remove('hidden');
+  }
+
+  function render() {
+    $('#disc-count').textContent = `共 ${disciplines.length} 个学科`;
+    if (disciplines.length === 0) {
+      $('#disc-list').classList.add('hidden');
+      $('#empty-state').classList.remove('hidden');
+      return;
+    }
+    $('#disc-list').classList.remove('hidden');
+    $('#empty-state').classList.add('hidden');
+
+    $('#disc-list').innerHTML = disciplines.map((d) => {
+      const titleEn = d.title.en ? `<span class="disc-title-en">${escapeHtml(d.title.en)}</span>` : '';
+      const tagline = d.tagline?.zh ? `<div class="disc-tagline">${escapeHtml(d.tagline.zh)}</div>` : '';
+      const c = d.counts;
+      const isEmpty = d.is_empty;
+      const blockers = [];
+      if (c.view > 0) blockers.push(`${c.view} 视角`);
+      if (c.school > 0) blockers.push(`${c.school} 学派`);
+      if (c.scholar > 0) blockers.push(`${c.scholar} 学者`);
+      if (c.kp > 0) blockers.push(`${c.kp} KP`);
+      const deleteBtn = isEmpty
+        ? `<button type="button" class="disc-btn-delete is-can" data-delete="${escapeAttr(d.key)}">🗑 删除</button>`
+        : `<button type="button" class="disc-btn-delete is-locked" disabled title="该学科含 ${blockers.join(' / ')}，清空才能删">🔒 含内容</button>`;
+
+      return `
+        <div class="disc-row ${isEmpty ? 'is-empty' : ''}">
+          <div class="disc-row-main">
+            <div class="disc-name">
+              <span class="disc-title-zh">${escapeHtml(d.title.zh)}</span>
+              ${titleEn}
+              <span class="disc-key">${escapeHtml(d.key)}</span>
+            </div>
+            ${tagline}
+            <div class="disc-counts ${isEmpty ? 'is-all-zero' : ''}">
+              <span class="disc-count"><span class="disc-count-n">${c.view}</span><span class="disc-count-label">视角</span></span>
+              <span class="disc-count"><span class="disc-count-n">${c.school}</span><span class="disc-count-label">学派</span></span>
+              <span class="disc-count"><span class="disc-count-n">${c.scholar}</span><span class="disc-count-label">学者</span></span>
+              <span class="disc-count"><span class="disc-count-n">${c.kp}</span><span class="disc-count-label">KP</span></span>
+            </div>
+          </div>
+          <div class="disc-actions">
+            <button type="button" class="disc-btn-edit" data-edit="${escapeAttr(d.key)}">编辑</button>
+            ${deleteBtn}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    document.querySelectorAll('[data-edit]').forEach((b) => {
+      b.addEventListener('click', () => openEdit(b.dataset.edit));
+    });
+    document.querySelectorAll('[data-delete]').forEach((b) => {
+      b.addEventListener('click', () => doDelete(b.dataset.delete));
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  }
+  function escapeAttr(s) { return escapeHtml(s); }
+
+  /* === 创建 drawer === */
+  $('#open-create-btn').addEventListener('click', () => {
+    $('#form-key').value = '';
+    $('#form-title-zh').value = '';
+    $('#form-title-en').value = '';
+    $('#form-title-ja').value = '';
+    $('#form-tagline-zh').value = '';
+    $('#form-tagline-ja').value = '';
+    $('#create-drawer').classList.remove('hidden');
+    setTimeout(() => $('#form-key').focus(), 100);
+  });
+  document.querySelectorAll('[data-close]').forEach((el) => {
+    el.addEventListener('click', () => $('#create-drawer').classList.add('hidden'));
+  });
+
+  $('#create-submit-btn').addEventListener('click', async () => {
+    const key = $('#form-key').value.trim();
+    const titleZh = $('#form-title-zh').value.trim();
+    if (!key) { window.toast?.error('key 必填'); return; }
+    if (!titleZh) { window.toast?.error('中文名必填'); return; }
+
+    const btn = $('#create-submit-btn');
+    btn.disabled = true; btn.textContent = '创建中...';
+
+    const body = {
+      key,
+      title: {
+        zh: titleZh,
+        en: $('#form-title-en').value.trim() || null,
+        ja: $('#form-title-ja').value.trim() || null,
+      },
+      tagline: {
+        zh: $('#form-tagline-zh').value.trim() || null,
+        ja: $('#form-tagline-ja').value.trim() || null,
+      },
+    };
+    const res = await fetch('/api/admin/disciplines', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json().catch(() => ({}));
+    btn.disabled = false; btn.textContent = '创建';
+    if (!res.ok) {
+      window.toast?.error(`${data.reason ?? 'error'}: ${typeof data.detail === 'string' ? data.detail : ''}`.slice(0, 100));
+      return;
+    }
+    window.toast?.success(`已创建学科 ${key}`);
+    $('#create-drawer').classList.add('hidden');
+    await load();
+  });
+
+  /* === 编辑 drawer === */
+  function openEdit(key) {
+    const d = disciplines.find((x) => x.key === key);
+    if (!d) return;
+    $('#edit-key-display').textContent = d.key;
+    $('#edit-title-zh').value = d.title.zh ?? '';
+    $('#edit-title-en').value = d.title.en ?? '';
+    $('#edit-title-ja').value = d.title.ja ?? '';
+    $('#edit-tagline-zh').value = d.tagline?.zh ?? '';
+    $('#edit-tagline-ja').value = d.tagline?.ja ?? '';
+    $('#edit-sub').textContent = `${d.title.zh} · ${d.key}`;
+    $('#edit-drawer').classList.remove('hidden');
+    $('#edit-drawer').dataset.editingKey = key;
+    setTimeout(() => $('#edit-title-zh').focus(), 100);
+  }
+  document.querySelectorAll('[data-close-edit]').forEach((el) => {
+    el.addEventListener('click', () => $('#edit-drawer').classList.add('hidden'));
+  });
+  $('#edit-submit-btn').addEventListener('click', async () => {
+    const key = $('#edit-drawer').dataset.editingKey;
+    if (!key) return;
+    const titleZh = $('#edit-title-zh').value.trim();
+    if (!titleZh) { window.toast?.error('中文名必填'); return; }
+
+    const btn = $('#edit-submit-btn');
+    btn.disabled = true; btn.textContent = '保存中...';
+
+    const body = {
+      title: {
+        zh: titleZh,
+        en: $('#edit-title-en').value.trim() || null,
+        ja: $('#edit-title-ja').value.trim() || null,
+      },
+      tagline: {
+        zh: $('#edit-tagline-zh').value.trim() || null,
+        ja: $('#edit-tagline-ja').value.trim() || null,
+      },
+    };
+    const res = await fetch(`/api/admin/disciplines/${encodeURIComponent(key)}`, {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json().catch(() => ({}));
+    btn.disabled = false; btn.textContent = '保存';
+    if (!res.ok) {
+      window.toast?.error(`${data.reason ?? 'error'}: ${typeof data.detail === 'string' ? data.detail : ''}`.slice(0, 100));
+      return;
+    }
+    window.toast?.success(`已保存 ${key}`);
+    $('#edit-drawer').classList.add('hidden');
+    await load();
+  });
+
+  async function doDelete(key) {
+    if (!confirm(`确认删除学科 "${key}"？\n\n此操作会:\n• 删 git 文件 v2/data/${key}/discipline.json\n• 删 D1 discipline 行\n• cascade 删该学科的 user_permission 行\n\n不可恢复（除非从 git history revert）。`)) return;
+    const res = await fetch(`/api/admin/disciplines/${encodeURIComponent(key)}`, { method: 'DELETE' });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) {
+      window.toast?.success(`已删除 ${key}`);
+      await load();
+    } else {
+      window.toast?.error(`${data.reason ?? 'error'}: ${typeof data.detail === 'object' ? JSON.stringify(data.detail) : (data.detail ?? '')}`.slice(0, 120));
+    }
+  }
+
+  load();
+</script>

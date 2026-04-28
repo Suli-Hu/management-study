@@ -22,8 +22,18 @@ export const KpId = z.string().regex(/^[a-z]{1,3}\d+$/, 'KP id 必须是小写�
 
 export const SchoolKey  = z.string().regex(/^[a-z][a-z0-9_]*$/, '学派 key 必须是小写蛇形');
 export const ScholarKey = z.string().regex(/^[a-z][a-z0-9_]*$/, '学者 key 必须是小写蛇形');
-export const DisciplineKey = z.enum(['keiei', 'marketing', 'sociology', 'finance', 'hr', 'strategy_g', 'org_g', 'other'])
-  .describe('学科 key — 新增学科时在这里加 enum 值');
+/**
+ * 学科 key — slug 格式（小写蛇形）。
+ *
+ * v0.5.98 起从 enum 改为 regex：让 super-admin 通过 /admin/disciplines UI
+ * 即时创建新学科，不再需要改代码 + redeploy。
+ *
+ * 运行时 cross-ref：写入数据时（API / sync 路径）会校验 discipline 必须
+ * 存在于 D1 discipline 表 (scripts/lib/load-data.ts checkAllIssues)。
+ */
+export const DisciplineKey = z.string()
+  .regex(/^[a-z][a-z0-9_]{1,30}$/, '学科 key 必须小写字母开头 + 字母/数字/下划线，长度 2-31')
+  .describe('学科 key — 小写蛇形 slug，例 keiei / marketing');
 
 /** ISO 8601 UTC timestamp（如 "2026-04-23T01:00:00.000Z"） */
 export const IsoTimestamp = z.string().datetime({ offset: false, message: 'updatedAt 必须是 ISO 8601 UTC（结尾 Z）' });
