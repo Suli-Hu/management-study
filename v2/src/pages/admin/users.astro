@@ -1,0 +1,335 @@
+---
+/**
+ * /admin/users — 用户权限管理 (v0.5.95)
+ * super-admin only。SSR gate；UI 全 client-rendered fetch /api/admin/users。
+ *
+ * 设计 (frontend-design skill):
+ *   - 单表格 layout，header (h1 + N 人 count)
+ *   - 每行 user：accent 色头像（email hash → ob 绿/classic 橙/strategy 蓝）+ email + meta
+ *   - 权限矩阵 = segmented toggle 三段 [—][R][A]，1 tap 切换 + toast
+ *   - 技术字段（user_id 后 6 位 / created_at）用 SF Mono
+ *   - super-admin 行皇冠 icon + 全列锁死 ALL
+ *   - iPad: 表格水平滚 + email 列 sticky + toggle ≥ 32px
+ */
+import Layout from '~/layouts/Layout.astro';
+
+if (!Astro.locals.user) return Astro.redirect('/login');
+if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
+---
+
+<Layout title="用户权限管理">
+  <main class="max-w-reading mx-auto px-4 py-6">
+    <header class="mb-6">
+      <a href="/" class="text-xs text-tertiary hover:underline">← 返回首页</a>
+      <div class="flex items-baseline gap-3 mt-2">
+        <h1 class="text-2xl font-semibold">用户权限管理</h1>
+        <span class="text-xs text-quaternary" id="user-count"></span>
+      </div>
+      <p class="text-xs text-tertiary mt-1">每格点击切换 — 即时生效</p>
+    </header>
+
+    <div id="loading" class="space-y-2">
+      {[1,2,3].map(() => (
+        <div class="h-14 rounded-md bg-bg-secondary animate-pulse"></div>
+      ))}
+    </div>
+
+    <div id="content" class="hidden">
+      <div class="users-wrap">
+        <table class="users-table" id="users-table">
+          <thead>
+            <tr>
+              <th class="sticky-col">用户</th>
+              {/* 学科列 client 注入 */}
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="mt-6 p-3 rounded-md bg-bg-secondary text-xs text-tertiary leading-relaxed">
+        <strong class="text-secondary">权限语义：</strong>
+        <span class="inline-block mx-1.5 px-1.5 py-0.5 border rounded text-quaternary">—</span> 无 (访问该学科 → 跳首页) ·
+        <span class="inline-block mx-1.5 px-1.5 py-0.5 border rounded text-accent-strategy" style="border-color: var(--accent-strategy)">R</span> 只读 ·
+        <span class="inline-block mx-1.5 px-1.5 py-0.5 border rounded text-accent-warning" style="border-color: var(--accent-warning)">A</span> 编辑 (read+write)
+        <br>
+        <strong class="text-secondary">super-admin</strong>（皇冠）由 <code class="font-mono text-quaternary">ADMIN_EMAILS</code> env 决定，不可改。
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style is:global>
+  .users-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-bg-primary);
+  }
+  .users-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 640px;
+    font-size: 13px;
+  }
+  .users-table thead th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--color-bg-secondary);
+    border-bottom: 1px solid var(--color-border);
+    font-weight: 500;
+    font-size: 11px;
+    color: var(--color-text-quaternary);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .users-table thead th.sticky-col {
+    position: sticky; left: 0; z-index: 2;
+    min-width: 220px;
+  }
+  .users-table tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--color-bg-tertiary);
+    vertical-align: middle;
+  }
+  .users-table tbody tr:last-child td { border-bottom: 0; }
+  .users-table tbody td.sticky-col {
+    position: sticky; left: 0;
+    background: var(--color-bg-primary);
+    z-index: 1;
+  }
+  .users-table tbody tr:hover td { background: var(--color-bg-secondary); }
+  .users-table tbody tr:hover td.sticky-col { background: var(--color-bg-secondary); }
+
+  /* user 身份单元（头像 + email + meta） */
+  .user-cell { display: flex; align-items: center; gap: 10px; }
+  .user-avatar {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    font-family: -apple-system, "SF Pro Text", "PingFang SC", sans-serif;
+    position: relative;
+  }
+  .user-avatar.is-super::after {
+    content: '👑';
+    position: absolute;
+    top: -6px; right: -6px;
+    font-size: 11px;
+    line-height: 1;
+  }
+  .user-info { display: flex; flex-direction: column; min-width: 0; }
+  .user-email {
+    font-weight: 500;
+    color: var(--color-text-primary);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
+  .user-meta {
+    font-size: 10.5px;
+    color: var(--color-text-quaternary);
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    margin-top: 2px;
+    display: flex;
+    gap: 6px;
+  }
+
+  /* 权限三段 toggle */
+  .perm-toggle {
+    display: inline-flex;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--color-bg-primary);
+    height: 32px;
+  }
+  .perm-toggle button {
+    all: unset;
+    cursor: pointer;
+    padding: 0 10px;
+    min-width: 32px;
+    font-size: 12px;
+    line-height: 1;
+    color: var(--color-text-quaternary);
+    text-align: center;
+    background: var(--color-bg-primary);
+    transition: background 100ms, color 100ms;
+    font-weight: 500;
+    border-right: 1px solid var(--color-border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .perm-toggle button:last-child { border-right: 0; }
+  .perm-toggle button:hover { background: var(--color-bg-secondary); }
+  .perm-toggle button.is-active {
+    background: var(--color-text-primary);
+    color: var(--color-bg-primary);
+  }
+  .perm-toggle button[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  .perm-toggle.is-locked {
+    background: var(--color-bg-secondary);
+  }
+  .perm-toggle.is-locked button { cursor: not-allowed; }
+
+  /* 锁定 cell（super-admin 全列 ALL） */
+  .perm-lock {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 12px;
+    height: 32px;
+    border: 1px solid var(--color-bg-tertiary);
+    border-radius: 6px;
+    background: var(--color-bg-secondary);
+    color: var(--color-text-quaternary);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 640px) {
+    .user-email { max-width: 130px; }
+  }
+</style>
+
+<script>
+  // @ts-nocheck
+  const $ = (s) => document.querySelector(s);
+  const ACCENT_PALETTE = ['#34C759', '#FF9500', '#007AFF']; // ob / classic / strategy
+
+  /** 简单 string hash → palette index（同 email 跨页一致） */
+  function pickAccent(email) {
+    let h = 0;
+    for (let i = 0; i < email.length; i++) h = ((h << 5) - h + email.charCodeAt(i)) | 0;
+    return ACCENT_PALETTE[Math.abs(h) % ACCENT_PALETTE.length];
+  }
+
+  function shortId(id) { return id ? id.slice(-6) : '?'; }
+  function formatDate(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return `${d.getMonth() + 1}/${d.getDate()}`;
+  }
+
+  let state = { users: [], disciplines: [] };
+
+  async function load() {
+    const res = await fetch('/api/admin/users');
+    if (!res.ok) {
+      window.toast?.error('加载失败：' + res.status);
+      return;
+    }
+    const data = await res.json();
+    state.users = data.users;
+    state.disciplines = data.disciplines;
+    render();
+    $('#loading').classList.add('hidden');
+    $('#content').classList.remove('hidden');
+  }
+
+  function render() {
+    $('#user-count').textContent = `共 ${state.users.length} 人`;
+
+    // header — sticky 用户列 + 学科列
+    const thead = $('#users-table thead tr');
+    thead.innerHTML = '<th class="sticky-col">用户</th>' +
+      state.disciplines.map((d) => `<th>${d.title_zh}<br><span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--color-text-quaternary);font-size:10px">${d.key}</span></th>`).join('');
+
+    const tbody = $('#users-table tbody');
+    tbody.innerHTML = state.users.map((u) => {
+      const accent = pickAccent(u.email);
+      const initial = (u.email[0] ?? '?').toUpperCase();
+      const cells = state.disciplines.map((d) => {
+        if (u.is_super_admin) {
+          return `<td><span class="perm-lock">ALL</span></td>`;
+        }
+        const cur = u.permissions[d.key] ?? null; // null/'guest'/'admin'
+        return `<td>${renderToggle(u.id, d.key, cur)}</td>`;
+      }).join('');
+
+      return `
+        <tr data-user-id="${u.id}">
+          <td class="sticky-col">
+            <div class="user-cell">
+              <span class="user-avatar ${u.is_super_admin ? 'is-super' : ''}" style="background:${accent}">${initial}</span>
+              <div class="user-info">
+                <div class="user-email" title="${u.email}">${u.email}</div>
+                <div class="user-meta"><span>${shortId(u.id)}</span><span>·</span><span>since ${formatDate(u.created_at)}</span></div>
+              </div>
+            </div>
+          </td>
+          ${cells}
+        </tr>
+      `;
+    }).join('');
+
+    bindToggles();
+  }
+
+  function renderToggle(userId, discKey, cur) {
+    const states = [
+      { val: null,    label: '—', title: '无权限' },
+      { val: 'guest', label: 'R', title: '只读' },
+      { val: 'admin', label: 'A', title: '编辑' },
+    ];
+    return `<div class="perm-toggle" data-user-id="${userId}" data-discipline="${discKey}">${
+      states.map((s) =>
+        `<button type="button" data-role="${s.val ?? ''}" class="${cur === s.val ? 'is-active' : ''}" title="${s.title}">${s.label}</button>`,
+      ).join('')
+    }</div>`;
+  }
+
+  function bindToggles() {
+    document.querySelectorAll('.perm-toggle').forEach((wrap) => {
+      const userId = wrap.dataset.userId;
+      const disc = wrap.dataset.discipline;
+      wrap.querySelectorAll('button').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          if (btn.classList.contains('is-active')) return;
+          const role = btn.dataset.role || null;
+          // optimistic
+          wrap.querySelectorAll('button').forEach((b) => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+
+          const res = await fetch(`/api/admin/users/${encodeURIComponent(userId)}/permission`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ discipline: disc, role: role || null }),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (res.ok) {
+            // update local state
+            const u = state.users.find((x) => x.id === userId);
+            if (u) {
+              if (role) u.permissions[disc] = role;
+              else delete u.permissions[disc];
+            }
+            const u2 = state.users.find((x) => x.id === userId);
+            const label = role === 'admin' ? '编辑权' : role === 'guest' ? '只读权' : '无权限';
+            window.toast?.success(`${u2.email.split('@')[0]} · ${disc} · ${label}`);
+          } else {
+            window.toast?.error(`${data.reason ?? 'error'}: ${data.detail ?? ''}`.slice(0, 80));
+            // 失败 → 回滚 UI（重 render 这一格）
+            const cur = state.users.find((x) => x.id === userId)?.permissions[disc] ?? null;
+            wrap.querySelectorAll('button').forEach((b) => {
+              b.classList.toggle('is-active', (b.dataset.role || null) === cur);
+            });
+          }
+        });
+      });
+    });
+  }
+
+  load();
+</script>

@@ -48,6 +48,7 @@ const sections: Array<{ key: 'schools' | 'scholars' | 'kps'; label: string; href
 const emailInitial = user?.email.charAt(0).toUpperCase() ?? '';
 const brandHref = currentDiscipline ? `/${currentDiscipline}` : '/';
 const isAdmin = currentDiscipline ? Astro.locals.canEdit(currentDiscipline) : false;
+const isSuperAdmin = Astro.locals.isSuperAdmin;
 ---
 
 <nav class="topnav" data-topnav>
@@ -130,6 +131,18 @@ const isAdmin = currentDiscipline ? Astro.locals.canEdit(currentDiscipline) : fa
               <div class="tn-menu-item-title">标签库</div>
               <div class="tn-menu-item-sub">管理跨视图的学派标签</div>
             </a>
+          )}
+          {isSuperAdmin && (
+            <>
+              <a href="/admin/users" role="menuitem" class="tn-menu-item">
+                <div class="tn-menu-item-title">用户权限管理 <span style="font-size:11px;opacity:0.5;margin-left:4px">👑</span></div>
+                <div class="tn-menu-item-sub">配置 per-discipline 编辑 / 只读权限</div>
+              </a>
+              <a href="/admin/tokens" role="menuitem" class="tn-menu-item">
+                <div class="tn-menu-item-title">API Tokens <span style="font-size:11px;opacity:0.5;margin-left:4px">👑</span></div>
+                <div class="tn-menu-item-sub">给 Claude / GPT 用的 API 凭证</div>
+              </a>
+            </>
           )}
           <button id="theme-toggle" type="button" role="menuitem" class="tn-menu-item tn-menu-item-btn">
             <div class="tn-menu-item-title">
