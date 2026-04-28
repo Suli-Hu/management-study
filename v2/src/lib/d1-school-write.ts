@@ -1,0 +1,95 @@
+/**
+ * School 直写 D1 (v0.5.93)
+ *
+ * 写入边界：
+ *   1. school 主表 (UPSERT)
+ *   2. kp_school join — school-driven 那部分（school.concepts[] → position 0..N）
+ *      KP-driven fallback rows（position 1000+i）保持不动，由 KP 写入路径维护
+ *
+ * 不在边界内：
+ *   - scholar_school 反向派生（v0.4.17 三路并集）— 留 GH Actions 全量 sync 兜底
+ *
+ * 删除：
+ *   - 调用方必须先做 0-KP gate 检查（v0.4.18），D1 helper 假设 caller 已校验
+ */
+
+import type { z } from 'zod';
+import type { School } from '~/schemas/school';
+
+type ParsedSchool = z.infer<typeof School>;
+
+export async function upsertSchoolInD1(
+  db: D1Database,
+  school: ParsedSchool,
+): Promise<void> {
+  const stmts: D1PreparedStatement[] = [];
+
+  // 1. school 主表 UPSERT（accent 列已废弃但仍要写空字符串，跟 sync 脚本一致）
+  stmts.push(
+    db.prepare(
+      `INSERT INTO school (key, discipline, title_zh, title_en, title_ja,
+                            era, summary_zh, summary_ja, theme_key, accent,
+                            tags_json, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(key) DO UPDATE SET
+         discipline = excluded.discipline,
+         title_zh = excluded.title_zh,
+         title_en = excluded.title_en,
+         title_ja = excluded.title_ja,
+         era = excluded.era,
+         summary_zh = excluded.summary_zh,
+         summary_ja = excluded.summary_ja,
+         theme_key = excluded.theme_key,
+         accent = excluded.accent,
+         tags_json = excluded.tags_json,
+         created_at = excluded.created_at,
+         updated_at = excluded.updated_at`,
+    ).bind(
+      school.key,
+      school.discipline,
+      school.title.zh,
+      school.title.en ?? null,
+      school.title.ja ?? null,
+      school.era ?? '',
+      school.summary.zh,
+      school.summary.ja ?? null,
+      school.themeKey,
+      '',
+      JSON.stringify(school.tags ?? []),
+      school.createdAt,
+      school.updatedAt,
+    ),
+  );
+
+  // 2. kp_school join — 重建 school-driven 部分（position < 1000）
+  //    KP-driven fallback 保留（position >= 1000）
+  stmts.push(
+    db.prepare('DELETE FROM kp_school WHERE school_key = ? AND position < 1000')
+      .bind(school.key),
+  );
+  school.concepts.forEach((kpId, position) => {
+    stmts.push(
+      db.prepare(
+        `INSERT OR IGNORE INTO kp_school (kp_id, school_key, position)
+         VALUES (?, ?, ?)`,
+      ).bind(kpId, school.key, position),
+    );
+  });
+
+  await db.batch(stmts);
+}
+
+/**
+ * 删除 school（含所有 join 关联）。
+ * 调用方先做 0-KP gate 检查 (count of kp_school where school_key = ?)
+ */
+export async function deleteSchoolInD1(
+  db: D1Database,
+  schoolKey: string,
+): Promise<void> {
+  await db.batch([
+    db.prepare('DELETE FROM kp_school WHERE school_key = ?').bind(schoolKey),
+    db.prepare('DELETE FROM scholar_school WHERE school_key = ?').bind(schoolKey),
+    db.prepare('DELETE FROM school WHERE key = ?').bind(schoolKey),
+  ]);
+}
