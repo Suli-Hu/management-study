@@ -5,9 +5,7 @@
     "ja": "経営学",
     "en": "Management"
   },
-  "tagline": {
-    "zh": "日本大学院入试备考"
-  },
+  "tagline": {},
   "tags": [
     {
       "key": "t_ejbdv3",
@@ -222,5 +220,5 @@
     }
   ],
   "createdAt": "2026-04-24T16:44:30.409Z",
-  "updatedAt": "2026-04-27T11:03:39.150Z"
+  "updatedAt": "2026-04-28T04:20:20.200Z"
 }
