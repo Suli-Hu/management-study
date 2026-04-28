@@ -5,7 +5,6 @@ import Footer from '~/components/Footer.astro';
 
 interface Props {
   title?: string;
-  description?: string;
   currentDiscipline?: string;
   currentSection?: 'schools' | 'scholars' | 'kps' | 'search';
   /** 第三段面包屑（v0.5.52 学派 / v0.5.55 学者）— Nav 渲染时无视语义只填字 */
@@ -16,7 +15,6 @@ interface Props {
 
 const {
   title = 'sususu',
-  description = '日本大学院入试备考知识库',
   currentDiscipline,
   currentSection,
   currentLeafTitle,
@@ -30,7 +28,6 @@ const fullTitle = title === 'sususu' ? title : `${title} · sususu`;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="description" content={description} />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1a1a1c" media="(prefers-color-scheme: dark)" />
     <title>{fullTitle}</title>
