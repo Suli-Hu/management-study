@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KP 高亮动效 demo · 全科笔记</title>
+  <style>
+    /* === v2 design tokens (亮色) === */
+    :root {
+      --color-text-primary: #1d1d1f;
+      --color-text-secondary: #2c2c2e;
+      --color-text-tertiary: #48484a;
+      --color-text-quaternary: #86868b;
+      --color-bg-primary: #ffffff;
+      --color-bg-secondary: #fafafa;
+      --color-bg-tertiary: #f5f5f7;
+      --color-border: #e5e5ea;
+      --accent-strategy: #007AFF;
+      --accent-ob: #34C759;
+      --accent-classic: #FF9500;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont,
+        "SF Pro Text", "PingFang SC", "Hiragino Sans", "Noto Sans CJK SC", sans-serif;
+      background: var(--color-bg-secondary);
+      color: var(--color-text-primary);
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      margin: 0 0 6px;
+    }
+    p.intro {
+      font-size: 13px;
+      color: var(--color-text-tertiary);
+      margin: 0 0 28px;
+    }
+
+    .global-actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+      padding: 12px 14px;
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .global-actions span { font-size: 12px; color: var(--color-text-tertiary); }
+
+    .demo-section {
+      margin-bottom: 40px;
+    }
+    .demo-h {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      gap: 16px;
+    }
+    .demo-h-l h2 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 4px;
+    }
+    .demo-h-l .meta {
+      font-size: 11.5px;
+      color: var(--color-text-quaternary);
+      letter-spacing: 0.02em;
+    }
+    .demo-trigger {
+      flex-shrink: 0;
+      padding: 7px 14px;
+      font-size: 12.5px;
+      font-family: inherit;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: white;
+      cursor: pointer;
+      color: var(--color-text-secondary);
+      transition: background 120ms;
+    }
+    .demo-trigger:hover {
+      background: var(--color-bg-tertiary);
+      color: var(--color-text-primary);
+    }
+    .demo-trigger:active { background: var(--color-border); }
+    .demo-trigger.is-primary {
+      background: var(--color-text-primary);
+      color: white;
+      border-color: var(--color-text-primary);
+    }
+    .demo-trigger.is-primary:hover {
+      background: var(--color-text-secondary);
+    }
+
+    /* === KP 卡 (mock 真站样式) === */
+    .kp-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .kp-card {
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 120ms;
+    }
+    .kp-card .row1 {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+    .kp-card .title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .kp-card .year {
+      font-size: 11px;
+      color: var(--color-text-quaternary);
+      flex-shrink: 0;
+    }
+    .kp-card .meta {
+      font-size: 11.5px;
+      color: var(--color-text-tertiary);
+      margin-bottom: 6px;
+    }
+    .kp-card .body {
+      font-size: 12.5px;
+      color: var(--color-text-secondary);
+      line-height: 1.65;
+    }
+
+    /* === 动效 v1: Flash highlight (黄) === */
+    @keyframes hl-flash {
+      0%   { background: #fff8c5; }
+      40%  { background: #fffae8; }
+      100% { background: white; }
+    }
+    .kp-card.is-flash { animation: hl-flash 1400ms ease-out; }
+
+    /* === 动效 v2: Accent ring 脉冲（边框 + 阴影色 = KP tag 色） ===
+       每张卡上挂 --tag-color (hex)，CSS 用 color-mix 计算半透明阴影。
+       默认值 var(--color-text-quaternary) 保证未设 tag 的卡也有兜底。 */
+    .kp-card { --tag-color: var(--color-text-quaternary); }
+    @keyframes hl-ring {
+      0% {
+        box-shadow: 0 0 0 0 transparent;
+        border-color: var(--color-border);
+      }
+      25% {
+        box-shadow: 0 0 0 6px color-mix(in srgb, var(--tag-color) 18%, transparent);
+        border-color: var(--tag-color);
+      }
+      55% {
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--tag-color) 10%, transparent);
+        border-color: var(--tag-color);
+      }
+      100% {
+        box-shadow: 0 0 0 0 transparent;
+        border-color: var(--color-border);
+      }
+    }
+    .kp-card.is-ring { animation: hl-ring 1600ms ease-out; }
+
+    /* tag 小色点（卡左上角，让用户能看出每张卡的 tag 色） */
+    .kp-card .tag-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 999px;
+      background: var(--tag-color);
+      margin-right: 6px;
+      vertical-align: middle;
+      transform: translateY(-1px);
+    }
+
+    /* === 动效 v3: 左侧竖条 + 卡上浮 === */
+    @keyframes hl-bar-lift {
+      0%   { transform: translateY(0); box-shadow: none; }
+      12%  { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0, 122, 255, 0.18); }
+      85%  { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0, 122, 255, 0.18); }
+      100% { transform: translateY(0); box-shadow: none; }
+    }
+    @keyframes hl-bar-show {
+      0%   { transform: scaleY(0); opacity: 0; }
+      12%  { transform: scaleY(1); opacity: 1; }
+      85%  { transform: scaleY(1); opacity: 1; }
+      100% { transform: scaleY(0.4); opacity: 0; }
+    }
+    .kp-card.is-bar { animation: hl-bar-lift 2000ms ease-out; }
+    .kp-card.is-bar::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--accent-strategy);
+      transform-origin: center;
+      animation: hl-bar-show 2000ms ease-out;
+      border-radius: 2px 0 0 2px;
+    }
+
+    /* === 对比说明区 === */
+    .compare {
+      margin-top: 56px;
+      padding: 18px 20px;
+      background: white;
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+    }
+    .compare h3 {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 0 0 10px;
+      color: var(--color-text-secondary);
+    }
+    .compare table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .compare th, .compare td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--color-bg-tertiary);
+    }
+    .compare th {
+      font-weight: 500;
+      color: var(--color-text-quaternary);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .compare td:first-child {
+      font-weight: 600;
+      width: 70px;
+    }
+    .compare tr:last-child td { border: 0; }
+
+    /* dark mode */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-text-primary: #f2f2f7;
+        --color-text-secondary: #d1d1d6;
+        --color-text-tertiary: #a8a8ad;
+        --color-text-quaternary: #85858a;
+        --color-bg-primary: #1a1a1c;
+        --color-bg-secondary: #202022;
+        --color-bg-tertiary: #2a2a2e;
+        --color-border: #38383a;
+      }
+      .kp-card { background: var(--color-bg-primary); }
+      .demo-trigger { background: var(--color-bg-primary); }
+      .demo-trigger:hover { background: var(--color-bg-tertiary); }
+      .global-actions { background: var(--color-bg-primary); }
+      .compare { background: var(--color-bg-primary); }
+      @keyframes hl-flash {
+        0%   { background: #3a2e17; }
+        40%  { background: #2a241a; }
+        100% { background: var(--color-bg-primary); }
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>KP 卡高亮动效 — 3 版方案</h1>
+  <p class="intro">编辑保存后跳回查看页/列表页时，短暂高亮"刚改的那条"。点 ▶ 演示反复看效果。</p>
+
+  <div class="global-actions">
+    <span>三个动效一起触发，方便对比</span>
+    <button class="demo-trigger is-primary" onclick="triggerAll()">▶ 全部演示</button>
+  </div>
+
+  <!-- v1 -->
+  <div class="demo-section">
+    <div class="demo-h">
+      <div class="demo-h-l">
+        <h2>v1 · Flash highlight（黄色一闪）</h2>
+        <div class="meta">1.4s · 一次性 · GitHub blame 风格 · 最 subtle</div>
+      </div>
+      <button class="demo-trigger" onclick="trigger('flash')">▶ 演示</button>
+    </div>
+    <div class="kp-list">
+      <div class="kp-card">
+        <div class="row1"><div class="title">期望理论</div><div class="year">1964</div></div>
+        <div class="meta">激励学派 · Vroom · OB</div>
+        <div class="body">动机强度 = 期望 × 工具性 × 效价。三因素任一为零，行为动机即归零。</div>
+      </div>
+      <div class="kp-card" id="card-flash">
+        <div class="row1"><div class="title">双因素理论 ←（演示目标）</div><div class="year">1959</div></div>
+        <div class="meta">激励学派 · Herzberg · OB</div>
+        <div class="body">激励因素与保健因素是性质不同的两类要素。保健因素改善只能消除不满，激励因素提升才能产生满意。</div>
+      </div>
+      <div class="kp-card">
+        <div class="row1"><div class="title">需要层次理论</div><div class="year">1943</div></div>
+        <div class="meta">激励学派 · Maslow · OB</div>
+        <div class="body">人类需要分 5 层，低层满足后高层凸显。马斯洛后期补充自我超越层。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- v2 -->
+  <div class="demo-section">
+    <div class="demo-h">
+      <div class="demo-h-l">
+        <h2>v2 · Accent ring 脉冲（边框色 = KP 自己 tag 色）</h2>
+        <div class="meta">1.6s · 边框 + 阴影圈扩散 · 4 张卡分别用 OB 绿 / 经典橙 / 战略蓝 / Warning 红</div>
+      </div>
+      <button class="demo-trigger" onclick="triggerRingAll()">▶ 4 卡同时演示</button>
+    </div>
+    <div class="kp-list">
+      <!-- OB 绿 -->
+      <div class="kp-card" id="card-ring-ob" style="--tag-color: #34C759;">
+        <div class="row1"><div class="title"><span class="tag-dot"></span>双因素理论 ←（OB · 绿）</div><div class="year">1959</div></div>
+        <div class="meta">激励学派 · Herzberg · OB</div>
+        <div class="body">激励因素与保健因素是性质不同的两类要素。保健因素改善只能消除不满，激励因素提升才能产生满意。</div>
+      </div>
+      <!-- 经典橙 -->
+      <div class="kp-card" id="card-ring-classic" style="--tag-color: #FF9500;">
+        <div class="row1"><div class="title"><span class="tag-dot"></span>科学管理 ←（经典 · 橙）</div><div class="year">1911</div></div>
+        <div class="meta">古典管理学派 · Taylor · 经典</div>
+        <div class="body">通过时间动作研究 + 任务分解 + 差别计件工资制，把作业从经验主义升级为科学方法。</div>
+      </div>
+      <!-- 战略蓝 -->
+      <div class="kp-card" id="card-ring-strategy" style="--tag-color: #007AFF;">
+        <div class="row1"><div class="title"><span class="tag-dot"></span>五力模型 ←（战略 · 蓝）</div><div class="year">1979</div></div>
+        <div class="meta">竞争战略学派 · Porter · 战略</div>
+        <div class="body">行业盈利能力由 5 种竞争力决定：现有竞争 / 新进入者 / 替代品 / 买方议价 / 供方议价。</div>
+      </div>
+      <!-- Warning 红（比如限制 / 警示类 tag） -->
+      <div class="kp-card" id="card-ring-warning" style="--tag-color: #FF3B30;">
+        <div class="row1"><div class="title"><span class="tag-dot"></span>霍桑实验局限 ←（限制 · 红）</div><div class="year">1932</div></div>
+        <div class="meta">人际关系学派 · Mayo · 限制</div>
+        <div class="body">实验设计存在严重选样偏差，"霍桑效应"本身被后续 Parsons 等人批判为统计假象。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- v3 -->
+  <div class="demo-section">
+    <div class="demo-h">
+      <div class="demo-h-l">
+        <h2>v3 · 左侧竖条 + 卡上浮</h2>
+        <div class="meta">2.0s · 最强信号 · 像被"点亮" · 视觉占位最大</div>
+      </div>
+      <button class="demo-trigger" onclick="trigger('bar')">▶ 演示</button>
+    </div>
+    <div class="kp-list">
+      <div class="kp-card">
+        <div class="row1"><div class="title">期望理论</div><div class="year">1964</div></div>
+        <div class="meta">激励学派 · Vroom · OB</div>
+        <div class="body">动机强度 = 期望 × 工具性 × 效价。三因素任一为零，行为动机即归零。</div>
+      </div>
+      <div class="kp-card" id="card-bar">
+        <div class="row1"><div class="title">双因素理论 ←（演示目标）</div><div class="year">1959</div></div>
+        <div class="meta">激励学派 · Herzberg · OB</div>
+        <div class="body">激励因素与保健因素是性质不同的两类要素。保健因素改善只能消除不满，激励因素提升才能产生满意。</div>
+      </div>
+      <div class="kp-card">
+        <div class="row1"><div class="title">需要层次理论</div><div class="year">1943</div></div>
+        <div class="meta">激励学派 · Maslow · OB</div>
+        <div class="body">人类需要分 5 层，低层满足后高层凸显。马斯洛后期补充自我超越层。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 对比表 -->
+  <div class="compare">
+    <h3>三版对比 · 选哪个？</h3>
+    <table>
+      <thead>
+        <tr><th>版本</th><th>强度</th><th>时长</th><th>场景适配</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>v1 Flash</td>
+          <td>★☆☆</td>
+          <td>1.4s</td>
+          <td>列表页 KP 多时不抢镜，但容易看漏</td>
+        </tr>
+        <tr>
+          <td>v2 Ring</td>
+          <td>★★☆</td>
+          <td>1.6s</td>
+          <td>v2 蓝色一致 · 平衡 · 推荐默认</td>
+        </tr>
+        <tr>
+          <td>v3 Bar+Lift</td>
+          <td>★★★</td>
+          <td>2.0s</td>
+          <td>"我刚改了哪条"必看，但卡少时偏 over</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function triggerById(id, cls) {
+      const card = document.getElementById(id);
+      if (!card) return;
+      card.classList.remove(cls);
+      void card.offsetWidth;
+      card.classList.add(cls);
+    }
+    function trigger(name) {
+      // v2 ring 区有多张卡，特殊处理
+      if (name === 'ring') return triggerRingAll();
+      triggerById('card-' + name, 'is-' + name);
+    }
+    function triggerRingAll() {
+      ['ob', 'classic', 'strategy', 'warning'].forEach((variant) => {
+        triggerById('card-ring-' + variant, 'is-ring');
+      });
+    }
+    function triggerAll() {
+      trigger('flash');
+      triggerRingAll();
+      trigger('bar');
+    }
+    // 进页面自动演示一次
+    window.addEventListener('load', () => {
+      setTimeout(triggerAll, 400);
+    });
+  </script>
+</body>
+</html>
