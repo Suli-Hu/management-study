@@ -54,10 +54,17 @@ export function mountBodyEditor(container: HTMLElement, opts: BodyEditorOptions)
   function getCurrent(): ParsedBody {
     return lang === 'zh' ? zhParsed : jaParsed;
   }
-  function setCurrent(p: ParsedBody) {
+  /**
+   * v0.5.86 — `rerender` 区分两类调用：
+   *   - false (默认)：input/textarea 输入。只更新 state + fire onChange；不重渲，保住 caret/焦点。
+   *   - true：增删按钮（× / + 条目 / + 添加分组 / + 添加对比列）。state 改了 DOM 必须重画。
+   * 之前一律不 render，所以删除/新增按钮看起来没反应。
+   */
+  function setCurrent(p: ParsedBody, rerender = false) {
     if (lang === 'zh') zhParsed = p;
     else jaParsed = p;
     fire();
+    if (rerender) render();
   }
   function switchFormat(newF: Format) {
     if (newF === format) return;
@@ -279,10 +286,12 @@ function buildFormatBar(
 // 5 Editors
 // ============================================================
 
+type SetParsedFn<P extends ParsedBody> = (p: P, rerender?: boolean) => void;
+
 function renderNarrative(
   parent: HTMLElement,
   parsed: Extract<ParsedBody, { format: 'narrative' }>,
-  setParsed: (p: ParsedBody) => void,
+  setParsed: SetParsedFn<ParsedBody>,
 ) {
   parent.appendChild(textarea({
     value: parsed.raw,
@@ -296,9 +305,9 @@ function renderNarrative(
 function renderFlatList(
   parent: HTMLElement,
   parsed: Extract<ParsedBody, { format: 'flat-list' }>,
-  setParsed: (p: ParsedBody) => void,
+  setParsed: SetParsedFn<ParsedBody>,
 ) {
-  const update = (patch: Partial<typeof parsed>) => setParsed({ ...parsed, ...patch });
+  const update = (patch: Partial<typeof parsed>, rerender = false) => setParsed({ ...parsed, ...patch }, rerender);
 
   // 导语
   parent.appendChild(fmtBlock('导语', textarea({
@@ -341,10 +350,10 @@ function renderFlatList(
       },
     }));
     row.appendChild(wrap);
-    row.appendChild(deleteX(() => update({ items: parsed.items.filter((_, idx) => idx !== i) })));
+    row.appendChild(deleteX(() => update({ items: parsed.items.filter((_, idx) => idx !== i) }, true)));
     list.appendChild(row);
   });
-  list.appendChild(addBtn('+ 添加条目', () => update({ items: [...parsed.items, { name: '', desc: '' }] })));
+  list.appendChild(addBtn('+ 添加条目', () => update({ items: [...parsed.items, { name: '', desc: '' }] }, true)));
   itemsBlock.appendChild(list);
   parent.appendChild(itemsBlock);
 }
@@ -352,9 +361,9 @@ function renderFlatList(
 function renderAccordion(
   parent: HTMLElement,
   parsed: Extract<ParsedBody, { format: 'accordion' }>,
-  setParsed: (p: ParsedBody) => void,
+  setParsed: SetParsedFn<ParsedBody>,
 ) {
-  const update = (patch: Partial<typeof parsed>) => setParsed({ ...parsed, ...patch });
+  const update = (patch: Partial<typeof parsed>, rerender = false) => setParsed({ ...parsed, ...patch }, rerender);
 
   parent.appendChild(fmtBlock('导语', textarea({
     value: parsed.lead, rows: 2, placeholder: '总论 / 串场（可空）',
@@ -373,7 +382,7 @@ function renderAccordion(
         update({ groups });
       },
     }));
-    groupH.appendChild(deleteX(() => update({ groups: parsed.groups.filter((_, x) => x !== gi) })));
+    groupH.appendChild(deleteX(() => update({ groups: parsed.groups.filter((_, x) => x !== gi) }, true)));
     groupBox.appendChild(groupH);
 
     g.items.forEach((it, ii) => {
@@ -403,29 +412,29 @@ function renderAccordion(
       pair.appendChild(deleteX(() => {
         const groups = [...parsed.groups];
         groups[gi] = { ...groups[gi], items: g.items.filter((_, x) => x !== ii) };
-        update({ groups });
+        update({ groups }, true);
       }));
       groupBox.appendChild(pair);
     });
     groupBox.appendChild(addBtn('+ 条目', () => {
       const groups = [...parsed.groups];
       groups[gi] = { ...groups[gi], items: [...g.items, { name: '', desc: '' }] };
-      update({ groups });
+      update({ groups }, true);
     }));
     parent.appendChild(groupBox);
   });
 
   parent.appendChild(addBtn('+ 添加分组', () => {
-    update({ groups: [...parsed.groups, { title: '', items: [{ name: '', desc: '' }] }] });
+    update({ groups: [...parsed.groups, { title: '', items: [{ name: '', desc: '' }] }] }, true);
   }, true));
 }
 
 function renderCompare(
   parent: HTMLElement,
   parsed: Extract<ParsedBody, { format: 'compare' }>,
-  setParsed: (p: ParsedBody) => void,
+  setParsed: SetParsedFn<ParsedBody>,
 ) {
-  const update = (patch: Partial<typeof parsed>) => setParsed({ ...parsed, ...patch });
+  const update = (patch: Partial<typeof parsed>, rerender = false) => setParsed({ ...parsed, ...patch }, rerender);
 
   parent.appendChild(fmtBlock('导语', textarea({
     value: parsed.lead, rows: 2, placeholder: '对对比关系的引言（可空）',
@@ -453,7 +462,7 @@ function renderCompare(
         update({ cols: cs });
       },
     }));
-    colH.appendChild(deleteX(() => update({ cols: parsed.cols.filter((_, x) => x !== ci) })));
+    colH.appendChild(deleteX(() => update({ cols: parsed.cols.filter((_, x) => x !== ci) }, true)));
     card.appendChild(colH);
 
     const fields = el('div', 'kpedit-cmp-fields');
@@ -484,7 +493,7 @@ function renderCompare(
   });
   colsBlock.appendChild(cols);
   colsBlock.appendChild(addBtn('+ 添加对比列', () => {
-    update({ cols: [...parsed.cols, { title: '', keyword: '', desc: '', type: '', theories: '', detail: '' }] });
+    update({ cols: [...parsed.cols, { title: '', keyword: '', desc: '', type: '', theories: '', detail: '' }] }, true);
   }));
   parent.appendChild(colsBlock);
 }
@@ -492,7 +501,7 @@ function renderCompare(
 function renderQuad(
   parent: HTMLElement,
   parsed: Extract<ParsedBody, { format: 'quad' }>,
-  setParsed: (p: ParsedBody) => void,
+  setParsed: SetParsedFn<ParsedBody>,
 ) {
   const update = (patch: Partial<typeof parsed>) => setParsed({ ...parsed, ...patch });
 
