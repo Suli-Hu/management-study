@@ -5,9 +5,11 @@
     "ja": "社会学",
     "en": "Sociology"
   },
-  "tagline": {},
+  "tagline": {
+    "zh": "🌱 即将上线"
+  },
   "tags": [],
   "themes": [],
   "createdAt": "2026-04-27T11:21:24.729Z",
-  "updatedAt": "2026-04-28T04:20:30.589Z"
+  "updatedAt": "2026-04-28T04:26:54.689Z"
 }
