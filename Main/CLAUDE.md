@@ -64,6 +64,13 @@
 - 跨 discipline 推 KP 的复用方式（API 已通用）
 - 失败时给用户的反馈话术
 
+**任何 session 想用 API 管理知识库** 📘 — `v2/API_REFERENCE.md`：
+- TL;DR：webhook 配好后 git push 自动 ~5-10s 同步 D1，多数场景 zero API call
+- 所有 endpoint 完整说明（Sync API / Webhook / Edit / New / Read / Search）
+- KP / School / Scholar / View 完整字段定义（zod schema 真源映射）
+- 7 个常用 agent 调用配方（新建 / 移动 / 删除 / 合并 KP）
+- v0.5.94+ 路线图（v1 CRUD + API token RBAC）
+
 ## 核心规则
 
 1. **部署 = `git push origin main`**（不要再跑 `wrangler pages deploy`）
