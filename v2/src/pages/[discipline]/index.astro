@@ -134,35 +134,39 @@ const chipViews = allViews.map((v) => ({
       </p>
     </header>
 
-    {/* === ViewSwitcher chip 行 === */}
-    {chipViews.length > 0 ? (
-      <ViewSwitcher
-        views={chipViews}
-        currentId={currentView?.id ?? ''}
-        discipline={discipline!}
-        canEdit={canEdit}
-      />
-    ) : canEdit ? (
-      <div class="empty-views-cta">
-        还没有视图。<button type="button" data-view-new class="empty-views-link">+ 新建视图</button>
-      </div>
-    ) : null}
+    {/* v0.5.84 wrap：ViewSwitcher + ViewDescription 整块包成 [data-view-block]，
+        ViewSwitcher 里的「视图」label 按钮 toggle data-collapsed → CSS 隐藏 chip + desc */}
+    <div class="view-block" data-view-block>
+      {/* === ViewSwitcher chip 行 === */}
+      {chipViews.length > 0 ? (
+        <ViewSwitcher
+          views={chipViews}
+          currentId={currentView?.id ?? ''}
+          discipline={discipline!}
+          canEdit={canEdit}
+        />
+      ) : canEdit ? (
+        <div class="empty-views-cta">
+          还没有视图。<button type="button" data-view-new class="empty-views-link">+ 新建视图</button>
+        </div>
+      ) : null}
 
-    {/* === ViewDescription === */}
-    {currentView && (
-      <ViewDescription
-        view={{
-          id: currentView.id,
-          name: currentView.name,
-          icon: currentView.icon,
-          description: currentView.description,
-          flow: currentView.flow,
-        }}
-        count={viewSchoolCount}
-        totalSchools={totalSchools}
-        canEdit={canEdit}
-      />
-    )}
+      {/* === ViewDescription === */}
+      {currentView && (
+        <ViewDescription
+          view={{
+            id: currentView.id,
+            name: currentView.name,
+            icon: currentView.icon,
+            description: currentView.description,
+            flow: currentView.flow,
+          }}
+          count={viewSchoolCount}
+          totalSchools={totalSchools}
+          canEdit={canEdit}
+        />
+      )}
+    </div>
 
     {/* === Resolved groups === */}
     {currentView && resolvedGroups.length > 0 && (
@@ -222,6 +226,20 @@ const chipViews = allViews.map((v) => ({
   }
   @media (max-width: 720px) {
     .discipline-page { padding: 24px 16px 80px; }
+  }
+
+  /* v0.5.84 折叠态：ViewSwitcher 的 label-btn 还显示，其它都收起 */
+  .view-block[data-collapsed="1"] :global(.vs-chip),
+  .view-block[data-collapsed="1"] :global(.vs-new),
+  .view-block[data-collapsed="1"] :global(.view-desc),
+  .view-block[data-collapsed="1"] .empty-views-cta {
+    display: none;
+  }
+  /* 折叠时 view-switcher 行抹掉下边线，避免「孤零零一根线」突兀 */
+  .view-block[data-collapsed="1"] :global(.view-switcher) {
+    border-bottom: 0;
+    margin-bottom: 6px;
+    padding-bottom: 0;
   }
 
   .page-h { margin-bottom: 8px; }
