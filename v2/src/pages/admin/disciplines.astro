@@ -62,18 +62,14 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
       </div>
       <div class="disc-drawer-body">
         <label class="disc-field">
-          <div class="disc-label">key <span class="disc-req">*</span></div>
-          <input type="text" id="form-key" placeholder="例 finance / hrm" class="disc-input disc-input-mono" autocomplete="off" maxlength="31" />
-          <div class="disc-hint">小写字母开头 + 字母/数字/下划线，长度 2-31。建后不可改。</div>
-        </label>
-        <label class="disc-field">
           <div class="disc-label">中文名 <span class="disc-req">*</span></div>
           <input type="text" id="form-title-zh" placeholder="例 财务管理" class="disc-input" />
         </label>
         <div class="disc-field-row">
           <label class="disc-field">
-            <div class="disc-label">English</div>
+            <div class="disc-label">English <span class="disc-req">*</span></div>
             <input type="text" id="form-title-en" placeholder="Finance" class="disc-input" />
+            <div class="disc-hint" id="key-preview">将生成 key: <span class="disc-input-mono" id="key-preview-val">—</span></div>
           </label>
           <label class="disc-field">
             <div class="disc-label">日本語</div>
@@ -467,34 +463,63 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
   function escapeAttr(s) { return escapeHtml(s); }
 
   /* === 创建 drawer === */
+  /** Slugify English 标题 → key (lowercase + 非字母数字转下划线 + trim 边界 _) */
+  function slugify(en) {
+    return (en || '').toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .slice(0, 31);
+  }
+  function updateKeyPreview() {
+    const en = $('#form-title-en').value.trim();
+    const slug = slugify(en);
+    const valid = /^[a-z][a-z0-9_]{1,30}$/.test(slug);
+    const el = $('#key-preview-val');
+    if (!en) {
+      el.textContent = '—';
+      el.style.color = 'var(--color-text-quaternary)';
+    } else if (valid) {
+      el.textContent = slug;
+      el.style.color = 'var(--color-text-primary)';
+    } else {
+      el.textContent = slug || '(无法生成)';
+      el.style.color = '#FF3B30';
+    }
+  }
+  $('#form-title-en').addEventListener('input', updateKeyPreview);
+
   $('#open-create-btn').addEventListener('click', () => {
-    $('#form-key').value = '';
     $('#form-title-zh').value = '';
     $('#form-title-en').value = '';
     $('#form-title-ja').value = '';
     $('#form-tagline-zh').value = '';
     $('#form-tagline-ja').value = '';
+    updateKeyPreview();
     $('#create-drawer').classList.remove('hidden');
-    setTimeout(() => $('#form-key').focus(), 100);
+    setTimeout(() => $('#form-title-zh').focus(), 100);
   });
   document.querySelectorAll('[data-close]').forEach((el) => {
     el.addEventListener('click', () => $('#create-drawer').classList.add('hidden'));
   });
 
   $('#create-submit-btn').addEventListener('click', async () => {
-    const key = $('#form-key').value.trim();
     const titleZh = $('#form-title-zh').value.trim();
-    if (!key) { window.toast?.error('key 必填'); return; }
+    const titleEn = $('#form-title-en').value.trim();
     if (!titleZh) { window.toast?.error('中文名必填'); return; }
+    if (!titleEn) { window.toast?.error('English 必填（用来生成 key）'); return; }
+    const slug = slugify(titleEn);
+    if (!/^[a-z][a-z0-9_]{1,30}$/.test(slug)) {
+      window.toast?.error(`English "${titleEn}" 无法生成有效 key (slug=${slug})，请改 English 写法`);
+      return;
+    }
 
     const btn = $('#create-submit-btn');
     btn.disabled = true; btn.textContent = '创建中...';
 
     const body = {
-      key,
       title: {
         zh: titleZh,
-        en: $('#form-title-en').value.trim() || null,
+        en: titleEn,
         ja: $('#form-title-ja').value.trim() || null,
       },
       tagline: {
@@ -513,7 +538,7 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
       window.toast?.error(`${data.reason ?? 'error'}: ${typeof data.detail === 'string' ? data.detail : ''}`.slice(0, 100));
       return;
     }
-    window.toast?.success(`已创建学科 ${key}`);
+    window.toast?.success(`已创建学科 ${data.discipline?.key ?? slug}`);
     $('#create-drawer').classList.add('hidden');
     await load();
   });

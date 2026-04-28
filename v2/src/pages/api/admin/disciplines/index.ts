@@ -77,9 +77,17 @@ export const GET: APIRoute = async ({ locals }) => {
 };
 
 interface CreateBody {
-  key?: string;
+  /** v0.6.1 起 key 由后端自动从 title.en slugify 生成，client 不传 */
   title?: { zh?: string; en?: string | null; ja?: string | null };
   tagline?: { zh?: string | null; ja?: string | null };
+}
+
+/** Slugify English 标题 → key (lowercase + 非字母数字转 _ + trim 边界 _) */
+function slugify(en: string): string {
+  return en.toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .slice(0, 31);
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -95,14 +103,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
   try { body = (await request.json()) as CreateBody; }
   catch { return json(400, { ok: false, reason: 'bad_request', detail: 'invalid json' }); }
 
-  const key = body.key?.trim() ?? '';
   const titleZh = body.title?.zh?.trim() ?? '';
-  if (!key) return json(400, { ok: false, reason: 'bad_request', detail: 'key required' });
+  const titleEn = body.title?.en?.trim() ?? '';
   if (!titleZh) return json(400, { ok: false, reason: 'bad_request', detail: 'title.zh required' });
+  if (!titleEn) return json(400, { ok: false, reason: 'bad_request', detail: 'title.en required (用来生成 key)' });
 
-  // key slug check (跟 DisciplineKey schema 一致)
+  // v0.6.1 自动从 English slugify 生成 key
+  const key = slugify(titleEn);
   if (!/^[a-z][a-z0-9_]{1,30}$/.test(key)) {
-    return json(400, { ok: false, reason: 'bad_request', detail: 'key 必须小写字母开头 + 字母/数字/下划线，长度 2-31' });
+    return json(400, { ok: false, reason: 'bad_request', detail: `English "${titleEn}" 无法生成有效 key (slug=${key})，请改 English 写法` });
   }
 
   // key 可用性检查
