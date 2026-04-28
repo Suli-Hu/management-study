@@ -57,6 +57,12 @@ const fullTitle = title === '全科笔记' ? title : `${title} · 全科笔记`;
     </div>
     {!fullHeight && <Footer />}
 
+    {/* v0.5.88：全局 toast 系统 — 暴露 window.toast 给所有 inline script + module 用 */}
+    <script>
+      import { mountToastSystem } from '~/lib/toast-client';
+      mountToastSystem();
+    </script>
+
     {/* v0.5.79：lang-toggle 全局拦截 — 把 ?lang=ja 链接的 click 改成 fetch + DOM 选择性 swap，
         保留滚动位置 + 已展开 <details>。FAB 与 Cmd+J 都 .click() anchor，自动经过此拦截。 */}
     <script>

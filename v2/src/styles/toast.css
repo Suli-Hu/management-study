@@ -1,0 +1,103 @@
+/* ==========================================================================
+   全局 Toast 系统 (v0.5.88)
+   - 顶部居中固定，单一替换（新 toast 替换旧的）
+   - 4 种类型：success / error / warning / info
+   - 文案 SF Pro / PingFang，跟全站一致
+   ========================================================================== */
+
+.app-toast-stage {
+  position: fixed;
+  top: 80px;                 /* nav (~56px) + 24px 间距 */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 640px) {
+  .app-toast-stage { top: 64px; }
+}
+
+.app-toast {
+  pointer-events: auto;
+  min-width: 200px;
+  max-width: min(380px, calc(100vw - 32px));
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+
+  opacity: 0;
+  transform: translateY(-12px);
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+.app-toast.is-shown {
+  opacity: 1;
+  transform: translateY(0);
+}
+.app-toast.is-leaving {
+  opacity: 0;
+  transform: translateY(-12px);
+  transition: opacity 200ms ease-in, transform 200ms ease-in;
+}
+
+.app-toast-icon {
+  flex-shrink: 0;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 600;
+}
+.app-toast-msg {
+  flex: 1;
+  word-break: break-word;
+}
+.app-toast-x {
+  background: none;
+  border: 0;
+  color: inherit;
+  opacity: 0.5;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 0 0 4px;
+  font-family: inherit;
+}
+.app-toast-x:hover { opacity: 1; }
+
+/* === 类型颜色 (亮色) === */
+.app-toast--success { background: #e8f8ec; border-color: #34C759; color: #1a7d3b; }
+.app-toast--error   { background: #fdecea; border-color: #FF3B30; color: #a3231b; }
+.app-toast--warning { background: #fff4e0; border-color: #FF9500; color: #a35e00; }
+.app-toast--info    { background: #e0f0ff; border-color: #007AFF; color: #0050a8; }
+
+/* === 类型颜色 (暗色) === */
+html.dark .app-toast--success {
+  background: rgba(52, 199, 89, 0.15);
+  border-color: rgba(52, 199, 89, 0.5);
+  color: #6dd99e;
+}
+html.dark .app-toast--error {
+  background: rgba(255, 59, 48, 0.15);
+  border-color: rgba(255, 59, 48, 0.5);
+  color: #ff7c75;
+}
+html.dark .app-toast--warning {
+  background: rgba(255, 149, 0, 0.15);
+  border-color: rgba(255, 149, 0, 0.5);
+  color: #ffb84d;
+}
+html.dark .app-toast--info {
+  background: rgba(0, 122, 255, 0.15);
+  border-color: rgba(0, 122, 255, 0.5);
+  color: #5ba9ff;
+}

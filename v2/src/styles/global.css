@@ -1,6 +1,7 @@
 /* KP body 组件 + OptionA + 共用组件 — @import 必须在 @tailwind 之前 */
 @import './components.css';
 @import './kp-edit.css';
+@import './toast.css';
 
 /* Tailwind base + components + utilities */
 @tailwind base;

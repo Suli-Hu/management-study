@@ -112,11 +112,15 @@ async function toggleLangInPlace(): Promise<void> {
   if (isJa) url.searchParams.delete('lang');
   else url.searchParams.set('lang', 'ja');
   const targetUrl = url.toString();
+  // v0.5.88: 切换后的目标语言 — toast 用目标语言文案做"切换生效"的自证
+  const targetLang: 'zh' | 'ja' = isJa ? 'zh' : 'ja';
 
   document.body.dataset.langSwapping = '1';
   try {
     await fetchAndSwap(targetUrl);
     history.pushState(null, '', targetUrl);
+    // v0.5.88: 切换成功 toast — 文案用目标语言
+    window.toast?.langSwitched(targetLang);
   } catch (err) {
     if ((err as { name?: string })?.name === 'AbortError') return;
     console.error('[lang-toggle] in-place failed, fallback to full nav', err);
