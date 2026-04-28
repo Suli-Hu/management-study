@@ -13,6 +13,7 @@
 import type { APIRoute } from 'astro';
 import { Kp } from '~/schemas/kp';
 import { getFile, putFile, deleteFile } from '~/lib/github';
+import { upsertKpInD1, deleteKpInD1, withRetry } from '~/lib/d1-kp-write';
 
 interface SuccessBody {
   ok: true;
@@ -104,6 +105,15 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     return json<ErrorBody>(502, { ok: false, reason: 'github_error', detail: res.detail });
   }
 
+  // v0.5.89 双写 D1：git 已 commit 成功后，立即把改动写进 D1，
+  // 让用户刷新就看到新数据，不等 GitHub Actions sync (~90s)。
+  // D1 写失败不阻断响应 — git 已成功，GH Actions sync 跑完会自愈。
+  try {
+    await withRetry(() => upsertKpInD1(env.DB, kp));
+  } catch (d1Err) {
+    console.error('[edit/kp PUT] D1 dual-write failed (git committed; GH Actions sync will reconcile):', d1Err);
+  }
+
   return json<SuccessBody>(200, {
     ok: true,
     commit_sha: res.data.commit_sha,
@@ -165,6 +175,14 @@ export const DELETE: APIRoute = async ({ params, request, locals }) => {
       return json<ErrorBody>(409, { ok: false, reason: 'sha_conflict', current_sha });
     }
     return json<ErrorBody>(502, { ok: false, reason: 'github_error', detail: res.detail });
+  }
+
+  // v0.5.89 双删 D1：git 已 delete 成功后，立即把 D1 行也删掉，
+  // 用户回 list 页立刻看不到这条 KP，不等 GH Actions sync。
+  try {
+    await withRetry(() => deleteKpInD1(env.DB, id));
+  } catch (d1Err) {
+    console.error('[edit/kp DELETE] D1 dual-delete failed (git deleted; GH Actions sync will reconcile):', d1Err);
   }
 
   return json(200, { ok: true, commit_sha: res.data.commit_sha, deploy_eta_seconds: 90 });
