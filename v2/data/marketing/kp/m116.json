@@ -1,0 +1,41 @@
+{
+  "id": "m116",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "strategic_marketing"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "Product Portfolio Design · 产品组合设计",
+    "ja": "Product Portfolio Design · 製品ポートフォリオ設計",
+    "en": "Product Portfolio Design"
+  },
+  "body": {
+    "zh": "<strong>Product Portfolio Design（产品组合设计）</strong>是企业管理<strong>多产品 / 多 SBU</strong>的战略框架·marketing planning 核心。<br><br><strong>2 大经典工具</strong>：<br>① <strong>BCG Matrix</strong>——成长率 × 份额 4 象限（详见 m097）<br>② <strong>GE / McKinsey Matrix</strong>——产业魅力度 × 业务实力 9 格（更精细）<br><br><strong>GE Matrix 9 格</strong>：<br>纵轴产业魅力度：高 / 中 / 低<br>横轴业务实力：强 / 中 / 弱<br>战略：① 投资·建设（左上 3 格）② 选择·维持（中央 3 格）③ 收割·剥离（右下 3 格）<br><br><strong>portfolio 评估 5 标准</strong>：<br>① <strong>Size</strong>·② <strong>Growth</strong>·③ <strong>Profit</strong>·④ <strong>Risk</strong>·⑤ <strong>Strategic Fit</strong><br><br><strong>marketing 实务原则</strong>：<br>① <strong>balanced portfolio</strong>——既有 cash cow（现在）+ star（未来）<br>② <strong>cash flow management</strong>——cow 资金 → 投资 star / question mark<br>③ <strong>定期 review</strong>——portfolio 每年 / 每季度评估<br>④ <strong>果断剥离</strong>——dog 不能恋战·占用资源<br><br><strong>典型例</strong>：<br>① Sony portfolio：Game（PS·star）+ Music（cow）+ Mobile（dog·已剥离）+ Imaging（cow）<br>② P&G 的 Beauty / Health / Home Care 平衡<br>③ Microsoft：Office（cow）+ Azure（star）+ Surface（question mark）<br><br><strong>跨学派关系</strong>：与 SBU·BCG Matrix·strategic_marketing 一体使用。",
+    "ja": "<strong>Product Portfolio Design（製品ポートフォリオ設計）</strong>は企業が<strong>多製品·多 SBU</strong>を管理する戦略フレーム·マーケティング・プランニング核心。<br><br><strong>2 大古典ツール</strong>：① BCG Matrix（成長率 × シェア 4 象限·m097）② GE / McKinsey Matrix（業界魅力度 × 業務実力 9 格·より精緻）<br><br><strong>GE Matrix 9 格</strong>：縦軸=業界魅力度（高·中·低）·横軸=業務実力（強·中·弱）·戦略：① 投資·建設（左上 3 格）② 選択·維持（中央 3 格）③ 収穫·剥離（右下 3 格）<br><br><strong>ポートフォリオ評価 5 基準</strong>：① Size ② Growth ③ Profit ④ Risk ⑤ Strategic Fit<br><br><strong>マーケティング実務原則</strong>：① balanced portfolio ② cash flow management（cow → star / question mark）③ 定期 review ④ 果断剥離（dog）<br><br><strong>典型例</strong>：① Sony（Game·star + Music·cow + Mobile·dog 剥離 + Imaging·cow）② P&G（Beauty / Health / Home Care 均衡）③ Microsoft（Office·cow + Azure·star + Surface·question mark）<br><br><strong>他派との関係</strong>：SBU·BCG Matrix·strategic_marketing と併用。"
+  },
+  "tags": [
+    "portfolio",
+    "BCG",
+    "GE Matrix"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "多产品企业的 marketing 战略框架·资源配置依据",
+      "限": "BCG 过简·GE 复杂·实务用 hybrid",
+      "例": "Sony·P&G·Microsoft 是教科书 portfolio",
+      "应": "Kotler 第 8 章·strategic 题"
+    },
+    "ja": {
+      "限": "BCG 過簡·GE 複雑·実務 hybrid",
+      "例": "Sony·P&G·Microsoft 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:35:31.586Z",
+  "updatedAt": "2026-04-30T07:35:31.586Z"
+}
