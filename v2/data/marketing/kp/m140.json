@@ -1,0 +1,41 @@
+{
+  "id": "m140",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "strategic_marketing"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "1990",
+  "title": {
+    "zh": "海外参入决策 · Decision to Go Abroad",
+    "ja": "海外参入決定",
+    "en": "Decision to Go Abroad"
+  },
+  "body": {
+    "zh": "<strong>海外参入决策</strong>是企业全球化战略的<strong>第一步</strong>·Kotler 16 版第 20 章核心。<br><br><strong>3 大决策</strong>：<br>① <strong>是否海外</strong>（go vs stay home）<br>② <strong>哪些市场</strong>（few vs many）<br>③ <strong>如何进入</strong>（参入方式·m141）<br><br><strong>5 大 push factor（推动因素）</strong>：<br>① 国内市场饱和<br>② 海外市场增长更快<br>③ 规模经济需要<br>④ 减少 single-market 依赖（risk diversification）<br>⑤ 跟随主要客户出海（B2B follow customer）<br><br><strong>5 大 pull factor（吸引因素）</strong>：<br>① 海外低成本生产<br>② 海外 tax incentives<br>③ 海外资源 / 技术·talent<br>④ 海外 brand 提升（出口 brand 拉抬国内 brand）<br>⑤ 海外市场 brand 偏好（如「Made in Japan」加成）<br><br><strong>5 大 risk</strong>：<br>① 不理解 foreign culture·语言·preferences<br>② 政治 / 法律风险<br>③ exchange rate·payment risk<br>④ 高成本（distribution·marketing·tariff）<br>⑤ 失去既有客户的关注<br><br><strong>marketing 战略评估</strong>：<br>① <strong>internationalization model</strong>（Uppsala model）——逐步 commitment·从 export → branch → subsidiary<br>② <strong>born global</strong>——SaaS·数字 brand 一开始就全球化（Spotify·Slack）<br>③ <strong>regional vs global</strong>——region-by-region 还是 global standardization<br><br><strong>典型例</strong>：① UNIQLO 1991 起逐步全球化 ② Tesla 一开始就 global ③ 楽天 多次全球化失败（亚马逊压力）<br><br><strong>跨学派关系</strong>：与 strategic_marketing·Ansoff Matrix（m088）的 market development·effectuation 都关联。",
+    "ja": "<strong>海外参入決定</strong>は企業グローバル化戦略の<strong>第一段階</strong>·Kotler 16 版第 20 章核心。<br><br><strong>3 大決定</strong>：① 海外可否 ② どの市場（少 vs 多）③ どう参入<br><br><strong>5 大 push factor</strong>：① 国内市場飽和 ② 海外成長 ③ 規模の経済 ④ リスク分散 ⑤ B2B follow customer<br><br><strong>5 大 pull factor</strong>：① 海外低コスト生産 ② tax incentives ③ 海外資源·人材 ④ ブランド向上 ⑤ ブランド偏好（「Made in Japan」加成）<br><br><strong>5 大 risk</strong>：① 異文化·言語·preferences 理解不足 ② 政治·法律リスク ③ exchange rate·payment ④ 高コスト ⑤ 既存顧客への注力低下<br><br><strong>マーケティング戦略評価</strong>：① internationalization model（Uppsala·逐次 commitment）② born global（SaaS·Spotify·Slack）③ regional vs global standardization<br><br><strong>典型例</strong>：① UNIQLO 1991 年から逐次グローバル化 ② Tesla 当初からグローバル ③ 楽天 多回失敗（Amazon プレッシャー）<br><br><strong>他派との関係</strong>：strategic_marketing·Ansoff Matrix（m088）の market development·effectuation 関連。"
+  },
+  "tags": [
+    "globalization",
+    "Uppsala",
+    "born global"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "全球化战略的起点·marketing 全球化必学",
+      "限": "决策因素多·跨文化复杂·风险高",
+      "例": "UNIQLO·Tesla·楽天 是教科书 + 失败案例",
+      "应": "Kotler 20 章·strategic 题·一橋·神戸命题"
+    },
+    "ja": {
+      "限": "決定要因多·異文化複雑·リスク高",
+      "例": "UNIQLO·Tesla·楽天 は教科書·失敗事例"
+    }
+  },
+  "createdAt": "2026-04-30T07:36:14.667Z",
+  "updatedAt": "2026-04-30T07:36:14.667Z"
+}
