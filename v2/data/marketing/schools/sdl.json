@@ -1,0 +1,25 @@
+{
+  "key": "sdl",
+  "discipline": "marketing",
+  "title": {
+    "zh": "服务主导逻辑（SDL）",
+    "ja": "サービス主導ロジック学派",
+    "en": "Service-Dominant Logic (SDL)"
+  },
+  "era": "2004– marketing 范式革命",
+  "summary": {
+    "zh": "<strong>服务主导逻辑（SDL）</strong>由 <strong>Vargo & Lusch</strong> 于 <em>Journal of Marketing</em> 2004 论文「Evolving to a New Dominant Logic for Marketing」提出·被视为 marketing 学的<strong>范式革命</strong>。<br><br><strong>核心范式</strong>：经济本质是<strong>服务的交换</strong>（service-for-service exchange）·商品（goods）只是服务的载体——与传统<strong>商品主导逻辑（G-DL）</strong>形成对照。G-DL 把「商品」当经济基本单位·SDL 把「应用 specialized competence 服务他者」当基本单位。<br><br><strong>核心内容</strong>：① <strong>11 个基本前提（FPs）</strong>：2004 年初 8 FP·经 2008·2016 扩展至 11（含 5 axioms）·核心 ▸ 服务是经济交换的根本基础 ▸ 客户始终是<strong>价值共创者</strong>（co-creator）▸ 价值由受益者<strong>现象学</strong>地决定（value-in-use）▸ 所有主体都是<strong>资源整合者</strong>（resource integrator）▸ 价值共创由 actors 在 service ecosystem 中协调 ② <strong>service ecosystem</strong> 概念 ③ <strong>operant resources vs operand resources</strong>（人/技能 vs 物理资源）④ <strong>value-in-use vs value-in-exchange</strong> ⑤ <strong>co-creation</strong>·co-production。<br><br><strong>跨学派关系</strong>：与 <code>relationship</code> 共享长期关系假设但更哲学层。与 <code>cct_interpretive</code> 共享消费者主体性。与传统 <code>managerial</code> 形成<strong>范式冲突</strong>（商品中心 vs 服务中心）。<br><br><strong>局限</strong>：FPs 抽象度高·<strong>实证操作化困难</strong>·实务界采纳缓慢·批评者指其更像「哲学声明」非可验证理论。<br><br><strong>日本研究</strong>：<strong>村松潤一</strong>（広島大）等推进 SDL 翻译与实证 ※ 待 verify。",
+    "ja": "<strong>サービス主導ロジック（SDL）</strong>は <strong>Vargo & Lusch</strong>（2004 in <em>Journal of Marketing</em>）によって提唱され、マーケティング学の<strong>パラダイム革命</strong>。<br><br><strong>核心パラダイム</strong>：経済の本質は<strong>サービスの交換</strong>·商品はサービスの伝達手段。伝統的<strong>商品主導ロジック（G-DL）</strong>と対照。<br><br><strong>主要内容</strong>：① <strong>11 の基本前提（FPs）</strong>：2004 年に 8 FP·2008·2016 で 11 個（5 axioms 含）·主要 ▸ サービスは経済交換の根本基盤 ▸ 顧客は常に<strong>価値の共創者</strong> ▸ 価値は受益者によって<strong>現象学的</strong>に決定（value-in-use）▸ すべての主体は<strong>資源統合者</strong> ▸ service ecosystem で調整 ② <strong>サービス・エコシステム</strong> ③ <strong>operant vs operand resources</strong> ④ <strong>value-in-use vs value-in-exchange</strong> ⑤ <strong>co-creation</strong>·co-production。<br><br><strong>他派との関係</strong>：<code>relationship</code> と共有·より哲学層。<code>cct_interpretive</code> と消費者主体性を共有。伝統的 <code>managerial</code> とパラダイム的に<strong>対立</strong>。<br><br><strong>限界</strong>：FPs 抽象度高·実証操作化困難·実務界採用遅い。<br><br><strong>日本研究</strong>：<strong>村松潤一</strong>（広島大）等 ※ 要 verify。"
+  },
+  "themeKey": "growth_relationship",
+  "tags": [
+    "Vargo",
+    "Lusch",
+    "co-creation",
+    "value-in-use",
+    "FPs"
+  ],
+  "concepts": [],
+  "createdAt": "2026-04-30T04:28:11.773Z",
+  "updatedAt": "2026-04-30T04:28:11.773Z"
+}
