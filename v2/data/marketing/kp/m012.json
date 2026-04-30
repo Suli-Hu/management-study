@@ -10,8 +10,8 @@
   ],
   "year": "2018",
   "title": {
-    "zh": "G-STIC 行动计划",
-    "ja": "G-STIC 行動計画",
+    "zh": "G-STIC 行动计划框架",
+    "ja": "G-STIC 行動計画フレーム",
     "en": "G-STIC Action Plan"
   },
   "body": {
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T04:40:30.306Z",
-  "updatedAt": "2026-04-30T04:40:30.306Z"
+  "updatedAt": "2026-04-30T13:19:01.789Z"
 }
