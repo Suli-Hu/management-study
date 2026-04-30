@@ -1,0 +1,41 @@
+{
+  "id": "m047",
+  "discipline": "marketing",
+  "schools": [
+    "channel_retail",
+    "digital_marketing"
+  ],
+  "scholars": [
+    "stern"
+  ],
+  "year": "2010",
+  "title": {
+    "zh": "Omnichannel · 全渠道战略",
+    "ja": "オムニチャネル · 全チャネル戦略",
+    "en": "Omnichannel Strategy"
+  },
+  "body": {
+    "zh": "<strong>Omnichannel（オムニチャネル·全渠道）</strong>是 channel 战略的数字时代演化·从单 channel → multichannel → omnichannel 三阶段。Kotler 第 16 章·Pro Plus 第 11 章核心。<br><br><strong>3 阶段进化</strong>：<br>① <strong>Single Channel</strong>——只有 1 个 channel（如纯电商或纯实体）<br>② <strong>Multichannel</strong>——多个 channel 但<strong>不互通</strong>（实体 + 电商分别运营·库存独立·客户分别）<br>③ <strong>Omnichannel</strong>——多个 channel <strong>无缝整合</strong>·消费者跨 channel 体验一致<br><br><strong>Omnichannel 5 大特征</strong>：<br>① <strong>统一库存</strong>——任何 channel 都能查全部库存<br>② <strong>统一客户视图</strong>——线上+线下一个客户档案<br>③ <strong>无缝跨 channel 体验</strong>——线上下单·线下取货（BOPIS）·线下试穿·线上购买<br>④ <strong>统一价格</strong>——线上线下同价（避免渠道冲突）<br>⑤ <strong>统一 brand</strong>——所有 channel 统一 brand 体验<br><br><strong>典型案例</strong>：<br>① <strong>UNIQLO</strong>——APP + 实体店：线上预订·店内取货·线下扫码看库存<br>② <strong>Apple</strong>——Apple Store·Genius Bar·apple.com·Apple Store APP 无缝<br>③ <strong>無印良品</strong>——MUJI passport APP 跨 channel 积分<br><br><strong>展厅效应（Showrooming）</strong>——消费者在实体店看·在线买（Amazon）。omnichannel 战略要解决这个问题。<br><br><strong>反向展厅效应（Webrooming）</strong>——消费者线上查·线下买。<br><br><strong>OMO（Online-Merge-Offline）</strong>——比 omnichannel 更彻底的融合·中国新零售概念（盒马·瑞幸）。<br><br><strong>marketing 实务挑战</strong>：① 系统整合难 ② 组织 silo 打破 ③ 投资大 ④ ROI 难测量。",
+    "ja": "<strong>オムニチャネル（Omnichannel）</strong>はチャネル戦略のデジタル時代進化·単チャネル → multichannel → omnichannel 3 段階。Kotler 第 16 章·Pro Plus 第 11 章核心。<br><br><strong>3 段階進化</strong>：<br>① Single Channel·1 チャネルのみ<br>② Multichannel·複数チャネルだが<strong>非相通</strong><br>③ Omnichannel·複数チャネル<strong>シームレス統合</strong>·消費者跨チャネル一貫体験<br><br><strong>5 大特徴</strong>：① 統一在庫 ② 統一顧客ビュー ③ シームレス跨チャネル体験（BOPIS）④ 統一価格 ⑤ 統一ブランド<br><br><strong>典型事例</strong>：① UNIQLO（APP + 実店：オンライン予約·店頭受取·店内 QR 在庫確認）② Apple（Apple Store·Genius Bar·apple.com·APP）③ 無印良品（MUJI passport APP）<br><br><strong>ショールーミング</strong>·実店舗で見て·オンラインで買う（Amazon）。omnichannel 戦略はこれを解決。<br><br><strong>ウェブルーミング</strong>·オンラインで調べて·実店舗で買う。<br><br><strong>OMO（Online-Merge-Offline）</strong>·omnichannel より徹底的融合·中国新小売概念（盒馬·瑞幸）。<br><br><strong>マーケティング実務挑戦</strong>：① システム統合困難 ② 組織サイロ打破 ③ 投資大 ④ ROI 測定困難。"
+  },
+  "tags": [
+    "omnichannel",
+    "BOPIS",
+    "OMO"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "channel 战略的现代演化·omnichannel 是数字时代标准",
+      "限": "系统整合难·投资重·跨文化适用",
+      "例": "UNIQLO APP·Apple 全 channel·盒马 OMO",
+      "应": "Pro Plus 11·16 章·digital 题命中"
+    },
+    "ja": {
+      "限": "システム統合困難·投資重·異文化適用",
+      "例": "UNIQLO APP·Apple 全チャネル·盒馬 OMO"
+    }
+  },
+  "createdAt": "2026-04-30T05:03:43.076Z",
+  "updatedAt": "2026-04-30T05:03:43.076Z"
+}
