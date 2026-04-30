@@ -46,8 +46,26 @@
         "CCT"
       ],
       "schools": []
+    },
+    {
+      "key": "value_creation",
+      "title": {
+        "zh": "价值创造",
+        "ja": "価値創造",
+        "en": "Value Creation"
+      },
+      "desc": {
+        "zh": "创造可交换价值的两种主要途径——通过 brand 的资产化、通过 channel 的流通设计。包含品牌资产学派（Aaker 5 维·Keller CBBE pyramid·brand portfolio·brand crisis）、流通学派（Stern·El-Ansary·若林靖永·日本流通制度学派·流通系列化·建値制崩壊·VMS·延期投機理論）。",
+        "ja": "交換可能な価値を創造する 2 つの主要経路——ブランドの資産化と流通チャネル設計を通じて。ブランド・エクイティ学派（Aaker 5 次元·Keller CBBE pyramid·ブランド・ポートフォリオ·ブランド危機）·流通学派（Stern·El-Ansary·若林靖永·日本流通制度学派·流通系列化·建値制崩壊·VMS·延期投機理論）を含む。"
+      },
+      "tags": [
+        "品牌",
+        "流通",
+        "VMS"
+      ],
+      "schools": []
     }
   ],
   "createdAt": "2026-04-27T11:21:24.729Z",
-  "updatedAt": "2026-04-30T04:16:24.627Z"
+  "updatedAt": "2026-04-30T04:16:26.478Z"
 }
