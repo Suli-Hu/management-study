@@ -9,7 +9,27 @@
     "zh": "🌱 即将上线"
   },
   "tags": [],
-  "themes": [],
+  "themes": [
+    {
+      "key": "marketing_strategy",
+      "title": {
+        "zh": "战略与定位",
+        "ja": "戦略とポジショニング",
+        "en": "Strategy & Positioning"
+      },
+      "desc": {
+        "zh": "marketing 的战略层与定位决策，回答「如何选择市场·如何在选定市场中赢」。包含管理学派（Kotler·STP·4P·PLC·成长战略）、营销概念派（Levitt·Drucker·5 志向·マーケティング 1.0→5.0）、市场战略派（George Day·Porter 5 forces·Christensen 破壊·Ansoff 多角化）。",
+        "ja": "マーケティングの戦略層とポジショニング決定であり、「いかに市場を選択し·選定された市場でいかに勝つか」に答える。マネジリアル学派（Kotler·STP·4P·PLC·成長戦略）·マーケティング・コンセプト学派（Levitt·Drucker·5 志向·マーケティング 1.0→5.0）·戦略マーケティング学派（George Day·Porter 5 forces·Christensen 破壊·Ansoff 多角化）を含む。"
+      },
+      "tags": [
+        "战略",
+        "定位",
+        "STP",
+        "4P"
+      ],
+      "schools": []
+    }
+  ],
   "createdAt": "2026-04-27T11:21:24.729Z",
-  "updatedAt": "2026-04-28T09:16:12.614Z"
+  "updatedAt": "2026-04-30T04:16:22.759Z"
 }
