@@ -1,0 +1,40 @@
+{
+  "id": "m162",
+  "discipline": "marketing",
+  "schools": [
+    "managerial"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "Pricing Objectives 5 大类",
+    "ja": "価格設定目標 5 大類",
+    "en": "Pricing Objectives · 5 Types"
+  },
+  "body": {
+    "zh": "<strong>Pricing Objectives（价格设定目标）</strong>是定价决策的<strong>第一步</strong>·决定后续所有 pricing 决策。Kotler 第 11 章·Pro Plus 第 9 章核心。<br><br><strong>5 大目标</strong>：<br>① <strong>Survival（生存）</strong>——价格 ≥ 变动成本·渡过短期危机<br>例：疫情期间航空·餐饮 deep discount<br>② <strong>Maximum Current Profit（短期利润最大化）</strong>——基于需求 / 成本估算定 max profit price<br>例：season sale·短期 promotion<br>③ <strong>Maximum Market Share（市场份额最大化·penetration）</strong>——低价快速占领<br>例：Netflix 早期 $7.99 / 月<br>④ <strong>Maximum Market Skimming（撇脂·skimming）</strong>——高价吸收最高 willingness to pay 顾客<br>例：iPhone 新 release·新药<br>⑤ <strong>Product-Quality Leadership（产品质量领导）</strong>——高价表达高质量·brand premium<br>例：Hermès·BMW·Apple<br><br><strong>非营利 / 公共部门 pricing 目标</strong>：<br>① cost recovery（公共服务）② subsidized prices（教育·医疗）③ social price（公益 / cause）<br><br><strong>marketing 战略影响</strong>：<br>① 不同目标 → 完全不同 pricing strategy<br>② 短期 vs 长期 trade-off<br>③ 每 year / quarter 调整 objectives<br><br><strong>典型例</strong>：<br>- Tesla 早期：skimming（Roadster）→ market share（Model 3）<br>- Apple iPhone：skimming（new model）+ 老款留下做 entry-level<br>- Amazon：market share（Prime 低价）→ profitability（高 margin services）<br><br><strong>跨学派关系</strong>：与 marketing strategy（G-STIC 的 Goal）·pricing methods（m120）·PLC（m010）一体。",
+    "ja": "<strong>Pricing Objectives（価格設定目標）</strong>は価格意思決定の<strong>第一段階</strong>·後続全 pricing 決定を決める。Kotler 第 11 章·Pro Plus 第 9 章核心。<br><br><strong>5 大目標</strong>：① Survival（コロナ期の航空·飲食 deep discount）② Maximum Current Profit（season sale·短期 promotion）③ Maximum Market Share（penetration·Netflix $7.99 / 月）④ Maximum Market Skimming（iPhone 新 release·新薬）⑤ Product-Quality Leadership（Hermès·BMW·Apple）<br><br><strong>非営利 / 公共部門 pricing 目標</strong>：① cost recovery ② subsidized prices ③ social price<br><br><strong>マーケティング戦略影響</strong>：① 異目標→完全異 pricing strategy ② 短期 vs 長期トレードオフ ③ 每年 / 四半期調整<br><br><strong>典型例</strong>：Tesla（skimming → market share）·Apple iPhone（skimming + entry-level 留）·Amazon（market share → profitability）<br><br><strong>他派との関係</strong>：marketing strategy（G-STIC の Goal）·pricing methods（m120）·PLC（m010）と一体。"
+  },
+  "tags": [
+    "pricing objectives",
+    "skimming",
+    "penetration"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "定价决策的起点·所有 pricing 战略的根本",
+      "限": "目标间 trade-off·短长期平衡",
+      "例": "Tesla·Apple·Amazon 是教科书",
+      "应": "Kotler 11 章·Pro Plus 9 章·价格题"
+    },
+    "ja": {
+      "限": "目標間トレードオフ·短長期均衡",
+      "例": "Tesla·Apple·Amazon 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T09:26:16.345Z",
+  "updatedAt": "2026-04-30T09:26:16.345Z"
+}
