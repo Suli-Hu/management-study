@@ -1,0 +1,42 @@
+{
+  "id": "m137",
+  "discipline": "marketing",
+  "schools": [
+    "strategic_marketing",
+    "managerial"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "2010",
+  "title": {
+    "zh": "Business Model Design · 商业模式设计",
+    "ja": "ビジネスモデル設計",
+    "en": "Business Model Design"
+  },
+  "body": {
+    "zh": "<strong>Business Model Design（商业模式设计）</strong>是新品开发 stage 2 核心·定义企业如何<strong>create·deliver·capture value</strong>。Kotler 16 版第 18.4 节核心。<br><br><strong>Business Model Canvas（Osterwalder 2010）9 要素</strong>：<br>① <strong>Customer Segments</strong>——target<br>② <strong>Value Propositions</strong>——价值<br>③ <strong>Channels</strong>——交付<br>④ <strong>Customer Relationships</strong>——关系<br>⑤ <strong>Revenue Streams</strong>——收入流<br>⑥ <strong>Key Resources</strong>——关键资源<br>⑦ <strong>Key Activities</strong>——关键活动<br>⑧ <strong>Key Partnerships</strong>——关键伙伴<br>⑨ <strong>Cost Structure</strong>——成本结构<br><br><strong>marketing 视角的 5 大核心问题</strong>：<br>① <strong>WHO</strong>——customer segments<br>② <strong>WHAT</strong>——value proposition<br>③ <strong>HOW</strong>——channel·activities<br>④ <strong>HOW MUCH</strong>——revenue model + cost<br>⑤ <strong>WHY</strong>——sustainable competitive advantage<br><br><strong>常见 revenue models</strong>：<br>① <strong>One-Time Sale</strong>（传统购买）<br>② <strong>Subscription</strong>（Netflix·SaaS）<br>③ <strong>Freemium</strong>（Spotify·Dropbox）<br>④ <strong>Advertising</strong>（Google·Facebook）<br>⑤ <strong>Marketplace / Platform</strong>（Amazon·Uber）<br>⑥ <strong>Two-Sided Market</strong>（App Store）<br>⑦ <strong>Razor-Razorblade</strong>（Gillette·Nespresso）<br>⑧ <strong>Pay-per-Use</strong>（cloud services）<br><br><strong>典型 BM 创新</strong>：<br>① Netflix（DVD by mail → streaming subscription·BM 转换）<br>② Adobe（perpetual license → Creative Cloud subscription·2013）<br>③ Tesla（dealer-based → direct + OTA upgrade）<br>④ Spotify（freemium music subscription）<br><br><strong>跨学派关系</strong>：① 与 effectuation（m075）的 means-driven 思维互补 ② 与 strategic_marketing 的 sustainable competitive advantage（m109）一致 ③ 与 SDL（m070）的 service ecosystem 一致。",
+    "ja": "<strong>Business Model Design（ビジネスモデル設計）</strong>は新製品開発 stage 2 核心·企業がいかに<strong>create·deliver·capture value</strong> するかを定義。Kotler 16 版第 18.4 節核心。<br><br><strong>Business Model Canvas（Osterwalder 2010）9 要素</strong>：① Customer Segments ② Value Propositions ③ Channels ④ Customer Relationships ⑤ Revenue Streams ⑥ Key Resources ⑦ Key Activities ⑧ Key Partnerships ⑨ Cost Structure<br><br><strong>マーケティング視点 5 大核心問題</strong>：① WHO ② WHAT ③ HOW ④ HOW MUCH ⑤ WHY<br><br><strong>常見 revenue models</strong>：① One-Time Sale ② Subscription（Netflix·SaaS）③ Freemium（Spotify·Dropbox）④ Advertising（Google·Facebook）⑤ Marketplace / Platform（Amazon·Uber）⑥ Two-Sided Market（App Store）⑦ Razor-Razorblade（Gillette·Nespresso）⑧ Pay-per-Use<br><br><strong>典型 BM 革新</strong>：① Netflix（DVD → streaming subscription）② Adobe（perpetual → Creative Cloud subscription·2013）③ Tesla（dealer → direct + OTA）④ Spotify（freemium music）<br><br><strong>他派との関係</strong>：① effectuation（m075）と相補 ② strategic_marketing の SCA（m109）一致 ③ SDL（m070）の service ecosystem 一致。"
+  },
+  "tags": [
+    "business model",
+    "Osterwalder",
+    "BMC",
+    "subscription"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "新品开发战略层·商业模式比产品本身更关键",
+      "限": "模式过多·选择困难",
+      "例": "Netflix·Adobe·Tesla·Spotify 是教科书",
+      "应": "Kotler 18 章·strategic 题"
+    },
+    "ja": {
+      "限": "モデル多·選択困難",
+      "例": "Netflix·Adobe·Tesla·Spotify 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:36:09.289Z",
+  "updatedAt": "2026-04-30T07:36:09.289Z"
+}
