@@ -1,0 +1,41 @@
+{
+  "id": "m008",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "marketing_concept"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "1990",
+  "title": {
+    "zh": "4C · 消费者视角的 Marketing Mix",
+    "ja": "4C · 消費者視点のマーケティング・ミックス",
+    "en": "4C · Consumer-side Marketing Mix"
+  },
+  "body": {
+    "zh": "<strong>4C</strong>由 <strong>Robert Lauterborn</strong>（1990）提出·把 4P 从企业视角翻转为<strong>消费者视角</strong>·呼应 marketing concept 学派的「顾客中心」哲学。<br><br><strong>4P → 4C 对应</strong>：<br>① <strong>Product → Customer Value（顾客价值）</strong>——不要问「我卖什么产品」·要问「顾客买的是什么<strong>价值</strong>」<br>② <strong>Price → Cost（顾客成本）</strong>——不只是 list price·还包括时间·心理·学习·机会成本<br>③ <strong>Place → Convenience（便利性）</strong>——不要问「我把商品摆在哪」·要问「顾客获得最方便的方式」<br>④ <strong>Promotion → Communication（沟通）</strong>——不要问「我怎么宣传」·要问「我怎么与顾客<strong>对话</strong>」<br><br><strong>哲学意义</strong>：4C 是 marketing concept 学派（Levitt·Drucker 顾客中心）的实务表达·把 marketing 从「企业 push」转向「顾客 pull」的认知转换。<br><br><strong>实务影响</strong>：① brand 设计从「我有什么功能」转向「顾客解决什么问题」（Job-to-be-done 思维·Christensen）② 价格策略考虑总成本而非单价 ③ omnichannel 强调便利性而非单 channel 推广 ④ IMC 强调对话而非单向广告。<br><br><strong>跨学派关系</strong>：与 SDL（co-creation·value-in-use）共享「顾客是价值定义者」的哲学。与 relationship marketing 共享「与顾客对话」的态度。",
+    "ja": "<strong>4C</strong>は <strong>Robert Lauterborn</strong>（1990）が提唱·4P を企業視点から<strong>消費者視点</strong>に反転·マーケティング・コンセプト学派の「顧客中心」哲学に呼応。<br><br><strong>4P → 4C 対応</strong>：<br>① <strong>Product → Customer Value（顧客価値）</strong>·「私は何を売るか」ではなく「顧客は何の<strong>価値</strong>を買っているか」<br>② <strong>Price → Cost（顧客コスト）</strong>·list price だけでなく·時間·心理·学習·機会コストも含む<br>③ <strong>Place → Convenience（利便性）</strong>·「商品をどこに置くか」ではなく「顧客が最も便利に入手する方法」<br>④ <strong>Promotion → Communication（コミュニケーション）</strong>·「どう宣伝するか」ではなく「どう顧客と<strong>対話</strong>するか」<br><br><strong>哲学的意義</strong>：4C はマーケティング・コンセプト学派（Levitt·Drucker 顧客中心）の実務的表現·マーケティングを「企業 push」から「顧客 pull」へ認知転換。<br><br><strong>実務影響</strong>：① ブランド設計は「機能」から「顧客が解決する問題」へ（Job-to-be-done·Christensen）② 価格戦略は単価ではなく総コストを考慮 ③ オムニチャネルは利便性重視 ④ IMC は対話重視。<br><br><strong>他派との関係</strong>：SDL（co-creation·value-in-use）と「顧客が価値定義者」の哲学を共有。関係性マーケティングと「顧客との対話」態度を共有。"
+  },
+  "tags": [
+    "4C",
+    "Lauterborn",
+    "消費者視点"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "4P 的消费者视角翻转·marketing concept 学派的实务表达",
+      "限": "在 B2B 等场景对应不一定整齐·概念抽象",
+      "例": "iPhone：Customer Value=整合体验·Cost=学习成本+价格·Convenience=Apple Store·Communication=Think Different",
+      "应": "Kotler 教材辅助框架·与 4P 配套使用"
+    },
+    "ja": {
+      "限": "B2B 等場面で対応が整わない·概念抽象",
+      "例": "iPhone：Customer Value=統合体験·Cost=学習コスト+価格·Convenience=Apple Store·Communication=Think Different"
+    }
+  },
+  "createdAt": "2026-04-30T04:40:23.320Z",
+  "updatedAt": "2026-04-30T04:40:23.320Z"
+}
