@@ -1,0 +1,42 @@
+{
+  "id": "m078",
+  "discipline": "marketing",
+  "schools": [
+    "effectuation",
+    "strategic_marketing"
+  ],
+  "scholars": [
+    "sarasvathy",
+    "kuriki"
+  ],
+  "year": "2002",
+  "title": {
+    "zh": "Entrepreneurial Marketing · 创业营销",
+    "ja": "Entrepreneurial Marketing · アントレプレナー・マーケティング",
+    "en": "Entrepreneurial Marketing"
+  },
+  "body": {
+    "zh": "<strong>Entrepreneurial Marketing（创业营销·EM）</strong>是 effectuation 学派的实务延伸·研究 startup·SME（中小企业）·创业型组织的 marketing 特殊性。<br><br><strong>vs 传统 marketing 的 7 大区别</strong>：<br>| 维度 | 传统 marketing | Entrepreneurial Marketing |<br>|---|---|---|<br>| 资源 | 充足 | 极少（bootstrap）|<br>| 决策依据 | 数据·调研 | 直觉·verify by trial |<br>| 客户 | 多·分细 | 少·深 1-on-1 |<br>| 投资 | 大额预算 | 极小·借力·免费 |<br>| 时间 | 季度·年度 | 周·日 |<br>| 风险 | 控制 | 拥抱 |<br>| 创新 | 渐进 | 颠覆 |<br><br><strong>EM 7 大特征</strong>（Morris-Schindehutte-LaForge 2002）：<br>① <strong>Proactive</strong>·主动塑造市场·非被动应对<br>② <strong>Risk-taking</strong>·愿担风险<br>③ <strong>Innovative</strong>·创新核心<br>④ <strong>Opportunity-focused</strong>·机会驱动·非问题驱动<br>⑤ <strong>Customer-intensity</strong>·深度顾客互动<br>⑥ <strong>Resource leveraging</strong>·借力·非自有资源<br>⑦ <strong>Value creation</strong>·价值创造·非价值交换<br><br><strong>EM 的 4 大战术</strong>：<br>① <strong>Guerrilla marketing</strong>——低成本·非常规营销（街头·flash mob·viral）<br>② <strong>Buzz marketing</strong>——主动制造话题·让 SNS 自发传播<br>③ <strong>Inbound marketing</strong>——content marketing·吸引而非打扰<br>④ <strong>Co-creation marketing</strong>——与 early adopters 共建产品<br><br><strong>典型案例</strong>：<br>① <strong>Dropbox</strong>——viral referral program（推荐得空间）<br>② <strong>Glossier</strong>——Instagram + UGC + community 起步·100% inbound<br>③ <strong>Tesla 早期</strong>——零广告投放·靠 Elon Musk Twitter + 媒体免费报道<br>④ <strong>无印良品</strong>——anti-marketing 风格作为 marketing<br><br><strong>跨学派关系</strong>：① effectuation 是 EM 的方法论 ② SDL co-creation 是 EM 的哲学基础 ③ 与 strategic_marketing 形成对照·EM 强调 emergent strategy·非 deliberate strategy。<br><br><strong>日本研究</strong>：栗木契（神戸）的市场创造研究是日本 EM 学派的代表。",
+    "ja": "<strong>Entrepreneurial Marketing（アントレプレナー・マーケティング·EM）</strong>は effectuation 学派の実務延長·startup·SME·起業組織のマーケティング特殊性を研究。<br><br><strong>vs 伝統マーケティングの 7 大区別</strong>：資源·意思決定·顧客·投資·時間·リスク·イノベーションすべて異なる。<br><br><strong>EM 7 大特徴</strong>（Morris-Schindehutte-LaForge 2002）：① Proactive ② Risk-taking ③ Innovative ④ Opportunity-focused ⑤ Customer-intensity ⑥ Resource leveraging ⑦ Value creation<br><br><strong>4 大戦術</strong>：① ゲリラ・マーケティング ② バズ・マーケティング ③ インバウンド・マーケティング ④ Co-creation マーケティング<br><br><strong>典型事例</strong>：① Dropbox（viral referral）② Glossier（Instagram + UGC）③ Tesla 早期（Elon Twitter + 媒体）④ 無印良品（anti-marketing）<br><br><strong>他派との関係</strong>：① effectuation は EM の方法論 ② SDL co-creation は EM の哲学基盤 ③ strategic_marketing と対照·EM は emergent strategy·deliberate ではない<br><br><strong>日本研究</strong>：栗木契（神戸）の市場創造研究は日本 EM 学派の代表。"
+  },
+  "tags": [
+    "entrepreneurial marketing",
+    "Morris",
+    "guerrilla"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "effectuation 的实务延伸·startup marketing 学派",
+      "限": "难规模化·成功率低·特定 context",
+      "例": "Dropbox·Glossier·Tesla 早期是教科书",
+      "应": "effectuation 题·神戸命题"
+    },
+    "ja": {
+      "限": "規模化困難·成功率低·特定 context",
+      "例": "Dropbox·Glossier·Tesla 早期は教科書"
+    }
+  },
+  "createdAt": "2026-04-30T05:14:09.205Z",
+  "updatedAt": "2026-04-30T05:14:09.205Z"
+}
