@@ -1,0 +1,41 @@
+{
+  "id": "m158",
+  "discipline": "marketing",
+  "schools": [
+    "brand_equity",
+    "imc_communication"
+  ],
+  "scholars": [
+    "keller"
+  ],
+  "year": "2003",
+  "title": {
+    "zh": "Brand Elements · brand 要素 5 类",
+    "ja": "ブランド要素 5 類",
+    "en": "Brand Elements · 5 Types"
+  },
+  "body": {
+    "zh": "<strong>Brand Elements（ブランド要素）</strong>是构成 brand 的<strong>可视化 / 听觉化</strong>组件·Kotler 10 章·brand 战略实务核心。<br><br><strong>5 大 brand elements</strong>：<br>① <strong>Brand Name（品牌名）</strong>——核心要素·难改<br>② <strong>Logos & Symbols（标志·符号）</strong>——视觉认知<br>③ <strong>Characters（角色）</strong>——拟人化 brand<br>④ <strong>Slogans / Taglines（口号）</strong>——文字表达<br>⑤ <strong>Jingles（音乐 / 音效）</strong>——听觉记忆<br>⑥ <strong>Packaging（包装）</strong>——实体接触点<br>⑦ <strong>URLs（域名）</strong>——digital identity<br><br><strong>brand element 6 大选择基准</strong>（Keller）：① <strong>Memorable</strong>——易记 ② <strong>Meaningful</strong>——意味丰富 ③ <strong>Likable</strong>——讨喜 ④ <strong>Transferable</strong>——可跨产品 / 跨地域 ⑤ <strong>Adaptable</strong>——可更新 ⑥ <strong>Protectable</strong>——法律可保护<br><br><strong>典型 brand element 案例</strong>：<br>- <strong>Name</strong>：Apple（简单·meaningful）·Kodak（独特但 meaningless）·UNIQLO（unique + meaningful）<br>- <strong>Logo</strong>：Nike swoosh·Apple bitten apple·Mercedes 三叉星<br>- <strong>Character</strong>：Mickey Mouse·KFC Colonel Sanders·任天堂 Mario<br>- <strong>Slogan</strong>：Nike「Just Do It」·McDonald's「I'm Lovin' It」<br>- <strong>Jingle</strong>：Intel「ding ding ding ding」·McDonald's「ba da ba ba ba」<br>- <strong>Packaging</strong>：Tiffany 蓝盒·Coca-Cola 瓶<br><br><strong>marketing 战略</strong>：① 一致性——所有 elements 视觉风格一致 ② evolve over time——logo 逐渐 modernize ③ legal protection——商标·版权 ④ cultural adaptation——跨文化时调整<br><br><strong>跨学派关系</strong>：brand_equity·IMC（visual identity）·marketing communication 一体。",
+    "ja": "<strong>Brand Elements（ブランド要素）</strong>はブランドを構成する<strong>視覚化 / 聴覚化</strong>コンポーネント·Kotler 10 章·ブランド戦略実務核心。<br><br><strong>5 大 brand elements</strong>：① Brand Name ② Logos & Symbols ③ Characters ④ Slogans / Taglines ⑤ Jingles ⑥ Packaging ⑦ URLs<br><br><strong>brand element 6 大選択基準</strong>（Keller）：① Memorable ② Meaningful ③ Likable ④ Transferable ⑤ Adaptable ⑥ Protectable<br><br><strong>典型 brand element 事例</strong>：<br>- <strong>Name</strong>：Apple·Kodak·UNIQLO<br>- <strong>Logo</strong>：Nike swoosh·Apple bitten apple·Mercedes 三叉星<br>- <strong>Character</strong>：Mickey Mouse·KFC Colonel Sanders·任天堂 Mario<br>- <strong>Slogan</strong>：Nike「Just Do It」·McDonald's「I'm Lovin' It」<br>- <strong>Jingle</strong>：Intel「ding ding ding ding」·McDonald's「ba da ba ba ba」<br>- <strong>Packaging</strong>：Tiffany ブルーボックス·Coca-Cola ボトル<br><br><strong>マーケティング戦略</strong>：① 一貫性 ② 時間と共に進化 ③ 法的保護 ④ 異文化適応<br><br><strong>他派との関係</strong>：brand_equity·IMC（visual identity）·marketing communication 一体。"
+  },
+  "tags": [
+    "brand elements",
+    "Keller",
+    "Nike swoosh"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "brand 的可视化构成·brand strategy 实务核心",
+      "限": "6 基準间相互作用·实务全部满足难",
+      "例": "Nike·Apple·McDonald's·UNIQLO 是教科书",
+      "应": "Kotler 10 章·brand 题"
+    },
+    "ja": {
+      "限": "6 基準相互作用·実務全部充足困難",
+      "例": "Nike·Apple·McDonald's·UNIQLO 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T09:26:08.926Z",
+  "updatedAt": "2026-04-30T09:26:08.926Z"
+}
