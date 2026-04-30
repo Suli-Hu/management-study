@@ -10,8 +10,8 @@
   ],
   "year": "1980",
   "title": {
-    "zh": "包装与标签 · Packaging & Labeling",
-    "ja": "包装とラベリング · Packaging & Labeling",
+    "zh": "包装与标签·Packaging & Labeling",
+    "ja": "包装とラベリング",
     "en": "Packaging & Labeling"
   },
   "body": {
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T07:35:28.003Z",
-  "updatedAt": "2026-04-30T07:35:28.003Z"
+  "updatedAt": "2026-04-30T13:23:15.788Z"
 }
