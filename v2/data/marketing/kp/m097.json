@@ -10,9 +10,9 @@
   ],
   "year": "1970",
   "title": {
-    "zh": "BCG Matrix · 产品 portfolio 4 象限",
-    "ja": "BCG マトリックス · 製品ポートフォリオ 4 象限",
-    "en": "BCG Matrix · Growth-Share Matrix"
+    "zh": "BCG 矩阵·成长率与市场份额 4 象限",
+    "ja": "BCG マトリックス・成長率とシェア 4 象限",
+    "en": "BCG Matrix"
   },
   "body": {
     "zh": "<strong>BCG Matrix（Growth-Share Matrix·成长-市场份额矩阵）</strong>由 Boston Consulting Group 在 1970 年提出·企业产品 portfolio 管理的<strong>2x2 经典框架</strong>。<br><br><strong>2x2 矩阵</strong>：<br>纵轴：市场成长率（高 / 低）<br>横轴：相对市场份额（高 / 低）<br>4 象限：<br><br>① <strong>⭐ Star（明星）</strong>——高成长 × 高份额<br>战略：投资·建·成长<br>未来：成熟后变 Cash Cow<br>例：Tesla EV·Apple iPhone（peak）<br><br>② <strong>🐮 Cash Cow（现金牛）</strong>——低成长 × 高份额<br>战略：维持·收割·提供 cash<br>用 cash 投资 Star·Question Mark<br>例：Coca-Cola classic·Apple iMac<br><br>③ <strong>❓ Question Mark（问题儿童）</strong>——高成长 × 低份额<br>战略：选择·投资变 Star 或退出<br>风险高·消耗 cash<br>例：Apple Vision Pro·Tesla Cybertruck<br><br>④ <strong>🐶 Dog（瘦狗）</strong>——低成长 × 低份额<br>战略：剥离·清算<br>例：Microsoft Zune（已废）·Sony Ericsson<br><br><strong>marketing 启示</strong>：<br>① <strong>cash flow 配置</strong>——Cow 的 cash → 投 Star 和 Question Mark<br>② <strong>战略重心</strong>——Star 是未来·Cow 是现在<br>③ <strong>果断剥离 Dog</strong>——避免资源浪费<br><br><strong>批判</strong>：<br>① 仅 2 维度过简——还要看 brand·tech·R&D<br>② 假设市场份额 = 利润——不一定成立（如 Apple 高 margin·非高份额）<br>③ 静态分析——市场动态难捕捉<br>④ GE / McKinsey Matrix 9 格更精细·部分替代 BCG<br><br><strong>跨学派关系</strong>：与 strategic_marketing 的 portfolio strategy 核心·与 Ansoff Matrix 一起构成 marketing 战略 portfolio 工具。",
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T07:24:48.111Z",
-  "updatedAt": "2026-04-30T07:24:48.111Z"
+  "updatedAt": "2026-04-30T13:22:35.627Z"
 }
