@@ -1,0 +1,40 @@
+{
+  "id": "m084",
+  "discipline": "marketing",
+  "schools": [
+    "strategic_marketing"
+  ],
+  "scholars": [
+    "day_g"
+  ],
+  "year": "1990",
+  "title": {
+    "zh": "Market Orientation · 市场导向",
+    "ja": "Market Orientation · 市場志向",
+    "en": "Market Orientation"
+  },
+  "body": {
+    "zh": "<strong>Market Orientation（市场导向·市場志向）</strong>是 strategic_marketing 学派的奠基概念·主张企业应以<strong>系统化方式理解和回应市场</strong>来达成 firm performance。1990 年 Narver & Slater 与 Kohli & Jaworski 同年发表 2 篇奠基论文·正式确立这一概念。<br><br><strong>2 个奠基论文</strong>：<br>① <strong>Narver & Slater 1990</strong>「The Effect of a Market Orientation on Business Profitability」in <em>Journal of Marketing</em><br>② <strong>Kohli & Jaworski 1990</strong>「Market Orientation: The Construct, Research Propositions, and Managerial Implications」in <em>Journal of Marketing</em><br><br><strong>Narver-Slater 3 要素</strong>：<br>① <strong>Customer Orientation（客户导向）</strong>——理解客户的现在和未来需要<br>② <strong>Competitor Orientation（竞争导向）</strong>——理解竞争对手的优势·劣势·能力<br>③ <strong>Interfunctional Coordination（部门间协调）</strong>——marketing·R&D·销售·制造一起·针对客户价值<br><br>3 要素的<strong>共通点</strong>：长期 + 利润最大化的统一。<br><br><strong>Kohli-Jaworski 3 要素</strong>（强调过程）：<br>① <strong>Intelligence Generation（情报产生）</strong>——收集 market intelligence<br>② <strong>Intelligence Dissemination（情报扩散）</strong>——跨部门共享<br>③ <strong>Responsiveness（反应）</strong>——基于情报采取行动<br><br><strong>Market Orientation 与 Firm Performance 的关系</strong>：<br>多数实证研究发现 MO 高的企业<strong>profit·sales growth·market share·new product success</strong> 都更好。但因果关系仍有争议——MO 高 → performance 高·还是 performance 高 → 能投资 MO？<br><br><strong>实务测量工具</strong>：<br>- <strong>MARKOR scale</strong>（Kohli-Jaworski 1993）——20 题问卷<br>- <strong>MKTOR scale</strong>（Narver-Slater 1990）——15 题问卷<br><br><strong>跨学派关系</strong>：① 与 marketing_concept 5 志向中「顾客志向」「社会志向」一致 ② 与 dynamic capability（Day 1994）密切——MO 是 dynamic capability 的体现 ③ 与 IMC·CRM·digital marketing 的实务对接。",
+    "ja": "<strong>Market Orientation（市場志向）</strong>は strategic_marketing 学派の基礎概念·企業が<strong>体系的に市場を理解·対応</strong>することで firm performance 達成。1990 年 Narver & Slater と Kohli & Jaworski 同年に基礎論文 2 編発表·概念正式確立。<br><br><strong>2 つの基礎論文</strong>：① Narver & Slater 1990 in <em>JM</em> ② Kohli & Jaworski 1990 in <em>JM</em><br><br><strong>Narver-Slater 3 要素</strong>：① Customer Orientation ② Competitor Orientation ③ Interfunctional Coordination<br><br><strong>Kohli-Jaworski 3 要素</strong>（プロセス強調）：① Intelligence Generation ② Intelligence Dissemination ③ Responsiveness<br><br><strong>Market Orientation と Firm Performance の関係</strong>：実証研究多数で MO 高い企業の profit·sales growth·market share·新製品成功 良好。因果論争（MO →パフォーマンスか·パフォーマンス→MO 投資か）。<br><br><strong>実務測定ツール</strong>：MARKOR scale·MKTOR scale<br><br><strong>他派との関係</strong>：① marketing_concept 5 志向「顧客志向」「社会志向」一致 ② dynamic capability（Day 1994）と密接 ③ IMC·CRM·digital marketing 実務接続。"
+  },
+  "tags": [
+    "market orientation",
+    "Narver-Slater",
+    "Kohli-Jaworski"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "strategic_marketing 学派的奠基概念·firm-level marketing capability",
+      "限": "因果论争·跨文化适用",
+      "例": "Narver-Slater·Kohli-Jaworski 论文是必引",
+      "应": "strategic 题·一橋·神戸 命题"
+    },
+    "ja": {
+      "限": "因果論争·異文化適用",
+      "例": "Narver-Slater·Kohli-Jaworski 論文必引用"
+    }
+  },
+  "createdAt": "2026-04-30T05:14:21.104Z",
+  "updatedAt": "2026-04-30T05:14:21.104Z"
+}
