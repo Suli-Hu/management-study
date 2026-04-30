@@ -1,0 +1,26 @@
+{
+  "key": "social_marketing",
+  "discipline": "marketing",
+  "title": {
+    "zh": "社会营销学派 / ソーシャル・マーケティング",
+    "ja": "ソーシャル・マーケティング学派",
+    "en": "Social Marketing"
+  },
+  "era": "1962– 消费者权利运动以来",
+  "summary": {
+    "zh": "<strong>社会营销学派</strong>主张 marketing 必须考虑<strong>社会·环境·伦理外部性</strong>·不只是利润最大化。两条流派：① 非营利组织 marketing ② 企业的社会责任 marketing（CSR / sustainable）。<br><br><strong>核心范式</strong>：企业的利益与社会的利益必须<strong>统合</strong>——长期来看·只追求利润而忽视社会的企业不可持续。<br><br><strong>核心内容</strong>：① <strong>コンシューマリズム</strong>（消费者主义·1960s 美国）② <strong>Kennedy 1962 消费者 4 つの権利</strong>（安全·知情·选择·意见反映）③ <strong>非营利组织 marketing</strong>（Pro Plus 第 14 章）④ <strong>CSR</strong>·<strong>cause marketing</strong>（公益与商业结合）⑤ <strong>green marketing</strong>·sustainable marketing ⑥ <strong>BOP（Bottom of Pyramid）</strong>（Prahalad 2004『The Fortune at the Bottom of the Pyramid』）⑦ <strong>CSV（Creating Shared Value）</strong>（Porter & Kramer 2011）⑧ <strong>マーケティング 3.0</strong>（Kotler 人间中心 marketing）⑨ <strong>privacy 与伦理</strong> ⑩ <strong>ESG 与 marketing</strong>。<br><br><strong>跨学派关系</strong>：与 <code>marketing_concept</code> 邻近（5 志向中的「社会志向」）·与 <code>managerial</code> 互补（Pro Plus 第 14 章 4 节「マネジリアル・マーケティングとの統合」）。<br><br><strong>局限</strong>：CSR 实务「漂绿」（greenwashing）问题·BOP 商业可行性争议·价值观与商业目标平衡难。",
+    "ja": "<strong>ソーシャル・マーケティング学派</strong>はマーケティングが<strong>社会·環境·倫理的外部性</strong>を考慮すべきと主張。2 つの流れ：① 非営利組織マーケティング ② 企業の社会責任マーケティング（CSR / sustainable）。<br><br><strong>核心パラダイム</strong>：企業の利益と社会の利益を<strong>統合</strong>すべき。<br><br><strong>主要内容</strong>：① <strong>コンシューマリズム</strong>（1960s 米国）② <strong>Kennedy 1962 消費者 4 つの権利</strong>（安全·知らされる·選択·意見反映）③ <strong>非営利組織マーケティング</strong>（Pro Plus 第 14 章）④ <strong>CSR</strong>·<strong>コーズ・マーケティング</strong> ⑤ <strong>グリーン・マーケティング</strong>·sustainable ⑥ <strong>BOP</strong>（Prahalad 2004）⑦ <strong>CSV</strong>（Porter & Kramer 2011）⑧ <strong>マーケティング 3.0</strong>（Kotler）⑨ <strong>プライバシーと倫理</strong> ⑩ <strong>ESG とマーケティング</strong>。<br><br><strong>他派との関係</strong>：<code>marketing_concept</code> と隣接·<code>managerial</code> と相補。<br><br><strong>限界</strong>：CSR 実務における「グリーンウォッシング」問題·BOP の商業的実行可能性·価値観と商業目標のバランス。"
+  },
+  "themeKey": "growth_relationship",
+  "tags": [
+    "Kennedy 4 权利",
+    "Prahalad",
+    "CSV",
+    "BOP",
+    "CSR",
+    "コンシューマリズム"
+  ],
+  "concepts": [],
+  "createdAt": "2026-04-30T04:28:13.502Z",
+  "updatedAt": "2026-04-30T04:28:13.502Z"
+}
