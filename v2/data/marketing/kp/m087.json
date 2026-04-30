@@ -11,9 +11,9 @@
   ],
   "year": "1980",
   "title": {
-    "zh": "競争地位別戦略 · 4 类企业战略",
-    "ja": "競争地位別戦略 · 4 タイプ企業戦略",
-    "en": "Competitive Position Strategy · 4 Types"
+    "zh": "竞争地位别战略·4 类企业战略",
+    "ja": "競争地位別戦略・4 タイプ企業戦略",
+    "en": "Competitive Position Strategy"
   },
   "body": {
     "zh": "<strong>競争地位別戦略</strong>是 Kotler 系统化的 4 类企业战略·按企业在市场中的<strong>地位（leader·challenger·follower·nicher）</strong>区分。Pro Plus 第 12 章核心·日本院试核心。<br><br><strong>4 类企业战略</strong>：<br><br>① <strong>Market Leader（リーダー）</strong>——产业第一<br>市场份额：通常 40%+<br>战略目标：① 扩大总市场（pie expansion）② 防御现有份额 ③ 扩张 share<br>具体战术：① 鼓励整体使用（Kellogg's「make breakfast great again」）② 防御创新者攻击（preemptive defense）③ flank·counter-offensive·position·mobile defense<br>例：Toyota 在日本·Coca-Cola·Apple iPhone（部分市场）<br><br>② <strong>Market Challenger（チャレンジャー）</strong>——挑战领导者的第二·三位<br>市场份额：通常 30%+<br>战略目标：直接攻击或绕道·夺取 share<br>具体战术：① 价格攻击（Pepsi vs Coca-Cola）② 产品创新攻击（iPhone vs BlackBerry）③ marketing 投入攻击 ④ niche-by-niche 攻击<br>例：Pepsi·Samsung·Toyota 在美国（vs GM）<br><br>③ <strong>Market Follower（フォロワー）</strong>——跟随领导者·不正面竞争<br>市场份额：通常 10-30%<br>战略目标：保持现有份额·避免 leader 报复<br>具体战术：① cloner（克隆）② imitator（模仿但有差异）③ adapter（改良）<br>例：日本电视行业的二线品牌·普通日本汽车 brand<br><br>④ <strong>Market Nicher（ニッチャー）</strong>——专注 niche·避免与 leader 对抗<br>市场份额：通常 < 10%<br>战略目标：在 niche 内成为 leader·获 niche 利润<br>具体战术：① customer specialization ② product specialization ③ geographic specialization ④ price-quality specialization<br>例：Ferrari·Porsche·MINI Cooper·Patagonia<br><br><strong>2 大原则</strong>：<br>① <strong>不同地位 = 不同战略</strong>——leader 战略不能用于 follower<br>② <strong>地位可变</strong>——today's challenger 可能是 tomorrow's leader<br><br><strong>跨学派关系</strong>：① Pro Plus 把这归入 strategic_marketing·与 Porter 3 战略形成补充 ② 与 STP 一体——Targeting 决定 nicher / leader 角色 ③ marketing strategy 必学。",
@@ -40,5 +40,5 @@
     }
   },
   "createdAt": "2026-04-30T05:14:26.275Z",
-  "updatedAt": "2026-04-30T05:14:26.275Z"
+  "updatedAt": "2026-04-30T13:22:12.809Z"
 }
