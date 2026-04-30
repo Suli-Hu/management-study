@@ -1,0 +1,43 @@
+{
+  "id": "m005",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "brand_equity"
+  ],
+  "scholars": [
+    "kotler",
+    "keller"
+  ],
+  "year": "2003",
+  "title": {
+    "zh": "POD vs POP · 差別化 vs 類似化点",
+    "ja": "POD vs POP · 差別化と類似化ポイント",
+    "en": "POD vs POP · Differentiation & Parity"
+  },
+  "body": {
+    "zh": "<strong>POD（Points of Difference）</strong>和 <strong>POP（Points of Parity）</strong>是 Positioning 的两个对偶概念·由 Keller 在 brand 战略文献中系统化。<br><br><strong>POD（差別化点）</strong>：消费者认为<strong>本品牌独有·竞争品牌没有</strong>的属性或利益。是 brand 选择购买的<strong>理由</strong>。<br>例：UNIQLO 的「Lifewear（基本款 + 高品质 + 良心价格）」·iPhone 的「整合的硬软件体验」·Tesla 的「电动 + 自动驾驶」。<br><br><strong>POP（類似化点）</strong>：消费者期待该<strong>类目所有品牌都具备</strong>的属性·达到「合格门槛」。是<strong>不被淘汰</strong>的条件。<br>例：UNIQLO 必须有「合理价格 + 基本款覆盖」（fast fashion 类目门槛）·iPhone 必须有「打电话 + 拍照」（智能机门槛）。<br><br><strong>3 大判断基准</strong>（Kotler 16 版第 7.3 节·brand association 是否成为 POD 的标准）：<br>① <strong>Desirability（望ましさ）</strong>——消费者觉得这个差异点<strong>对自己重要</strong>吗？<br>② <strong>Deliverability（伝達可能性）</strong>——企业有能力<strong>持续提供</strong>这个差异吗？<br>③ <strong>Differentiability（差別化可能性）</strong>——竞争对手<strong>难以模仿</strong>吗？<br><br><strong>POD-POP 战略</strong>：第一步先满足 POP（不被淘汰）·第二步建立 POD（被选择）。先门槛后差异——而不是反过来。",
+    "ja": "<strong>POD（Points of Difference）</strong>と <strong>POP（Points of Parity）</strong>は Positioning の双対概念·Keller がブランド戦略文献で体系化。<br><br><strong>POD（差別化ポイント）</strong>：消費者が<strong>本ブランド独自·競合ブランドにない</strong>と認める属性·便益。ブランド選択の<strong>理由</strong>。<br>例：UNIQLO の「Lifewear（ベーシック + 高品質 + 良心価格）」·iPhone の「統合されたハードソフト体験」·Tesla の「電気 + 自動運転」。<br><br><strong>POP（類似化ポイント）</strong>：消費者がそのカテゴリーの<strong>すべてのブランドが備えるべき</strong>属性·「合格基準」。<strong>淘汰されない</strong>条件。<br>例：UNIQLO は「合理的価格 + ベーシック覆盖」（fast fashion カテゴリー基準）·iPhone は「通話 + 撮影」（スマホ基準）が必須。<br><br><strong>3 つの判断基準</strong>（Kotler 16 版第 7.3 節·ブランド連想が POD となる基準）：<br>① <strong>Desirability（望ましさ）</strong>·消費者がこの差別ポイントを<strong>重要</strong>と感じるか？<br>② <strong>Deliverability（伝達可能性）</strong>·企業が<strong>持続的に提供</strong>できるか？<br>③ <strong>Differentiability（差別化可能性）</strong>·競合が<strong>模倣困難</strong>か？<br><br><strong>POD-POP 戦略</strong>：第一に POP（淘汰されない）·第二に POD（選ばれる）。基準先行·差別後·逆ではない。"
+  },
+  "tags": [
+    "Positioning",
+    "POD",
+    "POP",
+    "Keller"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "Positioning 的核心操作工具·区分「门槛」与「亮点」",
+      "限": "POD/POP 边界在饱和市场模糊·新类目难判断",
+      "例": "UNIQLO POP=合理价 + 基本款·POD=Lifewear 概念",
+      "应": "Kotler 16 版第 7.3 节·一橋·早大命题命中"
+    },
+    "ja": {
+      "限": "飽和市場で POD/POP 境界曖昧·新カテゴリー判断難",
+      "例": "UNIQLO POP=合理価 + ベーシック·POD=Lifewear 概念"
+    }
+  },
+  "createdAt": "2026-04-30T04:40:17.764Z",
+  "updatedAt": "2026-04-30T04:40:17.764Z"
+}
