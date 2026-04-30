@@ -1,0 +1,44 @@
+{
+  "id": "m149",
+  "discipline": "marketing",
+  "schools": [
+    "cct_interpretive",
+    "brand_equity",
+    "relationship"
+  ],
+  "scholars": [
+    "arnould",
+    "thompson",
+    "ishii_j"
+  ],
+  "year": "2001",
+  "title": {
+    "zh": "Brand Community · 品牌共同体",
+    "ja": "ブランド・コミュニティ",
+    "en": "Brand Community"
+  },
+  "body": {
+    "zh": "<strong>Brand Community（品牌共同体）</strong>是 Muniz & O'Guinn 在 2001 年 <em>Journal of Consumer Research</em>「Brand Community」提出·CCT 学派的核心概念。<br><br><strong>定义</strong>：「<em>A specialized, non-geographically bound community based on a structured set of social relationships among admirers of a brand.</em>」<br><br><strong>3 大特征</strong>：① <strong>Consciousness of Kind</strong>（共同体意识）——「我们」感<br>② <strong>Shared Rituals & Traditions</strong>（共有仪式）——年度活动·特殊语言·gear<br>③ <strong>Sense of Moral Responsibility</strong>（道义责任）——共同体内部互助<br><br><strong>典型 brand community</strong>：<br>① <strong>Harley-Davidson Owners Group（HOG）</strong>——百万级·骑车 rally·brand 活动<br>② <strong>Apple users</strong>——devotion·apple stores·user groups<br>③ <strong>Tesla owners</strong>——自录 testimonial·road-trip groups·OTA 升级共享<br>④ <strong>無印良品「MUJI passport」</strong>——会员 + 价值观共有<br>⑤ <strong>Star Wars / Marvel fans</strong>——comic con·cosplay·fan fiction<br><br><strong>marketing 战略</strong>：<br>① <strong>foster community</strong>——主办活动·platform·content<br>② <strong>empower super-fans</strong>——给特别 access·inside info<br>③ <strong>UGC 鼓励</strong>——粉丝创造内容·brand 放大<br>④ <strong>collaboration</strong>——共同设计 product·co-creation<br><br><strong>community-driven brand 价值</strong>：<br>① brand evangelism（free marketing）<br>② high CLV·retention<br>③ 抗 brand crisis（社区会保卫）<br>④ 创新 input·product feedback<br><br><strong>跨学派关系</strong>：CCT 4 大研究领域之一·与 brand_equity 的 brand resonance（CBBE 顶层）·relationship 的 advocacy 一致·与 social media·digital marketing 一致。",
+    "ja": "<strong>Brand Community（ブランド・コミュニティ）</strong>は Muniz & O'Guinn 2001 年 <em>Journal of Consumer Research</em>「Brand Community」提唱·CCT 学派の核心概念。<br><br><strong>定義</strong>：「<em>A specialized, non-geographically bound community based on a structured set of social relationships among admirers of a brand.</em>」<br><br><strong>3 大特徴</strong>：① Consciousness of Kind ② Shared Rituals & Traditions ③ Sense of Moral Responsibility<br><br><strong>典型 brand community</strong>：① Harley-Davidson Owners Group（HOG）② Apple users ③ Tesla owners ④ 無印良品「MUJI passport」⑤ Star Wars / Marvel fans<br><br><strong>マーケティング戦略</strong>：① foster community ② empower super-fans ③ UGC 奨励 ④ collaboration（共同設計·co-creation）<br><br><strong>community-driven brand 価値</strong>：① brand evangelism（free marketing）② 高 CLV·retention ③ 抗 brand crisis ④ イノベーション input<br><br><strong>他派との関係</strong>：CCT 4 大研究領域の一つ·brand_equity の brand resonance（CBBE 頂層）·relationship の advocacy と一致·SNS·digital marketing と一致。"
+  },
+  "tags": [
+    "brand community",
+    "Muniz-OGuinn",
+    "HOG"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "CCT 学派核心概念·消费者主体性的具体表现",
+      "限": "难规模化·难量化·依赖品牌特性",
+      "例": "Harley·Apple·Tesla·MUJI 是教科书",
+      "应": "CCT 题·brand 题·一橋·神戸命题"
+    },
+    "ja": {
+      "限": "規模化困難·数量化困難·ブランド特性依存",
+      "例": "Harley·Apple·Tesla·MUJI 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:41:12.093Z",
+  "updatedAt": "2026-04-30T07:41:12.093Z"
+}
