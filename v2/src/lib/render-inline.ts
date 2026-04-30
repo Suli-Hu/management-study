@@ -1,5 +1,5 @@
 /**
- * 渲染 BilingualBody 字段的内联 HTML — 白名单 <strong> <em> <br>。
+ * 渲染 BilingualBody 字段的内联 HTML — 白名单 <strong> <em> <code> <br>。
  * 其它一切 < > & " ' 全部 HTML 转义。
  *
  * 用途：school.summary / scholar.contribution / 任何 BilingualBody 字段
@@ -9,6 +9,12 @@
  *   - 先全部 HTML escape（防 XSS / 属性注入）
  *   - 再把白名单的 escaped 标签反转回明文标签
  *   - 顺序重要：先 escape，再 unescape 白名单 — 反过来会把白名单 < 也 escape 掉
+ *
+ * 白名单标签语义：
+ *   <strong>  加粗 — 关键术语 / 概念名
+ *   <em>      斜体 — 强调
+ *   <code>    等宽 — 学派 key / 字段名 / 代码标识符
+ *   <br>      换行 — 段落内换行
  *
  * 不支持：
  *   - 标签属性（<strong class="x"> 会被 escape 显示原文）— 老师只能用裸标签
@@ -26,8 +32,8 @@ export function renderInlineHtml(s: string | null | undefined): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
-  // Step 2: 白名单反转 — 必须严格匹配 ` <strong> / </strong> / <em> / </em> / <br> / <br/> ` 6 种
+  // Step 2: 白名单反转 — 4 种内联标签 + br 自闭合
   return escaped
-    .replace(/&lt;(\/?)(strong|em)&gt;/gi, '<$1$2>')
+    .replace(/&lt;(\/?)(strong|em|code)&gt;/gi, '<$1$2>')
     .replace(/&lt;br\s*\/?&gt;/gi, '<br>');
 }
