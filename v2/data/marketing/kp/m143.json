@@ -1,0 +1,43 @@
+{
+  "id": "m143",
+  "discipline": "marketing",
+  "schools": [
+    "brand_equity",
+    "strategic_marketing"
+  ],
+  "scholars": [
+    "aaker",
+    "keller"
+  ],
+  "year": "2000",
+  "title": {
+    "zh": "Global Brand Strategy · 全球 brand 战略",
+    "ja": "グローバル・ブランド戦略",
+    "en": "Global Brand Strategy"
+  },
+  "body": {
+    "zh": "<strong>Global Brand Strategy（全球 brand 战略）</strong>是 brand_equity 学派与 globalization 学派的<strong>交叉</strong>·Kotler 16 版第 20 章·brand 全球化的实务。<br><br><strong>3 类 global brand 战略</strong>：<br>① <strong>Global Brand</strong>——全球同 brand·同 positioning·同 promise<br>例：Apple·BMW·Mercedes·Coca-Cola·Nike<br>② <strong>International Brand</strong>——同 brand·不同地域不同 positioning<br>例：Heineken（欧美高端 vs 亚洲大众）<br>③ <strong>Local Brand</strong>——不同地域用不同 brand<br>例：Unilever 在不同国用不同 brand（Knorr·Lipton·Magnum 等）<br><br><strong>Global Brand 5 大优势</strong>：<br>① <strong>规模经济</strong>——全球统一 marketing 投资<br>② <strong>brand equity 累积</strong>——跨市场一致·equity 强<br>③ <strong>消费者一致体验</strong>——travelers·MNC 喜爱<br>④ <strong>谈判力</strong>——对 channel·media 强势<br>⑤ <strong>转移效率</strong>——成功的 marketing 可全球复制<br><br><strong>Global Brand 5 大挑战</strong>：<br>① 文化差异·消费者反弹<br>② 一处危机全球受影响<br>③ 法律·规制差异<br>④ 价格统一难（购买力差）<br>⑤ 对小市场不灵活<br><br><strong>Top Global Brands（Interbrand 2024）</strong>：Apple·Microsoft·Amazon·Google·Samsung·Toyota·Coca-Cola·Mercedes·McDonald's·BMW（前 10 强）<br><br><strong>brand equity 全球性 4 大特征</strong>：<br>① <strong>recognized worldwide</strong><br>② <strong>consistent positioning</strong><br>③ <strong>trusted by global consumers</strong><br>④ <strong>premium pricing power globally</strong><br><br><strong>跨学派关系</strong>：与 brand_equity·strategic_marketing·channel_retail（global distribution）一体。",
+    "ja": "<strong>Global Brand Strategy（グローバル・ブランド戦略）</strong>は brand_equity 学派と globalization 学派の<strong>交差</strong>·Kotler 16 版第 20 章·ブランド・グローバル化の実務。<br><br><strong>3 類 global brand 戦略</strong>：① Global Brand（同 brand·同 positioning·Apple·BMW·Coca-Cola·Nike）② International Brand（同 brand·異 positioning·Heineken）③ Local Brand（異 brand·Unilever の Knorr·Lipton·Magnum）<br><br><strong>Global Brand 5 大優位</strong>：① 規模の経済 ② ブランド・エクイティ蓄積 ③ 消費者一貫体験 ④ 交渉力 ⑤ 転移効率<br><br><strong>Global Brand 5 大挑戦</strong>：① 文化差·消費者反発 ② 一処危機グローバル波及 ③ 法律·規制差 ④ 価格統一困難（購買力差）⑤ 小市場非柔軟<br><br><strong>Top Global Brands（Interbrand 2024）</strong>：Apple·Microsoft·Amazon·Google·Samsung·Toyota·Coca-Cola·Mercedes·McDonald's·BMW（前 10）<br><br><strong>ブランド・エクイティ全球性 4 大特徴</strong>：① recognized worldwide ② consistent positioning ③ trusted by global consumers ④ premium pricing power globally<br><br><strong>他派との関係</strong>：brand_equity·strategic_marketing·channel_retail（global distribution）一体。"
+  },
+  "tags": [
+    "global brand",
+    "Interbrand",
+    "Apple",
+    "Coca-Cola"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "brand_equity 与 globalization 学派的交叉·跨界 brand 战略",
+      "限": "文化差异管理难·一处危机全球受影响",
+      "例": "Apple·Toyota·Coca-Cola 是 global brand 教科书",
+      "应": "Kotler 20 章·brand 题·一橋命题"
+    },
+    "ja": {
+      "限": "文化差異管理困難·一処危機全球波及",
+      "例": "Apple·Toyota·Coca-Cola は global brand 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:36:19.975Z",
+  "updatedAt": "2026-04-30T07:36:19.975Z"
+}
