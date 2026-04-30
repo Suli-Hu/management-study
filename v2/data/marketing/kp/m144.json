@@ -1,0 +1,42 @@
+{
+  "id": "m144",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "cct_interpretive"
+  ],
+  "scholars": [
+    "arnould",
+    "ishii_j"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "Cross-Cultural Marketing · 跨文化营销",
+    "ja": "クロスカルチャー・マーケティング",
+    "en": "Cross-Cultural Marketing"
+  },
+  "body": {
+    "zh": "<strong>Cross-Cultural Marketing（跨文化营销）</strong>是全球 marketing 的<strong>实务核心</strong>·研究文化差异如何影响消费者行为·Kotler 16 章。<br><br><strong>Hofstede 6 大文化维度（1980）</strong>·marketing 借入：<br>① <strong>Power Distance</strong>——权力差距（高 = 接受层级·低 = 平等）<br>② <strong>Individualism vs Collectivism</strong>——个人 vs 集体（美国 高个人 / 日本 高集体）<br>③ <strong>Masculinity vs Femininity</strong>——男性 / 女性气质<br>④ <strong>Uncertainty Avoidance</strong>——避免不确定（日本高 / 美国中）<br>⑤ <strong>Long-Term vs Short-Term Orientation</strong>——长期 / 短期导向<br>⑥ <strong>Indulgence vs Restraint</strong>——放纵 / 克制<br><br><strong>marketing 应用</strong>：<br>① 高 individualism culture：「Just for you」personalization<br>② 高 collectivism culture：「家族·朋友」「群体认可」<br>③ 高 uncertainty avoidance：trust·warranty·guarantee 重要<br>④ 高 power distance：status symbols 重要（奢侈品市场大）<br>⑤ 高 masculinity：performance·power·status<br>⑥ 高 femininity：caring·sustainability<br><br><strong>marketing 4 类失败</strong>：<br>① <strong>Translation Errors</strong>——「Pepsi brings your ancestors back from the grave」（中国失败翻译）<br>② <strong>Symbol Errors</strong>——颜色·数字·宗教 symbols 误用<br>③ <strong>Habit Errors</strong>——日本人不喜欢直接 CTA·美式硬销售失败<br>④ <strong>Value Errors</strong>——西方个人主义广告在亚洲失败<br><br><strong>典型成功案例</strong>：① McDonald's 全球本地化（印度 vegetarian·中东 halal）② Toyota 美国 product 设计 ③ KitKat 日本（季节限定 + 「kitto katsu」吉祥）<br><br><strong>典型失败案例</strong>：① Pepsi 中国「祖先复活」② Walmart 退出德国（不理解德国零售文化）③ eBay 退出日本（不适应日本拍卖偏好）<br><br><strong>跨学派关系</strong>：与 CCT 学派的文化分析·石井淳蔵 解釈学派·strategic_marketing 互补。",
+    "ja": "<strong>Cross-Cultural Marketing（クロスカルチャー・マーケティング）</strong>はグローバル・マーケティングの<strong>実務核心</strong>·文化差が消費者行動に与える影響を研究·Kotler 16 章。<br><br><strong>Hofstede 6 大文化次元（1980）</strong>·マーケティング借入：① Power Distance ② Individualism vs Collectivism（米国 個人 / 日本 集団）③ Masculinity vs Femininity ④ Uncertainty Avoidance（日本高 / 米国中）⑤ Long-Term vs Short-Term Orientation ⑥ Indulgence vs Restraint<br><br><strong>マーケティング応用</strong>：① 高 individualism は「Just for you」② 高 collectivism は「家族·友人·集団認可」③ 高 uncertainty avoidance は trust·warranty 重要 ④ 高 power distance は status symbols（ラグジュアリー大）⑤ 高 masculinity は performance·power ⑥ 高 femininity は caring·sustainability<br><br><strong>マーケティング 4 類失敗</strong>：① Translation Errors（Pepsi 中国「祖先復活」）② Symbol Errors（色·数字·宗教 symbols 誤用）③ Habit Errors（日本人 vs 米式硬販売）④ Value Errors（西方個人主義 vs 亚洲）<br><br><strong>典型成功</strong>：① McDonald's 全球現地化（印度 vegetarian·中東 halal）② Toyota 米国 ③ KitKat 日本（季節限定 +「kitto katsu」吉祥）<br><br><strong>典型失敗</strong>：① Pepsi 中国 ② Walmart 撤退ドイツ ③ eBay 撤退日本<br><br><strong>他派との関係</strong>：CCT 学派の文化分析·石井淳蔵 解釈学派·strategic_marketing と相補。"
+  },
+  "tags": [
+    "cross-cultural",
+    "Hofstede",
+    "KitKat"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "全球化 marketing 的实务核心·跨文化敏感度",
+      "限": "Hofstede 维度过简·实务复杂",
+      "例": "McDonald's·Toyota·KitKat·Pepsi·Walmart 是经典",
+      "应": "Kotler 20 章·全球化题·CCT 题"
+    },
+    "ja": {
+      "限": "Hofstede 次元過簡·実務複雑",
+      "例": "McDonald's·Toyota·KitKat·Pepsi·Walmart 古典"
+    }
+  },
+  "createdAt": "2026-04-30T07:36:21.725Z",
+  "updatedAt": "2026-04-30T07:36:21.725Z"
+}
