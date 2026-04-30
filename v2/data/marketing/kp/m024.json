@@ -10,8 +10,8 @@
   ],
   "year": "1969",
   "title": {
-    "zh": "Howard-Sheth モデル · 包括的意思決定模型",
-    "ja": "Howard-Sheth モデル",
+    "zh": "Howard-Sheth 综合决策模型",
+    "ja": "Howard-Sheth 包括的意思決定モデル",
     "en": "Howard-Sheth Model"
   },
   "body": {
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T04:51:37.421Z",
-  "updatedAt": "2026-04-30T04:51:37.421Z"
+  "updatedAt": "2026-04-30T13:19:27.592Z"
 }
