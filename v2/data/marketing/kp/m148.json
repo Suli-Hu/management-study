@@ -1,0 +1,41 @@
+{
+  "id": "m148",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "digital_marketing"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "2008",
+  "title": {
+    "zh": "Marketing Dashboard · 营销仪表盘",
+    "ja": "マーケティング・ダッシュボード",
+    "en": "Marketing Dashboard"
+  },
+  "body": {
+    "zh": "<strong>Marketing Dashboard（营销仪表盘）</strong>是企业 marketing performance management 的<strong>可视化工具</strong>·Kotler 16 章·Pro Plus 5 章。<br><br><strong>核心思想</strong>：marketing 不能只看 sales·要看 leading indicators + lagging indicators 的全景。<br><br><strong>3 类 marketing metrics</strong>：<br>① <strong>Customer-Based Metrics</strong>——awareness·preference·NPS·CSAT·CLV·churn rate<br>② <strong>Brand-Based Metrics</strong>——brand equity·brand health·share of voice·market share<br>③ <strong>Financial Metrics</strong>——sales·profit·marketing ROI·CAC·payback period<br><br><strong>典型 marketing dashboard 内容</strong>：<br>- <strong>Awareness funnel</strong>：unaware → aware → consider → prefer → buy<br>- <strong>Brand health</strong>：brand equity score·sentiment·share of voice<br>- <strong>Customer health</strong>：NPS·CSAT·retention·CLV·CAC<br>- <strong>Channel performance</strong>：traffic·conversion·revenue per channel<br>- <strong>Campaign ROI</strong>：spend·impressions·clicks·sales·ROAS<br><br><strong>4 大设计原则</strong>：<br>① <strong>Real-time</strong>——尽量实时<br>② <strong>Drill-down</strong>——可深入到 segment / channel / product<br>③ <strong>Action-oriented</strong>——指标连接到决策<br>④ <strong>Visual</strong>——chart·color·threshold alert<br><br><strong>典型工具</strong>：① Tableau·Power BI ② HubSpot dashboards ③ Google Analytics 4 ④ Salesforce dashboards<br><br><strong>vs CMO 报告</strong>：dashboard 是 real-time 工具·CMO 报告是周 / 月 / 季度的 narrative 总结。<br><br><strong>跨学派关系</strong>：所有 marketing 学派的 KPI 都通过 dashboard 可视化。",
+    "ja": "<strong>Marketing Dashboard（マーケティング・ダッシュボード）</strong>は企業マーケティング・パフォーマンス・マネジメントの<strong>可視化ツール</strong>·Kotler 16 章·Pro Plus 5 章。<br><br><strong>核心思想</strong>：マーケティングは sales だけでなく·leading + lagging indicators の全景を見る。<br><br><strong>3 類 marketing metrics</strong>：① Customer-Based（awareness·preference·NPS·CSAT·CLV·churn）② Brand-Based（brand equity·brand health·share of voice·market share）③ Financial（sales·profit·ROI·CAC·payback period）<br><br><strong>典型ダッシュボード内容</strong>：① Awareness funnel ② Brand health ③ Customer health ④ Channel performance ⑤ Campaign ROI<br><br><strong>4 大設計原則</strong>：① Real-time ② Drill-down ③ Action-oriented ④ Visual<br><br><strong>典型ツール</strong>：① Tableau·Power BI ② HubSpot dashboards ③ Google Analytics 4 ④ Salesforce dashboards<br><br><strong>vs CMO 報告</strong>：dashboard は real-time·CMO 報告は週 / 月 / 四半期の narrative 総括。<br><br><strong>他派との関係</strong>：全マーケティング学派の KPI が dashboard で可視化。"
+  },
+  "tags": [
+    "dashboard",
+    "KPI",
+    "Tableau"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "marketing performance 的标准管理工具·CMO 必学",
+      "限": "data quality 决定 dashboard 价值",
+      "例": "HubSpot·Salesforce·Google Analytics 是教科书",
+      "应": "Kotler 5 章·marketing analytics 题"
+    },
+    "ja": {
+      "限": "データ品質が dashboard 価値を決定",
+      "例": "HubSpot·Salesforce·Google Analytics 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:41:10.353Z",
+  "updatedAt": "2026-04-30T07:41:10.353Z"
+}
