@@ -9,9 +9,9 @@
   ],
   "year": "1993",
   "title": {
-    "zh": "Keller CBBE Pyramid · 4 层模型",
-    "ja": "Keller CBBE ピラミッド · 4 層モデル",
-    "en": "Keller CBBE Pyramid"
+    "zh": "Keller CBBE 金字塔·4 层模型",
+    "ja": "Keller CBBE ピラミッド・4 層モデル",
+    "en": "Keller's CBBE Pyramid"
   },
   "body": {
     "zh": "<strong>Keller CBBE Pyramid（Customer-Based Brand Equity·消费者基础品牌资产）</strong>是 Kevin Keller 1993 年在 <em>Journal of Marketing</em> 论文「Conceptualizing, Measuring, and Managing Customer-Based Brand Equity」提出·brand_equity 学派的<strong>另一座经典</strong>·与 Aaker 5 维度并列。<br><br><strong>4 层金字塔</strong>（从下到上递进·消费者认识 brand 的过程）：<br><br>① <strong>第 1 层 · Identity（身份）</strong>——「Who are you?」<br>- 包括：<strong>Salience（突出度）</strong>——brand 认知度·brand 在心智中的存在感<br>- 关键问题：消费者第一次想到这一类目时·想到这个 brand 吗？<br>- 例：「茶饮」→ 立即想到「Starbucks」<br><br>② <strong>第 2 层 · Meaning（意味）</strong>——「What are you?」<br>- 包括：<strong>Performance（性能）</strong>——产品功能·属性·价格·可靠性 + <strong>Imagery（形象）</strong>——使用场景·用户类型·人格·历史<br>- 关键问题：消费者认为这个 brand 是什么·能做什么·像什么人？<br>- 例：BMW Performance = 高性能·Imagery = 成功白领<br><br>③ <strong>第 3 层 · Response（反应）</strong>——「What about you?」<br>- 包括：<strong>Judgments（判断）</strong>——质量·可信·考虑·优越 + <strong>Feelings（情感）</strong>——温暖·乐趣·兴奋·安全感·社交认可·自尊<br>- 关键问题：消费者怎么评价这个 brand·有什么情感反应？<br>- 例：Apple 引发「兴奋·自尊·社交认可」<br><br>④ <strong>第 4 层 · Resonance（共鸣）</strong>——「What about you and me?」<br>- 包括：<strong>Loyalty</strong>·<strong>Attachment</strong>·<strong>Community</strong>·<strong>Engagement</strong><br>- 关键问题：消费者与 brand 形成深度连接·成为 brand community 一员吗？<br>- 例：Harley-Davidson 用户共同体·Apple 粉丝·Tesla 推广者<br><br><strong>brand building 的目的</strong>：让消费者从第 1 层「认知」一路爬到第 4 层「共鸣」——但只有少数 brand 能到达第 4 层。<br><br><strong>vs Aaker 5 维</strong>：CBBE 是<strong>过程模型</strong>（从认识到共鸣）·Aaker 是<strong>资产清单</strong>（5 个组成）·两者互补。CBBE 实务用于诊断 brand 在哪一层薄弱·针对性优化。",
@@ -36,5 +36,5 @@
     }
   },
   "createdAt": "2026-04-30T04:51:56.687Z",
-  "updatedAt": "2026-04-30T04:51:56.687Z"
+  "updatedAt": "2026-04-30T13:19:50.890Z"
 }
