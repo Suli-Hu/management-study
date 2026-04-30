@@ -1,0 +1,41 @@
+{
+  "id": "m024",
+  "discipline": "marketing",
+  "schools": [
+    "consumer_behavior"
+  ],
+  "scholars": [
+    "howard",
+    "sheth"
+  ],
+  "year": "1969",
+  "title": {
+    "zh": "Howard-Sheth モデル · 包括的意思決定模型",
+    "ja": "Howard-Sheth モデル",
+    "en": "Howard-Sheth Model"
+  },
+  "body": {
+    "zh": "<strong>Howard-Sheth モデル（Howard-Sheth Model of Buyer Behavior）</strong>是消费者行为学派的<strong>奠基性综合模型</strong>·1969 年 John Howard 与 Jagdish Sheth 合著『The Theory of Buyer Behavior』提出。<br><br><strong>4 大模块</strong>：<br><br>① <strong>Input Variables（输入变量）</strong>——3 类刺激<br>- significative stimuli（显著刺激·产品的实际属性如价格·质量·包装）<br>- symbolic stimuli（符号刺激·marketing 沟通中的产品形象）<br>- social stimuli（社会刺激·家人·朋友的影响）<br><br>② <strong>Perceptual Constructs（知觉变量）</strong>——5 个内部知觉过程<br>- attention（注意）·perceptual bias（知觉偏差）·overt search（明显搜索）·stimulus ambiguity（刺激模糊）·confidence（确信度）<br><br>③ <strong>Learning Constructs（学习变量）</strong>——6 个学习过程<br>- motives（动机）·choice criteria（选择基准）·brand comprehension（brand 理解）·attitude（态度）·intention（意图）·confidence（确信度）<br><br>④ <strong>Output Variables（输出变量）</strong>——5 类反应<br>- attention（注意）·brand comprehension·attitude·intention·purchase（购买）<br><br><strong>3 类购买类型</strong>：<br>① <strong>Extensive Problem Solving（EPS·扩展问题解决）</strong>——首次购买高介入产品·需要全部 5 步<br>② <strong>Limited Problem Solving（LPS·限定问题解决）</strong>——一定经验·部分简化<br>③ <strong>Routinized Response Behavior（RRB·习惯反应）</strong>——日常品·无意识购买<br><br><strong>历史地位</strong>：Howard-Sheth 是 marketing 学第一个真正<strong>系统化</strong>的消费者综合模型·影响 EBM 模型·Bettman 模型等所有后续研究·成为消费者行为学派的<strong>范式建构</strong>。",
+    "ja": "<strong>Howard-Sheth モデル（Howard-Sheth Model of Buyer Behavior）</strong>は消費者行動学派の<strong>基礎総合モデル</strong>·1969 年 John Howard と Jagdish Sheth が共著『The Theory of Buyer Behavior』で提唱。<br><br><strong>4 大モジュール</strong>：<br><br>① <strong>Input Variables（入力変数）</strong>·3 類刺激（significative·symbolic·social）<br>② <strong>Perceptual Constructs（知覚変数）</strong>·attention·perceptual bias·overt search·stimulus ambiguity·confidence<br>③ <strong>Learning Constructs（学習変数）</strong>·motives·choice criteria·brand comprehension·attitude·intention·confidence<br>④ <strong>Output Variables（出力変数）</strong>·attention·brand comprehension·attitude·intention·purchase<br><br><strong>3 類の購買タイプ</strong>：<br>① <strong>EPS（Extensive Problem Solving）</strong>·初購入高関与製品·5 段階全て<br>② <strong>LPS（Limited Problem Solving）</strong>·経験あり·部分簡略化<br>③ <strong>RRB（Routinized Response Behavior）</strong>·日用品·無意識購買<br><br><strong>歴史的位置</strong>：Howard-Sheth はマーケティング学初の真に<strong>体系化</strong>された消費者総合モデル·EBM·Bettman 等後続全研究に影響·消費者行動学派の<strong>パラダイム構築</strong>。"
+  },
+  "tags": [
+    "Howard-Sheth",
+    "consumer behavior",
+    "EPS LPS RRB"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "消费者行为学派的奠基模型·后续模型的元参照",
+      "限": "模型复杂·难以全部实证·偏认知化",
+      "例": "首次购车 EPS·重复买洗发水 RRB·偶尔买衣 LPS",
+      "应": "消费者行为题·一桥·神戸命题点"
+    },
+    "ja": {
+      "限": "モデル複雑·全実証困難·認知化偏重",
+      "例": "初購車 EPS·シャンプー反復 RRB·たまの服 LPS"
+    }
+  },
+  "createdAt": "2026-04-30T04:51:37.421Z",
+  "updatedAt": "2026-04-30T04:51:37.421Z"
+}
