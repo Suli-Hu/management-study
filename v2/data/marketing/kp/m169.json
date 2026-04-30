@@ -1,0 +1,40 @@
+{
+  "id": "m169",
+  "discipline": "marketing",
+  "schools": [
+    "channel_retail"
+  ],
+  "scholars": [
+    "stern"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "Channel Levels · 渠道层数",
+    "ja": "チャネル段階数",
+    "en": "Channel Levels"
+  },
+  "body": {
+    "zh": "<strong>Channel Levels（チャネル段階数·渠道层数）</strong>是 channel 设计的<strong>核心结构决策</strong>·按从厂家到消费者之间的中间商数量分类。Kotler 15 章·Pro Plus 11 章。<br><br><strong>4 大 channel levels</strong>：<br><br>① <strong>Zero-Level（直接·0 层）</strong>——厂家 → 消费者<br>例：Tesla 直营·Apple Store·Avon 直销·D2C brand·Amazon 1P<br><br>② <strong>One-Level（1 层）</strong>——厂家 → 零售商 → 消费者<br>例：UNIQLO 自营 + franchise·Costco（厂家直供）·Walmart 大牌直供<br><br>③ <strong>Two-Level（2 层）</strong>——厂家 → 卸 → 零售 → 消费者<br>例：日本传统流通·便利店供应链·药品行业<br><br>④ <strong>Three-Level（3 层）</strong>——厂家 → 卸 → jobber/agent → 零售 → 消费者<br>例：日本食品·农产品·一些 B2B 工业品<br><br><strong>影响 channel level 选择的 5 大因素</strong>：<br>① <strong>Customer characteristics</strong>——分布·购买频率·习惯<br>② <strong>Product characteristics</strong>——价格·体积·腐烂性·复杂度<br>③ <strong>Middlemen characteristics</strong>——可获得性·能力<br>④ <strong>Competitive characteristics</strong>——竞争对手用什么 channel<br>⑤ <strong>Company characteristics</strong>——资源·objectives·产品 portfolio<br><br><strong>marketing 战略权衡</strong>：<br>- <strong>更多 levels</strong>：广覆盖·风险分散·但 control 弱·价格高<br>- <strong>更少 levels</strong>：control 强·margin 高·brand 一致·但成本高·覆盖有限<br><br><strong>趋势</strong>：digital → 减少 levels（disintermediation）·D2C 兴起。<br><br><strong>典型例</strong>：<br>- Apple：从多层（through resellers）→ 0 层（Apple Store）<br>- Tesla：始终 0 层（直营·废 dealer）<br>- 日本汽车：长期复杂 multilayer dealer 网络<br>- Amazon：1P 是 0 层·3P marketplace 是 1 层<br><br><strong>跨学派关系</strong>：与 channel functions（m168）·VMS（m044）·omnichannel（m047）·D2C 一体。",
+    "ja": "<strong>Channel Levels（チャネル段階数）</strong>はチャネル設計の<strong>核心構造決定</strong>·メーカーから消費者までの中間商数で分類。Kotler 15 章·Pro Plus 11 章。<br><br><strong>4 大 channel levels</strong>：<br>① <strong>Zero-Level（0 段·直接）</strong>·Tesla 直営·Apple Store·D2C·Amazon 1P<br>② <strong>One-Level（1 段）</strong>·UNIQLO 自営+franchise·Costco·Walmart 大手直供<br>③ <strong>Two-Level（2 段）</strong>·日本伝統流通·コンビニ供給·薬品<br>④ <strong>Three-Level（3 段）</strong>·日本食品·農産物·B2B 工業品<br><br><strong>影響 channel level 5 大要因</strong>：① 顧客特性 ② 製品特性（価格·体積·腐れ性·複雑度）③ 中間商特性 ④ 競合特性 ⑤ 企業特性<br><br><strong>マーケティング戦略権衡</strong>：多段階 = 広覆盖·リスク分散·制御弱·価格高·少段階 = 制御強·margin 高·ブランド一致·コスト高·覆盖限定<br><br><strong>トレンド</strong>：digital → 段階削減（disintermediation）·D2C 興隆。<br><br><strong>典型例</strong>：① Apple（multilayer → Apple Store 0 段）② Tesla（始終 0 段·dealer 廃止）③ 日本自動車（長期複雑 multilayer）④ Amazon（1P 0 段·3P marketplace 1 段）<br><br><strong>他派との関係</strong>：channel functions（m168）·VMS（m044）·omnichannel（m047）·D2C と一体。"
+  },
+  "tags": [
+    "channel levels",
+    "D2C",
+    "Tesla"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "channel 设计的结构决策·控制 vs 覆盖权衡",
+      "限": "产品 / 行业差异大·digital 时代变化快",
+      "例": "Apple·Tesla·UNIQLO·Amazon 是教科书",
+      "应": "Kotler 15 章·channel 题"
+    },
+    "ja": {
+      "限": "製品 / 業界差大·デジタル時代変化速",
+      "例": "Apple·Tesla·UNIQLO·Amazon 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T09:26:29.798Z",
+  "updatedAt": "2026-04-30T09:26:29.798Z"
+}
