@@ -10,8 +10,8 @@
   ],
   "year": "2001",
   "title": {
-    "zh": "Causation vs Effectuation 对照",
-    "ja": "Causation vs Effectuation 対照",
+    "zh": "因果推理 vs 效果推理对照",
+    "ja": "コーゼーション vs エフェクチュエーション対照",
     "en": "Causation vs Effectuation"
   },
   "body": {
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T05:14:05.826Z",
-  "updatedAt": "2026-04-30T05:14:05.826Z"
+  "updatedAt": "2026-04-30T13:21:46.788Z"
 }
