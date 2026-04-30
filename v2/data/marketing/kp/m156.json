@@ -10,9 +10,9 @@
   ],
   "year": "2011",
   "title": {
-    "zh": "Lean Startup · MVP 与快速试错",
-    "ja": "リーン・スタートアップ · MVP",
-    "en": "Lean Startup · MVP"
+    "zh": "精益创业·Lean Startup·Ries 2011",
+    "ja": "リーン・スタートアップ・Ries 2011",
+    "en": "Lean Startup"
   },
   "body": {
     "zh": "<strong>Lean Startup</strong>由 Eric Ries 在 2011 年同名书提出·与 Sarasvathy effectuation 学派<strong>哲学一致</strong>但更实务化·成为 Silicon Valley·digital startup 的标准方法论。<br><br><strong>核心命题</strong>：传统 Stage-Gate 慢·重·适合大企业；startup 必须<strong>快速 build → measure → learn → iterate</strong>。<br><br><strong>3 大概念</strong>：<br>① <strong>MVP（Minimum Viable Product）</strong>——最小化能 launch 的版本·收集真实反馈<br>② <strong>Build-Measure-Learn Loop</strong>——快速迭代<br>③ <strong>Pivot vs Persevere</strong>——基于 data 决定调整方向 vs 坚持<br><br><strong>5 大原则</strong>：① <strong>Entrepreneurs are everywhere</strong>·② <strong>Entrepreneurship is management</strong>·③ <strong>Validated learning</strong>·④ <strong>Innovation accounting</strong>·⑤ <strong>Build-measure-learn</strong><br><br><strong>典型 MVP 类型</strong>：<br>① <strong>Landing Page MVP</strong>——只做着陆页·测兴趣<br>② <strong>Concierge MVP</strong>——人工执行 service·后自动化<br>③ <strong>Wizard of Oz MVP</strong>——表面看自动·后台人工<br>④ <strong>Single-Feature MVP</strong>——只 launch 1 功能<br>⑤ <strong>Crowdfunding MVP</strong>——Kickstarter 测需求<br><br><strong>典型成功案例</strong>：<br>① <strong>Dropbox</strong>——3 分钟 demo video MVP·收集兴趣<br>② <strong>Airbnb</strong>——3 个 air mattress 在创始人公寓·测概念<br>③ <strong>Zappos</strong>——CEO 拍鞋店货架照片·测电商需求<br>④ <strong>Buffer</strong>——pricing page 测 willingness to pay<br><br><strong>vs Stage-Gate</strong>：Stage-Gate 慢·thorough·大企业·Lean Startup 快·iterative·startup<br><br><strong>vs Effectuation</strong>：<br>- Effectuation（Sarasvathy）：哲学层·5 原则<br>- Lean Startup（Ries）：方法层·实务工具<br>- 二者哲学一致·实务上 Lean Startup 是 effectuation 的 toolkit<br><br><strong>跨学派关系</strong>：与 effectuation·entrepreneurial marketing·digital_marketing·strategic_marketing 一体。",
@@ -38,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:41:24.703Z",
-  "updatedAt": "2026-04-30T07:41:24.703Z"
+  "updatedAt": "2026-04-30T13:24:51.759Z"
 }
