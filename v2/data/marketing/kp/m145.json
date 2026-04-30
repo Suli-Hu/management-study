@@ -1,0 +1,41 @@
+{
+  "id": "m145",
+  "discipline": "marketing",
+  "schools": [
+    "consumer_behavior",
+    "managerial"
+  ],
+  "scholars": [
+    "howard"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "Marketing Research 6 步骤",
+    "ja": "マーケティング・リサーチ 6 段階",
+    "en": "Marketing Research · 6 Stages"
+  },
+  "body": {
+    "zh": "<strong>Marketing Research 6 步骤</strong>是 Kotler 16 章·Pro Plus 第 5 章核心·marketing 调研的标准流程。<br><br><strong>6 步骤</strong>：① <strong>问题定义</strong>（不是 too narrow / too broad）② <strong>调研计划</strong>（data sources·research approach·research instruments·sampling plan·contact methods）③ <strong>信息收集</strong>（survey·interview·observation·experiment·secondary data）④ <strong>信息分析</strong>（statistical·qualitative）⑤ <strong>决策提出</strong>·⑥ <strong>决策执行 + 效果反馈</strong><br><br><strong>2 大调研类型</strong>：<br>① <strong>定性 / 質的（Qualitative）</strong>·Focus Group·Depth Interview·エスノグラフィ·MROC·了解 why·how<br>② <strong>定量 / 量的（Quantitative）</strong>·Survey·Web·POS·Conjoint·了解 what·how much<br><br><strong>research instruments 5 大类</strong>：① questionnaires ② qualitative measures ③ technological devices（GSR·eye-tracking·neuro-marketing）④ POS / behavioral data ⑤ social listening<br><br><strong>5 大 sampling 方法</strong>：① probability（random·stratified）② non-probability（convenience·judgment·quota）<br><br><strong>跨学派关系</strong>：marketing research 是<strong>方法论学派</strong>·支持所有 marketing 学派的实证研究。",
+    "ja": "<strong>Marketing Research 6 段階</strong>は Kotler 16 章·Pro Plus 第 5 章核心·マーケティング調査の標準プロセス。<br><br><strong>6 段階</strong>：① 問題定義 ② 調査計画 ③ 情報収集 ④ 情報分析 ⑤ 意思決定提出 ⑥ 意思決定執行 + 効果フィードバック<br><br><strong>2 大調査類型</strong>：① 質的（Focus Group·Depth Interview·エスノグラフィ·MROC·why·how 理解）② 量的（Survey·Web·POS·Conjoint·what·how much 理解）<br><br><strong>research instruments 5 大類</strong>：① questionnaires ② qualitative measures ③ technological devices（GSR·eye-tracking·neuro-marketing）④ POS / behavioral data ⑤ social listening<br><br><strong>5 大 sampling 方法</strong>：① probability（random·stratified）② non-probability（convenience·judgment·quota）<br><br><strong>他派との関係</strong>：marketing research は<strong>方法論学派</strong>·全マーケティング学派の実証研究を支援。"
+  },
+  "tags": [
+    "marketing research",
+    "6 stages",
+    "Kotler"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "marketing 调研的标准流程·所有研究的基础",
+      "限": "流程化·实务常迭代",
+      "例": "任何 marketing project 第一步都是 research",
+      "应": "Kotler 5 章·Pro Plus 5 章·调研题"
+    },
+    "ja": {
+      "限": "プロセス化·実務反復多",
+      "例": "全マーケティング・プロジェクトの第一段階は research"
+    }
+  },
+  "createdAt": "2026-04-30T07:41:04.930Z",
+  "updatedAt": "2026-04-30T07:41:04.930Z"
+}
