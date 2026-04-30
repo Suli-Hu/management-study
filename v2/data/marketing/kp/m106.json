@@ -1,0 +1,42 @@
+{
+  "id": "m106",
+  "discipline": "marketing",
+  "schools": [
+    "consumer_behavior"
+  ],
+  "scholars": [
+    "kahneman",
+    "bettman"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "行动决策理论 · BDT",
+    "ja": "行動決定理論 · BDT",
+    "en": "Behavioral Decision Theory (BDT)"
+  },
+  "body": {
+    "zh": "<strong>行动决策理论（Behavioral Decision Theory·BDT）</strong>是消费者行为学派与<strong>行为经济学</strong>交叉的领域·研究消费者实际决策（vs 理性决策）的差异。Kotler 16 版第 3 章 Marketing Insight。<br><br><strong>核心命题</strong>：消费者决策<strong>系统性地偏离理性</strong>——不是 random error·而是 predictable bias。<br><br><strong>10 大 BDT 概念</strong>（marketing 借入）：<br><br>① <strong>Anchoring（锚定效应）</strong>——首个数字影响后续判断（原价 ¥1000 → ¥800 的 anchor 效果）<br>② <strong>Availability Heuristic（可获得性启发）</strong>——容易回忆的事被认为更频繁（飞机失事新闻 → 觉得飞机不安全）<br>③ <strong>Representativeness Heuristic（代表性启发）</strong>——按 stereotype 判断（医生 = 西装 + 听诊器）<br>④ <strong>Confirmation Bias（确认偏差）</strong>——只看支持现有观点的证据<br>⑤ <strong>Loss Aversion（损失厌恶）</strong>——失去比得到痛苦 2-2.5 倍<br>⑥ <strong>Endowment Effect（禀赋效应）</strong>——已拥有的东西觉得更有价值<br>⑦ <strong>Mental Accounting（心理账户）</strong>——同样金钱在不同账户感觉不同（年终 bonus vs 工资）<br>⑧ <strong>Status Quo Bias（现状偏差）</strong>——倾向于不变·default 选项被偏好<br>⑨ <strong>Framing（框架效应）</strong>——同样信息·不同表达·决策不同（90% 生存率 vs 10% 死亡率）<br>⑩ <strong>Decoy Effect（诱饵效应）</strong>——加入 inferior 选项让原选项更有吸引<br><br><strong>marketing 实务应用</strong>：<br>① <strong>定价</strong>——anchor·decoy·心理价格<br>② <strong>UI/UX 设计</strong>——default·framing·choice architecture（Thaler-Sunstein 2008 nudge）<br>③ <strong>广告创意</strong>——loss frame·avail heuristic·storytelling<br>④ <strong>checkout</strong>——降低 status quo bias·simplify·reduce friction<br><br><strong>nudge marketing</strong>（Thaler-Sunstein 2008）——基于 BDT 设计微小默认引导·改变行为而不改变选择空间。<br><br><strong>跨学派关系</strong>：与 Kahneman Prospect Theory（m028）·System 1/2（m029）紧密·是行为经济学 marketing 的实务工具集。",
+    "ja": "<strong>行動決定理論（Behavioral Decision Theory·BDT）</strong>は消費者行動学派と<strong>行動経済学</strong>の交差領域·消費者の実際意思決定（vs 合理的意思決定）の差異を研究。Kotler 16 版第 3 章 Marketing Insight。<br><br><strong>核心命題</strong>：消費者意思決定は<strong>系統的に合理性から逸脱</strong>·random error ではなく predictable bias。<br><br><strong>10 大 BDT 概念</strong>：① Anchoring ② Availability Heuristic ③ Representativeness Heuristic ④ Confirmation Bias ⑤ Loss Aversion ⑥ Endowment Effect ⑦ Mental Accounting ⑧ Status Quo Bias ⑨ Framing ⑩ Decoy Effect<br><br><strong>マーケティング実務応用</strong>：① 価格（anchor·decoy·心理価格）② UI/UX 設計（default·framing·choice architecture·Thaler-Sunstein 2008 nudge）③ 広告クリエイティブ（loss frame·storytelling）④ checkout（status quo bias 低減·simplify·reduce friction）<br><br><strong>nudge marketing</strong>（Thaler-Sunstein 2008）·BDT 基底で微小デフォルト誘導設計·選択空間を変えず行動変える。<br><br><strong>他派との関係</strong>：Kahneman プロスペクト理論（m028）·System 1/2（m029）と密接·行動経済学マーケティングの実務ツール集。"
+  },
+  "tags": [
+    "BDT",
+    "behavioral economics",
+    "nudge",
+    "Thaler"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "行为经济学 marketing 的实务工具集·定价 / UX / 广告必学",
+      "限": "工具多·难全部应用·跨文化适用",
+      "例": "Amazon checkout flow = nudge marketing 集大成",
+      "应": "Kotler 第 3 章·东大数理派必学"
+    },
+    "ja": {
+      "限": "ツール多·全適用困難·異文化適用",
+      "例": "Amazon checkout flow = nudge marketing 集大成"
+    }
+  },
+  "createdAt": "2026-04-30T07:24:13.598Z",
+  "updatedAt": "2026-04-30T07:24:13.598Z"
+}
