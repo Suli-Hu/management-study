@@ -1,0 +1,41 @@
+{
+  "id": "m022",
+  "discipline": "marketing",
+  "schools": [
+    "consumer_behavior"
+  ],
+  "scholars": [
+    "howard",
+    "howard"
+  ],
+  "year": "1968",
+  "title": {
+    "zh": "消费者决策 5 步过程",
+    "ja": "消費者意思決定 5 段階",
+    "en": "Consumer Decision Process · 5 Stages"
+  },
+  "body": {
+    "zh": "<strong>消费者决策 5 步过程</strong>是 marketing 学最经典的消费者行为模型·由 Engel-Kollat-Blackwell（EBM 模型 1968）系统化·成为 Kotler 教材标准内容。<br><br><strong>5 个步骤</strong>：<br><br>① <strong>问题识别（Problem Recognition）</strong>——消费者意识到 actual state 与 desired state 之间存在差距。<br>触发因素：内部刺激（饥饿·疲劳）·外部刺激（广告·朋友推荐）。<br><br>② <strong>信息搜索（Information Search）</strong>——主动·被动获取相关信息。<br>来源：personal sources（家人·朋友）·commercial sources（广告·销售员）·public sources（媒体·消费者评估）·experiential sources（试用）。<br><br>③ <strong>替代品评价（Evaluation of Alternatives）</strong>——比较 evoked set 中的选择。<br>评价基准：产品属性·重要性权重·brand 形象·感知风险。<br><br>④ <strong>购买决定（Purchase Decision）</strong>——做出最终选择。<br>影响因素：他人态度·意外情况（如缺货·新信息）。<br><br>⑤ <strong>购买后行为（Post-purchase Behavior）</strong>——使用·满足度评价·重购意向·口碑传播。<br>关键现象：<strong>cognitive dissonance（认知不协调）</strong>——后悔感·marketing 应通过保证·售后服务缓解。<br><br><strong>实务应用</strong>：marketing 应在每一步设计触点——广告（步骤 1·2）·SEO/SEM（步骤 2）·销售（步骤 3·4）·CRM（步骤 5）。<br><br><strong>批判</strong>：① 模型偏理性·情感冲动购买不适用 ② 5 步线性·实际可能跳跃·循环 ③ 高 vs 低介入产品决策路径不同。",
+    "ja": "<strong>消費者意思決定 5 段階</strong>はマーケティング学最古典の消費者行動モデル·Engel-Kollat-Blackwell（EBM モデル 1968）が体系化·Kotler 教材標準。<br><br><strong>5 つのステップ</strong>：<br><br>① <strong>問題認識</strong>·実際状態と望ましい状態の差を認識。<br>誘因：内部刺激（空腹·疲労）·外部刺激（広告·友人推奨）。<br><br>② <strong>情報探索</strong>·能動·受動的情報取得。<br>源：personal·commercial·public·experiential。<br><br>③ <strong>代替品評価</strong>·evoked set 内選択肢を比較。<br>評価基準：製品属性·重要度ウェイト·ブランド・イメージ·知覚リスク。<br><br>④ <strong>購買決定</strong>·最終選択。<br>影響要因：他者の態度·予期外（在庫切れ·新情報）。<br><br>⑤ <strong>購買後行動</strong>·使用·満足度評価·再購入意向·口コミ。<br>重要現象：<strong>認知的不協和（cognitive dissonance）</strong>·後悔感·マーケティングは保証·アフターサービスで緩和。<br><br><strong>実務応用</strong>：マーケティングは各段階に接点を設計——広告（1·2）·SEO/SEM（2）·販売（3·4）·CRM（5）。<br><br><strong>批判</strong>：① モデル合理性偏重·情緒衝動購買に不適用 ② 5 段階線形·実際は跳躍·循環可 ③ 高 vs 低関与製品で経路異なる。"
+  },
+  "tags": [
+    "consumer decision",
+    "EBM",
+    "5 steps"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "消费者行为分析的最基础工具·marketing 战略各步骤的设计依据",
+      "限": "理性偏重·线性偏重·情感和冲动购买不适用",
+      "例": "购买 iPhone 的 5 步：意识旧机变慢→搜索→比较 iPhone vs Samsung→购买→evangelism",
+      "应": "Kotler 第 3 章·消费者行为题命中"
+    },
+    "ja": {
+      "限": "合理性偏重·線形偏重·情緒衝動購買に不適用",
+      "例": "iPhone 購入 5 段階：旧機遅い認識→探索→iPhone vs Samsung 比較→購買→evangelism"
+    }
+  },
+  "createdAt": "2026-04-30T04:51:34.039Z",
+  "updatedAt": "2026-04-30T04:51:34.039Z"
+}
