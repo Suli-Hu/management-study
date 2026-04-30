@@ -1,0 +1,42 @@
+{
+  "id": "m013",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "strategic_marketing"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "2000",
+  "title": {
+    "zh": "5C 分析框架",
+    "ja": "5C 分析フレーム",
+    "en": "5C Analysis Framework"
+  },
+  "body": {
+    "zh": "<strong>5C 分析</strong>是 marketing 战略环境分析的标准框架·把企业面临的<strong>5 个环境维度</strong>系统化。<br><br><strong>5 个 C</strong>：<br><br>① <strong>Company（企业）</strong>——内部能力·资源·历史·文化·brand 资产·财务状况。「我是谁」「我有什么」。<br><br>② <strong>Customer（顾客）</strong>——目标客户的 needs·decision process·segment 特征·purchase behavior。「我服务谁」「他们要什么」。<br><br>③ <strong>Collaborator（协力者）</strong>——供应商·分销商·联盟伙伴·研发合作·channel 成员。「我和谁一起做」。<br><br>④ <strong>Competitor（竞争对手）</strong>——直接·间接竞争者·替代品·新进入者。「谁在和我抢」。Porter 5 forces 部分对应。<br><br>⑤ <strong>Context（环境）</strong>——PEST（政治·经济·社会·技术）+ 法律·伦理·生态。「我在什么大环境中」。<br><br><strong>5C 与 SWOT 的关系</strong>：5C 是输入分析框架（向外看）·SWOT 是综合判断框架（向内总结）。5C 分析后可整理为 SWOT。<br><br><strong>使用场景</strong>：① marketing plan 第一步「situation analysis」② 案例分析的环境扫描 ③ 战略选择前的诊断。<br><br><strong>变体</strong>：3C（Customer·Competitor·Company·Ohmae 1982）·4C（+Channel·5C 的精简版）·6C（+Climate）。",
+    "ja": "<strong>5C 分析</strong>はマーケティング戦略環境分析の標準フレーム·企業の<strong>5 つの環境次元</strong>を体系化。<br><br><strong>5 つの C</strong>：<br><br>① <strong>Company（企業）</strong>·内部能力·資源·歴史·文化·ブランド資産·財務状況。「私は誰か」「何を持っているか」。<br><br>② <strong>Customer（顧客）</strong>·目標顧客のニーズ·意思決定プロセス·segment 特徴·購買行動。「誰に対応するか」「何を求めているか」。<br><br>③ <strong>Collaborator（協力者）</strong>·供給者·流通業者·提携パートナー·研究開発協力·channel メンバー。「誰と一緒にやるか」。<br><br>④ <strong>Competitor（競合）</strong>·直接·間接競合·代替品·新規参入者。「誰と争うか」。Porter 5 forces 部分対応。<br><br>⑤ <strong>Context（環境）</strong>·PEST（政治·経済·社会·技術）+ 法律·倫理·エコ。「どのような大環境にいるか」。<br><br><strong>5C と SWOT の関係</strong>：5C は入力分析フレーム（外を見る）·SWOT は総合判断フレーム（内を総括）。5C 分析後 SWOT に整理可。<br><br><strong>使用場面</strong>：① マーケティング計画第一段階「situation analysis」② ケース分析の環境スキャン ③ 戦略選択前の診断。<br><br><strong>バリエーション</strong>：3C（Customer·Competitor·Company·Ohmae 1982）·4C（+Channel）·6C（+Climate）。"
+  },
+  "tags": [
+    "5C",
+    "3C",
+    "Ohmae",
+    "Marketing Plan"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "marketing 环境分析的最经典框架·5 维度全覆盖",
+      "限": "维度间界线模糊·实务用 3C 更简洁",
+      "例": "Toyota 5C 分析：Company=製造能力·Customer=家族层·Competitor=Honda·VW·Collaborator=ディーラー·Context=电动化趋势",
+      "应": "case 分析必用·所有 11 校命题前置"
+    },
+    "ja": {
+      "限": "次元間境界曖昧·実務は 3C がシンプル",
+      "例": "Toyota 5C：Company=製造能力·Customer=家族層·Competitor=Honda·VW·Collaborator=ディーラー·Context=電動化トレンド"
+    }
+  },
+  "createdAt": "2026-04-30T04:40:32.213Z",
+  "updatedAt": "2026-04-30T04:40:32.213Z"
+}
