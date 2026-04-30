@@ -1,0 +1,41 @@
+{
+  "id": "m076",
+  "discipline": "marketing",
+  "schools": [
+    "effectuation",
+    "strategic_marketing"
+  ],
+  "scholars": [
+    "sarasvathy"
+  ],
+  "year": "2001",
+  "title": {
+    "zh": "Causation vs Effectuation 对照",
+    "ja": "Causation vs Effectuation 対照",
+    "en": "Causation vs Effectuation"
+  },
+  "body": {
+    "zh": "<strong>Causation vs Effectuation</strong>是 Sarasvathy 2001 年提出的 2 种对立的<strong>战略行动逻辑</strong>·effectuation 学派的元区分。<br><br><strong>5 维度对照</strong>：<br><br>| 维度 | Causation | Effectuation |<br>|---|---|---|<br>| 起点 | <strong>明确目标</strong> | <strong>已有手段</strong> |<br>| 决策依据 | <strong>预期收益最大化</strong> | <strong>可承受损失</strong> |<br>| 与他人关系 | 竞争·有利的合作 | <strong>非竞争性合作</strong>（crazy quilt）|<br>| 对意外 | 避免·控制 | <strong>拥抱·利用</strong>（lemonade）|<br>| 对未来 | 预测·适应 | <strong>塑造·控制</strong>（pilot in the plane）|<br><br><strong>实例对照</strong>：<br>开餐厅：<br>- Causation：① 市场调研「人们想吃什么」② 选定菜系（如意大利菜）③ 找好厨师 ④ 选好地段 ⑤ 大投资开店<br>- Effectuation：① 我会做意大利菜（means: skill）② 朋友想合伙（means: network）③ 我有 ¥500 万储蓄·最多失去 ¥200 万（affordable loss）④ 在朋友家附近的小店开始（resource-based）⑤ 试 pop-up·根据反馈迭代<br><br><strong>使用 context</strong>：<br>- Causation 适用：<strong>已知市场·成熟产业·大企业</strong>（环境可预测）<br>- Effectuation 适用：<strong>未知市场·创新·startup·entrepreneur</strong>（环境不可预测）<br><br><strong>marketing 启示</strong>：<br>① 不是「Causation 好 vs Effectuation 好」·而是<strong>看 context</strong><br>② 创新型 marketing campaign 多用 effectuation 思维<br>③ 既有 brand 战略多用 causation<br>④ 实务中常混合·hybrid 模式<br><br><strong>实证研究</strong>：Sarasvathy 研究 27 位「专家创业者」（成功创立 1 家以上 IPO 公司·有 15 年以上经验）·发现他们普遍用 effectuation·而非 causation——这是 effectuation 理论的实证基础。<br><br><strong>跨学派关系</strong>：与 strategic_marketing 的传统 SWOT·5 forces 分析对立·但实务中可结合。",
+    "ja": "<strong>Causation vs Effectuation</strong>は Sarasvathy 2001 年提唱の 2 つの対立的<strong>戦略行動論理</strong>·effectuation 学派のメタ区分。<br><br><strong>5 次元対照</strong>：<br>| 次元 | Causation | Effectuation |<br>|---|---|---|<br>| 起点 | <strong>明確な目標</strong> | <strong>既有手段</strong> |<br>| 意思決定依拠 | <strong>期待収益最大化</strong> | <strong>可承受損失</strong> |<br>| 他者との関係 | 競争·有利協力 | <strong>非競争協力</strong>（crazy quilt）|<br>| 予期外への対応 | 回避·制御 | <strong>抱擁·利用</strong>（lemonade）|<br>| 未来への態度 | 予測·適応 | <strong>塑造·制御</strong>（pilot in the plane）|<br><br><strong>事例対照</strong>：レストラン開業·Causation は市場調査·メニュー選定·投資·effectuation は手段（skill·network）·affordable loss·pop-up 反復。<br><br><strong>使用 context</strong>：Causation は既知市場·成熟産業·大企業（予測可能）·Effectuation は未知市場·イノベーション·スタートアップ（予測不可能）<br><br><strong>マーケティング示唆</strong>：① 「Causation 良 vs Effectuation 良」ではなく<strong>context 依存</strong> ② 革新型キャンペーン effectuation ③ 既存ブランド戦略 causation ④ 実務 hybrid<br><br><strong>実証研究</strong>：Sarasvathy 研究 27 位専門起業家（IPO 1 社以上·15 年以上経験）·effectuation 普遍使用·causation ではない——effectuation 理論の実証基盤。<br><br><strong>他派との関係</strong>：strategic_marketing の伝統 SWOT·5 forces と対立·実務結合可。"
+  },
+  "tags": [
+    "causation",
+    "effectuation",
+    "Sarasvathy"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "effectuation 学派的元理论·2 大行动逻辑对照",
+      "限": "二分法过简·实际混合·context 判断主观",
+      "例": "成熟企业 = Causation·startup = Effectuation",
+      "应": "effectuation 论述·strategic 题"
+    },
+    "ja": {
+      "限": "二分法過簡·実際混合·context 判断主観",
+      "例": "成熟企業 = Causation·startup = Effectuation"
+    }
+  },
+  "createdAt": "2026-04-30T05:14:05.826Z",
+  "updatedAt": "2026-04-30T05:14:05.826Z"
+}
