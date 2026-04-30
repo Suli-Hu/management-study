@@ -9,8 +9,8 @@
   ],
   "year": "1990",
   "title": {
-    "zh": "Concept Development · Testing",
-    "ja": "コンセプト開発·検証",
+    "zh": "概念开发与测试·5 大方法",
+    "ja": "コンセプト開発と検証・5 大方法",
     "en": "Concept Development & Testing"
   },
   "body": {
@@ -36,5 +36,5 @@
     }
   },
   "createdAt": "2026-04-30T07:36:07.479Z",
-  "updatedAt": "2026-04-30T07:36:07.479Z"
+  "updatedAt": "2026-04-30T13:24:06.938Z"
 }
