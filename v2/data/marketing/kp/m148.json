@@ -10,8 +10,8 @@
   ],
   "year": "2008",
   "title": {
-    "zh": "Marketing Dashboard · 营销仪表盘",
-    "ja": "マーケティング・ダッシュボード",
+    "zh": "营销仪表盘·Marketing Dashboard 设计原则",
+    "ja": "マーケティング・ダッシュボード設計原則",
     "en": "Marketing Dashboard"
   },
   "body": {
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T07:41:10.353Z",
-  "updatedAt": "2026-04-30T07:41:10.353Z"
+  "updatedAt": "2026-04-30T13:24:33.327Z"
 }
