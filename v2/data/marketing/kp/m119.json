@@ -1,0 +1,42 @@
+{
+  "id": "m119",
+  "discipline": "marketing",
+  "schools": [
+    "sdl",
+    "managerial"
+  ],
+  "scholars": [
+    "vargo",
+    "lusch"
+  ],
+  "year": "1985",
+  "title": {
+    "zh": "Internal·Interactive·External Marketing 3 角",
+    "ja": "インターナル·インタラクティブ·エクスターナル 3 角",
+    "en": "Internal·Interactive·External Marketing Triangle"
+  },
+  "body": {
+    "zh": "<strong>Service Marketing 3 角</strong>是 Kotler·Bowen·Makens 系统化的服务 marketing 实务框架·指出服务企业必须做<strong>3 类 marketing</strong>·而非传统 1 类。<br><br><strong>3 大 marketing</strong>：<br>① <strong>External Marketing（外部）</strong>——传统 marketing：企业 → 顾客<br>4P / 7P·brand 建设·promotion<br>② <strong>Internal Marketing（内部）</strong>——企业 → 员工<br>训练·激励·empowerment·让员工成为 brand 的 ambassador<br>③ <strong>Interactive Marketing（互动）</strong>——员工 ↔ 顾客<br>真正的 service moment of truth·员工质量决定服务质量<br><br><strong>核心命题</strong>：<br>「员工没被好好对待·就不会好好对待顾客」（Karl Albrecht）。Service profit chain（Heskett 1994）：<br>good internal marketing → satisfied employees → satisfied customers → profitable growth。<br><br><strong>典型例</strong>：<br>① Ritz-Carlton：员工权限 $2,000 解决问题（empowerment）<br>② Disney：cast members 训练 → guest experience<br>③ Starbucks：barista 是 brand·咖啡的高质量是结果<br>④ SAS Airlines（Carlzon 1987 *Moments of Truth*）：5,000 万年顾客接触 = 5,000 万 moment of truth<br><br><strong>marketing 实务启示</strong>：<br>① <strong>HR 与 marketing 一体</strong>——服务企业 HR 是 marketing 的核心<br>② <strong>internal brand-building</strong>——员工先认同 brand<br>③ <strong>service blueprint</strong>——把服务流程可视化设计<br><br><strong>跨学派关系</strong>：① 与 SDL co-creation 一致 ② 与 relationship 学派的员工 - 顾客关系一致 ③ 是 holistic marketing（m094）的具体应用。",
+    "ja": "<strong>Service Marketing 3 角</strong>は Kotler·Bowen·Makens 体系化のサービス・マーケティング実務フレーム·サービス企業は<strong>3 類のマーケティング</strong>を行うべき·伝統 1 類ではない。<br><br><strong>3 大マーケティング</strong>：① <strong>External</strong>（伝統·企業 → 顧客·4P/7P·ブランド構築·プロモーション）② <strong>Internal</strong>（企業 → 従業員·訓練·激励·empowerment·従業員がブランド・アンバサダー）③ <strong>Interactive</strong>（従業員 ↔ 顧客·真の service moment of truth）<br><br><strong>核心命題</strong>：「従業員が大切にされなければ·顧客を大切にできない」（Karl Albrecht）·Service profit chain（Heskett 1994）<br><br><strong>典型例</strong>：① Ritz-Carlton（従業員権限 $2,000）② Disney（cast members）③ Starbucks（barista がブランド）④ SAS Airlines（Carlzon 1987 Moments of Truth）<br><br><strong>マーケティング実務示唆</strong>：① HR とマーケティング一体 ② internal brand-building ③ service blueprint<br><br><strong>他派との関係</strong>：① SDL co-creation 一致 ② relationship 学派の従業員 - 顧客関係 ③ holistic marketing（m094）の具体応用。"
+  },
+  "tags": [
+    "internal marketing",
+    "interactive",
+    "Carlzon"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "服务 marketing 的实务核心·HR + marketing 整合",
+      "限": "实务难·组织协调·投资大",
+      "例": "Ritz-Carlton·Disney·Starbucks 是教科书",
+      "应": "Kotler 第 9 章·service 题"
+    },
+    "ja": {
+      "限": "実務困難·組織調整·投資大",
+      "例": "Ritz-Carlton·Disney·Starbucks 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:35:37.152Z",
+  "updatedAt": "2026-04-30T07:35:37.152Z"
+}
