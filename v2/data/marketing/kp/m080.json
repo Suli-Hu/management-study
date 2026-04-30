@@ -1,0 +1,40 @@
+{
+  "id": "m080",
+  "discipline": "marketing",
+  "schools": [
+    "social_marketing"
+  ],
+  "scholars": [
+    "porter"
+  ],
+  "year": "1953",
+  "title": {
+    "zh": "CSR · 企业社会责任",
+    "ja": "CSR · 企業の社会責任",
+    "en": "Corporate Social Responsibility"
+  },
+  "body": {
+    "zh": "<strong>CSR（Corporate Social Responsibility·企业社会责任）</strong>是 social marketing 学派的核心概念·主张企业不应只追利润·还要承担<strong>对社会·环境·伦理</strong>的责任。Pro Plus 第 14 章核心。<br><br><strong>CSR 演化 4 阶段</strong>：<br><br>① <strong>1950s-70s · Defensive CSR</strong>——回应外部压力·避免争议<br>例：1950 年 Howard Bowen『Social Responsibilities of the Businessman』奠基<br><br>② <strong>1980s-90s · Reactive CSR</strong>——制定政策·回应 stakeholder<br>例：Body Shop（1976 起）反动物试验·设立行业标准<br><br>③ <strong>2000s · Strategic CSR</strong>——把 CSR 整合到企业战略·变成竞争优势<br>例：Patagonia 环保 brand·CSR = brand identity 核心<br><br>④ <strong>2010s+ · Transformative CSR</strong>——超越企业·改变产业·社会<br>例：Tesla 加速可持续能源转型·Beyond Meat 改变蛋白质产业<br><br><strong>CSR 的 4 个领域</strong>（Carroll 金字塔 1991）：<br>1. <strong>Economic Responsibilities（经济·基础）</strong>——盈利·提供产品<br>2. <strong>Legal Responsibilities（法律）</strong>——遵守法律<br>3. <strong>Ethical Responsibilities（伦理）</strong>——超越法律的道德标准<br>4. <strong>Philanthropic Responsibilities（慈善·顶层）</strong>——回馈社会<br><br><strong>CSR 的 5 大批判</strong>：<br>① <strong>Greenwashing（漂绿）</strong>——marketing 装好·实际无变化<br>② <strong>性价比争议</strong>——CSR 是否与利润最大化冲突<br>③ <strong>Friedman 反对</strong>——「企业的责任是让 stockholders 赚钱」（1970）<br>④ <strong>测量困难</strong>——CSR 的 ROI 难量化<br>⑤ <strong>跨文化偏差</strong>——发达 vs 发展中国家不同标准<br><br><strong>vs CSV（Creating Shared Value）</strong>：<br>- CSR：企业利润 - CSR 投资 = 净利润（CSR 是成本）<br>- CSV（Porter-Kramer 2011）：CSR 创造经济 + 社会双赢（CSR = 利润源泉）<br>- CSV 是 CSR 的进化版·更被现代企业采纳<br><br><strong>跨学派关系</strong>：与 marketing_concept 5 志向最后一阶段「社会志向」一致·与 brand_equity 的 brand purpose 概念紧密。",
+    "ja": "<strong>CSR（Corporate Social Responsibility·企業の社会責任）</strong>は social marketing 学派の核心概念·企業が利益追求だけでなく<strong>社会·環境·倫理</strong>に責任を負うべきと主張。Pro Plus 第 14 章核心。<br><br><strong>CSR 進化 4 段階</strong>：① 1950s-70s · Defensive CSR ② 1980s-90s · Reactive CSR ③ 2000s · Strategic CSR ④ 2010s+ · Transformative CSR<br><br><strong>CSR 4 領域</strong>（Carroll ピラミッド 1991）：① 経済 ② 法律 ③ 倫理 ④ 慈善（philanthropic）<br><br><strong>5 大批判</strong>：① グリーンウォッシング ② 性価比論争 ③ Friedman 反対（1970 年）④ 測定困難 ⑤ 異文化バイアス<br><br><strong>vs CSV（Creating Shared Value）</strong>：CSR は利益 - 投資 = 純利益（コスト）·CSV（Porter-Kramer 2011）は経済 + 社会双贏（利益源泉）·CSV は CSR の進化版·現代企業に採用。<br><br><strong>他派との関係</strong>：marketing_concept 5 志向最後の「社会志向」一致·brand_equity の brand purpose と密接。"
+  },
+  "tags": [
+    "CSR",
+    "Carroll",
+    "greenwashing"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "social marketing 学派的核心实务·marketing 与社会的接口",
+      "限": "漂绿·测量·跨文化挑战",
+      "例": "Patagonia·Body Shop·Tesla 是教科书",
+      "应": "Pro Plus 14 章·一橋 命题"
+    },
+    "ja": {
+      "限": "グリーンウォッシング·測定·異文化挑戦",
+      "例": "Patagonia·Body Shop·Tesla 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T05:14:13.099Z",
+  "updatedAt": "2026-04-30T05:14:13.099Z"
+}
