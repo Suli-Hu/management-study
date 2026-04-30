@@ -10,8 +10,8 @@
   ],
   "year": "1972",
   "title": {
-    "zh": "STP 框架 · 整体三步骤",
-    "ja": "STP フレーム · 三段階全体",
+    "zh": "STP 框架·三步骤总览",
+    "ja": "STP フレーム・三段階全体",
     "en": "STP Framework · Three Steps"
   },
   "body": {
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T04:40:12.767Z",
-  "updatedAt": "2026-04-30T04:40:12.767Z"
+  "updatedAt": "2026-04-30T13:18:40.901Z"
 }
