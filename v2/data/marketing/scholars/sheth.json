@@ -1,0 +1,31 @@
+{
+  "key": "sheth",
+  "discipline": "marketing",
+  "name": {
+    "zh": "贾格迪什·谢思",
+    "ja": "ジャグディシュ・シェス",
+    "en": "Jagdish N. Sheth"
+  },
+  "schools": [
+    "consumer_behavior",
+    "b2b_marketing"
+  ],
+  "schoolsExplicit": true,
+  "contribution": {
+    "zh": "<strong>消费者行为</strong>·<strong>B2B marketing</strong> 双重领域的多产学者。1969 年与 Howard 合著奠基性的 Howard-Sheth 模型。1973 年发表 \"A Model of Industrial Buyer Behavior\" in <em>Journal of Marketing</em>·提出生产财市场购买行为模型·把 B2B 学派的理论体系系统化。后期推动 <strong>relationship marketing</strong>·<strong>customer-centricity</strong> 等多个领域的研究·是 marketing 学界产出最多的学者之一。",
+    "ja": "<strong>消費者行動</strong>·<strong>B2B マーケティング</strong> 両領域の多産学者。1969 年 Howard と Howard-Sheth モデルを共著。1973 年 <em>Journal of Marketing</em> 「A Model of Industrial Buyer Behavior」発表·生産財市場購買行動モデルを提唱·B2B 学派の理論体系を体系化。後期に <strong>関係性マーケティング</strong>·<strong>顧客中心主義</strong> 等多領域の研究を推進·マーケティング学界で最も多産な学者の一人。"
+  },
+  "lifespan": "1938 – 至今",
+  "institution": "Emory University Goizueta Business School",
+  "born": "1938",
+  "died": "",
+  "nationality": "印度生美国籍",
+  "flag": "🇮🇳🇺🇸",
+  "origin": "",
+  "field": "消费者·B2B",
+  "tags": [],
+  "nobel": null,
+  "kpsOrder": [],
+  "createdAt": "2026-04-30T04:34:21.227Z",
+  "updatedAt": "2026-04-30T04:34:21.227Z"
+}
