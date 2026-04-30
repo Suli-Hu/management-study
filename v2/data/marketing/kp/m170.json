@@ -1,0 +1,41 @@
+{
+  "id": "m170",
+  "discipline": "marketing",
+  "schools": [
+    "channel_retail"
+  ],
+  "scholars": [
+    "stern"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "Channel Member Selection · 渠道成员选择",
+    "ja": "チャネル・メンバーの選定",
+    "en": "Channel Member Selection"
+  },
+  "body": {
+    "zh": "<strong>Channel Member Selection（渠道成员选择）</strong>是 channel 设计后的<strong>具体执行</strong>·选哪些零售·批发·dealer。Kotler 15 章。<br><br><strong>3 类 distribution intensity</strong>（基于覆盖广度）：<br>① <strong>Intensive Distribution（开放·高覆盖）</strong>——FMCG·快消品<br>例：Coca-Cola·Pepsi·零食·烟草——所有零售点都要在<br>② <strong>Selective Distribution（选择·中覆盖）</strong>——耐用品·中端品<br>例：家电·中端服装——选少数 qualified retailers<br>③ <strong>Exclusive Distribution（排他·低覆盖）</strong>——奢侈品·特殊产品<br>例：Hermès·Lexus dealer·Apple Premium Reseller——一区域只 1 个<br><br><strong>Channel Member Selection 6 大评估标准</strong>：<br>① <strong>Years in business</strong>——经验<br>② <strong>Lines carried</strong>——产品组合·是否有冲突<br>③ <strong>Growth and profit record</strong>——财务健康<br>④ <strong>Solvency</strong>——信用<br>⑤ <strong>Cooperativeness</strong>——合作意愿<br>⑥ <strong>Reputation</strong>——市场口碑<br><br><strong>marketing 实务</strong>：<br>① <strong>Channel partner audit</strong>——定期 review channel partners<br>② <strong>Channel certification</strong>——给优秀 partner 认证（Apple Premium Reseller·Toyota 5-Star Dealer）<br>③ <strong>Channel exclusivity terms</strong>——合同保护双方<br><br><strong>典型例</strong>：<br>- <strong>Hermès Birkin</strong>——只在直营 boutique·限量·必须候补<br>- <strong>Apple Premium Reseller</strong>——选 qualified retailers·非所有人能开<br>- <strong>Toyota 5-Star Dealer</strong>——分级管理·激励竞争<br>- <strong>UNIQLO</strong>——自营为主·少 selective franchise<br><br><strong>跨学派关系</strong>：与 channel functions（m168）·VMS（m044）·exclusive vs selective 战略一体。",
+    "ja": "<strong>Channel Member Selection（チャネル・メンバーの選定）</strong>はチャネル設計後の<strong>具体執行</strong>·どの小売·卸·ディーラーを選ぶか。Kotler 15 章。<br><br><strong>3 類 distribution intensity</strong>：① Intensive Distribution（開放·高覆盖·Coca-Cola·Pepsi·お菓子·たばこ）② Selective Distribution（選択·中覆盖·家電·中級服装）③ Exclusive Distribution（排他·低覆盖·Hermès·Lexus dealer·Apple Premium Reseller）<br><br><strong>Channel Member Selection 6 大評価基準</strong>：① Years in business ② Lines carried ③ Growth and profit record ④ Solvency ⑤ Cooperativeness ⑥ Reputation<br><br><strong>マーケティング実務</strong>：① Channel partner audit ② Channel certification（Apple Premium Reseller·Toyota 5-Star Dealer）③ Channel exclusivity terms<br><br><strong>典型例</strong>：① Hermès Birkin（直営 boutique のみ·限量·候補必須）② Apple Premium Reseller（qualified retailers のみ）③ Toyota 5-Star Dealer（階層管理·激励競争）④ UNIQLO（自営主·少 selective franchise）<br><br><strong>他派との関係</strong>：channel functions（m168）·VMS（m044）·exclusive vs selective 戦略と一体。"
+  },
+  "tags": [
+    "channel selection",
+    "intensive",
+    "selective",
+    "exclusive"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "channel 战略的实务核心·partner 选择决定 brand 体验",
+      "限": "评估主观·partner 表现动态",
+      "例": "Hermès·Apple·Toyota·UNIQLO 是教科书",
+      "应": "Kotler 15 章·channel 题"
+    },
+    "ja": {
+      "限": "評価主観·partner パフォーマンス動態",
+      "例": "Hermès·Apple·Toyota·UNIQLO 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T09:26:31.799Z",
+  "updatedAt": "2026-04-30T09:26:31.799Z"
+}
