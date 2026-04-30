@@ -1,0 +1,42 @@
+{
+  "id": "m108",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "brand_equity"
+  ],
+  "scholars": [
+    "kotler",
+    "keller"
+  ],
+  "year": "2003",
+  "title": {
+    "zh": "参照枠 · Frame of Reference",
+    "ja": "参照枠 · Frame of Reference",
+    "en": "Frame of Reference"
+  },
+  "body": {
+    "zh": "<strong>参照枠（Frame of Reference）</strong>是 Positioning 的<strong>对照基准</strong>——消费者评价 brand 时与之比较的<strong>类目或竞争对手</strong>。Kotler 第 7 章·Keller 系统化。<br><br><strong>核心概念</strong>：<br>消费者不会孤立判断 brand·而是与其他选项<strong>对照</strong>判断。同一 brand 选不同参照枠·定位完全不同。<br><br><strong>3 类参照枠</strong>：<br>① <strong>Category Reference</strong>——同类目竞争对手<br>例：Tesla Model 3 参照 BMW 3 Series·Mercedes C-Class·Audi A4<br>② <strong>Substitute Reference</strong>——替代品<br>例：Tesla 也参照 ICE 车·hybrid·electric scooter<br>③ <strong>Aspirational Reference</strong>——目标品类<br>例：Beyond Meat 参照真肉·不是其他植物蛋白<br><br><strong>参照枠选择的战略意义</strong>：<br>① <strong>选错参照 = 定位失败</strong>——参照枠太强·brand 显弱；参照枠太弱·brand 失去价值感<br>② <strong>跨参照定位</strong>——成功 brand 经常重新定义参照枠（如 Cirque du Soleil 跨马戏团 + 戏剧 2 个参照枠）<br>③ <strong>参照枠决定 POD/POP</strong>——所有差別化·类似化基于参照枠<br><br><strong>marketing 战略选择</strong>：<br>① <strong>narrow reference</strong>——狭参照枠·明确 niche（Patagonia 在 outdoor 高端）<br>② <strong>broad reference</strong>——广参照枠·跨类目（Apple 跨 phone·watch·music·subscription）<br>③ <strong>shifting reference</strong>——动态调整参照枠·随产品成熟<br><br><strong>典型案例</strong>：<br>① <strong>iPhone 1 (2007)</strong>——参照枠不是 BlackBerry / Nokia·而是「全部小型电脑 + iPod + 手机」综合体——重定义类目<br>② <strong>Tesla</strong>——参照枠不是其他 EV·而是「BMW 3 Series 等高端 ICE 车」——逼迫 ICE 转 EV<br>③ <strong>Airbnb</strong>——参照枠不是酒店·而是「住在朋友家」——创造新类目<br><br><strong>跨学派关系</strong>：① 与 STP Targeting 一体——target customer 的参照枠决定 brand 战略 ② 与 brand_equity 的 brand association 一致 ③ 与 effectuation·blue ocean 共享「重定义类目」思维。",
+    "ja": "<strong>参照枠（Frame of Reference）</strong>は Positioning の<strong>対照基準</strong>·消費者がブランドを評価する際比較する<strong>カテゴリーまたは競合</strong>。Kotler 第 7 章·Keller 体系化。<br><br><strong>核心概念</strong>：消費者はブランドを孤立判断せず·他選択肢と<strong>対照</strong>判断。同ブランドでも参照枠が異なれば定位完全に異なる。<br><br><strong>3 類の参照枠</strong>：① Category Reference（同カテゴリー競合·Tesla Model 3 → BMW 3 Series）② Substitute Reference（代替品·Tesla → ICE 車·scooter）③ Aspirational Reference（目標品類·Beyond Meat → 真肉）<br><br><strong>参照枠選択の戦略意義</strong>：① 選誤 = 定位失敗 ② 跨参照定位（Cirque du Soleil）③ 参照枠が POD/POP 決定<br><br><strong>マーケティング戦略選択</strong>：① narrow reference（Patagonia outdoor 高端）② broad reference（Apple 跨 phone·watch·music）③ shifting reference（動的調整）<br><br><strong>典型事例</strong>：① iPhone 1（参照枠は BlackBerry でなく「小型 PC + iPod + 携帯」総合）② Tesla（参照枠は他 EV でなく BMW 3 Series 等高端 ICE）③ Airbnb（参照枠はホテルでなく「友人宅」）<br><br><strong>他派との関係</strong>：① STP Targeting と一体 ② brand_equity の brand association 一致 ③ effectuation·blue ocean と「カテゴリー再定義」思考共有。"
+  },
+  "tags": [
+    "frame of reference",
+    "positioning",
+    "category"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "Positioning 的核心选择·参照枠决定 POD/POP",
+      "限": "主观·实务难精确·跨文化适用",
+      "例": "iPhone·Tesla·Airbnb 是参照枠教科书",
+      "应": "Kotler 第 7 章·定位题"
+    },
+    "ja": {
+      "限": "主観·実務精確困難·異文化適用",
+      "例": "iPhone·Tesla·Airbnb は参照枠教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:24:17.350Z",
+  "updatedAt": "2026-04-30T07:24:17.350Z"
+}
