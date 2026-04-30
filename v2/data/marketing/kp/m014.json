@@ -1,0 +1,43 @@
+{
+  "id": "m014",
+  "discipline": "marketing",
+  "schools": [
+    "marketing_concept"
+  ],
+  "scholars": [
+    "levitt",
+    "drucker",
+    "kotler"
+  ],
+  "year": "1950",
+  "title": {
+    "zh": "5 志向演化 · marketing 概念发展史",
+    "ja": "5 志向の進化 · マーケティング概念発展史",
+    "en": "Five Marketing Orientations Evolution"
+  },
+  "body": {
+    "zh": "Pro Plus（和田·恩藏·三浦『マーケティング戦略』）序章梳理的 marketing 概念<strong>5 志向演化</strong>·把企业看待市场的方式分为 5 个历史阶段。<br><br>① <strong>プロダクト志向（产品志向）</strong>·1900 年代初·Ford 大量生产时代——「我做出好产品·消费者自然会买」。代表：Ford T 型车「only in black」。<br><br>② <strong>販売志向（销售志向）</strong>·1920-50 年代·大量生产到大量销售——「产品做出来了·要靠 hard sell 推出去」。Drucker 名言「marketing 的目的是让 selling 成为不必要」直接批判这个志向。<br><br>③ <strong>ニーズ志向（需要志向）</strong>·1950-60 年代·Levitt 1960 Marketing Myopia——「先识别消费者需要·再设计产品」。这是<strong>marketing concept 学派的诞生</strong>。<br><br>④ <strong>顧客志向（顾客志向）</strong>·1980-90 年代·关系营销兴起——「不只是单次需要·要建长期关系」。Berry 1983 relationship marketing。<br><br>⑤ <strong>社会志向（社会志向）</strong>·2000 年代起——「marketing 必须考虑社会·伦理·环境责任」。CSR·BOP·sustainable marketing 兴起·Kotler 后期推动。<br><br><strong>各志向递进逻辑</strong>：从「企业 push」到「顾客 pull」·再到「社会 stakeholder」——视野不断扩展。<br><br><strong>跨学派关系</strong>：与 Marketing 1.0→5.0（Kotler 演化论）有部分对应——5 志向是<strong>企业内部视角</strong>·1.0-5.0 是 marketing 系统视角·两者互补不重复。",
+    "ja": "Pro Plus（和田·恩藏·三浦『マーケティング戦略』）序章で整理されたマーケティング概念<strong>5 志向の進化</strong>·企業の市場の見方を 5 つの歴史段階に分類。<br><br>① <strong>プロダクト志向</strong>·1900 年代初·Ford 大量生産時代——「良い製品を作れば消費者は買う」。代表：Ford T 型車「only in black」。<br><br>② <strong>販売志向</strong>·1920-50 年代·大量生産から大量販売へ——「製品はできた·hard sell で押し出す」。Drucker 名言「マーケティングの目的は selling を不要にすること」が直接批判。<br><br>③ <strong>ニーズ志向</strong>·1950-60 年代·Levitt 1960 Marketing Myopia——「まずニーズ識別·後製品設計」。<strong>マーケティング・コンセプト学派の誕生</strong>。<br><br>④ <strong>顧客志向</strong>·1980-90 年代·関係性マーケティング興隆——「単発ニーズではなく長期関係」。Berry 1983。<br><br>⑤ <strong>社会志向</strong>·2000 年代以降——「マーケティングは社会·倫理·環境責任を考慮」。CSR·BOP·sustainable marketing·Kotler 後期推進。<br><br><strong>各志向の漸進論理</strong>：「企業 push」から「顧客 pull」·さらに「社会 stakeholder」へ——視野が拡大。<br><br><strong>他派との関係</strong>：Marketing 1.0→5.0（Kotler 進化論）と部分対応——5 志向は<strong>企業内部視点</strong>·1.0-5.0 はマーケティング・システム視点·相補。"
+  },
+  "tags": [
+    "5 志向",
+    "Drucker",
+    "Levitt",
+    "marketing concept"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "marketing 思想史的核心脉络·从企业到顾客到社会",
+      "限": "5 志向阶段在实务中常并存·非时序",
+      "例": "Toyota：产品志向(T 型代)→需要志向(Camry)→社会志向(Prius)",
+      "应": "Pro Plus 序章·marketing 哲学题"
+    },
+    "ja": {
+      "限": "5 志向は実務で並存·時系列ではない",
+      "例": "Toyota：プロダクト志向→ニーズ志向→社会志向(Prius)"
+    }
+  },
+  "createdAt": "2026-04-30T04:51:20.121Z",
+  "updatedAt": "2026-04-30T04:51:20.121Z"
+}
