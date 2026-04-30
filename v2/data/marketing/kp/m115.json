@@ -11,8 +11,8 @@
   ],
   "year": "1980",
   "title": {
-    "zh": "Warranty · 保证 / Guarantee 战略",
-    "ja": "ワランティ · 保証 / ギャランティ戦略",
+    "zh": "保证 / 保障战略·Warranty 与 Guarantee",
+    "ja": "ワランティ・ギャランティ戦略",
     "en": "Warranty / Guarantee Strategy"
   },
   "body": {
@@ -38,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:35:29.801Z",
-  "updatedAt": "2026-04-30T07:35:29.801Z"
+  "updatedAt": "2026-04-30T13:23:17.853Z"
 }
