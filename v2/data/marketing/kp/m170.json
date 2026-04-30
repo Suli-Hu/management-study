@@ -9,8 +9,8 @@
   ],
   "year": "1980",
   "title": {
-    "zh": "Channel Member Selection · 渠道成员选择",
-    "ja": "チャネル・メンバーの選定",
+    "zh": "渠道成员选择·开放·选择·排他 3 类",
+    "ja": "チャネル・メンバーの選定・開放・選択・排他 3 類",
     "en": "Channel Member Selection"
   },
   "body": {
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T09:26:31.799Z",
-  "updatedAt": "2026-04-30T09:26:31.799Z"
+  "updatedAt": "2026-04-30T13:25:23.983Z"
 }
