@@ -5,7 +5,9 @@
 import type { APIRoute } from 'astro';
 import { Scholar } from '~/schemas/scholar';
 import { handlePost } from '~/lib/edit-helpers';
+import { upsertScholarInD1 } from '~/lib/d1-scholar-write';
 
+// v0.6.6：D1 双写
 export const POST: APIRoute = (ctx) => handlePost({
   ctx,
   schema: Scholar,
@@ -16,4 +18,5 @@ export const POST: APIRoute = (ctx) => handlePost({
     const now = new Date().toISOString();
     return { createdAt: now, updatedAt: now, schoolsExplicit: true } as Partial<typeof Scholar._type>;
   },
+  upsertD1: (db, scholar) => upsertScholarInD1(db, scholar),
 });
