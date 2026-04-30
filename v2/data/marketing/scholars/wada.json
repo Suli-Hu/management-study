@@ -1,0 +1,32 @@
+{
+  "key": "wada",
+  "discipline": "marketing",
+  "name": {
+    "zh": "和田 充夫",
+    "ja": "和田 充夫",
+    "en": "Mitsuo Wada"
+  },
+  "schools": [
+    "relationship",
+    "channel_retail",
+    "brand_equity"
+  ],
+  "schoolsExplicit": true,
+  "contribution": {
+    "zh": "日本<strong>関係性マーケティング</strong>·<strong>brand 价值共创</strong>·<strong>製販同盟</strong>研究的代表性学者。慶應義塾大学名誉教授·関西学院大学元教授。著作『関係性マーケティングの構図』有斐閣·『関係性マーケティングと演劇消費』ダイヤモンド社·『ブランド価値共創』同文舘出版·『地域ブランド・マネジメント』（共著）有斐閣。提出 <strong>MAC（Marketing as Communication）</strong>·<strong>对话するマーケティング</strong>·<strong>地域ブランド・マーケティング</strong> 等独创概念。Pro Plus 执笔分担：序章·第 1-3 章·第 7 章·第 15 章。",
+    "ja": "日本<strong>関係性マーケティング</strong>·<strong>ブランド価値共創</strong>·<strong>製販同盟</strong>研究の代表的学者。慶應義塾大学名誉教授·関西学院大学元教授。著作『関係性マーケティングの構図』有斐閣·『関係性マーケティングと演劇消費』ダイヤモンド社·『ブランド価値共創』同文舘出版·『地域ブランド・マネジメント』（共著）有斐閣。<strong>MAC（Marketing as Communication）</strong>·<strong>対話するマーケティング</strong>·<strong>地域ブランド・マーケティング</strong> 等独創概念を提唱。Pro Plus 執筆分担：序章·第 1-3 章·第 7 章·第 15 章。"
+  },
+  "lifespan": "1944 – 至今",
+  "institution": "慶應義塾大学名誉教授",
+  "born": "1944",
+  "died": "",
+  "nationality": "日本",
+  "flag": "🇯🇵",
+  "origin": "",
+  "field": "関係性·brand",
+  "tags": [],
+  "nobel": null,
+  "kpsOrder": [],
+  "createdAt": "2026-04-30T04:34:31.592Z",
+  "updatedAt": "2026-04-30T04:34:31.592Z"
+}
