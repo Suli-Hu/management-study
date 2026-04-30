@@ -1,0 +1,41 @@
+{
+  "id": "m077",
+  "discipline": "marketing",
+  "schools": [
+    "effectuation",
+    "strategic_marketing"
+  ],
+  "scholars": [
+    "sarasvathy"
+  ],
+  "year": "2005",
+  "title": {
+    "zh": "Blue Ocean Strategy · 蓝海战略",
+    "ja": "Blue Ocean Strategy · ブルー・オーシャン戦略",
+    "en": "Blue Ocean Strategy"
+  },
+  "body": {
+    "zh": "<strong>Blue Ocean Strategy（蓝海战略）</strong>由 W. Chan Kim 与 Renée Mauborgne 在 2005 年同名书提出·INSEAD 教授·marketing 战略学派核心·与 effectuation 共享「市场创造」哲学。<br><br><strong>核心区分</strong>：<br>① <strong>Red Ocean（红海）</strong>——既有市场·激烈竞争·企业争夺有限利润<br>② <strong>Blue Ocean（蓝海）</strong>——尚不存在的市场·企业创造新需求·避免竞争<br><br><strong>红海 vs 蓝海 战略对照</strong>：<br>| 维度 | Red Ocean | Blue Ocean |<br>|---|---|---|<br>| 市场 | 既有 | 新创 |<br>| 竞争 | 激烈 | 几乎无 |<br>| 战略 | beat the competition | make the competition irrelevant |<br>| 价值-成本 | trade-off | break trade-off |<br>| 选择 | differentiation OR low cost | differentiation AND low cost |<br><br><strong>4 个 ERRC 行动框架</strong>（核心工具）：<br>① <strong>Eliminate（消除）</strong>——消除产业当前提供但无价值的元素<br>② <strong>Reduce（减少）</strong>——减少元素到行业标准以下<br>③ <strong>Raise（提升）</strong>——提升元素到行业标准以上<br>④ <strong>Create（创造）</strong>——创造行业从未提供的元素<br><br><strong>典型案例</strong>：<br>① <strong>Cirque du Soleil</strong>——传统马戏团（红海）→ 创造「无动物 + 高品质艺术」蓝海·年收 8 亿+<br>② <strong>iTunes</strong>——CD 行业（红海）→ 创造数字音乐购买（蓝海）<br>③ <strong>Nintendo Wii</strong>——硬核游戏（PS3·Xbox 红海）→ 创造体感游戏 / 全家娱乐（蓝海）<br>④ <strong>UNIQLO HEATTECH</strong>——保暖内衣（红海）→ 创造「时尚保暖功能性」蓝海<br><br><strong>marketing 实务启示</strong>：<br>① <strong>市场扫描不要只看 direct competitors</strong>·要看 substitutes·non-customers<br>② <strong>价值曲线分析</strong>——绘制 strategy canvas·识别 differentiation 机会<br>③ <strong>非顾客转化</strong>——把不消费 / 间接消费的人转为顾客<br><br><strong>跨学派关系</strong>：① 与 effectuation 的「市场创造」哲学高度一致 ② 与 strategic_marketing 的 Porter 3 战略形成对话——Blue Ocean 主张 break trade-off·而 Porter 主张 trade-off ③ 与 Christensen 破壊创新有重叠·但 Blue Ocean 更宽泛（不只是低端开始）。",
+    "ja": "<strong>Blue Ocean Strategy（ブルー・オーシャン戦略）</strong>は W. Chan Kim·Renée Mauborgne 2005 年同名書提唱·INSEAD 教授·マーケティング戦略学派核心·effectuation と「市場創造」哲学共有。<br><br><strong>核心区分</strong>：① Red Ocean（既有市場·激烈競争）② Blue Ocean（不存在の市場·企業創造）<br><br><strong>戦略対照</strong>：<br>| 次元 | Red | Blue |<br>|---|---|---|<br>| 市場 | 既有 | 新創 |<br>| 競争 | 激烈 | ほぼなし |<br>| 戦略 | beat competition | make competition irrelevant |<br>| 価値-コスト | trade-off | break trade-off |<br><br><strong>ERRC 4 つの行動フレーム</strong>：① Eliminate ② Reduce ③ Raise ④ Create<br><br><strong>典型事例</strong>：① Cirque du Soleil ② iTunes ③ Nintendo Wii ④ UNIQLO HEATTECH<br><br><strong>マーケティング実務示唆</strong>：① マーケット・スキャンは direct competitors だけでなく substitutes·non-customers ② 価値曲線分析（strategy canvas）③ 非顧客転化<br><br><strong>他派との関係</strong>：① effectuation「市場創造」と高度一致 ② strategic_marketing Porter 3 戦略と対話·Blue Ocean は break trade-off·Porter は trade-off ③ Christensen 破壊と重複あるが Blue Ocean はより広い。"
+  },
+  "tags": [
+    "Blue Ocean",
+    "Kim-Mauborgne",
+    "ERRC"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "市场创造战略的代表理论·与 effectuation 哲学一致",
+      "限": "事后归因风险·识别蓝海难·实施成本高",
+      "例": "Cirque du Soleil·Wii·UNIQLO HEATTECH 是教科书",
+      "应": "effectuation·strategic 题·一橋 命题"
+    },
+    "ja": {
+      "限": "事後帰因リスク·ブルー・オーシャン識別困難·実施コスト高",
+      "例": "Cirque du Soleil·Wii·UNIQLO HEATTECH 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T05:14:07.541Z",
+  "updatedAt": "2026-04-30T05:14:07.541Z"
+}
