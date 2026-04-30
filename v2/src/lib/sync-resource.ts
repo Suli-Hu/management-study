@@ -155,7 +155,8 @@ export async function deleteResource(
     if (type === 'discipline') await withRetry(() => deleteDisciplineInD1(env.DB, idOrKey));
     else if (type === 'kp') await withRetry(() => deleteKpInD1(env.DB, idOrKey));
     else if (type === 'school') await withRetry(() => deleteSchoolInD1(env.DB, idOrKey));
-    else if (type === 'scholar') await withRetry(() => deleteScholarInD1(env.DB, idOrKey));
+    // v0.6.8: scholar 复合 PK，删除按 (discipline, key)
+    else if (type === 'scholar') await withRetry(() => deleteScholarInD1(env.DB, _discipline, idOrKey));
     else await withRetry(() => deleteViewInD1(env.DB, idOrKey));
     await logSync(env.DB, null);
     return { ok: true, type, discipline: _discipline, id_or_key: idOrKey };

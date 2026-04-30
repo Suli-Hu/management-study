@@ -138,9 +138,10 @@ if (selectedKp) {
   if (scholarKeys.length > 0) {
     if (isPartial) {
       const placeholders = scholarKeys.map(() => '?').join(',');
+      // v0.6.8: scholar 复合 PK — 必须按 (discipline, key) 过滤防跨学科同名学者污染
       const scRes = await db
-        .prepare(`SELECT key, name_zh, name_en FROM scholar WHERE key IN (${placeholders})`)
-        .bind(...scholarKeys)
+        .prepare(`SELECT key, name_zh, name_en FROM scholar WHERE discipline = ? AND key IN (${placeholders})`)
+        .bind(discipline, ...scholarKeys)
         .all<{ key: string; name_zh: string; name_en: string | null }>();
       const lookup = new Map((scRes.results ?? []).map((s) => [s.key, s]));
       selectedScholars = scholarKeys.map((sk) => lookup.get(sk)).filter((s): s is NonNullable<typeof s> => Boolean(s));

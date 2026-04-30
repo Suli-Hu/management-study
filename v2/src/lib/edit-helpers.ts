@@ -233,10 +233,15 @@ interface DeleteCtx {
   /** 从 D1 查 discipline（学派/学者/KP 都需要因为 url 不带 discipline 时） */
   resolveDiscipline: (ident: string, db: any) => Promise<string | null>;
   urlIdentifier: () => string | undefined;
+  /**
+   * v0.6.8: git delete 成功后双删 D1。失败只 console.error 不阻断响应。
+   * caller 拿到 (discipline, ident) 自己组装 delete 调用。
+   */
+  deleteD1?: (db: D1Database, discipline: string, ident: string) => Promise<void>;
 }
 
 export async function handleDelete(opts: DeleteCtx): Promise<Response> {
-  const { ctx, pathFor, objectLabel, resolveDiscipline, urlIdentifier } = opts;
+  const { ctx, pathFor, objectLabel, resolveDiscipline, urlIdentifier, deleteD1 } = opts;
   // v0.4.25 RBAC：admin gate 推迟到 resolveDiscipline 之后
   if (!ctx.locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
@@ -282,6 +287,16 @@ export async function handleDelete(opts: DeleteCtx): Promise<Response> {
     }
     return jsonRes<EditError>(502, { ok: false, reason: 'github_error', detail: res.detail });
   }
+
+  // v0.6.8: D1 双删 — git 已 delete 成功后立即把 D1 行也删掉
+  if (deleteD1 && env.DB) {
+    try {
+      await withRetry(() => deleteD1(env.DB, discipline, ident));
+    } catch (d1Err) {
+      console.error(`[handleDelete ${objectLabel(ident)}] D1 dual-delete failed (git deleted):`, d1Err);
+    }
+  }
+
   return jsonRes(200, { ok: true, commit_sha: res.data.commit_sha, deploy_eta_seconds: 90 });
 }
 

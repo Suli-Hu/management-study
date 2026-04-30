@@ -574,7 +574,8 @@ const canEdit = Astro.locals.canEdit(discipline);
           const res = await fetch('/api/edit/reorder/scholar-kps', {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({ scholarKey, kpIds }),
+            // v0.6.8: scholar 复合 PK — body 必传 discipline 才能 disambiguate
+            body: JSON.stringify({ discipline, scholarKey, kpIds }),
           });
           if (!res.ok) {
             const data = await res.json().catch(() => ({}));

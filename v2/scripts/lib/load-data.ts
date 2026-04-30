@@ -66,7 +66,8 @@ export function loadAllData(dataRoot = DATA_ROOT): LoadedData {
   return {
     disciplines, schools, scholars, kps,
     schoolKeys: new Set(schools.map((s) => s.key)),
-    scholarKeys: new Set(scholars.map((s) => s.key)),
+    // v0.6.8: scholar 复合 PK (discipline, key) — Set 元素是 `${disc}:${key}`
+    scholarKeys: new Set(scholars.map((s) => `${s.discipline}:${s.key}`)),
     kpIds: new Set(kps.map((k) => k.id)),
   };
 }
@@ -84,9 +85,10 @@ export function checkAllIssues(data: LoadedData): LoadIssue[] {
       }
     }
     for (const sc of kp.scholars) {
-      if (!data.scholarKeys.has(sc)) {
+      // v0.6.8: KP 引用 scholar 必在同 discipline，按 (discipline, key) 复合查
+      if (!data.scholarKeys.has(`${kp.discipline}:${sc}`)) {
         issues.push({ level: 'error', category: 'cross-ref',
-          message: `KP ${kp.id} references missing scholar "${sc}"` });
+          message: `KP ${kp.id} references missing scholar "${sc}" in discipline "${kp.discipline}"` });
       }
     }
   }
