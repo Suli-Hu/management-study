@@ -11,8 +11,8 @@
   ],
   "year": "1980",
   "title": {
-    "zh": "Cross-Cultural Marketing · 跨文化营销",
-    "ja": "クロスカルチャー・マーケティング",
+    "zh": "跨文化营销·Hofstede 6 大文化维度",
+    "ja": "クロスカルチャー・マーケティング・Hofstede 6 大文化次元",
     "en": "Cross-Cultural Marketing"
   },
   "body": {
@@ -38,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:36:21.725Z",
-  "updatedAt": "2026-04-30T07:36:21.725Z"
+  "updatedAt": "2026-04-30T13:24:24.696Z"
 }
