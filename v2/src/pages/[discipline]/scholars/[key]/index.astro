@@ -20,6 +20,7 @@ import EmptyRight from '~/components/EmptyRight.astro';
 import LangFab from '~/components/LangFab.astro';
 import { getDb } from '~/lib/db';
 import { renderBodyForSchool, renderEvalModule, type KpFormat } from '~/lib/render-body';
+import { renderInlineHtml } from '~/lib/render-inline';
 import { editHref } from '~/lib/nav';
 import { tagColor } from '~/lib/tag-color';
 import { shortYear } from '~/lib/format-year';
@@ -395,7 +396,7 @@ const canEdit = Astro.locals.canEdit(discipline);
             </div>
           )}
           {/* v0.5.79: data-scholar-contribution 让 in-place lang swap 能精准 swap 这块 */}
-          <div class="optA-summary-v2 optA-contribution" data-scholar-contribution set:html={contribution} />
+          <div class="optA-summary-v2 optA-contribution" data-scholar-contribution set:html={renderInlineHtml(contribution)} />
         </section>
       )}
 
