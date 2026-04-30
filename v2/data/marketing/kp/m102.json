@@ -10,9 +10,9 @@
   ],
   "year": "1943",
   "title": {
-    "zh": "Maslow 欲求 5 层次 · 消费动机理论",
-    "ja": "マズロー欲求 5 段階 · 消費動機理論",
-    "en": "Maslow Hierarchy of Needs"
+    "zh": "Maslow 需求层次·消费动机理论",
+    "ja": "マズロー欲求 5 段階・消費動機理論",
+    "en": "Maslow's Hierarchy of Needs"
   },
   "body": {
     "zh": "<strong>Maslow 欲求 5 层次（Maslow's Hierarchy of Needs）</strong>由 Abraham Maslow 1943 年在「A Theory of Human Motivation」提出·心理学奠基理论·marketing 借入解释消费者动机。<br><br><strong>5 层次（金字塔·从下到上）</strong>：<br><br>① <strong>生理（Physiological）</strong>——食物·水·睡眠·生存基础<br>marketing 例：食品·药品·基础日用品<br><br>② <strong>安全（Safety）</strong>——身体安全·经济安全·健康<br>marketing 例：保险·医疗·安全装置·汽车安全 feature<br><br>③ <strong>社会归属（Belongingness）</strong>——爱·友谊·归属感·亲密关系<br>marketing 例：SNS·dating app·社区活动·family product<br><br>④ <strong>尊重（Esteem）</strong>——成就·声望·status·认可<br>marketing 例：奢侈品·高级 brand·荣誉勋章·LinkedIn<br><br>⑤ <strong>自我实现（Self-Actualization）</strong>——成为最好的自己·peak experience<br>marketing 例：教育·健身·艺术·创作工具·Patagonia「冒险伴侣」<br><br><strong>核心命题</strong>：低层次需要满足后·高层次需要才会主导。<br><br><strong>marketing 实务应用</strong>：<br>① <strong>产品定位</strong>——明确产品满足哪一层<br>② <strong>brand purpose</strong>——高层 brand（如 Patagonia·Tesla）打 self-actualization<br>③ <strong>跨文化适应</strong>——发达国家偏高层·发展中国家偏低层<br>④ <strong>价格层级</strong>——价格越高·要满足越高层（奢侈品 = esteem + self-actualization）<br><br><strong>批判</strong>：<br>① <strong>线性顺序质疑</strong>——人可能同时追多层<br>② <strong>跨文化偏差</strong>——东方社会更看重归属·西方更看重自我实现<br>③ <strong>5 层不全</strong>——后续 ERG·Alderfer 等修订<br><br><strong>跨学派关系</strong>：与 marketing_concept 5 志向（顾客志向·社会志向）一脉相承·与 brand purpose·brand archetypes 直接对接。",
@@ -36,5 +36,5 @@
     }
   },
   "createdAt": "2026-04-30T07:24:06.049Z",
-  "updatedAt": "2026-04-30T07:24:06.049Z"
+  "updatedAt": "2026-04-30T13:22:45.779Z"
 }
