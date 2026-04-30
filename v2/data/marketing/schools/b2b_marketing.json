@@ -1,0 +1,25 @@
+{
+  "key": "b2b_marketing",
+  "discipline": "marketing",
+  "title": {
+    "zh": "生产财营销学派",
+    "ja": "生産財マーケティング学派",
+    "en": "B2B Marketing School"
+  },
+  "era": "1970– B2B 独立子学科",
+  "summary": {
+    "zh": "<strong>生产财营销学派</strong>将 B2B（business-to-business）从 B2C 中分离·作为独立子学科。代表 <strong>Frederick Webster</strong>（『Industrial Marketing Strategy』1979）·<strong>Yoram Wind</strong>（Webster-Wind 模型 1972）。日本本土 <strong>南知惠子</strong>（神戸名誉·B2B·制造业服务化）。<br><br><strong>核心范式</strong>：B2B 与 B2C 在<strong>购买决策·关系性·channel·价格</strong>上完全不同——必须独立理论体系。<br><br><strong>核心内容</strong>：① <strong>组织购买行为</strong>（不是个人 buyer·是 buying center 群体决策）② <strong>购买中枢 6 角色</strong>：initiator·user·influencer·decider·buyer·gatekeeper（Webster-Wind 1972）③ <strong>购买意思决定 8 段</strong>（Robinson-Faris-Wind 1967·BUYGRID 模型）④ <strong>B2B segmentation</strong>（按行业·企业规模·应用·购买行为）⑤ <strong>新购买 / 直接再购 / 修正再购</strong>3 类型 ⑥ <strong>制造业服务化</strong>（servitization·南知惠子焦点）⑦ <strong>B2B brand</strong>·关系性管理·风险与日和见主义。<br><br><strong>跨学派关系</strong>：与 <code>relationship</code> 重叠（B2B 重 relationship·但 B2B 是子学科·relationship 是范式）。与 <code>channel_retail</code> 邻近。<br><br><strong>局限</strong>：日本本土教材（Pro Plus 16 章）<strong>不独立 B2B 章</strong>·学派独立性在日本院试中较低。<br><br><strong>日本研究</strong>：<strong>南知惠子</strong>·神戸命题点。",
+    "ja": "<strong>生産財マーケティング学派</strong>は B2B を B2C から分離した独立下位分野。代表は <strong>Frederick Webster</strong>（1979）·<strong>Yoram Wind</strong>（Webster-Wind モデル 1972）。日本本土の <strong>南知惠子</strong>（神戸名誉）。<br><br><strong>核心パラダイム</strong>：B2B と B2C は<strong>購買意思決定·関係性·チャネル·価格</strong>においてまったく異なる。<br><br><strong>主要内容</strong>：① <strong>組織購買行動</strong>（buying center による集団意思決定）② <strong>購買中枢 6 役割</strong>（Webster-Wind 1972）③ <strong>購買意思決定 8 段階</strong>（BUYGRID）④ <strong>B2B セグメンテーション</strong> ⑤ <strong>新規購入 / 直接再購入 / 修正再購入</strong>3 タイプ ⑥ <strong>製造業のサービス化</strong>（servitization）⑦ <strong>B2B ブランド</strong>·関係性管理·リスクと日和見主義。<br><br><strong>他派との関係</strong>：<code>relationship</code> と重複·<code>channel_retail</code> と隣接。<br><br><strong>限界</strong>：日本本土教材に B2B 独立章なし·日本院試における学派独立性は低い。<br><br><strong>日本研究</strong>：<strong>南知惠子</strong>·神戸の命題点。"
+  },
+  "themeKey": "consumer_market",
+  "tags": [
+    "Webster",
+    "Wind",
+    "南知惠子",
+    "Buying Center",
+    "BUYGRID"
+  ],
+  "concepts": [],
+  "createdAt": "2026-04-30T04:27:52.297Z",
+  "updatedAt": "2026-04-30T04:27:52.297Z"
+}
