@@ -1,0 +1,31 @@
+{
+  "key": "keller",
+  "discipline": "marketing",
+  "name": {
+    "zh": "凯文·凯勒",
+    "ja": "ケビン・レーン・ケラー",
+    "en": "Kevin Lane Keller"
+  },
+  "schools": [
+    "brand_equity",
+    "managerial"
+  ],
+  "schoolsExplicit": true,
+  "contribution": {
+    "zh": "<strong>品牌资产学派</strong>的奠基人之一。1993 年在 <em>Journal of Marketing</em> 发表 \"Conceptualizing, Measuring, and Managing Customer-Based Brand Equity\" 提出 <strong>CBBE（Customer-Based Brand Equity）pyramid</strong>·4 层结构（identity → meaning → response → resonance）成为 brand 管理的标准模型。著作『Strategic Brand Management』多版·与 Kotler 合著『Marketing Management』15·16 版·将 brand 战略整合进主流 marketing 教材。",
+    "ja": "<strong>ブランド・エクイティ学派</strong>の基礎を築いた一人。1993 年 <em>Journal of Marketing</em> で「Conceptualizing, Measuring, and Managing Customer-Based Brand Equity」を発表し·<strong>CBBE（Customer-Based Brand Equity）ピラミッド</strong>を提唱·4 層構造（identity → meaning → response → resonance）はブランド管理の標準モデル。『Strategic Brand Management』各版·Kotler と『Marketing Management』15·16 版を共著·ブランド戦略を主流マーケティング教材に統合。"
+  },
+  "lifespan": "1956 – 至今",
+  "institution": "美国 Dartmouth College Tuck School",
+  "born": "1956",
+  "died": "",
+  "nationality": "美国",
+  "flag": "🇺🇸",
+  "origin": "",
+  "field": "品牌战略",
+  "tags": [],
+  "nobel": null,
+  "kpsOrder": [],
+  "createdAt": "2026-04-30T04:33:54.906Z",
+  "updatedAt": "2026-04-30T04:33:54.906Z"
+}
