@@ -1,0 +1,41 @@
+{
+  "id": "m082",
+  "discipline": "marketing",
+  "schools": [
+    "social_marketing",
+    "strategic_marketing"
+  ],
+  "scholars": [
+    "porter"
+  ],
+  "year": "2011",
+  "title": {
+    "zh": "CSV · 共享价值创造",
+    "ja": "CSV · 共有価値創造",
+    "en": "Creating Shared Value (CSV)"
+  },
+  "body": {
+    "zh": "<strong>CSV（Creating Shared Value·共享价值创造）</strong>由 Michael Porter 与 Mark Kramer 在 2011 年 <em>Harvard Business Review</em>「Creating Shared Value」提出·主张企业利润和社会价值<strong>不冲突·而是整合</strong>·成为 CSR 的进化版。<br><br><strong>核心命题</strong>：<br>「<em>Creating economic value in a way that also creates value for society by addressing its needs and challenges.</em>」<br><br><strong>vs CSR 的根本区别</strong>：<br>| 维度 | CSR | CSV |<br>|---|---|---|<br>| 价值观 | 慈善义务 | 经济 + 社会一体 |<br>| 投资逻辑 | 利润 - CSR 投资 | CSR = 利润源泉 |<br>| 战略地位 | 边缘部门 | 核心战略 |<br>| 主体 | 企业被动 | 企业主动 |<br>| 测量 | 成本 | ROI |<br><br><strong>CSV 3 大实现路径</strong>：<br>① <strong>Reconceiving Products and Markets</strong>——重塑产品和市场<br>例：Nestlé 「Healthy Kids」——更健康的食品 = 更好生意<br>② <strong>Redefining Productivity in the Value Chain</strong>——重定义价值链生产率<br>例：Walmart 减少包装·节约成本 + 减少环境影响<br>③ <strong>Building Supportive Industry Clusters</strong>——构建支持性产业集群<br>例：Yara Norway 在非洲投资农业基础设施·扩大化肥市场<br><br><strong>典型案例</strong>：<br>① <strong>Nestlé Cocoa Plan</strong>——投资 cocoa 农户教育·提升 cocoa 质量·双赢<br>② <strong>Tesla</strong>——加速 EV·气候 + 商业双赢（Musk 战略明确 CSV）<br>③ <strong>Patagonia</strong>——回收旧衣服·减少环境 + brand 强化<br>④ <strong>Toyota Prius</strong>——hybrid 技术·环保 + 商业成功<br><br><strong>CSV 的 3 大批判</strong>：<br>① <strong>Crane et al. 2014</strong>·「CSV 不是新概念·是包装」<br>② <strong>不解决企业责任的 fundamental conflict</strong>——某些情况下利润和社会真冲突<br>③ <strong>实务难度大</strong>——能找到 win-win 的不多<br><br><strong>跨学派关系</strong>：① 是 CSR 的进化版·把 CSR 整合进 strategic_marketing ② 与 BOP（Prahalad）共享「商业 + 社会双赢」哲学 ③ Pro Plus 第 14 章 4 节「マネジリアル・マーケティングとの統合」表达类似思想。",
+    "ja": "<strong>CSV（Creating Shared Value·共有価値創造）</strong>は Michael Porter·Mark Kramer 2011 年 <em>HBR</em>「Creating Shared Value」提唱·企業利益と社会価値が<strong>衝突せず·統合</strong>·CSR の進化版。<br><br><strong>核心命題</strong>：「<em>Creating economic value in a way that also creates value for society by addressing its needs and challenges.</em>」<br><br><strong>vs CSR の根本区別</strong>：CSR は慈善義務·コスト視点·CSV は経済 + 社会一体·利益源泉視点·核心戦略。<br><br><strong>CSV 3 大実現経路</strong>：① Reconceiving Products and Markets（Nestlé Healthy Kids）② Redefining Productivity in Value Chain（Walmart 包装削減）③ Building Supportive Industry Clusters（Yara Norway アフリカ）<br><br><strong>典型事例</strong>：① Nestlé Cocoa Plan ② Tesla（EV）③ Patagonia ④ Toyota Prius<br><br><strong>3 大批判</strong>：① Crane et al. 2014「新概念ではない」② 根本対立を解決せず ③ 実務 win-win 困難<br><br><strong>他派との関係</strong>：① CSR の進化版·strategic_marketing に統合 ② BOP と「商業 + 社会双贏」哲学共有 ③ Pro Plus 第 14 章 4 節「マネジリアル・マーケティングとの統合」と類似。"
+  },
+  "tags": [
+    "CSV",
+    "Porter-Kramer",
+    "shared value"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "CSR 的进化版·strategic 整合 social",
+      "限": "理想化·实务 win-win 罕见·概念被批",
+      "例": "Tesla·Patagonia·Nestlé Cocoa Plan 是教科书",
+      "应": "social marketing·strategic 题"
+    },
+    "ja": {
+      "限": "理想化·実務 win-win 稀·概念批判",
+      "例": "Tesla·Patagonia·Nestlé Cocoa Plan 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T05:14:17.101Z",
+  "updatedAt": "2026-04-30T05:14:17.101Z"
+}
