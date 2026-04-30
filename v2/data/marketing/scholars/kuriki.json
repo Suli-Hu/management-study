@@ -1,0 +1,31 @@
+{
+  "key": "kuriki",
+  "discipline": "marketing",
+  "name": {
+    "zh": "栗木 契",
+    "ja": "栗木 契",
+    "en": "Kei Kuriki"
+  },
+  "schools": [
+    "effectuation",
+    "strategic_marketing"
+  ],
+  "schoolsExplicit": true,
+  "contribution": {
+    "zh": "日本<strong>エフェクチュエーション</strong>·<strong>市场创造</strong>研究の代表者。神戸大学経営学研究科教授。専攻：マーケティング·エフェクチュエーション·市場創造。与 Sarasvathy 直接对话·把 effectuation 引入日本 marketing 研究。神戸大学的市场创造·entrepreneurial marketing 命题导向研究者。著作多数研究 brand·新製品開発·entrepreneurship·neo-marketing 战略。",
+    "ja": "日本<strong>エフェクチュエーション</strong>·<strong>市場創造</strong>研究の代表者。神戸大学経営学研究科教授。マーケティング·エフェクチュエーション·市場創造を専攻。Sarasvathy と直接対話·effectuation を日本マーケティング研究に導入。神戸大学の市場創造·entrepreneurial marketing 命題指向研究者。ブランド·新製品開発·entrepreneurship·neo-marketing 戦略を多数著作。"
+  },
+  "lifespan": "1966 – 至今",
+  "institution": "神戸大学大学院経営学研究科",
+  "born": "1966",
+  "died": "",
+  "nationality": "日本",
+  "flag": "🇯🇵",
+  "origin": "",
+  "field": "エフェクチュエーション",
+  "tags": [],
+  "nobel": null,
+  "kpsOrder": [],
+  "createdAt": "2026-04-30T04:33:58.286Z",
+  "updatedAt": "2026-04-30T04:33:58.286Z"
+}
