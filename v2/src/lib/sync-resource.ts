@@ -12,15 +12,19 @@ import { Kp } from '~/schemas/kp';
 import { School } from '~/schemas/school';
 import { Scholar } from '~/schemas/scholar';
 import { View } from '~/schemas/view';
+import { Discipline } from '~/schemas/discipline';
 import { getFile } from '~/lib/github';
 import { upsertKpInD1, deleteKpInD1, withRetry } from '~/lib/d1-kp-write';
 import { upsertSchoolInD1, deleteSchoolInD1 } from '~/lib/d1-school-write';
 import { upsertScholarInD1, deleteScholarInD1 } from '~/lib/d1-scholar-write';
 import { upsertViewInD1, deleteViewInD1 } from '~/lib/d1-view-write';
+import { upsertDisciplineInD1, deleteDisciplineInD1 } from '~/lib/d1-discipline-write';
 
-export type ResourceType = 'kp' | 'school' | 'scholar' | 'view';
+// v0.6.7: 加 'discipline' — 让 themes/tags 改动也走 sync 路径
+export type ResourceType = 'kp' | 'school' | 'scholar' | 'view' | 'discipline';
 
-const TYPE_DIR: Record<ResourceType, string> = {
+// 4 种文件级资源（discipline.json 不在此表，路径特殊处理）
+const TYPE_DIR: Record<Exclude<ResourceType, 'discipline'>, string> = {
   kp: 'kp',
   school: 'schools',
   scholar: 'scholars',
@@ -29,6 +33,10 @@ const TYPE_DIR: Record<ResourceType, string> = {
 
 /** url path 段 → resource type，未识别返 null */
 export function detectResourceFromPath(filePath: string): { type: ResourceType; discipline: string; idOrKey: string } | null {
+  // discipline.json 优先匹配 — 约定 idOrKey == discipline 自身（路径无 idOrKey 段）
+  const dm = filePath.match(/^v2\/data\/([^/]+)\/discipline\.json$/);
+  if (dm) return { type: 'discipline', discipline: dm[1], idOrKey: dm[1] };
+
   const m = filePath.match(/^v2\/data\/([^/]+)\/(kp|schools|scholars|views)\/([^/]+)\.json$/);
   if (!m) return null;
   const [, discipline, dir, idOrKey] = m;
@@ -56,7 +64,9 @@ export async function syncResource(
   discipline: string,
   idOrKey: string,
 ): Promise<SyncResult> {
-  const path = `v2/data/${discipline}/${TYPE_DIR[type]}/${idOrKey}.json`;
+  const path = type === 'discipline'
+    ? `v2/data/${discipline}/discipline.json`
+    : `v2/data/${discipline}/${TYPE_DIR[type]}/${idOrKey}.json`;
   // retry 拉 GitHub 2 次
   let ghRes: Awaited<ReturnType<typeof getFile>> | null = null;
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -80,6 +90,17 @@ export async function syncResource(
   }
 
   try {
+    if (type === 'discipline') {
+      const p = Discipline.safeParse(parsedJson);
+      if (!p.success) return { ok: false, type, discipline, id_or_key: idOrKey, reason: 'schema_invalid', detail: p.error.issues };
+      // 约定：idOrKey == discipline 自身 key
+      if (p.data.key !== idOrKey || p.data.key !== discipline) {
+        return { ok: false, type, discipline, id_or_key: idOrKey, reason: 'path_json_mismatch', detail: { key: p.data.key, expected: discipline } };
+      }
+      await withRetry(() => upsertDisciplineInD1(env.DB, p.data));
+      await logSync(env.DB, ghRes.data.sha);
+      return { ok: true, type, discipline, id_or_key: idOrKey, title_zh: p.data.title.zh, commit_sha: ghRes.data.sha };
+    }
     if (type === 'kp') {
       const p = Kp.safeParse(parsedJson);
       if (!p.success) return { ok: false, type, discipline, id_or_key: idOrKey, reason: 'schema_invalid', detail: p.error.issues };
@@ -131,7 +152,8 @@ export async function deleteResource(
   idOrKey: string,
 ): Promise<SyncResult> {
   try {
-    if (type === 'kp') await withRetry(() => deleteKpInD1(env.DB, idOrKey));
+    if (type === 'discipline') await withRetry(() => deleteDisciplineInD1(env.DB, idOrKey));
+    else if (type === 'kp') await withRetry(() => deleteKpInD1(env.DB, idOrKey));
     else if (type === 'school') await withRetry(() => deleteSchoolInD1(env.DB, idOrKey));
     else if (type === 'scholar') await withRetry(() => deleteScholarInD1(env.DB, idOrKey));
     else await withRetry(() => deleteViewInD1(env.DB, idOrKey));

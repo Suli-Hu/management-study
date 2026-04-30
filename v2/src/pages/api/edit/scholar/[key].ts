@@ -7,6 +7,7 @@
 import type { APIRoute } from 'astro';
 import { Scholar } from '~/schemas/scholar';
 import { handleGet, handlePut, handleDelete, jsonRes, type EditError } from '~/lib/edit-helpers';
+import { upsertScholarInD1 } from '~/lib/d1-scholar-write';
 
 const pathFor = (key: string, discipline: string) => `v2/data/${discipline}/scholars/${key}.json`;
 
@@ -32,6 +33,7 @@ export const GET: APIRoute = (ctx) => handleGet({
   },
 });
 
+// v0.6.7: D1 双写
 export const PUT: APIRoute = (ctx) => handlePut({
   ctx,
   schema: Scholar,
@@ -41,6 +43,7 @@ export const PUT: APIRoute = (ctx) => handlePut({
   urlIdentifier: () => ctx.params.key,
   // v0.5.65: 任何 admin 保存 → schoolsExplicit=true，sync 时跳过 KP 派生覆盖
   forceFields: () => ({ updatedAt: new Date().toISOString(), schoolsExplicit: true }),
+  upsertD1: (db, scholar) => upsertScholarInD1(db, scholar),
 });
 
 export const DELETE: APIRoute = async (ctx) => {

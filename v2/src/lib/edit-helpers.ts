@@ -46,10 +46,15 @@ interface PutCtx<S extends ZodTypeAny> {
   urlIdentifier: () => string | undefined;
   /** 强制服务端刷新的字段（如 updatedAt） */
   forceFields?: (obj: ZodInfer<S>) => Partial<ZodInfer<S>>;
+  /**
+   * v0.6.7: git put 成功后双写 D1。失败只 console.error 不阻断响应
+   * （git 已成功，backfill / webhook / reconcile cron 都能自愈）。
+   */
+  upsertD1?: (db: D1Database, obj: ZodInfer<S>) => Promise<void>;
 }
 
 export async function handlePut<S extends ZodTypeAny>(opts: PutCtx<S>): Promise<Response> {
-  const { ctx, schema, pathFor, objectLabel, identifierMatch, urlIdentifier, forceFields } = opts;
+  const { ctx, schema, pathFor, objectLabel, identifierMatch, urlIdentifier, forceFields, upsertD1 } = opts;
   // v0.4.25 RBAC：admin gate 推迟到拿到 obj.discipline 之后（按学科粒度判定）
   if (!ctx.locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
@@ -108,6 +113,15 @@ export async function handlePut<S extends ZodTypeAny>(opts: PutCtx<S>): Promise<
       });
     }
     return jsonRes<EditError>(502, { ok: false, reason: 'github_error', detail: res.detail });
+  }
+
+  // v0.6.7: D1 双写 — git 已 commit 成功后立即写 D1
+  if (upsertD1 && env.DB) {
+    try {
+      await withRetry(() => upsertD1(env.DB, obj));
+    } catch (d1Err) {
+      console.error(`[handlePut ${objectLabel(obj)}] D1 dual-write failed (git committed; reconcile cron can detect drift):`, d1Err);
+    }
   }
 
   return jsonRes(200, {

@@ -11,6 +11,8 @@ import type { APIRoute } from 'astro';
 import { getFile, putFile } from '~/lib/github';
 import { jsonRes, type EditError } from '~/lib/edit-helpers';
 import { Discipline, ThemeGroup } from '~/schemas/discipline';
+import { upsertDisciplineInD1 } from '~/lib/d1-discipline-write';
+import { withRetry } from '~/lib/d1-kp-write';
 
 type LoadResult =
   | { error: Response; disc?: never; sha?: never; path?: never }
@@ -67,6 +69,13 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
   if (!res.ok) {
     return jsonRes<EditError>(res.reason === 'conflict' ? 409 : 502, { ok: false, reason: res.reason === 'conflict' ? 'sha_conflict' : 'github_error', detail: res.detail });
   }
+
+  // v0.6.7: D1 双写
+  if (env.DB) {
+    try { await withRetry(() => upsertDisciplineInD1(env.DB, disc)); }
+    catch (d1Err) { console.error(`[edit/theme PUT ${discipline}/${key}] D1 dual-write failed (git committed):`, d1Err); }
+  }
+
   return jsonRes(200, { ok: true, commit_sha: res.data.commit_sha, deploy_eta_seconds: 90 });
 };
 
@@ -106,6 +115,13 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
   if (!res.ok) {
     return jsonRes<EditError>(res.reason === 'conflict' ? 409 : 502, { ok: false, reason: res.reason === 'conflict' ? 'sha_conflict' : 'github_error', detail: res.detail });
   }
+
+  // v0.6.7: D1 双写
+  if (env.DB) {
+    try { await withRetry(() => upsertDisciplineInD1(env.DB, disc)); }
+    catch (d1Err) { console.error(`[edit/theme DELETE ${discipline}/${key}] D1 dual-write failed (git committed):`, d1Err); }
+  }
+
   return jsonRes(200, { ok: true, commit_sha: res.data.commit_sha, deploy_eta_seconds: 90 });
 };
 

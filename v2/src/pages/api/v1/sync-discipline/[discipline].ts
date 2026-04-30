@@ -57,6 +57,12 @@ interface TypeSummary {
   errors: Array<{ id: string; reason: string; detail?: unknown }>;
 }
 
+interface DisciplineSummary {
+  ok: 0 | 1;
+  failed: 0 | 1;
+  errors: Array<{ id: string; reason: string; detail?: unknown }>;
+}
+
 export const POST: APIRoute = async ({ params, locals }) => {
   const discipline = params.discipline;
   if (!discipline) return json(400, { ok: false, reason: 'bad_request', detail: 'missing discipline' });
@@ -69,7 +75,13 @@ export const POST: APIRoute = async ({ params, locals }) => {
   }
   const ghEnv = { GITHUB_PAT: env.GITHUB_PAT, GITHUB_REPO: env.GITHUB_REPO, DB: env.DB };
 
-  // 先 schools / scholars / views（被引用方），再 kp（FK 依赖前者）
+  // v0.6.7: 先同步 discipline.json 自己（school/scholar 的 FK parent，必须最先）
+  const discResult = await syncResource(ghEnv, 'discipline', discipline, discipline);
+  const discSummary: DisciplineSummary = discResult.ok
+    ? { ok: 1, failed: 0, errors: [] }
+    : { ok: 0, failed: 1, errors: [{ id: discipline, reason: discResult.reason ?? 'unknown', detail: discResult.detail }] };
+
+  // 再 schools / scholars / views（被引用方），再 kp（FK 依赖前者）
   const ORDER: { type: ResourceType; dir: string; key: 'schools' | 'scholars' | 'views' | 'kps' }[] = [
     { type: 'school',  dir: 'schools',  key: 'schools' },
     { type: 'scholar', dir: 'scholars', key: 'scholars' },
@@ -102,8 +114,8 @@ export const POST: APIRoute = async ({ params, locals }) => {
     }
   }
 
-  const totalOk     = summary.schools.ok     + summary.scholars.ok     + summary.views.ok     + summary.kps.ok;
-  const totalFailed = summary.schools.failed + summary.scholars.failed + summary.views.failed + summary.kps.failed;
+  const totalOk     = discSummary.ok + summary.schools.ok     + summary.scholars.ok     + summary.views.ok     + summary.kps.ok;
+  const totalFailed = discSummary.failed + summary.schools.failed + summary.scholars.failed + summary.views.failed + summary.kps.failed;
 
   return json(200, {
     ok: true,
@@ -111,6 +123,6 @@ export const POST: APIRoute = async ({ params, locals }) => {
     synced_at: new Date().toISOString(),
     total_ok: totalOk,
     total_failed: totalFailed,
-    summary,
+    summary: { discipline: discSummary, ...summary },
   });
 };

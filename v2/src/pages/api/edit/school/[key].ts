@@ -8,6 +8,7 @@
 import type { APIRoute } from 'astro';
 import { School } from '~/schemas/school';
 import { handleGet, handlePut, handleDelete, jsonRes, type EditError } from '~/lib/edit-helpers';
+import { upsertSchoolInD1 } from '~/lib/d1-school-write';
 
 const pathFor = (key: string, discipline: string) => `v2/data/${discipline}/schools/${key}.json`;
 
@@ -34,6 +35,7 @@ export const GET: APIRoute = (ctx) => handleGet({
   },
 });
 
+// v0.6.7: D1 双写
 export const PUT: APIRoute = (ctx) => handlePut({
   ctx,
   schema: School,
@@ -42,6 +44,7 @@ export const PUT: APIRoute = (ctx) => handlePut({
   identifierMatch: (urlKey, obj) => obj.key === urlKey,
   urlIdentifier: () => ctx.params.key,
   forceFields: () => ({ updatedAt: new Date().toISOString() }),
+  upsertD1: (db, school) => upsertSchoolInD1(db, school),
 });
 
 export const DELETE: APIRoute = async (ctx) => {

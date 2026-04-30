@@ -13,6 +13,7 @@
 import type { APIRoute } from 'astro';
 import { View } from '~/schemas/view';
 import { handleGet, handlePut, handleDelete, jsonRes, type EditError } from '~/lib/edit-helpers';
+import { upsertViewInD1 } from '~/lib/d1-view-write';
 
 const pathFor = (id: string, discipline: string) =>
   `v2/data/${discipline}/views/${id}.json`;
@@ -24,6 +25,7 @@ export const GET: APIRoute = (ctx) => handleGet({
   urlIdentifier: () => ctx.params.id,
 });
 
+// v0.6.7: D1 双写
 export const PUT: APIRoute = (ctx) => handlePut({
   ctx,
   schema: View,
@@ -32,6 +34,7 @@ export const PUT: APIRoute = (ctx) => handlePut({
   identifierMatch: (urlId, obj) => obj.id === urlId && obj.discipline === ctx.params.discipline,
   urlIdentifier: () => ctx.params.id,
   forceFields: () => ({ updatedAt: new Date().toISOString() }),
+  upsertD1: (db, view) => upsertViewInD1(db, view),
 });
 
 export const DELETE: APIRoute = async (ctx) => {
