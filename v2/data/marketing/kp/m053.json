@@ -1,0 +1,41 @@
+{
+  "id": "m053",
+  "discipline": "marketing",
+  "schools": [
+    "imc_communication"
+  ],
+  "scholars": [
+    "schultz",
+    "onzo"
+  ],
+  "year": "1924",
+  "title": {
+    "zh": "AIDMA · AIDA + Memory 日本广告学",
+    "ja": "AIDMA · AIDA + Memory 日本広告学",
+    "en": "AIDMA Model"
+  },
+  "body": {
+    "zh": "<strong>AIDMA（Attention-Interest-Desire-Memory-Action）</strong>是 AIDA 模型的<strong>日本演化版</strong>·1924 年 Samuel Roland Hall 提出·后被日本广告业广泛采用·成为日本マスメディア型广告的核心模型。<br><br><strong>5 阶段</strong>（与 AIDA 比多了 M）：<br>① <strong>A - Attention（注意）</strong>——消费者注意到广告<br>② <strong>I - Interest（关心）</strong>——产生兴趣<br>③ <strong>D - Desire（欲望）</strong>——产生欲望<br>④ <strong>M - Memory（记忆）</strong>⭐——记住 brand·重复看到时还能记得<br>⑤ <strong>A - Action（行动）</strong>——做出购买<br><br><strong>核心创新：Memory（记忆）</strong><br>AIDA 假设消费者看到广告 → 立即购买。但实际中·消费者通常需要<strong>多次接触</strong>·先记住 brand·下次购物时回忆出·才行动。Memory 这一步是 marketing 投资的<strong>基础假设</strong>。<br><br><strong>对 marketing 的影响</strong>：<br>① <strong>反复曝光（frequency）</strong>——一次广告不够·要多次<br>② <strong>brand awareness 战略</strong>——构建 top-of-mind awareness<br>③ <strong>媒体投放计划</strong>——reach × frequency 决定 memory<br>④ <strong>广告创意</strong>——slogan·jingle·visual hook 帮助记忆<br><br><strong>历史地位</strong>：AIDMA 是日本マスメディア时代（1950-2000）的<strong>标准 communication 模型</strong>·影响了所有日本广告业的实务训练。<br><br><strong>跨学派关系</strong>：与 Bettman 信息处理范式中的 memory 模块呼应——AIDMA 是 marketing 实务版的「记忆-检索」过程。<br><br><strong>到 AISAS 的演化</strong>：互联网时代消费者不再被动·而是主动 search 与 share——電通 2005 年 AISAS 取代 AIDMA 作为新主流模型。",
+    "ja": "<strong>AIDMA（Attention-Interest-Desire-Memory-Action）</strong>は AIDA モデルの<strong>日本進化版</strong>·1924 年 Samuel Roland Hall 提唱·後日本広告業に広く採用·日本マスメディア型広告の核心モデル。<br><br><strong>5 段階</strong>（AIDA に M 追加）：① Attention ② Interest ③ Desire ④ <strong>Memory（記憶）</strong>⭐ ⑤ Action<br><br><strong>核心革新：Memory（記憶）</strong><br>AIDA は消費者が広告を見て即購入と仮定。しかし実際は<strong>複数回接触</strong>·brand を記憶·次回購買時想起·後行動。Memory はマーケティング投資の<strong>基礎前提</strong>。<br><br><strong>マーケティング影響</strong>：① 反復曝露（frequency）② ブランド認知度戦略·top-of-mind ③ メディア投下計画·reach × frequency が memory を決定 ④ 広告クリエイティブ·スローガン·ジングル·visual hook<br><br><strong>歴史的位置</strong>：AIDMA は日本マスメディア時代（1950-2000）の<strong>標準コミュニケーション・モデル</strong>·全日本広告業実務訓練に影響。<br><br><strong>他派との関係</strong>：Bettman 情報処理パラダイムの memory モジュールと呼応——AIDMA は marketing 実務版の「記憶-検索」プロセス。<br><br><strong>AISAS への進化</strong>：インターネット時代消費者は受動的でなく·能動 search·share——電通 2005 年 AISAS が AIDMA に代わり新主流。"
+  },
+  "tags": [
+    "AIDMA",
+    "Hall 1924",
+    "memory"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "日本マスメディア时代标准模型·AIDA 的实务化版",
+      "限": "互联网时代被 AISAS 取代·静态",
+      "例": "100 年间日本广告创作的标准",
+      "应": "日本院试 IMC 必考·态度形成谱系起点"
+    },
+    "ja": {
+      "限": "インターネット時代 AISAS に代替·静的",
+      "例": "100 年間日本広告作成標準"
+    }
+  },
+  "createdAt": "2026-04-30T05:03:53.295Z",
+  "updatedAt": "2026-04-30T05:03:53.295Z"
+}
