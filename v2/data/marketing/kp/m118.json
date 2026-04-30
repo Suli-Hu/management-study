@@ -11,8 +11,8 @@
   ],
   "year": "1988",
   "title": {
-    "zh": "SERVQUAL · 服务质量 5 维度",
-    "ja": "SERVQUAL · サービス品質 5 次元",
+    "zh": "SERVQUAL 服务质量 5 维度·RATER 模型",
+    "ja": "SERVQUAL サービス品質 5 次元・RATER モデル",
     "en": "SERVQUAL · 5 Service Quality Dimensions"
   },
   "body": {
@@ -38,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:35:35.309Z",
-  "updatedAt": "2026-04-30T07:35:35.309Z"
+  "updatedAt": "2026-04-30T13:23:24.482Z"
 }
