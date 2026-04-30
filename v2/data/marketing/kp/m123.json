@@ -1,0 +1,40 @@
+{
+  "id": "m123",
+  "discipline": "marketing",
+  "schools": [
+    "managerial"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "Product Mix Pricing · 产品组合定价",
+    "ja": "製品ミックス価格設定 · Product Mix Pricing",
+    "en": "Product Mix Pricing"
+  },
+  "body": {
+    "zh": "<strong>Product Mix Pricing（产品组合定价）</strong>是为<strong>产品组合 / 产品线</strong>设计价格的战略·考虑产品间相互影响。Kotler 11 章·Pro Plus 9 章核心。<br><br><strong>5 大策略</strong>：<br>① <strong>Product Line Pricing（产品线定价）</strong>——同 line 不同 SKU 的价差·形成阶梯<br>例：Toyota Yaris·Corolla·Camry·Avalon 的递增价<br>② <strong>Optional Feature Pricing（可选功能定价）</strong>——base + add-on<br>例：汽车 base + GPS + leather + 高级音响<br>③ <strong>Captive Product Pricing（套牢产品定价）</strong>——主产品低价 + 配件 / 耗材高价<br>例：① Gillette razor cheap + blades expensive ② Nespresso 机器低价 + capsule 高价 ③ HP printer cheap + ink expensive<br>④ <strong>Two-Part Pricing（两段式定价）</strong>——固定费 + 使用费<br>例：① 电话 monthly fee + per-call ② Costco 会员费 + 商品价 ③ Disney park ticket + food<br>⑤ <strong>By-Product Pricing（副产品定价）</strong>——废料 / 副产品的定价<br>例：石油的副产品（沥青·石脑油）·农业副产品<br>⑥ <strong>Bundled Pricing（捆绑定价）</strong>——pure bundle 或 mixed bundle<br>例：Microsoft Office 365·Costco 套装<br><br><strong>marketing 战略</strong>：<br>① 利润最大化要看 lifetime value·非单产品<br>② cross-subsidization（一部分亏·另一部分赚）<br>③ price discrimination（不同 segment 不同价）<br><br><strong>典型案例</strong>：<br>① Costco（会员费 = 利润·商品几乎不赚）② Apple iPhone（device + service ecosystem）③ Disney Park（ticket + food + souvenir 体验经济）<br><br><strong>跨学派关系</strong>：与 product line（m113）·portfolio（m116）·CLV（m063）一体使用。",
+    "ja": "<strong>Product Mix Pricing（製品ミックス価格設定）</strong>は<strong>製品組合·製品ライン</strong>の価格設計戦略·製品間相互影響を考慮。Kotler 11 章·Pro Plus 9 章核心。<br><br><strong>5+ 大戦略</strong>：① <strong>Product Line Pricing</strong>（Toyota Yaris·Corolla·Camry·Avalon 階段）② <strong>Optional Feature Pricing</strong>（base + GPS + leather + 高級音響）③ <strong>Captive Product Pricing</strong>（Gillette razor 安·blades 高·Nespresso·HP printer + ink）④ <strong>Two-Part Pricing</strong>（電話·Costco·Disney）⑤ <strong>By-Product Pricing</strong>（石油副産物）⑥ <strong>Bundled Pricing</strong>（Microsoft Office 365）<br><br><strong>マーケティング戦略</strong>：① lifetime value 最大化（単製品ではない）② cross-subsidization ③ price discrimination<br><br><strong>典型事例</strong>：① Costco（会員費 = 利益·商品ほぼ無利益）② Apple iPhone（device + service ecosystem）③ Disney Park<br><br><strong>他派との関係</strong>：product line（m113）·portfolio（m116）·CLV（m063）併用。"
+  },
+  "tags": [
+    "product mix pricing",
+    "captive",
+    "bundling"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "产品组合的高级定价战略·CLV 优化工具",
+      "限": "复杂·跨产品依赖",
+      "例": "Costco·Apple·Disney 是教科书",
+      "应": "Kotler 11 章·价格题"
+    },
+    "ja": {
+      "限": "複雑·跨製品依存",
+      "例": "Costco·Apple·Disney 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:35:44.392Z",
+  "updatedAt": "2026-04-30T07:35:44.392Z"
+}
