@@ -1,0 +1,41 @@
+{
+  "id": "m124",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "imc_communication"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "2022",
+  "title": {
+    "zh": "Incentives Management · 促销激励管理",
+    "ja": "インセンティブ・マネジメント · Incentives Management",
+    "en": "Incentives Management"
+  },
+  "body": {
+    "zh": "<strong>Incentives Management（促销激励管理）</strong>是 Kotler 16 版第 11 章独立的<strong>战略层面</strong>讨论·把传统 sales promotion 提升为系统化战略。<br><br><strong>2 类 incentives</strong>：<br>① <strong>Consumer Incentives</strong>（详见 m060）——coupon·rebate·sample·点数·会员<br>② <strong>Trade Incentives</strong>——给 channel 的 allowance·rebate·display fee<br><br><strong>Incentives 5 大功能</strong>：<br>① <strong>促进 trial</strong>——新顾客试用<br>② <strong>提升 frequency</strong>——既有顾客增加购买<br>③ <strong>反 cannibalization</strong>——保护既有产品免被竞争夺走<br>④ <strong>清库存</strong>——季末·过时品<br>⑤ <strong>积累 data</strong>——会员·loyalty 数据<br><br><strong>Incentives 战略 4 决策</strong>（Kotler 16 版）：<br>① <strong>类型</strong>——financial vs experiential·short-term vs long-term<br>② <strong>规模</strong>——多大 discount<br>③ <strong>时机</strong>——何时·多久<br>④ <strong>目标</strong>——所有顾客 vs target segments<br><br><strong>Brand-building vs Sales Promotion 平衡</strong>：<br>- 长期 brand-building：投资 brand·提高 brand equity<br>- 短期 sales promotion：incentives·快速销售<br>- 80/20 原则：80% brand-building + 20% incentives = 健康<br>- 反例：100% incentives = brand erosion<br><br><strong>典型案例</strong>：① Starbucks Stars·loyalty + experiential ② Amazon Prime Day·event-driven ③ Costco 会员价·exclusive ④ Toyota 0% financing·promotional<br><br><strong>跨学派关系</strong>：与 IMC（m060 sales promotion）·brand_equity·relationship 学派交叉。",
+    "ja": "<strong>Incentives Management（インセンティブ・マネジメント）</strong>は Kotler 16 版第 11 章独立<strong>戦略層</strong>議論·伝統 sales promotion を体系戦略へ昇格。<br><br><strong>2 類 incentives</strong>：① Consumer Incentives（m060）② Trade Incentives<br><br><strong>5 大機能</strong>：① trial 促進 ② frequency 向上 ③ 反 cannibalization ④ 在庫処分 ⑤ data 蓄積<br><br><strong>Incentives 戦略 4 決定</strong>：① 類型（financial vs experiential·short vs long）② 規模 ③ 時期 ④ 目標<br><br><strong>Brand-building vs Sales Promotion バランス</strong>：80/20 原則·100% incentives = ブランド侵食<br><br><strong>典型事例</strong>：① Starbucks Stars ② Amazon Prime Day ③ Costco 会員価 ④ Toyota 0% financing<br><br><strong>他派との関係</strong>：IMC（m060）·brand_equity·relationship と交差。"
+  },
+  "tags": [
+    "incentives",
+    "Kotler 16",
+    "Starbucks Stars"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "Kotler 16 版独立化讨论·sales promotion 战略化",
+      "限": "过度使用 brand erosion·测量难",
+      "例": "Starbucks·Amazon·Costco 是教科书",
+      "应": "Kotler 16 版第 11 章·价格 + IMC"
+    },
+    "ja": {
+      "限": "過剰使用ブランド侵食·測定困難",
+      "例": "Starbucks·Amazon·Costco 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:35:46.196Z",
+  "updatedAt": "2026-04-30T07:35:46.196Z"
+}
