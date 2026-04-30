@@ -64,8 +64,27 @@
         "VMS"
       ],
       "schools": []
+    },
+    {
+      "key": "value_communication",
+      "title": {
+        "zh": "价值传达",
+        "ja": "価値伝達",
+        "en": "Value Communication"
+      },
+      "desc": {
+        "zh": "将价值传达给市场的整合方法，回答「如何让市场知道并产生反应」。包含统合营销传播学派（IMC·Schultz·恩藏直人·**日本独有态度形成模型谱系**：AIDA→AIDMA→AISAS→SIPS→DECAX→ZMOT）、数字营销学派（Anderson 长尾·platform 经济·algorithmic·SaaS·programmatic）。",
+        "ja": "市場に価値を伝達する統合的方法であり、「いかに市場に知らせ反応を引き出すか」に答える。統合マーケティング・コミュニケーション学派（IMC·Schultz·恩藏直人·**日本独自の態度形成モデル系譜**：AIDA→AIDMA→AISAS→SIPS→DECAX→ZMOT）·デジタル・マーケティング学派（Anderson ロングテール·プラットフォーム経済·アルゴリズム·SaaS·プログラマティック）を含む。"
+      },
+      "tags": [
+        "IMC",
+        "广告",
+        "数字营销",
+        "AISAS"
+      ],
+      "schools": []
     }
   ],
   "createdAt": "2026-04-27T11:21:24.729Z",
-  "updatedAt": "2026-04-30T04:16:26.478Z"
+  "updatedAt": "2026-04-30T04:16:28.327Z"
 }
