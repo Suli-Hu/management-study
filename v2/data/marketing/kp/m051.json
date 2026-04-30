@@ -1,0 +1,43 @@
+{
+  "id": "m051",
+  "discipline": "marketing",
+  "schools": [
+    "channel_retail",
+    "digital_marketing"
+  ],
+  "scholars": [
+    "miura_t"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "POS·EOS·EDI·QR · 数字流通工具",
+    "ja": "POS·EOS·EDI·QR · デジタル流通ツール",
+    "en": "Digital Distribution Tools"
+  },
+  "body": {
+    "zh": "流通数字化的<strong>4 大核心工具</strong>·从 1980 年代开始普及·彻底改变了日本流通形态。Pro Plus 第 16 章·塾 13 章「其他」核心。<br><br><strong>① POS（Point of Sale·销售时点情报系统）</strong><br>定义：实时记录每个商品销售的 system<br>影响：① 厂家从「猜测」转为「数据」② 库存精准管理 ③ PB 开发依据 ④ 消费者行为分析<br>历史：Seven-Eleven Japan 1982 年首次全店导入·开启日本流通革命<br><br><strong>② EOS（Electronic Ordering System·电子订货系统）</strong><br>定义：零售店通过电子系统向厂家订货<br>影响：① 订货时间从天到分钟 ② 错误率大幅下降 ③ 紧密 channel 协调<br><br><strong>③ EDI（Electronic Data Interchange·电子数据交换）</strong><br>定义：企业间通过标准化电子格式交换商业文档（订单·发票·物流通知）<br>影响：① 跨企业流程标准化 ② B2B 协调成本下降 ③ 全球供应链可能<br><br><strong>④ QR（Quick Response·快速响应系统）</strong><br>定义：基于 POS 数据·实现「需求→生产→配送」的快速循环<br>历史：1980 年代美国 apparel 产业首创·后扩展到所有零售业<br>结果：库存周转加快 3-5 倍·缺货率下降 50%<br><br><strong>从 4 大工具到现代化</strong>：<br>- 2000 年代：RFID（Radio Frequency Identification）<br>- 2010 年代：Beacon·QR Code（二维码）<br>- 2020 年代：AI demand forecast·blockchain supply chain<br><br><strong>跨学派关系</strong>：与 digital_marketing 学派的 platform·algorithmic·O2O 概念高度交叉。Seven-Eleven Japan 是日本流通数字化的<strong>世界级标杆</strong>·被全球零售业研究。<br><br><strong>marketing 启示</strong>：数字工具不是单纯的 IT 投资·是 marketing 战略的核心基础设施——决定了能多快响应市场·能多精准了解消费者。",
+    "ja": "流通デジタル化の<strong>4 大核心ツール</strong>·1980 年代から普及·日本流通形態を根本的に変えた。Pro Plus 第 16 章·塾 13 章「其他」核心。<br><br><strong>① POS（Point of Sale）</strong><br>影響：① メーカーの「推測」から「データ」へ ② 在庫精確管理 ③ PB 開発依拠 ④ 消費者行動分析<br>歴史：セブン-イレブン Japan 1982 年全店導入·日本流通革命を開始<br><br><strong>② EOS（電子発注システム）</strong><br>影響：① 発注時間が日から分へ ② エラー率大幅低下 ③ 緊密チャネル調整<br><br><strong>③ EDI（電子データ交換）</strong><br>影響：① 跨企業プロセス標準化 ② B2B 調整コスト低下 ③ グローバル・サプライチェーン可能<br><br><strong>④ QR（Quick Response）</strong><br>歴史：1980 年代米国 apparel 産業発祥·後全小売業に拡大<br>結果：在庫回転 3-5 倍速·欠品率 50% 低下<br><br><strong>4 大ツールから現代化</strong>：2000 年代 RFID·2010 年代 Beacon·QR Code·2020 年代 AI 需要予測·blockchain supply chain<br><br><strong>他派との関係</strong>：digital_marketing 学派の platform·algorithmic·O2O 概念と高度交差。セブン-イレブン Japan は日本流通デジタル化の<strong>世界級標杆</strong>·全球小売業研究対象。<br><br><strong>マーケティング示唆</strong>：デジタル・ツールは単なる IT 投資ではなく·マーケティング戦略の核心基盤·市場応答速度·消費者理解精度を決定。"
+  },
+  "tags": [
+    "POS",
+    "EOS",
+    "EDI",
+    "QR",
+    "Seven-Eleven"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "流通现代化的基础工具·数字时代 marketing 的硬基建",
+      "限": "工具进化快·POS/EOS 等已基本概念·新一代 RFID·blockchain",
+      "例": "Seven-Eleven 1982 POS 是日本流通革命的起点",
+      "应": "Pro Plus 16 章·塾 13 章·digital marketing 题"
+    },
+    "ja": {
+      "限": "ツール進化速·POS/EOS 等は基本概念·新世代 RFID·blockchain",
+      "例": "セブン-イレブン 1982 POS は日本流通革命の起点"
+    }
+  },
+  "createdAt": "2026-04-30T05:03:49.810Z",
+  "updatedAt": "2026-04-30T05:03:49.810Z"
+}
