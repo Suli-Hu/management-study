@@ -1,0 +1,30 @@
+{
+  "key": "christensen",
+  "discipline": "marketing",
+  "name": {
+    "zh": "克莱顿·克里斯坦森",
+    "ja": "クレイトン・クリステンセン",
+    "en": "Clayton M. Christensen"
+  },
+  "schools": [
+    "strategic_marketing"
+  ],
+  "schoolsExplicit": true,
+  "contribution": {
+    "zh": "<strong>破壊的イノベーション</strong>理论的提出者。1997 年『The Innovator's Dilemma』提出 <strong>disruptive vs sustaining innovation</strong> 区分——既有强企业擅长「持续创新」（sustaining）但容易被「破壊创新」（disruptive·从低端市场起步）颠覆。这一框架在 marketing 战略学派被广泛借用·解释新製品開発失败原因·新市场战略选择。后期提出「<strong>Jobs to be Done（JTBD）</strong>」理论·marketing 概念辨析的有力工具。",
+    "ja": "<strong>破壊的イノベーション</strong>理論の提唱者。1997 年『The Innovator's Dilemma』で <strong>disruptive vs sustaining innovation</strong> 区分を提唱——既存大企業は「持続的イノベーション」（sustaining）に長けるが「破壊的イノベーション」（disruptive·低端市場から始まる）に転覆されやすい。マーケティング戦略学派で広く借入·新製品開発失敗·新市場戦略選択を説明。後期に「<strong>Jobs to be Done（JTBD）</strong>」理論を提唱·マーケティング概念識別の有力ツール。"
+  },
+  "lifespan": "1952–2020",
+  "institution": "Harvard Business School",
+  "born": "1952",
+  "died": "",
+  "nationality": "美国",
+  "flag": "🇺🇸",
+  "origin": "",
+  "field": "破壊创新",
+  "tags": [],
+  "nobel": null,
+  "kpsOrder": [],
+  "createdAt": "2026-04-30T04:33:42.916Z",
+  "updatedAt": "2026-04-30T04:33:42.916Z"
+}
