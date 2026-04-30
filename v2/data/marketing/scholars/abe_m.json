@@ -1,0 +1,30 @@
+{
+  "key": "abe_m",
+  "discipline": "marketing",
+  "name": {
+    "zh": "阿部 诚",
+    "ja": "阿部 誠",
+    "en": "Makoto Abe"
+  },
+  "schools": [
+    "consumer_behavior"
+  ],
+  "schoolsExplicit": true,
+  "contribution": {
+    "zh": "日本数理 marketing·<strong>marketing science</strong> 的代表性研究者。MIT 博士（1991）·東京大学大学院経済学研究科教授（2004 年起）。专攻 <strong>消费者行为模型</strong>·<strong>购买决策实证</strong>·<strong>行为决策理论</strong>·把统计建模 + Kahneman 行为经济学引入消费者行为研究。著作『東大教授が教えるヤバいマーケティング』『大学 4 年間のマーケティングが 10 時間でざっと学べる』等。東大命题数理 marketing 题型核心研究者。",
+    "ja": "日本数理マーケティング·<strong>マーケティング・サイエンス</strong> の代表的研究者。MIT 博士（1991）·東京大学大学院経済学研究科教授（2004 年以降）。<strong>消費者行動モデル</strong>·<strong>購買意思決定実証</strong>·<strong>行動意思決定理論</strong>を専攻·統計モデリング + Kahneman 行動経済学を消費者行動研究に導入。著作『東大教授が教えるヤバいマーケティング』『大学 4 年間のマーケティングが 10 時間でざっと学べる』等。東大命題数理マーケティング題型の核心研究者。"
+  },
+  "lifespan": "1957 – 至今",
+  "institution": "東京大学大学院経済学研究科",
+  "born": "1957",
+  "died": "",
+  "nationality": "日本",
+  "flag": "🇯🇵",
+  "origin": "",
+  "field": "数理 marketing",
+  "tags": [],
+  "nobel": null,
+  "kpsOrder": [],
+  "createdAt": "2026-04-30T04:33:31.355Z",
+  "updatedAt": "2026-04-30T04:33:31.355Z"
+}
