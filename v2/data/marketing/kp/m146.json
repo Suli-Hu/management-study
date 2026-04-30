@@ -1,0 +1,41 @@
+{
+  "id": "m146",
+  "discipline": "marketing",
+  "schools": [
+    "consumer_behavior",
+    "managerial"
+  ],
+  "scholars": [
+    "abe_m"
+  ],
+  "year": "1971",
+  "title": {
+    "zh": "Conjoint Analysis · 联合分析",
+    "ja": "コンジョイント分析",
+    "en": "Conjoint Analysis"
+  },
+  "body": {
+    "zh": "<strong>Conjoint Analysis（联合分析）</strong>是 marketing research 的<strong>定量经典方法</strong>·Green & Rao 1971 提出·测量消费者对<strong>多个产品属性的相对重要性</strong>。<br><br><strong>核心命题</strong>：消费者不是单独评价属性·而是<strong>整体评价 product bundle</strong>。Conjoint 倒推每个属性的「权重 / utility」。<br><br><strong>5 步骤</strong>：① 选择属性·② 选择 levels·③ 设计 product profiles·④ 收集消费者偏好（rate / rank / choose）·⑤ 估算 utility<br><br><strong>典型例</strong>：iPhone 选择属性 = 价格（$799 / $999 / $1199）+ 屏幕大小（6.1 / 6.7 inch）+ 颜色（黑·白·蓝）+ 容量（128 / 256 / 512 GB）。让消费者排序 8-16 个 profiles·算出每个属性 importance + 每个 level 的 utility。<br><br><strong>marketing 应用</strong>：<br>① <strong>定价决策</strong>——多少 incremental price 顾客愿付<br>② <strong>产品设计</strong>——哪些 features 优先开发<br>③ <strong>市场细分</strong>——不同 segment 的属性偏好<br>④ <strong>新品 launch</strong>——预测市场份额<br>⑤ <strong>brand 选择模型</strong>——消费者在多 brand 间的选择概率<br><br><strong>类型</strong>：① Traditional Conjoint ② Choice-Based Conjoint（CBC）③ Adaptive Conjoint Analysis（ACA）④ Hierarchical Bayes Conjoint<br><br><strong>典型应用案例</strong>：① 汽车价格 + feature 优化 ② 旅游 package 设计 ③ SaaS pricing tiers ④ 食品 / 化妆品 product line<br><br><strong>跨学派关系</strong>：与 consumer_behavior（Bettman 信息处理）·阿部誠 数理 marketing 一致·东大数理派必学。",
+    "ja": "<strong>Conjoint Analysis（コンジョイント分析）</strong>はマーケティング・リサーチの<strong>量的古典手法</strong>·Green & Rao 1971 提唱·消費者の<strong>多属性相対重要度</strong>を測定。<br><br><strong>核心命題</strong>：消費者は単属性評価でなく·<strong>製品 bundle 全体評価</strong>·conjoint で各属性「重み / utility」を逆算。<br><br><strong>5 段階</strong>：① 属性選択 ② levels 選択 ③ product profiles 設計 ④ 消費者選好収集（rate / rank / choose）⑤ utility 推定<br><br><strong>典型例</strong>：iPhone 属性 = 価格（$799 / $999 / $1199）+ 画面（6.1 / 6.7 inch）+ 色（黒·白·青）+ 容量（128 / 256 / 512 GB）·8-16 profiles 順位·属性 importance + level utility 算出。<br><br><strong>マーケティング応用</strong>：① 価格意思決定 ② 製品設計 ③ 市場細分化 ④ 新品 launch ⑤ ブランド選択モデル<br><br><strong>類型</strong>：① Traditional ② Choice-Based（CBC）③ Adaptive（ACA）④ Hierarchical Bayes<br><br><strong>典型応用</strong>：① 自動車価格 + feature 最適化 ② 旅行 package 設計 ③ SaaS pricing tiers ④ 食品 / 化粧品 product line<br><br><strong>他派との関係</strong>：consumer_behavior（Bettman 情報処理）·阿部誠 数理マーケティング一致·東大数理派必学。"
+  },
+  "tags": [
+    "conjoint",
+    "Green-Rao",
+    "CBC"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "marketing research 的核心数量方法·定价 / 产品设计依据",
+      "限": "假设 utility 加和·实际复杂·样本量大",
+      "例": "汽车·SaaS·旅游 package 是教科书",
+      "应": "东大数理派必学·Kotler 5 章"
+    },
+    "ja": {
+      "限": "utility 加和仮定·実際複雑·サンプル量大",
+      "例": "自動車·SaaS·旅行 package 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:41:06.756Z",
+  "updatedAt": "2026-04-30T07:41:06.756Z"
+}
