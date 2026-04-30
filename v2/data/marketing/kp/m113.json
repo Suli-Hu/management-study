@@ -9,8 +9,8 @@
   ],
   "year": "1967",
   "title": {
-    "zh": "Product Line · 产品线管理",
-    "ja": "Product Line · 製品ライン管理",
+    "zh": "产品线管理·长度·宽度·深度",
+    "ja": "製品ライン管理・長さ・幅・深さ",
     "en": "Product Line Management"
   },
   "body": {
@@ -36,5 +36,5 @@
     }
   },
   "createdAt": "2026-04-30T07:35:26.150Z",
-  "updatedAt": "2026-04-30T07:35:26.150Z"
+  "updatedAt": "2026-04-30T13:23:13.206Z"
 }
