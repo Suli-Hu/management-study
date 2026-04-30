@@ -11,9 +11,9 @@
   ],
   "year": "2004",
   "title": {
-    "zh": "Co-Creation · 价值共创",
-    "ja": "Co-Creation · 価値共創",
-    "en": "Co-Creation"
+    "zh": "价值共创·Co-Creation 与 DART 框架",
+    "ja": "価値共創・Co-Creation と DART フレーム",
+    "en": "Co-Creation & DART Framework"
   },
   "body": {
     "zh": "<strong>Co-Creation（价值共创）</strong>是 SDL 学派的核心概念·主张<strong>价值由企业和顾客共同创造</strong>·而非企业单方提供。Prahalad & Ramaswamy 2004 年『The Future of Competition』也独立推动这一概念。<br><br><strong>核心命题</strong>：<br>- 传统：企业 → 设计 → 生产 → 销售 → 顾客（价值由企业决定）<br>- Co-Creation：企业 + 顾客 → 共同设计 → 共同生产 → 共同体验（价值由双方创造）<br><br><strong>4 个 co-creation 模式</strong>（Prahalad-Ramaswamy DART 框架）：<br>① <strong>Dialogue（对话）</strong>——企业与顾客的双向沟通<br>② <strong>Access（access）</strong>——顾客 access 企业资源·参与价值创造<br>③ <strong>Risk（风险共担）</strong>——双方共担风险<br>④ <strong>Transparency（透明）</strong>——企业向顾客透明信息·让顾客做 informed choice<br><br><strong>典型案例</strong>：<br>① <strong>LEGO Ideas</strong>——粉丝设计·LEGO 生产·获 1% 销售分成<br>② <strong>Wikipedia</strong>——用户共同编辑<br>③ <strong>Airbnb</strong>——host 共同提供住宿服务<br>④ <strong>Tesla 软件 OTA 升级</strong>——根据用户反馈持续 evolve<br>⑤ <strong>无印良品「生活良品研究所」</strong>——顾客提建议·MUJI 开发<br><br><strong>co-creation 的 4 大优势</strong>：<br>① 顾客真正想要的产品（reduce 失败率）<br>② 顾客成为 advocate（增 NPS）<br>③ 创新加速（多元 input）<br>④ 顾客忠诚度（参与感）<br><br><strong>4 大挑战</strong>：<br>① IP 归属<br>② 决策慢（需多方共识）<br>③ 顾客参与质量参差<br>④ 不是所有产品适用（如药品·食品安全相关）<br><br><strong>跨学派关系</strong>：与 SDL FP6（value-in-use）和 FP10（institutional arrangements）紧密·与 CCT 学派的「消费者意味共创」一致·与 relationship 学派的 MAC（和田）共鸣。",
@@ -38,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T05:13:58.668Z",
-  "updatedAt": "2026-04-30T05:13:58.668Z"
+  "updatedAt": "2026-04-30T13:21:38.465Z"
 }
