@@ -701,6 +701,29 @@ details.eval {
   text-wrap: pretty;
 }
 
+/* v0.6.14 跨学派引用链接 — render-inline.ts 把 <code>school_key</code> resolve 成 <a class="inline-ref">中文标题</a> */
+.inline-ref {
+  color: var(--color-text-primary);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--color-text-tertiary);
+  padding-bottom: 1px;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.inline-ref:hover {
+  color: var(--color-accent, #007aff);
+  border-bottom-color: currentColor;
+  border-bottom-style: solid;
+}
+/* resolve 失败时 fallback 的等宽 <code>key</code> — 让老师能看到 broken ref */
+.optA-summary-v2 code {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.92em;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--color-bg-secondary, rgba(0,0,0,0.04));
+  color: var(--color-text-tertiary);
+}
+
 /* v0.5.55 学者页 tab panel 专用 */
 .optA-profile-block { padding: 14px 18px 8px; }
 .optA-nobel-detail {

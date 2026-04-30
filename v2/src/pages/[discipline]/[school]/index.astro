@@ -45,6 +45,14 @@ const sch = await db
   .first<{ key: string; title_zh: string; title_en: string | null; era: string; summary_zh: string; tags_json: string }>();
 if (!sch) return Astro.redirect('/404');
 
+// v0.6.14: 同 discipline 全部 schools 的 key→title_zh 映射，给 summary 里 <code>key</code>
+//   跨学派引用 resolve 用（render-inline.ts 的 resolveCode callback）
+const allSchoolsRes = await db
+  .prepare('SELECT key, title_zh FROM school WHERE discipline = ?')
+  .bind(discipline)
+  .all<{ key: string; title_zh: string }>();
+const schoolNameByKey = new Map((allSchoolsRes.results ?? []).map((s) => [s.key, s.title_zh]));
+
 const schoolTags = JSON.parse(sch.tags_json) as string[];
 const accentHex = tagColor({ tags: schoolTags }, tagLibrary);
 
@@ -297,7 +305,12 @@ const canEdit = Astro.locals.canEdit(discipline);
       {/* Tab Panel: 概述 */}
       {sch.summary_zh && (
         <section class="optA-tab-panel" data-tab-panel="overview" hidden>
-          <div class="optA-summary-v2" set:html={renderInlineHtml(sch.summary_zh)} />
+          <div class="optA-summary-v2" set:html={renderInlineHtml(sch.summary_zh, {
+            resolveCode: (key) => {
+              const title = schoolNameByKey.get(key);
+              return title ? { text: title, href: `/${discipline}/${key}` } : null;
+            },
+          })} />
         </section>
       )}
 
