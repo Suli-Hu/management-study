@@ -1,0 +1,26 @@
+{
+  "key": "channel_retail",
+  "discipline": "marketing",
+  "title": {
+    "zh": "流通学派 / 日本流通制度学派",
+    "ja": "流通学派",
+    "en": "Channel & Retail School"
+  },
+  "era": "1960– 美系 + 日本流通制度独立学派",
+  "summary": {
+    "zh": "<strong>流通学派</strong>把 marketing 看作<strong>channel 内的权力博弈与协调</strong>。美系代表 <strong>Louis Stern & El-Ansary</strong>（『Marketing Channels』多版）·日本本土 <strong>若林靖永</strong>（京大名誉·流通商业学派）·<strong>渡辺達朗</strong>等。<br><br><strong>核心范式</strong>：marketing 不是企业内部活动·而是 channel 多主体（厂家·批发·零售·消费者）<strong>权力·冲突·协调</strong>的结果——价值创造发生在 channel 内部。<br><br><strong>核心内容（美系）</strong>：① <strong>channel 设计</strong>（长度·宽度·政策：开放·选择·排他 3 类）② <strong>VMS（垂直营销系统）</strong>：corporate·contractual·administered ③ <strong>channel power</strong>·<strong>channel conflict</strong>·<strong>channel coordination</strong>（French-Raven 5 power bases·1959）④ <strong>延期投機理論</strong>（Bucklin 1965）⑤ <strong>omnichannel·SPA</strong> ⑥ <strong>市场物流</strong>·零售战略·批发·private brand。<br><br><strong>核心内容（日本本土·Pro Plus 第 7·11 章）</strong>：① <strong>日本型流通システム</strong>（卸·小売多段化）② <strong>流通系列化</strong>（メーカー → 流通的 vertical 整合）③ <strong>百貨店法</strong>（一次 1937·二次 1956）·<strong>大店法</strong>（1973）·<strong>街づくり三法</strong> ④ <strong>テリトリー制</strong>·<strong>一店一帳合制</strong>·<strong>店会制</strong> ⑤ <strong>建値制崩壊</strong>·<strong>二重価格表示</strong> ⑥ <strong>リベート·アロウワンス</strong> ⑦ <strong>製販同盟</strong>（和田充夫研究·convenience store の流通革新）⑧ <strong>パワー关系崩壊</strong>（メーカー → 大手小売）⑨ <strong>POS·EOS·EDI·QR</strong> 数字流通工具。<br><br><strong>跨学派关系</strong>：相对独立·与 <code>relationship</code> 在製販同盟概念交叉。<br><br><strong>日本研究</strong>：<strong>若林靖永</strong>·<strong>和田充夫</strong>·渡辺達朗·恩藏直人均涉足·京大流通商业学派强校。",
+    "ja": "<strong>流通学派</strong>はマーケティングを <strong>channel 内の権力博弈と調整</strong>として捉える。米系代表は <strong>Louis Stern & El-Ansary</strong>·日本本土は <strong>若林靖永</strong>（京大名誉）·<strong>渡辺達朗</strong>等。<br><br><strong>核心パラダイム</strong>：マーケティングは企業内部活動ではなく、channel 多主体の<strong>権力·コンフリクト·調整</strong>の結果である。<br><br><strong>主要内容（米系）</strong>：① <strong>チャネル設計</strong>（長さ·幅·政策 3 類）② <strong>VMS</strong>3 類 ③ <strong>チャネル・パワー / コンフリクト / 調整</strong>（French-Raven 5 power bases）④ <strong>延期投機理論</strong>（Bucklin 1965）⑤ <strong>オムニチャネル·SPA</strong> ⑥ <strong>マーケット・ロジスティクス</strong>·小売戦略·卸売·プライベート・ブランド。<br><br><strong>主要内容（日本本土·Pro Plus 第 7·11 章）</strong>：① <strong>日本型流通システム</strong> ② <strong>流通系列化</strong> ③ <strong>百貨店法·大店法·街づくり三法</strong> ④ <strong>テリトリー制·一店一帳合制·店会制</strong> ⑤ <strong>建値制崩壊·二重価格表示</strong> ⑥ <strong>リベート·アロウワンス</strong> ⑦ <strong>製販同盟</strong> ⑧ <strong>パワー关系崩壊</strong> ⑨ <strong>POS·EOS·EDI·QR</strong>。<br><br><strong>他派との関係</strong>：相対的独立·<code>relationship</code> と製販同盟概念で交差。<br><br><strong>日本研究</strong>：<strong>若林靖永</strong>·<strong>和田充夫</strong>·渡辺達朗·恩藏直人。京大流通商業学派は強い。"
+  },
+  "themeKey": "value_creation",
+  "tags": [
+    "Stern",
+    "若林靖永",
+    "VMS",
+    "流通系列化",
+    "製販同盟",
+    "POS"
+  ],
+  "concepts": [],
+  "createdAt": "2026-04-30T04:27:57.585Z",
+  "updatedAt": "2026-04-30T04:27:57.585Z"
+}
