@@ -1,0 +1,40 @@
+{
+  "id": "m063",
+  "discipline": "marketing",
+  "schools": [
+    "relationship"
+  ],
+  "scholars": [
+    "reichheld"
+  ],
+  "year": "1990",
+  "title": {
+    "zh": "CLV / LTV · 顾客生涯价值",
+    "ja": "CLV / LTV · 顧客生涯価値",
+    "en": "Customer Lifetime Value"
+  },
+  "body": {
+    "zh": "<strong>Customer Lifetime Value（CLV / LTV·顾客生涯价值）</strong>是 relationship 学派的<strong>核心测量工具</strong>·把客户当成<strong>资产</strong>而非单次交易·量化客户对企业的全部价值。<br><br><strong>核心公式</strong>（简化版）：<br>**CLV = (Average Order Value × Purchase Frequency × Customer Lifespan) - Acquisition Cost**<br><br><strong>更精确公式</strong>（含 discounting）：<br>**CLV = Σ [(Revenue - Costs) × Retention Rate^t] / (1+i)^t**<br>- t = year<br>- i = discount rate<br>- Retention Rate = 客户每年留存率<br><br><strong>CLV 的 4 个 marketing 应用</strong>：<br>① <strong>Acquisition budget</strong>——可花多少钱获客？答：CLV 的一定比例<br>② <strong>Customer prioritization</strong>——high-CLV 客户得到 VIP 待遇<br>③ <strong>Churn 防止</strong>——CLV 高的客户流失·marketing 应做 service recovery<br>④ <strong>Pricing</strong>——LTV 高的客户可以做 free trial·LTV 低的不行<br><br><strong>CLV 的行业差异</strong>：<br>- 高 CLV 行业：航空·银行·电信·SaaS（CLV 几千到几万 USD）<br>- 低 CLV 行业：FMCG·快餐（CLV 几十到几百 USD）<br><br><strong>提高 CLV 的 4 大杠杆</strong>：<br>① 提高 average order value（cross-sell·up-sell）<br>② 提高 purchase frequency（loyalty programs·CRM）<br>③ 延长 customer lifespan（关系建设·service quality）<br>④ 降低 acquisition cost（refer-a-friend·content marketing）<br><br><strong>典型案例</strong>：<br>① <strong>Amazon Prime</strong>——年费 $139·但 Prime 用户 LTV 是 non-Prime 的 2.5 倍<br>② <strong>Netflix</strong>——subscriber LTV 公开数据约 $400+<br>③ <strong>Tesla</strong>——单次购买 $50K + 服务 + 升级 + 转介紹·LTV $80K+<br><br><strong>跨学派关系</strong>：① 与 brand_equity 的 customer equity 概念（Rust-Zeithaml-Lemon 2000）紧密 ② 与 NPS 互补——NPS 测情感·CLV 测行为。",
+    "ja": "<strong>Customer Lifetime Value（CLV / LTV·顧客生涯価値）</strong>は relationship 学派の<strong>核心測定ツール</strong>·顧客を<strong>資産</strong>として捉え·企業への全価値を数量化。<br><br><strong>核心公式</strong>（簡略版）：**CLV = (Average Order Value × Purchase Frequency × Customer Lifespan) - Acquisition Cost**<br><br><strong>4 つのマーケティング応用</strong>：① Acquisition budget·CLV の一定割合 ② Customer prioritization·高 CLV 顧客 VIP ③ Churn 防止 ④ Pricing<br><br><strong>業界差異</strong>：高 CLV（航空·銀行·電信·SaaS·数千〜数万 USD）·低 CLV（FMCG·ファストフード·数十〜数百 USD）<br><br><strong>CLV 向上 4 大レバー</strong>：① average order value 向上（cross-sell·up-sell）② purchase frequency 向上 ③ customer lifespan 延長 ④ acquisition cost 低減<br><br><strong>典型事例</strong>：① Amazon Prime·年会費 $139·但 Prime 用戶 LTV 是 non-Prime の 2.5 倍 ② Netflix·subscriber LTV 約 $400+ ③ Tesla·LTV $80K+<br><br><strong>他派との関係</strong>：① brand_equity の customer equity（Rust-Zeithaml-Lemon 2000）と密接 ② NPS と相補·NPS は情緒測定·CLV は行動測定。"
+  },
+  "tags": [
+    "CLV",
+    "LTV",
+    "Amazon Prime"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "relationship 学派的核心数学化工具·marketing 决策依据",
+      "限": "预测精度依赖数据·新行业难精确",
+      "例": "Amazon Prime LTV 是教科书",
+      "应": "relationship 题·strategic marketing 题"
+    },
+    "ja": {
+      "限": "予測精度はデータ依存·新業界精確困難",
+      "例": "Amazon Prime LTV は教科書"
+    }
+  },
+  "createdAt": "2026-04-30T05:04:10.819Z",
+  "updatedAt": "2026-04-30T05:04:10.819Z"
+}
