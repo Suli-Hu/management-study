@@ -1,0 +1,42 @@
+{
+  "id": "m088",
+  "discipline": "marketing",
+  "schools": [
+    "strategic_marketing",
+    "managerial"
+  ],
+  "scholars": [
+    "ansoff"
+  ],
+  "year": "1957",
+  "title": {
+    "zh": "Ansoff Matrix · 多角化矩阵",
+    "ja": "Ansoff Matrix · 多角化マトリックス",
+    "en": "Ansoff Matrix"
+  },
+  "body": {
+    "zh": "<strong>Ansoff Matrix（多角化矩阵）</strong>由 Igor Ansoff 1957 年在 <em>Harvard Business Review</em>「Strategies for Diversification」提出·企业成长战略的<strong>2x2 经典框架</strong>。Pro Plus 第 2 章核心。<br><br><strong>2x2 矩阵</strong>：<br>纵轴：Product（既有 / 新）<br>横轴：Market（既有 / 新）<br>4 象限：<br><br>① <strong>Market Penetration（市场渗透）</strong>——既有 product × 既有 market<br>战略：增加现有客户购买频度 / 数量·从竞争对手抢客<br>风险：低<br>例：Coca-Cola 在美国增加 marketing 投入·让既有客户多喝<br><br>② <strong>Market Development（市场开发）</strong>——既有 product × 新 market<br>战略：把现有产品卖到新地理 / 人群<br>风险：中<br>例：UNIQLO 从日本扩展到美国·中国<br><br>③ <strong>Product Development（产品开发）</strong>——新 product × 既有 market<br>战略：在现有客户中推新产品<br>风险：中<br>例：Apple 从 iPhone 推 Apple Watch·AirPods<br><br>④ <strong>Diversification（多角化）</strong>——新 product × 新 market<br>战略：进入完全新领域<br>风险：最高<br>子类型：<br>- <strong>Related Diversification（関連多角化）</strong>·与现有业务相关<br>- <strong>Conglomerate Diversification（コングロマリット多角化）</strong>·完全无关<br>例：① 関連：Disney 从电影到主题公园 ② Conglomerate：GE 从电气到金融<br><br><strong>Ansoff 的洞察</strong>：风险递增——penetration 最低·diversification 最高。多数失败的成长战略是过快多角化。<br><br><strong>marketing 实务应用</strong>：<br>① <strong>战略规划</strong>——评估各成长路径的风险 / 收益<br>② <strong>资源分配</strong>——按风险程度分配 marketing 预算<br>③ <strong>创新管理</strong>——区分增量创新（penetration·development）vs 颠覆创新（diversification）<br><br><strong>vs Christensen 破壊创新</strong>：<br>- Ansoff：纯产品 / 市场矩阵·不区分创新性质<br>- Christensen：在 Ansoff Diversification 内·又区分 sustaining vs disruptive<br>- 现代 marketing 战略综合两者·得到更精细的成长 portfolio<br><br><strong>跨学派关系</strong>：① 与 strategic_marketing 的 firm growth strategy 一体 ② 与 managerial 学派的成长战略章一致 ③ 与 effectuation·blue ocean 形成对照（后者反对 deliberate planning）。",
+    "ja": "<strong>Ansoff Matrix（多角化マトリックス）</strong>は Igor Ansoff 1957 年 <em>HBR</em>「Strategies for Diversification」提唱·企業成長戦略の<strong>2x2 古典フレーム</strong>。Pro Plus 第 2 章核心。<br><br><strong>2x2 マトリックス</strong>：縦軸=製品（既有 / 新）·横軸=市場（既有 / 新）·4 象限：<br>① Market Penetration（市場浸透·既有 × 既有·低リスク·Coca-Cola 米国 marketing 投入）<br>② Market Development（市場開発·既有 × 新·中リスク·UNIQLO 米国·中国拡張）<br>③ Product Development（製品開発·新 × 既有·中リスク·Apple Watch·AirPods）<br>④ Diversification（多角化·新 × 新·最高リスク·関連 vs コングロマリット）<br><br><strong>Ansoff の洞察</strong>：リスク漸増·penetration 最低·diversification 最高·過速多角化が失敗の主因。<br><br><strong>マーケティング実務応用</strong>：① 戦略計画 ② 資源配分 ③ イノベーション管理（増分 vs 破壊）<br><br><strong>vs Christensen 破壊</strong>：Ansoff は純製品 / 市場·創新性質不区分·Christensen は Diversification 内で sustaining vs disruptive 区分·現代マーケティング戦略は両者総合。<br><br><strong>他派との関係</strong>：① strategic_marketing の firm growth strategy 一体 ② managerial 学派の成長戦略章 ③ effectuation·blue ocean と対照。"
+  },
+  "tags": [
+    "Ansoff",
+    "matrix",
+    "diversification",
+    "penetration"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "成长战略的最经典框架·Pro Plus 第 2 章必学",
+      "限": "过简·不区分创新性质·Christensen 补充",
+      "例": "UNIQLO·Apple·Disney 都是 Ansoff 案例",
+      "应": "Pro Plus 2 章·strategic 题"
+    },
+    "ja": {
+      "限": "過簡·創新性質不区分·Christensen 補完",
+      "例": "UNIQLO·Apple·Disney すべて Ansoff 事例"
+    }
+  },
+  "createdAt": "2026-04-30T05:14:27.954Z",
+  "updatedAt": "2026-04-30T05:14:27.954Z"
+}
