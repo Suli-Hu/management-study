@@ -1,0 +1,41 @@
+{
+  "id": "m168",
+  "discipline": "marketing",
+  "schools": [
+    "channel_retail"
+  ],
+  "scholars": [
+    "stern"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "Channel Functions · 渠道 9 大功能",
+    "ja": "チャネル機能 · 9 大機能",
+    "en": "Channel Functions · 9 Roles"
+  },
+  "body": {
+    "zh": "<strong>Channel Functions（チャネル機能·渠道 9 大功能）</strong>是 Kotler·Stern 系统化的渠道理论·channel 不只是「distribution」·而是 9 类<strong>marketing 功能</strong>的执行者。Kotler 15 章·Pro Plus 11 章核心。<br><br><strong>9 大 channel functions</strong>（按 forward·backward·both 分）：<br><br><strong>Forward Flow（厂家 → 消费者）</strong>：<br>① <strong>Physical Possession</strong>——产品物理占有 / 转移<br>② <strong>Ownership</strong>——所有权转移<br>③ <strong>Promotion</strong>——marketing communication<br><br><strong>Backward Flow（消费者 → 厂家）</strong>：<br>④ <strong>Ordering</strong>——订单<br>⑤ <strong>Payment</strong>——付款<br><br><strong>Both Ways（双向）</strong>：<br>⑥ <strong>Information</strong>——市场情报·销售数据·消费者反馈<br>⑦ <strong>Negotiation</strong>——价格·条件·合同协商<br>⑧ <strong>Financing</strong>——库存融资·分期·信贷<br>⑨ <strong>Risk Taking</strong>——库存·过期·季节性·价格风险承担<br><br><strong>核心命题</strong>：channel 不是<strong>是否需要</strong>·而是<strong>由谁执行</strong>。这 9 大功能必须有人做——厂家·中间商·零售商·消费者中的某些组合。<br><br><strong>marketing 战略意义</strong>：<br>① <strong>Direct vs Indirect</strong>——直营 channel 厂家做全部·indirect 分给中间商<br>② <strong>Channel Compensation</strong>——按功能给中间商付费<br>③ <strong>Channel Disintermediation</strong>——digital 时代消费者直接做更多 functions（如 Amazon search·comparison·payment 自助）<br><br><strong>典型例</strong>：<br>- 传统 channel：厂家 → 卸 → 零售 → 消费者·9 functions 分散<br>- Amazon：厂家 + Amazon → 消费者·Amazon 做大部分 functions<br>- D2C（Direct-to-Consumer）：厂家 → 消费者·厂家做全部 functions<br><br><strong>跨学派关系</strong>：channel_retail 学派的奠基理论·与 VMS（m044）·延期投機（m045）·SPA（m046）·omnichannel（m047）一体。",
+    "ja": "<strong>Channel Functions（チャネル 9 大機能）</strong>は Kotler·Stern 体系化のチャネル理論·channel は単なる「distribution」ではなく·9 類の<strong>マーケティング機能</strong>の執行者。Kotler 15 章·Pro Plus 11 章核心。<br><br><strong>9 大 channel functions</strong>（forward·backward·both 分）：<br><strong>Forward Flow</strong>：① Physical Possession ② Ownership ③ Promotion<br><strong>Backward Flow</strong>：④ Ordering ⑤ Payment<br><strong>Both Ways</strong>：⑥ Information ⑦ Negotiation ⑧ Financing ⑨ Risk Taking<br><br><strong>核心命題</strong>：channel は<strong>必要かどうか</strong>ではなく·<strong>誰が執行するか</strong>。9 大機能は誰かが必ず行う——メーカー·中間商·小売·消費者のいずれかの組合せ。<br><br><strong>マーケティング戦略意義</strong>：① Direct vs Indirect ② Channel Compensation ③ Channel Disintermediation（デジタル時代·消費者が自助で多機能·Amazon search·comparison·payment）<br><br><strong>典型例</strong>：<br>- 伝統 channel：メーカー → 卸 → 小売 → 消費者·9 機能分散<br>- Amazon：メーカー + Amazon → 消費者·Amazon が大部分執行<br>- D2C：メーカー → 消費者·メーカーが全機能<br><br><strong>他派との関係</strong>：channel_retail 学派の基礎理論·VMS（m044）·延期投機（m045）·SPA（m046）·omnichannel（m047）と一体。"
+  },
+  "tags": [
+    "channel functions",
+    "9 roles",
+    "Stern",
+    "Kotler"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "channel 学派的奠基理论·所有 channel 战略起点",
+      "限": "9 类边界模糊·实务混合",
+      "例": "Amazon·D2C·传统多层是教科书",
+      "应": "Kotler 15 章·Pro Plus 11 章·channel 题"
+    },
+    "ja": {
+      "限": "9 類境界曖昧·実務混合",
+      "例": "Amazon·D2C·伝統多層が教科書"
+    }
+  },
+  "createdAt": "2026-04-30T09:26:27.918Z",
+  "updatedAt": "2026-04-30T09:26:27.918Z"
+}
