@@ -1,0 +1,41 @@
+{
+  "id": "m153",
+  "discipline": "marketing",
+  "schools": [
+    "strategic_marketing",
+    "managerial"
+  ],
+  "scholars": [
+    "porter"
+  ],
+  "year": "1965",
+  "title": {
+    "zh": "SWOT Analysis · 综合环境分析",
+    "ja": "SWOT 分析",
+    "en": "SWOT Analysis"
+  },
+  "body": {
+    "zh": "<strong>SWOT Analysis</strong>是 marketing 战略最普及的<strong>综合环境分析框架</strong>·把 5C 等输入分析整合为 4 象限决策矩阵。Kotler·Pro Plus 必学。<br><br><strong>4 象限</strong>：<br>① <strong>Strengths（强项·内部正）</strong>——marketing capability·brand·R&D·channel·人才<br>② <strong>Weaknesses（弱点·内部负）</strong>——内部不足·debt·依赖·技能 gap<br>③ <strong>Opportunities（机会·外部正）</strong>——市场增长·新技术·法规变化·竞争退出<br>④ <strong>Threats（威胁·外部负）</strong>——竞争对手·替代品·法规·经济衰退<br><br><strong>SWOT 矩阵·TOWS strategy</strong>（4 战略组合）：<br>- <strong>SO（S × O）</strong>——maxi-maxi·用强项抓机会<br>- <strong>ST（S × T）</strong>——maxi-mini·用强项抗威胁<br>- <strong>WO（W × O）</strong>——mini-maxi·克弱抓机会<br>- <strong>WT（W × T）</strong>——mini-mini·避弱避威胁<br><br><strong>vs 5C 分析</strong>：<br>- 5C 是<strong>输入分析</strong>（向外看）<br>- SWOT 是<strong>综合判断</strong>（向内总结）<br>- 5C 分析后整理为 SWOT<br><br><strong>典型例</strong>：<br>Tesla SWOT：<br>- S：technology lead·brand·Musk·software<br>- W：profitability·service network·labor<br>- O：EV market growth·climate policy·battery cost decline<br>- T：legacy automakers EV·Chinese competition（BYD）·regulation<br><br><strong>批判</strong>：① 静态·② 列举式·缺少 prioritization·③ 表面·缺 depth·④ 主观<br><br><strong>跨学派关系</strong>：与 5C·Porter 5 forces·strategic_marketing·marketing planning（G-STIC）一体。",
+    "ja": "<strong>SWOT Analysis</strong>はマーケティング戦略最普及の<strong>総合環境分析フレーム</strong>·5C 等入力分析を 4 象限意思決定マトリックスに統合。Kotler·Pro Plus 必学。<br><br><strong>4 象限</strong>：① Strengths（内部正）② Weaknesses（内部負）③ Opportunities（外部正）④ Threats（外部負）<br><br><strong>SWOT マトリックス·TOWS strategy</strong>（4 戦略組合）：① SO（maxi-maxi）② ST（maxi-mini）③ WO（mini-maxi）④ WT（mini-mini）<br><br><strong>vs 5C 分析</strong>：5C は<strong>入力分析</strong>·SWOT は<strong>総合判断</strong>·5C 分析後 SWOT に整理<br><br><strong>典型例</strong>：Tesla SWOT·S（technology·brand·Musk·software）W（profitability·service network·labor）O（EV growth·climate policy·battery cost decline）T（legacy EV·中国 BYD·regulation）<br><br><strong>批判</strong>：① 静的 ② 列挙·prioritization 欠如 ③ 表面·depth 欠如 ④ 主観<br><br><strong>他派との関係</strong>：5C·Porter 5 forces·strategic_marketing·マーケティング・プランニング（G-STIC）と一体。"
+  },
+  "tags": [
+    "SWOT",
+    "TOWS",
+    "strategic"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "marketing 战略最普及框架·实务必学",
+      "限": "静态·列举·缺优先排序·主观",
+      "例": "Tesla·Apple·所有 case 必有 SWOT",
+      "应": "strategic 题·case 分析必用"
+    },
+    "ja": {
+      "限": "静的·列挙·優先順位欠如·主観",
+      "例": "Tesla·Apple·全ケース必 SWOT"
+    }
+  },
+  "createdAt": "2026-04-30T07:41:19.618Z",
+  "updatedAt": "2026-04-30T07:41:19.618Z"
+}
