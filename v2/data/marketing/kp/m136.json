@@ -1,0 +1,40 @@
+{
+  "id": "m136",
+  "discipline": "marketing",
+  "schools": [
+    "managerial"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "1990",
+  "title": {
+    "zh": "Concept Development · Testing",
+    "ja": "コンセプト開発·検証",
+    "en": "Concept Development & Testing"
+  },
+  "body": {
+    "zh": "<strong>Concept Development（概念开发）</strong>是把 idea 转化为<strong>具体可测试的产品概念</strong>·新品开发 stage 2-3 核心。<br><br><strong>idea vs concept vs image</strong>：<br>- <strong>Idea</strong>——「我们做电动车」<br>- <strong>Concept</strong>——「针对环境意识高·年收入 10 万 USD+ 的城市职业人士的高级 EV·能 0-60 mph 5 秒·400 mile range·OTA 软件升级·Tesla Model S」<br>- <strong>Image</strong>——「Tesla = 创新·sustainable·premium」<br><br><strong>Concept 4 大要素</strong>：<br>① <strong>WHO（target customer）</strong><br>② <strong>WHAT（key benefits）</strong><br>③ <strong>WHY（reason to believe）</strong><br>④ <strong>HOW（usage scenario）</strong><br><br><strong>Concept Testing 5 大方法</strong>：<br>① <strong>Focus Group</strong>——8-10 人·定性<br>② <strong>Online Survey</strong>——大量·定量<br>③ <strong>Conjoint Analysis</strong>——属性偏好分析<br>④ <strong>Prototype Testing</strong>——physical / digital prototype<br>⑤ <strong>Beta Testing</strong>——少量真实用户<br><br><strong>Test 评估的 5 大指标</strong>：① <strong>likelihood to buy</strong>·② <strong>relative preference vs competitor</strong>·③ <strong>price sensitivity</strong>·④ <strong>frequency / quantity</strong>·⑤ <strong>features importance</strong><br><br><strong>典型例</strong>：① Apple iPhone 1 内部 prototype 测试 5+ 年 ② Tesla Roadster concept 测试 → Model S → Model 3 ③ 食品业 taste test<br><br><strong>跨学派关系</strong>：与 marketing research（m113）·consumer behavior 测量一体。",
+    "ja": "<strong>Concept Development（コンセプト開発）</strong>はアイデアを<strong>具体的に検証可能な製品コンセプト</strong>に変換·新製品開発 stage 2-3 核心。<br><br><strong>idea vs concept vs image</strong>：Idea 抽象「電気自動車を作る」·Concept 具体「環境意識高·年収 $100K+ 都市プロフェッショナル向け高級 EV·0-60 mph 5 秒·400 mile range·OTA 软件升级·Tesla Model S」·Image「Tesla = innovation·sustainable·premium」<br><br><strong>Concept 4 大要素</strong>：① WHO ② WHAT ③ WHY ④ HOW<br><br><strong>Concept Testing 5 大方法</strong>：① Focus Group ② Online Survey ③ Conjoint Analysis ④ Prototype Testing ⑤ Beta Testing<br><br><strong>Test 評価 5 大指標</strong>：① likelihood to buy ② relative preference vs competitor ③ price sensitivity ④ frequency / quantity ⑤ features importance<br><br><strong>典型例</strong>：① Apple iPhone 1 内部 prototype 5+ 年テスト ② Tesla Roadster → Model S → Model 3 ③ 食品業 taste test<br><br><strong>他派との関係</strong>：marketing research（m113）·consumer behavior 測定と一体。"
+  },
+  "tags": [
+    "concept development",
+    "conjoint analysis",
+    "Tesla"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "新品开发的关键步骤·idea → 可测试 concept",
+      "限": "测试方法主观·成本高",
+      "例": "Apple iPhone·Tesla 是 concept testing 教科书",
+      "应": "Kotler 18 章·新品开发题"
+    },
+    "ja": {
+      "限": "テスト方法主観·コスト高",
+      "例": "Apple iPhone·Tesla は concept testing 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:36:07.479Z",
+  "updatedAt": "2026-04-30T07:36:07.479Z"
+}
