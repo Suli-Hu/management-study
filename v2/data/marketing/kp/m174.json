@@ -1,0 +1,42 @@
+{
+  "id": "m174",
+  "discipline": "marketing",
+  "schools": [
+    "channel_retail",
+    "brand_equity"
+  ],
+  "scholars": [
+    "stern"
+  ],
+  "year": "1973",
+  "title": {
+    "zh": "Store Atmospherics · 店铺氛围",
+    "ja": "店舗の雰囲気",
+    "en": "Store Atmospherics"
+  },
+  "body": {
+    "zh": "<strong>Store Atmospherics（店铺氛围）</strong>由 <strong>Philip Kotler</strong> 1973 年同名论文「Atmospherics as a Marketing Tool」in <em>Journal of Retailing</em> 提出·把<strong>店铺物理环境</strong>当作 marketing 工具。Kotler 16 章·零售实务核心。<br><br><strong>核心命题</strong>：<br>购买决定不只在产品·还在<strong>购买情境</strong>。氛围影响情感·情感影响购买。<br><br><strong>5 大感官设计要素</strong>（Pine-Gilmore experience economy）：<br>① <strong>Sight（视觉）</strong>——color·lighting·spaciousness·display<br>② <strong>Sound（听觉）</strong>——music·noise·jingle<br>③ <strong>Scent（嗅觉）</strong>——fragrance·food smell（Cinnabon 香气）<br>④ <strong>Touch（触觉）</strong>——material·texture·temperature<br>⑤ <strong>Taste（味觉）</strong>——sample·food tasting<br><br><strong>4 大 atmospherics 战略</strong>：<br>① <strong>Brand Reinforcement</strong>——氛围强化 brand identity<br>② <strong>Customer Engagement</strong>——让消费者停留更长<br>③ <strong>Purchase Stimulation</strong>——激励冲动购买<br>④ <strong>Differentiation</strong>——与竞争对手区分<br><br><strong>典型例</strong>：<br>- <strong>Apple Store</strong>——minimalist·spacious·natural light·wood·premium feeling<br>- <strong>Lush（化妆品）</strong>——香气浓·色彩·体验式<br>- <strong>MUJI</strong>——简约·natural·calm·brand 一致<br>- <strong>Tiffany</strong>——蓝色·光线·security guards·premium<br>- <strong>ドン・キホーテ（Don Quixote）</strong>——压缩陈列·惊喜感·寻宝体验·完全反向 atmospherics<br>- <strong>Costco</strong>——仓储风·实用·high turnover·与高端反向<br><br><strong>跨学派关系</strong>：与 brand_equity（brand experience）·CCT（消费者文化体验）·sensory marketing 一体。<br><br><strong>研究先驱</strong>：Kotler 1973 论文是 atmospherics 学派起点·后续 Russell-Mehrabian（PAD model）·Donovan-Rossiter 扩展·Pine-Gilmore experience economy（1999）整合。",
+    "ja": "<strong>Store Atmospherics（店舗の雰囲気）</strong>は <strong>Philip Kotler</strong> 1973 年同名論文「Atmospherics as a Marketing Tool」in <em>Journal of Retailing</em> 提唱·<strong>店舗物理環境</strong>をマーケティング・ツールに。Kotler 16 章·小売実務核心。<br><br><strong>核心命題</strong>：購買決定は製品だけでなく·<strong>購買情境</strong>にも依存。雰囲気が情緒に影響·情緒が購買に影響。<br><br><strong>5 大感覚設計要素</strong>（Pine-Gilmore experience economy）：① Sight ② Sound ③ Scent（Cinnabon の香り）④ Touch ⑤ Taste<br><br><strong>4 大 atmospherics 戦略</strong>：① Brand Reinforcement ② Customer Engagement ③ Purchase Stimulation ④ Differentiation<br><br><strong>典型例</strong>：① Apple Store（minimalist·spacious·natural light·wood·premium）② Lush（化粧品·香り強·色彩·体験式）③ MUJI（簡約·natural·calm·brand 一致）④ Tiffany（青·光·security·premium）⑤ ドン・キホーテ（圧縮陳列·驚喜·宝探し·完全逆 atmospherics）⑥ Costco（倉庫風·実用·高 turnover）<br><br><strong>他派との関係</strong>：brand_equity（brand experience）·CCT（消費者文化体験）·sensory marketing と一体。<br><br><strong>研究先駆</strong>：Kotler 1973 論文が atmospherics 学派起点·後続 Russell-Mehrabian（PAD model）·Donovan-Rossiter 拡張·Pine-Gilmore experience economy（1999）統合。"
+  },
+  "tags": [
+    "atmospherics",
+    "Kotler 1973",
+    "Apple Store",
+    "MUJI"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "零售战略的感官层·brand experience 物理实现",
+      "限": "成本高·难规模化·跨文化适用",
+      "例": "Apple Store·MUJI·ドンキ 都是教科书",
+      "应": "Kotler 16 章·retail 题·brand 题"
+    },
+    "ja": {
+      "限": "コスト高·規模化困難·異文化適用",
+      "例": "Apple Store·MUJI·ドンキ 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T09:26:39.085Z",
+  "updatedAt": "2026-04-30T09:26:39.085Z"
+}
