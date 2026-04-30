@@ -10,9 +10,9 @@
   ],
   "year": "1996",
   "title": {
-    "zh": "Brand Identity vs Image · 身份与形象",
-    "ja": "Brand Identity vs Image · アイデンティティと イメージ",
-    "en": "Brand Identity vs Image"
+    "zh": "品牌身份与品牌形象",
+    "ja": "ブランド・アイデンティティとブランド・イメージ",
+    "en": "Brand Identity vs Brand Image"
   },
   "body": {
     "zh": "<strong>Brand Identity</strong> 和 <strong>Brand Image</strong> 是 brand_equity 学派的对偶概念·标准答题点之一。<br><br><strong>Brand Identity（ブランド・アイデンティティ）</strong><br>定义：<strong>企业希望消费者如何看待 brand</strong>——marketer 的「应然」<br>来源：企业战略·brand vision·core values·brand 设计 (logo·色彩·tone of voice)<br>性质：主观·企业控制·向外发送的信号<br>例：Volvo 想被认为是「safety」·Apple 想被认为是「creativity」·UNIQLO 想被认为是「Lifewear」<br><br><strong>Brand Image（ブランド・イメージ）</strong><br>定义：<strong>消费者实际怎么看待 brand</strong>——consumer 的「实然」<br>来源：消费者实际体验·口碑·广告印象·过往经验<br>性质：客观·消费者持有·实际的认知<br>例：Volvo 在欧洲被认为是 safety·实现 identity·但在亚洲被认为是「中老年的车」·与 identity 偏离<br><br><strong>Identity-Image Gap（差距）</strong><br>差距 = identity 与 image 之间的距离·marketing 的核心任务是缩小这个 gap：<br>- gap 大 → marketing 失败·brand 战略需要调整<br>- gap 小 → marketing 成功·brand 高度统一<br><br><strong>4 种典型差距</strong>：<br>① Image > Identity（感知比期望好·罕见但发生·brand 应升级 identity）<br>② Image = Identity（理想·brand 一致）<br>③ Image < Identity（最常见·marketing 沟通不足）<br>④ Image ≠ Identity（错位·消费者对 brand 有完全不同的理解）<br><br><strong>Aaker brand identity prism（1996）</strong>：6 维分析 brand identity——physique·personality·culture·relationship·reflection·self-image。",
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T04:51:58.419Z",
-  "updatedAt": "2026-04-30T04:51:58.419Z"
+  "updatedAt": "2026-04-30T13:20:13.496Z"
 }
