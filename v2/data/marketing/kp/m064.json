@@ -1,0 +1,40 @@
+{
+  "id": "m064",
+  "discipline": "marketing",
+  "schools": [
+    "relationship"
+  ],
+  "scholars": [
+    "reichheld"
+  ],
+  "year": "2003",
+  "title": {
+    "zh": "NPS · Net Promoter Score",
+    "ja": "NPS · ネット・プロモーター・スコア",
+    "en": "Net Promoter Score"
+  },
+  "body": {
+    "zh": "<strong>NPS（Net Promoter Score·净推荐值）</strong>是 Frederick Reichheld 2003 年在 <em>Harvard Business Review</em> 发表 \"The One Number You Need to Grow\" 提出的<strong>简单到极致的客户忠诚度指标</strong>·全球最广泛使用的 KPI 之一。<br><br><strong>NPS 测量方法</strong>：<br>**一个问题**：「您会向朋友 / 同事推荐这个 brand 吗？请用 0-10 分回答。」<br><br><strong>3 类客户分类</strong>：<br>① <strong>Promoters（推荐者）</strong>——9-10 分·热情拥护<br>② <strong>Passives（被动者）</strong>——7-8 分·满意但不热情·会被竞争挖走<br>③ <strong>Detractors（贬低者）</strong>——0-6 分·不满意·会传播负面<br><br><strong>NPS 公式</strong>：<br>**NPS = % Promoters - % Detractors**<br><br>NPS 范围：-100 到 +100。一般标准：<br>- 0+ 算 OK<br>- 30+ 算好<br>- 50+ 算优秀<br>- 70+ 是 world-class（Apple·Tesla·Costco 在此区间）<br><br><strong>NPS 的 marketing 价值</strong>：<br>① <strong>简单</strong>——只问一题·客户配合度高<br>② <strong>预测性</strong>——Reichheld 研究：NPS 与 firm growth 正相关（虽然学术界对因果性有争议）<br>③ <strong>可比</strong>——跨公司·跨行业可比<br>④ <strong>行动指引</strong>——找出 detractors·service recovery·把 passives 转 promoters<br><br><strong>NPS 的 3 大批判</strong>：<br>① <strong>过简</strong>——一个问题不能反映复杂客户体验<br>② <strong>因果性争议</strong>——NPS 与 growth 相关·但不是因果（high NPS 是结果·不是原因）<br>③ <strong>跨文化偏差</strong>——日本人不爱给 9-10 分（克制文化）·美国人爱给（夸张文化）<br><br><strong>实务应用</strong>：<br>- <strong>关系性 NPS</strong>——总体 brand 关系评估（每年 / 每季度）<br>- <strong>交易性 NPS</strong>——每次具体交互后（购买·support·使用）<br>- 与 CLV·CRM 一起作为 customer success 三大 KPI<br><br><strong>跨学派关系</strong>：与 WOM·CLV 三位一体——NPS 测情感意向·CLV 测行为价值·WOM 是 NPS 的实际行为表现。",
+    "ja": "<strong>NPS（Net Promoter Score·ネット・プロモーター・スコア）</strong>は Frederick Reichheld 2003 年 <em>Harvard Business Review</em> 「The One Number You Need to Grow」発表の<strong>極めて簡単な顧客ロイヤルティ指標</strong>·世界で最も広く使用される KPI の一つ。<br><br><strong>測定方法</strong>：**一つの質問**：「あなたはこのブランドを友人 / 同僚に推奨しますか？0-10 点でお答えください。」<br><br><strong>3 類の顧客分類</strong>：① Promoters（9-10 点）② Passives（7-8 点）③ Detractors（0-6 点）<br><br><strong>NPS 公式</strong>：**NPS = % Promoters - % Detractors**<br><br>NPS 範囲：-100 から +100。一般基準：0+ OK·30+ 良·50+ 優·70+ world-class（Apple·Tesla·Costco）。<br><br><strong>マーケティング価値</strong>：① 簡単 ② 予測性·NPS と growth 正相関 ③ 比較可能·跨業界 ④ 行動指針<br><br><strong>3 大批判</strong>：① 過簡 ② 因果性論争·結果であって原因ではない ③ 異文化バイアス·日本人は 9-10 を控えめ（克制文化）·米国人は与えがち（誇張文化）<br><br><strong>実務応用</strong>：関係性 NPS（年次·四半期）·取引性 NPS（毎回交互後）·CLV·CRM と顧客成功 3 大 KPI。<br><br><strong>他派との関係</strong>：WOM·CLV と三位一体·NPS は情緒意向·CLV は行動価値·WOM は NPS の実際行動表現。"
+  },
+  "tags": [
+    "NPS",
+    "Reichheld",
+    "loyalty"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "relationship 学派最简单普及的 KPI·客户忠诚度的标准化测量",
+      "限": "过简·因果争议·跨文化偏差",
+      "例": "Apple NPS 70+·Costco NPS 80·教科书",
+      "应": "relationship 题·marketing dashboard 题"
+    },
+    "ja": {
+      "限": "過簡·因果論争·異文化バイアス",
+      "例": "Apple NPS 70+·Costco NPS 80·教科書"
+    }
+  },
+  "createdAt": "2026-04-30T05:04:12.523Z",
+  "updatedAt": "2026-04-30T05:04:12.523Z"
+}
