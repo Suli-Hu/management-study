@@ -28,6 +28,7 @@ const CLEANUP_PROBABILITY = 0.01;
 const PUBLIC_PATH_PREFIXES = [
   '/login',          // 登录页 + /login/sent
   '/api/auth/',      // login / verify / verify-code / logout
+  '/api/v1/webhook/',// v0.6.10: GitHub webhook (HMAC SHA-256 验签代替 cookie auth)
   '/favicon',
   '/robots.txt',
   '/_astro/',        // 静态资源（dev + prod）
