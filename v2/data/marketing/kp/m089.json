@@ -1,0 +1,42 @@
+{
+  "id": "m089",
+  "discipline": "marketing",
+  "schools": [
+    "digital_marketing",
+    "strategic_marketing"
+  ],
+  "scholars": [
+    "anderson_c"
+  ],
+  "year": "2006",
+  "title": {
+    "zh": "Long Tail · 长尾理论",
+    "ja": "Long Tail · ロングテール理論",
+    "en": "Long Tail Theory"
+  },
+  "body": {
+    "zh": "<strong>Long Tail（长尾理论）</strong>由 Chris Anderson（元 <em>Wired</em> 编辑）2006 年在『The Long Tail』提出·digital_marketing 学派的奠基理论·彻底改写了零售·media·内容产业的 marketing 逻辑。<br><br><strong>核心命题</strong>：在数字时代<br>① <strong>Head（畅销头部·hits）</strong>仍重要·但失去全部利润占有<br>② <strong>Tail（尾部·niches）</strong>变成可盈利的市场<br>③ 数字技术（零库存成本·algorithmic recommendation）使尾部消费可以累积成大市场<br><br><strong>3 个驱动力</strong>（Anderson 总结）：<br>① <strong>democratized production</strong>——人人能创作（YouTube·blog·podcast）<br>② <strong>democratized distribution</strong>——人人能 distribution（Amazon·Spotify）<br>③ <strong>connected supply and demand</strong>——algorithm 让需求 + 供给精准匹配（Netflix recommendation·Google search）<br><br><strong>vs 传统 80/20 规则</strong>：<br>- 传统：80% 销售来自 20% 产品（Pareto）<br>- 长尾：50% 销售来自 80% 「冷门」产品（Anderson 数据 Amazon·Netflix）<br><br><strong>典型案例</strong>：<br>① <strong>Amazon</strong>——卖几百万种书·top 100 占少部分销售<br>② <strong>Netflix</strong>——从 DVD 到 streaming·long tail 内容矩阵<br>③ <strong>Spotify·Apple Music</strong>——亿级歌曲·尾部 indie 音乐共同成大市场<br>④ <strong>YouTube</strong>——top creator 与 long tail creators 一起<br>⑤ <strong>Etsy</strong>——千万 artisan 的长尾<br><br><strong>marketing 战略启示</strong>：<br>① <strong>filter 取代 channel</strong>——consumer 用 algorithm·review 找到长尾产品<br>② <strong>aggregator 是新的 channel master</strong>——Amazon·Netflix·Spotify 是 long tail 之主<br>③ <strong>niche brand 可生存</strong>——不需要大众市场·只要 1000 真粉就 sustainable（Kevin Kelly 1000 True Fans）<br>④ <strong>recommendation algorithm 是核心</strong>——marketer 要懂如何让产品被推荐<br><br><strong>批判</strong>：<br>① <strong>Anita Elberse 2008</strong>·实证发现 hits 仍占主导·long tail 多数无利润<br>② <strong>aggregator 集中化</strong>——long tail 由几个 platform 控制（Amazon·Apple·Google）·新的 monopoly<br>③ <strong>discovery 困难</strong>——long tail 产品多·消费者难发现<br><br><strong>跨学派关系</strong>：① 与 effectuation·blue ocean 共享「市场创造」思维 ② 与 platform economics 紧密——长尾依赖平台 ③ 与 STP 学派形成对照——长尾允许 nano-segmentation·而非 macro segmentation。",
+    "ja": "<strong>Long Tail（ロングテール理論）</strong>は Chris Anderson（元 <em>Wired</em>）2006 年『The Long Tail』提唱·digital_marketing 学派の基礎理論·小売·メディア·コンテンツ産業のマーケティング論理を根本的に書き換え。<br><br><strong>核心命題</strong>：デジタル時代に ① Head（ヒット）は重要だが利益独占喪失 ② Tail（ニッチ）が収益市場に ③ 零在庫コスト + アルゴリズミック推薦が tail 累積を可能に。<br><br><strong>3 つの駆動力</strong>：① democratized production（YouTube·blog）② democratized distribution（Amazon·Spotify）③ connected supply and demand（algorithm·Netflix recommendation）<br><br><strong>vs 伝統 80/20 ルール</strong>：伝統は 80% 売上が 20% 製品·Long tail は 50% 売上が 80%「マイナー」製品<br><br><strong>典型事例</strong>：① Amazon ② Netflix ③ Spotify·Apple Music ④ YouTube ⑤ Etsy<br><br><strong>マーケティング戦略示唆</strong>：① filter がチャネル代替 ② aggregator が新チャネル主 ③ niche brand 生存可（1000 True Fans）④ recommendation algorithm が核心<br><br><strong>批判</strong>：① Anita Elberse 2008·hits 依然主導 ② aggregator 集中化（Amazon·Apple·Google モノポリー）③ discovery 困難<br><br><strong>他派との関係</strong>：① effectuation·blue ocean と「市場創造」思考共有 ② プラットフォーム経済と密接 ③ STP と対照·nano-segmentation 可能。"
+  },
+  "tags": [
+    "long tail",
+    "Anderson",
+    "Amazon",
+    "Netflix"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "digital_marketing 学派的奠基理论·零售·media 战略革命",
+      "限": "Anita Elberse 实证质疑·aggregator 集中化",
+      "例": "Amazon·Netflix·Spotify·YouTube 是教科书",
+      "应": "digital marketing 题·一橋·神戸 命题"
+    },
+    "ja": {
+      "限": "Anita Elberse 実証質疑·aggregator 集中化",
+      "例": "Amazon·Netflix·Spotify·YouTube 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T05:14:29.815Z",
+  "updatedAt": "2026-04-30T05:14:29.815Z"
+}
