@@ -1,0 +1,42 @@
+{
+  "id": "m086",
+  "discipline": "marketing",
+  "schools": [
+    "strategic_marketing"
+  ],
+  "scholars": [
+    "porter"
+  ],
+  "year": "1985",
+  "title": {
+    "zh": "Porter 3 つの基本戦略",
+    "ja": "Porter 3 つの基本戦略",
+    "en": "Porter's 3 Generic Strategies"
+  },
+  "body": {
+    "zh": "<strong>Porter 3 つの基本戦略（3 Generic Strategies）</strong>由 Michael Porter 1985 年『Competitive Advantage』提出·企业取得竞争优势的<strong>3 种基本路径</strong>。Pro Plus 第 12 章核心。<br><br><strong>3 战略</strong>：<br><br>① <strong>Cost Leadership（成本领导战略）</strong>——成为产业内成本最低者<br>来源：规模经济·学习曲线·process 创新·strict cost control<br>例：① Walmart「Always Low Prices」② Toyota lean production ③ Ryanair 极简航空<br><br>② <strong>Differentiation（差別化戦略）</strong>——提供产业内独特的产品 / 服务<br>来源：独特设计·brand·技术·客户服务·dealer network·feature<br>例：① Apple iPhone（design·ecosystem）② BMW（performance）③ Tesla（EV·autopilot）④ Hermès（luxury·craftsmanship）<br><br>③ <strong>Focus（集中战略）</strong>——专注于特定 segment·提供 cost leader 或 differentiation<br>子类型：<br>- <strong>Cost Focus</strong>（如 Aldi 在德国 grocery）<br>- <strong>Differentiation Focus</strong>（如 Ferrari 在 luxury sports car）<br><br><strong>「Stuck in the Middle」 警告</strong>：<br>Porter 警告·企业不能既试图 cost leader 又 differentiation——会「卡在中间」·什么都不擅长·失去竞争优势。<br>但后来理论（Hambrick·Reeves 等）质疑这一论断·提出 hybrid strategy 也可行（如 IKEA cost + differentiation）。<br><br><strong>vs STP 的关系</strong>：<br>- STP 的 Targeting 决定「对谁」<br>- Porter 3 战略决定「怎么赢」<br>- Focus 战略 = STP 的 Targeting 应用<br>- 两者互补·strategic_marketing 学派合并使用<br><br><strong>marketing 实务应用</strong>：<br>① <strong>brand positioning</strong>——根据选定战略设计 brand<br>② <strong>marketing mix</strong>——cost leader 重 4P 中的 Price·differentiation 重 Product·Promotion<br>③ <strong>组织能力</strong>——cost leader 需要 process excellence·differentiation 需要 R&D + brand building<br><br><strong>跨学派关系</strong>：① 与 STP Targeting 一体使用 ② 与 5 forces 一起构成 Porter 战略框架 ③ 与 effectuation·blue ocean 形成对照（后者跨越 cost vs differentiation）。",
+    "ja": "<strong>Porter 3 つの基本戦略（3 Generic Strategies）</strong>は Michael Porter 1985 年『Competitive Advantage』提唱·企業が競争優位を獲得する<strong>3 つの基本経路</strong>。Pro Plus 第 12 章核心。<br><br><strong>3 戦略</strong>：① <strong>Cost Leadership</strong>（規模の経済·学習曲線·コスト制御·Walmart·Toyota·Ryanair）② <strong>Differentiation</strong>（独自設計·brand·技術·Apple·BMW·Tesla·Hermès）③ <strong>Focus</strong>（特定 segment 集中·Cost Focus / Differentiation Focus·Aldi / Ferrari）<br><br><strong>「Stuck in the Middle」警告</strong>：cost leader と differentiation 同時試みは「中間で立往生」·後に hybrid strategy も可能と質疑（IKEA 等）。<br><br><strong>vs STP の関係</strong>：STP の Targeting は「誰に」·Porter 3 戦略は「どう勝つか」·Focus 戦略 = STP Targeting 応用·両者相補。<br><br><strong>マーケティング実務応用</strong>：① brand positioning ② marketing mix（cost leader は Price·differentiation は Product·Promotion）③ 組織能力<br><br><strong>他派との関係</strong>：① STP Targeting 一体 ② 5 forces と Porter 戦略フレーム ③ effectuation·blue ocean と対照（cost vs differentiation 跨越）。"
+  },
+  "tags": [
+    "Porter",
+    "3 strategies",
+    "cost leadership",
+    "differentiation",
+    "focus"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "strategic_marketing 学派核心战略框架·Pro Plus 第 12 章主题",
+      "限": "二分法过简·hybrid 也可能·数字时代变化",
+      "例": "Walmart·Apple·Hermès·Ferrari 是教科书",
+      "应": "Pro Plus 12 章·全 11 校 命题"
+    },
+    "ja": {
+      "限": "二分法過簡·hybrid 可能·デジタル時代変化",
+      "例": "Walmart·Apple·Hermès·Ferrari 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T05:14:24.582Z",
+  "updatedAt": "2026-04-30T05:14:24.582Z"
+}
