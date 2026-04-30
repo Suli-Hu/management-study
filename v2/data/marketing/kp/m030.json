@@ -10,9 +10,9 @@
   ],
   "year": "1962",
   "title": {
-    "zh": "Rogers 採用曲線 · 创新扩散理论",
-    "ja": "Rogers 採用曲線 · イノベーション普及理論",
-    "en": "Rogers Adoption Curve"
+    "zh": "Rogers 采用曲线·创新扩散理论",
+    "ja": "Rogers 採用曲線・イノベーション普及理論",
+    "en": "Rogers' Adoption Curve"
   },
   "body": {
     "zh": "<strong>Rogers 採用曲線（Adoption Curve·创新扩散理论）</strong>是 Everett Rogers 1962 年『Diffusion of Innovations』提出·marketing 战略·新製品開発·扩散研究的标准框架。Pro Plus 第 5 章把 Rogers 採用曲線归入<strong>消费者行为学派</strong>下「新製品の普及過程研究」。<br><br><strong>5 类用户</strong>（按正态分布·依采用时机区分）：<br><br>① <strong>Innovators（创新者·2.5%）</strong>——技术爱好者·愿冒风险·先尝鲜<br>例：Tesla 第一批车主·VR 头显先用者·Apple Vision Pro 早期 buyer<br><br>② <strong>Early Adopters（早期采用者·13.5%）</strong>——意见领袖·有威望·别人会跟随<br>例：科技博主·KOL·影响家人和朋友<br><br>③ <strong>Early Majority（早期多数·34%）</strong>——谨慎·待证明再采用<br>例：iPhone 在 iPhone 4 后才买的人·EV 车在普及后才买的家庭<br><br>④ <strong>Late Majority（后期多数·34%）</strong>——保守·受周围人压力<br>例：智能手机普及到「不买就落伍」才买的中老年<br><br>⑤ <strong>Laggards（落后者·16%）</strong>——抗拒变化·只在传统选择消失时才换<br>例：还在用功能机的人·拒用 SNS 的老人<br><br><strong>5 个采用决策影响因素</strong>：① relative advantage（相对优势）② compatibility（与既有兼容）③ complexity（复杂度低易采用）④ trialability（可试用）⑤ observability（可观察）<br><br><strong>跨学派关系</strong>：① 与 PLC 互补——Rogers 看消费者侧·PLC 看产品销售侧 ② Moore 1991『Crossing the Chasm』指出 early adopters → early majority 之间有「鸿沟」（chasm）·新製品扩散最易夭折在这里。<br><br><strong>marketing 战略启示</strong>：① 新品先打 innovator·early adopter（口碑·KOL）② 跨越 chasm 后才能打 majority（mass marketing）③ 不同阶段需要不同 marketing mix。",
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T04:51:47.729Z",
-  "updatedAt": "2026-04-30T04:51:47.729Z"
+  "updatedAt": "2026-04-30T13:19:40.004Z"
 }
