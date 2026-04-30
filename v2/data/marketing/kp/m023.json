@@ -9,9 +9,9 @@
   ],
   "year": "1955",
   "title": {
-    "zh": "S-O-R モデル · 刺激-机体-反应模型",
-    "ja": "S-O-R モデル",
-    "en": "S-O-R Model"
+    "zh": "S-O-R 模型·刺激·机体·反应",
+    "ja": "S-O-R モデル・刺激・有機体・反応",
+    "en": "Stimulus-Organism-Response Model"
   },
   "body": {
     "zh": "<strong>S-O-R モデル（Stimulus-Organism-Response）</strong>是消费者行为学派的<strong>基础概念框架</strong>·把消费者决策分解为「输入-处理-输出」。<br><br><strong>3 部分</strong>：<br><br>① <strong>S（Stimulus·刺激）</strong>——外部输入<br>来源：marketing 刺激（4P：产品·价格·渠道·促销）·环境刺激（经济·技术·政治·文化）。<br><br>② <strong>O（Organism·机体）</strong>——消费者内部处理<br>包含：消费者特性（文化·社会·个人·心理因素）+ 决策过程（5 步：问题识别→信息搜索→评价→购买→后购）。<br><br>③ <strong>R（Response·反应）</strong>——输出<br>包括：产品选择·brand 选择·购买时机·购买数量·购买频度。<br><br><strong>核心思想</strong>：marketing 不能直接控制 R·只能通过 S·让 O 内部处理后输出有利的 R。「<strong>black box</strong>」（黑盒）的 O 是 marketing 研究的核心对象。<br><br><strong>历史地位</strong>：S-O-R 是认知心理学派 marketing 的<strong>范式起点</strong>·Howard-Sheth 1969·EBM 1968·Bettman 1979 等具体模型都建立在 S-O-R 框架之上。<br><br><strong>跨学派关系</strong>：与 CCT 学派（人文范式）形成对照——CCT 拒绝把消费者当成可以输入-输出建模的「机体」·而是视为<strong>意味生产者</strong>。",
@@ -35,5 +35,5 @@
     }
   },
   "createdAt": "2026-04-30T04:51:35.791Z",
-  "updatedAt": "2026-04-30T04:51:35.791Z"
+  "updatedAt": "2026-04-30T13:19:25.595Z"
 }
