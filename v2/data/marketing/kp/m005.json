@@ -11,8 +11,8 @@
   ],
   "year": "2003",
   "title": {
-    "zh": "POD vs POP · 差別化 vs 類似化点",
-    "ja": "POD vs POP · 差別化と類似化ポイント",
+    "zh": "差別化点 POD vs 类似化点 POP",
+    "ja": "POD vs POP・差別化点と類似化点",
     "en": "POD vs POP · Differentiation & Parity"
   },
   "body": {
@@ -39,5 +39,5 @@
     }
   },
   "createdAt": "2026-04-30T04:40:17.764Z",
-  "updatedAt": "2026-04-30T04:40:17.764Z"
+  "updatedAt": "2026-04-30T13:18:47.506Z"
 }
