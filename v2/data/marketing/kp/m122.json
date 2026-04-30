@@ -1,0 +1,43 @@
+{
+  "id": "m122",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "consumer_behavior"
+  ],
+  "scholars": [
+    "kotler",
+    "kahneman"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "Psychological Pricing · 心理价格",
+    "ja": "心理価格 · Psychological Pricing",
+    "en": "Psychological Pricing"
+  },
+  "body": {
+    "zh": "<strong>Psychological Pricing（心理价格）</strong>是利用消费者<strong>非理性认知偏差</strong>设计价格的战略·Kotler 11 章·Pro Plus 第 9 章核心。<br><br><strong>5 大心理价格类型</strong>：<br>① <strong>Odd Pricing（端数价格·9 分尾）</strong>——¥1,990 比 ¥2,000 感觉便宜很多（left-digit effect）<br>② <strong>Prestige Pricing（威光价格）</strong>——高价 = 高质量信号·奢侈品定价<br>③ <strong>Customary Pricing（慣習价格）</strong>——日本巧克力 ¥100·消费者期待<br>④ <strong>Reference Pricing（参照价格）</strong>——「原价 ¥10,000 → 现价 ¥7,000」激活 anchor + loss aversion<br>⑤ <strong>Bundling Pricing（组合定价）</strong>——「3 件套 ¥1,500」比单买 3×¥600 感觉便宜<br><br><strong>背后的认知机制</strong>（行为经济学）：<br>① <strong>Anchoring</strong>（锚定）—— reference price<br>② <strong>Loss Aversion</strong>（损失厌恶）——「错过折扣 = 损失」<br>③ <strong>Mental Accounting</strong>（心理账户）—— bundle 价格被算作一项<br>④ <strong>Left-Digit Effect</strong>—— 9 vs 0 的强烈差异感<br><br><strong>典型例</strong>：① iPhone 起价 $799（不是 $800）② 711 商品 ¥98·¥138（端数）③ Hermès 高价制造稀缺感 ④ Costco 三明治套餐捆绑<br><br><strong>跨学派关系</strong>：与 consumer_behavior BDT（m106）·Prospect Theory（m028）直接对接·是行为经济学 marketing 的具体应用。",
+    "ja": "<strong>Psychological Pricing（心理価格）</strong>は消費者の<strong>非合理認知バイアス</strong>を利用する価格戦略·Kotler 11 章·Pro Plus 第 9 章核心。<br><br><strong>5 大心理価格類型</strong>：① <strong>Odd Pricing（端数·¥1,990 vs ¥2,000）</strong> ② <strong>Prestige Pricing（威光·高価=高品質シグナル）</strong> ③ <strong>Customary Pricing（慣習·日本チョコ ¥100）</strong> ④ <strong>Reference Pricing（参照·「元価 → 現価」）</strong> ⑤ <strong>Bundling Pricing（組合·3 件 ¥1,500）</strong><br><br><strong>背後の認知メカニズム</strong>：① Anchoring ② Loss Aversion ③ Mental Accounting ④ Left-Digit Effect<br><br><strong>典型例</strong>：① iPhone 起価 $799 ② 711 商品 ¥98·¥138 ③ Hermès 高価·稀少感 ④ Costco サンドイッチ組合<br><br><strong>他派との関係</strong>：consumer_behavior BDT（m106）·プロスペクト理論（m028）と直接接続·行動経済学マーケティングの具体応用。"
+  },
+  "tags": [
+    "psychological pricing",
+    "odd pricing",
+    "prestige",
+    "reference"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "价格战略的认知科学化·marketing 实务工具",
+      "限": "过度使用消费者反感·跨文化适用",
+      "例": "iPhone $799·Hermès·Costco bundle 是教科书",
+      "应": "Kotler 11 章·价格 + BDT 题"
+    },
+    "ja": {
+      "限": "過剰使用は消費者反感·異文化適用",
+      "例": "iPhone $799·Hermès·Costco bundle 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:35:42.624Z",
+  "updatedAt": "2026-04-30T07:35:42.624Z"
+}
