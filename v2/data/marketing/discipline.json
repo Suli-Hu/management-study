@@ -83,8 +83,27 @@
         "AISAS"
       ],
       "schools": []
+    },
+    {
+      "key": "growth_relationship",
+      "title": {
+        "zh": "成长与关系",
+        "ja": "成長と関係",
+        "en": "Growth & Relationship"
+      },
+      "desc": {
+        "zh": "长期成长与顾客关系建设——marketing 的「长尾」维度。包含关系营销学派（Berry·Gummesson·嶋口充輝·和田充夫·CRM·CLV·NPS·MAC）、服务主导逻辑（SDL·Vargo-Lusch 范式革命·co-creation·value-in-use）、市场创造学派（Sarasvathy·栗木契·effectuation）、社会营销学派（CSR·コンシューマリズム·Kennedy 4 权利·BOP·green marketing）。",
+        "ja": "長期的成長と顧客関係構築——マーケティングの「ロングテール」次元。リレーションシップ・マーケティング学派（Berry·Gummesson·嶋口充輝·和田充夫·CRM·CLV·NPS·MAC）·サービス主導ロジック（SDL·Vargo-Lusch パラダイム革命·co-creation·value-in-use）·市場創造学派（Sarasvathy·栗木契·エフェクチュエーション）·ソーシャル・マーケティング学派（CSR·コンシューマリズム·Kennedy 4 つの権利·BOP·グリーン・マーケティング）を含む。"
+      },
+      "tags": [
+        "关系营销",
+        "CRM",
+        "SDL",
+        "CSR"
+      ],
+      "schools": []
     }
   ],
   "createdAt": "2026-04-27T11:21:24.729Z",
-  "updatedAt": "2026-04-30T04:16:28.327Z"
+  "updatedAt": "2026-04-30T04:16:30.204Z"
 }
