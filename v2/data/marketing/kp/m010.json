@@ -9,8 +9,8 @@
   ],
   "year": "1965",
   "title": {
-    "zh": "PLC 概念 · 产品生命周期",
-    "ja": "PLC 概念 · 製品ライフサイクル",
+    "zh": "产品生命周期 PLC 概念",
+    "ja": "製品ライフサイクル PLC 概念",
     "en": "Product Life Cycle (PLC) Concept"
   },
   "body": {
@@ -36,5 +36,5 @@
     }
   },
   "createdAt": "2026-04-30T04:40:26.901Z",
-  "updatedAt": "2026-04-30T04:40:26.901Z"
+  "updatedAt": "2026-04-30T13:18:57.553Z"
 }
