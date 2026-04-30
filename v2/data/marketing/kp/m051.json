@@ -10,8 +10,8 @@
   ],
   "year": "1980",
   "title": {
-    "zh": "POS·EOS·EDI·QR · 数字流通工具",
-    "ja": "POS·EOS·EDI·QR · デジタル流通ツール",
+    "zh": "数字流通工具·POS·EOS·EDI·QR",
+    "ja": "デジタル流通ツール・POS・EOS・EDI・QR",
     "en": "Digital Distribution Tools"
   },
   "body": {
@@ -39,5 +39,5 @@
     }
   },
   "createdAt": "2026-04-30T05:03:49.810Z",
-  "updatedAt": "2026-04-30T05:03:49.810Z"
+  "updatedAt": "2026-04-30T13:20:47.240Z"
 }
