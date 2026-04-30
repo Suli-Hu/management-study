@@ -1,0 +1,41 @@
+{
+  "id": "m163",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "consumer_behavior"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "Demand Estimation · 需求测定方法",
+    "ja": "需要の決定",
+    "en": "Demand Estimation"
+  },
+  "body": {
+    "zh": "<strong>Demand Estimation（需求决定·需要的测定）</strong>是 demand-based pricing 的<strong>关键技能</strong>·测量给定价格下的预期需求量。Kotler 11 章·Pro Plus 9 章核心。<br><br><strong>3 大测量层次</strong>：<br>① <strong>Total Market Demand（市场总需求）</strong>——全部消费者·全部价格·特定时段总数<br>② <strong>Market Forecast（市场预测）</strong>——给定 marketing 投入时·特定时段需求<br>③ <strong>Company Demand</strong>——给定竞争环境下·企业自己的销售预测<br><br><strong>4 大需求估算方法</strong>：<br>① <strong>Survey of Buyers' Intentions</strong>——直接问消费者「你会买吗·按什么价」<br>② <strong>Composite of Sales Force Opinions</strong>——汇总销售员的预测<br>③ <strong>Expert Opinion</strong>——Delphi method·industry analyst<br>④ <strong>Past Sales Analysis</strong>——time series·moving average·exponential smoothing·econometric model<br><br><strong>5 大影响需求因素</strong>（Kotler 11 章）：<br>① <strong>Price Sensitivity</strong>（详见 m121 价格弹性）<br>② <strong>Unique Value</strong>——独特价值降低敏感度<br>③ <strong>Substitute Awareness</strong>——替代品越知越敏感<br>④ <strong>Difficult Comparison</strong>——难比较·敏感度低<br>⑤ <strong>Total Expenditure</strong>——占收入比例越大·敏感度越高<br><br><strong>marketing 实务应用</strong>：<br>① <strong>新品定价</strong>——结合 conjoint analysis（m146）<br>② <strong>price change 影响测算</strong><br>③ <strong>capacity planning</strong>——生产·库存·渠道<br>④ <strong>scenario analysis</strong>——经济好 / 坏 / 中各情境<br><br><strong>跨学派关系</strong>：与 marketing research（m145·m146）·consumer behavior（m121）·MMM（m147）一致。",
+    "ja": "<strong>Demand Estimation（需要の決定）</strong>は demand-based pricing の<strong>主要スキル</strong>·所与価格下の予期需要量測定。Kotler 11 章·Pro Plus 9 章核心。<br><br><strong>3 大測量層次</strong>：① Total Market Demand ② Market Forecast ③ Company Demand<br><br><strong>4 大需要推定方法</strong>：① Survey of Buyers' Intentions ② Composite of Sales Force Opinions ③ Expert Opinion（Delphi method）④ Past Sales Analysis（time series·moving average·econometric）<br><br><strong>5 大影響需要要因</strong>（Kotler 11 章）：① Price Sensitivity ② Unique Value ③ Substitute Awareness ④ Difficult Comparison ⑤ Total Expenditure<br><br><strong>マーケティング実務応用</strong>：① 新品定价（conjoint analysis·m146 結合）② price change 影響測算 ③ capacity planning ④ scenario analysis<br><br><strong>他派との関係</strong>：marketing research（m145·m146）·consumer behavior（m121）·MMM（m147）と一致。"
+  },
+  "tags": [
+    "demand estimation",
+    "forecasting",
+    "Kotler"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "价格 + 需求的科学化测量·实务定价基础",
+      "限": "预测精度依 data·消费者意向 vs 行动 gap",
+      "例": "任何新品 launch 前都要 demand estimation",
+      "应": "Kotler 11 章·价格题"
+    },
+    "ja": {
+      "限": "予測精度はデータ依存·消費者意向 vs 行動 gap",
+      "例": "全新品 launch 前 demand estimation"
+    }
+  },
+  "createdAt": "2026-04-30T09:26:18.401Z",
+  "updatedAt": "2026-04-30T09:26:18.401Z"
+}
