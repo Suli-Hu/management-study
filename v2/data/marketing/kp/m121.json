@@ -1,0 +1,40 @@
+{
+  "id": "m121",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "consumer_behavior"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "Price Elasticity · 价格弹力性",
+    "ja": "価格弾力性 · Price Elasticity",
+    "en": "Price Elasticity"
+  },
+  "body": {
+    "zh": "<strong>Price Elasticity（价格弹力性）</strong>是 demand-based pricing 的核心概念·测量价格变化对需求的影响程度。<br><br><strong>公式</strong>：<br>**E = (% Change in Quantity Demanded) / (% Change in Price)**<br><br><strong>3 类弹力性</strong>：<br>① <strong>Elastic（>1）</strong>——价格敏感·小降价 → 大需求增<br>例：奢侈品·非必需品<br>② <strong>Inelastic（<1）</strong>——价格不敏感·价格变化对需求影响小<br>例：药品·必需食品·上瘾品<br>③ <strong>Unitary（=1）</strong>——比例对应<br><br><strong>影响弹力性的 5 大因素</strong>：① 替代品有无 ② 必需 vs 奢侈 ③ 占收入比例 ④ 时间长度（短期不弹性·长期弹性）⑤ brand loyalty<br><br><strong>Cross Elasticity（交叉弹力性）</strong>：<br>**E_xy = (% Change in Demand for X) / (% Change in Price of Y)**<br>正 = 替代品（Pepsi 涨价 → Coca-Cola 需求增）<br>负 = 互补品（PS5 涨价 → 游戏需求降）<br><br><strong>marketing 实务应用</strong>：① 定价决策 ② 促销 ROI 预测 ③ 替代 / 互补品识别 ④ 价格战略调整<br><br><strong>跨学派关系</strong>：与 consumer_behavior 价格敏感度·perceived value 一致·与 BDT anchoring·loss aversion 互补。",
+    "ja": "<strong>価格弾力性（Price Elasticity）</strong>は demand-based pricing の核心概念·価格変化が需要に与える影響程度を測定。<br><br><strong>公式</strong>：**E = (% 需要量変化) / (% 価格変化)**<br><br><strong>3 類弾力性</strong>：① Elastic（>1·価格敏感·ラグジュアリー）② Inelastic（<1·価格非敏感·薬品·必需食品）③ Unitary（=1）<br><br><strong>影響要因 5</strong>：① 代替品有無 ② 必需 vs 贅沢 ③ 収入比 ④ 時間（短期非弾性·長期弾性）⑤ ブランド・ロイヤルティ<br><br><strong>Cross Elasticity（交差弾力性）</strong>：正 = 代替品（Pepsi 値上 → Coca-Cola 需要増）·負 = 補完品（PS5 値上 → ゲーム需要減）<br><br><strong>マーケティング実務応用</strong>：① 価格意思決定 ② プロモーション ROI 予測 ③ 代替·補完品識別 ④ 価格戦略調整<br><br><strong>他派との関係</strong>：consumer_behavior 価格敏感度·perceived value と一致·BDT anchoring·loss aversion と相補。"
+  },
+  "tags": [
+    "price elasticity",
+    "cross elasticity"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "定价决策的核心数学化工具·实务必学",
+      "限": "测量难·短期 vs 长期不同",
+      "例": "药品低弹性·奢侈品高弹性",
+      "应": "Kotler 11 章·价格题"
+    },
+    "ja": {
+      "限": "測定困難·短期 vs 長期異",
+      "例": "薬品低弾性·ラグジュアリー高弾性"
+    }
+  },
+  "createdAt": "2026-04-30T07:35:40.894Z",
+  "updatedAt": "2026-04-30T07:35:40.894Z"
+}
