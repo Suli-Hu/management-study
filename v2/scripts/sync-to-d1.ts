@@ -518,7 +518,66 @@ mkdirSync(OUT_DIR, { recursive: true });
 const outputs: Array<{ name: string; path: string; sizeKb: string; lines: number }> = [];
 let totalLines = 0;
 let totalKb = 0;
+
+// v0.6.16: 02_kp shard 按 ~500KB 切多个 02_kp_NNN.sql。
+//   背景：marketing 老师推 KP 量增加后，单个 02_kp.sql 涨到 1.9MB，超 D1 单次
+//   batch 上限 + 本地 miniflare workerd ECONNRESET。切片让每个文件独立 apply。
+//   命名 02_kp_NNN（3 位 zero-pad）保证字典序 = 数字序。
+const KP_SHARD_MAX_BYTES = 500_000;
+
+function splitKpShard(lines: string[]): Array<{ name: string; content: string }> {
+  // 头部 = 自动生成注释段（前缀 -- 或空行，直到第一行真 SQL）
+  let headerEnd = 0;
+  for (let i = 0; i < lines.length; i++) {
+    const t = lines[i].trim();
+    if (t.startsWith('--') || t === '') continue;
+    headerEnd = i;
+    break;
+  }
+  const header = lines.slice(0, headerEnd);
+  const body = lines.slice(headerEnd);
+
+  const shards: string[][] = [];
+  let cur: string[] = [];
+  let curBytes = 0;
+  for (const line of body) {
+    const lb = line.length + 1; // +1 for \n
+    if (curBytes + lb > KP_SHARD_MAX_BYTES && cur.length > 0) {
+      shards.push(cur); cur = []; curBytes = 0;
+    }
+    cur.push(line); curBytes += lb;
+  }
+  if (cur.length > 0) shards.push(cur);
+
+  return shards.map((shardLines, i) => {
+    const idx = String(i + 1).padStart(3, '0');
+    const total = String(shards.length).padStart(3, '0');
+    const content = [
+      ...header,
+      `-- Shard ${idx}/${total} (${shardLines.length} lines)`,
+      '',
+      ...shardLines,
+    ].join('\n') + '\n';
+    return { name: `02_kp_${idx}`, content };
+  });
+}
+
 for (const [name, lines] of Object.entries(sections)) {
+  if (name === '02_kp') {
+    // 切片写出多个 02_kp_NNN.sql；同时清理可能残留的旧 02_kp.sql
+    const legacy = join(OUT_DIR, '02_kp.sql');
+    if (existsSync(legacy)) writeFileSync(legacy, '-- replaced by 02_kp_NNN.sql shards (v0.6.16)\n', 'utf-8');
+    const shards = splitKpShard(lines);
+    for (const { name: shardName, content } of shards) {
+      const path = join(OUT_DIR, `${shardName}.sql`);
+      writeFileSync(path, content, 'utf-8');
+      const sizeKb = content.length / 1024;
+      const lc = content.split('\n').length;
+      outputs.push({ name: shardName, path, sizeKb: sizeKb.toFixed(1), lines: lc });
+      totalLines += lc; totalKb += sizeKb;
+    }
+    continue;
+  }
   const path = join(OUT_DIR, `${name}.sql`);
   const content = lines.join('\n') + '\n';
   writeFileSync(path, content, 'utf-8');
