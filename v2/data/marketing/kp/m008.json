@@ -10,9 +10,9 @@
   ],
   "year": "1990",
   "title": {
-    "zh": "4C · 消费者视角的 Marketing Mix",
-    "ja": "4C · 消費者視点のマーケティング・ミックス",
-    "en": "4C · Consumer-side Marketing Mix"
+    "zh": "4C·消费者视角营销组合",
+    "ja": "4C・消費者視点のマーケティング・ミックス",
+    "en": "4C · Consumer-Side Marketing Mix"
   },
   "body": {
     "zh": "<strong>4C</strong>由 <strong>Robert Lauterborn</strong>（1990）提出·把 4P 从企业视角翻转为<strong>消费者视角</strong>·呼应 marketing concept 学派的「顾客中心」哲学。<br><br><strong>4P → 4C 对应</strong>：<br>① <strong>Product → Customer Value（顾客价值）</strong>——不要问「我卖什么产品」·要问「顾客买的是什么<strong>价值</strong>」<br>② <strong>Price → Cost（顾客成本）</strong>——不只是 list price·还包括时间·心理·学习·机会成本<br>③ <strong>Place → Convenience（便利性）</strong>——不要问「我把商品摆在哪」·要问「顾客获得最方便的方式」<br>④ <strong>Promotion → Communication（沟通）</strong>——不要问「我怎么宣传」·要问「我怎么与顾客<strong>对话</strong>」<br><br><strong>哲学意义</strong>：4C 是 marketing concept 学派（Levitt·Drucker 顾客中心）的实务表达·把 marketing 从「企业 push」转向「顾客 pull」的认知转换。<br><br><strong>实务影响</strong>：① brand 设计从「我有什么功能」转向「顾客解决什么问题」（Job-to-be-done 思维·Christensen）② 价格策略考虑总成本而非单价 ③ omnichannel 强调便利性而非单 channel 推广 ④ IMC 强调对话而非单向广告。<br><br><strong>跨学派关系</strong>：与 SDL（co-creation·value-in-use）共享「顾客是价值定义者」的哲学。与 relationship marketing 共享「与顾客对话」的态度。",
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T04:40:23.320Z",
-  "updatedAt": "2026-04-30T04:40:23.320Z"
+  "updatedAt": "2026-04-30T13:18:53.619Z"
 }
