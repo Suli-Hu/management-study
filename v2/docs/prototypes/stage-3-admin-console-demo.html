@@ -656,17 +656,15 @@
           </div>
           <p class="subtitle">创建、编辑、删除学科；负责人和 Token 从每个学科进入管理。</p>
         </div>
-        <button type="button" class="btn btn-primary" id="open-create-btn">+ 新建学科</button>
       </header>
 
       <section class="stage-note" aria-label="Stage 3 compatibility notes">
         <p>
           <strong>这版样机沿用当前 v2 页面。</strong>
-          变化只放在能力层：新学科线上立即可用、不同学科数据自动隔离、负责人可以拿 Token 维护内容。
+          变化只放在能力层：新学科线上立即可用，负责人可以拿 Token 维护内容，不需要再走 GitHub。
         </p>
         <div class="chips">
           <span class="chip chip-success">线上立即生效</span>
-          <span class="chip chip-success">学科数据隔离</span>
           <span class="chip chip-warning">不需要 GitHub</span>
         </div>
       </section>
@@ -675,12 +673,7 @@
         <div class="toolbar-title">学科列表</div>
         <div class="filters">
           <input class="input" type="search" placeholder="搜索学科" id="search-input" />
-          <select class="select" id="status-filter" aria-label="筛选学科状态">
-            <option value="all">全部状态</option>
-            <option value="ready">已上线</option>
-            <option value="draft">空学科</option>
-            <option value="needs-owner">缺负责人</option>
-          </select>
+          <button type="button" class="btn btn-primary" id="open-create-btn">+ 新建学科</button>
         </div>
       </div>
 
@@ -690,8 +683,8 @@
         <h2>Stage 3 只补这三件事</h2>
         <div class="review-grid">
           <div class="review-card">
-            <h3>1. 新建仍在右上角</h3>
-            <p>沿用现有 drawer。用户不用重新学习入口。</p>
+            <h3>1. 新建放在学科列表</h3>
+            <p>操作贴着对象，不做成全局主按钮。</p>
             <code>创建后线上立即可用</code>
           </div>
           <div class="review-card">
@@ -787,7 +780,7 @@
             <input class="input" id="edit-tagline-ja" />
           </label>
           <section class="stage-note">
-            <p><strong>保存预览：</strong>这里只编辑学科名称和定位。负责人、Token、内容数量在学科详情里管理。</p>
+            <p><strong>保存预览：</strong>这里只编辑学科名称和定位。负责人、Token、内容数量在后续管理页里处理。</p>
           </section>
           <div class="advanced-note">内部标识会保持不变，避免已有链接和 API 调用失效。这个字段默认不展示给普通后台用户。</div>
         </div>
@@ -853,7 +846,6 @@
       const list = document.querySelector("#disc-list");
       const count = document.querySelector("#disc-count");
       const searchInput = document.querySelector("#search-input");
-      const statusFilter = document.querySelector("#status-filter");
       const createDrawer = document.querySelector("#create-drawer");
       const editDrawer = document.querySelector("#edit-drawer");
       const deleteConfirm = document.querySelector("#delete-confirm");
@@ -879,20 +871,12 @@
         showToast.timer = window.setTimeout(() => toast.classList.remove("is-visible"), 1800);
       }
 
-      function rowStatus(discipline) {
-        if (!discipline.owner) return "needs-owner";
-        if (isEmpty(discipline)) return "draft";
-        return "ready";
-      }
-
       function render() {
         const query = searchInput.value.trim().toLowerCase();
-        const status = statusFilter.value;
         const filtered = disciplines.filter((discipline) => {
           const haystack = `${discipline.key} ${discipline.title.zh} ${discipline.title.en ?? ""}`.toLowerCase();
           const matchesQuery = !query || haystack.includes(query);
-          const matchesStatus = status === "all" || rowStatus(discipline) === status;
-          return matchesQuery && matchesStatus;
+          return matchesQuery;
         });
 
         count.textContent = `共 ${filtered.length} 个学科`;
@@ -923,7 +907,6 @@
                 <div class="disc-meta">
                   ${ownerChip}
                   ${tokenChip}
-                  <span class="chip chip-success">数据已隔离</span>
                 </div>
                 <div class="disc-counts ${empty ? "is-all-zero" : ""}">
                   <span class="disc-count"><span class="disc-count-n">${c.view}</span><span class="disc-count-label">视角</span></span>
@@ -933,7 +916,6 @@
                 </div>
               </div>
               <div class="disc-actions">
-                <button type="button" class="btn" data-detail="${discipline.key}">详情</button>
                 <button type="button" class="btn" data-edit="${discipline.key}">编辑</button>
                 ${deleteButton}
               </div>
@@ -946,12 +928,6 @@
         });
         document.querySelectorAll("[data-delete]").forEach((button) => {
           button.addEventListener("click", () => openDelete(button.dataset.delete));
-        });
-        document.querySelectorAll("[data-detail]").forEach((button) => {
-          button.addEventListener("click", () => {
-            const discipline = findDiscipline(button.dataset.detail);
-            showToast(`${discipline.title.zh}详情页：负责人、Token、API 指引用 tabs 管理`);
-          });
         });
         document.querySelectorAll("[data-owner]").forEach((button) => {
           button.addEventListener("click", () => {
@@ -1068,7 +1044,6 @@
       });
 
       searchInput.addEventListener("input", render);
-      statusFilter.addEventListener("change", render);
 
       render();
     </script>
