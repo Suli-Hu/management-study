@@ -8,6 +8,9 @@
  *
  * 删默认视图（isDefault=true）受 schema 不阻拦，但前端 ViewMenu 应 disable。
  * 这里硬约束：删 isDefault 的视图返 409，避免学派列表页失去渲染源。
+ *
+ * @deprecated Use /api/views/:id?discipline=<key>. The API-first route writes
+ * directly to D1 and enforces tenant membership server-side.
  */
 
 import type { APIRoute } from 'astro';
@@ -17,14 +20,21 @@ import { handleGet, handlePut, handleDelete, jsonRes, type EditError } from '~/l
 const pathFor = (id: string, discipline: string) =>
   `v2/data/${discipline}/views/${id}.json`;
 
-export const GET: APIRoute = (ctx) => handleGet({
+const deprecate = (response: Response): Response => {
+  const headers = new Headers(response.headers);
+  headers.set('deprecation', 'true');
+  headers.set('link', '</api/views>; rel="successor-version"');
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+};
+
+export const GET: APIRoute = async (ctx) => deprecate(await handleGet({
   ctx,
   pathFor,
   resolveDiscipline: async () => ctx.params.discipline ?? null,
   urlIdentifier: () => ctx.params.id,
-});
+}));
 
-export const PUT: APIRoute = (ctx) => handlePut({
+export const PUT: APIRoute = async (ctx) => deprecate(await handlePut({
   ctx,
   schema: View,
   pathFor: (obj) => pathFor(obj.id, obj.discipline),
@@ -32,13 +42,13 @@ export const PUT: APIRoute = (ctx) => handlePut({
   identifierMatch: (urlId, obj) => obj.id === urlId && obj.discipline === ctx.params.discipline,
   urlIdentifier: () => ctx.params.id,
   forceFields: () => ({ updatedAt: new Date().toISOString() }),
-});
+}));
 
 export const DELETE: APIRoute = async (ctx) => {
-  if (!ctx.locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+  if (!ctx.locals.user) return deprecate(jsonRes<EditError>(403, { ok: false, reason: 'not_admin' }));
   const { discipline, id } = ctx.params;
-  if (!discipline || !id) return jsonRes<EditError>(400, { ok: false, reason: 'bad_request' });
-  if (!ctx.locals.canEdit(discipline)) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+  if (!discipline || !id) return deprecate(jsonRes<EditError>(400, { ok: false, reason: 'bad_request' }));
+  if (!ctx.locals.canEdit(discipline)) return deprecate(jsonRes<EditError>(403, { ok: false, reason: 'not_admin' }));
 
   // 防呆：不允许删除当前 discipline 的 isDefault 视图
   const row = await ctx.locals.runtime.env.DB
@@ -46,18 +56,18 @@ export const DELETE: APIRoute = async (ctx) => {
     .bind(id, discipline)
     .first() as { is_default: number } | null;
   if (row?.is_default) {
-    return jsonRes(409, {
+    return deprecate(jsonRes(409, {
       ok: false,
       reason: 'has_dependents' as const,
       detail: '默认视图不能删除（学派列表页需要它当兜底渲染）。先把另一个视图设为默认再来删。',
-    });
+    }));
   }
 
-  return handleDelete({
+  return deprecate(await handleDelete({
     ctx,
     pathFor,
     objectLabel: (i) => `view/${discipline}/${i}`,
     resolveDiscipline: async () => discipline,
     urlIdentifier: () => id,
-  });
+  }));
 };

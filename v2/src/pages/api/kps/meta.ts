@@ -21,6 +21,15 @@ interface ScholarOptionRow {
 
 interface DisciplineTagsRow {
   tags_json: string;
+  themes_json: string;
+}
+
+interface ViewOptionRow {
+  id: string;
+  name: string;
+  icon: string;
+  is_default: number;
+  position: number;
 }
 
 function parseJson<T>(value: string | null | undefined, fallback: T): T {
@@ -37,7 +46,7 @@ export const GET: APIRoute = async (context) => {
   if (!tenant.ok) return noStore(json(tenant.status, { ok: false, reason: tenant.reason }));
 
   const db = context.locals.runtime.env.DB;
-  const [schoolsRes, scholarsRes, tagsRow] = await Promise.all([
+  const [schoolsRes, scholarsRes, tagsRow, viewsRes] = await Promise.all([
     db.prepare(`
       SELECT s.key, s.title_zh, s.title_en, s.tags_json,
         (SELECT COUNT(*) FROM kp_school ks WHERE ks.school_key = s.key) as kp_count
@@ -52,9 +61,15 @@ export const GET: APIRoute = async (context) => {
       WHERE sc.discipline = ?
       ORDER BY sc.name_zh ASC, sc.key ASC
     `).bind(tenant.tenant.discipline).all<ScholarOptionRow>(),
-    db.prepare('SELECT tags_json FROM discipline WHERE key = ?')
+    db.prepare('SELECT tags_json, themes_json FROM discipline WHERE key = ?')
       .bind(tenant.tenant.discipline)
       .first<DisciplineTagsRow>(),
+    db.prepare(`
+      SELECT id, name, icon, is_default, position
+      FROM view
+      WHERE discipline = ?
+      ORDER BY position ASC, id ASC
+    `).bind(tenant.tenant.discipline).all<ViewOptionRow>(),
   ]);
 
   return noStore(json(200, {
@@ -62,6 +77,7 @@ export const GET: APIRoute = async (context) => {
     tenant: tenant.tenant,
     formats: KpFormat.options,
     tags: parseJson(tagsRow?.tags_json, []),
+    themes: parseJson(tagsRow?.themes_json, []),
     schools: (schoolsRes.results ?? []).map((s) => ({
       key: s.key,
       title: { zh: s.title_zh, ...(s.title_en ? { en: s.title_en } : {}) },
@@ -73,6 +89,13 @@ export const GET: APIRoute = async (context) => {
       name: { zh: s.name_zh, ...(s.name_en ? { en: s.name_en } : {}) },
       tags: parseJson<string[]>(s.tags_json, []),
       kp_count: s.kp_count,
+    })),
+    views: (viewsRes.results ?? []).map((v) => ({
+      id: v.id,
+      name: v.name,
+      icon: v.icon,
+      isDefault: Boolean(v.is_default),
+      position: v.position,
     })),
   }));
 };

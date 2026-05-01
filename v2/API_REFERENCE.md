@@ -3,7 +3,8 @@
 > **API-first migration note**：新写入路径是 `GET/POST /api/kps`、
 > `GET/PATCH/DELETE /api/kps/:id`、`GET/POST /api/schools` 与
 > `GET/PATCH/DELETE /api/schools/:key`、`GET/POST /api/scholars` 与
-> `GET/PATCH/DELETE /api/scholars/:key`。旧的 GitHub JSON sync / edit 端点仍可用，
+> `GET/PATCH/DELETE /api/scholars/:key`、`GET/POST /api/views` 与
+> `GET/PATCH/DELETE /api/views/:id`。旧的 GitHub JSON sync / edit 端点仍可用，
 > 但已标记 deprecated，只作为迁移期兜底。
 
 ---
@@ -14,12 +15,13 @@
 
 1. 用 `/admin/tokens` 给目标用户创建 API token。
 2. 调 `GET /api/me` 确认 token 身份、scope、可读/可写学科。
-3. 调 `GET /api/kps/meta?discipline=<key>` 获取可用 `schools` / `scholars` / `tags` / `formats`。
+3. 调 `GET /api/metadata?discipline=<key>` 获取可用 `schools` / `scholars` / `views` / `tags` / `themes` / `formats`。
 4. 如需先建学派，调 `POST /api/schools?discipline=<key>`。
 5. 如需先建学者，调 `POST /api/scholars?discipline=<key>`。
-6. 调 `POST /api/kps?discipline=<key>` 创建 KP。
-7. 调 `GET /api/kps/:id` 或 `GET /api/kps?discipline=<key>&q=<title>` 确认写入结果。
-8. 如需审计，调 `GET /api/kps/:id/versions` 查看历史快照。
+6. 如需调整学派列表页组织方式，调 `POST /api/views?discipline=<key>` 或 `POST /api/views/reorder?discipline=<key>`。
+7. 调 `POST /api/kps?discipline=<key>` 创建 KP。
+8. 调 `GET /api/kps/:id` 或 `GET /api/kps?discipline=<key>&q=<title>` 确认写入结果。
+9. 如需审计，调 `GET /api/kps/:id/versions` 查看历史快照。
 
 ### Tenant 选择与权限
 
@@ -76,6 +78,7 @@ Response:
 ### `GET /api/kps/meta?discipline=<key>`
 
 返回创建 KP 前需要引用的学科元数据。读权限即可调用，适合 agent 在生成 KP JSON 前先拿合法 key。
+新代码优先用更完整的 `GET /api/metadata?discipline=<key>`；本端点保留为 KP 写入专用快捷入口。
 
 ```bash
 curl 'https://study.sususu.org/api/kps/meta?discipline=keiei' \
@@ -90,12 +93,41 @@ Response:
   "tenant": { "tenantId": "keiei", "discipline": "keiei", "role": "editor" },
   "formats": ["narrative", "flat-list", "accordion", "compare", "quad"],
   "tags": [{ "key": "classic", "label": { "zh": "经典" }, "color": "#007AFF" }],
+  "themes": [{ "key": "organization", "title": { "zh": "组织" }, "schools": ["motivation"] }],
   "schools": [
     { "key": "motivation", "title": { "zh": "动机理论", "en": "Motivation Theory" }, "tags": ["classic"], "kp_count": 12 }
   ],
   "scholars": [
     { "key": "maslow", "name": { "zh": "马斯洛", "en": "Abraham Maslow" }, "tags": ["classic"], "kp_count": 3 }
+  ],
+  "views": [
+    { "id": "default", "name": "默认视图", "icon": "📚", "isDefault": true, "position": 0 }
   ]
+}
+```
+
+### `GET /api/metadata?discipline=<key>`
+
+统一元数据入口。读权限即可调用，适合 agent / admin UI 在创建 KP、School、Scholar、View 前获取完整可引用 key。
+
+Response:
+
+```json
+{
+  "ok": true,
+  "tenant": { "tenantId": "keiei", "discipline": "keiei", "role": "editor" },
+  "discipline": {
+    "key": "keiei",
+    "tenant_id": "keiei",
+    "title": { "zh": "经营学", "en": "Management" },
+    "tagline": { "zh": "管理学知识库" }
+  },
+  "formats": ["narrative", "flat-list", "accordion", "compare", "quad"],
+  "tags": [{ "key": "classic", "label": { "zh": "经典" }, "color": "#007AFF" }],
+  "themes": [{ "key": "organization", "title": { "zh": "组织" }, "schools": ["motivation"] }],
+  "schools": [{ "key": "motivation", "themeKey": "organization", "kp_count": 12 }],
+  "scholars": [{ "key": "maslow", "kp_count": 3 }],
+  "views": [{ "id": "default", "name": "默认视图", "isDefault": true }]
 }
 ```
 
@@ -209,6 +241,8 @@ Response:
 | `school_not_found` | 404 | School 不存在 |
 | `scholar_key_exists` | 409 | 创建时 scholar key 已存在 |
 | `scholar_not_found` | 404 | Scholar 不存在 |
+| `view_id_exists` | 409 | 创建时 view id 已存在 |
+| `view_not_found` | 404 | View 不存在 |
 | `school_not_in_tenant` | 422 | schools 引用了该学科不存在的 key |
 | `scholar_not_in_tenant` | 422 | scholars 引用了该学科不存在的 key |
 | `theme_not_in_tenant` | 422 | themeKey 引用了该学科不存在的 key |
@@ -217,6 +251,8 @@ Response:
 | `school_has_scholars` | 409 | 删除 school 前需要先移走或删除关联 Scholar |
 | `school_used_in_views` | 409 | 删除 school 前需要先从 View 中移除 |
 | `scholar_has_kps` | 409 | 删除 scholar 前需要先移走或删除关联 KP |
+| `view_is_default` | 409 | 删除 view 前需要先把其它 view 设为默认 |
+| `view_ids_mismatch` | 422 | 重排 view 时提交集合必须等于当前 view 集合 |
 | `tenant_mismatch` | 403 | 请求试图操作其它 tenant 的 KP |
 
 > **谁该读**：在任意 worktree / 任意 Claude Code session 想以编程方式管理知识库的 agent。
@@ -379,6 +415,61 @@ Response:
 
 删除未被 KP 引用的学者。若该学者仍有关联 KP，会返回 `409`。
 
+## API-first View endpoints
+
+View 是“学派列表页怎么组织和分组”的数据库写入入口。它只影响展示组织方式，不改变 School / Scholar / KP 本体。
+
+### `GET /api/views?discipline=<key>`
+
+列出当前 tenant 的视图。读权限即可调用。
+
+### `POST /api/views?discipline=<key>`
+
+直接写入 D1，创建视图。`groups[].schoolIds` 必须属于同一 tenant。请求 body 不能包含 `tenant_id` 或 `discipline`。
+
+```json
+{
+  "id": "default",
+  "name": "默认视图",
+  "jp": "デフォルト",
+  "icon": "📚",
+  "description": "默认分组",
+  "flow": "",
+  "scope": "public",
+  "kind": "manual",
+  "isDefault": true,
+  "position": 0,
+  "groups": [
+    { "id": "main", "title": "主要理论", "flow": "", "schoolIds": ["motivation"] }
+  ]
+}
+```
+
+如果 `isDefault: true`，服务端会自动取消同 tenant 其它 view 的默认状态，并把当前 view 的 `position` 写为 `0`。
+
+### `GET /api/views/:id?discipline=<key>`
+
+读取单个视图。需要指定 `discipline`，服务端会校验当前用户是否可读该 tenant。
+
+### `PATCH /api/views/:id?discipline=<key>`
+
+局部更新视图。禁止变更 id / tenant；`groups[].schoolIds` 会做同 tenant 校验。
+
+### `DELETE /api/views/:id?discipline=<key>`
+
+删除非默认视图。默认视图不能直接删除，需要先通过 reorder 把其它视图设为默认。
+
+### `POST /api/views/reorder?discipline=<key>`
+
+重排视图，并可同时指定默认视图。`viewIds` 必须与当前 tenant 的 view 集合完全一致，避免误增删。
+
+```json
+{
+  "viewIds": ["timeline", "default"],
+  "defaultViewId": "timeline"
+}
+```
+
 ## 0. TL;DR — 9 成场景就这一句话
 
 **新流程：agent 通过 API token 直接写数据库，不需要改 GitHub JSON。**
@@ -386,11 +477,13 @@ Response:
 ```
 GET /api/me
 ↓
-GET /api/kps/meta?discipline=<key>
+GET /api/metadata?discipline=<key>
 ↓
 POST /api/schools?discipline=<key>   （需要新学派时）
 ↓
 POST /api/scholars?discipline=<key>  （需要新学者时）
+↓
+POST /api/views?discipline=<key>     （需要页面新组织方式时）
 ↓
 POST /api/kps?discipline=<key>
 ↓
