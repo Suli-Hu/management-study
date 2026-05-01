@@ -14,7 +14,8 @@ test.describe('登录', () => {
   test('未登录访问受保护页 → 重定向到 /login', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveURL(/\/login$/);
-    await expect(page.locator('h1')).toContainText('登录');
+    await expect(page.locator('input[name=password]')).toBeVisible();
+    await expect(page.locator('button[type=submit]')).toContainText('登录');
   });
 
   test('错误密码 → 留在 /login 且显示「密码不对」', async ({ page }) => {

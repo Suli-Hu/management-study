@@ -74,6 +74,7 @@ jobs:
       - name: Write test .dev.vars
         run: |
           cat > .dev.vars <<EOF
+          AUTH_MODE=password
           ADMIN_PASSWORD=test-admin-pw
           GUEST_PASSWORD=test-guest-pw
           SESSION_SECRET=ci-test-secret-not-for-prod-use-32chars
