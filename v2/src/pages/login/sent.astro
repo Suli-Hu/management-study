@@ -26,7 +26,7 @@ const maskedEmail = email.replace(/^(.{2}).*(@.*)$/, '$1•••$2');
       <header class="mb-6">
         <h1 class="text-2xl mb-2">查收邮箱</h1>
         <p class="text-sm text-tertiary leading-relaxed">
-          我们给 <strong class="text-secondary">{maskedEmail || '你的邮箱'}</strong> 发了一封登录邮件。
+          我们给 <strong class="text-secondary" id="masked-email">{maskedEmail || '你的邮箱'}</strong> 发了一封登录邮件。
         </p>
       </header>
 
@@ -41,7 +41,7 @@ const maskedEmail = email.replace(/^(.{2}).*(@.*)$/, '$1•••$2');
           输入邮件里的 <strong>6 位 code</strong>：
         </p>
         <form id="code-form" method="POST" action="/api/auth/verify-code">
-          <input type="hidden" name="email" value={email} />
+          <input type="hidden" name="email" id="login-email-hidden" value={email} />
           <input type="hidden" name="code" id="code-hidden" />
           <div class="flex gap-2 justify-center mb-3" id="otp-boxes">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -74,7 +74,42 @@ const maskedEmail = email.replace(/^(.{2}).*(@.*)$/, '$1•••$2');
     const boxes = Array.from(document.querySelectorAll('[data-otp-index]'));
     const hidden = document.getElementById('code-hidden');
     const form = document.getElementById('code-form');
-    if (!boxes.length || !hidden || !form) return;
+    const emailHidden = document.getElementById('login-email-hidden');
+    const maskedEmail = document.getElementById('masked-email');
+    if (!boxes.length || !hidden || !form || !emailHidden) return;
+
+    const EMAIL_STORAGE_KEY = 'management-study:last-login-email';
+    const LOCAL_DEFAULT_EMAIL = 'husuli0623@gmail.com';
+    const isLocalDev = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+
+    function readRememberedEmail() {
+      try {
+        return localStorage.getItem(EMAIL_STORAGE_KEY) || (isLocalDev ? LOCAL_DEFAULT_EMAIL : '');
+      } catch (_) {
+        return isLocalDev ? LOCAL_DEFAULT_EMAIL : '';
+      }
+    }
+
+    function rememberEmail(value) {
+      const email = String(value || '').trim().toLowerCase();
+      if (!email) return;
+      try { localStorage.setItem(EMAIL_STORAGE_KEY, email); } catch (_) { /* ignore */ }
+    }
+
+    function maskEmail(email) {
+      return email.replace(/^(.{2}).*(@.*)$/, '$1•••$2');
+    }
+
+    let email = String(emailHidden.value || '').trim().toLowerCase();
+    if (email) {
+      rememberEmail(email);
+    } else {
+      email = readRememberedEmail();
+      if (email) {
+        emailHidden.value = email;
+        if (maskedEmail) maskedEmail.textContent = maskEmail(email);
+      }
+    }
 
     function sync() {
       hidden.value = boxes.map((b) => b.value).join('');

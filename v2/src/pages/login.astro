@@ -84,6 +84,7 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
               <input
                 type="email"
                 name="email"
+                data-login-email
                 required
                 autocomplete="email"
                 placeholder="you@gmail.com"
@@ -113,6 +114,34 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
     const invitePane = document.querySelector('[data-login-pane="invite"]');
     const emailPane = document.querySelector('[data-login-pane="email"]');
     if (!invitePane || !emailPane) return;
+
+    const EMAIL_STORAGE_KEY = 'management-study:last-login-email';
+    const LOCAL_DEFAULT_EMAIL = 'husuli0623@gmail.com';
+    const isLocalDev = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+    const emailInput = document.querySelector('[data-login-email]');
+
+    function readRememberedEmail() {
+      try {
+        return localStorage.getItem(EMAIL_STORAGE_KEY) || (isLocalDev ? LOCAL_DEFAULT_EMAIL : '');
+      } catch (_) {
+        return isLocalDev ? LOCAL_DEFAULT_EMAIL : '';
+      }
+    }
+
+    function rememberEmail(value) {
+      const email = String(value || '').trim().toLowerCase();
+      if (!email) return;
+      try { localStorage.setItem(EMAIL_STORAGE_KEY, email); } catch (_) { /* ignore */ }
+    }
+
+    if (emailInput && !emailInput.value) {
+      emailInput.value = readRememberedEmail();
+    }
+
+    emailPane.addEventListener('submit', () => {
+      if (emailInput) rememberEmail(emailInput.value);
+    });
+
     const footerText = document.querySelector('[data-app-footer-text]');
     if (!footerText) return;
     footerText.style.cursor = 'pointer';
