@@ -1,21 +1,23 @@
 # API Reference (Claude Code agent 视角)
 
-> **API-first migration note**：新写入路径是 `GET/POST /api/kps` 与
-> `GET/PATCH/DELETE /api/kps/:id`。旧的 GitHub JSON sync 端点仍可用，
+> **API-first migration note**：新写入路径是 `GET/POST /api/kps`、
+> `GET/PATCH/DELETE /api/kps/:id`、`GET/POST /api/schools` 与
+> `GET/PATCH/DELETE /api/schools/:key`。旧的 GitHub JSON sync / edit 端点仍可用，
 > 但已标记 deprecated，只作为迁移期兜底。
 
 ---
 
-## API-first KP endpoints
+## API-first endpoints
 
 ### Agent 调用流程
 
 1. 用 `/admin/tokens` 给目标用户创建 API token。
 2. 调 `GET /api/me` 确认 token 身份、scope、可读/可写学科。
 3. 调 `GET /api/kps/meta?discipline=<key>` 获取可用 `schools` / `scholars` / `tags` / `formats`。
-4. 调 `POST /api/kps?discipline=<key>` 创建 KP。
-5. 调 `GET /api/kps/:id` 或 `GET /api/kps?discipline=<key>&q=<title>` 确认写入结果。
-6. 如需审计，调 `GET /api/kps/:id/versions` 查看历史快照。
+4. 如需先建学派，调 `POST /api/schools?discipline=<key>`。
+5. 调 `POST /api/kps?discipline=<key>` 创建 KP。
+6. 调 `GET /api/kps/:id` 或 `GET /api/kps?discipline=<key>&q=<title>` 确认写入结果。
+7. 如需审计，调 `GET /api/kps/:id/versions` 查看历史快照。
 
 ### Tenant 选择与权限
 
@@ -201,8 +203,15 @@ Response:
 | `schema_invalid` | 422 | 请求 JSON 不符合 schema |
 | `kp_id_exists` | 409 | 创建时 KP id 已存在 |
 | `kp_not_found` | 404 | KP 不存在或已删除 |
+| `school_key_exists` | 409 | 创建时 school key 已存在 |
+| `school_not_found` | 404 | School 不存在 |
 | `school_not_in_tenant` | 422 | schools 引用了该学科不存在的 key |
 | `scholar_not_in_tenant` | 422 | scholars 引用了该学科不存在的 key |
+| `theme_not_in_tenant` | 422 | themeKey 引用了该学科不存在的 key |
+| `concept_not_in_tenant` | 422 | concepts 引用了该学科不存在的 KP |
+| `school_has_kps` | 409 | 删除 school 前需要先移走或删除关联 KP |
+| `school_has_scholars` | 409 | 删除 school 前需要先移走或删除关联 Scholar |
+| `school_used_in_views` | 409 | 删除 school 前需要先从 View 中移除 |
 | `tenant_mismatch` | 403 | 请求试图操作其它 tenant 的 KP |
 
 > **谁该读**：在任意 worktree / 任意 Claude Code session 想以编程方式管理知识库的 agent。
@@ -210,23 +219,96 @@ Response:
 
 ---
 
+## API-first School endpoints
+
+School 是“学派/知识分类”的数据库写入入口。新学科负责人可以通过 token 直接创建和维护学派，不需要走 Git。
+
+### `GET /api/schools?discipline=<key>`
+
+列出当前 tenant 的学派。读权限即可调用。
+
+Query：
+
+| 参数 | 说明 |
+|---|---|
+| `discipline` | 目标学科 / tenant |
+| `limit` | 默认 `50`，最大 `200` |
+| `offset` | 默认 `0` |
+| `q` | 可选，匹配 title / summary 的 zh/en/ja |
+| `theme` | 可选，只列某个 theme 下的学派 |
+
+Response:
+
+```json
+{
+  "ok": true,
+  "tenant": { "tenantId": "keiei", "discipline": "keiei", "role": "editor" },
+  "schools": [
+    {
+      "key": "motivation",
+      "title": { "zh": "动机理论", "en": "Motivation Theory" },
+      "era": "20c",
+      "summary": { "zh": "研究动机与需求的理论群。" },
+      "themeKey": "organization",
+      "tags": ["classic"],
+      "concepts": ["k101", "k102"],
+      "kp_count": 12,
+      "scholar_count": 3,
+      "view_count": 1,
+      "createdAt": "2026-05-01T00:00:00.000Z",
+      "updatedAt": "2026-05-01T00:00:00.000Z"
+    }
+  ],
+  "page": { "limit": 50, "offset": 0, "total": 1, "next_offset": null }
+}
+```
+
+### `POST /api/schools?discipline=<key>`
+
+直接写入 D1，创建学派。`themeKey` 必须属于该学科；`concepts` 里的 KP 必须属于同一 tenant。
+请求 body 不能包含 `tenant_id` 或 `discipline`。
+
+```json
+{
+  "key": "motivation",
+  "title": { "zh": "动机理论", "ja": "動機づけ理論", "en": "Motivation Theory" },
+  "era": "20c",
+  "summary": { "zh": "研究动机与需求的理论群。", "ja": "動機づけを扱う理論群。" },
+  "themeKey": "organization",
+  "tags": ["classic"],
+  "concepts": ["k101", "k102"]
+}
+```
+
+### `GET /api/schools/:key?discipline=<key>`
+
+读取单个学派。需要指定 `discipline`，服务端会校验当前用户是否可读该 tenant。
+
+### `PATCH /api/schools/:key?discipline=<key>`
+
+局部更新学派。禁止变更 key / tenant；`themeKey` 和 `concepts` 会做同 tenant 校验。
+
+### `DELETE /api/schools/:key?discipline=<key>`
+
+删除空学派。若该学派仍有关联 KP、Scholar 或 View，会返回 `409`，避免误删导致页面断裂。
+
 ## 0. TL;DR — 9 成场景就这一句话
 
-**配好 webhook（一次性，见 §3.2）后，learning agent 写 KP 流程就是**：
+**新流程：agent 通过 API token 直接写数据库，不需要改 GitHub JSON。**
 
 ```
-写 v2/data/<discipline>/(kp|schools|scholars|views)/<id>.json
+GET /api/me
 ↓
-cd v2 && pnpm validate
+GET /api/kps/meta?discipline=<key>
 ↓
-git add ... && git commit -m "..." && git push origin main
+POST /api/schools?discipline=<key>   （需要新学派时）
 ↓
-（GitHub 自动发 webhook）
+POST /api/kps?discipline=<key>
 ↓
-~5-10s 后线上生效
+线上读接口直接从 D1 读到新数据
 ```
 
-**不需要调任何 API**。
+旧的 GitHub JSON / webhook / sync 流程仍保留在后文作为迁移期说明。
 
 如果 webhook 没配，或者要立即触发不等：调 `/api/v1/sync/<type>/<disc>/<idOrKey>` POST 一次，~3s 生效。
 
@@ -591,6 +673,9 @@ GitHub repo 配的 webhook。配好后所有 push 到 main 自动触发对应 sy
 ```
 
 ### 5.2 School / Scholar / View / Theme
+
+School 的旧 edit 入口已经标记 deprecated。新代码优先使用
+`/api/schools?discipline=<key>` 与 `/api/schools/:key?discipline=<key>`。
 
 同模式（POST /api/new/<resource>、GET/PUT/DELETE /api/edit/<resource>/<key>）。
 
