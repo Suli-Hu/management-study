@@ -8,6 +8,9 @@ export default defineConfig({
   // 'server' = 默认 SSR（页面运行时渲染，可访问 D1）
   // 后续个别静态页面可用 `export const prerender = true` 转 SSG
   output: 'server',
+  devToolbar: {
+    enabled: !process.env.CI,
+  },
   adapter: cloudflare({
     platformProxy: {
       // 让 `astro dev` 本地开发也能连 wrangler.toml 里声明的 D1 binding

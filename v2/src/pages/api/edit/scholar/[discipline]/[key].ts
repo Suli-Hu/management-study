@@ -7,6 +7,9 @@
  * 前端编辑页 /[discipline]/scholars/[key]/edit.astro 已知 discipline，调用方便。
  *
  * has_dependents gate：scholar 还在该学科 KP 引用中时拒绝删除（前端 disabled 是 UX，这里防绕过）
+ *
+ * @deprecated Use /api/scholars/:key?discipline=<key>. The API-first route writes
+ * directly to D1 and enforces tenant membership server-side.
  */
 
 import type { APIRoute } from 'astro';
@@ -25,7 +28,14 @@ async function countKpsByScholar(db: any, discipline: string, scholarKey: string
   return row?.n ?? 0;
 }
 
-export const GET: APIRoute = (ctx) => handleGet({
+const deprecate = (response: Response): Response => {
+  const headers = new Headers(response.headers);
+  headers.set('deprecation', 'true');
+  headers.set('link', '</api/scholars>; rel="successor-version"');
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+};
+
+export const GET: APIRoute = async (ctx) => deprecate(await handleGet({
   ctx,
   pathFor,
   resolveDiscipline: async () => ctx.params.discipline ?? null,
@@ -38,9 +48,9 @@ export const GET: APIRoute = (ctx) => handleGet({
     const tag_library = tagsRow?.tags_json ? JSON.parse(tagsRow.tags_json) : [];
     return { tag_library, kp_count: await countKpsByScholar(db, discipline, key) };
   },
-});
+}));
 
-export const PUT: APIRoute = (ctx) => handlePut({
+export const PUT: APIRoute = async (ctx) => deprecate(await handlePut({
   ctx,
   schema: Scholar,
   pathFor: (obj) => pathFor(obj.key, obj.discipline),
@@ -51,28 +61,28 @@ export const PUT: APIRoute = (ctx) => handlePut({
   // v0.5.65: 任何 admin 保存 → schoolsExplicit=true，sync 时跳过 KP 派生覆盖
   forceFields: () => ({ updatedAt: new Date().toISOString(), schoolsExplicit: true }),
   upsertD1: (db, scholar) => upsertScholarInD1(db, scholar),
-});
+}));
 
 export const DELETE: APIRoute = async (ctx) => {
-  if (!ctx.locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+  if (!ctx.locals.user) return deprecate(jsonRes<EditError>(403, { ok: false, reason: 'not_admin' }));
   const { discipline, key } = ctx.params;
-  if (!discipline || !key) return jsonRes<EditError>(400, { ok: false, reason: 'bad_request' });
-  if (!ctx.locals.canEdit(discipline)) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+  if (!discipline || !key) return deprecate(jsonRes<EditError>(400, { ok: false, reason: 'bad_request' }));
+  if (!ctx.locals.canEdit(discipline)) return deprecate(jsonRes<EditError>(403, { ok: false, reason: 'not_admin' }));
 
   const kpCount = await countKpsByScholar(ctx.locals.runtime.env.DB, discipline, key);
   if (kpCount > 0) {
-    return jsonRes(409, {
+    return deprecate(jsonRes(409, {
       ok: false,
       reason: 'has_dependents' as const,
       detail: `学者名下还有 ${kpCount} 个 KP 关联。先把这些 KP 移到别的学者或删掉再试。`,
-    });
+    }));
   }
-  return handleDelete({
+  return deprecate(await handleDelete({
     ctx,
     pathFor,
     objectLabel: (k) => `scholar/${discipline}/${k}`,
     resolveDiscipline: async () => discipline,
     urlIdentifier: () => key,
     deleteD1: (db, _disc, schKey) => deleteScholarInD1(db, _disc, schKey),
-  });
+  }));
 };

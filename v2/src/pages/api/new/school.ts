@@ -1,5 +1,8 @@
 /**
  * POST /api/new/school  (v0.4.4 part 2)
+ *
+ * @deprecated Use POST /api/schools?discipline=<key>. The API-first route writes
+ * directly to D1 and enforces tenant membership server-side.
  */
 
 import type { APIRoute } from 'astro';
@@ -7,8 +10,14 @@ import { School } from '~/schemas/school';
 import { handlePost } from '~/lib/edit-helpers';
 import { upsertSchoolInD1 } from '~/lib/d1-school-write';
 
-// v0.6.6：D1 双写
-export const POST: APIRoute = (ctx) => handlePost({
+const deprecate = (response: Response): Response => {
+  const headers = new Headers(response.headers);
+  headers.set('deprecation', 'true');
+  headers.set('link', '</api/schools>; rel="successor-version"');
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+};
+
+export const POST: APIRoute = async (ctx) => deprecate(await handlePost({
   ctx,
   schema: School,
   pathFor: (obj) => `v2/data/${obj.discipline}/schools/${obj.key}.json`,
@@ -18,4 +27,4 @@ export const POST: APIRoute = (ctx) => handlePost({
     return { createdAt: now, updatedAt: now } as Partial<typeof School._type>;
   },
   upsertD1: (db, school) => upsertSchoolInD1(db, school),
-});
+}));

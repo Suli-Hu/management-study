@@ -99,7 +99,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
   const scholarRes = await env.DB
     .prepare(`
       SELECT s.key, s.name_zh, s.name_en, s.name_ja,
-        (SELECT COUNT(*) FROM kp_scholar WHERE scholar_key = s.key) AS kp_count
+        (SELECT COUNT(*) FROM kp_scholar WHERE scholar_discipline = s.discipline AND scholar_key = s.key) AS kp_count
       FROM scholar s
       WHERE s.discipline = ?
       ORDER BY s.key
@@ -113,7 +113,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
     .prepare(`
       SELECT k.id, k.title_zh, k.title_ja, k.year, k.format,
         (SELECT GROUP_CONCAT(school_key,  ',') FROM kp_school  WHERE kp_id = k.id ORDER BY position) AS schools_csv,
-        (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id ORDER BY position) AS scholars_csv
+        (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id AND scholar_discipline = k.discipline ORDER BY position) AS scholars_csv
       FROM kp k
       WHERE k.discipline = ?
       ORDER BY k.id

@@ -1,8 +1,8 @@
 /**
  * data/ JSON 文件 → D1 SQL 同步脚本
  *
- * 输出一个 SQL 文件（默认 .wrangler/sync.sql），随后用：
- *   wrangler d1 execute management-study-v2 --remote --file=.wrangler/sync.sql
+ * 输出 SQL 分片（默认 .wrangler/sync/*.sql），随后用：
+ *   pnpm sync:d1:apply:remote
  * 由 GitHub Actions 跑（见 .github/workflows/deploy-v2.yml）。
  *
  * 策略：upsert + 孤儿清理（v0.3.4 修 A2）
@@ -16,10 +16,10 @@
  *
  * 用法（本地干跑生成 SQL 但不执行）：
  *   pnpm sync:d1
- *   cat .wrangler/sync.sql  # 检查输出
+ *   ls .wrangler/sync/*.sql  # 检查输出
  *
  * 用法（CI 实际同步）：
- *   pnpm sync:d1 && wrangler d1 execute management-study-v2 --remote --file=.wrangler/sync.sql
+ *   pnpm sync:d1:remote
  */
 
 import { readFileSync, readdirSync, existsSync, mkdirSync, writeFileSync, statSync } from 'node:fs';
@@ -602,4 +602,4 @@ for (const o of outputs) {
 console.log(`  total: ${totalKb.toFixed(1)} KB, ${totalLines} stmts`);
 console.log('');
 console.log('Apply（按顺序）：');
-console.log(`  for f in ${OUT_DIR}/*.sql; do wrangler d1 execute management-study-v2 --remote --file="$f"; done`);
+console.log('  pnpm sync:d1:apply:remote');

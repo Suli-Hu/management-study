@@ -1,5 +1,8 @@
 /**
- * POST /api/v1/webhook/github  (v0.5.93)
+ * DEPRECATED: POST /api/v1/webhook/github  (v0.5.93)
+ *
+ * API-first 路线下，业务数据的写入入口是 /api/kps。此 webhook 仅保留给
+ * 迁移期旧 GitHub JSON 工作流兜底使用。
  *
  * GitHub push event 接收 → 自动解析改动文件 → 调 syncResource / deleteResource。
  *
@@ -42,7 +45,11 @@ interface PushPayload {
 function json<T>(status: number, body: T): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'content-type': 'application/json' },
+    headers: {
+      'content-type': 'application/json',
+      'deprecation': 'true',
+      'link': '</api/kps>; rel="successor-version"',
+    },
   });
 }
 

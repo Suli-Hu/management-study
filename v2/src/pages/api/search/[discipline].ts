@@ -75,7 +75,7 @@ export const GET: APIRoute = async ({ params, url, locals }) => {
           k.id, k.title_zh, k.title_en, k.title_ja, k.year,
           snippet(kp_fts, 4, '<mark>', '</mark>', '...', 18) as excerpt_zh,
           snippet(kp_fts, 5, '<mark>', '</mark>', '...', 18) as excerpt_ja,
-          (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id ORDER BY position) as scholars_csv,
+          (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id AND scholar_discipline = k.discipline ORDER BY position) as scholars_csv,
           (SELECT GROUP_CONCAT(school_key,   ',') FROM kp_school  WHERE kp_id = k.id ORDER BY position) as schools_csv
         FROM kp_fts
         INNER JOIN kp k ON k.id = kp_fts.id
@@ -94,7 +94,7 @@ export const GET: APIRoute = async ({ params, url, locals }) => {
         SELECT
           k.id, k.title_zh, k.title_en, k.title_ja, k.year,
           '' as excerpt_zh, '' as excerpt_ja,
-          (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id ORDER BY position) as scholars_csv,
+          (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id AND scholar_discipline = k.discipline ORDER BY position) as scholars_csv,
           (SELECT GROUP_CONCAT(school_key,   ',') FROM kp_school  WHERE kp_id = k.id ORDER BY position) as schools_csv
         FROM kp k
         WHERE k.discipline = ?
@@ -118,7 +118,7 @@ export const GET: APIRoute = async ({ params, url, locals }) => {
   const schRes = await db
     .prepare(`
       SELECT key, name_zh, name_en,
-        (SELECT COUNT(*) FROM kp_scholar WHERE scholar_key = scholar.key) as kp_count
+        (SELECT COUNT(*) FROM kp_scholar WHERE scholar_discipline = scholar.discipline AND scholar_key = scholar.key) as kp_count
       FROM scholar
       WHERE discipline = ?
         AND (name_zh LIKE ? OR name_en LIKE ? OR name_ja LIKE ? OR key LIKE ?)

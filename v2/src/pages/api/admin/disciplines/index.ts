@@ -154,24 +154,38 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return json(502, { ok: false, reason: 'github_error', detail: ghRes.detail });
   }
 
-  // 写 D1
-  await env.DB.prepare(
-    `INSERT INTO discipline (key, title_zh, title_en, title_ja, tagline_zh, tagline_ja,
-                              accent, tags_json, themes_json, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  ).bind(
-    key,
-    parsed.data.title.zh,
-    parsed.data.title.en ?? null,
-    parsed.data.title.ja ?? null,
-    parsed.data.tagline?.zh ?? null,
-    parsed.data.tagline?.ja ?? null,
-    '',
-    JSON.stringify([]),
-    JSON.stringify([]),
-    now,
-    now,
-  ).run();
+  // 写 D1：discipline + tenant 一起创建，保证 API-first 路径立即可用。
+  await env.DB.batch([
+    env.DB.prepare(
+      `INSERT INTO discipline (key, title_zh, title_en, title_ja, tagline_zh, tagline_ja,
+                                accent, tags_json, themes_json, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ).bind(
+      key,
+      parsed.data.title.zh,
+      parsed.data.title.en ?? null,
+      parsed.data.title.ja ?? null,
+      parsed.data.tagline?.zh ?? null,
+      parsed.data.tagline?.ja ?? null,
+      '',
+      JSON.stringify([]),
+      JSON.stringify([]),
+      now,
+      now,
+    ),
+    env.DB.prepare(
+      `INSERT INTO tenant (id, discipline_key, title_zh, title_en, title_ja, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    ).bind(
+      key,
+      key,
+      parsed.data.title.zh,
+      parsed.data.title.en ?? null,
+      parsed.data.title.ja ?? null,
+      now,
+      now,
+    ),
+  ]);
 
   return json(200, {
     ok: true,

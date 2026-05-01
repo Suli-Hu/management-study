@@ -7,6 +7,11 @@
  * POST — 创建新 token，返一次性明文 (plaintext)
  *       Body: { name, user_id, scopes: string[], expires_days: number | null }
  *       expires_days null = 永不过期，否则 created + N 天
+ *
+ * Scope safety:
+ *   - scopes=[] means "all permissions this user already has"
+ *   - non-super-admin target users cannot receive scopes outside their user_permission rows
+ *   - super-admin target users may scope to any existing discipline
  */
 
 import type { APIRoute } from 'astro';
@@ -92,10 +97,32 @@ export const POST: APIRoute = async ({ request, locals }) => {
     .first<{ id: string; email: string }>();
   if (!userRow) return json(404, { ok: false, reason: 'user_not_found' });
 
+  const superAdminEmails = (env.ADMIN_EMAILS ?? '')
+    .split(',')
+    .map((s: string) => s.trim().toLowerCase())
+    .filter(Boolean);
+  const targetIsSuperAdmin = superAdminEmails.includes(userRow.email.toLowerCase());
+
   // 验证 scope discipline 都存在
   for (const s of scopes) {
     const disc = await env.DB.prepare('SELECT key FROM discipline WHERE key = ?').bind(s).first();
     if (!disc) return json(400, { ok: false, reason: 'bad_request', detail: `unknown discipline in scope: ${s}` });
+  }
+
+  if (!targetIsSuperAdmin && scopes.length > 0) {
+    const rows = await env.DB
+      .prepare('SELECT discipline_key FROM user_permission WHERE user_id = ?')
+      .bind(userId)
+      .all<{ discipline_key: string }>();
+    const allowed = new Set((rows.results ?? []).map((r) => r.discipline_key));
+    const forbidden = scopes.filter((s) => !allowed.has(s));
+    if (forbidden.length > 0) {
+      return json(403, {
+        ok: false,
+        reason: 'scope_exceeds_user_permission',
+        detail: forbidden,
+      });
+    }
   }
 
   const { plain, hash } = await generateToken();

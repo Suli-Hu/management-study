@@ -59,11 +59,12 @@ jobs:
           GITHUB_SHA: ${{ github.sha }}
 
       - name: Apply D1 data sync (local)
-        run: pnpm exec wrangler d1 execute management-study-v2 --local --file=.wrangler/sync.sql
+        run: pnpm sync:d1:apply:local
 
       - name: Write test .dev.vars
         run: |
           cat > .dev.vars <<EOF
+          AUTH_MODE=password
           ADMIN_PASSWORD=test-admin-pw
           GUEST_PASSWORD=test-guest-pw
           SESSION_SECRET=ci-test-secret-not-for-prod-use-32chars

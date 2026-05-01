@@ -75,56 +75,11 @@ jobs:
           workingDirectory: v2
           command: d1 migrations apply management-study-v2 --remote
 
-      # v0.4.14 sync 拆 5 片避免 D1 1MB batch 上限 + workerd hash bug
-      - name: Sync shard 01 meta+wipe
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: v2
-          command: d1 execute management-study-v2 --remote --file=.wrangler/sync/01_meta_wipe.sql
-
-      # v0.6.16: 02_kp 按 ~500KB 切多个 02_kp_NNN.sql，循环 apply
-      # （之前单文件 02_kp.sql 1.9MB 超 D1 batch 上限 + 本地 miniflare ECONNRESET）
-      - name: Sync shard 02 KP (multi-file)
+      - name: Apply D1 sync shards
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: |
-          shopt -s nullglob
-          shards=(.wrangler/sync/02_kp_*.sql)
-          if (( ${#shards[@]} == 0 )); then
-            echo "::error::no 02_kp_*.sql shards found"; exit 1
-          fi
-          for f in "${shards[@]}"; do
-            echo "::group::apply $f ($(wc -c < "$f") bytes)"
-            pnpm exec wrangler d1 execute management-study-v2 --remote --file="$f"
-            echo "::endgroup::"
-          done
-
-      - name: Sync shard 03 KP joins
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: v2
-          command: d1 execute management-study-v2 --remote --file=.wrangler/sync/03_kp_joins.sql
-
-      - name: Sync shard 04 FTS
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: v2
-          command: d1 execute management-study-v2 --remote --file=.wrangler/sync/04_fts.sql
-
-      - name: Sync shard 05 log
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: v2
-          command: d1 execute management-study-v2 --remote --file=.wrangler/sync/05_log.sql
+        run: pnpm sync:d1:apply:remote
 
       # ========== Deploy Pages ==========
       - name: Deploy Pages

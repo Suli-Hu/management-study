@@ -24,6 +24,24 @@ const users = (await db
 const disciplines = (await db
   .prepare('SELECT key, title_zh FROM discipline ORDER BY key')
   .all<{ key: string; title_zh: string }>()).results ?? [];
+const permissionRows = (await db
+  .prepare('SELECT user_id, discipline_key, role FROM user_permission')
+  .all<{ user_id: string; discipline_key: string; role: 'admin' | 'guest' }>()).results ?? [];
+const superAdminEmails = (Astro.locals.runtime.env.ADMIN_EMAILS ?? '')
+  .split(',')
+  .map((s: string) => s.trim().toLowerCase())
+  .filter(Boolean);
+const permissionsByUser = new Map<string, Record<string, 'admin' | 'guest'>>();
+for (const row of permissionRows) {
+  if (!permissionsByUser.has(row.user_id)) permissionsByUser.set(row.user_id, {});
+  permissionsByUser.get(row.user_id)![row.discipline_key] = row.role;
+}
+const userAccess = users.map((u) => ({
+  id: u.id,
+  email: u.email,
+  isSuperAdmin: superAdminEmails.includes(u.email.toLowerCase()),
+  permissions: permissionsByUser.get(u.id) ?? {},
+}));
 ---
 
 <Layout title="API Tokens">
@@ -34,7 +52,7 @@ const disciplines = (await db
         <h1 class="text-2xl font-semibold">API Tokens</h1>
         <span class="text-xs text-quaternary" id="token-count"></span>
       </div>
-      <p class="text-xs text-tertiary mt-1">为 user 生成 API token，给 Claude / GPT 等 agent 用 (Bearer auth)</p>
+      <p class="text-xs text-tertiary mt-1">为用户生成 API token，给 Claude / GPT 等 agent 使用。Token 永远不能超过该用户已有权限。</p>
     </header>
 
     {/* 创建表单 — inline，不 modal */}
@@ -47,7 +65,7 @@ const disciplines = (await db
             <input type="text" id="form-name" placeholder='如 "GPT for marketing"' class="tokens-input" />
           </label>
           <label>
-            <div class="tokens-form-label">关联 user</div>
+            <div class="tokens-form-label">关联用户</div>
             <select id="form-user" class="tokens-input">
               <option value="">— 选择 —</option>
               {users.map((u) => <option value={u.id}>{u.email}</option>)}
@@ -66,12 +84,13 @@ const disciplines = (await db
         </div>
         <div class="tokens-form-row">
           <div style="flex:1">
-            <div class="tokens-form-label">学科 scope（不勾 = 该 user 全部权限；勾选 = 仅这些学科）</div>
+            <div class="tokens-form-label">学科范围</div>
+            <p class="tokens-scope-help" id="scope-help">先选择用户。未勾选时，token 使用该用户的全部学科权限。</p>
             <div class="tokens-scope-chips">
               {disciplines.map((d) => (
-                <label class="tokens-scope-chip">
+                <label class="tokens-scope-chip" data-scope-chip={d.key}>
                   <input type="checkbox" name="scope" value={d.key} />
-                  <span>{d.title_zh} <span class="tokens-scope-key">{d.key}</span></span>
+                  <span>{d.title_zh} <span class="tokens-scope-key">{d.key}</span> <span class="tokens-role-badge" data-role-badge={d.key}></span></span>
                 </label>
               ))}
             </div>
@@ -153,6 +172,12 @@ const disciplines = (await db
     color: var(--color-text-tertiary);
     font-weight: 500;
   }
+  .tokens-scope-help {
+    margin: 0 0 8px;
+    font-size: 11.5px;
+    color: var(--color-text-tertiary);
+    line-height: 1.5;
+  }
   .tokens-input {
     padding: 7px 10px;
     border: 1px solid var(--color-border);
@@ -178,6 +203,14 @@ const disciplines = (await db
     user-select: none;
     transition: background 100ms;
   }
+  .tokens-scope-chip.is-disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+    background: var(--color-bg-secondary);
+  }
+  .tokens-scope-chip.is-disabled input {
+    cursor: not-allowed;
+  }
   .tokens-scope-chip:hover { background: var(--color-bg-secondary); }
   .tokens-scope-chip input { margin: 0; cursor: pointer; }
   .tokens-scope-chip:has(input:checked) {
@@ -189,6 +222,32 @@ const disciplines = (await db
     font-size: 10px;
     color: var(--color-text-quaternary);
     margin-left: 2px;
+  }
+  .tokens-role-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    margin-left: 4px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    color: var(--color-text-quaternary);
+    background: var(--color-bg-secondary);
+  }
+  .tokens-role-badge[data-role="admin"] {
+    color: var(--color-bg-primary);
+    background: var(--accent-warning);
+  }
+  .tokens-role-badge[data-role="guest"] {
+    color: var(--color-bg-primary);
+    background: var(--accent-strategy);
+  }
+  .tokens-role-badge[data-role="all"] {
+    color: var(--color-bg-primary);
+    background: var(--color-text-primary);
   }
 
   .tokens-create-btn {
@@ -391,10 +450,13 @@ const disciplines = (await db
   .reveal-btn-secondary:hover { background: var(--color-bg-secondary); }
 </style>
 
+<script type="application/json" id="token-user-access" set:html={JSON.stringify(userAccess)}></script>
+
 <script>
   // @ts-nocheck
   const $ = (s) => document.querySelector(s);
   const ACCENT_PALETTE = ['#34C759', '#FF9500', '#007AFF'];
+  const USER_ACCESS = JSON.parse(document.getElementById('token-user-access').textContent || '[]');
   function pickAccent(email) {
     let h = 0;
     for (let i = 0; i < email.length; i++) h = ((h << 5) - h + email.charCodeAt(i)) | 0;
@@ -419,6 +481,51 @@ const disciplines = (await db
   }
 
   let tokens = [];
+
+  function selectedUserAccess() {
+    const userId = $('#form-user').value;
+    return USER_ACCESS.find((u) => u.id === userId) || null;
+  }
+
+  function refreshScopeAvailability() {
+    const selected = selectedUserAccess();
+    const help = $('#scope-help');
+    const allowedCount = selected
+      ? selected.isSuperAdmin
+        ? document.querySelectorAll('input[name="scope"]').length
+        : Object.keys(selected.permissions || {}).length
+      : 0;
+
+    if (!selected) {
+      help.textContent = '先选择用户。未勾选时，token 使用该用户的全部学科权限。';
+    } else if (selected.isSuperAdmin) {
+      help.textContent = '该用户是 super-admin。可不勾选表示全站权限；勾选后 token 只限所选学科。';
+    } else {
+      help.textContent = `该用户可访问 ${allowedCount} 个学科。不可访问的学科已禁用；不勾选表示使用这 ${allowedCount} 个学科权限。`;
+    }
+
+    document.querySelectorAll('input[name="scope"]').forEach((input) => {
+      const key = input.value;
+      const chip = document.querySelector(`[data-scope-chip="${key}"]`);
+      const badge = document.querySelector(`[data-role-badge="${key}"]`);
+      let role = null;
+      let enabled = false;
+      if (selected?.isSuperAdmin) {
+        role = 'all';
+        enabled = true;
+      } else if (selected?.permissions?.[key]) {
+        role = selected.permissions[key];
+        enabled = true;
+      }
+      input.disabled = !enabled;
+      if (!enabled) input.checked = false;
+      chip?.classList.toggle('is-disabled', !enabled);
+      if (badge) {
+        badge.dataset.role = role || '';
+        badge.textContent = role === 'all' ? 'ALL' : role === 'admin' ? 'A' : role === 'guest' ? 'R' : '—';
+      }
+    });
+  }
 
   async function loadTokens() {
     const res = await fetch('/api/admin/tokens');
@@ -447,7 +554,7 @@ const disciplines = (await db
       const accent = pickAccent(t.user_email);
       const initial = (t.user_email[0] ?? '?').toUpperCase();
       const scopesHtml = t.scopes.length === 0
-        ? `<span class="token-scope-all">全 user 权限</span>`
+        ? `<span class="token-scope-all">继承用户全部权限</span>`
         : t.scopes.map((s) => `<span class="token-scope-chip">${s}</span>`).join('');
       const revokedNote = t.revoked_at ? ` · 已撤销 ${fmtDate(t.revoked_at)}` : '';
       return `
@@ -491,6 +598,8 @@ const disciplines = (await db
     }
   }
 
+  $('#form-user').addEventListener('change', refreshScopeAvailability);
+
   $('#create-btn').addEventListener('click', async () => {
     const name = $('#form-name').value.trim();
     const userId = $('#form-user').value;
@@ -516,7 +625,8 @@ const disciplines = (await db
     btn.textContent = '生成 token';
 
     if (!res.ok) {
-      window.toast?.error(`${data.reason ?? 'error'}: ${data.detail ?? ''}`.slice(0, 80));
+      const detail = Array.isArray(data.detail) ? data.detail.join(', ') : data.detail ?? '';
+      window.toast?.error(`${data.reason ?? 'error'}: ${detail}`.slice(0, 96));
       return;
     }
 
@@ -534,7 +644,7 @@ const disciplines = (await db
     $('#reveal-meta').innerHTML = `
       <strong>${escapeHtml(data.name)}</strong> ·
       ${escapeHtml(data.user_email)} ·
-      ${data.scopes.length === 0 ? '全 user 权限' : data.scopes.map(escapeHtml).join(', ')} ·
+      ${data.scopes.length === 0 ? '继承用户全部权限' : data.scopes.map(escapeHtml).join(', ')} ·
       ${data.expires_at ? `过期 ${fmtDate(data.expires_at)}` : '永不过期'}
     `;
     $('#reveal-overlay').classList.remove('hidden');
@@ -557,5 +667,6 @@ const disciplines = (await db
   });
   // overlay 不能点空白关闭，不能 ESC（防误操作）
 
+  refreshScopeAvailability();
   loadTokens();
 </script>
