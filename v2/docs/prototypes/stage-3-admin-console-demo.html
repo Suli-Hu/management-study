@@ -297,10 +297,10 @@
 
       .disc-row {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 16px;
+        grid-template-columns: minmax(180px, 1fr) minmax(210px, 230px) minmax(150px, 180px) auto;
+        gap: 14px;
         align-items: center;
-        padding: 14px 18px;
+        padding: 14px 16px;
         border: 1px solid var(--color-border);
         border-radius: 10px;
         background: var(--color-bg-primary);
@@ -338,6 +338,9 @@
       .disc-tagline {
         color: var(--color-text-tertiary);
         font-size: 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       .disc-meta {
@@ -346,12 +349,28 @@
         flex-wrap: wrap;
       }
 
-      .disc-counts {
+      .disc-manage {
         display: flex;
-        gap: 16px;
-        margin-top: 1px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 7px;
+        min-width: 0;
+      }
+
+      .manage-label {
+        color: var(--color-text-quaternary);
+        font-size: 10.5px;
+        font-weight: 650;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .disc-counts {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(72px, 1fr));
+        gap: 6px 12px;
+        margin: 0;
         font-size: 13px;
-        flex-wrap: wrap;
       }
 
       .disc-counts.is-all-zero {
@@ -362,6 +381,7 @@
         display: inline-flex;
         align-items: baseline;
         gap: 4px;
+        min-width: 0;
       }
 
       .disc-count-n {
@@ -565,6 +585,95 @@
         font-size: 12px;
       }
 
+      .drawer-section {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .drawer-section-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .drawer-section-title {
+        color: var(--color-text-quaternary);
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .mini-card-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .mini-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+        padding: 11px 12px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        background: var(--color-bg-primary);
+      }
+
+      .mini-card.is-empty {
+        border-style: dashed;
+        background: var(--color-bg-secondary);
+      }
+
+      .mini-title {
+        color: var(--color-text-primary);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .mini-sub {
+        margin-top: 2px;
+        color: var(--color-text-quaternary);
+        font-size: 11px;
+      }
+
+      .role-badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 22px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: var(--color-bg-tertiary);
+        color: var(--color-text-tertiary);
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .role-badge.owner {
+        background: color-mix(in srgb, var(--accent-success) 12%, var(--color-bg-primary));
+        color: #1f7a42;
+      }
+
+      .role-badge.editor {
+        background: color-mix(in srgb, var(--accent-strategy) 10%, var(--color-bg-primary));
+        color: #0f5a9f;
+      }
+
+      .token-value {
+        margin-top: 8px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        background: var(--color-bg-tertiary);
+        color: var(--color-text-secondary);
+        font-family: var(--mono);
+        font-size: 11px;
+        line-height: 1.6;
+        word-break: break-all;
+      }
+
       .toast {
         position: fixed;
         left: 50%;
@@ -623,7 +732,7 @@
         gap: 8px;
       }
 
-      @media (max-width: 720px) {
+      @media (max-width: 780px) {
         .page {
           width: min(100vw - 24px, 880px);
           padding-top: 18px;
@@ -633,6 +742,10 @@
         .disc-row,
         .review-grid {
           grid-template-columns: 1fr;
+        }
+
+        .disc-manage {
+          align-items: flex-start;
         }
 
         .disc-actions {
@@ -649,7 +762,7 @@
     <main class="page">
       <header class="page-header">
         <div>
-          <a class="back-link" href="#">← 返回首页</a>
+          <a class="back-link" href="#" data-back-link>← 返回</a>
           <div class="title-row">
             <h1>学科管理</h1>
             <span class="count" id="disc-count">共 4 个学科</span>
@@ -689,7 +802,7 @@
           </div>
           <div class="review-card">
             <h3>2. 编辑仍在每一行</h3>
-            <p>只改名称和一句话定位，不暴露内部字段。</p>
+            <p>只改名称和中文定位，不暴露内部字段。</p>
             <code>不影响已有内容</code>
           </div>
           <div class="review-card">
@@ -707,7 +820,7 @@
         <div class="drawer-head">
           <div>
             <div class="drawer-title" id="create-title">新建学科</div>
-            <div class="drawer-sub">填写学科名称和一句话定位。系统会自动处理内部标识和数据隔离。</div>
+            <div class="drawer-sub">填写学科名称和中文定位。创建后从列表继续配置负责人和 Token。</div>
           </div>
           <button type="button" class="drawer-close" data-close-drawer aria-label="关闭">×</button>
         </div>
@@ -720,7 +833,7 @@
             <label class="field">
               <span class="label">English <span class="required">*</span></span>
               <input class="input" id="form-title-en" value="Finance" />
-              <span class="hint">英文名用于系统生成内部标识，普通用户不用手动填写内部标识。</span>
+              <span class="hint">English 用于生成系统路径，后台用户不用再填写额外字段。</span>
             </label>
             <label class="field">
               <span class="label">日本語</span>
@@ -731,12 +844,8 @@
             <span class="label">中文一句话定位</span>
             <input class="input" id="form-tagline-zh" value="日本大学院入试备考" />
           </label>
-          <label class="field">
-            <span class="label">日本語一句タグライン</span>
-            <input class="input" id="form-tagline-ja" value="" placeholder="可空" />
-          </label>
           <section class="stage-note">
-            <p><strong>写入预览：</strong>创建后线上立即生效，并自动建立这个学科自己的数据空间；负责人之后可以用 Token 上传知识。</p>
+            <p><strong>写入预览：</strong>创建后线上立即生效；负责人之后可以用 Token 上传知识。</p>
           </section>
         </div>
         <div class="drawer-foot">
@@ -775,18 +884,96 @@
             <span class="label">中文一句话定位</span>
             <input class="input" id="edit-tagline-zh" />
           </label>
-          <label class="field">
-            <span class="label">日本語一句タグライン</span>
-            <input class="input" id="edit-tagline-ja" />
-          </label>
           <section class="stage-note">
-            <p><strong>保存预览：</strong>这里只编辑学科名称和定位。负责人、Token、内容数量在后续管理页里处理。</p>
+            <p><strong>保存预览：</strong>这里只编辑学科名称和中文定位。负责人、Token、内容数量在后续管理页里处理。</p>
           </section>
-          <div class="advanced-note">内部标识会保持不变，避免已有链接和 API 调用失效。这个字段默认不展示给普通后台用户。</div>
         </div>
         <div class="drawer-foot">
           <button type="button" class="btn" data-close-drawer>取消</button>
           <button type="button" class="btn btn-primary" id="edit-submit-btn">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer" id="owner-drawer" role="dialog" aria-modal="true" aria-labelledby="owner-title">
+      <div class="drawer-overlay" data-close-drawer></div>
+      <div class="drawer-panel">
+        <div class="drawer-head">
+          <div>
+            <div class="drawer-title" id="owner-title">负责人分配</div>
+            <div class="drawer-sub" id="owner-sub">经营学</div>
+          </div>
+          <button type="button" class="drawer-close" data-close-drawer aria-label="关闭">×</button>
+        </div>
+        <div class="drawer-body">
+          <section class="drawer-section">
+            <div class="drawer-section-head">
+              <div class="drawer-section-title">当前成员</div>
+              <button type="button" class="btn">添加邮箱</button>
+            </div>
+            <div class="mini-card-list" id="owner-list"></div>
+          </section>
+
+          <section class="drawer-section">
+            <div class="drawer-section-title">添加或调整权限</div>
+            <label class="field">
+              <span class="label">邮箱</span>
+              <input class="input" value="new-owner@example.com" />
+            </label>
+            <label class="field">
+              <span class="label">角色</span>
+              <select class="select">
+                <option>负责人</option>
+                <option>编辑者</option>
+                <option>只读</option>
+              </select>
+            </label>
+            <div class="advanced-note">如果邮箱还没有登录过，正式版会先保存为待接受邀请；用户第一次登录后自动绑定。</div>
+          </section>
+        </div>
+        <div class="drawer-foot">
+          <button type="button" class="btn" data-close-drawer>取消</button>
+          <button type="button" class="btn btn-primary">保存分配</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer" id="token-drawer" role="dialog" aria-modal="true" aria-labelledby="token-title">
+      <div class="drawer-overlay" data-close-drawer></div>
+      <div class="drawer-panel">
+        <div class="drawer-head">
+          <div>
+            <div class="drawer-title" id="token-title">Token 管理</div>
+            <div class="drawer-sub" id="token-sub">经营学</div>
+          </div>
+          <button type="button" class="drawer-close" data-close-drawer aria-label="关闭">×</button>
+        </div>
+        <div class="drawer-body">
+          <section class="drawer-section">
+            <div class="drawer-section-head">
+              <div class="drawer-section-title">可用 Token</div>
+              <button type="button" class="btn btn-primary" id="demo-generate-token">生成 Token</button>
+            </div>
+            <div class="mini-card-list" id="token-list"></div>
+          </section>
+
+          <section class="drawer-section">
+            <div class="drawer-section-title">新建 Token</div>
+            <label class="field">
+              <span class="label">用途名称</span>
+              <input class="input" value="GPT 经营学写入" />
+            </label>
+            <label class="field">
+              <span class="label">绑定负责人</span>
+              <select class="select" id="token-owner-select"></select>
+            </label>
+            <div class="advanced-note">Token 只对当前学科有效。拿到 Token 的 GPT 或脚本可以通过 API 上传知识，不需要接触 GitHub。</div>
+            <div class="token-value" id="demo-token-value">点击“生成 Token”后，这里只显示一次明文。</div>
+          </section>
+        </div>
+        <div class="drawer-foot">
+          <button type="button" class="btn" data-close-drawer>关闭</button>
+          <button type="button" class="btn">复制 API 指引</button>
         </div>
       </div>
     </div>
@@ -813,6 +1000,15 @@
           counts: { view: 3, school: 48, scholar: 132, kp: 562 },
           owner: "Husuli",
           tokens: 4,
+          members: [
+            { email: "husuli0623@gmail.com", role: "负责人", note: "可以管理成员、Token 和内容" },
+            { email: "mika@example.com", role: "编辑者", note: "可以创建和编辑知识内容" },
+            { email: "ren@example.com", role: "只读", note: "只能查看该学科" },
+          ],
+          apiTokens: [
+            { name: "GPT 经营学写入", owner: "Husuli", note: "最近使用 12 分钟前", status: "可用" },
+            { name: "Claude 内容检查", owner: "Husuli", note: "30 天后过期", status: "即将过期" },
+          ],
         },
         {
           key: "marketing",
@@ -821,6 +1017,11 @@
           counts: { view: 1, school: 24, scholar: 40, kp: 178 },
           owner: "",
           tokens: 2,
+          members: [],
+          apiTokens: [
+            { name: "GPT 市场营销写入", owner: "未绑定", note: "需要先分配负责人", status: "待处理" },
+            { name: "内容导入测试", owner: "未绑定", note: "暂停使用", status: "停用" },
+          ],
         },
         {
           key: "finance",
@@ -829,6 +1030,10 @@
           counts: { view: 0, school: 0, scholar: 0, kp: 0 },
           owner: "Mika",
           tokens: 0,
+          members: [
+            { email: "mika@example.com", role: "负责人", note: "可以管理成员、Token 和内容" },
+          ],
+          apiTokens: [],
         },
         {
           key: "strategy",
@@ -837,17 +1042,27 @@
           counts: { view: 1, school: 11, scholar: 18, kp: 91 },
           owner: "Ren",
           tokens: 1,
+          members: [
+            { email: "ren@example.com", role: "负责人", note: "可以管理成员、Token 和内容" },
+            { email: "husuli0623@gmail.com", role: "只读", note: "可以查看该学科配置" },
+          ],
+          apiTokens: [
+            { name: "战略管理写入", owner: "Ren", note: "最近使用 2 天前", status: "可用" },
+          ],
         },
       ];
 
       let editingKey = "";
       let deleteKey = "";
+      let tokenKey = "";
 
       const list = document.querySelector("#disc-list");
       const count = document.querySelector("#disc-count");
       const searchInput = document.querySelector("#search-input");
       const createDrawer = document.querySelector("#create-drawer");
       const editDrawer = document.querySelector("#edit-drawer");
+      const ownerDrawer = document.querySelector("#owner-drawer");
+      const tokenDrawer = document.querySelector("#token-drawer");
       const deleteConfirm = document.querySelector("#delete-confirm");
       const toast = document.querySelector("#toast");
 
@@ -871,6 +1086,22 @@
         showToast.timer = window.setTimeout(() => toast.classList.remove("is-visible"), 1800);
       }
 
+      function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        })[char]);
+      }
+
+      function roleClass(role) {
+        if (role === "负责人" || role === "可用") return "owner";
+        if (role === "编辑者" || role === "即将过期") return "editor";
+        return "";
+      }
+
       function render() {
         const query = searchInput.value.trim().toLowerCase();
         const filtered = disciplines.filter((discipline) => {
@@ -889,34 +1120,37 @@
           if (c.scholar > 0) blockers.push(`${c.scholar} 学者`);
           if (c.kp > 0) blockers.push(`${c.kp} KP`);
           const ownerChip = discipline.owner
-            ? `<button type="button" class="chip chip-action" data-owner="${discipline.key}">负责人 ${discipline.owner}</button>`
-            : `<button type="button" class="chip chip-warning chip-action" data-owner="${discipline.key}">分配负责人</button>`;
-          const tokenChip = `<button type="button" class="chip chip-action" data-token="${discipline.key}">Token ${discipline.tokens}</button>`;
+            ? `<button type="button" class="chip chip-action" data-owner="${escapeHtml(discipline.key)}">负责人 ${escapeHtml(discipline.owner)}</button>`
+            : `<button type="button" class="chip chip-warning chip-action" data-owner="${escapeHtml(discipline.key)}">分配负责人</button>`;
+          const tokenChip = `<button type="button" class="chip chip-action" data-token="${escapeHtml(discipline.key)}">Token ${discipline.tokens}</button>`;
           const deleteButton = empty
-            ? `<button type="button" class="btn btn-danger" data-delete="${discipline.key}">删除</button>`
+            ? `<button type="button" class="btn btn-danger" data-delete="${escapeHtml(discipline.key)}">删除</button>`
             : `<button type="button" class="btn btn-disabled" disabled title="该学科含 ${blockers.join(" / ")}，清空才能删">含内容</button>`;
 
           return `
             <article class="disc-row ${empty ? "is-empty" : ""}">
               <div class="disc-row-main">
                 <div class="disc-name">
-                  <span class="disc-title-zh">${discipline.title.zh}</span>
-                  <span class="disc-title-en">${discipline.title.en ?? ""}</span>
+                  <span class="disc-title-zh">${escapeHtml(discipline.title.zh)}</span>
+                  <span class="disc-title-en">${escapeHtml(discipline.title.en ?? "")}</span>
                 </div>
-                <div class="disc-tagline">${discipline.tagline?.zh ?? ""}</div>
+                <div class="disc-tagline">${escapeHtml(discipline.tagline?.zh ?? "")}</div>
+              </div>
+              <div class="disc-counts ${empty ? "is-all-zero" : ""}">
+                <span class="disc-count"><span class="disc-count-n">${c.view}</span><span class="disc-count-label">视角</span></span>
+                <span class="disc-count"><span class="disc-count-n">${c.school}</span><span class="disc-count-label">学派</span></span>
+                <span class="disc-count"><span class="disc-count-n">${c.scholar}</span><span class="disc-count-label">学者</span></span>
+                <span class="disc-count"><span class="disc-count-n">${c.kp}</span><span class="disc-count-label">KP</span></span>
+              </div>
+              <div class="disc-manage">
+                <div class="manage-label">管理</div>
                 <div class="disc-meta">
                   ${ownerChip}
                   ${tokenChip}
                 </div>
-                <div class="disc-counts ${empty ? "is-all-zero" : ""}">
-                  <span class="disc-count"><span class="disc-count-n">${c.view}</span><span class="disc-count-label">视角</span></span>
-                  <span class="disc-count"><span class="disc-count-n">${c.school}</span><span class="disc-count-label">学派</span></span>
-                  <span class="disc-count"><span class="disc-count-n">${c.scholar}</span><span class="disc-count-label">学者</span></span>
-                  <span class="disc-count"><span class="disc-count-n">${c.kp}</span><span class="disc-count-label">KP</span></span>
-                </div>
               </div>
               <div class="disc-actions">
-                <button type="button" class="btn" data-edit="${discipline.key}">编辑</button>
+                <button type="button" class="btn" data-edit="${escapeHtml(discipline.key)}">编辑</button>
                 ${deleteButton}
               </div>
             </article>
@@ -931,14 +1165,12 @@
         });
         document.querySelectorAll("[data-owner]").forEach((button) => {
           button.addEventListener("click", () => {
-            const discipline = findDiscipline(button.dataset.owner);
-            showToast(`进入 ${discipline.title.zh} 的负责人分配页`);
+            openOwner(button.dataset.owner);
           });
         });
         document.querySelectorAll("[data-token]").forEach((button) => {
           button.addEventListener("click", () => {
-            const discipline = findDiscipline(button.dataset.token);
-            showToast(`进入 ${discipline.title.zh} 的 Token 管理页`);
+            openToken(button.dataset.token);
           });
         });
       }
@@ -946,6 +1178,75 @@
       function openCreate() {
         createDrawer.classList.add("is-open");
         document.querySelector("#form-title-zh").focus();
+      }
+
+      function renderOwnerMembers(discipline) {
+        const members = discipline.members ?? [];
+        const listHtml = members.length
+          ? members.map((member) => `
+              <article class="mini-card">
+                <div>
+                  <div class="mini-title">${escapeHtml(member.email)}</div>
+                  <div class="mini-sub">${escapeHtml(member.note)}</div>
+                </div>
+                <span class="role-badge ${roleClass(member.role)}">${escapeHtml(member.role)}</span>
+              </article>
+            `).join("")
+          : `
+              <article class="mini-card is-empty">
+                <div>
+                  <div class="mini-title">暂未分配负责人</div>
+                  <div class="mini-sub">先添加邮箱，再选择负责人、编辑者或只读。</div>
+                </div>
+                <span class="role-badge">待配置</span>
+              </article>
+            `;
+        document.querySelector("#owner-list").innerHTML = listHtml;
+      }
+
+      function renderTokenItems(discipline) {
+        const tokens = discipline.apiTokens ?? [];
+        const listHtml = tokens.length
+          ? tokens.map((token) => `
+              <article class="mini-card">
+                <div>
+                  <div class="mini-title">${escapeHtml(token.name)}</div>
+                  <div class="mini-sub">负责人 ${escapeHtml(token.owner)} · ${escapeHtml(token.note)}</div>
+                </div>
+                <span class="role-badge ${roleClass(token.status)}">${escapeHtml(token.status)}</span>
+              </article>
+            `).join("")
+          : `
+              <article class="mini-card is-empty">
+                <div>
+                  <div class="mini-title">还没有 Token</div>
+                  <div class="mini-sub">生成后，学科负责人可以把它交给 GPT 或脚本上传知识。</div>
+                </div>
+                <span class="role-badge">未生成</span>
+              </article>
+            `;
+        const ownerOptions = (discipline.members ?? [])
+          .filter((member) => member.role !== "只读")
+          .map((member) => `<option>${escapeHtml(member.email)}</option>`)
+          .join("");
+        document.querySelector("#token-list").innerHTML = listHtml;
+        document.querySelector("#token-owner-select").innerHTML = ownerOptions || "<option>请先分配负责人</option>";
+      }
+
+      function openOwner(key) {
+        const discipline = findDiscipline(key);
+        document.querySelector("#owner-sub").textContent = `${discipline.title.zh} · 成员权限`;
+        renderOwnerMembers(discipline);
+        ownerDrawer.classList.add("is-open");
+      }
+
+      function openToken(key) {
+        const discipline = findDiscipline(key);
+        tokenKey = key;
+        document.querySelector("#token-sub").textContent = `${discipline.title.zh} · API 写入权限`;
+        document.querySelector("#demo-token-value").textContent = "点击“生成 Token”后，这里只显示一次明文。";
+        renderTokenItems(discipline);
+        tokenDrawer.classList.add("is-open");
       }
 
       function findDiscipline(key) {
@@ -961,7 +1262,6 @@
         document.querySelector("#edit-title-en").value = discipline.title.en ?? "";
         document.querySelector("#edit-title-ja").value = discipline.title.ja ?? "";
         document.querySelector("#edit-tagline-zh").value = discipline.tagline?.zh ?? "";
-        document.querySelector("#edit-tagline-ja").value = discipline.tagline?.ja ?? "";
         editDrawer.classList.add("is-open");
         document.querySelector("#edit-title-zh").focus();
       }
@@ -977,6 +1277,8 @@
       function closeLayers() {
         createDrawer.classList.remove("is-open");
         editDrawer.classList.remove("is-open");
+        ownerDrawer.classList.remove("is-open");
+        tokenDrawer.classList.remove("is-open");
         deleteConfirm.classList.remove("is-open");
       }
 
@@ -986,10 +1288,6 @@
       });
       document.querySelectorAll("[data-close-confirm]").forEach((el) => {
         el.addEventListener("click", closeLayers);
-      });
-
-      document.querySelector("#form-title-en").addEventListener("input", (event) => {
-        document.querySelector("#key-preview").textContent = slugify(event.target.value) || "无法生成";
       });
 
       document.querySelector("#create-submit-btn").addEventListener("click", () => {
@@ -1011,6 +1309,8 @@
           counts: { view: 0, school: 0, scholar: 0, kp: 0 },
           owner: "",
           tokens: 0,
+          members: [],
+          apiTokens: [],
         });
         closeLayers();
         render();
@@ -1028,7 +1328,7 @@
         discipline.title.zh = titleZh;
         discipline.title.en = document.querySelector("#edit-title-en").value.trim();
         discipline.title.ja = document.querySelector("#edit-title-ja").value.trim();
-        discipline.tagline.zh = document.querySelector("#edit-tagline-zh").value.trim();
+        discipline.tagline = { zh: document.querySelector("#edit-tagline-zh").value.trim() };
         closeLayers();
         render();
         showToast(`已保存「${discipline.title.zh}」学科信息`);
@@ -1044,6 +1344,32 @@
       });
 
       searchInput.addEventListener("input", render);
+      document.querySelector("#demo-generate-token").addEventListener("click", () => {
+        const discipline = findDiscipline(tokenKey);
+        const ownerEmail = document.querySelector("#token-owner-select").value;
+        if (ownerEmail === "请先分配负责人") {
+          showToast("请先分配负责人");
+          return;
+        }
+        discipline.tokens += 1;
+        discipline.apiTokens = [
+          { name: `GPT ${discipline.title.zh}写入`, owner: ownerEmail, note: "刚刚生成", status: "可用" },
+          ...(discipline.apiTokens ?? []),
+        ];
+        renderTokenItems(discipline);
+        render();
+        document.querySelector("#demo-token-value").textContent = "ms_v1_demo_7f2c9a41b60d4e29a9d4ef13c28a9001";
+        showToast("Token 已生成，只显示一次");
+      });
+
+      document.querySelector("[data-back-link]").addEventListener("click", (event) => {
+        event.preventDefault();
+        if (window.history.length > 1) {
+          window.history.back();
+          return;
+        }
+        showToast("正式版会返回进入前的页面");
+      });
 
       render();
     </script>
