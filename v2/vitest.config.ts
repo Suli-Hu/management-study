@@ -2,6 +2,7 @@ import { defineConfig } from 'vitest/config';
 import { fileURLToPath } from 'node:url';
 
 const SRC = fileURLToPath(new URL('./src', import.meta.url));
+const TESTS = fileURLToPath(new URL('./tests', import.meta.url));
 
 export default defineConfig({
   test: {
@@ -13,6 +14,7 @@ export default defineConfig({
   },
   resolve: {
     alias: [
+      { find: 'astro:middleware', replacement: `${TESTS}/shims/astro-middleware.ts` },
       // 用 regex 精确匹配 `~/...` 前缀，避免误吞裸 `~`
       { find: /^~\/(.*)$/, replacement: `${SRC}/$1` },
     ],
