@@ -2,7 +2,8 @@
 
 > **API-first migration note**：新写入路径是 `GET/POST /api/kps`、
 > `GET/PATCH/DELETE /api/kps/:id`、`GET/POST /api/schools` 与
-> `GET/PATCH/DELETE /api/schools/:key`。旧的 GitHub JSON sync / edit 端点仍可用，
+> `GET/PATCH/DELETE /api/schools/:key`、`GET/POST /api/scholars` 与
+> `GET/PATCH/DELETE /api/scholars/:key`。旧的 GitHub JSON sync / edit 端点仍可用，
 > 但已标记 deprecated，只作为迁移期兜底。
 
 ---
@@ -15,9 +16,10 @@
 2. 调 `GET /api/me` 确认 token 身份、scope、可读/可写学科。
 3. 调 `GET /api/kps/meta?discipline=<key>` 获取可用 `schools` / `scholars` / `tags` / `formats`。
 4. 如需先建学派，调 `POST /api/schools?discipline=<key>`。
-5. 调 `POST /api/kps?discipline=<key>` 创建 KP。
-6. 调 `GET /api/kps/:id` 或 `GET /api/kps?discipline=<key>&q=<title>` 确认写入结果。
-7. 如需审计，调 `GET /api/kps/:id/versions` 查看历史快照。
+5. 如需先建学者，调 `POST /api/scholars?discipline=<key>`。
+6. 调 `POST /api/kps?discipline=<key>` 创建 KP。
+7. 调 `GET /api/kps/:id` 或 `GET /api/kps?discipline=<key>&q=<title>` 确认写入结果。
+8. 如需审计，调 `GET /api/kps/:id/versions` 查看历史快照。
 
 ### Tenant 选择与权限
 
@@ -205,6 +207,8 @@ Response:
 | `kp_not_found` | 404 | KP 不存在或已删除 |
 | `school_key_exists` | 409 | 创建时 school key 已存在 |
 | `school_not_found` | 404 | School 不存在 |
+| `scholar_key_exists` | 409 | 创建时 scholar key 已存在 |
+| `scholar_not_found` | 404 | Scholar 不存在 |
 | `school_not_in_tenant` | 422 | schools 引用了该学科不存在的 key |
 | `scholar_not_in_tenant` | 422 | scholars 引用了该学科不存在的 key |
 | `theme_not_in_tenant` | 422 | themeKey 引用了该学科不存在的 key |
@@ -212,6 +216,7 @@ Response:
 | `school_has_kps` | 409 | 删除 school 前需要先移走或删除关联 KP |
 | `school_has_scholars` | 409 | 删除 school 前需要先移走或删除关联 Scholar |
 | `school_used_in_views` | 409 | 删除 school 前需要先从 View 中移除 |
+| `scholar_has_kps` | 409 | 删除 scholar 前需要先移走或删除关联 KP |
 | `tenant_mismatch` | 403 | 请求试图操作其它 tenant 的 KP |
 
 > **谁该读**：在任意 worktree / 任意 Claude Code session 想以编程方式管理知识库的 agent。
@@ -292,6 +297,88 @@ Response:
 
 删除空学派。若该学派仍有关联 KP、Scholar 或 View，会返回 `409`，避免误删导致页面断裂。
 
+## API-first Scholar endpoints
+
+Scholar 是“学者/理论贡献者”的数据库写入入口。新学科负责人可以通过 token 直接创建和维护学者，不需要走 Git。
+
+### `GET /api/scholars?discipline=<key>`
+
+列出当前 tenant 的学者。读权限即可调用。
+
+Query：
+
+| 参数 | 说明 |
+|---|---|
+| `discipline` | 目标学科 / tenant |
+| `limit` | 默认 `50`，最大 `200` |
+| `offset` | 默认 `0` |
+| `q` | 可选，匹配 name / contribution 的 zh/en/ja |
+| `school` | 可选，只列关联某个 school 的学者 |
+
+Response:
+
+```json
+{
+  "ok": true,
+  "tenant": { "tenantId": "keiei", "discipline": "keiei", "role": "editor" },
+  "scholars": [
+    {
+      "key": "maslow",
+      "name": { "zh": "马斯洛", "en": "Abraham Maslow" },
+      "schools": ["motivation"],
+      "contribution": { "zh": "提出需求层次理论。" },
+      "lifespan": "1908-1970",
+      "institution": "Brandeis University",
+      "born": "1908",
+      "died": "1970",
+      "nationality": "美国",
+      "field": "心理学",
+      "tags": ["classic"],
+      "nobel": null,
+      "kpsOrder": ["k101"],
+      "kp_count": 1,
+      "school_count": 1
+    }
+  ],
+  "page": { "limit": 50, "offset": 0, "total": 1, "next_offset": null }
+}
+```
+
+### `POST /api/scholars?discipline=<key>`
+
+直接写入 D1，创建学者。`schools` 和 `kpsOrder` 里的 key/id 必须属于同一 tenant。
+请求 body 不能包含 `tenant_id` 或 `discipline`。
+
+```json
+{
+  "key": "maslow",
+  "name": { "zh": "马斯洛", "ja": "マズロー", "en": "Abraham Maslow" },
+  "schools": ["motivation"],
+  "contribution": { "zh": "提出需求层次理论。", "ja": "欲求階層説を提唱。" },
+  "lifespan": "1908-1970",
+  "institution": "Brandeis University",
+  "born": "1908",
+  "died": "1970",
+  "nationality": "美国",
+  "field": "心理学",
+  "tags": ["classic"],
+  "nobel": null,
+  "kpsOrder": ["k101"]
+}
+```
+
+### `GET /api/scholars/:key?discipline=<key>`
+
+读取单个学者。需要指定 `discipline`，服务端会校验当前用户是否可读该 tenant。
+
+### `PATCH /api/scholars/:key?discipline=<key>`
+
+局部更新学者。禁止变更 key / tenant；`schools` 和 `kpsOrder` 会做同 tenant 校验。
+
+### `DELETE /api/scholars/:key?discipline=<key>`
+
+删除未被 KP 引用的学者。若该学者仍有关联 KP，会返回 `409`。
+
 ## 0. TL;DR — 9 成场景就这一句话
 
 **新流程：agent 通过 API token 直接写数据库，不需要改 GitHub JSON。**
@@ -302,6 +389,8 @@ GET /api/me
 GET /api/kps/meta?discipline=<key>
 ↓
 POST /api/schools?discipline=<key>   （需要新学派时）
+↓
+POST /api/scholars?discipline=<key>  （需要新学者时）
 ↓
 POST /api/kps?discipline=<key>
 ↓
