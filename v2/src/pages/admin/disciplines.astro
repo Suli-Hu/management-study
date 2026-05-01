@@ -1,6 +1,6 @@
 ---
 /**
- * /admin/disciplines — 学科管理 (v0.5.98)
+ * /admin/disciplines — 学科管理
  * super-admin only。SSR gate；UI client-rendered。
  *
  * 设计 (frontend-design skill):
@@ -10,7 +10,7 @@
  *   - 删除按钮:
  *     * 可删: [🗑 删除] warning ghost
  *     * 不可删: [🔒 含内容] hover tooltip 给具体障碍数
- *   - 创建: 顶部 [+ 新建学科] → drawer 从右滑入（沿用 NewViewDrawer 模式）
+ *   - 创建: 学科列表工具条 [+ 新建学科] → drawer 从右滑入（沿用 NewViewDrawer 模式）
  *   - 编辑: 行点击 inline 展开 (改 title/tagline)
  */
 import Layout from '~/layouts/Layout.astro';
@@ -23,14 +23,13 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
   <main class="max-w-reading mx-auto px-4 py-6">
     <header class="mb-6 flex items-baseline justify-between gap-3 flex-wrap">
       <div>
-        <a href="/" class="text-xs text-tertiary hover:underline">← 返回首页</a>
+        <button type="button" class="disc-back-btn" data-back>← 返回</button>
         <div class="flex items-baseline gap-3 mt-2">
           <h1 class="text-2xl font-semibold">学科管理</h1>
           <span class="text-xs text-quaternary" id="disc-count"></span>
         </div>
-        <p class="text-xs text-tertiary mt-1">创建 / 编辑学科元数据 — themes / tags 在各学科内部管理</p>
+        <p class="text-xs text-tertiary mt-1">创建、编辑和删除学科；权限分配在“用户权限管理”里完成。</p>
       </div>
-      <button type="button" id="open-create-btn" class="disc-create-btn">+ 新建学科</button>
     </header>
 
     <div id="loading" class="space-y-2">
@@ -38,11 +37,18 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
     </div>
 
     <div id="content" class="hidden">
+      <div class="disc-toolbar">
+        <div>
+          <div class="disc-toolbar-title">学科列表</div>
+          <div class="disc-toolbar-sub">空学科可以删除；已有内容的学科会被锁定。</div>
+        </div>
+        <button type="button" id="open-create-btn" class="disc-create-btn">+ 新建学科</button>
+      </div>
       <div id="disc-list" class="disc-list"></div>
       <div id="empty-state" class="disc-empty hidden">
         <div class="disc-empty-icon">∅</div>
         <div class="disc-empty-text">还没有学科</div>
-        <div class="disc-empty-sub">点 [+ 新建学科] 创建第一个</div>
+        <div class="disc-empty-sub">点“新建学科”创建第一个</div>
       </div>
     </div>
   </main>
@@ -54,7 +60,7 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
       <div class="disc-drawer-head">
         <div>
           <div class="disc-drawer-title">新建学科</div>
-          <div class="disc-drawer-sub">key 不可改，建后锁死。Themes / tags 在学科内 admin 配。</div>
+          <div class="disc-drawer-sub">创建后可以继续编辑名称和备注；内容配置在对应学科内完成。</div>
         </div>
         <button type="button" class="disc-drawer-close" data-close aria-label="关闭">
           <svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -69,7 +75,6 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
           <label class="disc-field">
             <div class="disc-label">English <span class="disc-req">*</span></div>
             <input type="text" id="form-title-en" placeholder="Finance" class="disc-input" />
-            <div class="disc-hint" id="key-preview">将生成 key: <span class="disc-input-mono" id="key-preview-val">—</span></div>
           </label>
           <label class="disc-field">
             <div class="disc-label">日本語</div>
@@ -77,12 +82,8 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
           </label>
         </div>
         <label class="disc-field">
-          <div class="disc-label">中文一句话定位</div>
+          <div class="disc-label">备注</div>
           <input type="text" id="form-tagline-zh" placeholder="日本大学院入试备考" class="disc-input" />
-        </label>
-        <label class="disc-field">
-          <div class="disc-label">日本語一句タグライン</div>
-          <input type="text" id="form-tagline-ja" placeholder="可空" class="disc-input" />
         </label>
       </div>
       <div class="disc-drawer-foot">
@@ -106,11 +107,6 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
         </button>
       </div>
       <div class="disc-drawer-body">
-        <div class="disc-field">
-          <div class="disc-label">key</div>
-          <div class="disc-input disc-input-mono disc-input-readonly" id="edit-key-display"></div>
-          <div class="disc-hint">key 不可改</div>
-        </div>
         <label class="disc-field">
           <div class="disc-label">中文名 <span class="disc-req">*</span></div>
           <input type="text" id="edit-title-zh" class="disc-input" />
@@ -126,12 +122,8 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
           </label>
         </div>
         <label class="disc-field">
-          <div class="disc-label">中文一句话定位</div>
+          <div class="disc-label">备注</div>
           <input type="text" id="edit-tagline-zh" class="disc-input" />
-        </label>
-        <label class="disc-field">
-          <div class="disc-label">日本語一句タグライン</div>
-          <input type="text" id="edit-tagline-ja" class="disc-input" />
         </label>
       </div>
       <div class="disc-drawer-foot">
@@ -143,6 +135,35 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
 </Layout>
 
 <style is:global>
+  .disc-back-btn {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-text-tertiary);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .disc-back-btn:hover { color: var(--color-text-primary); }
+
+  .disc-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .disc-toolbar-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+  .disc-toolbar-sub {
+    margin-top: 2px;
+    font-size: 11.5px;
+    color: var(--color-text-tertiary);
+  }
+
   /* === 列表 === */
   .disc-list { display: flex; flex-direction: column; gap: 8px; }
   .disc-row {
@@ -151,7 +172,7 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
     gap: 16px;
     padding: 14px 18px;
     border: 1px solid var(--color-border);
-    border-radius: 10px;
+    border-radius: 8px;
     background: var(--color-bg-primary);
     align-items: center;
   }
@@ -174,14 +195,6 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
   .disc-title-en {
     font-size: 12px;
     color: var(--color-text-quaternary);
-  }
-  .disc-key {
-    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-    font-size: 11px;
-    color: var(--color-text-quaternary);
-    padding: 1px 6px;
-    background: var(--color-bg-tertiary);
-    border-radius: 4px;
   }
   .disc-tagline {
     font-size: 12px;
@@ -211,6 +224,44 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
   }
   .disc-count-label {
     font-size: 11px;
+    color: var(--color-text-quaternary);
+  }
+
+  .disc-access {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--color-text-tertiary);
+  }
+  .disc-access-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+  .disc-access-label {
+    color: var(--color-text-quaternary);
+    flex-shrink: 0;
+  }
+  .disc-person-list {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .disc-person-pill {
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
+  }
+  .disc-access-empty {
     color: var(--color-text-quaternary);
   }
 
@@ -262,7 +313,7 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
     padding: 50px 20px;
     color: var(--color-text-quaternary);
     border: 1px dashed var(--color-border);
-    border-radius: 10px;
+    border-radius: 8px;
   }
   .disc-empty-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.4; }
   .disc-empty-text { font-size: 13px; color: var(--color-text-tertiary); }
@@ -381,12 +432,40 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
     font-family: inherit;
   }
   .disc-btn-ghost:hover { background: var(--color-bg-secondary); }
+
+  @media (max-width: 640px) {
+    .disc-toolbar,
+    .disc-row {
+      align-items: stretch;
+      grid-template-columns: 1fr;
+    }
+    .disc-toolbar {
+      flex-direction: column;
+    }
+    .disc-create-btn,
+    .disc-actions {
+      width: 100%;
+    }
+    .disc-actions button {
+      flex: 1;
+    }
+    .disc-field-row {
+      flex-direction: column;
+    }
+  }
 </style>
 
 <script>
   // @ts-nocheck
   const $ = (s) => document.querySelector(s);
   let disciplines = [];
+
+  document.querySelectorAll('[data-back]').forEach((el) => {
+    el.addEventListener('click', () => {
+      if (window.history.length > 1) window.history.back();
+      else window.location.href = '/';
+    });
+  });
 
   async function load() {
     const res = await fetch('/api/admin/disciplines');
@@ -414,6 +493,7 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
     $('#disc-list').innerHTML = disciplines.map((d) => {
       const titleEn = d.title.en ? `<span class="disc-title-en">${escapeHtml(d.title.en)}</span>` : '';
       const tagline = d.tagline?.zh ? `<div class="disc-tagline">${escapeHtml(d.tagline.zh)}</div>` : '';
+      const access = renderAccess(d.access);
       const c = d.counts;
       const isEmpty = d.is_empty;
       const blockers = [];
@@ -422,8 +502,8 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
       if (c.scholar > 0) blockers.push(`${c.scholar} 学者`);
       if (c.kp > 0) blockers.push(`${c.kp} KP`);
       const deleteBtn = isEmpty
-        ? `<button type="button" class="disc-btn-delete is-can" data-delete="${escapeAttr(d.key)}">🗑 删除</button>`
-        : `<button type="button" class="disc-btn-delete is-locked" disabled title="该学科含 ${blockers.join(' / ')}，清空才能删">🔒 含内容</button>`;
+        ? `<button type="button" class="disc-btn-delete is-can" data-delete="${escapeAttr(d.key)}">删除</button>`
+        : `<button type="button" class="disc-btn-delete is-locked" disabled title="该学科含 ${blockers.join(' / ')}，清空才能删">含内容</button>`;
 
       return `
         <div class="disc-row ${isEmpty ? 'is-empty' : ''}">
@@ -431,7 +511,6 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
             <div class="disc-name">
               <span class="disc-title-zh">${escapeHtml(d.title.zh)}</span>
               ${titleEn}
-              <span class="disc-key">${escapeHtml(d.key)}</span>
             </div>
             ${tagline}
             <div class="disc-counts ${isEmpty ? 'is-all-zero' : ''}">
@@ -440,6 +519,7 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
               <span class="disc-count"><span class="disc-count-n">${c.scholar}</span><span class="disc-count-label">学者</span></span>
               <span class="disc-count"><span class="disc-count-n">${c.kp}</span><span class="disc-count-label">KP</span></span>
             </div>
+            ${access}
           </div>
           <div class="disc-actions">
             <button type="button" class="disc-btn-edit" data-edit="${escapeAttr(d.key)}">编辑</button>
@@ -461,40 +541,47 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
     return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
   }
   function escapeAttr(s) { return escapeHtml(s); }
+  function displayUser(user) {
+    if (user?.display_name) return user.display_name;
+    const email = user?.email ?? '';
+    return email.includes('@') ? email.split('@')[0] : email || '未知用户';
+  }
+  function renderPeople(users) {
+    if (!users?.length) return '<span class="disc-access-empty">无</span>';
+    return `<span class="disc-person-list">${users.map((u) => (
+      `<span class="disc-person-pill" title="${escapeAttr(u.email)}">${escapeHtml(displayUser(u))}</span>`
+    )).join('')}</span>`;
+  }
+  function renderAccess(access) {
+    const editors = access?.editors ?? [];
+    const readers = access?.readers ?? [];
+    return `
+      <div class="disc-access">
+        <div class="disc-access-group">
+          <span class="disc-access-label">编辑</span>
+          ${renderPeople(editors)}
+        </div>
+        <div class="disc-access-group">
+          <span class="disc-access-label">只读</span>
+          ${renderPeople(readers)}
+        </div>
+      </div>
+    `;
+  }
 
   /* === 创建 drawer === */
-  /** Slugify English 标题 → key (lowercase + 非字母数字转下划线 + trim 边界 _) */
+  /** Slugify English 标题为内部标识 */
   function slugify(en) {
     return (en || '').toLowerCase()
       .replace(/[^a-z0-9]+/g, '_')
       .replace(/^_+|_+$/g, '')
       .slice(0, 31);
   }
-  function updateKeyPreview() {
-    const en = $('#form-title-en').value.trim();
-    const slug = slugify(en);
-    const valid = /^[a-z][a-z0-9_]{1,30}$/.test(slug);
-    const el = $('#key-preview-val');
-    if (!en) {
-      el.textContent = '—';
-      el.style.color = 'var(--color-text-quaternary)';
-    } else if (valid) {
-      el.textContent = slug;
-      el.style.color = 'var(--color-text-primary)';
-    } else {
-      el.textContent = slug || '(无法生成)';
-      el.style.color = '#FF3B30';
-    }
-  }
-  $('#form-title-en').addEventListener('input', updateKeyPreview);
-
   $('#open-create-btn').addEventListener('click', () => {
     $('#form-title-zh').value = '';
     $('#form-title-en').value = '';
     $('#form-title-ja').value = '';
     $('#form-tagline-zh').value = '';
-    $('#form-tagline-ja').value = '';
-    updateKeyPreview();
     $('#create-drawer').classList.remove('hidden');
     setTimeout(() => $('#form-title-zh').focus(), 100);
   });
@@ -506,10 +593,10 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
     const titleZh = $('#form-title-zh').value.trim();
     const titleEn = $('#form-title-en').value.trim();
     if (!titleZh) { window.toast?.error('中文名必填'); return; }
-    if (!titleEn) { window.toast?.error('English 必填（用来生成 key）'); return; }
+    if (!titleEn) { window.toast?.error('English 必填'); return; }
     const slug = slugify(titleEn);
     if (!/^[a-z][a-z0-9_]{1,30}$/.test(slug)) {
-      window.toast?.error(`English "${titleEn}" 无法生成有效 key (slug=${slug})，请改 English 写法`);
+      window.toast?.error(`English“${titleEn}”格式不适合创建学科，请换成英文单词或短语`);
       return;
     }
 
@@ -524,7 +611,6 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
       },
       tagline: {
         zh: $('#form-tagline-zh').value.trim() || null,
-        ja: $('#form-tagline-ja').value.trim() || null,
       },
     };
     const res = await fetch('/api/admin/disciplines', {
@@ -538,7 +624,7 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
       window.toast?.error(`${data.reason ?? 'error'}: ${typeof data.detail === 'string' ? data.detail : ''}`.slice(0, 100));
       return;
     }
-    window.toast?.success(`已创建学科 ${data.discipline?.key ?? slug}`);
+    window.toast?.success(`已创建学科 ${data.discipline?.title?.zh ?? titleZh}`);
     $('#create-drawer').classList.add('hidden');
     await load();
   });
@@ -547,13 +633,11 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
   function openEdit(key) {
     const d = disciplines.find((x) => x.key === key);
     if (!d) return;
-    $('#edit-key-display').textContent = d.key;
     $('#edit-title-zh').value = d.title.zh ?? '';
     $('#edit-title-en').value = d.title.en ?? '';
     $('#edit-title-ja').value = d.title.ja ?? '';
     $('#edit-tagline-zh').value = d.tagline?.zh ?? '';
-    $('#edit-tagline-ja').value = d.tagline?.ja ?? '';
-    $('#edit-sub').textContent = `${d.title.zh} · ${d.key}`;
+    $('#edit-sub').textContent = d.title.zh;
     $('#edit-drawer').classList.remove('hidden');
     $('#edit-drawer').dataset.editingKey = key;
     setTimeout(() => $('#edit-title-zh').focus(), 100);
@@ -578,7 +662,6 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
       },
       tagline: {
         zh: $('#edit-tagline-zh').value.trim() || null,
-        ja: $('#edit-tagline-ja').value.trim() || null,
       },
     };
     const res = await fetch(`/api/admin/disciplines/${encodeURIComponent(key)}`, {
@@ -592,17 +675,19 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
       window.toast?.error(`${data.reason ?? 'error'}: ${typeof data.detail === 'string' ? data.detail : ''}`.slice(0, 100));
       return;
     }
-    window.toast?.success(`已保存 ${key}`);
+    window.toast?.success(`已保存 ${titleZh}`);
     $('#edit-drawer').classList.add('hidden');
     await load();
   });
 
   async function doDelete(key) {
-    if (!confirm(`确认删除学科 "${key}"？\n\n此操作会:\n• 删 git 文件 v2/data/${key}/discipline.json\n• 删 D1 discipline 行\n• cascade 删该学科的 user_permission 行\n\n不可恢复（除非从 git history revert）。`)) return;
+    const d = disciplines.find((x) => x.key === key);
+    const name = d?.title?.zh ?? key;
+    if (!confirm(`确认删除学科“${name}”？\n\n只有空学科可以删除。删除后，该学科的用户权限也会一起清理。`)) return;
     const res = await fetch(`/api/admin/disciplines/${encodeURIComponent(key)}`, { method: 'DELETE' });
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
-      window.toast?.success(`已删除 ${key}`);
+      window.toast?.success(`已删除 ${name}`);
       await load();
     } else {
       window.toast?.error(`${data.reason ?? 'error'}: ${typeof data.detail === 'object' ? JSON.stringify(data.detail) : (data.detail ?? '')}`.slice(0, 120));

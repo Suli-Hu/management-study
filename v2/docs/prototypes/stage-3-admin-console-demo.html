@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Stage 3 Discipline Admin Prototype</title>
+    <title>Stage 3 Admin MVP Prototype</title>
     <style>
       :root {
         color-scheme: light;
@@ -15,7 +15,7 @@
         --color-bg-secondary: #fafafa;
         --color-bg-tertiary: #f5f5f7;
         --color-border: #e5e5ea;
-        --accent-strategy: #007aff;
+        --accent-blue: #007aff;
         --accent-warning: #ff9500;
         --accent-danger: #ff3b30;
         --accent-success: #34c759;
@@ -59,10 +59,44 @@
         text-decoration: none;
       }
 
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin: 0;
+        color: var(--color-text-primary);
+        font-size: 24px;
+        line-height: 1.25;
+        font-weight: 650;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        margin: 0;
+        color: var(--color-text-primary);
+        font-size: 16px;
+        line-height: 1.3;
+        font-weight: 650;
+        letter-spacing: 0;
+      }
+
+      h3 {
+        margin: 0 0 3px;
+        color: var(--color-text-primary);
+        font-size: 13px;
+        line-height: 1.35;
+        font-weight: 650;
+        letter-spacing: 0;
+      }
+
       .page {
-        width: min(880px, calc(100vw - 32px));
+        width: min(1040px, calc(100vw - 32px));
         margin: 0 auto;
-        padding: 24px 0 48px;
+        padding: 24px 0 52px;
       }
 
       .page-header {
@@ -70,7 +104,7 @@
         align-items: flex-start;
         justify-content: space-between;
         gap: 16px;
-        margin-bottom: 20px;
+        margin-bottom: 16px;
         flex-wrap: wrap;
       }
 
@@ -92,41 +126,8 @@
         flex-wrap: wrap;
       }
 
-      h1,
-      h2,
-      h3,
-      p {
-        margin-top: 0;
-      }
-
-      h1 {
-        margin: 0;
-        color: var(--color-text-primary);
-        font-size: 24px;
-        line-height: 1.25;
-        font-weight: 650;
-        letter-spacing: 0;
-      }
-
-      h2 {
-        margin: 0;
-        color: var(--color-text-primary);
-        font-size: 15px;
-        line-height: 1.3;
-        font-weight: 650;
-        letter-spacing: 0;
-      }
-
-      h3 {
-        margin: 0 0 3px;
-        color: var(--color-text-primary);
-        font-size: 13px;
-        line-height: 1.35;
-        font-weight: 650;
-        letter-spacing: 0;
-      }
-
-      .count {
+      .count,
+      .muted {
         color: var(--color-text-quaternary);
         font-size: 12px;
       }
@@ -185,12 +186,29 @@
         background: var(--color-bg-secondary);
       }
 
+      .input,
+      .select {
+        min-height: 34px;
+        padding: 7px 10px;
+        border: 1px solid var(--color-border);
+        border-radius: 6px;
+        background: var(--color-bg-primary);
+        color: var(--color-text-primary);
+        font-size: 12px;
+        outline: none;
+      }
+
+      .input:focus,
+      .select:focus {
+        border-color: var(--color-text-primary);
+      }
+
       .stage-note {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
         gap: 14px;
         align-items: center;
-        margin-bottom: 16px;
+        margin-bottom: 14px;
         padding: 12px 14px;
         border: 1px solid var(--color-border);
         border-radius: 8px;
@@ -208,7 +226,8 @@
         font-weight: 650;
       }
 
-      .chips {
+      .chips,
+      .inline-list {
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
@@ -223,9 +242,9 @@
         border-radius: 999px;
         background: var(--color-bg-primary);
         color: var(--color-text-tertiary);
-        font-family: var(--mono);
-        font-size: 10.5px;
+        font-size: 11px;
         line-height: 1;
+        white-space: nowrap;
       }
 
       .chip-success {
@@ -240,13 +259,66 @@
         background: color-mix(in srgb, var(--accent-warning) 12%, var(--color-bg-primary));
       }
 
-      .chip-action {
-        cursor: pointer;
+      .chip-blue {
+        color: #0f5a9f;
+        border-color: color-mix(in srgb, var(--accent-blue) 30%, var(--color-border));
+        background: color-mix(in srgb, var(--accent-blue) 8%, var(--color-bg-primary));
       }
 
-      .chip-action:hover {
-        border-color: var(--color-text-quaternary);
+      .chip-muted {
+        background: var(--color-bg-tertiary);
+        color: var(--color-text-quaternary);
+      }
+
+      .tabs {
+        display: flex;
+        gap: 6px;
+        margin: 0 0 16px;
+        padding: 4px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        background: var(--color-bg-secondary);
+        overflow-x: auto;
+      }
+
+      .tab-btn {
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--color-text-tertiary);
+        min-height: 34px;
+        padding: 7px 12px;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .tab-btn.is-active {
+        background: var(--color-bg-primary);
         color: var(--color-text-primary);
+        box-shadow: inset 0 0 0 1px var(--color-border);
+      }
+
+      .panel {
+        display: none;
+      }
+
+      .panel.is-active {
+        display: block;
+      }
+
+      .panel-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+      }
+
+      .panel-head p {
+        margin: 4px 0 0;
+        color: var(--color-text-tertiary);
+        font-size: 12px;
       }
 
       .toolbar {
@@ -272,24 +344,8 @@
         flex-wrap: wrap;
       }
 
-      .input,
-      .select {
-        min-height: 34px;
-        padding: 7px 10px;
-        border: 1px solid var(--color-border);
-        border-radius: 6px;
-        background: var(--color-bg-primary);
-        color: var(--color-text-primary);
-        font-size: 12px;
-        outline: none;
-      }
-
-      .input:focus,
-      .select:focus {
-        border-color: var(--color-text-primary);
-      }
-
-      .disc-list {
+      .disc-list,
+      .token-list {
         display: flex;
         flex-direction: column;
         gap: 8px;
@@ -297,7 +353,7 @@
 
       .disc-row {
         display: grid;
-        grid-template-columns: minmax(180px, 1fr) minmax(210px, 230px) minmax(150px, 180px) auto;
+        grid-template-columns: minmax(220px, 1fr) minmax(210px, 230px) minmax(220px, 260px) auto;
         gap: 14px;
         align-items: center;
         padding: 14px 16px;
@@ -310,7 +366,7 @@
         background: var(--color-bg-secondary);
       }
 
-      .disc-row-main {
+      .disc-main {
         min-width: 0;
         display: flex;
         flex-direction: column;
@@ -343,33 +399,10 @@
         white-space: nowrap;
       }
 
-      .disc-meta {
-        display: flex;
-        gap: 7px;
-        flex-wrap: wrap;
-      }
-
-      .disc-manage {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 7px;
-        min-width: 0;
-      }
-
-      .manage-label {
-        color: var(--color-text-quaternary);
-        font-size: 10.5px;
-        font-weight: 650;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-      }
-
       .disc-counts {
         display: grid;
-        grid-template-columns: repeat(2, minmax(72px, 1fr));
+        grid-template-columns: repeat(2, minmax(76px, 1fr));
         gap: 6px 12px;
-        margin: 0;
         font-size: 13px;
       }
 
@@ -395,63 +428,419 @@
         font-size: 11px;
       }
 
+      .access-summary {
+        display: grid;
+        gap: 7px;
+        min-width: 0;
+      }
+
+      .access-line {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 7px;
+        align-items: center;
+      }
+
+      .access-label {
+        color: var(--color-text-quaternary);
+        font-size: 11px;
+      }
+
+      .person-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .person-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        min-height: 22px;
+        padding: 2px 7px 2px 5px;
+        border: 1px solid var(--color-border);
+        border-radius: 999px;
+        background: var(--color-bg-primary);
+        color: var(--color-text-tertiary);
+        font-size: 11px;
+        max-width: 120px;
+      }
+
+      .person-pill.is-empty {
+        color: var(--color-text-quaternary);
+        background: var(--color-bg-tertiary);
+      }
+
+      .avatar {
+        width: 18px;
+        height: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        border-radius: 999px;
+        background: var(--color-text-primary);
+        color: var(--color-bg-primary);
+        font-size: 10px;
+        font-weight: 650;
+      }
+
+      .person-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
       .disc-actions {
         display: flex;
         gap: 6px;
-        flex-shrink: 0;
-        flex-wrap: wrap;
         justify-content: flex-end;
+        flex-wrap: wrap;
       }
 
-      .review-panel {
-        margin-top: 18px;
-        padding: 14px 16px;
+      .users-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        background: var(--color-bg-primary);
+      }
+
+      .users-table {
+        width: 100%;
+        min-width: 760px;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      .users-table th {
+        text-align: left;
+        padding: 10px 14px;
+        background: var(--color-bg-secondary);
+        border-bottom: 1px solid var(--color-border);
+        color: var(--color-text-quaternary);
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .users-table td {
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--color-bg-tertiary);
+        vertical-align: middle;
+      }
+
+      .users-table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .sticky-col {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        min-width: 230px;
+      }
+
+      .users-table td.sticky-col {
+        background: var(--color-bg-primary);
+        z-index: 1;
+      }
+
+      .users-table tr:hover td,
+      .users-table tr:hover td.sticky-col {
+        background: var(--color-bg-secondary);
+      }
+
+      .user-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      .user-name {
+        color: var(--color-text-primary);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .user-email {
+        max-width: 180px;
+        color: var(--color-text-quaternary);
+        font-size: 11px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .perm-toggle {
+        display: inline-flex;
+        height: 32px;
+        overflow: hidden;
+        border: 1px solid var(--color-border);
+        border-radius: 6px;
+        background: var(--color-bg-primary);
+      }
+
+      .perm-toggle button {
+        all: unset;
+        min-width: 54px;
+        padding: 0 10px;
+        border-right: 1px solid var(--color-border);
+        color: var(--color-text-quaternary);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 550;
+      }
+
+      .perm-toggle button:last-child {
+        border-right: 0;
+      }
+
+      .perm-toggle button:hover {
+        background: var(--color-bg-secondary);
+      }
+
+      .perm-toggle button.is-active {
+        background: var(--color-text-primary);
+        color: var(--color-bg-primary);
+      }
+
+      .perm-lock {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 32px;
+        padding: 0 12px;
+        border: 1px solid var(--color-bg-tertiary);
+        border-radius: 6px;
+        background: var(--color-bg-secondary);
+        color: var(--color-text-quaternary);
+        font-size: 11px;
+        font-weight: 650;
+      }
+
+      .legend {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        background: var(--color-bg-secondary);
+        color: var(--color-text-tertiary);
+        font-size: 12px;
+      }
+
+      .token-create {
+        display: grid;
+        gap: 14px;
+        margin-bottom: 18px;
+        padding: 16px 18px;
         border: 1px solid var(--color-border);
         border-radius: 10px;
         background: var(--color-bg-primary);
       }
 
-      .review-grid {
+      .form-grid {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
-        margin-top: 12px;
+        grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) 140px;
+        gap: 12px;
       }
 
-      .review-card {
-        padding: 11px 12px;
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .field-row {
+        display: flex;
+        gap: 12px;
+      }
+
+      .field-row .field {
+        flex: 1;
+      }
+
+      .label {
+        color: var(--color-text-tertiary);
+        font-size: 11px;
+        font-weight: 550;
+      }
+
+      .required {
+        color: var(--accent-danger);
+      }
+
+      .hint,
+      .scope-help {
+        margin: 0;
+        color: var(--color-text-quaternary);
+        font-size: 11px;
+      }
+
+      .scope-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .scope-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 28px;
+        padding: 4px 10px 4px 8px;
         border: 1px solid var(--color-border);
-        border-radius: 8px;
+        border-radius: 999px;
+        background: var(--color-bg-primary);
+        color: var(--color-text-secondary);
+        font-size: 12px;
+        user-select: none;
+      }
+
+      .scope-chip.is-disabled {
+        opacity: 0.42;
+        cursor: not-allowed;
         background: var(--color-bg-secondary);
       }
 
-      .review-card p {
+      .scope-chip input {
         margin: 0;
+      }
+
+      .scope-chip:has(input:checked) {
+        border-color: var(--color-text-primary);
+        background: color-mix(in srgb, var(--color-text-primary) 8%, var(--color-bg-primary));
+      }
+
+      .scope-key,
+      .token-meta,
+      .token-id {
+        font-family: var(--mono);
+      }
+
+      .scope-key {
+        color: var(--color-text-quaternary);
+        font-size: 10px;
+      }
+
+      .role-dot {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 34px;
+        height: 18px;
+        border-radius: 999px;
+        background: var(--color-bg-tertiary);
+        color: var(--color-text-quaternary);
+        font-size: 10px;
+        font-weight: 650;
+      }
+
+      .role-dot.is-admin {
+        background: var(--accent-warning);
+        color: var(--color-bg-primary);
+      }
+
+      .role-dot.is-guest {
+        background: var(--accent-blue);
+        color: var(--color-bg-primary);
+      }
+
+      .role-dot.is-all {
+        background: var(--color-text-primary);
+        color: var(--color-bg-primary);
+      }
+
+      .token-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 14px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        background: var(--color-bg-primary);
+      }
+
+      .token-row.is-revoked {
+        opacity: 0.54;
+        background: var(--color-bg-secondary);
+      }
+
+      .token-main {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .token-top {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-width: 0;
+        flex-wrap: wrap;
+      }
+
+      .token-name {
+        color: var(--color-text-primary);
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .token-user {
         color: var(--color-text-tertiary);
         font-size: 12px;
       }
 
-      .review-card code {
-        display: inline-flex;
-        margin-top: 7px;
-        color: var(--color-text-primary);
-        font-family: var(--mono);
+      .token-scopes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+
+      .token-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        color: var(--color-text-quaternary);
         font-size: 11px;
       }
 
-      .drawer {
+      .drawer,
+      .confirm,
+      .reveal {
         position: fixed;
         inset: 0;
         z-index: 20;
         display: none;
-        justify-content: flex-end;
       }
 
-      .drawer.is-open {
+      .drawer.is-open,
+      .confirm.is-open,
+      .reveal.is-open {
         display: flex;
       }
 
-      .drawer-overlay {
+      .drawer {
+        justify-content: flex-end;
+      }
+
+      .drawer-overlay,
+      .modal-overlay {
         position: absolute;
         inset: 0;
         background: rgba(10, 10, 10, 0.32);
@@ -497,7 +886,6 @@
         margin-top: 4px;
         color: var(--color-text-tertiary);
         font-size: 12px;
-        line-height: 1.5;
       }
 
       .drawer-close {
@@ -532,37 +920,6 @@
         background: var(--color-bg-secondary);
       }
 
-      .field {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .field-row {
-        display: flex;
-        gap: 12px;
-      }
-
-      .field-row .field {
-        flex: 1;
-      }
-
-      .label {
-        color: var(--color-text-tertiary);
-        font-size: 11px;
-        font-weight: 550;
-      }
-
-      .required {
-        color: var(--accent-danger);
-      }
-
-      .hint {
-        margin-top: 2px;
-        color: var(--color-text-quaternary);
-        font-size: 11px;
-      }
-
       .readonly {
         display: flex;
         align-items: center;
@@ -573,105 +930,55 @@
         background: var(--color-bg-tertiary);
         color: var(--color-text-tertiary);
         font-family: var(--mono);
-        font-size: 12.5px;
+        font-size: 12px;
       }
 
-      .advanced-note {
-        padding: 10px 12px;
-        border: 1px dashed var(--color-border);
-        border-radius: 8px;
-        background: var(--color-bg-secondary);
+      .confirm,
+      .reveal {
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+        background: rgba(10, 10, 10, 0.32);
+        backdrop-filter: blur(2px);
+      }
+
+      .confirm-card,
+      .reveal-card {
+        position: relative;
+        width: min(480px, 100%);
+        padding: 18px;
+        border: 1px solid var(--color-border);
+        border-radius: 10px;
+        background: var(--color-bg-primary);
+        box-shadow: 0 20px 54px rgba(0, 0, 0, 0.22);
+      }
+
+      .confirm-card p,
+      .reveal-card p {
+        margin: 6px 0 16px;
         color: var(--color-text-tertiary);
         font-size: 12px;
       }
 
-      .drawer-section {
+      .confirm-actions,
+      .reveal-actions {
         display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .drawer-section-head {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 10px;
-      }
-
-      .drawer-section-title {
-        color: var(--color-text-quaternary);
-        font-size: 11px;
-        font-weight: 650;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .mini-card-list {
-        display: flex;
-        flex-direction: column;
+        justify-content: flex-end;
         gap: 8px;
-      }
-
-      .mini-card {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 10px;
-        align-items: center;
-        padding: 11px 12px;
-        border: 1px solid var(--color-border);
-        border-radius: 8px;
-        background: var(--color-bg-primary);
-      }
-
-      .mini-card.is-empty {
-        border-style: dashed;
-        background: var(--color-bg-secondary);
-      }
-
-      .mini-title {
-        color: var(--color-text-primary);
-        font-size: 13px;
-        font-weight: 600;
-      }
-
-      .mini-sub {
-        margin-top: 2px;
-        color: var(--color-text-quaternary);
-        font-size: 11px;
-      }
-
-      .role-badge {
-        display: inline-flex;
-        align-items: center;
-        min-height: 22px;
-        padding: 2px 8px;
-        border-radius: 999px;
-        background: var(--color-bg-tertiary);
-        color: var(--color-text-tertiary);
-        font-size: 11px;
-        font-weight: 600;
-      }
-
-      .role-badge.owner {
-        background: color-mix(in srgb, var(--accent-success) 12%, var(--color-bg-primary));
-        color: #1f7a42;
-      }
-
-      .role-badge.editor {
-        background: color-mix(in srgb, var(--accent-strategy) 10%, var(--color-bg-primary));
-        color: #0f5a9f;
+        flex-wrap: wrap;
       }
 
       .token-value {
-        margin-top: 8px;
-        padding: 10px 12px;
+        margin: 12px 0 12px;
+        padding: 12px;
         border-radius: 8px;
         background: var(--color-bg-tertiary);
-        color: var(--color-text-secondary);
+        color: var(--color-text-primary);
         font-family: var(--mono);
-        font-size: 11px;
+        font-size: 12px;
         line-height: 1.6;
         word-break: break-all;
+        user-select: all;
       }
 
       .toast {
@@ -695,65 +1002,30 @@
         transform: translateX(-50%) translateY(0);
       }
 
-      .confirm {
-        position: fixed;
-        inset: 0;
-        z-index: 30;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 18px;
-        background: rgba(10, 10, 10, 0.32);
-        backdrop-filter: blur(2px);
-      }
-
-      .confirm.is-open {
-        display: flex;
-      }
-
-      .confirm-card {
-        width: min(420px, 100%);
-        padding: 18px;
-        border: 1px solid var(--color-border);
-        border-radius: 10px;
-        background: var(--color-bg-primary);
-        box-shadow: 0 20px 54px rgba(0, 0, 0, 0.22);
-      }
-
-      .confirm-card p {
-        margin: 6px 0 16px;
-        color: var(--color-text-tertiary);
-        font-size: 12px;
-      }
-
-      .confirm-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-      }
-
-      @media (max-width: 780px) {
-        .page {
-          width: min(100vw - 24px, 880px);
-          padding-top: 18px;
-        }
-
+      @media (max-width: 900px) {
         .stage-note,
         .disc-row,
-        .review-grid {
+        .form-grid {
           grid-template-columns: 1fr;
-        }
-
-        .disc-manage {
-          align-items: flex-start;
         }
 
         .disc-actions {
           justify-content: flex-start;
         }
+      }
+
+      @media (max-width: 640px) {
+        .page {
+          width: min(100vw - 24px, 1040px);
+          padding-top: 18px;
+        }
 
         .field-row {
           flex-direction: column;
+        }
+
+        .token-row {
+          grid-template-columns: 1fr;
         }
       }
     </style>
@@ -764,65 +1036,140 @@
         <div>
           <a class="back-link" href="#" data-back-link>← 返回</a>
           <div class="title-row">
-            <h1>学科管理</h1>
-            <span class="count" id="disc-count">共 4 个学科</span>
+            <h1>管理后台 MVP</h1>
+            <span class="count">Stage 3 样机</span>
           </div>
-          <p class="subtitle">创建、编辑、删除学科；负责人和 Token 从每个学科进入管理。</p>
+          <p class="subtitle">保留 v2 的三个后台场景：学科管理、用户权限管理、API Tokens。</p>
         </div>
       </header>
 
-      <section class="stage-note" aria-label="Stage 3 compatibility notes">
+      <section class="stage-note" aria-label="MVP notes">
         <p>
-          <strong>这版样机沿用当前 v2 页面。</strong>
-          变化只放在能力层：新学科线上立即可用，负责人可以拿 Token 维护内容，不需要再走 GitHub。
+          <strong>MVP 原则：</strong>
+          不把权限和 Token 强塞进学科列表。学科列表只做学科元数据；权限继续用矩阵；Token 继续用全局创建和撤销流程。
         </p>
         <div class="chips">
-          <span class="chip chip-success">线上立即生效</span>
-          <span class="chip chip-warning">不需要 GitHub</span>
+          <span class="chip chip-success">不丢 v2 功能</span>
+          <span class="chip chip-warning">线上立即生效</span>
+          <span class="chip chip-blue">不需要 GitHub</span>
         </div>
       </section>
 
-      <div class="toolbar">
-        <div class="toolbar-title">学科列表</div>
-        <div class="filters">
-          <input class="input" type="search" placeholder="搜索学科" id="search-input" />
-          <button type="button" class="btn btn-primary" id="open-create-btn">+ 新建学科</button>
+      <nav class="tabs" aria-label="后台模块">
+        <button type="button" class="tab-btn is-active" data-tab="disciplines">学科管理</button>
+        <button type="button" class="tab-btn" data-tab="users">用户权限</button>
+        <button type="button" class="tab-btn" data-tab="tokens">API Tokens</button>
+      </nav>
+
+      <section class="panel is-active" id="panel-disciplines" aria-label="学科管理">
+        <div class="panel-head">
+          <div>
+            <h2>学科管理</h2>
+          <p>创建、编辑、删除学科。权限和 Token 不在这里配置。</p>
+          </div>
+          <span class="count" id="disc-count">共 4 个学科</span>
         </div>
-      </div>
 
-      <section class="disc-list" id="disc-list" aria-label="学科列表"></section>
-
-      <section class="review-panel">
-        <h2>Stage 3 只补这三件事</h2>
-        <div class="review-grid">
-          <div class="review-card">
-            <h3>1. 新建放在学科列表</h3>
-            <p>操作贴着对象，不做成全局主按钮。</p>
-            <code>创建后线上立即可用</code>
-          </div>
-          <div class="review-card">
-            <h3>2. 编辑仍在每一行</h3>
-            <p>只改名称和中文定位，不暴露内部字段。</p>
-            <code>不影响已有内容</code>
-          </div>
-          <div class="review-card">
-            <h3>3. 删除仍有内容保护</h3>
-            <p>view / school / scholar / KP 全为 0 才允许删除。</p>
-            <code>有内容时不可删</code>
+        <div class="toolbar">
+          <div class="toolbar-title">学科列表</div>
+          <div class="filters">
+            <input class="input" type="search" placeholder="搜索学科" id="disc-search" />
+            <button type="button" class="btn btn-primary" id="open-create-btn">+ 新建学科</button>
           </div>
         </div>
+
+        <section class="disc-list" id="disc-list"></section>
+      </section>
+
+      <section class="panel" id="panel-users" aria-label="用户权限">
+        <div class="panel-head">
+          <div>
+            <h2>用户权限管理</h2>
+            <p>核心是“用户 × 学科”的权限矩阵。这里保留 v2 的矩阵视图，适合批量检查和调整。</p>
+          </div>
+          <div class="filters">
+            <input class="input" type="search" placeholder="搜索用户或邮箱" id="user-search" />
+            <button type="button" class="btn" id="add-user-btn">添加邮箱</button>
+          </div>
+        </div>
+
+        <div class="users-wrap">
+          <table class="users-table">
+            <thead>
+              <tr id="users-head"></tr>
+            </thead>
+            <tbody id="users-body"></tbody>
+          </table>
+        </div>
+
+        <div class="legend">
+          权限语义：
+          <span class="chip">无</span>
+          <span class="chip chip-blue">只读</span>
+          <span class="chip chip-warning">编辑</span>
+          <span class="chip chip-muted">ALL 超级管理员</span>
+          。Stage 3 后台会同步写入新的成员表，但主操作仍是这个矩阵。
+        </div>
+      </section>
+
+      <section class="panel" id="panel-tokens" aria-label="API Tokens">
+        <div class="panel-head">
+          <div>
+            <h2>API Tokens</h2>
+            <p>为某个用户生成 Token，可选择学科范围和有效期。生成后只显示一次性明文，已有 Token 可撤销。</p>
+          </div>
+          <span class="count" id="token-count">共 3 条</span>
+        </div>
+
+        <section class="token-create">
+          <h3>创建 Token</h3>
+          <div class="form-grid">
+            <label class="field">
+              <span class="label">名称 <span class="required">*</span></span>
+              <input class="input" id="token-name" value="GPT 经营学写入" />
+            </label>
+            <label class="field">
+              <span class="label">关联用户 <span class="required">*</span></span>
+              <select class="select" id="token-user"></select>
+            </label>
+            <label class="field">
+              <span class="label">有效期</span>
+              <select class="select" id="token-expiry">
+                <option value="90">90 天</option>
+                <option value="30">30 天</option>
+                <option value="180">180 天</option>
+                <option value="365">365 天</option>
+                <option value="">永不过期</option>
+              </select>
+            </label>
+          </div>
+          <div>
+            <div class="label">学科范围</div>
+            <p class="scope-help" id="scope-help">未勾选时，Token 使用该用户的全部学科权限。</p>
+            <div class="scope-grid" id="scope-grid"></div>
+          </div>
+          <div>
+            <button type="button" class="btn btn-primary" id="create-token-btn">生成 Token</button>
+          </div>
+        </section>
+
+        <div class="toolbar">
+          <div class="toolbar-title">已有 Tokens</div>
+          <input class="input" type="search" placeholder="搜索 Token" id="token-search" />
+        </div>
+        <section class="token-list" id="token-list"></section>
       </section>
     </main>
 
     <div class="drawer" id="create-drawer" role="dialog" aria-modal="true" aria-labelledby="create-title">
-      <div class="drawer-overlay" data-close-drawer></div>
+      <div class="drawer-overlay" data-close-layer></div>
       <div class="drawer-panel">
         <div class="drawer-head">
           <div>
             <div class="drawer-title" id="create-title">新建学科</div>
-            <div class="drawer-sub">填写学科名称和中文定位。创建后从列表继续配置负责人和 Token。</div>
+            <div class="drawer-sub">和 v2 一样先填名称。创建后去权限矩阵分配编辑者和只读者。</div>
           </div>
-          <button type="button" class="drawer-close" data-close-drawer aria-label="关闭">×</button>
+          <button type="button" class="drawer-close" data-close-layer aria-label="关闭">×</button>
         </div>
         <div class="drawer-body">
           <label class="field">
@@ -833,7 +1180,7 @@
             <label class="field">
               <span class="label">English <span class="required">*</span></span>
               <input class="input" id="form-title-en" value="Finance" />
-              <span class="hint">English 用于生成系统路径，后台用户不用再填写额外字段。</span>
+              <span class="hint" id="key-preview">系统路径预览：finance</span>
             </label>
             <label class="field">
               <span class="label">日本語</span>
@@ -841,31 +1188,36 @@
             </label>
           </div>
           <label class="field">
-            <span class="label">中文一句话定位</span>
+            <span class="label">备注</span>
             <input class="input" id="form-tagline-zh" value="日本大学院入试备考" />
           </label>
           <section class="stage-note">
-            <p><strong>写入预览：</strong>创建后线上立即生效；负责人之后可以用 Token 上传知识。</p>
+            <p><strong>写入预览：</strong>创建后线上立即可用。权限和 Token 不在这里顺手乱配，避免漏看全局矩阵。</p>
           </section>
         </div>
         <div class="drawer-foot">
-          <button type="button" class="btn" data-close-drawer>取消</button>
+          <button type="button" class="btn" data-close-layer>取消</button>
           <button type="button" class="btn btn-primary" id="create-submit-btn">创建</button>
         </div>
       </div>
     </div>
 
     <div class="drawer" id="edit-drawer" role="dialog" aria-modal="true" aria-labelledby="edit-title">
-      <div class="drawer-overlay" data-close-drawer></div>
+      <div class="drawer-overlay" data-close-layer></div>
       <div class="drawer-panel">
         <div class="drawer-head">
           <div>
             <div class="drawer-title" id="edit-title">编辑学科</div>
-            <div class="drawer-sub" id="edit-sub">经营学 · keiei</div>
+            <div class="drawer-sub" id="edit-sub">经营学</div>
           </div>
-          <button type="button" class="drawer-close" data-close-drawer aria-label="关闭">×</button>
+          <button type="button" class="drawer-close" data-close-layer aria-label="关闭">×</button>
         </div>
         <div class="drawer-body">
+          <div class="field">
+            <span class="label">系统路径</span>
+            <div class="readonly" id="edit-key-display"></div>
+            <span class="hint">路径保持不变，避免已有链接和 API 调用失效。</span>
+          </div>
           <label class="field">
             <span class="label">中文名 <span class="required">*</span></span>
             <input class="input" id="edit-title-zh" />
@@ -881,99 +1233,13 @@
             </label>
           </div>
           <label class="field">
-            <span class="label">中文一句话定位</span>
+            <span class="label">备注</span>
             <input class="input" id="edit-tagline-zh" />
           </label>
-          <section class="stage-note">
-            <p><strong>保存预览：</strong>这里只编辑学科名称和中文定位。负责人、Token、内容数量在后续管理页里处理。</p>
-          </section>
         </div>
         <div class="drawer-foot">
-          <button type="button" class="btn" data-close-drawer>取消</button>
+          <button type="button" class="btn" data-close-layer>取消</button>
           <button type="button" class="btn btn-primary" id="edit-submit-btn">保存</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="drawer" id="owner-drawer" role="dialog" aria-modal="true" aria-labelledby="owner-title">
-      <div class="drawer-overlay" data-close-drawer></div>
-      <div class="drawer-panel">
-        <div class="drawer-head">
-          <div>
-            <div class="drawer-title" id="owner-title">负责人分配</div>
-            <div class="drawer-sub" id="owner-sub">经营学</div>
-          </div>
-          <button type="button" class="drawer-close" data-close-drawer aria-label="关闭">×</button>
-        </div>
-        <div class="drawer-body">
-          <section class="drawer-section">
-            <div class="drawer-section-head">
-              <div class="drawer-section-title">当前成员</div>
-              <button type="button" class="btn">添加邮箱</button>
-            </div>
-            <div class="mini-card-list" id="owner-list"></div>
-          </section>
-
-          <section class="drawer-section">
-            <div class="drawer-section-title">添加或调整权限</div>
-            <label class="field">
-              <span class="label">邮箱</span>
-              <input class="input" value="new-owner@example.com" />
-            </label>
-            <label class="field">
-              <span class="label">角色</span>
-              <select class="select">
-                <option>负责人</option>
-                <option>编辑者</option>
-                <option>只读</option>
-              </select>
-            </label>
-            <div class="advanced-note">如果邮箱还没有登录过，正式版会先保存为待接受邀请；用户第一次登录后自动绑定。</div>
-          </section>
-        </div>
-        <div class="drawer-foot">
-          <button type="button" class="btn" data-close-drawer>取消</button>
-          <button type="button" class="btn btn-primary">保存分配</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="drawer" id="token-drawer" role="dialog" aria-modal="true" aria-labelledby="token-title">
-      <div class="drawer-overlay" data-close-drawer></div>
-      <div class="drawer-panel">
-        <div class="drawer-head">
-          <div>
-            <div class="drawer-title" id="token-title">Token 管理</div>
-            <div class="drawer-sub" id="token-sub">经营学</div>
-          </div>
-          <button type="button" class="drawer-close" data-close-drawer aria-label="关闭">×</button>
-        </div>
-        <div class="drawer-body">
-          <section class="drawer-section">
-            <div class="drawer-section-head">
-              <div class="drawer-section-title">可用 Token</div>
-              <button type="button" class="btn btn-primary" id="demo-generate-token">生成 Token</button>
-            </div>
-            <div class="mini-card-list" id="token-list"></div>
-          </section>
-
-          <section class="drawer-section">
-            <div class="drawer-section-title">新建 Token</div>
-            <label class="field">
-              <span class="label">用途名称</span>
-              <input class="input" value="GPT 经营学写入" />
-            </label>
-            <label class="field">
-              <span class="label">绑定负责人</span>
-              <select class="select" id="token-owner-select"></select>
-            </label>
-            <div class="advanced-note">Token 只对当前学科有效。拿到 Token 的 GPT 或脚本可以通过 API 上传知识，不需要接触 GitHub。</div>
-            <div class="token-value" id="demo-token-value">点击“生成 Token”后，这里只显示一次明文。</div>
-          </section>
-        </div>
-        <div class="drawer-foot">
-          <button type="button" class="btn" data-close-drawer>关闭</button>
-          <button type="button" class="btn">复制 API 指引</button>
         </div>
       </div>
     </div>
@@ -981,10 +1247,22 @@
     <div class="confirm" id="delete-confirm" role="dialog" aria-modal="true" aria-labelledby="delete-title">
       <div class="confirm-card">
         <h2 id="delete-title">删除空学科</h2>
-        <p id="delete-copy">确认删除 finance？该学科没有 view / school / scholar / KP，可以删除。Stage 3 正式实现里建议先做 archive，再开放硬删除。</p>
+        <p id="delete-copy"></p>
         <div class="confirm-actions">
-          <button type="button" class="btn" data-close-confirm>取消</button>
+          <button type="button" class="btn" data-close-layer>取消</button>
           <button type="button" class="btn btn-danger" id="confirm-delete-btn">删除</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal" id="token-reveal" role="dialog" aria-modal="true" aria-labelledby="reveal-title">
+      <div class="reveal-card">
+        <h2 id="reveal-title">仅本次显示</h2>
+        <p id="reveal-meta">关闭后无法再次查看，请立即复制保存。</p>
+        <div class="token-value" id="reveal-token"></div>
+        <div class="reveal-actions">
+          <button type="button" class="btn btn-primary" id="copy-token-btn">复制 Token</button>
+          <button type="button" class="btn" data-close-layer>我已保存</button>
         </div>
       </div>
     </div>
@@ -998,93 +1276,96 @@
           title: { zh: "经营学", en: "Management", ja: "経営学" },
           tagline: { zh: "日本大学院入试备考" },
           counts: { view: 3, school: 48, scholar: 132, kp: 562 },
-          owner: "Husuli",
-          tokens: 4,
-          members: [
-            { email: "husuli0623@gmail.com", role: "负责人", note: "可以管理成员、Token 和内容" },
-            { email: "mika@example.com", role: "编辑者", note: "可以创建和编辑知识内容" },
-            { email: "ren@example.com", role: "只读", note: "只能查看该学科" },
-          ],
-          apiTokens: [
-            { name: "GPT 经营学写入", owner: "Husuli", note: "最近使用 12 分钟前", status: "可用" },
-            { name: "Claude 内容检查", owner: "Husuli", note: "30 天后过期", status: "即将过期" },
-          ],
         },
         {
           key: "marketing",
           title: { zh: "市场营销", en: "Marketing", ja: "マーケティング" },
           tagline: { zh: "Kotler 与消费者行为知识库" },
           counts: { view: 1, school: 24, scholar: 40, kp: 178 },
-          owner: "",
-          tokens: 2,
-          members: [],
-          apiTokens: [
-            { name: "GPT 市场营销写入", owner: "未绑定", note: "需要先分配负责人", status: "待处理" },
-            { name: "内容导入测试", owner: "未绑定", note: "暂停使用", status: "停用" },
-          ],
         },
         {
           key: "finance",
           title: { zh: "财务管理", en: "Finance", ja: "財務管理" },
           tagline: { zh: "准备上线的新学科" },
           counts: { view: 0, school: 0, scholar: 0, kp: 0 },
-          owner: "Mika",
-          tokens: 0,
-          members: [
-            { email: "mika@example.com", role: "负责人", note: "可以管理成员、Token 和内容" },
-          ],
-          apiTokens: [],
         },
         {
           key: "strategy",
           title: { zh: "战略管理", en: "Strategy", ja: "戦略論" },
           tagline: { zh: "竞争战略与组织能力" },
           counts: { view: 1, school: 11, scholar: 18, kp: 91 },
-          owner: "Ren",
-          tokens: 1,
-          members: [
-            { email: "ren@example.com", role: "负责人", note: "可以管理成员、Token 和内容" },
-            { email: "husuli0623@gmail.com", role: "只读", note: "可以查看该学科配置" },
-          ],
-          apiTokens: [
-            { name: "战略管理写入", owner: "Ren", note: "最近使用 2 天前", status: "可用" },
-          ],
+        },
+      ];
+
+      const users = [
+        {
+          id: "u_husuli",
+          name: "Husuli",
+          email: "husuli0623@gmail.com",
+          superAdmin: true,
+          permissions: {},
+        },
+        {
+          id: "u_mika",
+          name: "Mika",
+          email: "mika@example.com",
+          superAdmin: false,
+          permissions: { keiei: "admin", marketing: "admin", finance: "admin" },
+        },
+        {
+          id: "u_ren",
+          name: "Ren",
+          email: "ren@example.com",
+          superAdmin: false,
+          permissions: { keiei: "guest", strategy: "admin" },
+        },
+        {
+          id: "u_aoi",
+          name: "Aoi",
+          email: "aoi.long.email.address@example.com",
+          superAdmin: false,
+          permissions: { marketing: "guest", strategy: "guest" },
+        },
+      ];
+
+      const tokens = [
+        {
+          id: "tok_82a91c",
+          name: "GPT 经营学写入",
+          userId: "u_mika",
+          scopes: ["keiei"],
+          createdAt: "2026-05-01",
+          expiresAt: "2026-07-30",
+          lastUsed: "12 分钟前",
+          revokedAt: "",
+        },
+        {
+          id: "tok_419b0d",
+          name: "市场营销导入",
+          userId: "u_mika",
+          scopes: ["marketing"],
+          createdAt: "2026-04-28",
+          expiresAt: "2026-05-28",
+          lastUsed: "2 天前",
+          revokedAt: "",
+        },
+        {
+          id: "tok_73dd54",
+          name: "旧版测试 Token",
+          userId: "u_ren",
+          scopes: ["strategy"],
+          createdAt: "2026-04-03",
+          expiresAt: "",
+          lastUsed: "从未",
+          revokedAt: "2026-05-01",
         },
       ];
 
       let editingKey = "";
       let deleteKey = "";
-      let tokenKey = "";
 
-      const list = document.querySelector("#disc-list");
-      const count = document.querySelector("#disc-count");
-      const searchInput = document.querySelector("#search-input");
-      const createDrawer = document.querySelector("#create-drawer");
-      const editDrawer = document.querySelector("#edit-drawer");
-      const ownerDrawer = document.querySelector("#owner-drawer");
-      const tokenDrawer = document.querySelector("#token-drawer");
-      const deleteConfirm = document.querySelector("#delete-confirm");
-      const toast = document.querySelector("#toast");
-
-      function isEmpty(discipline) {
-        const c = discipline.counts;
-        return c.view + c.school + c.scholar + c.kp === 0;
-      }
-
-      function slugify(value) {
-        return (value || "")
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "_")
-          .replace(/^_+|_+$/g, "")
-          .slice(0, 31);
-      }
-
-      function showToast(message) {
-        toast.textContent = message;
-        toast.classList.add("is-visible");
-        window.clearTimeout(showToast.timer);
-        showToast.timer = window.setTimeout(() => toast.classList.remove("is-visible"), 1800);
-      }
+      const $ = (selector) => document.querySelector(selector);
+      const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
       function escapeHtml(value) {
         return String(value ?? "").replace(/[&<>"']/g, (char) => ({
@@ -1096,22 +1377,71 @@
         })[char]);
       }
 
-      function roleClass(role) {
-        if (role === "负责人" || role === "可用") return "owner";
-        if (role === "编辑者" || role === "即将过期") return "editor";
-        return "";
+      function initials(name) {
+        return (name || "?").slice(0, 1).toUpperCase();
       }
 
-      function render() {
-        const query = searchInput.value.trim().toLowerCase();
+      function slugify(value) {
+        return (value || "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "_")
+          .replace(/^_+|_+$/g, "")
+          .slice(0, 31);
+      }
+
+      function showToast(message) {
+        const toast = $("#toast");
+        toast.textContent = message;
+        toast.classList.add("is-visible");
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(() => toast.classList.remove("is-visible"), 1800);
+      }
+
+      function findDiscipline(key) {
+        return disciplines.find((item) => item.key === key);
+      }
+
+      function findUser(id) {
+        return users.find((user) => user.id === id);
+      }
+
+      function isEmpty(discipline) {
+        const c = discipline.counts;
+        return c.view + c.school + c.scholar + c.kp === 0;
+      }
+
+      function usersForDiscipline(key, role) {
+        return users.filter((user) => !user.superAdmin && user.permissions[key] === role);
+      }
+
+      function renderPeople(list) {
+        if (list.length === 0) return `<span class="person-pill is-empty">未配置</span>`;
+        return list.map((user) => `
+          <span class="person-pill" title="${escapeHtml(user.email)}">
+            <span class="avatar">${escapeHtml(initials(user.name))}</span>
+            <span class="person-name">${escapeHtml(user.name)}</span>
+          </span>
+        `).join("");
+      }
+
+      function switchTab(name) {
+        $$(".tab-btn").forEach((button) => {
+          button.classList.toggle("is-active", button.dataset.tab === name);
+        });
+        $$(".panel").forEach((panel) => {
+          panel.classList.toggle("is-active", panel.id === `panel-${name}`);
+        });
+      }
+
+      function renderDisciplines() {
+        const query = $("#disc-search").value.trim().toLowerCase();
         const filtered = disciplines.filter((discipline) => {
           const haystack = `${discipline.key} ${discipline.title.zh} ${discipline.title.en ?? ""}`.toLowerCase();
-          const matchesQuery = !query || haystack.includes(query);
-          return matchesQuery;
+          return !query || haystack.includes(query);
         });
 
-        count.textContent = `共 ${filtered.length} 个学科`;
-        list.innerHTML = filtered.map((discipline) => {
+        $("#disc-count").textContent = `共 ${filtered.length} 个学科`;
+        $("#disc-list").innerHTML = filtered.map((discipline) => {
           const c = discipline.counts;
           const empty = isEmpty(discipline);
           const blockers = [];
@@ -1119,17 +1449,15 @@
           if (c.school > 0) blockers.push(`${c.school} 学派`);
           if (c.scholar > 0) blockers.push(`${c.scholar} 学者`);
           if (c.kp > 0) blockers.push(`${c.kp} KP`);
-          const ownerChip = discipline.owner
-            ? `<button type="button" class="chip chip-action" data-owner="${escapeHtml(discipline.key)}">负责人 ${escapeHtml(discipline.owner)}</button>`
-            : `<button type="button" class="chip chip-warning chip-action" data-owner="${escapeHtml(discipline.key)}">分配负责人</button>`;
-          const tokenChip = `<button type="button" class="chip chip-action" data-token="${escapeHtml(discipline.key)}">Token ${discipline.tokens}</button>`;
+          const editors = usersForDiscipline(discipline.key, "admin");
+          const readers = usersForDiscipline(discipline.key, "guest");
           const deleteButton = empty
             ? `<button type="button" class="btn btn-danger" data-delete="${escapeHtml(discipline.key)}">删除</button>`
             : `<button type="button" class="btn btn-disabled" disabled title="该学科含 ${blockers.join(" / ")}，清空才能删">含内容</button>`;
 
           return `
             <article class="disc-row ${empty ? "is-empty" : ""}">
-              <div class="disc-row-main">
+              <div class="disc-main">
                 <div class="disc-name">
                   <span class="disc-title-zh">${escapeHtml(discipline.title.zh)}</span>
                   <span class="disc-title-en">${escapeHtml(discipline.title.en ?? "")}</span>
@@ -1142,11 +1470,14 @@
                 <span class="disc-count"><span class="disc-count-n">${c.scholar}</span><span class="disc-count-label">学者</span></span>
                 <span class="disc-count"><span class="disc-count-n">${c.kp}</span><span class="disc-count-label">KP</span></span>
               </div>
-              <div class="disc-manage">
-                <div class="manage-label">管理</div>
-                <div class="disc-meta">
-                  ${ownerChip}
-                  ${tokenChip}
+              <div class="access-summary">
+                <div class="access-line">
+                  <span class="access-label">编辑</span>
+                  <span class="person-stack">${renderPeople(editors)}</span>
+                </div>
+                <div class="access-line">
+                  <span class="access-label">只读</span>
+                  <span class="person-stack">${renderPeople(readers)}</span>
                 </div>
               </div>
               <div class="disc-actions">
@@ -1157,142 +1488,263 @@
           `;
         }).join("");
 
-        document.querySelectorAll("[data-edit]").forEach((button) => {
+        $$("[data-edit]").forEach((button) => {
           button.addEventListener("click", () => openEdit(button.dataset.edit));
         });
-        document.querySelectorAll("[data-delete]").forEach((button) => {
+        $$("[data-delete]").forEach((button) => {
           button.addEventListener("click", () => openDelete(button.dataset.delete));
         });
-        document.querySelectorAll("[data-owner]").forEach((button) => {
+      }
+
+      function renderUsers() {
+        const query = $("#user-search").value.trim().toLowerCase();
+        const filteredUsers = users.filter((user) => {
+          const haystack = `${user.name} ${user.email}`.toLowerCase();
+          return !query || haystack.includes(query);
+        });
+
+        $("#users-head").innerHTML = `<th class="sticky-col">用户</th>${disciplines.map((discipline) => `
+          <th>${escapeHtml(discipline.title.zh)}<br><span class="muted">${escapeHtml(discipline.key)}</span></th>
+        `).join("")}`;
+
+        $("#users-body").innerHTML = filteredUsers.map((user) => {
+          const cells = disciplines.map((discipline) => {
+            if (user.superAdmin) return `<td><span class="perm-lock">ALL</span></td>`;
+            return `<td>${renderToggle(user, discipline.key)}</td>`;
+          }).join("");
+
+          return `
+            <tr>
+              <td class="sticky-col">
+                <div class="user-cell">
+                  <span class="avatar">${escapeHtml(initials(user.name))}</span>
+                  <div class="user-info">
+                    <span class="user-name">${escapeHtml(user.name)}</span>
+                    <span class="user-email" title="${escapeHtml(user.email)}">${escapeHtml(user.email)}</span>
+                  </div>
+                </div>
+              </td>
+              ${cells}
+            </tr>
+          `;
+        }).join("");
+
+        $$(".perm-toggle button").forEach((button) => {
           button.addEventListener("click", () => {
-            openOwner(button.dataset.owner);
+            const user = findUser(button.closest(".perm-toggle").dataset.userId);
+            const discipline = button.closest(".perm-toggle").dataset.discipline;
+            const role = button.dataset.role || "";
+            if (!user) return;
+            if (role) user.permissions[discipline] = role;
+            else delete user.permissions[discipline];
+            renderUsers();
+            renderDisciplines();
+            renderTokenForm();
+            showToast(`${user.name} 的权限已更新`);
           });
         });
-        document.querySelectorAll("[data-token]").forEach((button) => {
+      }
+
+      function renderToggle(user, key) {
+        const current = user.permissions[key] ?? "";
+        const states = [
+          { value: "", label: "无", title: "无权限" },
+          { value: "guest", label: "只读", title: "只读" },
+          { value: "admin", label: "编辑", title: "编辑" },
+        ];
+        return `<div class="perm-toggle" data-user-id="${escapeHtml(user.id)}" data-discipline="${escapeHtml(key)}">${
+          states.map((state) => `
+            <button type="button" data-role="${state.value}" class="${current === state.value ? "is-active" : ""}" title="${state.title}">
+              ${state.label}
+            </button>
+          `).join("")
+        }</div>`;
+      }
+
+      function permissionLabel(role) {
+        if (role === "admin") return "编辑";
+        if (role === "guest") return "只读";
+        if (role === "all") return "ALL";
+        return "无";
+      }
+
+      function renderTokenForm() {
+        const selectableUsers = users.filter((user) => !user.superAdmin);
+        $("#token-user").innerHTML = `<option value="">选择用户</option>${selectableUsers.map((user) => `
+          <option value="${escapeHtml(user.id)}">${escapeHtml(user.name)} · ${escapeHtml(user.email)}</option>
+        `).join("")}`;
+        if (!$("#token-user").value && selectableUsers[0]) $("#token-user").value = selectableUsers[0].id;
+        renderScopes();
+      }
+
+      function renderScopes() {
+        const selectedUser = findUser($("#token-user").value);
+        if (!selectedUser) {
+          $("#scope-help").textContent = "先选择用户。未勾选时，Token 使用该用户的全部学科权限。";
+          $("#scope-grid").innerHTML = disciplines.map((discipline) => scopeChip(discipline, "", true)).join("");
+          return;
+        }
+
+        const allowedCount = selectedUser.superAdmin
+          ? disciplines.length
+          : Object.keys(selectedUser.permissions).length;
+        $("#scope-help").textContent = `该用户可访问 ${allowedCount} 个学科。未勾选时，Token 继承这些权限；勾选后进一步收窄范围。`;
+        $("#scope-grid").innerHTML = disciplines.map((discipline) => {
+          const role = selectedUser.superAdmin ? "all" : selectedUser.permissions[discipline.key] ?? "";
+          return scopeChip(discipline, role, !role);
+        }).join("");
+      }
+
+      function scopeChip(discipline, role, disabled) {
+        const dotClass = role === "admin" ? "is-admin" : role === "guest" ? "is-guest" : role === "all" ? "is-all" : "";
+        return `
+          <label class="scope-chip ${disabled ? "is-disabled" : ""}">
+            <input type="checkbox" value="${escapeHtml(discipline.key)}" ${disabled ? "disabled" : ""} />
+            <span>${escapeHtml(discipline.title.zh)} <span class="scope-key">${escapeHtml(discipline.key)}</span></span>
+            <span class="role-dot ${dotClass}">${permissionLabel(role)}</span>
+          </label>
+        `;
+      }
+
+      function renderTokens() {
+        const query = $("#token-search").value.trim().toLowerCase();
+        const filtered = tokens.filter((token) => {
+          const user = findUser(token.userId);
+          const haystack = `${token.name} ${token.id} ${user?.name ?? ""} ${user?.email ?? ""}`.toLowerCase();
+          return !query || haystack.includes(query);
+        });
+        $("#token-count").textContent = `共 ${filtered.length} 条`;
+        $("#token-list").innerHTML = filtered.map((token) => {
+          const user = findUser(token.userId);
+          const scopeHtml = token.scopes.length === 0
+            ? `<span class="chip chip-muted">继承用户全部权限</span>`
+            : token.scopes.map((scope) => `<span class="chip">${escapeHtml(scope)}</span>`).join("");
+          return `
+            <article class="token-row ${token.revokedAt ? "is-revoked" : ""}">
+              <div class="token-main">
+                <div class="token-top">
+                  <span class="avatar">${escapeHtml(initials(user?.name))}</span>
+                  <span class="token-name">${escapeHtml(token.name)}</span>
+                  <span class="token-user">${escapeHtml(user?.name ?? "未知用户")}</span>
+                </div>
+                <div class="token-scopes">${scopeHtml}</div>
+                <div class="token-meta">
+                  <span class="token-id">${escapeHtml(token.id)}</span>
+                  <span>创建 ${escapeHtml(token.createdAt)}</span>
+                  <span>过期 ${token.expiresAt ? escapeHtml(token.expiresAt) : "永不过期"}</span>
+                  <span>最近使用 ${escapeHtml(token.lastUsed)}</span>
+                  ${token.revokedAt ? `<span>已撤销 ${escapeHtml(token.revokedAt)}</span>` : ""}
+                </div>
+              </div>
+              ${token.revokedAt ? "" : `<button type="button" class="btn btn-danger" data-revoke="${escapeHtml(token.id)}">撤销</button>`}
+            </article>
+          `;
+        }).join("");
+
+        $$("[data-revoke]").forEach((button) => {
           button.addEventListener("click", () => {
-            openToken(button.dataset.token);
+            const token = tokens.find((item) => item.id === button.dataset.revoke);
+            if (!token) return;
+            token.revokedAt = "2026-05-02";
+            renderTokens();
+            showToast("Token 已撤销");
           });
         });
       }
 
       function openCreate() {
-        createDrawer.classList.add("is-open");
-        document.querySelector("#form-title-zh").focus();
-      }
-
-      function renderOwnerMembers(discipline) {
-        const members = discipline.members ?? [];
-        const listHtml = members.length
-          ? members.map((member) => `
-              <article class="mini-card">
-                <div>
-                  <div class="mini-title">${escapeHtml(member.email)}</div>
-                  <div class="mini-sub">${escapeHtml(member.note)}</div>
-                </div>
-                <span class="role-badge ${roleClass(member.role)}">${escapeHtml(member.role)}</span>
-              </article>
-            `).join("")
-          : `
-              <article class="mini-card is-empty">
-                <div>
-                  <div class="mini-title">暂未分配负责人</div>
-                  <div class="mini-sub">先添加邮箱，再选择负责人、编辑者或只读。</div>
-                </div>
-                <span class="role-badge">待配置</span>
-              </article>
-            `;
-        document.querySelector("#owner-list").innerHTML = listHtml;
-      }
-
-      function renderTokenItems(discipline) {
-        const tokens = discipline.apiTokens ?? [];
-        const listHtml = tokens.length
-          ? tokens.map((token) => `
-              <article class="mini-card">
-                <div>
-                  <div class="mini-title">${escapeHtml(token.name)}</div>
-                  <div class="mini-sub">负责人 ${escapeHtml(token.owner)} · ${escapeHtml(token.note)}</div>
-                </div>
-                <span class="role-badge ${roleClass(token.status)}">${escapeHtml(token.status)}</span>
-              </article>
-            `).join("")
-          : `
-              <article class="mini-card is-empty">
-                <div>
-                  <div class="mini-title">还没有 Token</div>
-                  <div class="mini-sub">生成后，学科负责人可以把它交给 GPT 或脚本上传知识。</div>
-                </div>
-                <span class="role-badge">未生成</span>
-              </article>
-            `;
-        const ownerOptions = (discipline.members ?? [])
-          .filter((member) => member.role !== "只读")
-          .map((member) => `<option>${escapeHtml(member.email)}</option>`)
-          .join("");
-        document.querySelector("#token-list").innerHTML = listHtml;
-        document.querySelector("#token-owner-select").innerHTML = ownerOptions || "<option>请先分配负责人</option>";
-      }
-
-      function openOwner(key) {
-        const discipline = findDiscipline(key);
-        document.querySelector("#owner-sub").textContent = `${discipline.title.zh} · 成员权限`;
-        renderOwnerMembers(discipline);
-        ownerDrawer.classList.add("is-open");
-      }
-
-      function openToken(key) {
-        const discipline = findDiscipline(key);
-        tokenKey = key;
-        document.querySelector("#token-sub").textContent = `${discipline.title.zh} · API 写入权限`;
-        document.querySelector("#demo-token-value").textContent = "点击“生成 Token”后，这里只显示一次明文。";
-        renderTokenItems(discipline);
-        tokenDrawer.classList.add("is-open");
-      }
-
-      function findDiscipline(key) {
-        return disciplines.find((item) => item.key === key) ?? { title: { zh: key } };
+        $("#create-drawer").classList.add("is-open");
+        $("#form-title-zh").focus();
       }
 
       function openEdit(key) {
         const discipline = findDiscipline(key);
         if (!discipline) return;
         editingKey = key;
-        document.querySelector("#edit-sub").textContent = discipline.title.zh;
-        document.querySelector("#edit-title-zh").value = discipline.title.zh ?? "";
-        document.querySelector("#edit-title-en").value = discipline.title.en ?? "";
-        document.querySelector("#edit-title-ja").value = discipline.title.ja ?? "";
-        document.querySelector("#edit-tagline-zh").value = discipline.tagline?.zh ?? "";
-        editDrawer.classList.add("is-open");
-        document.querySelector("#edit-title-zh").focus();
+        $("#edit-sub").textContent = discipline.title.zh;
+        $("#edit-key-display").textContent = discipline.key;
+        $("#edit-title-zh").value = discipline.title.zh ?? "";
+        $("#edit-title-en").value = discipline.title.en ?? "";
+        $("#edit-title-ja").value = discipline.title.ja ?? "";
+        $("#edit-tagline-zh").value = discipline.tagline?.zh ?? "";
+        $("#edit-drawer").classList.add("is-open");
+        $("#edit-title-zh").focus();
       }
 
       function openDelete(key) {
-        deleteKey = key;
         const discipline = findDiscipline(key);
-        document.querySelector("#delete-copy").textContent =
-          `确认删除「${discipline.title.zh}」？该学科没有视角、学派、学者、知识点，可以删除。Stage 3 正式实现里建议先做归档，再开放彻底删除。`;
-        deleteConfirm.classList.add("is-open");
+        if (!discipline) return;
+        deleteKey = key;
+        $("#delete-copy").textContent = `确认删除「${discipline.title.zh}」？该学科没有视角、学派、学者、知识点，可以删除。正式版建议先归档，再开放彻底删除。`;
+        $("#delete-confirm").classList.add("is-open");
       }
 
       function closeLayers() {
-        createDrawer.classList.remove("is-open");
-        editDrawer.classList.remove("is-open");
-        ownerDrawer.classList.remove("is-open");
-        tokenDrawer.classList.remove("is-open");
-        deleteConfirm.classList.remove("is-open");
+        $("#create-drawer").classList.remove("is-open");
+        $("#edit-drawer").classList.remove("is-open");
+        $("#delete-confirm").classList.remove("is-open");
+        $("#token-reveal").classList.remove("is-open");
       }
 
-      document.querySelector("#open-create-btn").addEventListener("click", openCreate);
-      document.querySelectorAll("[data-close-drawer], .drawer-overlay").forEach((el) => {
-        el.addEventListener("click", closeLayers);
+      function createToken() {
+        const name = $("#token-name").value.trim();
+        const userId = $("#token-user").value;
+        if (!name) {
+          showToast("名称必填");
+          return;
+        }
+        if (!userId) {
+          showToast("请选择关联用户");
+          return;
+        }
+        const checkedScopes = $$("#scope-grid input:checked").map((input) => input.value);
+        const expiry = $("#token-expiry").value;
+        const user = findUser(userId);
+        const today = "2026-05-02";
+        const expiresAt = expiry ? expiryDate(today, Number(expiry)) : "";
+        const id = `tok_${Math.random().toString(16).slice(2, 8)}`;
+        tokens.unshift({
+          id,
+          name,
+          userId,
+          scopes: checkedScopes,
+          createdAt: today,
+          expiresAt,
+          lastUsed: "从未",
+          revokedAt: "",
+        });
+        renderTokens();
+        $("#reveal-meta").textContent = `${name} · ${user?.name ?? ""} · ${checkedScopes.length ? checkedScopes.join(", ") : "继承用户全部权限"} · ${expiresAt || "永不过期"}`;
+        $("#reveal-token").textContent = `ms_v1_demo_${Math.random().toString(16).slice(2)}${Math.random().toString(16).slice(2)}`;
+        $("#token-reveal").classList.add("is-open");
+        $("#token-name").value = "";
+      }
+
+      function expiryDate(start, days) {
+        const date = new Date(`${start}T00:00:00`);
+        date.setDate(date.getDate() + days);
+        return date.toISOString().slice(0, 10);
+      }
+
+      $$(".tab-btn").forEach((button) => {
+        button.addEventListener("click", () => switchTab(button.dataset.tab));
       });
-      document.querySelectorAll("[data-close-confirm]").forEach((el) => {
-        el.addEventListener("click", closeLayers);
+      $("#disc-search").addEventListener("input", renderDisciplines);
+      $("#user-search").addEventListener("input", renderUsers);
+      $("#token-search").addEventListener("input", renderTokens);
+      $("#open-create-btn").addEventListener("click", openCreate);
+      $("#token-user").addEventListener("change", renderScopes);
+      $("#create-token-btn").addEventListener("click", createToken);
+      $("#add-user-btn").addEventListener("click", () => showToast("正式版这里会添加邮箱或发送邀请"));
+      $$("[data-close-layer], .drawer-overlay").forEach((element) => element.addEventListener("click", closeLayers));
+
+      $("#form-title-en").addEventListener("input", () => {
+        $("#key-preview").textContent = `系统路径预览：${slugify($("#form-title-en").value) || "无法生成"}`;
       });
 
-      document.querySelector("#create-submit-btn").addEventListener("click", () => {
-        const titleZh = document.querySelector("#form-title-zh").value.trim();
-        const titleEn = document.querySelector("#form-title-en").value.trim();
+      $("#create-submit-btn").addEventListener("click", () => {
+        const titleZh = $("#form-title-zh").value.trim();
+        const titleEn = $("#form-title-en").value.trim();
         const key = slugify(titleEn);
         if (!titleZh || !key) {
           showToast("中文名和 English 必填");
@@ -1300,69 +1752,53 @@
         }
         disciplines.unshift({
           key,
-          title: {
-            zh: titleZh,
-            en: titleEn,
-            ja: document.querySelector("#form-title-ja").value.trim(),
-          },
-          tagline: { zh: document.querySelector("#form-tagline-zh").value.trim() },
+          title: { zh: titleZh, en: titleEn, ja: $("#form-title-ja").value.trim() },
+          tagline: { zh: $("#form-tagline-zh").value.trim() },
           counts: { view: 0, school: 0, scholar: 0, kp: 0 },
-          owner: "",
-          tokens: 0,
-          members: [],
-          apiTokens: [],
         });
         closeLayers();
-        render();
-        showToast(`已创建学科 ${titleZh}，线上立即可用`);
+        renderAll();
+        showToast(`已创建学科 ${titleZh}`);
       });
 
-      document.querySelector("#edit-submit-btn").addEventListener("click", () => {
+      $("#edit-submit-btn").addEventListener("click", () => {
         const discipline = findDiscipline(editingKey);
-        if (!discipline) return;
-        const titleZh = document.querySelector("#edit-title-zh").value.trim();
-        if (!titleZh) {
+        const titleZh = $("#edit-title-zh").value.trim();
+        if (!discipline || !titleZh) {
           showToast("中文名必填");
           return;
         }
         discipline.title.zh = titleZh;
-        discipline.title.en = document.querySelector("#edit-title-en").value.trim();
-        discipline.title.ja = document.querySelector("#edit-title-ja").value.trim();
-        discipline.tagline = { zh: document.querySelector("#edit-tagline-zh").value.trim() };
+        discipline.title.en = $("#edit-title-en").value.trim();
+        discipline.title.ja = $("#edit-title-ja").value.trim();
+        discipline.tagline = { zh: $("#edit-tagline-zh").value.trim() };
         closeLayers();
-        render();
-        showToast(`已保存「${discipline.title.zh}」学科信息`);
+        renderDisciplines();
+        renderUsers();
+        renderTokenForm();
+        showToast(`已保存「${discipline.title.zh}」`);
       });
 
-      document.querySelector("#confirm-delete-btn").addEventListener("click", () => {
-        const index = disciplines.findIndex((item) => item.key === deleteKey);
+      $("#confirm-delete-btn").addEventListener("click", () => {
+        const index = disciplines.findIndex((discipline) => discipline.key === deleteKey);
         const discipline = findDiscipline(deleteKey);
         if (index >= 0) disciplines.splice(index, 1);
+        users.forEach((user) => delete user.permissions[deleteKey]);
         closeLayers();
-        render();
-        showToast(`已删除空学科「${discipline.title.zh}」`);
+        renderAll();
+        showToast(`已删除空学科「${discipline?.title.zh ?? ""}」`);
       });
 
-      searchInput.addEventListener("input", render);
-      document.querySelector("#demo-generate-token").addEventListener("click", () => {
-        const discipline = findDiscipline(tokenKey);
-        const ownerEmail = document.querySelector("#token-owner-select").value;
-        if (ownerEmail === "请先分配负责人") {
-          showToast("请先分配负责人");
-          return;
+      $("#copy-token-btn").addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText($("#reveal-token").textContent || "");
+          showToast("已复制 Token");
+        } catch {
+          showToast("复制失败，请手动选中复制");
         }
-        discipline.tokens += 1;
-        discipline.apiTokens = [
-          { name: `GPT ${discipline.title.zh}写入`, owner: ownerEmail, note: "刚刚生成", status: "可用" },
-          ...(discipline.apiTokens ?? []),
-        ];
-        renderTokenItems(discipline);
-        render();
-        document.querySelector("#demo-token-value").textContent = "ms_v1_demo_7f2c9a41b60d4e29a9d4ef13c28a9001";
-        showToast("Token 已生成，只显示一次");
       });
 
-      document.querySelector("[data-back-link]").addEventListener("click", (event) => {
+      $("[data-back-link]").addEventListener("click", (event) => {
         event.preventDefault();
         if (window.history.length > 1) {
           window.history.back();
@@ -1371,7 +1807,14 @@
         showToast("正式版会返回进入前的页面");
       });
 
-      render();
+      function renderAll() {
+        renderDisciplines();
+        renderUsers();
+        renderTokenForm();
+        renderTokens();
+      }
+
+      renderAll();
     </script>
   </body>
 </html>

@@ -4,11 +4,11 @@
  * super-admin only。SSR gate；UI client-rendered。
  *
  * 设计 (frontend-design skill):
- *   - 顶部 inline 创建表单（不开 modal，少跳层）+ 下方 token 列表
- *   - 创建后 fullscreen 半透 overlay 显示一次性明文 token，必须主动按"我已保存"才关闭
+ *   - 顶部 inline 创建表单（不开 modal，少跳层）+ 下方 Token 列表
+ *   - 创建后 fullscreen 半透 overlay 显示一次性明文 Token，必须主动按"我已保存"才关闭
  *   - 列表行：name · ●user accent 头像 · scope chips · last_used 相对时间 · revoke
  *   - 撤销 = soft delete (revoked_at = now)，已撤销 token 灰显
- *   - SF Mono 等宽字体给所有技术字段 (token / id / 时间戳)
+ *   - SF Mono 等宽字体给必要技术字段
  */
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
@@ -47,17 +47,17 @@ const userAccess = users.map((u) => ({
 <Layout title="API Tokens">
   <main class="max-w-reading mx-auto px-4 py-6">
     <header class="mb-6">
-      <a href="/" class="text-xs text-tertiary hover:underline">← 返回首页</a>
+      <button type="button" class="tokens-back-btn" data-back>← 返回</button>
       <div class="flex items-baseline gap-3 mt-2">
         <h1 class="text-2xl font-semibold">API Tokens</h1>
         <span class="text-xs text-quaternary" id="token-count"></span>
       </div>
-      <p class="text-xs text-tertiary mt-1">为用户生成 API token，给 Claude / GPT 等 agent 使用。Token 永远不能超过该用户已有权限。</p>
+      <p class="text-xs text-tertiary mt-1">为用户生成 API Token。Token 永远不能超过该用户已有权限。</p>
     </header>
 
     {/* 创建表单 — inline，不 modal */}
     <section class="tokens-create" id="create-section">
-      <h2 class="tokens-create-h">创建 token</h2>
+      <h2 class="tokens-create-h">创建 Token</h2>
       <div class="tokens-create-form">
         <div class="tokens-form-row">
           <label>
@@ -72,7 +72,7 @@ const userAccess = users.map((u) => ({
             </select>
           </label>
           <label>
-            <div class="tokens-form-label">过期</div>
+            <div class="tokens-form-label">有效期</div>
             <select id="form-expires" class="tokens-input">
               <option value="90" selected>90 天</option>
               <option value="30">30 天</option>
@@ -85,24 +85,24 @@ const userAccess = users.map((u) => ({
         <div class="tokens-form-row">
           <div style="flex:1">
             <div class="tokens-form-label">学科范围</div>
-            <p class="tokens-scope-help" id="scope-help">先选择用户。未勾选时，token 使用该用户的全部学科权限。</p>
+            <p class="tokens-scope-help" id="scope-help">先选择用户。未勾选时，Token 使用该用户的全部学科权限。</p>
             <div class="tokens-scope-chips">
               {disciplines.map((d) => (
                 <label class="tokens-scope-chip" data-scope-chip={d.key}>
                   <input type="checkbox" name="scope" value={d.key} />
-                  <span>{d.title_zh} <span class="tokens-scope-key">{d.key}</span> <span class="tokens-role-badge" data-role-badge={d.key}></span></span>
+                  <span>{d.title_zh} <span class="tokens-role-badge" data-role-badge={d.key}></span></span>
                 </label>
               ))}
             </div>
           </div>
-          <button type="button" id="create-btn" class="tokens-create-btn">生成 token</button>
+          <button type="button" id="create-btn" class="tokens-create-btn">生成 Token</button>
         </div>
       </div>
     </section>
 
     {/* 列表 */}
     <section class="mt-8">
-      <h2 class="tokens-list-h">已有 tokens</h2>
+      <h2 class="tokens-list-h">已有 Token</h2>
       <div id="loading" class="space-y-2">
         {[1,2].map(() => <div class="h-16 rounded-md bg-bg-secondary animate-pulse"></div>)}
       </div>
@@ -110,7 +110,7 @@ const userAccess = users.map((u) => ({
         <div class="tokens-list" id="tokens-list"></div>
         <div id="empty-state" class="tokens-empty hidden">
           <div class="tokens-empty-icon">⌑</div>
-          <div class="tokens-empty-text">还没有 token</div>
+          <div class="tokens-empty-text">还没有 Token</div>
           <div class="tokens-empty-sub">用上面表单创建第一个</div>
         </div>
       </div>
@@ -133,7 +133,7 @@ const userAccess = users.map((u) => ({
       <div class="reveal-token" id="reveal-token"></div>
 
       <div class="reveal-actions">
-        <button type="button" id="copy-btn" class="reveal-btn-primary">复制 token</button>
+        <button type="button" id="copy-btn" class="reveal-btn-primary">复制 Token</button>
         <button type="button" id="confirm-btn" class="reveal-btn-secondary">我已保存</button>
       </div>
     </div>
@@ -141,6 +141,17 @@ const userAccess = users.map((u) => ({
 </Layout>
 
 <style is:global>
+  .tokens-back-btn {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-text-tertiary);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .tokens-back-btn:hover { color: var(--color-text-primary); }
+
   /* === 创建表单 === */
   .tokens-create {
     border: 1px solid var(--color-border);
@@ -217,23 +228,18 @@ const userAccess = users.map((u) => ({
     background: color-mix(in srgb, var(--color-text-primary) 8%, transparent);
     border-color: var(--color-text-primary);
   }
-  .tokens-scope-key {
-    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-    font-size: 10px;
-    color: var(--color-text-quaternary);
-    margin-left: 2px;
-  }
   .tokens-role-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 18px;
+    min-width: 32px;
     height: 18px;
     margin-left: 4px;
+    padding: 0 6px;
     border-radius: 999px;
     font-size: 10px;
     font-weight: 600;
-    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-family: inherit;
     color: var(--color-text-quaternary);
     background: var(--color-bg-secondary);
   }
@@ -450,13 +456,22 @@ const userAccess = users.map((u) => ({
   .reveal-btn-secondary:hover { background: var(--color-bg-secondary); }
 </style>
 
-<script type="application/json" id="token-user-access" set:html={JSON.stringify(userAccess)}></script>
+<script is:inline type="application/json" id="token-user-access" set:html={JSON.stringify(userAccess)}></script>
+<script is:inline type="application/json" id="token-discipline-labels" set:html={JSON.stringify(Object.fromEntries(disciplines.map((d) => [d.key, d.title_zh])))}></script>
 
 <script>
   // @ts-nocheck
   const $ = (s) => document.querySelector(s);
   const ACCENT_PALETTE = ['#34C759', '#FF9500', '#007AFF'];
   const USER_ACCESS = JSON.parse(document.getElementById('token-user-access').textContent || '[]');
+  const DISCIPLINE_LABELS = JSON.parse(document.getElementById('token-discipline-labels').textContent || '{}');
+
+  document.querySelectorAll('[data-back]').forEach((el) => {
+    el.addEventListener('click', () => {
+      if (window.history.length > 1) window.history.back();
+      else window.location.href = '/';
+    });
+  });
   function pickAccent(email) {
     let h = 0;
     for (let i = 0; i < email.length; i++) h = ((h << 5) - h + email.charCodeAt(i)) | 0;
@@ -479,6 +494,9 @@ const userAccess = users.map((u) => ({
     const d = new Date(iso);
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
+  function displayScope(scope) {
+    return DISCIPLINE_LABELS[scope] ?? scope;
+  }
 
   let tokens = [];
 
@@ -497,9 +515,9 @@ const userAccess = users.map((u) => ({
       : 0;
 
     if (!selected) {
-      help.textContent = '先选择用户。未勾选时，token 使用该用户的全部学科权限。';
+      help.textContent = '先选择用户。未勾选时，Token 使用该用户的全部学科权限。';
     } else if (selected.isSuperAdmin) {
-      help.textContent = '该用户是 super-admin。可不勾选表示全站权限；勾选后 token 只限所选学科。';
+      help.textContent = '该用户是超级管理员。可不勾选表示全站权限；勾选后 Token 只限所选学科。';
     } else {
       help.textContent = `该用户可访问 ${allowedCount} 个学科。不可访问的学科已禁用；不勾选表示使用这 ${allowedCount} 个学科权限。`;
     }
@@ -522,7 +540,7 @@ const userAccess = users.map((u) => ({
       chip?.classList.toggle('is-disabled', !enabled);
       if (badge) {
         badge.dataset.role = role || '';
-        badge.textContent = role === 'all' ? 'ALL' : role === 'admin' ? 'A' : role === 'guest' ? 'R' : '—';
+        badge.textContent = role === 'all' ? 'ALL' : role === 'admin' ? '编辑' : role === 'guest' ? '只读' : '无';
       }
     });
   }
@@ -555,7 +573,7 @@ const userAccess = users.map((u) => ({
       const initial = (t.user_email[0] ?? '?').toUpperCase();
       const scopesHtml = t.scopes.length === 0
         ? `<span class="token-scope-all">继承用户全部权限</span>`
-        : t.scopes.map((s) => `<span class="token-scope-chip">${s}</span>`).join('');
+        : t.scopes.map((s) => `<span class="token-scope-chip">${escapeHtml(displayScope(s))}</span>`).join('');
       const revokedNote = t.revoked_at ? ` · 已撤销 ${fmtDate(t.revoked_at)}` : '';
       return `
         <div class="token-row ${t.revoked_at ? 'is-revoked' : ''}">
@@ -567,10 +585,10 @@ const userAccess = users.map((u) => ({
             </div>
             <div>${scopesHtml}</div>
             <div class="token-meta">
-              <span>id ${t.id}</span>
-              <span>created ${fmtDate(t.created_at)}</span>
-              <span>expires ${fmtDate(t.expires_at)}</span>
-              <span>last used ${relTime(t.last_used_at)}${revokedNote}</span>
+              <span>ID ${t.id}</span>
+              <span>创建 ${fmtDate(t.created_at)}</span>
+              <span>有效期 ${fmtDate(t.expires_at)}</span>
+              <span>最近使用 ${relTime(t.last_used_at)}${revokedNote}</span>
             </div>
           </div>
           ${t.revoked_at ? '' : `<button type="button" class="token-revoke-btn" data-revoke="${t.id}">撤销</button>`}
@@ -587,7 +605,7 @@ const userAccess = users.map((u) => ({
   }
 
   async function revoke(id) {
-    if (!confirm('撤销此 token？此后任何用此 token 的请求都会被拒绝。')) return;
+    if (!confirm('撤销此 Token？此后任何使用它的请求都会被拒绝。')) return;
     const res = await fetch(`/api/admin/tokens/${encodeURIComponent(id)}`, { method: 'DELETE' });
     if (res.ok) {
       window.toast?.success('已撤销');
@@ -609,11 +627,11 @@ const userAccess = users.map((u) => ({
       .map((el) => el.value);
 
     if (!name) { window.toast?.error('名称必填'); return; }
-    if (!userId) { window.toast?.error('请选择 user'); return; }
+    if (!userId) { window.toast?.error('请选择关联用户'); return; }
 
     const btn = $('#create-btn');
     btn.disabled = true;
-    btn.textContent = '生成中...';
+    btn.textContent = '生成中…';
 
     const res = await fetch('/api/admin/tokens', {
       method: 'POST',
@@ -622,7 +640,7 @@ const userAccess = users.map((u) => ({
     });
     const data = await res.json().catch(() => ({}));
     btn.disabled = false;
-    btn.textContent = '生成 token';
+    btn.textContent = '生成 Token';
 
     if (!res.ok) {
       const detail = Array.isArray(data.detail) ? data.detail.join(', ') : data.detail ?? '';
@@ -644,12 +662,12 @@ const userAccess = users.map((u) => ({
     $('#reveal-meta').innerHTML = `
       <strong>${escapeHtml(data.name)}</strong> ·
       ${escapeHtml(data.user_email)} ·
-      ${data.scopes.length === 0 ? '继承用户全部权限' : data.scopes.map(escapeHtml).join(', ')} ·
-      ${data.expires_at ? `过期 ${fmtDate(data.expires_at)}` : '永不过期'}
+      ${data.scopes.length === 0 ? '继承用户全部权限' : data.scopes.map((s) => escapeHtml(displayScope(s))).join(', ')} ·
+      ${data.expires_at ? `有效期 ${fmtDate(data.expires_at)}` : '永不过期'}
     `;
     $('#reveal-overlay').classList.remove('hidden');
     $('#copy-btn').classList.remove('is-copied');
-    $('#copy-btn').textContent = '复制 token';
+    $('#copy-btn').textContent = '复制 Token';
   }
 
   $('#copy-btn').addEventListener('click', async () => {
@@ -657,7 +675,7 @@ const userAccess = users.map((u) => ({
     try {
       await navigator.clipboard.writeText(txt);
       $('#copy-btn').classList.add('is-copied');
-      $('#copy-btn').textContent = '✓ 已复制';
+      $('#copy-btn').textContent = '已复制';
     } catch {
       window.toast?.error('复制失败，请手动选中复制');
     }

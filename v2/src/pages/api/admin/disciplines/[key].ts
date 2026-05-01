@@ -1,17 +1,32 @@
 /**
- * /api/admin/disciplines/<key>  (v0.5.98)
+ * /api/admin/disciplines/<key>
  *
- * PUT    — 改 metadata (title/tagline)，不能改 key
- * DELETE — 4×0 gate (view/school/scholar/kp 都 0 才能删)
+ * PUT    - 改 metadata (title/tagline)，不能改 key
+ * DELETE - 4x0 gate (view/school/scholar/kp 都 0 才能删)
+ *
+ * D1 is the source of truth. These admin operations no longer write
+ * GitHub JSON business data.
  */
 
 import type { APIRoute } from 'astro';
 import { Discipline, type Discipline as DisciplineT } from '~/schemas/discipline';
-import { getFile, putFile, deleteFile } from '~/lib/github';
 
 interface PutBody {
   title?: { zh?: string; en?: string | null; ja?: string | null };
   tagline?: { zh?: string | null; ja?: string | null };
+}
+
+interface DisciplineRow {
+  key: string;
+  title_zh: string;
+  title_en: string | null;
+  title_ja: string | null;
+  tagline_zh: string | null;
+  tagline_ja: string | null;
+  tags_json: string | null;
+  themes_json: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 function json<T>(status: number, body: T): Response {
@@ -19,6 +34,39 @@ function json<T>(status: number, body: T): Response {
     status,
     headers: { 'content-type': 'application/json' },
   });
+}
+
+function parseJsonArray<T>(value: string | null, fallback: T[]): T[] {
+  if (!value) return fallback;
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed as T[] : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function rowToDiscipline(row: DisciplineRow): DisciplineT {
+  const tagline = row.tagline_zh || row.tagline_ja
+    ? {
+        zh: row.tagline_zh ?? undefined,
+        ja: row.tagline_ja ?? undefined,
+      }
+    : undefined;
+
+  return {
+    key: row.key,
+    title: {
+      zh: row.title_zh,
+      en: row.title_en ?? undefined,
+      ja: row.title_ja ?? undefined,
+    },
+    tagline,
+    tags: parseJsonArray(row.tags_json, []),
+    themes: parseJsonArray(row.themes_json, []),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
 }
 
 export const PUT: APIRoute = async ({ params, request, locals }) => {
@@ -29,25 +77,20 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
   if (!key) return json(400, { ok: false, reason: 'bad_request' });
 
   const env = locals.runtime.env;
-  if (!env.GITHUB_PAT || !env.GITHUB_REPO) {
-    return json(503, { ok: false, reason: 'config_missing' });
-  }
-
-  // 拉现有 git 文件 + sha
-  const path = `v2/data/${key}/discipline.json`;
-  const cur = await getFile({ pat: env.GITHUB_PAT, repo: env.GITHUB_REPO }, path);
-  if (!cur.ok) {
-    if (cur.reason === 'not_found') return json(404, { ok: false, reason: 'discipline_not_found' });
-    return json(502, { ok: false, reason: 'github_error', detail: cur.detail });
-  }
-
-  let curData: DisciplineT;
-  try { curData = JSON.parse(cur.data.content) as DisciplineT; }
-  catch (e) { return json(502, { ok: false, reason: 'github_error', detail: `corrupt json: ${(e as Error).message}` }); }
 
   let body: PutBody;
   try { body = (await request.json()) as PutBody; }
   catch { return json(400, { ok: false, reason: 'bad_request', detail: 'invalid json' }); }
+
+  const row = await env.DB.prepare(
+    `SELECT key, title_zh, title_en, title_ja, tagline_zh, tagline_ja,
+            tags_json, themes_json, created_at, updated_at
+     FROM discipline
+     WHERE key = ?`,
+  ).bind(key).first<DisciplineRow>();
+  if (!row) return json(404, { ok: false, reason: 'discipline_not_found' });
+
+  const curData = rowToDiscipline(row);
 
   // 合并改动 — 只允许改 title / tagline
   const titleZh = body.title?.zh?.trim() ?? curData.title.zh;
@@ -72,36 +115,42 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     return json(422, { ok: false, reason: 'schema_invalid', detail: parsed.error.issues });
   }
 
-  // 写 git
-  const content = JSON.stringify(parsed.data, null, 2) + '\n';
-  const message = `v2: edit discipline ${key} by ${locals.user.email}`;
-  const ghRes = await putFile(
-    { pat: env.GITHUB_PAT, repo: env.GITHUB_REPO },
-    path,
-    { content, message, sha: cur.data.sha, branch: 'main' },
-  );
-  if (!ghRes.ok) {
-    return json(502, { ok: false, reason: 'github_error', detail: ghRes.detail });
-  }
+  await env.DB.batch([
+    env.DB.prepare(
+      `UPDATE discipline SET
+         title_zh = ?, title_en = ?, title_ja = ?,
+         tagline_zh = ?, tagline_ja = ?,
+         updated_at = ?
+       WHERE key = ?`,
+    ).bind(
+      parsed.data.title.zh,
+      parsed.data.title.en ?? null,
+      parsed.data.title.ja ?? null,
+      parsed.data.tagline?.zh ?? null,
+      parsed.data.tagline?.ja ?? null,
+      parsed.data.updatedAt,
+      key,
+    ),
+    env.DB.prepare(
+      `INSERT INTO tenant (id, discipline_key, title_zh, title_en, title_ja, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET
+         title_zh = excluded.title_zh,
+         title_en = excluded.title_en,
+         title_ja = excluded.title_ja,
+         updated_at = excluded.updated_at`,
+    ).bind(
+      key,
+      key,
+      parsed.data.title.zh,
+      parsed.data.title.en ?? null,
+      parsed.data.title.ja ?? null,
+      row.created_at,
+      parsed.data.updatedAt,
+    ),
+  ]);
 
-  // 写 D1
-  await env.DB.prepare(
-    `UPDATE discipline SET
-       title_zh = ?, title_en = ?, title_ja = ?,
-       tagline_zh = ?, tagline_ja = ?,
-       updated_at = ?
-     WHERE key = ?`,
-  ).bind(
-    parsed.data.title.zh,
-    parsed.data.title.en ?? null,
-    parsed.data.title.ja ?? null,
-    parsed.data.tagline?.zh ?? null,
-    parsed.data.tagline?.ja ?? null,
-    parsed.data.updatedAt,
-    key,
-  ).run();
-
-  return json(200, { ok: true, discipline: parsed.data, commit_sha: ghRes.data.commit_sha });
+  return json(200, { ok: true, discipline: parsed.data });
 };
 
 export const DELETE: APIRoute = async ({ params, locals }) => {
@@ -112,9 +161,9 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
   if (!key) return json(400, { ok: false, reason: 'bad_request' });
 
   const env = locals.runtime.env;
-  if (!env.GITHUB_PAT || !env.GITHUB_REPO) {
-    return json(503, { ok: false, reason: 'config_missing' });
-  }
+
+  const existing = await env.DB.prepare('SELECT key FROM discipline WHERE key = ?').bind(key).first();
+  if (!existing) return json(404, { ok: false, reason: 'discipline_not_found' });
 
   // 4×0 gate — view/school/scholar/kp 都必须 0
   const counts = await env.DB.prepare(
@@ -133,24 +182,12 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
     });
   }
 
-  // 拉 git sha 才能 delete
-  const path = `v2/data/${key}/discipline.json`;
-  const cur = await getFile({ pat: env.GITHUB_PAT, repo: env.GITHUB_REPO }, path);
-  if (cur.ok) {
-    const message = `v2: delete discipline ${key} by ${locals.user.email}`;
-    const ghDelRes = await deleteFile(
-      { pat: env.GITHUB_PAT, repo: env.GITHUB_REPO },
-      path,
-      { message, sha: cur.data.sha, branch: 'main' },
-    );
-    if (!ghDelRes.ok) {
-      return json(502, { ok: false, reason: 'github_error', detail: ghDelRes.detail });
-    }
-  }
-  // 即使 git 文件不在（罕见），仍删 D1（保持一致）
-
-  // 删 D1（user_permission cascade，view/school/scholar/kp 已 0 不会触发 FK）
-  await env.DB.prepare('DELETE FROM discipline WHERE key = ?').bind(key).run();
+  await env.DB.batch([
+    env.DB.prepare('DELETE FROM tenant_member WHERE tenant_id = ?').bind(key),
+    env.DB.prepare('DELETE FROM tenant WHERE id = ?').bind(key),
+    env.DB.prepare('DELETE FROM user_permission WHERE discipline_key = ?').bind(key),
+    env.DB.prepare('DELETE FROM discipline WHERE key = ?').bind(key),
+  ]);
 
   return json(200, { ok: true, key });
 };

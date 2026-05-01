@@ -6,10 +6,10 @@
  * 设计 (frontend-design skill):
  *   - 单表格 layout，header (h1 + N 人 count)
  *   - 每行 user：accent 色头像（email hash → ob 绿/classic 橙/strategy 蓝）+ email + meta
- *   - 权限矩阵 = segmented toggle 三段 [—][R][A]，1 tap 切换 + toast
+ *   - 权限矩阵 = segmented toggle 三段 [无][只读][编辑]，1 tap 切换 + toast
  *   - 技术字段（user_id 后 6 位 / created_at）用 SF Mono
  *   - super-admin 行皇冠 icon + 全列锁死 ALL
- *   - iPad: 表格水平滚 + email 列 sticky + toggle ≥ 32px
+ *   - iPad: 表格水平滚 + email 列 sticky + toggle ≥ 52px
  */
 import Layout from '~/layouts/Layout.astro';
 
@@ -20,7 +20,7 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
 <Layout title="用户权限管理">
   <main class="max-w-reading mx-auto px-4 py-6">
     <header class="mb-6">
-      <a href="/" class="text-xs text-tertiary hover:underline">← 返回首页</a>
+      <button type="button" class="users-back-btn" data-back>← 返回</button>
       <div class="flex items-baseline gap-3 mt-2">
         <h1 class="text-2xl font-semibold">用户权限管理</h1>
         <span class="text-xs text-quaternary" id="user-count"></span>
@@ -49,17 +49,28 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
 
       <div class="mt-6 p-3 rounded-md bg-bg-secondary text-xs text-tertiary leading-relaxed">
         <strong class="text-secondary">权限语义：</strong>
-        <span class="inline-block mx-1.5 px-1.5 py-0.5 border rounded text-quaternary">—</span> 无 (访问该学科 → 跳首页) ·
-        <span class="inline-block mx-1.5 px-1.5 py-0.5 border rounded text-accent-strategy" style="border-color: var(--accent-strategy)">R</span> 只读 ·
-        <span class="inline-block mx-1.5 px-1.5 py-0.5 border rounded text-accent-warning" style="border-color: var(--accent-warning)">A</span> 编辑 (read+write)
+        <span class="inline-block mx-1.5 px-1.5 py-0.5 border rounded text-quaternary">无</span> 不能访问该学科 ·
+        <span class="inline-block mx-1.5 px-1.5 py-0.5 border rounded text-accent-strategy" style="border-color: var(--accent-strategy)">只读</span> 可以查看 ·
+        <span class="inline-block mx-1.5 px-1.5 py-0.5 border rounded text-accent-warning" style="border-color: var(--accent-warning)">编辑</span> 可以查看和修改
         <br>
-        <strong class="text-secondary">super-admin</strong>（皇冠）由 <code class="font-mono text-quaternary">ADMIN_EMAILS</code> env 决定，不可改。
+        <strong class="text-secondary">ALL</strong> 表示超级管理员，不能在这里修改。
       </div>
     </div>
   </main>
 </Layout>
 
 <style is:global>
+  .users-back-btn {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-text-tertiary);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .users-back-btn:hover { color: var(--color-text-primary); }
+
   .users-wrap {
     overflow-x: auto;
     border: 1px solid var(--color-border);
@@ -69,7 +80,7 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
   .users-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 640px;
+    min-width: 700px;
     font-size: 13px;
   }
   .users-table thead th {
@@ -154,7 +165,7 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
     all: unset;
     cursor: pointer;
     padding: 0 10px;
-    min-width: 32px;
+    min-width: 52px;
     font-size: 12px;
     line-height: 1;
     color: var(--color-text-quaternary);
@@ -208,6 +219,13 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
   const $ = (s) => document.querySelector(s);
   const ACCENT_PALETTE = ['#34C759', '#FF9500', '#007AFF']; // ob / classic / strategy
 
+  document.querySelectorAll('[data-back]').forEach((el) => {
+    el.addEventListener('click', () => {
+      if (window.history.length > 1) window.history.back();
+      else window.location.href = '/';
+    });
+  });
+
   /** 简单 string hash → palette index（同 email 跨页一致） */
   function pickAccent(email) {
     let h = 0;
@@ -216,6 +234,9 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
   }
 
   function shortId(id) { return id ? id.slice(-6) : '?'; }
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  }
   function formatDate(iso) {
     if (!iso) return '—';
     const d = new Date(iso);
@@ -223,6 +244,10 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
   }
 
   let state = { users: [], disciplines: [] };
+
+  function disciplineTitle(key) {
+    return state.disciplines.find((d) => d.key === key)?.title_zh ?? key;
+  }
 
   async function load() {
     const res = await fetch('/api/admin/users');
@@ -244,7 +269,7 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
     // header — sticky 用户列 + 学科列
     const thead = $('#users-table thead tr');
     thead.innerHTML = '<th class="sticky-col">用户</th>' +
-      state.disciplines.map((d) => `<th>${d.title_zh}<br><span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--color-text-quaternary);font-size:10px">${d.key}</span></th>`).join('');
+      state.disciplines.map((d) => `<th>${escapeHtml(d.title_zh)}</th>`).join('');
 
     const tbody = $('#users-table tbody');
     tbody.innerHTML = state.users.map((u) => {
@@ -265,7 +290,7 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
               <span class="user-avatar ${u.is_super_admin ? 'is-super' : ''}" style="background:${accent}">${initial}</span>
               <div class="user-info">
                 <div class="user-email" title="${u.email}">${u.email}</div>
-                <div class="user-meta"><span>${shortId(u.id)}</span><span>·</span><span>since ${formatDate(u.created_at)}</span></div>
+                <div class="user-meta"><span>${shortId(u.id)}</span><span>·</span><span>加入 ${formatDate(u.created_at)}</span></div>
               </div>
             </div>
           </td>
@@ -279,9 +304,9 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
 
   function renderToggle(userId, discKey, cur) {
     const states = [
-      { val: null,    label: '—', title: '无权限' },
-      { val: 'guest', label: 'R', title: '只读' },
-      { val: 'admin', label: 'A', title: '编辑' },
+      { val: null,    label: '无', title: '无权限' },
+      { val: 'guest', label: '只读', title: '只读' },
+      { val: 'admin', label: '编辑', title: '编辑' },
     ];
     return `<div class="perm-toggle" data-user-id="${userId}" data-discipline="${discKey}">${
       states.map((s) =>
@@ -317,7 +342,7 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
             }
             const u2 = state.users.find((x) => x.id === userId);
             const label = role === 'admin' ? '编辑权' : role === 'guest' ? '只读权' : '无权限';
-            window.toast?.success(`${u2.email.split('@')[0]} · ${disc} · ${label}`);
+            window.toast?.success(`${u2.email.split('@')[0]} · ${disciplineTitle(disc)} · ${label}`);
           } else {
             window.toast?.error(`${data.reason ?? 'error'}: ${data.detail ?? ''}`.slice(0, 80));
             // 失败 → 回滚 UI（重 render 这一格）

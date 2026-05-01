@@ -1,17 +1,15 @@
 /**
- * /api/admin/disciplines  (v0.5.98)
+ * /api/admin/disciplines
  *
- * GET  — list 所有 discipline + 4 个 count (view/school/scholar/kp)
- * POST — 创建新 discipline
+ * GET  - list 所有 discipline + 内容数量 + 权限摘要
+ * POST - 创建新 discipline
  *        Body: { key, title:{zh,en?,ja?}, tagline?:{zh?,ja?} }
- *        - 写 git: v2/data/<key>/discipline.json
- *        - 写 D1: discipline 表 (themes/tags 都默认空)
- *        - 不创建子目录的 .gitkeep — 第一次写学派/学者/KP 时自动建路径
+ *        - 写 D1: discipline + tenant
+ *        - 不再写 GitHub 业务数据
  */
 
 import type { APIRoute } from 'astro';
 import { Discipline, type Discipline as DisciplineT } from '~/schemas/discipline';
-import { putFile } from '~/lib/github';
 
 interface ListRow {
   key: string;
@@ -30,11 +28,28 @@ interface ListRow {
   kp_count: number;
 }
 
+interface AccessRow {
+  discipline_key: string;
+  role: 'admin' | 'guest';
+  email: string;
+  display_name: string | null;
+}
+
 function json<T>(status: number, body: T): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: { 'content-type': 'application/json' },
   });
+}
+
+function parseJsonArray(value: string | null): unknown[] {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
 }
 
 export const GET: APIRoute = async ({ locals }) => {
@@ -55,16 +70,38 @@ export const GET: APIRoute = async ({ locals }) => {
      ORDER BY d.created_at`,
   ).all<ListRow>();
 
+  const accessRows = await env.DB.prepare(
+    `SELECT up.discipline_key, up.role, u.email, u.display_name
+     FROM user_permission up
+     JOIN user u ON u.id = up.user_id
+     ORDER BY u.email`,
+  ).all<AccessRow>();
+
+  const accessByDiscipline = new Map<string, {
+    editors: Array<{ email: string; display_name: string | null }>;
+    readers: Array<{ email: string; display_name: string | null }>;
+  }>();
+  for (const row of accessRows.results ?? []) {
+    if (!accessByDiscipline.has(row.discipline_key)) {
+      accessByDiscipline.set(row.discipline_key, { editors: [], readers: [] });
+    }
+    const bucket = accessByDiscipline.get(row.discipline_key)!;
+    const user = { email: row.email, display_name: row.display_name };
+    if (row.role === 'admin') bucket.editors.push(user);
+    else bucket.readers.push(user);
+  }
+
   return json(200, {
     ok: true,
     disciplines: (rows.results ?? []).map((r) => ({
       key: r.key,
       title: { zh: r.title_zh, en: r.title_en, ja: r.title_ja },
       tagline: { zh: r.tagline_zh, ja: r.tagline_ja },
-      themes_count: JSON.parse(r.themes_json || '[]').length,
-      tags_count: JSON.parse(r.tags_json || '[]').length,
+      themes_count: parseJsonArray(r.themes_json).length,
+      tags_count: parseJsonArray(r.tags_json).length,
       created_at: r.created_at,
       updated_at: r.updated_at,
+      access: accessByDiscipline.get(r.key) ?? { editors: [], readers: [] },
       counts: {
         view: r.view_count,
         school: r.school_count,
@@ -95,9 +132,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!locals.isSuperAdmin) return json(403, { ok: false, reason: 'super_admin_required' });
 
   const env = locals.runtime.env;
-  if (!env.GITHUB_PAT || !env.GITHUB_REPO) {
-    return json(503, { ok: false, reason: 'config_missing' });
-  }
 
   let body: CreateBody;
   try { body = (await request.json()) as CreateBody; }
@@ -108,7 +142,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!titleZh) return json(400, { ok: false, reason: 'bad_request', detail: 'title.zh required' });
   if (!titleEn) return json(400, { ok: false, reason: 'bad_request', detail: 'title.en required (用来生成 key)' });
 
-  // v0.6.1 自动从 English slugify 生成 key
   const key = slugify(titleEn);
   if (!/^[a-z][a-z0-9_]{1,30}$/.test(key)) {
     return json(400, { ok: false, reason: 'bad_request', detail: `English "${titleEn}" 无法生成有效 key (slug=${key})，请改 English 写法` });
@@ -139,19 +172,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const parsed = Discipline.safeParse(draft);
   if (!parsed.success) {
     return json(422, { ok: false, reason: 'schema_invalid', detail: parsed.error.issues });
-  }
-
-  // 写 git: v2/data/<key>/discipline.json
-  const path = `v2/data/${key}/discipline.json`;
-  const content = JSON.stringify(parsed.data, null, 2) + '\n';
-  const message = `v2: create discipline ${key} by ${locals.user.email}`;
-  const ghRes = await putFile(
-    { pat: env.GITHUB_PAT, repo: env.GITHUB_REPO },
-    path,
-    { content, message, branch: 'main' },
-  );
-  if (!ghRes.ok) {
-    return json(502, { ok: false, reason: 'github_error', detail: ghRes.detail });
   }
 
   // 写 D1：discipline + tenant 一起创建，保证 API-first 路径立即可用。
@@ -190,6 +210,5 @@ export const POST: APIRoute = async ({ request, locals }) => {
   return json(200, {
     ok: true,
     discipline: parsed.data,
-    commit_sha: ghRes.data.commit_sha,
   });
 };
