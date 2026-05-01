@@ -8,6 +8,11 @@ export default defineConfig({
   // 'server' = 默认 SSR（页面运行时渲染，可访问 D1）
   // 后续个别静态页面可用 `export const prerender = true` 转 SSG
   output: 'server',
+  security: {
+    // CSRF protection lives in src/middleware.ts so Bearer-token API calls can
+    // work without browser Origin headers while cookie-based writes stay guarded.
+    checkOrigin: false,
+  },
   devToolbar: {
     enabled: !process.env.CI,
   },
