@@ -4,7 +4,7 @@
  * v0.3.5 起：signed cookie stateless 验证（修 A5 N+1）+ CSRF Origin check
  *
  * + 强制登录 gate（v0.2.7 起）：除白名单外所有路径，未登录 → 302 /login
- * + CSRF：state-changing method（POST/PUT/DELETE/PATCH）要求 Origin 匹配 APP_URL
+ * + CSRF：cookie-based state-changing method（POST/PUT/DELETE/PATCH）要求 Origin 匹配 APP_URL
  *
  * locals.user = SessionUser（cookie 解出，非 DB 查询） | null
  */
@@ -41,7 +41,8 @@ function isPublicPath(pathname: string): boolean {
 const STATE_CHANGING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
 /**
- * CSRF Origin check (v0.3.5)：state-changing 请求必须带 Origin header 且匹配 APP_URL。
+ * CSRF Origin check (v0.3.5)：cookie-based state-changing 请求必须带 Origin header 且匹配 APP_URL。
+ * Bearer token API calls are not ambient browser credentials, so they are exempt from Origin checks.
  * GET / HEAD / OPTIONS 豁免（幂等）。dev 下 APP_URL 没配也允许（防本地卡住）。
  */
 function isOriginAllowed(
@@ -50,6 +51,8 @@ function isOriginAllowed(
   appUrl: string | undefined,
 ): boolean {
   if (!STATE_CHANGING_METHODS.has(request.method)) return true;
+  const authHeader = request.headers.get('authorization')?.trim();
+  if (authHeader?.startsWith('Bearer ')) return true;
   // v0.6.9: GitHub webhook server-to-server 不带 Origin header，但有 HMAC SHA-256 验签
   //   （/api/v1/webhook/github 自己用 GITHUB_WEBHOOK_SECRET 校验 X-Hub-Signature-256），
   //   比 Origin 更强 — 豁免 CSRF Origin check 让 GitHub 能成功投递 push event。
