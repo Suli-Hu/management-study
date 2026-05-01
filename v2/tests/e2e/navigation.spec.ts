@@ -7,7 +7,7 @@ const ADMIN_PASSWORD = process.env.E2E_ADMIN_PASSWORD ?? 'test-admin-pw';
 async function gotoFirstSchool(page: Page): Promise<string> {
   await page.goto('/');
   // 首页 main 里的 discipline 链接：href 形如 /keiei
-  const disciplineLink = page.locator('main a[href^="/"]').first();
+  const disciplineLink = page.locator('main section a[href^="/"]:not([href="/"])').first();
   await expect(disciplineLink).toBeVisible();
   const disciplineHref = await disciplineLink.getAttribute('href');
   await disciplineLink.click();
@@ -74,8 +74,9 @@ test.describe('登录后浏览', () => {
 
   test('夜间模式 toggle → html.dark class', async ({ page }) => {
     await page.goto('/');
-    // Nav 里的主题切换按钮，aria-label 含「主题」
-    const toggle = page.locator('[aria-label*="主题"], [aria-label*="theme"], [aria-label*="夜间"]').first();
+    // Nav 管理菜单里的主题切换按钮
+    await page.click('#mgmt-menu-trigger');
+    const toggle = page.locator('#theme-toggle');
     if ((await toggle.count()) === 0) test.skip(true, 'theme toggle not present');
     const beforeDark = await page.evaluate(() => document.documentElement.classList.contains('dark'));
     await toggle.click();

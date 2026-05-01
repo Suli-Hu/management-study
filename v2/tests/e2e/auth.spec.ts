@@ -52,7 +52,8 @@ test.describe('登录', () => {
     const cookiesBefore = await context.cookies();
     expect(cookiesBefore.find((c) => c.name === 'session')).toBeDefined();
 
-    // 点 nav 的「退出」按钮（form POST 自带 Origin，过 CSRF）
+    await page.click('#user-menu-trigger');
+    // 点 nav 用户菜单里的「退出」按钮（form POST 自带 Origin，过 CSRF）
     await page.click('form[action="/api/auth/logout"] button');
     // 退出后 302 → / 但 / 又被 middleware 拦回 /login
     await page.waitForURL(/\/login$/);
