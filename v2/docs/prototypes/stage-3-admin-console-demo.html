@@ -3,30 +3,24 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Stage 3 Admin Console Prototype</title>
+    <title>Stage 3 Discipline Admin Prototype</title>
     <style>
       :root {
         color-scheme: light;
-        --ink: #1d1d1f;
-        --ink-2: #303033;
-        --ink-3: #5d5d63;
-        --ink-4: #8a8a91;
-        --paper: #ffffff;
-        --wash: #f7f7f4;
-        --wash-2: #eeeeea;
-        --line: #deded8;
-        --green: #267b59;
-        --green-soft: #e6f3ed;
-        --blue: #245ea8;
-        --blue-soft: #e7eef8;
-        --amber: #a36112;
-        --amber-soft: #fff0d8;
-        --red: #b63f35;
-        --red-soft: #f8e7e4;
-        --violet: #6750a4;
-        --shadow: 0 16px 42px rgba(29, 29, 31, 0.08);
+        --color-text-primary: #1d1d1f;
+        --color-text-secondary: #2c2c2e;
+        --color-text-tertiary: #48484a;
+        --color-text-quaternary: #86868b;
+        --color-bg-primary: #ffffff;
+        --color-bg-secondary: #fafafa;
+        --color-bg-tertiary: #f5f5f7;
+        --color-border: #e5e5ea;
+        --accent-strategy: #007aff;
+        --accent-warning: #ff9500;
+        --accent-danger: #ff3b30;
+        --accent-success: #34c759;
         --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-        --sans: "Avenir Next", "SF Pro Text", "Hiragino Sans", "PingFang SC", system-ui, sans-serif;
+        --sans: -apple-system, "SF Pro Text", "PingFang SC", "Hiragino Sans", system-ui, sans-serif;
       }
 
       * {
@@ -35,17 +29,14 @@
 
       html {
         min-height: 100%;
-        background: var(--wash);
+        background: var(--color-bg-primary);
       }
 
       body {
         margin: 0;
         min-height: 100vh;
-        color: var(--ink-2);
-        background:
-          linear-gradient(90deg, rgba(222, 222, 216, 0.42) 1px, transparent 1px) 0 0 / 72px 72px,
-          linear-gradient(0deg, rgba(222, 222, 216, 0.36) 1px, transparent 1px) 0 0 / 72px 72px,
-          var(--wash);
+        background: var(--color-bg-primary);
+        color: var(--color-text-secondary);
         font-family: var(--sans);
         font-size: 14px;
         line-height: 1.5;
@@ -63,196 +54,42 @@
         cursor: pointer;
       }
 
-      .shell {
-        display: grid;
-        grid-template-columns: 240px minmax(0, 1fr);
-        min-height: 100vh;
-      }
-
-      .rail {
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        padding: 18px 14px;
-        border-right: 1px solid var(--line);
-        background: rgba(255, 255, 255, 0.72);
-        backdrop-filter: blur(18px);
-      }
-
-      .brand {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 24px;
-        padding: 0 4px;
-      }
-
-      .brand-name {
-        display: flex;
-        flex-direction: column;
-        gap: 1px;
-      }
-
-      .brand-name strong {
-        color: var(--ink);
-        font-size: 15px;
-        font-weight: 700;
-      }
-
-      .brand-name span {
-        color: var(--ink-4);
-        font-family: var(--mono);
-        font-size: 10px;
-      }
-
-      .env-pill {
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        padding: 3px 8px;
-        color: var(--green);
-        background: var(--green-soft);
-        font-family: var(--mono);
-        font-size: 10px;
-        font-weight: 700;
-      }
-
-      .rail-section {
-        margin: 18px 0 8px;
-        padding: 0 8px;
-        color: var(--ink-4);
-        font-size: 10px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-      }
-
-      .rail-btn {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        margin: 2px 0;
-        padding: 9px 10px;
-        border: 1px solid transparent;
-        border-radius: 8px;
-        background: transparent;
-        color: var(--ink-3);
-        text-align: left;
-      }
-
-      .rail-btn:hover {
-        background: var(--paper);
-        border-color: var(--line);
-      }
-
-      .rail-btn.is-active {
-        background: var(--ink);
-        color: var(--paper);
-      }
-
-      .rail-btn small {
+      a {
         color: inherit;
-        opacity: 0.68;
-        font-family: var(--mono);
-        font-size: 10px;
-      }
-
-      .main {
-        min-width: 0;
-      }
-
-      .topbar {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        padding: 14px 26px;
-        border-bottom: 1px solid var(--line);
-        background: rgba(247, 247, 244, 0.82);
-        backdrop-filter: blur(18px);
-      }
-
-      .crumb {
-        color: var(--ink-4);
-        font-size: 12px;
-      }
-
-      .crumb strong {
-        color: var(--ink);
-        font-weight: 650;
-      }
-
-      .top-actions {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-      }
-
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 7px;
-        min-height: 34px;
-        padding: 7px 12px;
-        border: 1px solid var(--line);
-        border-radius: 7px;
-        background: var(--paper);
-        color: var(--ink-2);
-        font-size: 12px;
-        font-weight: 650;
         text-decoration: none;
       }
 
-      .btn:hover {
-        border-color: var(--ink-4);
+      .page {
+        width: min(880px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 24px 0 48px;
       }
 
-      .btn-primary {
-        border-color: var(--ink);
-        background: var(--ink);
-        color: var(--paper);
+      .page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
       }
 
-      .btn-danger {
-        color: var(--red);
-        border-color: color-mix(in srgb, var(--red) 28%, var(--line));
+      .back-link {
+        display: inline-flex;
+        margin-bottom: 8px;
+        color: var(--color-text-tertiary);
+        font-size: 12px;
       }
 
-      .content {
-        padding: 28px 26px 46px;
+      .back-link:hover {
+        color: var(--color-text-primary);
       }
 
-      .view {
-        display: none;
-      }
-
-      .view.is-active {
-        display: block;
-      }
-
-      .page-head {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        align-items: end;
-        gap: 18px;
-        margin-bottom: 18px;
-      }
-
-      .eyebrow {
-        margin: 0 0 5px;
-        color: var(--ink-4);
-        font-family: var(--mono);
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
+      .title-row {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        flex-wrap: wrap;
       }
 
       h1,
@@ -263,464 +100,161 @@
       }
 
       h1 {
-        margin-bottom: 6px;
-        color: var(--ink);
-        font-size: 28px;
-        line-height: 1.18;
+        margin: 0;
+        color: var(--color-text-primary);
+        font-size: 24px;
+        line-height: 1.25;
+        font-weight: 650;
         letter-spacing: 0;
       }
 
       h2 {
-        margin-bottom: 12px;
-        color: var(--ink);
+        margin: 0;
+        color: var(--color-text-primary);
         font-size: 15px;
-        line-height: 1.25;
+        line-height: 1.3;
+        font-weight: 650;
         letter-spacing: 0;
       }
 
       h3 {
-        margin-bottom: 4px;
-        color: var(--ink);
+        margin: 0 0 3px;
+        color: var(--color-text-primary);
         font-size: 13px;
+        line-height: 1.35;
+        font-weight: 650;
         letter-spacing: 0;
       }
 
-      .subcopy {
-        margin: 0;
-        max-width: 760px;
-        color: var(--ink-3);
-        font-size: 13px;
-      }
-
-      .grid-kpi {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 10px;
-        margin-bottom: 14px;
-      }
-
-      .metric {
-        min-height: 104px;
-        padding: 14px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.78);
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset;
-      }
-
-      .metric-label {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        color: var(--ink-4);
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-      }
-
-      .metric strong {
-        display: block;
-        margin: 12px 0 4px;
-        color: var(--ink);
-        font-family: var(--mono);
-        font-size: 28px;
-        line-height: 1;
-        letter-spacing: 0;
-      }
-
-      .metric small {
-        color: var(--ink-3);
+      .count {
+        color: var(--color-text-quaternary);
         font-size: 12px;
       }
 
-      .tone-green {
-        color: var(--green);
-      }
-
-      .tone-blue {
-        color: var(--blue);
-      }
-
-      .tone-amber {
-        color: var(--amber);
-      }
-
-      .tone-red {
-        color: var(--red);
-      }
-
-      .layout-2 {
-        display: grid;
-        grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
-        gap: 14px;
-      }
-
-      .panel {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.86);
-        box-shadow: var(--shadow);
-      }
-
-      .panel-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 14px 16px;
-        border-bottom: 1px solid var(--line);
-      }
-
-      .panel-head h2 {
-        margin: 0;
-      }
-
-      .panel-body {
-        padding: 14px 16px;
-      }
-
-      .table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 13px;
-      }
-
-      .table th {
-        padding: 9px 10px;
-        color: var(--ink-4);
-        font-size: 10px;
-        font-weight: 800;
-        text-align: left;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        border-bottom: 1px solid var(--line);
-      }
-
-      .table td {
-        padding: 11px 10px;
-        border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
-        vertical-align: middle;
-      }
-
-      .table tr:last-child td {
-        border-bottom: 0;
-      }
-
-      .row-link {
-        color: var(--ink);
-        font-weight: 700;
-      }
-
-      .mono {
-        font-family: var(--mono);
+      .subtitle {
+        margin: 4px 0 0;
+        color: var(--color-text-tertiary);
         font-size: 12px;
       }
 
-      .muted {
-        color: var(--ink-4);
-      }
-
-      .status {
+      .btn {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        min-height: 24px;
-        padding: 2px 8px;
-        border-radius: 999px;
-        font-size: 11px;
-        font-weight: 700;
+        justify-content: center;
+        min-height: 34px;
+        padding: 7px 13px;
+        border: 1px solid var(--color-border);
+        border-radius: 6px;
+        background: var(--color-bg-primary);
+        color: var(--color-text-secondary);
+        font-size: 12px;
+        line-height: 1;
+        white-space: nowrap;
       }
 
-      .status::before {
-        content: "";
-        width: 7px;
-        height: 7px;
-        border-radius: 999px;
-        background: currentColor;
+      .btn:hover {
+        border-color: var(--color-text-quaternary);
+        color: var(--color-text-primary);
       }
 
-      .status.green {
-        color: var(--green);
-        background: var(--green-soft);
+      .btn-primary {
+        border-color: var(--color-text-primary);
+        background: var(--color-text-primary);
+        color: var(--color-bg-primary);
       }
 
-      .status.blue {
-        color: var(--blue);
-        background: var(--blue-soft);
+      .btn-primary:hover {
+        background: var(--color-text-secondary);
+        color: var(--color-bg-primary);
       }
 
-      .status.amber {
-        color: var(--amber);
-        background: var(--amber-soft);
+      .btn-danger {
+        color: var(--accent-danger);
+        border-color: color-mix(in srgb, var(--accent-danger) 30%, var(--color-border));
       }
 
-      .status.red {
-        color: var(--red);
-        background: var(--red-soft);
+      .btn-danger:hover {
+        border-color: var(--accent-danger);
+        background: color-mix(in srgb, var(--accent-danger) 8%, transparent);
+        color: var(--accent-danger);
+      }
+
+      .btn-disabled {
+        cursor: not-allowed;
+        color: var(--color-text-quaternary);
+        background: var(--color-bg-secondary);
+      }
+
+      .stage-note {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 14px;
+        align-items: center;
+        margin-bottom: 16px;
+        padding: 12px 14px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        background: var(--color-bg-secondary);
+      }
+
+      .stage-note p {
+        margin: 0;
+        color: var(--color-text-tertiary);
+        font-size: 12px;
+      }
+
+      .stage-note strong {
+        color: var(--color-text-primary);
+        font-weight: 650;
       }
 
       .chips {
         display: flex;
-        gap: 6px;
         flex-wrap: wrap;
+        gap: 6px;
       }
 
       .chip {
         display: inline-flex;
         align-items: center;
-        min-height: 24px;
-        padding: 3px 8px;
-        border: 1px solid var(--line);
+        min-height: 22px;
+        padding: 2px 8px;
+        border: 1px solid var(--color-border);
         border-radius: 999px;
-        color: var(--ink-3);
-        background: var(--paper);
+        background: var(--color-bg-primary);
+        color: var(--color-text-tertiary);
         font-family: var(--mono);
-        font-size: 11px;
+        font-size: 10.5px;
+        line-height: 1;
       }
 
-      .audit-list {
-        display: grid;
-        gap: 9px;
+      .chip-success {
+        color: #1f7a42;
+        border-color: color-mix(in srgb, var(--accent-success) 35%, var(--color-border));
+        background: color-mix(in srgb, var(--accent-success) 10%, var(--color-bg-primary));
       }
 
-      .audit-item {
-        display: grid;
-        grid-template-columns: 78px minmax(0, 1fr);
-        gap: 10px;
-        padding-bottom: 9px;
-        border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+      .chip-warning {
+        color: #9a5a00;
+        border-color: color-mix(in srgb, var(--accent-warning) 35%, var(--color-border));
+        background: color-mix(in srgb, var(--accent-warning) 12%, var(--color-bg-primary));
       }
 
-      .audit-item:last-child {
-        padding-bottom: 0;
-        border-bottom: 0;
-      }
-
-      .audit-time {
-        color: var(--ink-4);
-        font-family: var(--mono);
-        font-size: 11px;
-      }
-
-      .audit-copy {
-        color: var(--ink-3);
-        font-size: 12px;
-      }
-
-      .audit-copy strong {
-        color: var(--ink);
-      }
-
-      .tenant-hero {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 340px;
-        gap: 14px;
-        margin-bottom: 14px;
-      }
-
-      .tenant-title {
-        padding: 20px;
-        border: 1px solid var(--line);
-        border-left: 7px solid var(--green);
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.88);
-        box-shadow: var(--shadow);
-      }
-
-      .tenant-title h1 {
-        display: flex;
-        align-items: baseline;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-bottom: 8px;
-      }
-
-      .tenant-title code {
-        padding: 3px 7px;
-        border: 1px solid var(--line);
-        border-radius: 6px;
-        background: var(--wash);
-        color: var(--ink-3);
-        font-family: var(--mono);
-        font-size: 12px;
-      }
-
-      .health-stack {
-        display: grid;
-        gap: 8px;
-      }
-
-      .health-row {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 10px;
-        padding: 9px 0;
-        border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
-        font-size: 12px;
-      }
-
-      .health-row:last-child {
-        border-bottom: 0;
-      }
-
-      .tabs {
-        display: flex;
-        gap: 4px;
-        margin: 6px 0 14px;
-        border-bottom: 1px solid var(--line);
-      }
-
-      .tab {
-        padding: 10px 12px;
-        border: 0;
-        border-bottom: 2px solid transparent;
-        background: transparent;
-        color: var(--ink-4);
-        font-size: 12px;
-        font-weight: 750;
-      }
-
-      .tab.is-active {
-        color: var(--ink);
-        border-bottom-color: var(--ink);
-      }
-
-      .tab-panel {
-        display: none;
-      }
-
-      .tab-panel.is-active {
-        display: block;
-      }
-
-      .member-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
-      }
-
-      .person {
-        padding: 12px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--paper);
-      }
-
-      .person-head {
-        display: flex;
-        align-items: center;
-        gap: 9px;
-        margin-bottom: 10px;
-      }
-
-      .avatar {
-        width: 32px;
-        height: 32px;
-        border-radius: 999px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--paper);
-        background: var(--ink);
-        font-weight: 800;
-      }
-
-      .avatar.green {
-        background: var(--green);
-      }
-
-      .avatar.blue {
-        background: var(--blue);
-      }
-
-      .avatar.amber {
-        background: var(--amber);
-      }
-
-      .segmented {
-        display: inline-flex;
-        border: 1px solid var(--line);
-        border-radius: 7px;
-        overflow: hidden;
-        background: var(--paper);
-      }
-
-      .segmented button {
-        min-width: 58px;
-        padding: 6px 9px;
-        border: 0;
-        border-right: 1px solid var(--line);
-        background: transparent;
-        color: var(--ink-4);
-        font-size: 11px;
-        font-weight: 750;
-      }
-
-      .segmented button:last-child {
-        border-right: 0;
-      }
-
-      .segmented button.is-active {
-        background: var(--ink);
-        color: var(--paper);
-      }
-
-      .guide {
-        display: grid;
-        grid-template-columns: 240px minmax(0, 1fr);
-        gap: 12px;
-      }
-
-      .steps {
-        display: grid;
-        gap: 8px;
-      }
-
-      .step {
-        display: grid;
-        grid-template-columns: 28px 1fr;
-        gap: 9px;
-        padding: 10px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--paper);
-      }
-
-      .step-number {
-        width: 28px;
-        height: 28px;
-        border-radius: 999px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--ink);
-        color: var(--paper);
-        font-family: var(--mono);
-        font-size: 12px;
-      }
-
-      pre {
-        margin: 0;
-        overflow: auto;
-        min-height: 236px;
-        padding: 14px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: #171719;
-        color: #f4f4ef;
-        font-family: var(--mono);
-        font-size: 12px;
-        line-height: 1.7;
-      }
-
-      .token-toolbar {
+      .toolbar {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 12px;
-        margin-bottom: 12px;
+        margin: 0 0 10px;
+        flex-wrap: wrap;
+      }
+
+      .toolbar-title {
+        color: var(--color-text-quaternary);
+        font-size: 11px;
+        font-weight: 650;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
       }
 
       .filters {
@@ -729,791 +263,798 @@
         flex-wrap: wrap;
       }
 
-      .select,
-      .input {
+      .input,
+      .select {
         min-height: 34px;
         padding: 7px 10px;
-        border: 1px solid var(--line);
-        border-radius: 7px;
-        background: var(--paper);
-        color: var(--ink-2);
+        border: 1px solid var(--color-border);
+        border-radius: 6px;
+        background: var(--color-bg-primary);
+        color: var(--color-text-primary);
         font-size: 12px;
+        outline: none;
       }
 
-      .modal {
-        position: fixed;
-        inset: 0;
-        z-index: 50;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-        background: rgba(23, 23, 25, 0.52);
-        backdrop-filter: blur(8px);
+      .input:focus,
+      .select:focus {
+        border-color: var(--color-text-primary);
       }
 
-      .modal.is-open {
+      .disc-list {
         display: flex;
+        flex-direction: column;
+        gap: 8px;
       }
 
-      .dialog {
-        width: min(920px, 100%);
-        max-height: min(760px, calc(100vh - 48px));
-        overflow: auto;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--paper);
-        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
-      }
-
-      .dialog-head,
-      .dialog-foot {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 15px 18px;
-        border-bottom: 1px solid var(--line);
-      }
-
-      .dialog-foot {
-        border-top: 1px solid var(--line);
-        border-bottom: 0;
-        background: var(--wash);
-      }
-
-      .dialog-body {
+      .disc-row {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 340px;
+        grid-template-columns: minmax(0, 1fr) auto;
         gap: 16px;
-        padding: 18px;
+        align-items: center;
+        padding: 14px 18px;
+        border: 1px solid var(--color-border);
+        border-radius: 10px;
+        background: var(--color-bg-primary);
       }
 
-      .field {
-        display: grid;
-        gap: 5px;
-        margin-bottom: 12px;
+      .disc-row.is-empty {
+        background: var(--color-bg-secondary);
       }
 
-      .field label {
-        color: var(--ink-3);
-        font-size: 11px;
-        font-weight: 750;
-      }
-
-      .scope-list {
-        display: grid;
+      .disc-row-main {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
         gap: 7px;
       }
 
-      .scope-option {
+      .disc-name {
         display: flex;
-        align-items: center;
+        align-items: baseline;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .disc-title-zh {
+        color: var(--color-text-primary);
+        font-size: 16px;
+        font-weight: 650;
+      }
+
+      .disc-title-en {
+        color: var(--color-text-quaternary);
+        font-size: 12px;
+      }
+
+      .disc-key {
+        padding: 1px 6px;
+        border-radius: 4px;
+        background: var(--color-bg-tertiary);
+        color: var(--color-text-quaternary);
+        font-family: var(--mono);
+        font-size: 11px;
+      }
+
+      .disc-tagline {
+        color: var(--color-text-tertiary);
+        font-size: 12px;
+      }
+
+      .disc-meta {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+      }
+
+      .disc-counts {
+        display: flex;
+        gap: 16px;
+        margin-top: 1px;
+        font-size: 13px;
+        flex-wrap: wrap;
+      }
+
+      .disc-counts.is-all-zero {
+        opacity: 0.45;
+      }
+
+      .disc-count {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 4px;
+      }
+
+      .disc-count-n {
+        color: var(--color-text-primary);
+        font-family: var(--mono);
+        font-weight: 550;
+      }
+
+      .disc-count-label {
+        color: var(--color-text-quaternary);
+        font-size: 11px;
+      }
+
+      .disc-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .review-panel {
+        margin-top: 18px;
+        padding: 14px 16px;
+        border: 1px solid var(--color-border);
+        border-radius: 10px;
+        background: var(--color-bg-primary);
+      }
+
+      .review-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .review-card {
+        padding: 11px 12px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        background: var(--color-bg-secondary);
+      }
+
+      .review-card p {
+        margin: 0;
+        color: var(--color-text-tertiary);
+        font-size: 12px;
+      }
+
+      .review-card code {
+        display: inline-flex;
+        margin-top: 7px;
+        color: var(--color-text-primary);
+        font-family: var(--mono);
+        font-size: 11px;
+      }
+
+      .drawer {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        display: none;
+        justify-content: flex-end;
+      }
+
+      .drawer.is-open {
+        display: flex;
+      }
+
+      .drawer-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(10, 10, 10, 0.32);
+        backdrop-filter: blur(2px);
+      }
+
+      .drawer-panel {
+        position: relative;
+        width: min(520px, 100vw);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: var(--color-bg-primary);
+        box-shadow: -10px 0 40px rgba(0, 0, 0, 0.18);
+        animation: drawer-in 220ms ease-out;
+      }
+
+      @keyframes drawer-in {
+        from {
+          transform: translateX(100%);
+        }
+        to {
+          transform: translateX(0);
+        }
+      }
+
+      .drawer-head {
+        display: flex;
+        align-items: flex-start;
         justify-content: space-between;
         gap: 10px;
-        padding: 9px 10px;
-        border: 1px solid var(--line);
-        border-radius: 7px;
+        padding: 18px 22px 14px;
+        border-bottom: 1px solid var(--color-bg-tertiary);
       }
 
-      .scope-option input {
-        accent-color: var(--ink);
+      .drawer-title {
+        color: var(--color-text-primary);
+        font-size: 16px;
+        font-weight: 650;
       }
 
-      .preview-box {
-        padding: 13px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--wash);
-      }
-
-      .token-reveal {
-        display: none;
-        margin-top: 12px;
-        padding: 12px;
-        border-radius: 8px;
-        background: #171719;
-        color: #f4f4ef;
-        font-family: var(--mono);
+      .drawer-sub {
+        margin-top: 4px;
+        color: var(--color-text-tertiary);
         font-size: 12px;
-        line-height: 1.65;
-        word-break: break-all;
+        line-height: 1.5;
       }
 
-      .token-reveal.is-visible {
-        display: block;
+      .drawer-close {
+        width: 30px;
+        height: 30px;
+        border: 0;
+        border-radius: 4px;
+        background: transparent;
+        color: var(--color-text-quaternary);
       }
 
-      .mobile-note {
+      .drawer-close:hover {
+        background: var(--color-bg-secondary);
+        color: var(--color-text-primary);
+      }
+
+      .drawer-body {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding: 20px 22px;
+      }
+
+      .drawer-foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 14px 22px;
+        border-top: 1px solid var(--color-bg-tertiary);
+        background: var(--color-bg-secondary);
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .field-row {
+        display: flex;
+        gap: 12px;
+      }
+
+      .field-row .field {
+        flex: 1;
+      }
+
+      .label {
+        color: var(--color-text-tertiary);
+        font-size: 11px;
+        font-weight: 550;
+      }
+
+      .required {
+        color: var(--accent-danger);
+      }
+
+      .hint {
+        margin-top: 2px;
+        color: var(--color-text-quaternary);
+        font-size: 11px;
+      }
+
+      .readonly {
+        display: flex;
+        align-items: center;
+        min-height: 34px;
+        padding: 8px 10px;
+        border: 1px solid var(--color-border);
+        border-radius: 6px;
+        background: var(--color-bg-tertiary);
+        color: var(--color-text-tertiary);
+        font-family: var(--mono);
+        font-size: 12.5px;
+      }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 22px;
+        z-index: 40;
+        transform: translateX(-50%) translateY(16px);
+        opacity: 0;
+        pointer-events: none;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: var(--color-text-primary);
+        color: var(--color-bg-primary);
+        font-size: 12px;
+        transition: opacity 160ms ease, transform 160ms ease;
+      }
+
+      .toast.is-visible {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      .confirm {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
         display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+        background: rgba(10, 10, 10, 0.32);
+        backdrop-filter: blur(2px);
       }
 
-      @media (max-width: 1040px) {
-        .shell {
+      .confirm.is-open {
+        display: flex;
+      }
+
+      .confirm-card {
+        width: min(420px, 100%);
+        padding: 18px;
+        border: 1px solid var(--color-border);
+        border-radius: 10px;
+        background: var(--color-bg-primary);
+        box-shadow: 0 20px 54px rgba(0, 0, 0, 0.22);
+      }
+
+      .confirm-card p {
+        margin: 6px 0 16px;
+        color: var(--color-text-tertiary);
+        font-size: 12px;
+      }
+
+      .confirm-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      @media (max-width: 720px) {
+        .page {
+          width: min(100vw - 24px, 880px);
+          padding-top: 18px;
+        }
+
+        .stage-note,
+        .disc-row,
+        .review-grid {
           grid-template-columns: 1fr;
         }
 
-        .rail {
-          position: relative;
-          height: auto;
-          display: flex;
-          gap: 8px;
-          overflow-x: auto;
-          padding: 12px;
-          border-right: 0;
-          border-bottom: 1px solid var(--line);
+        .disc-actions {
+          justify-content: flex-start;
         }
 
-        .brand,
-        .rail-section {
-          display: none;
-        }
-
-        .rail-btn {
-          width: auto;
-          white-space: nowrap;
-        }
-
-        .topbar {
-          top: 57px;
-        }
-
-        .grid-kpi,
-        .layout-2,
-        .tenant-hero,
-        .dialog-body,
-        .guide,
-        .member-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      @media (max-width: 680px) {
-        .content,
-        .topbar {
-          padding-left: 14px;
-          padding-right: 14px;
-        }
-
-        .topbar,
-        .page-head,
-        .token-toolbar {
-          align-items: flex-start;
+        .field-row {
           flex-direction: column;
-        }
-
-        h1 {
-          font-size: 23px;
-        }
-
-        .table {
-          min-width: 720px;
-        }
-
-        .panel-body.is-scroll {
-          overflow-x: auto;
-        }
-
-        .mobile-note {
-          display: block;
-          margin: 0 0 10px;
-          color: var(--ink-4);
-          font-size: 12px;
         }
       }
     </style>
   </head>
   <body>
-    <div class="shell">
-      <aside class="rail" aria-label="Stage 3 admin navigation">
-        <div class="brand">
-          <div class="brand-name">
-            <strong>sususu admin</strong>
-            <span>stage-3 prototype</span>
+    <main class="page">
+      <header class="page-header">
+        <div>
+          <a class="back-link" href="#">← 返回首页</a>
+          <div class="title-row">
+            <h1>学科管理</h1>
+            <span class="count" id="disc-count">共 4 个学科</span>
           </div>
-          <span class="env-pill">prod</span>
+          <p class="subtitle">创建 / 编辑学科元数据，Stage 3 起新写入只走数据库，不再走 GitHub JSON。</p>
         </div>
+        <button type="button" class="btn btn-primary" id="open-create-btn">+ 新建学科</button>
+      </header>
 
-        <div class="rail-section">Console</div>
-        <button class="rail-btn is-active" data-view-target="overview">
-          <span>Overview</span>
-          <small>7d</small>
-        </button>
-        <button class="rail-btn" data-view-target="tenant">
-          <span>Discipline detail</span>
-          <small>keiei</small>
-        </button>
-        <button class="rail-btn" data-view-target="tokens">
-          <span>Tokens</span>
-          <small>18</small>
-        </button>
+      <section class="stage-note" aria-label="Stage 3 compatibility notes">
+        <p>
+          <strong>这版样机沿用当前 v2 页面。</strong>
+          变化只放在能力层：创建学科时同步创建 tenant；编辑只改 D1 metadata；删除仍保留“空学科才可删”的保护。
+        </p>
+        <div class="chips">
+          <span class="chip chip-success">D1 source</span>
+          <span class="chip chip-success">tenant auto-create</span>
+          <span class="chip chip-warning">Git JSON legacy</span>
+        </div>
+      </section>
 
-        <div class="rail-section">Review</div>
-        <button class="rail-btn" data-view-target="audit">
-          <span>Audit</span>
-          <small>42</small>
-        </button>
-        <button class="rail-btn" data-view-target="guide">
-          <span>API guide</span>
-          <small>v1</small>
-        </button>
-      </aside>
+      <div class="toolbar">
+        <div class="toolbar-title">Disciplines</div>
+        <div class="filters">
+          <input class="input" type="search" placeholder="搜索学科 / key" id="search-input" />
+          <select class="select" id="status-filter" aria-label="筛选学科状态">
+            <option value="all">全部状态</option>
+            <option value="ready">已上线</option>
+            <option value="draft">空学科</option>
+            <option value="needs-owner">缺负责人</option>
+          </select>
+        </div>
+      </div>
 
-      <main class="main">
-        <header class="topbar">
-          <div class="crumb"><strong>Stage 3A</strong> / Admin console prototype / No backend writes</div>
-          <div class="top-actions">
-            <button class="btn" data-view-target="tenant">Open keiei</button>
-            <button class="btn btn-primary" data-open-token>Create token</button>
+      <section class="disc-list" id="disc-list" aria-label="学科列表"></section>
+
+      <section class="review-panel">
+        <h2>Stage 3 只补这三件事</h2>
+        <div class="review-grid">
+          <div class="review-card">
+            <h3>1. 新建仍在右上角</h3>
+            <p>沿用现有 drawer。用户不用重新学习入口。</p>
+            <code>POST /api/admin/disciplines</code>
           </div>
-        </header>
-
-        <div class="content">
-          <section class="view is-active" id="view-overview">
-            <div class="page-head">
-              <div>
-                <p class="eyebrow">Super Admin Console</p>
-                <h1>运营后台从“能用”变成“可控”。</h1>
-                <p class="subcopy">这个首页把学科、负责人、token、API 写入和风险事件放在同一张工作台上。超级管理员不需要记住多个零散入口。</p>
-              </div>
-              <button class="btn btn-primary" data-view-target="tenant">Review launch checklist</button>
-            </div>
-
-            <div class="grid-kpi" aria-label="System metrics">
-              <div class="metric">
-                <div class="metric-label">Tenants <span class="tone-green">healthy</span></div>
-                <strong>06</strong>
-                <small>5 active, 1 draft</small>
-              </div>
-              <div class="metric">
-                <div class="metric-label">Owners <span class="tone-blue">covered</span></div>
-                <strong>09</strong>
-                <small>2 pending invites</small>
-              </div>
-              <div class="metric">
-                <div class="metric-label">API writes <span class="tone-green">7d</span></div>
-                <strong>184</strong>
-                <small>KP, school, scholar, view</small>
-              </div>
-              <div class="metric">
-                <div class="metric-label">Token risk <span class="tone-amber">needs review</span></div>
-                <strong>03</strong>
-                <small>2 expiring, 1 no permission</small>
-              </div>
-            </div>
-
-            <div class="layout-2">
-              <section class="panel">
-                <div class="panel-head">
-                  <h2>Disciplines</h2>
-                  <button class="btn">New discipline</button>
-                </div>
-                <div class="panel-body is-scroll">
-                  <p class="mobile-note">横向滑动查看完整表格。</p>
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th>Discipline</th>
-                        <th>Owner</th>
-                        <th>Content</th>
-                        <th>Tokens</th>
-                        <th>Status</th>
-                        <th>Updated</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td><button class="btn row-link" data-view-target="tenant">经营学</button> <span class="mono muted">keiei</span></td>
-                        <td>Husuli</td>
-                        <td><span class="mono">562</span> KP</td>
-                        <td><span class="mono">4</span> active</td>
-                        <td><span class="status green">Ready</span></td>
-                        <td class="mono muted">12m ago</td>
-                      </tr>
-                      <tr>
-                        <td><span class="row-link">Marketing</span> <span class="mono muted">marketing</span></td>
-                        <td>Pending</td>
-                        <td><span class="mono">178</span> KP</td>
-                        <td><span class="mono">2</span> active</td>
-                        <td><span class="status amber">Owner missing</span></td>
-                        <td class="mono muted">1h ago</td>
-                      </tr>
-                      <tr>
-                        <td><span class="row-link">Finance</span> <span class="mono muted">finance</span></td>
-                        <td>Mika</td>
-                        <td><span class="mono">0</span> KP</td>
-                        <td><span class="mono">0</span> active</td>
-                        <td><span class="status blue">Draft</span></td>
-                        <td class="mono muted">today</td>
-                      </tr>
-                      <tr>
-                        <td><span class="row-link">Strategy</span> <span class="mono muted">strategy</span></td>
-                        <td>Ren</td>
-                        <td><span class="mono">91</span> KP</td>
-                        <td><span class="mono">1</span> active</td>
-                        <td><span class="status green">Ready</span></td>
-                        <td class="mono muted">yesterday</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </section>
-
-              <aside class="panel">
-                <div class="panel-head">
-                  <h2>Launch checklist</h2>
-                  <span class="status amber">1 open</span>
-                </div>
-                <div class="panel-body">
-                  <div class="health-stack">
-                    <div class="health-row"><span>Create tenant row</span><strong class="tone-green">done</strong></div>
-                    <div class="health-row"><span>Assign owner</span><strong class="tone-green">done</strong></div>
-                    <div class="health-row"><span>Generate scoped token</span><strong class="tone-green">done</strong></div>
-                    <div class="health-row"><span>Verify cross-tenant guard</span><strong class="tone-green">done</strong></div>
-                    <div class="health-row"><span>Publish owner guide</span><strong class="tone-amber">review</strong></div>
-                  </div>
-                </div>
-              </aside>
-            </div>
-          </section>
-
-          <section class="view" id="view-tenant">
-            <div class="tenant-hero">
-              <div class="tenant-title">
-                <p class="eyebrow">Discipline workspace</p>
-                <h1>经营学 <code>keiei</code></h1>
-                <p class="subcopy">Owner 管这个学科空间；user 只是成员账号。所有 API 写入都由服务端注入 tenant，不信任客户端传入的 tenant_id。</p>
-                <div class="chips" style="margin-top: 16px;">
-                  <span class="chip">tenant_id keiei</span>
-                  <span class="chip">owner Husuli</span>
-                  <span class="chip">4 active tokens</span>
-                  <span class="chip">last write 12m ago</span>
-                </div>
-              </div>
-
-              <aside class="panel">
-                <div class="panel-head">
-                  <h2>Health</h2>
-                  <span class="status green">Ready</span>
-                </div>
-                <div class="panel-body">
-                  <div class="health-stack">
-                    <div class="health-row"><span>D1 source of truth</span><strong class="tone-green">on</strong></div>
-                    <div class="health-row"><span>Git data writes</span><strong class="tone-green">off</strong></div>
-                    <div class="health-row"><span>Owner assigned</span><strong class="tone-green">1</strong></div>
-                    <div class="health-row"><span>Expiring tokens</span><strong class="tone-amber">2</strong></div>
-                  </div>
-                </div>
-              </aside>
-            </div>
-
-            <div class="tabs" role="tablist" aria-label="Tenant detail tabs">
-              <button class="tab is-active" data-tab-target="overview">Overview</button>
-              <button class="tab" data-tab-target="members">Members</button>
-              <button class="tab" data-tab-target="tenant-tokens">Tokens</button>
-              <button class="tab" data-tab-target="tenant-guide">API Guide</button>
-              <button class="tab" data-tab-target="tenant-audit">Audit</button>
-            </div>
-
-            <div class="tab-panel is-active" id="tab-overview">
-              <div class="grid-kpi">
-                <div class="metric">
-                  <div class="metric-label">KP <span class="tone-green">live</span></div>
-                  <strong>562</strong>
-                  <small>23 updated this week</small>
-                </div>
-                <div class="metric">
-                  <div class="metric-label">Schools <span class="tone-blue">metadata</span></div>
-                  <strong>48</strong>
-                  <small>all tenant-scoped</small>
-                </div>
-                <div class="metric">
-                  <div class="metric-label">Scholars <span class="tone-blue">metadata</span></div>
-                  <strong>132</strong>
-                  <small>3 pending cleanup</small>
-                </div>
-                <div class="metric">
-                  <div class="metric-label">Versions <span class="tone-amber">audit</span></div>
-                  <strong>914</strong>
-                  <small>rollback-ready</small>
-                </div>
-              </div>
-            </div>
-
-            <div class="tab-panel" id="tab-members">
-              <div class="member-grid">
-                <div class="person">
-                  <div class="person-head">
-                    <span class="avatar green">H</span>
-                    <div>
-                      <h3>husuli0623@gmail.com</h3>
-                      <div class="mono muted">last active 12m ago</div>
-                    </div>
-                  </div>
-                  <div class="segmented" aria-label="Role selector">
-                    <button>Viewer</button>
-                    <button>Editor</button>
-                    <button class="is-active">Owner</button>
-                  </div>
-                </div>
-                <div class="person">
-                  <div class="person-head">
-                    <span class="avatar blue">M</span>
-                    <div>
-                      <h3>mika@example.com</h3>
-                      <div class="mono muted">pending invite</div>
-                    </div>
-                  </div>
-                  <div class="segmented" aria-label="Role selector">
-                    <button>Viewer</button>
-                    <button class="is-active">Editor</button>
-                    <button>Owner</button>
-                  </div>
-                </div>
-                <div class="person">
-                  <div class="person-head">
-                    <span class="avatar amber">R</span>
-                    <div>
-                      <h3>ren@example.com</h3>
-                      <div class="mono muted">read only</div>
-                    </div>
-                  </div>
-                  <div class="segmented" aria-label="Role selector">
-                    <button class="is-active">Viewer</button>
-                    <button>Editor</button>
-                    <button>Owner</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="tab-panel" id="tab-tenant-tokens">
-              <div class="token-toolbar">
-                <div class="filters">
-                  <select class="select" aria-label="Token status">
-                    <option>Active tokens</option>
-                    <option>Expiring soon</option>
-                    <option>Revoked</option>
-                  </select>
-                  <select class="select" aria-label="Token owner">
-                    <option>All owners</option>
-                    <option>Husuli</option>
-                    <option>Agent</option>
-                  </select>
-                </div>
-                <button class="btn btn-primary" data-open-token>Create keiei token</button>
-              </div>
-              <section class="panel">
-                <div class="panel-body is-scroll">
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>User</th>
-                        <th>Scope</th>
-                        <th>Status</th>
-                        <th>Last used</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td><strong>GPT keiei writer</strong></td>
-                        <td>Husuli</td>
-                        <td><span class="chip">keiei</span></td>
-                        <td><span class="status green">Active</span></td>
-                        <td class="mono muted">12m ago</td>
-                        <td><button class="btn btn-danger">Revoke</button></td>
-                      </tr>
-                      <tr>
-                        <td><strong>Claude review agent</strong></td>
-                        <td>Husuli</td>
-                        <td><span class="chip">keiei</span></td>
-                        <td><span class="status amber">Expires soon</span></td>
-                        <td class="mono muted">2d ago</td>
-                        <td><button class="btn btn-danger">Revoke</button></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </section>
-            </div>
-
-            <div class="tab-panel" id="tab-tenant-guide">
-              <div class="guide">
-                <div class="steps">
-                  <div class="step">
-                    <span class="step-number">1</span>
-                    <div><h3>Self-check token</h3><p class="subcopy">Confirm identity and effective tenant access.</p></div>
-                  </div>
-                  <div class="step">
-                    <span class="step-number">2</span>
-                    <div><h3>Load metadata</h3><p class="subcopy">Use current school and scholar keys before writing KP.</p></div>
-                  </div>
-                  <div class="step">
-                    <span class="step-number">3</span>
-                    <div><h3>Create KP</h3><p class="subcopy">Database write only; no GitHub data commit.</p></div>
-                  </div>
-                </div>
-                <pre><code>curl "https://study.sususu.org/api/me" \
-  -H "Authorization: Bearer $MS_TOKEN"
-
-curl "https://study.sususu.org/api/metadata?discipline=keiei" \
-  -H "Authorization: Bearer $MS_TOKEN"
-
-curl -X POST "https://study.sususu.org/api/kps?discipline=keiei" \
-  -H "Authorization: Bearer $MS_TOKEN" \
-  -H "Content-Type: application/json" \
-  --data '{ "title": { "zh": "组织学习" }, "body": { "zh": "..." }, "schools": ["adaptive_design"] }'</code></pre>
-              </div>
-            </div>
-
-            <div class="tab-panel" id="tab-tenant-audit">
-              <section class="panel">
-                <div class="panel-body">
-                  <div class="audit-list">
-                    <div class="audit-item">
-                      <span class="audit-time">15:41</span>
-                      <span class="audit-copy"><strong>GPT keiei writer</strong> created KP <span class="mono">k1777650076963574</span></span>
-                    </div>
-                    <div class="audit-item">
-                      <span class="audit-time">15:41</span>
-                      <span class="audit-copy"><strong>Husuli</strong> revoked token <span class="mono">t_95c09824c2</span></span>
-                    </div>
-                    <div class="audit-item">
-                      <span class="audit-time">15:36</span>
-                      <span class="audit-copy"><strong>System</strong> deployed API-first CSRF fix</span>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </div>
-          </section>
-
-          <section class="view" id="view-tokens">
-            <div class="page-head">
-              <div>
-                <p class="eyebrow">Token lifecycle</p>
-                <h1>Token 是用户权限的收窄，不是独立超权身份。</h1>
-                <p class="subcopy">这个页面把 token 变成可治理资产：谁创建、给谁用、能访问哪个 tenant、什么时候过期、最近是否出错。</p>
-              </div>
-              <button class="btn btn-primary" data-open-token>Create token</button>
-            </div>
-            <section class="panel">
-              <div class="panel-head">
-                <h2>Global tokens</h2>
-                <div class="filters">
-                  <select class="select"><option>All disciplines</option><option>keiei</option><option>marketing</option></select>
-                  <select class="select"><option>All statuses</option><option>Active</option><option>Expiring soon</option></select>
-                </div>
-              </div>
-              <div class="panel-body is-scroll">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Bound user</th>
-                      <th>Effective tenants</th>
-                      <th>Status</th>
-                      <th>Last used</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><strong>GPT keiei writer</strong></td>
-                      <td>husuli0623@gmail.com</td>
-                      <td><span class="chip">keiei</span></td>
-                      <td><span class="status green">Active</span></td>
-                      <td class="mono muted">12m ago</td>
-                      <td><button class="btn btn-danger">Revoke</button></td>
-                    </tr>
-                    <tr>
-                      <td><strong>Marketing migration</strong></td>
-                      <td>mika@example.com</td>
-                      <td><span class="chip">marketing</span></td>
-                      <td><span class="status red">No permission</span></td>
-                      <td class="mono muted">never</td>
-                      <td><button class="btn btn-danger">Revoke</button></td>
-                    </tr>
-                    <tr>
-                      <td><strong>Finance seed script</strong></td>
-                      <td>ren@example.com</td>
-                      <td><span class="chip">finance</span></td>
-                      <td><span class="status amber">Expires soon</span></td>
-                      <td class="mono muted">4d ago</td>
-                      <td><button class="btn btn-danger">Revoke</button></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </section>
-          </section>
-
-          <section class="view" id="view-audit">
-            <div class="page-head">
-              <div>
-                <p class="eyebrow">Audit trail</p>
-                <h1>权限和内容写入都要能回放。</h1>
-                <p class="subcopy">Stage 3 的审计不是装饰；它是后续多人协作时定位误操作、撤销 token、解释越权失败的基础设施。</p>
-              </div>
-            </div>
-            <section class="panel">
-              <div class="panel-body">
-                <div class="audit-list">
-                  <div class="audit-item"><span class="audit-time">15:54</span><span class="audit-copy"><strong>Product</strong> merged Stage 3 PRD into main</span></div>
-                  <div class="audit-item"><span class="audit-time">15:41</span><span class="audit-copy"><strong>GPT keiei writer</strong> deleted smoke-test KP after verification</span></div>
-                  <div class="audit-item"><span class="audit-time">15:30</span><span class="audit-copy"><strong>Invalid token</strong> attempted DELETE without permission and was blocked</span></div>
-                  <div class="audit-item"><span class="audit-time">14:38</span><span class="audit-copy"><strong>Super Admin</strong> applied production D1 migration 0015</span></div>
-                </div>
-              </div>
-            </section>
-          </section>
-
-          <section class="view" id="view-guide">
-            <div class="page-head">
-              <div>
-                <p class="eyebrow">API guide</p>
-                <h1>把“怎么接入”变成可复制的路径。</h1>
-                <p class="subcopy">面向学科负责人和外部 agent，文档默认带入当前 tenant，减少复制错学科 key 的概率。</p>
-              </div>
-            </div>
-            <div class="guide">
-              <div class="steps">
-                <div class="step"><span class="step-number">1</span><div><h3>创建 token</h3><p class="subcopy">Owner 只能创建本学科范围 token。</p></div></div>
-                <div class="step"><span class="step-number">2</span><div><h3>检查身份</h3><p class="subcopy">用 `/api/me` 看有效权限。</p></div></div>
-                <div class="step"><span class="step-number">3</span><div><h3>写入内容</h3><p class="subcopy">所有写入都由服务端注入 tenant。</p></div></div>
-              </div>
-              <pre><code># Minimal agent flow
-GET /api/me
-GET /api/metadata?discipline=keiei
-POST /api/schools?discipline=keiei
-POST /api/scholars?discipline=keiei
-POST /api/views?discipline=keiei
-POST /api/kps?discipline=keiei
-GET /api/kps/:id/versions</code></pre>
-            </div>
-          </section>
+          <div class="review-card">
+            <h3>2. 编辑仍在每一行</h3>
+            <p>只改标题和 tagline，key 仍然锁死。</p>
+            <code>PUT /api/admin/disciplines/:key</code>
+          </div>
+          <div class="review-card">
+            <h3>3. 删除仍有内容保护</h3>
+            <p>view / school / scholar / KP 全为 0 才允许删除。</p>
+            <code>DELETE /api/admin/disciplines/:key</code>
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+    </main>
 
-    <div class="modal" id="token-modal" role="dialog" aria-modal="true" aria-labelledby="token-modal-title">
-      <div class="dialog">
-        <div class="dialog-head">
+    <div class="drawer" id="create-drawer" role="dialog" aria-modal="true" aria-labelledby="create-title">
+      <div class="drawer-overlay" data-close-drawer></div>
+      <div class="drawer-panel">
+        <div class="drawer-head">
           <div>
-            <p class="eyebrow">Create token</p>
-            <h2 id="token-modal-title">Generate scoped API token</h2>
+            <div class="drawer-title" id="create-title">新建学科</div>
+            <div class="drawer-sub">key 由 English 自动生成，建后锁死。Stage 3 版本只写 D1，并自动创建 tenant。</div>
           </div>
-          <button class="btn" data-close-token>Close</button>
+          <button type="button" class="drawer-close" data-close-drawer aria-label="关闭">×</button>
         </div>
-        <div class="dialog-body">
-          <div>
-            <div class="field">
-              <label for="token-name">Token name</label>
-              <input class="input" id="token-name" value="GPT keiei writer" />
-            </div>
-            <div class="field">
-              <label for="token-user">Bound user</label>
-              <select class="select" id="token-user">
-                <option>husuli0623@gmail.com</option>
-                <option>mika@example.com</option>
-                <option>ren@example.com</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Tenant scope</label>
-              <div class="scope-list">
-                <label class="scope-option"><span>经营学 <span class="mono muted">keiei</span></span><input type="checkbox" checked /></label>
-                <label class="scope-option"><span>Marketing <span class="mono muted">marketing</span></span><input type="checkbox" /></label>
-                <label class="scope-option"><span>Finance <span class="mono muted">finance</span></span><input type="checkbox" disabled /></label>
-              </div>
-            </div>
-            <div class="field">
-              <label for="token-expiry">Expiry</label>
-              <select class="select" id="token-expiry">
-                <option>90 days</option>
-                <option>30 days</option>
-                <option>180 days</option>
-                <option>Never expires</option>
-              </select>
-            </div>
+        <div class="drawer-body">
+          <label class="field">
+            <span class="label">中文名 <span class="required">*</span></span>
+            <input class="input" id="form-title-zh" value="财务管理" />
+          </label>
+          <div class="field-row">
+            <label class="field">
+              <span class="label">English <span class="required">*</span></span>
+              <input class="input" id="form-title-en" value="Finance" />
+              <span class="hint">将生成 key: <span class="mono" id="key-preview">finance</span></span>
+            </label>
+            <label class="field">
+              <span class="label">日本語</span>
+              <input class="input" id="form-title-ja" value="財務管理" />
+            </label>
           </div>
-
-          <aside class="preview-box">
-            <h2>Effective permission preview</h2>
-            <div class="health-stack">
-              <div class="health-row"><span>Bound identity</span><strong>Husuli</strong></div>
-              <div class="health-row"><span>Scope</span><strong class="tone-green">keiei</strong></div>
-              <div class="health-row"><span>Can read</span><strong class="tone-green">yes</strong></div>
-              <div class="health-row"><span>Can write</span><strong class="tone-green">yes</strong></div>
-              <div class="health-row"><span>Can cross tenant</span><strong class="tone-red">no</strong></div>
-            </div>
-            <div class="token-reveal" id="token-reveal">ms_v1_demo_4f6a9c71b642f0e9a8d2c31e9f0a4c88</div>
-          </aside>
+          <label class="field">
+            <span class="label">中文一句话定位</span>
+            <input class="input" id="form-tagline-zh" value="日本大学院入试备考" />
+          </label>
+          <label class="field">
+            <span class="label">日本語一句タグライン</span>
+            <input class="input" id="form-tagline-ja" value="" placeholder="可空" />
+          </label>
+          <section class="stage-note">
+            <p><strong>写入预览：</strong>创建后会写入 `discipline` 和 `tenant`，不会再提交 `v2/data/&lt;key&gt;/discipline.json`。</p>
+          </section>
         </div>
-        <div class="dialog-foot">
-          <span class="muted">Plain token is shown once. Audit log records creation and revocation.</span>
-          <div class="top-actions">
-            <button class="btn" data-close-token>Cancel</button>
-            <button class="btn btn-primary" id="generate-token">Generate token</button>
-          </div>
+        <div class="drawer-foot">
+          <button type="button" class="btn" data-close-drawer>取消</button>
+          <button type="button" class="btn btn-primary" id="create-submit-btn">创建</button>
         </div>
       </div>
     </div>
 
-    <script>
-      const viewButtons = document.querySelectorAll("[data-view-target]");
-      const railButtons = document.querySelectorAll(".rail-btn[data-view-target]");
-      const views = document.querySelectorAll(".view");
+    <div class="drawer" id="edit-drawer" role="dialog" aria-modal="true" aria-labelledby="edit-title">
+      <div class="drawer-overlay" data-close-drawer></div>
+      <div class="drawer-panel">
+        <div class="drawer-head">
+          <div>
+            <div class="drawer-title" id="edit-title">编辑学科</div>
+            <div class="drawer-sub" id="edit-sub">经营学 · keiei</div>
+          </div>
+          <button type="button" class="drawer-close" data-close-drawer aria-label="关闭">×</button>
+        </div>
+        <div class="drawer-body">
+          <div class="field">
+            <span class="label">key</span>
+            <div class="readonly" id="edit-key-display">keiei</div>
+            <span class="hint">key 不可改，避免已有 URL、token scope 和 API 调用失效。</span>
+          </div>
+          <label class="field">
+            <span class="label">中文名 <span class="required">*</span></span>
+            <input class="input" id="edit-title-zh" />
+          </label>
+          <div class="field-row">
+            <label class="field">
+              <span class="label">English</span>
+              <input class="input" id="edit-title-en" />
+            </label>
+            <label class="field">
+              <span class="label">日本語</span>
+              <input class="input" id="edit-title-ja" />
+            </label>
+          </div>
+          <label class="field">
+            <span class="label">中文一句话定位</span>
+            <input class="input" id="edit-tagline-zh" />
+          </label>
+          <label class="field">
+            <span class="label">日本語一句タグライン</span>
+            <input class="input" id="edit-tagline-ja" />
+          </label>
+          <section class="stage-note">
+            <p><strong>保存预览：</strong>只更新 D1 metadata。负责人、token、内容数量在详情页继续管理，不塞进这个编辑表单。</p>
+          </section>
+        </div>
+        <div class="drawer-foot">
+          <button type="button" class="btn" data-close-drawer>取消</button>
+          <button type="button" class="btn btn-primary" id="edit-submit-btn">保存</button>
+        </div>
+      </div>
+    </div>
 
-      function activateView(name) {
-        views.forEach((view) => view.classList.toggle("is-active", view.id === `view-${name}`));
-        railButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.viewTarget === name));
+    <div class="confirm" id="delete-confirm" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+      <div class="confirm-card">
+        <h2 id="delete-title">删除空学科</h2>
+        <p id="delete-copy">确认删除 finance？该学科没有 view / school / scholar / KP，可以删除。Stage 3 正式实现里建议先做 archive，再开放硬删除。</p>
+        <div class="confirm-actions">
+          <button type="button" class="btn" data-close-confirm>取消</button>
+          <button type="button" class="btn btn-danger" id="confirm-delete-btn">删除</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      const disciplines = [
+        {
+          key: "keiei",
+          title: { zh: "经营学", en: "Management", ja: "経営学" },
+          tagline: { zh: "日本大学院入试备考" },
+          counts: { view: 3, school: 48, scholar: 132, kp: 562 },
+          owner: "Husuli",
+          tokens: 4,
+          source: "D1",
+        },
+        {
+          key: "marketing",
+          title: { zh: "市场营销", en: "Marketing", ja: "マーケティング" },
+          tagline: { zh: "Kotler 与消费者行为知识库" },
+          counts: { view: 1, school: 24, scholar: 40, kp: 178 },
+          owner: "",
+          tokens: 2,
+          source: "D1",
+        },
+        {
+          key: "finance",
+          title: { zh: "财务管理", en: "Finance", ja: "財務管理" },
+          tagline: { zh: "准备上线的新学科" },
+          counts: { view: 0, school: 0, scholar: 0, kp: 0 },
+          owner: "Mika",
+          tokens: 0,
+          source: "D1",
+        },
+        {
+          key: "strategy",
+          title: { zh: "战略管理", en: "Strategy", ja: "戦略論" },
+          tagline: { zh: "竞争战略与组织能力" },
+          counts: { view: 1, school: 11, scholar: 18, kp: 91 },
+          owner: "Ren",
+          tokens: 1,
+          source: "legacy sync",
+        },
+      ];
+
+      let editingKey = "";
+      let deleteKey = "";
+
+      const list = document.querySelector("#disc-list");
+      const count = document.querySelector("#disc-count");
+      const searchInput = document.querySelector("#search-input");
+      const statusFilter = document.querySelector("#status-filter");
+      const createDrawer = document.querySelector("#create-drawer");
+      const editDrawer = document.querySelector("#edit-drawer");
+      const deleteConfirm = document.querySelector("#delete-confirm");
+      const toast = document.querySelector("#toast");
+
+      function isEmpty(discipline) {
+        const c = discipline.counts;
+        return c.view + c.school + c.scholar + c.kp === 0;
       }
 
-      viewButtons.forEach((button) => {
-        button.addEventListener("click", () => activateView(button.dataset.viewTarget));
-      });
+      function slugify(value) {
+        return (value || "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "_")
+          .replace(/^_+|_+$/g, "")
+          .slice(0, 31);
+      }
 
-      const tabButtons = document.querySelectorAll("[data-tab-target]");
-      const tabPanels = document.querySelectorAll(".tab-panel");
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("is-visible");
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(() => toast.classList.remove("is-visible"), 1800);
+      }
 
-      tabButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          tabButtons.forEach((item) => item.classList.remove("is-active"));
-          tabPanels.forEach((panel) => panel.classList.remove("is-active"));
-          button.classList.add("is-active");
-          document.querySelector(`#tab-${button.dataset.tabTarget}`).classList.add("is-active");
+      function rowStatus(discipline) {
+        if (!discipline.owner) return "needs-owner";
+        if (isEmpty(discipline)) return "draft";
+        return "ready";
+      }
+
+      function render() {
+        const query = searchInput.value.trim().toLowerCase();
+        const status = statusFilter.value;
+        const filtered = disciplines.filter((discipline) => {
+          const haystack = `${discipline.key} ${discipline.title.zh} ${discipline.title.en ?? ""}`.toLowerCase();
+          const matchesQuery = !query || haystack.includes(query);
+          const matchesStatus = status === "all" || rowStatus(discipline) === status;
+          return matchesQuery && matchesStatus;
         });
-      });
 
-      const modal = document.querySelector("#token-modal");
-      const reveal = document.querySelector("#token-reveal");
-      const openTokenButtons = document.querySelectorAll("[data-open-token]");
-      const closeTokenButtons = document.querySelectorAll("[data-close-token]");
-      const generateButton = document.querySelector("#generate-token");
+        count.textContent = `共 ${filtered.length} 个学科`;
+        list.innerHTML = filtered.map((discipline) => {
+          const c = discipline.counts;
+          const empty = isEmpty(discipline);
+          const blockers = [];
+          if (c.view > 0) blockers.push(`${c.view} 视角`);
+          if (c.school > 0) blockers.push(`${c.school} 学派`);
+          if (c.scholar > 0) blockers.push(`${c.scholar} 学者`);
+          if (c.kp > 0) blockers.push(`${c.kp} KP`);
+          const ownerChip = discipline.owner
+            ? `<span class="chip">owner ${discipline.owner}</span>`
+            : `<span class="chip chip-warning">owner missing</span>`;
+          const sourceChip = discipline.source === "D1"
+            ? `<span class="chip chip-success">source D1</span>`
+            : `<span class="chip chip-warning">legacy sync</span>`;
+          const deleteButton = empty
+            ? `<button type="button" class="btn btn-danger" data-delete="${discipline.key}">删除</button>`
+            : `<button type="button" class="btn btn-disabled" disabled title="该学科含 ${blockers.join(" / ")}，清空才能删">含内容</button>`;
 
-      openTokenButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          reveal.classList.remove("is-visible");
-          generateButton.textContent = "Generate token";
-          modal.classList.add("is-open");
+          return `
+            <article class="disc-row ${empty ? "is-empty" : ""}">
+              <div class="disc-row-main">
+                <div class="disc-name">
+                  <span class="disc-title-zh">${discipline.title.zh}</span>
+                  <span class="disc-title-en">${discipline.title.en ?? ""}</span>
+                  <span class="disc-key">${discipline.key}</span>
+                </div>
+                <div class="disc-tagline">${discipline.tagline?.zh ?? ""}</div>
+                <div class="disc-meta">
+                  ${ownerChip}
+                  <span class="chip">tokens ${discipline.tokens}</span>
+                  ${sourceChip}
+                  <span class="chip">tenant ${discipline.key}</span>
+                </div>
+                <div class="disc-counts ${empty ? "is-all-zero" : ""}">
+                  <span class="disc-count"><span class="disc-count-n">${c.view}</span><span class="disc-count-label">视角</span></span>
+                  <span class="disc-count"><span class="disc-count-n">${c.school}</span><span class="disc-count-label">学派</span></span>
+                  <span class="disc-count"><span class="disc-count-n">${c.scholar}</span><span class="disc-count-label">学者</span></span>
+                  <span class="disc-count"><span class="disc-count-n">${c.kp}</span><span class="disc-count-label">KP</span></span>
+                </div>
+              </div>
+              <div class="disc-actions">
+                <button type="button" class="btn" data-detail="${discipline.key}">详情</button>
+                <button type="button" class="btn" data-edit="${discipline.key}">编辑</button>
+                ${deleteButton}
+              </div>
+            </article>
+          `;
+        }).join("");
+
+        document.querySelectorAll("[data-edit]").forEach((button) => {
+          button.addEventListener("click", () => openEdit(button.dataset.edit));
         });
+        document.querySelectorAll("[data-delete]").forEach((button) => {
+          button.addEventListener("click", () => openDelete(button.dataset.delete));
+        });
+        document.querySelectorAll("[data-detail]").forEach((button) => {
+          button.addEventListener("click", () => showToast(`${button.dataset.detail} 详情页会承接 owner / token / API guide`));
+        });
+      }
+
+      function openCreate() {
+        createDrawer.classList.add("is-open");
+        document.querySelector("#form-title-zh").focus();
+      }
+
+      function openEdit(key) {
+        const discipline = disciplines.find((item) => item.key === key);
+        if (!discipline) return;
+        editingKey = key;
+        document.querySelector("#edit-sub").textContent = `${discipline.title.zh} · ${discipline.key}`;
+        document.querySelector("#edit-key-display").textContent = discipline.key;
+        document.querySelector("#edit-title-zh").value = discipline.title.zh ?? "";
+        document.querySelector("#edit-title-en").value = discipline.title.en ?? "";
+        document.querySelector("#edit-title-ja").value = discipline.title.ja ?? "";
+        document.querySelector("#edit-tagline-zh").value = discipline.tagline?.zh ?? "";
+        document.querySelector("#edit-tagline-ja").value = discipline.tagline?.ja ?? "";
+        editDrawer.classList.add("is-open");
+        document.querySelector("#edit-title-zh").focus();
+      }
+
+      function openDelete(key) {
+        deleteKey = key;
+        document.querySelector("#delete-copy").textContent =
+          `确认删除 ${key}？该学科没有 view / school / scholar / KP，可以删除。Stage 3 正式实现里建议先做 archive，再开放硬删除。`;
+        deleteConfirm.classList.add("is-open");
+      }
+
+      function closeLayers() {
+        createDrawer.classList.remove("is-open");
+        editDrawer.classList.remove("is-open");
+        deleteConfirm.classList.remove("is-open");
+      }
+
+      document.querySelector("#open-create-btn").addEventListener("click", openCreate);
+      document.querySelectorAll("[data-close-drawer], .drawer-overlay").forEach((el) => {
+        el.addEventListener("click", closeLayers);
+      });
+      document.querySelectorAll("[data-close-confirm]").forEach((el) => {
+        el.addEventListener("click", closeLayers);
       });
 
-      closeTokenButtons.forEach((button) => {
-        button.addEventListener("click", () => modal.classList.remove("is-open"));
+      document.querySelector("#form-title-en").addEventListener("input", (event) => {
+        document.querySelector("#key-preview").textContent = slugify(event.target.value) || "无法生成";
       });
 
-      generateButton.addEventListener("click", () => {
-        reveal.classList.add("is-visible");
-        generateButton.textContent = "Token generated";
+      document.querySelector("#create-submit-btn").addEventListener("click", () => {
+        const titleZh = document.querySelector("#form-title-zh").value.trim();
+        const titleEn = document.querySelector("#form-title-en").value.trim();
+        const key = slugify(titleEn);
+        if (!titleZh || !key) {
+          showToast("中文名和 English 必填");
+          return;
+        }
+        disciplines.unshift({
+          key,
+          title: {
+            zh: titleZh,
+            en: titleEn,
+            ja: document.querySelector("#form-title-ja").value.trim(),
+          },
+          tagline: { zh: document.querySelector("#form-tagline-zh").value.trim() },
+          counts: { view: 0, school: 0, scholar: 0, kp: 0 },
+          owner: "",
+          tokens: 0,
+          source: "D1",
+        });
+        closeLayers();
+        render();
+        showToast(`已创建学科 ${key}，并自动创建 tenant`);
       });
 
-      modal.addEventListener("click", (event) => {
-        if (event.target === modal) modal.classList.remove("is-open");
+      document.querySelector("#edit-submit-btn").addEventListener("click", () => {
+        const discipline = disciplines.find((item) => item.key === editingKey);
+        if (!discipline) return;
+        const titleZh = document.querySelector("#edit-title-zh").value.trim();
+        if (!titleZh) {
+          showToast("中文名必填");
+          return;
+        }
+        discipline.title.zh = titleZh;
+        discipline.title.en = document.querySelector("#edit-title-en").value.trim();
+        discipline.title.ja = document.querySelector("#edit-title-ja").value.trim();
+        discipline.tagline.zh = document.querySelector("#edit-tagline-zh").value.trim();
+        closeLayers();
+        render();
+        showToast(`已保存 ${discipline.key} metadata`);
       });
+
+      document.querySelector("#confirm-delete-btn").addEventListener("click", () => {
+        const index = disciplines.findIndex((item) => item.key === deleteKey);
+        if (index >= 0) disciplines.splice(index, 1);
+        closeLayers();
+        render();
+        showToast(`已删除空学科 ${deleteKey}`);
+      });
+
+      searchInput.addEventListener("input", render);
+      statusFilter.addEventListener("change", render);
+
+      render();
     </script>
   </body>
 </html>
