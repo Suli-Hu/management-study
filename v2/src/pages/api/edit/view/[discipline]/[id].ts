@@ -16,6 +16,7 @@
 import type { APIRoute } from 'astro';
 import { View } from '~/schemas/view';
 import { handleGet, handlePut, handleDelete, jsonRes, type EditError } from '~/lib/edit-helpers';
+import { deleteViewInD1, upsertViewInD1 } from '~/lib/d1-view-write';
 
 const pathFor = (id: string, discipline: string) =>
   `v2/data/${discipline}/views/${id}.json`;
@@ -42,6 +43,7 @@ export const PUT: APIRoute = async (ctx) => deprecate(await handlePut({
   identifierMatch: (urlId, obj) => obj.id === urlId && obj.discipline === ctx.params.discipline,
   urlIdentifier: () => ctx.params.id,
   forceFields: () => ({ updatedAt: new Date().toISOString() }),
+  upsertD1: (db, view) => upsertViewInD1(db, view),
 }));
 
 export const DELETE: APIRoute = async (ctx) => {
@@ -69,5 +71,6 @@ export const DELETE: APIRoute = async (ctx) => {
     objectLabel: (i) => `view/${discipline}/${i}`,
     resolveDiscipline: async () => discipline,
     urlIdentifier: () => id,
+    deleteD1: (db, _discipline, viewId) => deleteViewInD1(db, viewId),
   }));
 };

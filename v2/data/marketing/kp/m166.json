@@ -1,0 +1,40 @@
+{
+  "id": "m166",
+  "discipline": "marketing",
+  "schools": [
+    "managerial"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "最终价格设定·6 步流程与影响因素",
+    "ja": "最終価格設定・6 段階フローと影響要因",
+    "en": "Final Price Setting"
+  },
+  "body": {
+    "zh": "<strong>Final Price Setting（最终价格设定）</strong>是定价 6 步流程的<strong>最后整合</strong>·把所有要素综合定 the price。Kotler 11 章。<br><br><strong>定价 6 步流程</strong>（Kotler）：<br>① 选择 pricing objective（m162）<br>② 决定 demand（m163）<br>③ 估算 cost（m164）<br>④ 分析 competitor price（m165）<br>⑤ 选择 pricing method（m120）<br>⑥ <strong>选 final price</strong>（本 KP）<br><br><strong>影响 final price 的 5 个因素</strong>：<br>① <strong>Psychological Factors</strong>（详见 m122）——end in 9·prestige·reference<br>② <strong>Marketing-Mix Influences</strong>——价格与 product·brand·channel·promotion 一致<br>③ <strong>Company Pricing Policies</strong>——内部规则·avoid arbitrary<br>④ <strong>Gain-and-Risk-Sharing Pricing</strong>——performance-based pricing（B2B·SaaS）<br>⑤ <strong>Impact of Price on Other Parties</strong>——distributors·dealers·suppliers·government·sales force·competitors<br><br><strong>geographical pricing 战略</strong>：① <strong>FOB-origin pricing</strong>（货物离厂时·买方付运费）② <strong>Uniform delivered pricing</strong>（全国统一价）③ <strong>Zone pricing</strong>（按区域）④ <strong>Basing-point pricing</strong>（基点）⑤ <strong>Freight-absorption pricing</strong>（卖方吸收运费）<br><br><strong>discount·allowance 战略</strong>：① cash discount ② quantity discount ③ functional discount（trade discount）④ seasonal discount ⑤ allowance（trade-in·promotional·rebate）<br><br><strong>typical pricing decisions</strong>：<br>- iPhone 15 final price $799：基于 prior models·components cost·BOM·BOM·competitors（Samsung Galaxy S 系列）·target margin<br>- Tesla Model 3 base $40,000：基于 battery cost decline·target margin·EV competitors<br>- Netflix Standard $15.49 / 月：basic + competitor + churn analysis<br><br><strong>跨学派关系</strong>：综合 m120-m165 的所有 pricing decisions。",
+    "ja": "<strong>Final Price Setting（最終価格設定）</strong>は定価 6 段階フローの<strong>最後統合</strong>·全要素総合で price 決定。Kotler 11 章。<br><br><strong>定価 6 段階フロー</strong>（Kotler）：① pricing objective（m162）② demand（m163）③ cost（m164）④ competitor price（m165）⑤ pricing method（m120）⑥ <strong>final price 選定</strong>（本 KP）<br><br><strong>final price 5 大影響要因</strong>：① Psychological Factors（m122）② Marketing-Mix Influences ③ Company Pricing Policies ④ Gain-and-Risk-Sharing Pricing（B2B·SaaS）⑤ Impact on Other Parties（distributors·dealers·government·sales force·competitors）<br><br><strong>geographical pricing 戦略</strong>：① FOB-origin pricing ② Uniform delivered pricing ③ Zone pricing ④ Basing-point pricing ⑤ Freight-absorption pricing<br><br><strong>discount·allowance 戦略</strong>：① cash ② quantity ③ functional（trade）④ seasonal ⑤ allowance（trade-in·promotional·rebate）<br><br><strong>typical pricing decisions</strong>：iPhone 15 ($799·prior models·BOM·Samsung Galaxy S·target margin）·Tesla Model 3 base $40,000（battery cost decline·target margin·EV competitors）·Netflix Standard $15.49 / 月（basic + competitor + churn analysis）<br><br><strong>他派との関係</strong>：m120-m165 の全 pricing decisions を総合。"
+  },
+  "tags": [
+    "final price",
+    "pricing process",
+    "Kotler"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "定价决策的最后整合·实务关键",
+      "限": "多因素权衡·主观",
+      "例": "iPhone·Tesla·Netflix 是教科书",
+      "应": "Kotler 11 章·价格题"
+    },
+    "ja": {
+      "限": "多要因権衡·主観",
+      "例": "iPhone·Tesla·Netflix 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T09:26:24.090Z",
+  "updatedAt": "2026-04-30T13:25:15.553Z"
+}

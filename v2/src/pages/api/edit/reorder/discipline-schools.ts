@@ -20,6 +20,9 @@ import { getFile, putFile, commitMultipleFiles } from '~/lib/github';
 import { jsonRes, type EditError } from '~/lib/edit-helpers';
 import { Discipline } from '~/schemas/discipline';
 import { School } from '~/schemas/school';
+import { upsertDisciplineInD1 } from '~/lib/d1-discipline-write';
+import { upsertSchoolInD1 } from '~/lib/d1-school-write';
+import { withRetry } from '~/lib/d1-kp-write';
 
 interface ReorderBody {
   discipline?: string;
@@ -120,6 +123,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (!res.ok) {
       return jsonRes<EditError>(res.reason === 'conflict' ? 409 : 502, { ok: false, reason: res.reason === 'conflict' ? 'sha_conflict' : 'github_error', detail: res.detail });
     }
+
+    // v0.6.7: D1 双写 — 跨组移动两份 git 文件，对应两次 D1 upsert（独立 try-catch）
+    if (env.DB) {
+      try { await withRetry(() => upsertDisciplineInD1(env.DB, disc)); }
+      catch (d1Err) { console.error(`[reorder/discipline-schools cross ${discipline}] discipline D1 dual-write failed:`, d1Err); }
+      try { await withRetry(() => upsertSchoolInD1(env.DB, school)); }
+      catch (d1Err) { console.error(`[reorder/discipline-schools cross ${discipline}] school/${movedSchool.key} D1 dual-write failed:`, d1Err); }
+    }
+
     return jsonRes(200, { ok: true, commit_sha: res.data.commit_sha, deploy_eta_seconds: 90 });
   }
 
@@ -134,5 +146,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!res.ok) {
     return jsonRes<EditError>(res.reason === 'conflict' ? 409 : 502, { ok: false, reason: res.reason === 'conflict' ? 'sha_conflict' : 'github_error', detail: res.detail });
   }
+
+  // v0.6.7: D1 双写
+  if (env.DB) {
+    try { await withRetry(() => upsertDisciplineInD1(env.DB, disc)); }
+    catch (d1Err) { console.error(`[reorder/discipline-schools same ${discipline}] D1 dual-write failed (git committed):`, d1Err); }
+  }
+
   return jsonRes(200, { ok: true, commit_sha: res.data.commit_sha, deploy_eta_seconds: 90 });
 };

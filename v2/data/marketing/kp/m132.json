@@ -1,0 +1,43 @@
+{
+  "id": "m132",
+  "discipline": "marketing",
+  "schools": [
+    "effectuation",
+    "strategic_marketing"
+  ],
+  "scholars": [
+    "sarasvathy",
+    "kuriki"
+  ],
+  "year": "2005",
+  "title": {
+    "zh": "新市场创造·非顾客转化战略",
+    "ja": "新市場創造・非顧客転化戦略",
+    "en": "New Market Creation"
+  },
+  "body": {
+    "zh": "<strong>新市场创造（Market Creation）</strong>是 effectuation·blue ocean 学派的核心命题——marketing 不是<strong>对应既有市场</strong>·而是<strong>创造新市场</strong>。Kotler 16 版第 17 章·effectuation 学派。<br><br><strong>3 大路径</strong>：<br>① <strong>非顾客转化</strong>——把非消费者转为消费者<br>例：Apple iPad（让从未用电脑的老人·儿童用）·Beyond Meat（让肉食者吃植物蛋白）<br>② <strong>新使用场景</strong>——既有产品的新用途<br>例：① Arm & Hammer 苏打粉（烤 → 除臭·清洁）② Lego（玩具 → 教育·成人收藏）<br>③ <strong>新解决方案</strong>——以新方式解决既有需求<br>例：① Uber（不是新需求·是新解决方案：从「叫出租车」到「按 app 叫司机」）② Airbnb（住宿的新方式）<br><br><strong>新市场创造的 4 大原则</strong>：<br>① <strong>look at non-customers</strong>——非现有客户<br>② <strong>look at substitutes</strong>——替代品<br>③ <strong>look at complementary</strong>——互补品<br>④ <strong>challenge industry assumptions</strong>——质疑产业前提<br><br><strong>典型案例</strong>：<br>① <strong>iPhone（2007）</strong>——创造 smartphone 市场<br>② <strong>Tesla</strong>——创造 EV 大众市场<br>③ <strong>Airbnb</strong>——创造 home-sharing 市场<br>④ <strong>无印良品</strong>——创造「no-brand」brand 市场<br>⑤ <strong>SoftBank Vision Fund</strong>——创造「super-scale tech investment」<br><br><strong>跨学派关系</strong>：与 effectuation（m075）·blue ocean（m077）·entrepreneurial marketing（m078）完美一致。",
+    "ja": "<strong>新市場創造（Market Creation）</strong>は effectuation·blue ocean 学派の核心命題——マーケティングは<strong>既有市場対応</strong>ではなく·<strong>新市場創造</strong>。Kotler 16 版第 17 章·effectuation 学派。<br><br><strong>3 大経路</strong>：① <strong>非顧客転化</strong>（Apple iPad·Beyond Meat）② <strong>新使用場面</strong>（Arm & Hammer·Lego）③ <strong>新解決方法</strong>（Uber·Airbnb）<br><br><strong>新市場創造 4 大原則</strong>：① 非顧客を見る ② 代替品を見る ③ 補完品を見る ④ 業界前提に挑戦<br><br><strong>典型事例</strong>：① iPhone（2007 年）② Tesla（EV 大衆市場）③ Airbnb（home-sharing）④ 無印良品（「no-brand」brand）⑤ SoftBank Vision Fund<br><br><strong>他派との関係</strong>：effectuation（m075）·blue ocean（m077）·entrepreneurial marketing（m078）と完璧一致。"
+  },
+  "tags": [
+    "market creation",
+    "Tesla",
+    "Airbnb",
+    "Apple"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "effectuation 学派的核心实务·marketing 创新源泉",
+      "限": "风险高·成功率低·难规划",
+      "例": "iPhone·Tesla·Airbnb·无印良品 是教科书",
+      "应": "effectuation·strategic 题"
+    },
+    "ja": {
+      "限": "リスク高·成功率低·計画困難",
+      "例": "iPhone·Tesla·Airbnb·無印良品 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:36:00.259Z",
+  "updatedAt": "2026-04-30T13:23:58.276Z"
+}

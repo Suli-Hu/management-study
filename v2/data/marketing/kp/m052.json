@@ -1,0 +1,40 @@
+{
+  "id": "m052",
+  "discipline": "marketing",
+  "schools": [
+    "imc_communication"
+  ],
+  "scholars": [
+    "schultz"
+  ],
+  "year": "1898",
+  "title": {
+    "zh": "AIDA·态度形成最古老模型",
+    "ja": "AIDA・最古典の態度形成モデル",
+    "en": "AIDA Model"
+  },
+  "body": {
+    "zh": "<strong>AIDA（Attention-Interest-Desire-Action）</strong>是态度形成模型的<strong>鼻祖</strong>·1898 年 E. St. Elmo Lewis 提出·marketing 学最古老的 communication 模型·**日本院试态度形成模型 4 大类的起点**。<br><br><strong>4 阶段</strong>：<br>① <strong>A - Attention（注意）</strong>——消费者注意到广告 / 产品<br>② <strong>I - Interest（兴趣）</strong>——产生兴趣·想了解更多<br>③ <strong>D - Desire（欲望）</strong>——产生购买欲望<br>④ <strong>A - Action（行动）</strong>——做出购买行动<br><br><strong>历史背景</strong>：19 世纪末美国大众媒体（报纸·杂志）兴起·广告业第一次需要系统化的 communication 模型。AIDA 是 marketing communication 学的<strong>奠基</strong>。<br><br><strong>影响</strong>：<br>① 影响后续所有态度形成模型——AIDMA·AIDAS·AISAS 等都是 AIDA 的修订版<br>② 影响销售流程设计——personal selling 7 步骤的雏形<br>③ 影响广告创作——文案结构「Attention-grabbing headline → Interest-building body → Desire-creating offer → Action-prompting CTA」<br><br><strong>批判</strong>：① 假设线性·实际消费者行为非线性 ② 不适合低介入产品（FMCG）③ 不解释 post-purchase 行为 ④ 不适合数字时代（消费者主动搜索·分享）<br><br><strong>跨学派关系</strong>：直接催生 ELM（Petty-Cacioppo 1986）等具体行为决策模型。AIDA 在日本被扩展为 AIDMA（+memory）·后再扩展为 AISAS（+search·share）。<br><br><strong>日本院试命中</strong>：「态度形成模型谱系」必出题——AIDA → AIDMA → AISAS → SIPS → DECAX 5 阶段演化。",
+    "ja": "<strong>AIDA（Attention-Interest-Desire-Action）</strong>は態度形成モデルの<strong>始祖</strong>·1898 年 E. St. Elmo Lewis 提唱·マーケティング学最古典のコミュニケーション・モデル·**日本院試態度形成モデル 4 大類の起点**。<br><br><strong>4 段階</strong>：① Attention（注意）② Interest（関心）③ Desire（欲望）④ Action（行動）<br><br><strong>歴史背景</strong>：19 世紀末米国マスメディア（新聞·雑誌）興隆·広告業初の体系的コミュニケーション・モデル必要。AIDA はマーケティング・コミュニケーション学の<strong>基礎</strong>。<br><br><strong>影響</strong>：① 後続全態度形成モデルに影響·AIDMA·AIDAS·AISAS は AIDA 修訂版 ② 販売プロセス設計に影響——personal selling 7 段階の原型 ③ 広告制作に影響·コピー構造「Attention headline → Interest body → Desire offer → Action CTA」<br><br><strong>批判</strong>：① 線形仮定·実際非線形 ② 低関与製品（FMCG）不適 ③ post-purchase 行動説明せず ④ デジタル時代不適（消費者能動探索·共有）<br><br><strong>他派との関係</strong>：ELM（Petty-Cacioppo 1986）等具体行動意思決定モデル直接派生。AIDA は日本で AIDMA（+memory）·後に AISAS（+search·share）に拡張。<br><br><strong>日本院試命中</strong>：「態度形成モデル系譜」必出題——AIDA → AIDMA → AISAS → SIPS → DECAX 5 段階進化。"
+  },
+  "tags": [
+    "AIDA",
+    "Lewis 1898",
+    "attitude formation"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "marketing communication 最古典模型·后续所有态度形成模型的祖先",
+      "限": "线性·假设过简·数字时代不适用",
+      "例": "百年来的广告创作公式「AIDA」",
+      "应": "日本院试 IMC 必考·一橋·早大·命题"
+    },
+    "ja": {
+      "限": "線形·仮定過簡·デジタル時代不適",
+      "例": "百年来の広告作成公式「AIDA」"
+    }
+  },
+  "createdAt": "2026-04-30T05:03:51.536Z",
+  "updatedAt": "2026-04-30T13:20:49.347Z"
+}

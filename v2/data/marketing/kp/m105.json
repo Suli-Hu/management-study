@@ -1,0 +1,40 @@
+{
+  "id": "m105",
+  "discipline": "marketing",
+  "schools": [
+    "consumer_behavior"
+  ],
+  "scholars": [
+    "howard"
+  ],
+  "year": "1960",
+  "title": {
+    "zh": "感知风险·5 类风险与营销应对",
+    "ja": "知覚リスク・5 類リスクとマーケティング対応",
+    "en": "Perceived Risk · 5 Types"
+  },
+  "body": {
+    "zh": "<strong>感知风险（Perceived Risk·知覚リスク）</strong>是消费者购买决策中<strong>对潜在负面后果的不确定感</strong>·Bauer 1960 提出·消费者行为学派的关键概念。Kotler 第 3 章「购买决定」节。<br><br><strong>5 类感知风险</strong>：<br><br>① <strong>Functional Risk（功能风险）</strong>——产品不能正常工作<br>例：买电脑后死机·买药无效<br>marketing 应对：保证·warranty·試用·QA<br><br>② <strong>Physical Risk（身体风险）</strong>——伤害健康或安全<br>例：副作用·食物中毒·汽车事故<br>marketing 应对：safety certification·医生 endorsement·成分透明<br><br>③ <strong>Financial Risk（金钱风险）</strong>——失去金钱<br>例：贵重购买后才发现不值·discount 后再买可能亏<br>marketing 应对：免费试用·低首付·分期·价格保证<br><br>④ <strong>Social Risk（社交风险）</strong>——他人负面评价<br>例：买不流行的衣服·买便宜车被嘲笑<br>marketing 应对：明星 endorsement·UGC·社区认可<br><br>⑤ <strong>Psychological Risk（心理风险）</strong>——damage self-image<br>例：买不符自我形象的产品·后悔感（cognitive dissonance）<br>marketing 应对：post-purchase reassurance·会员社区·个性化<br><br><strong>感知风险高 vs 低 决策的差异</strong>：<br>- 高风险：广搜信息·询问朋友·延迟决定·多备选品<br>- 低风险：习惯购买·快速决定·少思考<br><br><strong>marketing 启示</strong>：<br>① <strong>降低风险战略</strong>——上面 5 类应对<br>② <strong>高介入产品（车·房·保险）</strong>——重点降低风险<br>③ <strong>低介入产品（FMCG）</strong>——重点 brand awareness<br>④ <strong>onboarding</strong>——首次购买后的 risk reduction<br><br><strong>跨学派关系</strong>：① 与 Howard-Sheth 模型（m024）的「stimulus ambiguity」对应 ② 与 Kahneman loss aversion（m028）一致 ③ 与 brand_equity 的 brand trust 对应。",
+    "ja": "<strong>知覚リスク（Perceived Risk）</strong>は消費者購買意思決定における<strong>潜在的負面結果への不確実感</strong>·Bauer 1960 提唱·消費者行動学派の主要概念。Kotler 第 3 章「購買決定」節。<br><br><strong>5 類の知覚リスク</strong>：① <strong>Functional Risk</strong>（機能·保証·試用）② <strong>Physical Risk</strong>（身体·安全認証·医師 endorsement）③ <strong>Financial Risk</strong>（金銭·無料試用·分割払）④ <strong>Social Risk</strong>（社交·有名人 endorsement·UGC）⑤ <strong>Psychological Risk</strong>（心理·post-purchase reassurance）<br><br><strong>高 vs 低リスク意思決定の差</strong>：高は広く情報探索·朋友相談·遅延決定·複数候補·低は習慣購買·迅速·少思考<br><br><strong>マーケティング示唆</strong>：① リスク低減戦略 ② 高関与製品（車·家·保険）はリスク低減重視 ③ 低関与製品（FMCG）は brand awareness 重視 ④ onboarding<br><br><strong>他派との関係</strong>：① Howard-Sheth モデル（m024）の「stimulus ambiguity」対応 ② Kahneman loss aversion（m028）一致 ③ brand_equity の brand trust 対応。"
+  },
+  "tags": [
+    "perceived risk",
+    "Bauer 1960",
+    "5 types"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "消费者决策的关键阻碍·marketing 必须解决",
+      "限": "主观·跨文化差异·难量化",
+      "例": "Apple 30 day return·Tesla 7 day refund 应对 risk",
+      "应": "Kotler 第 3 章·消费者行为题"
+    },
+    "ja": {
+      "限": "主観·異文化差·数量化困難",
+      "例": "Apple 30 日返品·Tesla 7 日返金は risk 対応"
+    }
+  },
+  "createdAt": "2026-04-30T07:24:11.841Z",
+  "updatedAt": "2026-04-30T13:22:51.924Z"
+}

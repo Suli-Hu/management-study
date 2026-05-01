@@ -73,26 +73,26 @@ function compactI18n(zh: string, en: string | null, ja: string | null): { zh: st
   };
 }
 
-async function schoolsForScholar(db: D1Database, scholarKey: string): Promise<string[]> {
+async function schoolsForScholar(db: D1Database, discipline: string, scholarKey: string): Promise<string[]> {
   const result = await db
-    .prepare('SELECT school_key FROM scholar_school WHERE scholar_key = ? ORDER BY position ASC, school_key ASC')
-    .bind(scholarKey)
+    .prepare('SELECT school_key FROM scholar_school WHERE scholar_discipline = ? AND scholar_key = ? ORDER BY position ASC, school_key ASC')
+    .bind(discipline, scholarKey)
     .all<{ school_key: string }>();
   return (result.results ?? []).map((r) => r.school_key);
 }
 
-async function kpsForScholar(db: D1Database, scholarKey: string): Promise<string[]> {
+async function kpsForScholar(db: D1Database, discipline: string, scholarKey: string): Promise<string[]> {
   const result = await db
-    .prepare('SELECT kp_id FROM kp_scholar WHERE scholar_key = ? ORDER BY position ASC, kp_id ASC')
-    .bind(scholarKey)
+    .prepare('SELECT kp_id FROM kp_scholar WHERE scholar_discipline = ? AND scholar_key = ? ORDER BY position ASC, kp_id ASC')
+    .bind(discipline, scholarKey)
     .all<{ kp_id: string }>();
   return (result.results ?? []).map((r) => r.kp_id);
 }
 
 async function toRecord(db: D1Database, row: ScholarRow, tenantId: string): Promise<ScholarApiRecord> {
   const [schools, kpsOrder] = await Promise.all([
-    schoolsForScholar(db, row.key),
-    kpsForScholar(db, row.key),
+    schoolsForScholar(db, row.discipline, row.key),
+    kpsForScholar(db, row.discipline, row.key),
   ]);
   return {
     key: row.key,
@@ -122,8 +122,8 @@ async function toRecord(db: D1Database, row: ScholarRow, tenantId: string): Prom
 function baseScholarSelect(): string {
   return `
     SELECT s.*,
-      (SELECT COUNT(*) FROM kp_scholar ks WHERE ks.scholar_key = s.key) as kp_count,
-      (SELECT COUNT(*) FROM scholar_school ss WHERE ss.scholar_key = s.key) as school_count
+      (SELECT COUNT(*) FROM kp_scholar ks WHERE ks.scholar_discipline = s.discipline AND ks.scholar_key = s.key) as kp_count,
+      (SELECT COUNT(*) FROM scholar_school ss WHERE ss.scholar_discipline = s.discipline AND ss.scholar_key = s.key) as school_count
     FROM scholar s
   `;
 }
@@ -143,7 +143,7 @@ export async function listScholarsForTenant(
     binds.push(like, like, like, like, like);
   }
   if (options.school) {
-    where.push('EXISTS (SELECT 1 FROM scholar_school ss WHERE ss.scholar_key = s.key AND ss.school_key = ?)');
+    where.push('EXISTS (SELECT 1 FROM scholar_school ss WHERE ss.scholar_discipline = s.discipline AND ss.scholar_key = s.key AND ss.school_key = ?)');
     binds.push(options.school);
   }
 
@@ -235,7 +235,7 @@ export async function createScholarRecord(
   tenant: { tenantId: string; discipline: string },
   input: ScholarCreateInput,
 ): Promise<{ ok: true; record: ScholarApiRecord } | { ok: false; status: number; reason: string; detail?: unknown }> {
-  const existing = await db.prepare('SELECT key FROM scholar WHERE key = ?').bind(input.key).first<{ key: string }>();
+  const existing = await db.prepare('SELECT key FROM scholar WHERE discipline = ? AND key = ?').bind(tenant.discipline, input.key).first<{ key: string }>();
   if (existing) return { ok: false, status: 409, reason: 'scholar_key_exists' };
 
   const schoolRefs = await assertSchoolsBelongToTenant(db, tenant.discipline, input.schools ?? []);
@@ -255,10 +255,10 @@ export async function createScholarRecord(
     ).bind(...scholarValues(input, input.key, tenant, now, now)),
   ];
   input.schools.forEach((schoolKey, position) => {
-    stmts.push(db.prepare('INSERT OR IGNORE INTO scholar_school (scholar_key, school_key, position) VALUES (?, ?, ?)').bind(input.key, schoolKey, position));
+    stmts.push(db.prepare('INSERT OR IGNORE INTO scholar_school (scholar_discipline, scholar_key, school_key, position) VALUES (?, ?, ?, ?)').bind(tenant.discipline, input.key, schoolKey, position));
   });
   input.kpsOrder.forEach((kpId, position) => {
-    stmts.push(db.prepare('INSERT OR IGNORE INTO kp_scholar (kp_id, scholar_key, position) VALUES (?, ?, ?)').bind(kpId, input.key, position));
+    stmts.push(db.prepare('INSERT OR IGNORE INTO kp_scholar (kp_id, scholar_discipline, scholar_key, position) VALUES (?, ?, ?, ?)').bind(kpId, tenant.discipline, input.key, position));
   });
   await db.batch(stmts);
 
@@ -321,14 +321,14 @@ export async function patchScholarRecord(
       key,
       tenant.discipline,
     ),
-    db.prepare('DELETE FROM scholar_school WHERE scholar_key = ? AND position < 1000').bind(key),
-    db.prepare('DELETE FROM kp_scholar WHERE scholar_key = ? AND position < 1000').bind(key),
+    db.prepare('DELETE FROM scholar_school WHERE scholar_discipline = ? AND scholar_key = ? AND position < 1000').bind(tenant.discipline, key),
+    db.prepare('DELETE FROM kp_scholar WHERE scholar_discipline = ? AND scholar_key = ? AND position < 1000').bind(tenant.discipline, key),
   ];
   next.schools.forEach((schoolKey, position) => {
-    stmts.push(db.prepare('INSERT OR IGNORE INTO scholar_school (scholar_key, school_key, position) VALUES (?, ?, ?)').bind(key, schoolKey, position));
+    stmts.push(db.prepare('INSERT OR IGNORE INTO scholar_school (scholar_discipline, scholar_key, school_key, position) VALUES (?, ?, ?, ?)').bind(tenant.discipline, key, schoolKey, position));
   });
   next.kpsOrder.forEach((kpId, position) => {
-    stmts.push(db.prepare('INSERT OR IGNORE INTO kp_scholar (kp_id, scholar_key, position) VALUES (?, ?, ?)').bind(kpId, key, position));
+    stmts.push(db.prepare('INSERT OR IGNORE INTO kp_scholar (kp_id, scholar_discipline, scholar_key, position) VALUES (?, ?, ?, ?)').bind(kpId, tenant.discipline, key, position));
   });
   await db.batch(stmts);
 
@@ -346,8 +346,8 @@ export async function deleteScholarRecord(
   if (current.kp_count > 0) return { ok: false, status: 409, reason: 'scholar_has_kps', detail: current.kp_count };
 
   await db.batch([
-    db.prepare('DELETE FROM kp_scholar WHERE scholar_key = ?').bind(key),
-    db.prepare('DELETE FROM scholar_school WHERE scholar_key = ?').bind(key),
+    db.prepare('DELETE FROM kp_scholar WHERE scholar_discipline = ? AND scholar_key = ?').bind(tenant.discipline, key),
+    db.prepare('DELETE FROM scholar_school WHERE scholar_discipline = ? AND scholar_key = ?').bind(tenant.discipline, key),
     db.prepare('DELETE FROM scholar WHERE key = ? AND discipline = ?').bind(key, tenant.discipline),
   ]);
   return { ok: true };

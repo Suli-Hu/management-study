@@ -121,7 +121,8 @@ console.log(`  ✓ ${disciplines.length} disciplines / ${schools.length} schools
 console.log('→ Cross-reference check...');
 
 const schoolKeys = new Set(schools.map((s) => s.key));
-const scholarKeys = new Set(scholars.map((s) => s.key));
+// v0.6.8: scholar 复合 PK (discipline, key) — 用 `${disc}:${key}` 字符串作 Set 元素
+const scholarKeysComposite = new Set(scholars.map((s) => `${s.discipline}:${s.key}`));
 const kpIds = new Set(kps.map((k) => k.id));
 
 const errors: string[] = [];
@@ -130,8 +131,11 @@ for (const kp of kps) {
   for (const sk of kp.schools) {
     if (!schoolKeys.has(sk)) errors.push(`KP ${kp.id} references missing school "${sk}"`);
   }
+  // KP 引用的 scholar 必在同 discipline（语义约定 — 学科隔离）
   for (const sc of kp.scholars) {
-    if (!scholarKeys.has(sc)) errors.push(`KP ${kp.id} references missing scholar "${sc}"`);
+    if (!scholarKeysComposite.has(`${kp.discipline}:${sc}`)) {
+      errors.push(`KP ${kp.id} references missing scholar "${sc}" in discipline "${kp.discipline}"`);
+    }
   }
 }
 for (const school of schools) {
@@ -242,9 +246,10 @@ sqlLines.push('DELETE FROM scholar_school;');
 sqlLines.push('DELETE FROM view;');
 sqlLines.push('');
 
-/** 生成 ON CONFLICT DO UPDATE SET 子句（除 key 列外全部 overwrite） */
-function updateSet(cols: string[], keyCol: string): string {
-  return cols.filter((c) => c !== keyCol).map((c) => `${c}=excluded.${c}`).join(', ');
+/** 生成 ON CONFLICT DO UPDATE SET 子句（PK 列外全部 overwrite） */
+function updateSet(cols: string[], keyCols: string | string[]): string {
+  const keys = new Set(Array.isArray(keyCols) ? keyCols : [keyCols]);
+  return cols.filter((c) => !keys.has(c)).map((c) => `${c}=excluded.${c}`).join(', ');
 }
 
 // === Disciplines (upsert) ===
@@ -287,13 +292,14 @@ const scholarCols = [
   'nobel_year','nobel_detail','created_at','updated_at',
 ];
 for (const sc of scholars) {
+  // v0.6.8: ON CONFLICT 改为复合 PK (discipline, key)
   sqlLines.push(
     `INSERT INTO scholar (${scholarCols.join(', ')}) VALUES (` +
     `${q(sc.key)}, ${q(sc.discipline)}, ${q(sc.name.zh)}, ${q(sc.name.en)}, ${q(sc.name.ja)}, ` +
     `${q(sc.contribution.zh)}, ${q(sc.contribution.ja)}, ${q(sc.lifespan)}, ${q(sc.institution)}, ` +
     `${q(sc.born)}, ${q(sc.died)}, ${q(sc.nationality)}, ${q(sc.flag)}, ${q(sc.origin)}, ${q(sc.field)}, ${q('')}, ${jq(sc.tags ?? [])}, ` +
     `${q(sc.nobel?.year)}, ${q(sc.nobel?.detail)}, ${q(sc.createdAt)}, ${q(sc.updatedAt)}) ` +
-    `ON CONFLICT(key) DO UPDATE SET ${updateSet(scholarCols, 'key')};`
+    `ON CONFLICT(discipline, key) DO UPDATE SET ${updateSet(scholarCols, ['discipline', 'key'])};`
   );
 }
 sqlLines.push('');
@@ -305,10 +311,12 @@ sqlLines.push('');
 sqlLines.push('-- Orphan cleanup: discipline / school / scholar');
 const discKeysCSV = disciplines.map((d) => q(d.key)).join(',') || "''";
 const schoolKeysCSV = schools.map((s) => q(s.key)).join(',') || "''";
-const scholarKeysCSV = scholars.map((s) => q(s.key)).join(',') || "''";
 sqlLines.push(`DELETE FROM discipline WHERE key NOT IN (${discKeysCSV});`);
 sqlLines.push(`DELETE FROM school WHERE key NOT IN (${schoolKeysCSV});`);
-sqlLines.push(`DELETE FROM scholar WHERE key NOT IN (${scholarKeysCSV});`);
+// v0.6.8: scholar 复合 PK — 用 (discipline, key) tuple 列表
+const scholarTuplesCSV =
+  scholars.map((s) => `(${q(s.discipline)}, ${q(s.key)})`).join(',') || `('','')`;
+sqlLines.push(`DELETE FROM scholar WHERE (discipline, key) NOT IN (VALUES ${scholarTuplesCSV});`);
 sqlLines.push('');
 
 // === Scholar ↔ School（v0.4.17：补 V1→V2 迁移漏掉的两路数据源） ===
@@ -322,40 +330,47 @@ sqlLines.push('');
 //          schools[] 是真源，path 2/3 跳过派生，避免「我清空了还冒出来」。
 //          legacy（schoolsExplicit=false 默认）保留三路并集，不破坏历史 fallback。
 sqlLines.push('-- scholar_school');
+// v0.6.8: scholar 复合 PK — emitted set 与 explicit set 都按 (discipline, key) 区分
 const scholarSchoolEmitted = new Set<string>();
 const explicitScholars = new Set<string>(
-  scholars.filter((sc) => sc.schoolsExplicit).map((sc) => sc.key),
+  scholars.filter((sc) => sc.schoolsExplicit).map((sc) => `${sc.discipline}:${sc.key}`),
 );
 // 1) 学者声明优先（保留 schools[] 的 position 语义）
 for (const sc of scholars) {
   sc.schools.forEach((sk, i) => {
     if (!schoolKeys.has(sk)) return;
-    const k = `${sc.key}|${sk}`;
+    const k = `${sc.discipline}:${sc.key}|${sk}`;
     if (scholarSchoolEmitted.has(k)) return;
     scholarSchoolEmitted.add(k);
-    sqlLines.push(`INSERT INTO scholar_school (scholar_key, school_key, position) VALUES (${q(sc.key)}, ${q(sk)}, ${i});`);
+    sqlLines.push(
+      `INSERT INTO scholar_school (scholar_discipline, scholar_key, school_key, position) ` +
+      `VALUES (${q(sc.discipline)}, ${q(sc.key)}, ${q(sk)}, ${i});`,
+    );
   });
 }
-// 2+3) KP 反向派生（position=1000 让学者声明排前，同 position 按 sc.key 字典序）
+// 2+3) KP 反向派生（position=1000 让学者声明排前）— scholar 与 KP 同 discipline
 const kpById = new Map(kps.map((k) => [k.id, k]));
-function emitDerivedScholarSchool(scKey: string, schoolKey: string) {
-  if (!scholarKeys.has(scKey) || !schoolKeys.has(schoolKey)) return;
-  if (explicitScholars.has(scKey)) return;   // v0.5.65: admin 已显式定夺，不再 backfill
-  const k = `${scKey}|${schoolKey}`;
+function emitDerivedScholarSchool(scDiscipline: string, scKey: string, schoolKey: string) {
+  if (!scholarKeysComposite.has(`${scDiscipline}:${scKey}`) || !schoolKeys.has(schoolKey)) return;
+  if (explicitScholars.has(`${scDiscipline}:${scKey}`)) return;   // v0.5.65: admin 已显式定夺，不再 backfill
+  const k = `${scDiscipline}:${scKey}|${schoolKey}`;
   if (scholarSchoolEmitted.has(k)) return;
   scholarSchoolEmitted.add(k);
-  sqlLines.push(`INSERT INTO scholar_school (scholar_key, school_key, position) VALUES (${q(scKey)}, ${q(schoolKey)}, 1000);`);
+  sqlLines.push(
+    `INSERT INTO scholar_school (scholar_discipline, scholar_key, school_key, position) ` +
+    `VALUES (${q(scDiscipline)}, ${q(scKey)}, ${q(schoolKey)}, 1000);`,
+  );
 }
 for (const school of schools) {
   for (const kpId of school.concepts) {
     const kp = kpById.get(kpId);
     if (!kp) continue;
-    for (const scKey of kp.scholars) emitDerivedScholarSchool(scKey, school.key);
+    for (const scKey of kp.scholars) emitDerivedScholarSchool(kp.discipline, scKey, school.key);
   }
 }
 for (const kp of kps) {
   for (const sk of kp.schools) {
-    for (const scKey of kp.scholars) emitDerivedScholarSchool(scKey, sk);
+    for (const scKey of kp.scholars) emitDerivedScholarSchool(kp.discipline, scKey, sk);
   }
 }
 sqlLines.push('');
@@ -431,36 +446,46 @@ sqlLines.push('');
 // v0.5.33: 优先用 scholar.kpsOrder（该学者拖动后保存的顺序）；
 // fallback：KP.scholars enumeration order（保留原行为）。
 // 两者合并去重，kpsOrder 优先，未列的 KP 拼到 1000+i 防被覆盖。
+// v0.6.8: scholar 复合 PK — kp_scholar 加 scholar_discipline 列（scholar 与 kp 必同 discipline）
 sqlLines.push('-- kp_scholar');
 const kpScholarEmitted = new Set<string>();
+// 按 (discipline, scholarKey) 复合 key 索引学者的 KP（同 key 跨学科是不同学者）
 const kpsByScholar = new Map<string, string[]>();
 for (const kp of kps) {
   for (const scKey of kp.scholars) {
-    if (!scholarKeys.has(scKey)) continue;
-    const arr = kpsByScholar.get(scKey) ?? [];
+    if (!scholarKeysComposite.has(`${kp.discipline}:${scKey}`)) continue;
+    const compositeKey = `${kp.discipline}:${scKey}`;
+    const arr = kpsByScholar.get(compositeKey) ?? [];
     arr.push(kp.id);
-    kpsByScholar.set(scKey, arr);
+    kpsByScholar.set(compositeKey, arr);
   }
 }
 for (const scholar of scholars) {
-  const ownKps = new Set(kpsByScholar.get(scholar.key) ?? []);
+  const compositeKey = `${scholar.discipline}:${scholar.key}`;
+  const ownKps = new Set(kpsByScholar.get(compositeKey) ?? []);
   // 1) kpsOrder 里且确实是该学者 KP 的，按数组顺序拿前段
   scholar.kpsOrder.forEach((kpId, position) => {
     if (!ownKps.has(kpId)) return;
-    const k = `${kpId}|${scholar.key}`;
+    const k = `${kpId}|${compositeKey}`;
     if (kpScholarEmitted.has(k)) return;
     kpScholarEmitted.add(k);
-    sqlLines.push(`INSERT INTO kp_scholar (kp_id, scholar_key, position) VALUES (${q(kpId)}, ${q(scholar.key)}, ${position});`);
+    sqlLines.push(
+      `INSERT INTO kp_scholar (kp_id, scholar_discipline, scholar_key, position) ` +
+      `VALUES (${q(kpId)}, ${q(scholar.discipline)}, ${q(scholar.key)}, ${position});`,
+    );
   });
 }
 // 2) 走 KP.scholars 兜底剩下没出过的（含没 kpsOrder 的学者全部 KP）
 for (const kp of kps) {
   kp.scholars.forEach((scKey, i) => {
-    if (!scholarKeys.has(scKey)) return;
-    const k = `${kp.id}|${scKey}`;
+    if (!scholarKeysComposite.has(`${kp.discipline}:${scKey}`)) return;
+    const k = `${kp.id}|${kp.discipline}:${scKey}`;
     if (kpScholarEmitted.has(k)) return;
     kpScholarEmitted.add(k);
-    sqlLines.push(`INSERT INTO kp_scholar (kp_id, scholar_key, position) VALUES (${q(kp.id)}, ${q(scKey)}, ${1000 + i});`);
+    sqlLines.push(
+      `INSERT INTO kp_scholar (kp_id, scholar_discipline, scholar_key, position) ` +
+      `VALUES (${q(kp.id)}, ${q(kp.discipline)}, ${q(scKey)}, ${1000 + i});`,
+    );
   });
 }
 sqlLines.push('');
@@ -493,7 +518,66 @@ mkdirSync(OUT_DIR, { recursive: true });
 const outputs: Array<{ name: string; path: string; sizeKb: string; lines: number }> = [];
 let totalLines = 0;
 let totalKb = 0;
+
+// v0.6.16: 02_kp shard 按 ~500KB 切多个 02_kp_NNN.sql。
+//   背景：marketing 老师推 KP 量增加后，单个 02_kp.sql 涨到 1.9MB，超 D1 单次
+//   batch 上限 + 本地 miniflare workerd ECONNRESET。切片让每个文件独立 apply。
+//   命名 02_kp_NNN（3 位 zero-pad）保证字典序 = 数字序。
+const KP_SHARD_MAX_BYTES = 500_000;
+
+function splitKpShard(lines: string[]): Array<{ name: string; content: string }> {
+  // 头部 = 自动生成注释段（前缀 -- 或空行，直到第一行真 SQL）
+  let headerEnd = 0;
+  for (let i = 0; i < lines.length; i++) {
+    const t = lines[i].trim();
+    if (t.startsWith('--') || t === '') continue;
+    headerEnd = i;
+    break;
+  }
+  const header = lines.slice(0, headerEnd);
+  const body = lines.slice(headerEnd);
+
+  const shards: string[][] = [];
+  let cur: string[] = [];
+  let curBytes = 0;
+  for (const line of body) {
+    const lb = line.length + 1; // +1 for \n
+    if (curBytes + lb > KP_SHARD_MAX_BYTES && cur.length > 0) {
+      shards.push(cur); cur = []; curBytes = 0;
+    }
+    cur.push(line); curBytes += lb;
+  }
+  if (cur.length > 0) shards.push(cur);
+
+  return shards.map((shardLines, i) => {
+    const idx = String(i + 1).padStart(3, '0');
+    const total = String(shards.length).padStart(3, '0');
+    const content = [
+      ...header,
+      `-- Shard ${idx}/${total} (${shardLines.length} lines)`,
+      '',
+      ...shardLines,
+    ].join('\n') + '\n';
+    return { name: `02_kp_${idx}`, content };
+  });
+}
+
 for (const [name, lines] of Object.entries(sections)) {
+  if (name === '02_kp') {
+    // 切片写出多个 02_kp_NNN.sql；同时清理可能残留的旧 02_kp.sql
+    const legacy = join(OUT_DIR, '02_kp.sql');
+    if (existsSync(legacy)) writeFileSync(legacy, '-- replaced by 02_kp_NNN.sql shards (v0.6.16)\n', 'utf-8');
+    const shards = splitKpShard(lines);
+    for (const { name: shardName, content } of shards) {
+      const path = join(OUT_DIR, `${shardName}.sql`);
+      writeFileSync(path, content, 'utf-8');
+      const sizeKb = content.length / 1024;
+      const lc = content.split('\n').length;
+      outputs.push({ name: shardName, path, sizeKb: sizeKb.toFixed(1), lines: lc });
+      totalLines += lc; totalKb += sizeKb;
+    }
+    continue;
+  }
   const path = join(OUT_DIR, `${name}.sql`);
   const content = lines.join('\n') + '\n';
   writeFileSync(path, content, 'utf-8');

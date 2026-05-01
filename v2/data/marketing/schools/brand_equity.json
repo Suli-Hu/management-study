@@ -1,0 +1,24 @@
+{
+  "key": "brand_equity",
+  "discipline": "marketing",
+  "title": {
+    "zh": "品牌资产学派",
+    "ja": "ブランド・エクイティ学派",
+    "en": "Brand Equity School"
+  },
+  "era": "1991– brand 资产化时代",
+  "summary": {
+    "zh": "<strong>品牌资产学派</strong>把 brand 当作企业<strong>可测·可管理的资产</strong>。锚点 <strong>David Aaker</strong>（1991『Managing Brand Equity』5 维度）和 <strong>Kevin Keller</strong>（1993『Conceptualizing, Measuring, and Managing Customer-Based Brand Equity』in <em>Journal of Marketing</em>·CBBE 模型）。日本研究 <strong>恩藏直人</strong>（早稲田·brand 战略实务）。<br><br><strong>核心范式</strong>：brand 不是 logo / 名字 / slogan·是消费者心智中的<strong>资产存量</strong>·企业能持续投资构建·可估值与管理。<br><br><strong>核心内容</strong>：① <strong>Aaker brand equity 5 维度</strong>：brand awareness·perceived quality·brand loyalty·brand associations·other proprietary assets ② <strong>Keller CBBE Pyramid</strong>（4 层：identity·meaning·response·resonance）③ <strong>brand identity vs image</strong> ④ <strong>brand portfolio</strong>（house of brands vs branded house）⑤ <strong>brand 拡張</strong>（Aaker-Keller 1990）⑥ <strong>brand 危机管理</strong> ⑦ <strong>co-branding</strong>·二次的连想 ⑧ <strong>brand mantra</strong>·brand value chain ⑨ <strong>luxury branding</strong>。<br><br><strong>跨学派关系</strong>：与 <code>cct_interpretive</code> 形成 brand 论双轨——后者讲 brand 意味·这里讲 brand 资产。与 <code>imc_communication</code> 邻近·brand building 通过 communication 实现。<br><br><strong>局限</strong>：财务估值方法（Interbrand 等）有争议·brand equity 测量在不同 culture 下不一致·数字时代 brand 边界模糊。",
+    "ja": "<strong>ブランド・エクイティ学派</strong>はブランドを企業の<strong>測定可能·管理可能な資産</strong>として捉える。アンカーは <strong>David Aaker</strong>（1991）と <strong>Kevin Keller</strong>（1993·CBBE モデル）。日本研究は <strong>恩藏直人</strong>（早稲田）。<br><br><strong>核心パラダイム</strong>：ブランドはロゴ / 名前 / スローガンではなく、消費者の心の中の<strong>資産ストック</strong>であり、金融資産のように評価·管理できる。<br><br><strong>主要内容</strong>：① <strong>Aaker ブランド・エクイティ 5 次元</strong> ② <strong>Keller CBBE ピラミッド</strong>（4 層：identity·meaning·response·resonance）③ <strong>identity vs image</strong> ④ <strong>ブランド・ポートフォリオ</strong> ⑤ <strong>ブランド拡張</strong>（Aaker-Keller 1990）⑥ <strong>ブランド危機管理</strong> ⑦ <strong>コ・ブランディング</strong>·二次的連想 ⑧ <strong>ブランド・マントラ</strong>·ブランド・バリュー・チェーン ⑨ <strong>ラグジュアリー・ブランディング</strong>。<br><br><strong>他派との関係</strong>：<code>cct_interpretive</code> と二軌。<code>imc_communication</code> と隣接。<br><br><strong>限界</strong>：財務評価方法（Interbrand 等）に論争·測定の文化間不一致·デジタル時代に境界曖昧化。"
+  },
+  "themeKey": "value_creation",
+  "tags": [
+    "Aaker",
+    "Keller",
+    "CBBE",
+    "brand portfolio"
+  ],
+  "concepts": [],
+  "createdAt": "2026-04-30T04:27:54.118Z",
+  "updatedAt": "2026-04-30T04:27:54.118Z"
+}

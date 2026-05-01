@@ -1,0 +1,40 @@
+{
+  "id": "m065",
+  "discipline": "marketing",
+  "schools": [
+    "relationship"
+  ],
+  "scholars": [
+    "berry"
+  ],
+  "year": "1991",
+  "title": {
+    "zh": "顾客忠诚阶梯·5 阶段",
+    "ja": "顧客ロイヤルティ・ラダー・5 段階",
+    "en": "Loyalty Ladder · 5 Stages"
+  },
+  "body": {
+    "zh": "<strong>Loyalty Ladder（顾客忠诚阶梯）</strong>是 relationship 学派的<strong>客户关系深度模型</strong>·把客户与 brand 的关系分为 5 个递进阶段。<br><br><strong>5 阶段</strong>：<br><br>① <strong>Suspect（潜在客户·候补）</strong>——可能成为客户的人<br>marketing 任务：lead generation·awareness<br><br>② <strong>Prospect（潜在客户·明确）</strong>——已表现兴趣的人<br>marketing 任务：nurturing·content·sales follow-up<br><br>③ <strong>Customer（客户）</strong>——首次购买<br>marketing 任务：onboarding·retention<br><br>④ <strong>Client（重复客户）</strong>——多次购买·忠诚度高<br>marketing 任务：cross-sell·up-sell·VIP·service<br><br>⑤ <strong>Advocate（拥护者）</strong>——主动推荐 brand 的客户<br>marketing 任务：amplify·rewards·community<br><br><strong>每阶段的 marketing 重心</strong>：<br>- 1-2：<strong>Acquisition</strong>·获客 marketing<br>- 3-4：<strong>Retention</strong>·留客 marketing<br>- 5：<strong>Advocacy</strong>·客户主动 marketing for you<br><br><strong>5 阶段成本经济学</strong>：<br>- 获取新客成本 vs 留住老客 = <strong>5-7 倍</strong>（Reichheld 经典发现）<br>- 把 Customer 升级到 Advocate·marketing ROI 最高<br>- Advocate 自带 word-of-mouth·相当于 free marketing<br><br><strong>marketing 战略启示</strong>：<br>① <strong>最大化 advocate 数量</strong>——而不是最大化 customer 数量<br>② <strong>每阶段不同 KPI</strong>——not 一刀切的「销售额」<br>③ <strong>customer journey 设计</strong>——每个 touchpoint 推动客户上升<br><br><strong>Reichheld 「Loyalty Effect」</strong>：增加 5% retention 可以增加 25-95% profit（与行业有关）·这是 relationship 学派的<strong>核心数据支持</strong>。<br><br><strong>跨学派关系</strong>：① 与 CRM 的 4 步战略（Identify·Differentiate·Interact·Customize）对应 ② 与 NPS 的 3 类客户（Promoter·Passive·Detractor）对应——Promoter ≈ Advocate ③ 与 brand_equity 的 brand resonance（CBBE pyramid 顶层）对应。",
+    "ja": "<strong>Loyalty Ladder（顧客ロイヤルティ・ラダー）</strong>は relationship 学派の<strong>顧客関係深度モデル</strong>·顧客とブランドの関係を 5 段階に分類。<br><br><strong>5 段階</strong>：① Suspect（候補）② Prospect（明確）③ Customer（顧客）④ Client（反復顧客）⑤ Advocate（推奨者）<br><br><strong>各段階のマーケティング重心</strong>：1-2 Acquisition·3-4 Retention·5 Advocacy（顧客が能動的に marketing する）<br><br><strong>5 段階のコスト経済学</strong>：新規獲得コスト vs 既存維持 = <strong>5-7 倍</strong>（Reichheld 古典発見）·Customer を Advocate に昇格が ROI 最高·Advocate は word-of-mouth で free marketing。<br><br><strong>マーケティング戦略示唆</strong>：① advocate 最大化·customer 最大化ではない ② 各段階異 KPI ③ customer journey 設計<br><br><strong>Reichheld 「Loyalty Effect」</strong>：retention 5% 増で profit 25-95% 増·relationship 学派の<strong>核心データ支持</strong>。<br><br><strong>他派との関係</strong>：① CRM 4 段階戦略と対応 ② NPS 3 類顧客と対応·Promoter ≈ Advocate ③ brand_equity の brand resonance（CBBE 頂点）と対応。"
+  },
+  "tags": [
+    "loyalty ladder",
+    "Reichheld",
+    "Loyalty Effect"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "relationship 学派的客户阶梯模型·marketing journey 设计",
+      "限": "线性偏重·实际客户可能跳跃",
+      "例": "Tesla owner 80% 是 Advocate·教科书",
+      "应": "relationship 题·customer journey 题"
+    },
+    "ja": {
+      "限": "線形偏重·実際跳躍可能",
+      "例": "Tesla owner 80% が Advocate·教科書"
+    }
+  },
+  "createdAt": "2026-04-30T05:04:14.533Z",
+  "updatedAt": "2026-04-30T13:21:22.533Z"
+}

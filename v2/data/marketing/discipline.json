@@ -5,11 +5,103 @@
     "ja": "マーケティング",
     "en": "Marketing"
   },
-  "tagline": {
-    "zh": "🌱 即将上线"
-  },
+  "tagline": {},
   "tags": [],
-  "themes": [],
+  "themes": [
+    {
+      "key": "marketing_strategy",
+      "title": {
+        "zh": "战略与定位",
+        "ja": "戦略とポジショニング",
+        "en": "Strategy & Positioning"
+      },
+      "desc": {
+        "zh": "marketing 的战略层与定位决策，回答「如何选择市场·如何在选定市场中赢」。包含管理学派（Kotler·STP·4P·PLC·成长战略）、营销概念派（Levitt·Drucker·5 志向·マーケティング 1.0→5.0）、市场战略派（George Day·Porter 5 forces·Christensen 破壊·Ansoff 多角化）。",
+        "ja": "マーケティングの戦略層とポジショニング決定であり、「いかに市場を選択し·選定された市場でいかに勝つか」に答える。マネジリアル学派（Kotler·STP·4P·PLC·成長戦略）·マーケティング・コンセプト学派（Levitt·Drucker·5 志向·マーケティング 1.0→5.0）·戦略マーケティング学派（George Day·Porter 5 forces·Christensen 破壊·Ansoff 多角化）を含む。"
+      },
+      "tags": [
+        "战略",
+        "定位",
+        "STP",
+        "4P"
+      ],
+      "schools": []
+    },
+    {
+      "key": "consumer_market",
+      "title": {
+        "zh": "消费者与市场",
+        "ja": "消費者と市場",
+        "en": "Consumer & Market"
+      },
+      "desc": {
+        "zh": "理解市场内部结构与消费者行为的学问群，回答「市场内部是什么样子·消费者怎样决策」。包含消费者行为派（Howard-Sheth 模型·S-O-R·ELM·信息处理）、消费者文化理论派（CCT·解釈学派·石井淳蔵·文化意味与身份）、生产财营销派（Webster·Wind·B2B 组织购买）。",
+        "ja": "市場の内部構造と消費者行動を理解する学問群であり、「市場の内部はどのような姿か·消費者はいかに意思決定するか」に答える。消費者行動学派（Howard-Sheth モデル·S-O-R·ELM·情報処理）·消費者文化理論学派（CCT·解釈学派·石井淳蔵·文化的意味とアイデンティティ）·生産財マーケティング学派（Webster·Wind·B2B 組織購買）を含む。"
+      },
+      "tags": [
+        "消费者行为",
+        "B2B",
+        "CCT"
+      ],
+      "schools": []
+    },
+    {
+      "key": "value_creation",
+      "title": {
+        "zh": "价值创造",
+        "ja": "価値創造",
+        "en": "Value Creation"
+      },
+      "desc": {
+        "zh": "创造可交换价值的两种主要途径——通过 brand 的资产化、通过 channel 的流通设计。包含品牌资产学派（Aaker 5 维·Keller CBBE pyramid·brand portfolio·brand crisis）、流通学派（Stern·El-Ansary·若林靖永·日本流通制度学派·流通系列化·建値制崩壊·VMS·延期投機理論）。",
+        "ja": "交換可能な価値を創造する 2 つの主要経路——ブランドの資産化と流通チャネル設計を通じて。ブランド・エクイティ学派（Aaker 5 次元·Keller CBBE pyramid·ブランド・ポートフォリオ·ブランド危機）·流通学派（Stern·El-Ansary·若林靖永·日本流通制度学派·流通系列化·建値制崩壊·VMS·延期投機理論）を含む。"
+      },
+      "tags": [
+        "品牌",
+        "流通",
+        "VMS"
+      ],
+      "schools": []
+    },
+    {
+      "key": "value_communication",
+      "title": {
+        "zh": "价值传达",
+        "ja": "価値伝達",
+        "en": "Value Communication"
+      },
+      "desc": {
+        "zh": "将价值传达给市场的整合方法，回答「如何让市场知道并产生反应」。包含统合营销传播学派（IMC·Schultz·恩藏直人·**日本独有态度形成模型谱系**：AIDA→AIDMA→AISAS→SIPS→DECAX→ZMOT）、数字营销学派（Anderson 长尾·platform 经济·algorithmic·SaaS·programmatic）。",
+        "ja": "市場に価値を伝達する統合的方法であり、「いかに市場に知らせ反応を引き出すか」に答える。統合マーケティング・コミュニケーション学派（IMC·Schultz·恩藏直人·**日本独自の態度形成モデル系譜**：AIDA→AIDMA→AISAS→SIPS→DECAX→ZMOT）·デジタル・マーケティング学派（Anderson ロングテール·プラットフォーム経済·アルゴリズム·SaaS·プログラマティック）を含む。"
+      },
+      "tags": [
+        "IMC",
+        "广告",
+        "数字营销",
+        "AISAS"
+      ],
+      "schools": []
+    },
+    {
+      "key": "growth_relationship",
+      "title": {
+        "zh": "成长与关系",
+        "ja": "成長と関係",
+        "en": "Growth & Relationship"
+      },
+      "desc": {
+        "zh": "长期成长与顾客关系建设——marketing 的「长尾」维度。包含关系营销学派（Berry·Gummesson·嶋口充輝·和田充夫·CRM·CLV·NPS·MAC）、服务主导逻辑（SDL·Vargo-Lusch 范式革命·co-creation·value-in-use）、市场创造学派（Sarasvathy·栗木契·effectuation）、社会营销学派（CSR·コンシューマリズム·Kennedy 4 权利·BOP·green marketing）。",
+        "ja": "長期的成長と顧客関係構築——マーケティングの「ロングテール」次元。リレーションシップ・マーケティング学派（Berry·Gummesson·嶋口充輝·和田充夫·CRM·CLV·NPS·MAC）·サービス主導ロジック（SDL·Vargo-Lusch パラダイム革命·co-creation·value-in-use）·市場創造学派（Sarasvathy·栗木契·エフェクチュエーション）·ソーシャル・マーケティング学派（CSR·コンシューマリズム·Kennedy 4 つの権利·BOP·グリーン・マーケティング）を含む。"
+      },
+      "tags": [
+        "关系营销",
+        "CRM",
+        "SDL",
+        "CSR"
+      ],
+      "schools": []
+    }
+  ],
   "createdAt": "2026-04-27T11:21:24.729Z",
-  "updatedAt": "2026-04-28T09:16:12.614Z"
+  "updatedAt": "2026-04-30T09:14:29.145Z"
 }

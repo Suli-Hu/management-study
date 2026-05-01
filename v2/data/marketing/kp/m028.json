@@ -1,0 +1,40 @@
+{
+  "id": "m028",
+  "discipline": "marketing",
+  "schools": [
+    "consumer_behavior"
+  ],
+  "scholars": [
+    "kahneman"
+  ],
+  "year": "1979",
+  "title": {
+    "zh": "前景理论·Kahneman 1979",
+    "ja": "プロスペクト理論・Kahneman 1979",
+    "en": "Prospect Theory"
+  },
+  "body": {
+    "zh": "<strong>Prospect Theory（プロスペクト理論·前景理论）</strong>是行为经济学奠基性理论·1979 年 Kahneman & Tversky 在 <em>Econometrica</em> 发表·获 Kahneman 2002 年诺贝尔经济学奖。彻底改写了消费者决策理论。<br><br><strong>3 大发现</strong>（颠覆传统经济学的「理性人」假设）：<br><br>① <strong>价值函数 S 形（Value Function）</strong><br>- 不是从「<strong>绝对财富</strong>」感受效用·而是从「<strong>相对参考点</strong>」感受 gain / loss<br>- 收益区凸（diminishing sensitivity）·损失区凹·拐点在参考点<br>- 例：从 100 到 200 的快乐 < 从 0 到 100·因 diminishing<br><br>② <strong>损失厌恶（Loss Aversion）</strong>——失去 ¥100 的痛苦 ≈ 得到 ¥250 的快乐（约 2.5:1）<br>- 比起赚到·人更怕亏掉·marketing 启示：「不买就亏」的话术 > 「买了赚」<br>- 例：保险·延保·90 天免费试用 (anchoring on loss aversion)<br><br>③ <strong>概率扭曲（Probability Weighting）</strong>——人对小概率事件<strong>高估</strong>·对大概率事件<strong>低估</strong><br>- 例：高估彩票中奖率（实际百万分之一·感受像千分之一）·低估事故率（实际 0.1%·感受像零）<br>- marketing 启示：低概率高奖励的促销有效（lottery·sweepstakes）<br><br><strong>marketing 实务应用</strong>：<br>① <strong>定价</strong>——参考点设计（原价 ¥1000 现价 ¥800·gain frame）vs（特价 ¥800·缺少 frame）<br>② <strong>促销</strong>——「再不抢就没了」（loss frame）> 「快来抢」<br>③ <strong>保证</strong>——免费退货是 loss aversion 的对应物<br>④ <strong>会员</strong>——「失去尊享身份」是高 loss aversion 触发器<br><br><strong>跨学派关系</strong>：与 ELM 一起构成行为派 marketing 的两大支柱·与 Bettman 信息处理范式互补。",
+    "ja": "<strong>プロスペクト理論</strong>は行動経済学基礎理論·1979 年 Kahneman & Tversky <em>Econometrica</em> で発表·Kahneman 2002 年ノーベル経済学賞。消費者意思決定理論を根本的に書き換えた。<br><br><strong>3 大発見</strong>（伝統経済学「合理人」前提を覆す）：<br><br>① <strong>価値関数 S 形</strong><br>- 「<strong>絶対財富</strong>」ではなく「<strong>相対参照点</strong>」から gain / loss を感じる<br>- 利得区凸（diminishing sensitivity）·損失区凹·拐点は参照点<br>- 例：100→200 の快楽 < 0→100·diminishing<br><br>② <strong>損失回避（Loss Aversion）</strong>·¥100 損失痛苦 ≈ ¥250 利得快楽（約 2.5:1）<br>- 利得より損失を恐れる·マーケティング示唆：「買わないと損」 > 「買えば得」<br>- 例：保険·延長保証·90 日無料試用<br><br>③ <strong>確率歪み</strong>·小確率を<strong>過大評価</strong>·大確率を<strong>過小評価</strong><br>- 例：宝くじ当選率を過大（実際 100 万分の 1·感じは 1000 分の 1）·事故率過小評価<br>- マーケティング示唆：低確率高報酬促銷が有効<br><br><strong>マーケティング実務応用</strong>：<br>① 価格·参照点設計（元価 ¥1000 → ¥800·gain frame）<br>② プロモーション·「今すぐ取らないと無くなる」（loss frame）<br>③ 保証·無料返品は loss aversion 対応<br>④ 会員·「尊享身分喪失」は高 loss aversion トリガー<br><br><strong>他派との関係</strong>：ELM と並ぶ行動派マーケティング 2 大支柱·Bettman 情報処理パラダイムと相補。"
+  },
+  "tags": [
+    "Prospect Theory",
+    "Kahneman",
+    "Loss Aversion"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "行为经济学的核心理论·marketing 借入解释非理性消费者",
+      "限": "Western culture 数据为主·跨文化适用性争议",
+      "例": "超市「特价 ¥800（原 ¥1000）」激活 gain frame·销量更高",
+      "应": "marketing 数理题·東大数理派必引"
+    },
+    "ja": {
+      "限": "西洋文化データ偏重·異文化適用論争",
+      "例": "スーパー「特価 ¥800（元 ¥1000）」が gain frame 起動·売上向上"
+    }
+  },
+  "createdAt": "2026-04-30T04:51:44.379Z",
+  "updatedAt": "2026-04-30T13:19:35.370Z"
+}

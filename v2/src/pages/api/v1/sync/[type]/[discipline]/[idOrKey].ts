@@ -15,7 +15,7 @@ import type { APIRoute } from 'astro';
 import { syncResource, deleteResource, type ResourceType } from '~/lib/sync-resource';
 
 function isResourceType(s: unknown): s is ResourceType {
-  return s === 'kp' || s === 'school' || s === 'scholar' || s === 'view';
+  return s === 'kp' || s === 'school' || s === 'scholar' || s === 'view' || s === 'discipline';
 }
 
 function json<T>(status: number, body: T): Response {
@@ -55,10 +55,11 @@ export const POST: APIRoute = async ({ params, locals }) => {
 
   const appUrl = (env as { APP_URL?: string }).APP_URL ?? 'https://management-study-v2.pages.dev';
   const publicUrl =
-    type === 'kp'      ? `${appUrl}/${discipline}/kp/${idOrKey}` :
-    type === 'school'  ? `${appUrl}/${discipline}/${idOrKey}` :
-    type === 'scholar' ? `${appUrl}/${discipline}/scholars/${idOrKey}` :
-                          `${appUrl}/${discipline}`;
+    type === 'kp'         ? `${appUrl}/${discipline}/kp/${idOrKey}` :
+    type === 'school'     ? `${appUrl}/${discipline}/${idOrKey}` :
+    type === 'scholar'    ? `${appUrl}/${discipline}/scholars/${idOrKey}` :
+    type === 'discipline' ? `${appUrl}/${discipline}` :
+                             `${appUrl}/${discipline}`;
 
   return json(200, {
     ...result,

@@ -1,0 +1,41 @@
+{
+  "id": "m159",
+  "discipline": "marketing",
+  "schools": [
+    "brand_equity",
+    "imc_communication"
+  ],
+  "scholars": [
+    "keller"
+  ],
+  "year": "2003",
+  "title": {
+    "zh": "二次品牌联想·8 大借力来源",
+    "ja": "二次的連想・8 大借力源",
+    "en": "Secondary Brand Associations"
+  },
+  "body": {
+    "zh": "<strong>Secondary Brand Associations（二次的连想）</strong>是 Keller 提出的<strong>brand 借力策略</strong>——通过把 brand 与其他<strong>已有 association 的实体</strong>关联·快速借力 brand equity。<br><br><strong>定义</strong>：brand 不是直接拥有 association·而是通过 link 到其他<strong>有强 association 的 entity</strong>·间接获得 association。<br><br><strong>8 大二次连想来源</strong>：<br>① <strong>Company（企业）</strong>——子 brand 借母 brand（如 Toyota Camry 借 Toyota·Apple Watch 借 Apple）<br>② <strong>Country / Region（国家·地区）</strong>——「Made in Japan / Italy / Germany」加成<br>③ <strong>Channel（流通）</strong>——在 high-end retailer 卖（Whole Foods·Nordstrom 加成）<br>④ <strong>Co-Brand（联合 brand）</strong>——Beats by Dre × Apple（详见 m040）<br>⑤ <strong>Endorser（代言人）</strong>——名人 endorsement（详见 m059）<br>⑥ <strong>Event（事件）</strong>——sponsor Olympics·World Cup<br>⑦ <strong>Cause（公益）</strong>——partner with NGO·cause marketing<br>⑧ <strong>Other Brand（其他 brand）</strong>——ingredient brand（Intel Inside·Gore-Tex）<br><br><strong>marketing 战略</strong>：<br>① <strong>新 brand</strong>——靠二次连想快速建立 association（缺乏 own equity）<br>② <strong>brand 危机</strong>——撇清与受损二次 entity 的连想<br>③ <strong>地理拡張</strong>——选择本地认可的二次 entity<br><br><strong>典型例</strong>：<br>① Tesla 早期借 Elon Musk（个人 brand）+ SpaceX（创新形象）<br>② Nike + Michael Jordan（Air Jordan 系列·跨数十年）<br>③ Made in Japan 加成（汽车·电子·美容）<br>④ Patagonia + 1% for the Planet（cause）<br><br><strong>风险</strong>：① 二次 entity 受损会连累 brand（明星丑闻·国家形象问题）② 借力过多失去 own brand identity<br><br><strong>跨学派关系</strong>：与 IMC（celebrity endorsement·m059）·co-branding（m040）·brand crisis（m039）一体。",
+    "ja": "<strong>Secondary Brand Associations（二次的連想）</strong>は Keller 提唱の<strong>ブランド借力戦略</strong>——他の<strong>強連想を持つエンティティ</strong>とリンクし·速くブランド・エクイティを借りる。<br><br><strong>定義</strong>：ブランドは直接連想を持つのではなく·他の<strong>強連想エンティティ</strong>へのリンクを通じて·間接的に連想を獲得。<br><br><strong>8 大二次連想源</strong>：① Company ② Country / Region（「Made in Japan」加成）③ Channel（Whole Foods·Nordstrom）④ Co-Brand（Beats × Apple·m040）⑤ Endorser（celebrity·m059）⑥ Event（Olympics·World Cup スポンサー）⑦ Cause（NGO partner·cause marketing）⑧ Other Brand（Intel Inside·Gore-Tex）<br><br><strong>マーケティング戦略</strong>：① 新ブランドは二次連想で速く構築 ② ブランド危機は受損二次エンティティ連想撇清 ③ 地理拡張は現地認可二次エンティティ<br><br><strong>典型例</strong>：① Tesla（Musk + SpaceX）② Nike + Michael Jordan ③ Made in Japan ④ Patagonia + 1% for the Planet<br><br><strong>リスク</strong>：① 二次エンティティ受損→ブランド波及（明星スキャンダル·国家イメージ）② 借力過剰で own brand identity 喪失<br><br><strong>他派との関係</strong>：IMC（celebrity endorsement·m059）·co-branding（m040）·brand crisis（m039）一体。"
+  },
+  "tags": [
+    "secondary associations",
+    "Keller",
+    "Made in Japan"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "brand 借力战略·新 brand 快速建 equity",
+      "限": "二次 entity 风险传染·依赖过度",
+      "例": "Tesla·Nike·Patagonia 是教科书",
+      "应": "Kotler 10 章·brand 战略题"
+    },
+    "ja": {
+      "限": "二次エンティティ・リスク伝染·依存過剰",
+      "例": "Tesla·Nike·Patagonia 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T09:26:10.871Z",
+  "updatedAt": "2026-04-30T13:24:58.846Z"
+}

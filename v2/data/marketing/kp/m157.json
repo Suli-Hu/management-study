@@ -1,0 +1,41 @@
+{
+  "id": "m157",
+  "discipline": "marketing",
+  "schools": [
+    "brand_equity"
+  ],
+  "scholars": [
+    "keller"
+  ],
+  "year": "2003",
+  "title": {
+    "zh": "品牌咒语·Brand Mantra·Keller 提出",
+    "ja": "ブランド・マントラ・Keller 提唱",
+    "en": "Brand Mantra"
+  },
+  "body": {
+    "zh": "<strong>Brand Mantra（ブランド・マントラ）</strong>是 Keller 提出的 brand 内部沟通工具·brand 的<strong>3 字 / 5 字内核表达</strong>·简洁到员工和合作伙伴都能记住。<br><br><strong>3 大特征</strong>：① <strong>Communicate</strong>——明确 brand 是什么·不是什么 ② <strong>Simplify</strong>——3-5 字·易记 ③ <strong>Inspire</strong>——员工和合作伙伴感到鼓舞<br><br><strong>典型 brand mantra</strong>：<br>① Nike：「Authentic Athletic Performance」<br>② Disney：「Fun Family Entertainment」<br>③ McDonald's：「Food Folks Fun」<br>④ Apple：「Think Different」<br>⑤ Volvo：「Safe Family Cars」<br>⑥ BMW：「The Ultimate Driving Machine」<br>⑦ UNIQLO：「LifeWear」<br>⑧ Patagonia：「Built to Last·Built for the Planet」<br><br><strong>vs Tagline / Slogan</strong>：<br>- Tagline / Slogan：对外·marketing communication<br>- Brand Mantra：对内·内部 brand 战略<br>- 有时一致（如 Nike「Just Do It」≈ tagline·brand mantra「Authentic Athletic Performance」是内核）<br><br><strong>marketing 实务</strong>：① brand brief 第一句话 ② 员工 onboarding 反复强调 ③ 任何决策的「sniff test」（与 mantra 一致吗？）<br><br><strong>跨学派关系</strong>：与 brand_equity（Keller CBBE 第 2 层 meaning）·brand strategy·internal marketing 一致。",
+    "ja": "<strong>Brand Mantra（ブランド・マントラ）</strong>は Keller 提唱のブランド内部コミュニケーション・ツール·ブランドの<strong>3-5 字内核表現</strong>·従業員·協力者が覚えられるほど簡潔。<br><br><strong>3 大特徴</strong>：① Communicate（明確化）② Simplify（3-5 字·覚え易い）③ Inspire（鼓舞）<br><br><strong>典型 brand mantra</strong>：① Nike「Authentic Athletic Performance」② Disney「Fun Family Entertainment」③ McDonald's「Food Folks Fun」④ Apple「Think Different」⑤ Volvo「Safe Family Cars」⑥ BMW「The Ultimate Driving Machine」⑦ UNIQLO「LifeWear」⑧ Patagonia「Built to Last·Built for the Planet」<br><br><strong>vs Tagline / Slogan</strong>：Tagline は対外·マーケティング・コミュニケーション·Brand Mantra は対内·内部ブランド戦略<br><br><strong>マーケティング実務</strong>：① brand brief 第一文 ② 従業員 onboarding 反復強調 ③ 全意思決定の「sniff test」（mantra 一致？）<br><br><strong>他派との関係</strong>：brand_equity（Keller CBBE 第 2 層 meaning）·brand strategy·internal marketing 一致。"
+  },
+  "tags": [
+    "brand mantra",
+    "Keller",
+    "Nike",
+    "Disney"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "brand 战略的内部内核·员工对齐工具",
+      "限": "过简化·难复杂 brand 表达",
+      "例": "Nike·Disney·UNIQLO·Patagonia 是教科书",
+      "应": "Kotler 10 章·brand 题"
+    },
+    "ja": {
+      "限": "過簡化·複雑ブランド表現困難",
+      "例": "Nike·Disney·UNIQLO·Patagonia 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T09:26:06.711Z",
+  "updatedAt": "2026-04-30T13:24:54.001Z"
+}

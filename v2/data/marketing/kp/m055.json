@@ -1,0 +1,42 @@
+{
+  "id": "m055",
+  "discipline": "marketing",
+  "schools": [
+    "imc_communication",
+    "digital_marketing"
+  ],
+  "scholars": [
+    "schultz"
+  ],
+  "year": "2011",
+  "title": {
+    "zh": "SIPS·电通 SNS 时代模型",
+    "ja": "SIPS・電通の SNS 時代モデル",
+    "en": "SIPS Model"
+  },
+  "body": {
+    "zh": "<strong>SIPS（Sympathize-Identify-Participate-Share & Spread）</strong>是<strong>電通 2011 年提出</strong>的 SNS 时代 communication 模型·进一步扩展 AISAS·**反映 SNS 全面普及后的消费者行为**。<br><br><strong>4 阶段</strong>：<br>① <strong>S - Sympathize（共感）</strong>——消费者对 brand 信息产生情感共鸣<br>② <strong>I - Identify（确认）</strong>——确认信息·查证 brand 是否真值得<br>③ <strong>P - Participate（参加）</strong>——主动参与 brand 活动·UGC·community<br>④ <strong>S&S - Share & Spread（共享・扩散）</strong>——分享 + 扩散到自己的网络<br><br><strong>vs AISAS 的进化</strong>：<br>- AISAS 起点是「Attention」（被动接收）<br>- SIPS 起点是「Sympathize」（情感共鸣）<br>- 反映 SNS 时代消费者注意力极度碎片化·「打断式广告」失效·必须先建立情感连接<br><br><strong>SNS 时代核心特征</strong>：<br>① <strong>消费者信息源多元</strong>——朋友推荐·KOL·brand 自己·UGC·新闻·blog<br>② <strong>brand 与消费者距离消失</strong>——可以直接对话<br>③ <strong>brand 是 community 的中心</strong>——而非单方信息源<br>④ <strong>UGC 比 brand-generated content 更可信</strong><br><br><strong>marketing 实务应用</strong>：<br>① <strong>storytelling marketing</strong>——情感共鸣·而非功能宣传<br>② <strong>brand purpose</strong>——价值观吸引<br>③ <strong>brand community building</strong>——让消费者成为 community 一员<br>④ <strong>UGC campaign</strong>——比如 Coca-Cola Share-a-Coke·GoPro 用户视频<br><br><strong>典型案例</strong>：<br>① Patagonia「Don't buy this jacket」反消费广告——典型 SIPS 的 Sympathize<br>② Glossier 全部 brand building 通过 UGC + community<br>③ TikTok 上 viral 化的 brand challenges",
+    "ja": "<strong>SIPS（Sympathize-Identify-Participate-Share & Spread）</strong>は<strong>電通 2011 年提唱</strong>の SNS 時代コミュニケーション・モデル·AISAS をさらに拡張·**SNS 全面普及後の消費者行動を反映**。<br><br><strong>4 段階</strong>：① Sympathize（共感）② Identify（確認）③ Participate（参加）④ Share & Spread（共有・拡散）<br><br><strong>vs AISAS の進化</strong>：AISAS 起点は「Attention」（受動受信）·SIPS 起点は「Sympathize」（情緒共鳴）·SNS 時代の消費者注意力が極度断片化·「打断式広告」失効·情緒接続を先に築く必要。<br><br><strong>SNS 時代核心特徴</strong>：① 消費者情報源多元（友人·KOL·ブランド·UGC·ニュース·ブログ）② ブランドと消費者の距離消失·直接対話可 ③ ブランドはコミュニティの中心·単方情報源ではない ④ UGC が brand-generated content より信頼<br><br><strong>マーケティング実務応用</strong>：① ストーリーテリング·情緒共鳴 ② ブランド・パーパス·価値観吸引 ③ ブランド・コミュニティ構築 ④ UGC キャンペーン<br><br><strong>典型事例</strong>：① Patagonia「Don't buy this jacket」反消費広告——典型 SIPS の Sympathize ② Glossier·UGC + community ③ TikTok viral ブランド・チャレンジ"
+  },
+  "tags": [
+    "SIPS",
+    "電通",
+    "SNS",
+    "UGC"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "SNS 时代日本独有 communication 模型·AISAS 的进化",
+      "限": "实务测量难·SNS 算法变化快·模型滞后",
+      "例": "Patagonia·Glossier·TikTok challenges",
+      "应": "Pro Plus 16 章·digital IMC 题"
+    },
+    "ja": {
+      "限": "実務測定困難·SNS アルゴリズム変化速·モデル遅れ",
+      "例": "Patagonia·Glossier·TikTok チャレンジ"
+    }
+  },
+  "createdAt": "2026-04-30T05:03:57.011Z",
+  "updatedAt": "2026-04-30T13:20:56.398Z"
+}

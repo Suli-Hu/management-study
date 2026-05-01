@@ -59,8 +59,8 @@ function mockDb(opts: {
           if (sql.includes('FROM tenant WHERE')) return { id: 'keiei', discipline_key: 'keiei' } as T;
           if (sql.includes('FROM tenant_member')) return (role ? { role } : null) as T;
           if (sql.includes('SELECT COUNT(*) as n FROM scholar s')) return { n: 1 } as T;
-          if (sql.includes('SELECT key FROM scholar WHERE key = ?')) {
-            return (opts.existingScholar ? { key: stmt.binds[0] } : null) as T;
+          if (sql.includes('SELECT key FROM scholar WHERE discipline = ? AND key = ?')) {
+            return (opts.existingScholar ? { key: stmt.binds[1] } : null) as T;
           }
           if (sql.includes('FROM scholar s') && sql.includes('s.key = ?')) return row as T;
           return null as T;
@@ -289,6 +289,6 @@ describe('GET/PATCH/DELETE /api/scholars/:key', () => {
     const res = await scholarDELETE(ctx);
     expect(res.status).toBe(200);
     const db = ctx.locals.runtime.env.DB as unknown as ReturnType<typeof mockDb>;
-    expect(db.calls.some((c) => c.sql.includes('DELETE FROM scholar WHERE key = ?'))).toBe(true);
+    expect(db.calls.some((c) => c.sql.includes('DELETE FROM scholar WHERE key = ? AND discipline = ?'))).toBe(true);
   });
 });

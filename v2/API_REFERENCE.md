@@ -257,6 +257,11 @@ Response:
 
 > **谁该读**：在任意 worktree / 任意 Claude Code session 想以编程方式管理知识库的 agent。
 > 主要场景：写完 git → 让 D1 立即同步 / 读列表防重复 / 删除前查级联 / 元数据查询。
+>
+> **公开镜像**（仓库 private 后 agent 通过 WebFetch 拉取）：
+> https://study.sususu.org/docs/api-reference.md
+>
+> ⚠️ 编辑本文件后，记得同步：`cp v2/API_REFERENCE.md v2/public/docs/api-reference.md`
 
 ---
 
@@ -932,6 +937,48 @@ School 的旧 edit 入口已经标记 deprecated。新代码优先使用
 ```
 
 无需认证。
+
+### 6.3 GET `/api/v1/index/<discipline>` (v0.5.97)
+
+**学科 manifest** — 一次拿到该学科的全景（themes / schools / scholars / kps）。
+learning agent 会话开局**强烈建议先调一次**，跨 session 接力 / 防重复扫描 / 写新 KP 前确认 schools[] / scholars[] key 拼写都靠这个。
+
+**Auth**: Bearer token 或 cookie，且 `canRead(discipline)` = true。
+
+**Response 200**:
+```json
+{
+  "ok": true,
+  "discipline": { "key": "marketing", "title_zh": "市场营销学", "title_ja": "...", "title_en": "..." },
+  "counts": { "themes": 4, "schools": 12, "scholars": 25, "kps": 87 },
+  "themes": [
+    { "key": "marketing_strategy", "title": { "zh": "战略与定位" }, "desc": { "zh": "..." }, "schools": ["stp", "porter_generic"] }
+  ],
+  "schools": [
+    { "key": "stp", "title_zh": "STP 战略学派", "title_en": "...", "title_ja": "...",
+      "era": "1956–", "theme_key": "marketing_strategy", "kp_count": 7 }
+  ],
+  "scholars": [
+    { "key": "kotler", "name_zh": "菲利普·科特勒", "name_en": "Philip Kotler", "name_ja": "...", "kp_count": 12 }
+  ],
+  "kps": [
+    { "id": "m001", "title_zh": "市场细分", "title_ja": "...", "year": "1956",
+      "format": "narrative", "schools": ["stp"], "scholars": ["smith_w"] }
+  ]
+}
+```
+
+**Response 错误**:
+- `403 not_authenticated` — 没带 token / cookie
+- `403 no_read_permission` — 已登录但该 discipline 无 read 权限
+- `404 discipline_not_found` — discipline key 不存在
+- `503 config_missing` — D1 binding 未绑定
+
+**curl 例**：
+```bash
+curl -H "Authorization: Bearer $MS_TOKEN" \
+  https://management-study-v2.pages.dev/api/v1/index/marketing
+```
 
 ---
 

@@ -1,0 +1,41 @@
+{
+  "id": "m151",
+  "discipline": "marketing",
+  "schools": [
+    "cct_interpretive"
+  ],
+  "scholars": [
+    "arnould",
+    "thompson"
+  ],
+  "year": "1995",
+  "title": {
+    "zh": "消费亚文化·Schouten-McAlexander 1995",
+    "ja": "消費サブカルチャー・Schouten-McAlexander 1995",
+    "en": "Subcultures of Consumption"
+  },
+  "body": {
+    "zh": "<strong>Subcultures of Consumption（消费亚文化）</strong>由 Schouten & McAlexander 1995 年「Subcultures of Consumption: An Ethnography of the New Bikers」in <em>JCR</em> 提出·CCT 学派的<strong>奠基性民族志研究</strong>。<br><br><strong>定义</strong>：以特定 brand·活动·价值观为中心的<strong>消费者亚群</strong>·有独特 ethos·hierarchy·rituals。<br><br><strong>研究案例：哈雷骑士（new bikers）</strong>：<br>- ethos：自由·叛逆·美国梦<br>- hierarchy：「outlaw」（极端）→「old guard」→「moderate」→「hard-core」<br>- rituals：rally·改装车·tattoo·patch<br>- 与 brand 的关系：超越「product」·brand = identity 核心<br><br><strong>5 个特征</strong>（Schouten-McAlexander 1995）：<br>① <strong>identifiable hierarchical social structure</strong><br>② <strong>shared ethos</strong><br>③ <strong>jargon / rituals / symbols</strong><br>④ <strong>commitment to brand</strong><br>⑤ <strong>opposition to mainstream</strong><br><br><strong>典型亚文化案例</strong>：<br>① <strong>Harley-Davidson bikers</strong><br>② <strong>Apple users（早期反 PC）</strong><br>③ <strong>Sneakerheads</strong>——Air Jordan 收藏<br>④ <strong>K-pop 粉丝（BTS Army）</strong><br>⑤ <strong>Crossfit / SoulCycle 健身亚文化</strong><br>⑥ <strong>原宿 fashion subcultures</strong>（Lolita·Visual Kei·Ganguro）<br><br><strong>marketing 战略两难</strong>：<br>① 接近亚文化·获 cult-like loyalty<br>② 但商业化亚文化·会让 hard-core fans 反弹（「sell-out」）<br>③ 平衡：让亚文化保持 authentic·自己 facilitate 而非 mass-marketize<br><br><strong>典型例</strong>：<br>- 成功：Patagonia（接近 climbers·outdoor 亚文化）<br>- 失败：很多 brand 试图「co-opt」亚文化但被识破<br><br><strong>跨学派关系</strong>：CCT 学派经典研究·与 brand community（m149）·consumer identity（m150）·社会学一致。",
+    "ja": "<strong>Subcultures of Consumption（消費サブカルチャー）</strong>は Schouten & McAlexander 1995 年「Subcultures of Consumption: An Ethnography of the New Bikers」in <em>JCR</em> 提唱·CCT 学派の<strong>基礎民族誌研究</strong>。<br><br><strong>定義</strong>：特定ブランド·活動·価値観を中心とする<strong>消費者亜群</strong>·独自 ethos·hierarchy·rituals を持つ。<br><br><strong>研究事例：ハーレー・ライダー（new bikers）</strong>：ethos（自由·反逆·アメリカン・ドリーム）·hierarchy（outlaw → old guard → moderate → hard-core）·rituals（rally·改装·タトゥー·patch）<br><br><strong>5 つの特徴</strong>（Schouten-McAlexander 1995）：① 階層的社会構造 ② 共有 ethos ③ jargon / rituals / symbols ④ ブランドへのコミットメント ⑤ メインストリーム対立<br><br><strong>典型亜文化事例</strong>：① Harley-Davidson bikers ② Apple users（初期反 PC）③ Sneakerheads（Air Jordan 収集）④ K-pop ファン（BTS Army）⑤ Crossfit / SoulCycle ⑥ 原宿 fashion subcultures（Lolita·Visual Kei·Ganguro）<br><br><strong>マーケティング戦略のジレンマ</strong>：① 亜文化接近·cult-like loyalty 獲得 ② 商業化はハードコア・ファン反発（「sell-out」）③ 均衡：authentic 維持·facilitate·mass-marketize しない<br><br><strong>典型例</strong>：成功 Patagonia（climbers·outdoor 接近）·失敗多数（亜文化「co-opt」試みるが見抜かれる）<br><br><strong>他派との関係</strong>：CCT 学派古典研究·brand community（m149）·consumer identity（m150）·社会学と一致。"
+  },
+  "tags": [
+    "subculture",
+    "Schouten-McAlexander",
+    "Harley"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "CCT 学派经典民族志研究·亚文化 marketing 启示",
+      "限": "难量化·商业化两难·跨文化",
+      "例": "Harley·Apple·Sneakerheads·BTS Army 是教科书",
+      "应": "CCT 题·一橋·神戸高分"
+    },
+    "ja": {
+      "限": "数量化困難·商業化ジレンマ·異文化",
+      "例": "Harley·Apple·Sneakerheads·BTS Army 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:41:15.919Z",
+  "updatedAt": "2026-04-30T13:24:40.290Z"
+}

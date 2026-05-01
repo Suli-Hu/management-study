@@ -1,0 +1,40 @@
+{
+  "id": "m015",
+  "discipline": "marketing",
+  "schools": [
+    "marketing_concept"
+  ],
+  "scholars": [
+    "levitt"
+  ],
+  "year": "1960",
+  "title": {
+    "zh": "营销近视症·Levitt 1960",
+    "ja": "マーケティング近視眼・Levitt 1960",
+    "en": "Marketing Myopia"
+  },
+  "body": {
+    "zh": "<strong>Marketing Myopia（マーケティング近視眼·营销近视症）</strong>是 <strong>Theodore Levitt</strong> 于 1960 年在 <em>Harvard Business Review</em> 发表的同名论文·marketing 学最有影响力的论文之一·被视为 marketing concept 学派的奠基宣言。<br><br><strong>核心观点</strong>：企业失败<strong>不是因为市场饱和</strong>·而是因为<strong>错误地以「产品」定义自己</strong>·而不是以「顾客需要」定义自己。<br><br><strong>经典例子</strong>：<br>① <strong>美国铁路</strong>——若把自己定义为「<strong>运输业</strong>」（顾客需要：从 A 到 B 移动）·而非「铁路业」（产品：钢轨上的火车）·就不会被汽车·飞机颠覆。<br>② <strong>好莱坞</strong>——若把自己定义为「<strong>娱乐业</strong>」（顾客需要：消遣）·而非「电影业」（产品：胶片放映）·就不会被电视颠覆。<br>③ Levitt 警告每个行业都该问：「我们到底在卖什么？顾客真正要的是什么？」<br><br><strong>影响</strong>：<br>① <strong>Marketing concept 哲学</strong>——以顾客需要定义企业·而非以产品。<br>② <strong>STP 学派</strong>——市场细分前要先理解需要·而非按产品分类。<br>③ <strong>Christensen 破壊创新</strong>——「Job to be Done」（顾客雇佣产品做什么 job）的思想直接源于 Marketing Myopia。<br>④ <strong>SDL 学派</strong>——服务才是经济本质·商品只是载体——延续 Levitt 的批判逻辑。<br><br><strong>批判</strong>：① 太抽象·实务中「需要定义」不易操作 ② 把所有产品都还原为需要可能丢失差异化 ③ 顾客有时不知道自己的需要（Steve Jobs 名言）。<br><br><strong>题目命中</strong>：全 11 校 marketing 必考——「Levitt 1960 提出了什么？给企业战略什么启示？」",
+    "ja": "<strong>マーケティング近視眼（Marketing Myopia）</strong>は <strong>Theodore Levitt</strong> が 1960 年 <em>Harvard Business Review</em> で発表した同名論文·マーケティング学最も影響力のある論文の一つ·マーケティング・コンセプト学派の基礎宣言。<br><br><strong>核心観点</strong>：企業が失敗するのは<strong>市場が飽和</strong>したからではなく·<strong>「製品」で自分を定義した</strong>からであり·「顧客のニーズ」で定義しないからである。<br><br><strong>古典例</strong>：<br>① <strong>米国鉄道</strong>·「<strong>運輸業</strong>」（顧客ニーズ：A から B への移動）と定義していれば·「鉄道業」（製品：レール上の汽車）と定義しなければ·自動車·飛行機に転覆されなかった。<br>② <strong>ハリウッド</strong>·「<strong>エンターテインメント業</strong>」（顧客ニーズ：娯楽）と定義していれば·「映画業」（製品：フィルム上映）と定義しなければ·テレビに転覆されなかった。<br>③ Levitt はすべての業界に問う：「我々は何を売っているか？顧客は本当に何を求めているか？」<br><br><strong>影響</strong>：① <strong>マーケティング・コンセプト哲学</strong>——顧客ニーズで企業を定義 ② <strong>STP 学派</strong>——市場細分化前にニーズ理解 ③ <strong>Christensen 破壊的イノベーション</strong>——「Job to be Done」思想は直接 Myopia から ④ <strong>SDL 学派</strong>——サービスこそ本質·Levitt 批判論理を継承。<br><br><strong>批判</strong>：① 抽象的·「ニーズ定義」が実務操作困難 ② 全製品をニーズに還元すると差別化喪失可能 ③ 顧客は自らのニーズを知らない場合あり（Steve Jobs 名言）。<br><br><strong>題目命中</strong>：全 11 校マーケティング必出題。"
+  },
+  "tags": [
+    "Marketing Myopia",
+    "Levitt",
+    "1960"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "marketing 学最经典的概念论文·顾客中心哲学源头",
+      "限": "「需要定义」实务不易操作·过度抽象化风险",
+      "例": "「我们在运输业·不是铁路业」是教科书必背案例",
+      "应": "Kotler 16 版第 1 章·全 11 校命题命中"
+    },
+    "ja": {
+      "限": "「ニーズ定義」実務操作困難·抽象化過剰リスク",
+      "例": "「運輸業であって鉄道業ではない」は教科書必暗記ケース"
+    }
+  },
+  "createdAt": "2026-04-30T04:51:21.857Z",
+  "updatedAt": "2026-04-30T13:19:09.234Z"
+}

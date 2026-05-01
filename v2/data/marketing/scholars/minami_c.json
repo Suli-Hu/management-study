@@ -1,0 +1,31 @@
+{
+  "key": "minami_c",
+  "discipline": "marketing",
+  "name": {
+    "zh": "南 知惠子",
+    "ja": "南 知惠子",
+    "en": "Chieko Minami"
+  },
+  "schools": [
+    "b2b_marketing",
+    "relationship"
+  ],
+  "schoolsExplicit": true,
+  "contribution": {
+    "zh": "日本 B2B·<strong>関係性マーケティング</strong>·<strong>制造业服务化（servitization）</strong>研究的代表性学者。神戸大学経営学研究科名誉教授（2024 年起椙山女学園大学）。著作『リレーションシップ・マーケティング：企業間における関係管理と資源移転』（千倉書房 2005）是日本 B2B 关系营销学派核心文献。研究焦点：B2B 中的关系资源管理·制造业向服务化转型的 marketing 战略·神戸大学命题点。",
+    "ja": "日本 B2B·<strong>関係性マーケティング</strong>·<strong>製造業のサービス化（servitization）</strong>研究の代表的学者。神戸大学経営学研究科名誉教授（2024 年以降椙山女学園大学）。著作『リレーションシップ・マーケティング：企業間における関係管理と資源移転』（千倉書房 2005）は日本 B2B 関係性マーケティング学派の核心文献。研究焦点：B2B における関係資源管理·製造業のサービス化転換のマーケティング戦略·神戸大学命題点。"
+  },
+  "lifespan": "1962 – 至今",
+  "institution": "椙山女学園大学（神戸大学名誉）",
+  "born": "1962",
+  "died": "",
+  "nationality": "日本",
+  "flag": "🇯🇵",
+  "origin": "",
+  "field": "B2B·関係性",
+  "tags": [],
+  "nobel": null,
+  "kpsOrder": [],
+  "createdAt": "2026-04-30T04:34:05.515Z",
+  "updatedAt": "2026-04-30T04:34:05.515Z"
+}

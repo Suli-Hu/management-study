@@ -1,0 +1,42 @@
+{
+  "id": "m150",
+  "discipline": "marketing",
+  "schools": [
+    "cct_interpretive"
+  ],
+  "scholars": [
+    "arnould",
+    "thompson"
+  ],
+  "year": "2005",
+  "title": {
+    "zh": "消费者身份计划·CCT 学派核心理论",
+    "ja": "消費者アイデンティティ・プロジェクト・CCT 学派核心",
+    "en": "Consumer Identity Project"
+  },
+  "body": {
+    "zh": "<strong>Consumer Identity Project（消费者身份计划）</strong>是 CCT 学派 4 大研究领域之一·研究消费者通过<strong>消费来建构·表达·重构身份</strong>。<br><br><strong>核心命题</strong>：<br>消费不是单纯的 utility 满足·而是<strong>身份建构活动</strong>。消费者通过<strong>选择·使用·分享</strong>商品·向自己和他人定义「我是谁」。<br><br><strong>身份建构 4 大维度</strong>：<br>① <strong>Self-Identity（自我身份）</strong>——「我是谁」<br>② <strong>Social Identity（社会身份）</strong>——「我属于哪个群体」<br>③ <strong>Aspirational Identity（理想身份）</strong>——「我想成为什么」<br>④ <strong>Avoided Identity（回避身份）</strong>——「我不是什么」<br><br><strong>典型例</strong>：<br>① <strong>纹身 / 改装车</strong>——对外表达「叛逆 / 个性」身份<br>② <strong>奢侈品消费</strong>——表达「成功 / 富裕」<br>③ <strong>vintage 消费</strong>——表达「文化品味」<br>④ <strong>vegetarian / vegan</strong>——表达「ethical / 环境意识」<br>⑤ <strong>Patagonia 购买者</strong>——表达「环保战士」身份<br><br><strong>marketing 战略启示</strong>：<br>① <strong>brand 不只是产品·是 identity 工具</strong>——brand 帮消费者表达自我<br>② <strong>aspirational marketing</strong>——卖「理想 self」而非现实 self<br>③ <strong>brand archetypes（Mark-Pearson 2001）</strong>——让 brand 成为 identity 选项<br>④ <strong>身份转换</strong>——人生阶段·新身份新 brand（结婚·育儿·退休）<br><br><strong>典型 brand archetypes</strong>（Carl Jung 12 archetypes 应用）：<br>- Hero（Nike）·Outlaw（Harley）·Lover（Chanel）·Caregiver（Johnson）·Sage（Google）·Magician（Disney）·Innocent（Coca-Cola）·Ruler（Mercedes）·Jester（Old Spice）·Explorer（Patagonia）·Creator（Apple）·Everyman（IKEA）<br><br><strong>跨学派关系</strong>：CCT 4 大研究领域之一·与 brand_equity（brand identity）·consumer_behavior（self-concept）·social_marketing（purpose-driven brand）一致。",
+    "ja": "<strong>Consumer Identity Project（消費者アイデンティティ・プロジェクト）</strong>は CCT 学派 4 大研究領域の一つ·消費者が<strong>消費でアイデンティティを構築·表現·再構築</strong>を研究。<br><br><strong>核心命題</strong>：消費は単純な utility 充足ではなく·<strong>アイデンティティ構築活動</strong>。<br><br><strong>アイデンティティ構築 4 大次元</strong>：① Self-Identity ② Social Identity ③ Aspirational Identity ④ Avoided Identity<br><br><strong>典型例</strong>：① タトゥー / 改装車 ② ラグジュアリー消費 ③ vintage 消費 ④ vegetarian / vegan ⑤ Patagonia 購入者（環境戦士）<br><br><strong>マーケティング戦略示唆</strong>：① ブランドは製品ではなくアイデンティティ・ツール ② aspirational marketing（理想 self を売る）③ brand archetypes（Mark-Pearson 2001）④ 人生段階·新アイデンティティ新 brand<br><br><strong>典型 brand archetypes</strong>（Carl Jung 12 archetypes）：Hero（Nike）·Outlaw（Harley）·Lover（Chanel）·Caregiver（J&J）·Sage（Google）·Magician（Disney）·Innocent（Coca-Cola）·Ruler（Mercedes）·Jester（Old Spice）·Explorer（Patagonia）·Creator（Apple）·Everyman（IKEA）<br><br><strong>他派との関係</strong>：CCT 4 大研究領域の一つ·brand_equity（brand identity）·consumer_behavior（self-concept）·social_marketing（purpose-driven brand）一致。"
+  },
+  "tags": [
+    "consumer identity",
+    "archetypes",
+    "Jung",
+    "Patagonia"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "CCT 学派核心理论·brand purpose 的人文学派依据",
+      "限": "质性·难规模化·跨文化适用",
+      "例": "Nike·Patagonia·Apple 是 archetype 教科书",
+      "应": "CCT 题·brand 题·一橋·神戸高分"
+    },
+    "ja": {
+      "限": "質的·規模化困難·異文化適用",
+      "例": "Nike·Patagonia·Apple は archetype 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:41:14.019Z",
+  "updatedAt": "2026-04-30T13:24:38.014Z"
+}

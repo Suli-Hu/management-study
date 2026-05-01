@@ -1,5 +1,5 @@
 -- ============================================================
--- Migration 0014 — API-first multi-tenant foundation
+-- Migration 0015 — API-first multi-tenant foundation
 --
 -- discipline remains the public product concept. tenant is the
 -- canonical isolation boundary for API-first writes, with one tenant

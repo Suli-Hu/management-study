@@ -6,6 +6,7 @@
 
 import type { APIContext } from 'astro';
 import { getFile, putFile, deleteFile } from './github';
+import { withRetry } from './d1-kp-write';
 import type { ZodTypeAny, infer as ZodInfer } from 'zod';
 
 export type EditErrorReason =
@@ -45,10 +46,15 @@ interface PutCtx<S extends ZodTypeAny> {
   urlIdentifier: () => string | undefined;
   /** 强制服务端刷新的字段（如 updatedAt） */
   forceFields?: (obj: ZodInfer<S>) => Partial<ZodInfer<S>>;
+  /**
+   * v0.6.7: git put 成功后双写 D1。失败只 console.error 不阻断响应
+   * （git 已成功，backfill / webhook / reconcile cron 都能自愈）。
+   */
+  upsertD1?: (db: D1Database, obj: ZodInfer<S>) => Promise<void>;
 }
 
 export async function handlePut<S extends ZodTypeAny>(opts: PutCtx<S>): Promise<Response> {
-  const { ctx, schema, pathFor, objectLabel, identifierMatch, urlIdentifier, forceFields } = opts;
+  const { ctx, schema, pathFor, objectLabel, identifierMatch, urlIdentifier, forceFields, upsertD1 } = opts;
   // v0.4.25 RBAC：admin gate 推迟到拿到 obj.discipline 之后（按学科粒度判定）
   if (!ctx.locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
@@ -109,6 +115,15 @@ export async function handlePut<S extends ZodTypeAny>(opts: PutCtx<S>): Promise<
     return jsonRes<EditError>(502, { ok: false, reason: 'github_error', detail: res.detail });
   }
 
+  // v0.6.7: D1 双写 — git 已 commit 成功后立即写 D1
+  if (upsertD1 && env.DB) {
+    try {
+      await withRetry(() => upsertD1(env.DB, obj));
+    } catch (d1Err) {
+      console.error(`[handlePut ${objectLabel(obj)}] D1 dual-write failed (git committed; reconcile cron can detect drift):`, d1Err);
+    }
+  }
+
   return jsonRes(200, {
     ok: true,
     commit_sha: res.data.commit_sha,
@@ -124,11 +139,17 @@ interface PostCtx<S extends ZodTypeAny> {
   objectLabel: (obj: ZodInfer<S>) => string;
   /** 强制服务端字段（createdAt / updatedAt = now） */
   forceFields?: (obj: ZodInfer<S>) => Partial<ZodInfer<S>>;
+  /**
+   * v0.6.6: git commit 成功后双写 D1。失败只 console.error 不阻断响应
+   * （git 已成功，backfill endpoint / webhook / 后续 edit PUT 都能自愈）。
+   * 4 类资源各传对应的 upsertXxxInD1（kp/school/scholar/view）。
+   */
+  upsertD1?: (db: D1Database, obj: ZodInfer<S>) => Promise<void>;
 }
 
 /** 新建：POST 路由调它。不带 sha 写 = create；GitHub 返 422 时认为是 key 冲突。 */
 export async function handlePost<S extends ZodTypeAny>(opts: PostCtx<S>): Promise<Response> {
-  const { ctx, schema, pathFor, objectLabel, forceFields } = opts;
+  const { ctx, schema, pathFor, objectLabel, forceFields, upsertD1 } = opts;
   // v0.4.25 RBAC：admin gate 推迟到拿到 obj.discipline 之后
   if (!ctx.locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
@@ -186,6 +207,17 @@ export async function handlePost<S extends ZodTypeAny>(opts: PostCtx<S>): Promis
   if (!res.ok) {
     return jsonRes<EditError>(502, { ok: false, reason: 'github_error', detail: res.detail });
   }
+
+  // v0.6.6: D1 双写 — git 已 commit 成功后立即写 D1，让用户刷新就看到。
+  // 失败只 console.error 不阻断（git 已成功，webhook / backfill endpoint 能自愈）。
+  if (upsertD1 && env.DB) {
+    try {
+      await withRetry(() => upsertD1(env.DB, obj));
+    } catch (d1Err) {
+      console.error(`[handlePost ${objectLabel(obj)}] D1 dual-write failed (git committed; sync-discipline endpoint can backfill):`, d1Err);
+    }
+  }
+
   return jsonRes(201, {
     ok: true,
     commit_sha: res.data.commit_sha,
@@ -201,10 +233,15 @@ interface DeleteCtx {
   /** 从 D1 查 discipline（学派/学者/KP 都需要因为 url 不带 discipline 时） */
   resolveDiscipline: (ident: string, db: any) => Promise<string | null>;
   urlIdentifier: () => string | undefined;
+  /**
+   * v0.6.8: git delete 成功后双删 D1。失败只 console.error 不阻断响应。
+   * caller 拿到 (discipline, ident) 自己组装 delete 调用。
+   */
+  deleteD1?: (db: D1Database, discipline: string, ident: string) => Promise<void>;
 }
 
 export async function handleDelete(opts: DeleteCtx): Promise<Response> {
-  const { ctx, pathFor, objectLabel, resolveDiscipline, urlIdentifier } = opts;
+  const { ctx, pathFor, objectLabel, resolveDiscipline, urlIdentifier, deleteD1 } = opts;
   // v0.4.25 RBAC：admin gate 推迟到 resolveDiscipline 之后
   if (!ctx.locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
@@ -250,6 +287,16 @@ export async function handleDelete(opts: DeleteCtx): Promise<Response> {
     }
     return jsonRes<EditError>(502, { ok: false, reason: 'github_error', detail: res.detail });
   }
+
+  // v0.6.8: D1 双删 — git 已 delete 成功后立即把 D1 行也删掉
+  if (deleteD1 && env.DB) {
+    try {
+      await withRetry(() => deleteD1(env.DB, discipline, ident));
+    } catch (d1Err) {
+      console.error(`[handleDelete ${objectLabel(ident)}] D1 dual-delete failed (git deleted):`, d1Err);
+    }
+  }
+
   return jsonRes(200, { ok: true, commit_sha: res.data.commit_sha, deploy_eta_seconds: 90 });
 }
 

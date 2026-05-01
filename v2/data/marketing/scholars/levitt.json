@@ -1,0 +1,30 @@
+{
+  "key": "levitt",
+  "discipline": "marketing",
+  "name": {
+    "zh": "西奥多·莱维特",
+    "ja": "セオドア・レビット",
+    "en": "Theodore Levitt"
+  },
+  "schools": [
+    "marketing_concept"
+  ],
+  "schoolsExplicit": true,
+  "contribution": {
+    "zh": "<strong>营销概念派</strong>的奠基人之一。1960 年在 <em>Harvard Business Review</em> 发表 \"Marketing Myopia\"（《营销近视症》）成为 marketing 学最有影响力的论文之一·主张企业不应以「产品」定义自己·而应以「<strong>顾客需要</strong>」定义自己——铁路公司若把自己定义为「运输业」而非「铁路业」就不会衰退。这一思想是<strong>顾客志向</strong>哲学的源头。后期推动 <strong>marketing imagination</strong>·<strong>globalization of markets</strong>（1983）等概念。",
+    "ja": "<strong>マーケティング・コンセプト学派</strong>の基礎を築いた一人。1960 年 <em>Harvard Business Review</em> 「Marketing Myopia」（マーケティング近視眼）を発表·マーケティング学最も影響力のある論文の一つ·企業は「製品」で自分を定義せず「<strong>顧客のニーズ</strong>」で定義すべきと主張——鉄道会社が「運輸業」と定義していれば衰退しなかった。この思想は<strong>顧客志向</strong>哲学の源。後期に <strong>マーケティング・イマジネーション</strong>·<strong>市場のグローバル化</strong>（1983）等を推進。"
+  },
+  "lifespan": "1925–2006",
+  "institution": "Harvard Business School",
+  "born": "1925",
+  "died": "",
+  "nationality": "德国生美国籍",
+  "flag": "🇩🇪🇺🇸",
+  "origin": "",
+  "field": "营销战略",
+  "tags": [],
+  "nobel": null,
+  "kpsOrder": [],
+  "createdAt": "2026-04-30T04:34:00.108Z",
+  "updatedAt": "2026-04-30T04:34:00.108Z"
+}

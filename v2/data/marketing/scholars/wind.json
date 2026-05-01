@@ -1,0 +1,31 @@
+{
+  "key": "wind",
+  "discipline": "marketing",
+  "name": {
+    "zh": "约拉姆·温德",
+    "ja": "ヨラム・ウィンド",
+    "en": "Yoram (Jerry) Wind"
+  },
+  "schools": [
+    "b2b_marketing",
+    "managerial"
+  ],
+  "schoolsExplicit": true,
+  "contribution": {
+    "zh": "<strong>B2B segmentation</strong> 与 <strong>STP Targeting</strong> 双领域的奠基人。1972 年与 Webster 合著 Webster-Wind 模型奠定 B2B 学派。1978 年发表 \"Issues and Advances in Segmentation Research\" in <em>Journal of Marketing Research</em> 系统化 segmentation 方法论。在 STP 框架中·Wind 的 targeting 研究是 Smith 1956 segmentation 与 Ries-Trout 1981 positioning 之间的关键环。",
+    "ja": "<strong>B2B セグメンテーション</strong>·<strong>STP Targeting</strong> 両領域の基礎を築いた。1972 年 Webster と Webster-Wind モデルで B2B 学派を確立。1978 年 <em>Journal of Marketing Research</em> 「Issues and Advances in Segmentation Research」発表·セグメンテーション方法論を体系化。STP フレームにおいて·Wind の targeting 研究は Smith 1956 segmentation と Ries-Trout 1981 positioning の間の重要な環。"
+  },
+  "lifespan": "1937 – 至今",
+  "institution": "University of Pennsylvania Wharton School",
+  "born": "1937",
+  "died": "",
+  "nationality": "以色列生美国籍",
+  "flag": "🇮🇱🇺🇸",
+  "origin": "",
+  "field": "B2B·分群",
+  "tags": [],
+  "nobel": null,
+  "kpsOrder": [],
+  "createdAt": "2026-04-30T04:34:36.589Z",
+  "updatedAt": "2026-04-30T04:34:36.589Z"
+}

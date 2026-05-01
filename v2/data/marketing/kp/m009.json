@@ -1,0 +1,41 @@
+{
+  "id": "m009",
+  "discipline": "marketing",
+  "schools": [
+    "managerial"
+  ],
+  "scholars": [
+    "mccarthy",
+    "kotler"
+  ],
+  "year": "1953",
+  "title": {
+    "zh": "Borden 12 要素·营销组合的起源",
+    "ja": "Borden 12 要素・マーケティング・ミックスの起源",
+    "en": "Borden's 12 Elements · Origin of Marketing Mix"
+  },
+  "body": {
+    "zh": "<strong>Borden 12 要素</strong>是 marketing mix 概念的<strong>起源</strong>·由 <strong>Neil Borden</strong>（哈佛商学院）于 1953 / 1964 年提出·后由 McCarthy（1960）简化为 4P·成为现代 marketing 教学的标准。<br><br><strong>Borden 12 要素</strong>：① Product Planning（产品规划）② Pricing（定价）③ Branding（品牌）④ Channels of Distribution（分销渠道）⑤ Personal Selling（人员销售）⑥ Advertising（广告）⑦ Promotions（促销活动）⑧ Packaging（包装）⑨ Display（陈列）⑩ Servicing（服务）⑪ Physical Handling（物理处理·物流）⑫ Fact Finding and Analysis（情报与分析）。<br><br><strong>从 12 到 4P 的简化</strong>：<br>- ①·②·③·⑧·⑨·⑩ → <strong>Product</strong>（含 brand·包装等）<br>- ② → <strong>Price</strong><br>- ④·⑪ → <strong>Place</strong>（含物流）<br>- ⑤·⑥·⑦ → <strong>Promotion</strong><br>- ⑫ → 独立成 marketing research（不入 4P）<br><br><strong>历史意义</strong>：Borden 是 marketing 学第一个系统化「marketing mix」（mixed ingredients）这个概念的人——比喻为厨师把多个成分混合烹调·marketing manager 也要混合多个营销要素。这个比喻成为 marketing 学最广为人知的隐喻之一。<br><br><strong>关键引文</strong>：Borden（1964）\"The Concept of the Marketing Mix\" in <em>Journal of Advertising Research</em>·该文整理了他多年来的「mixer of ingredients」思想。",
+    "ja": "<strong>Borden 12 要素</strong>はマーケティング・ミックス概念の<strong>起源</strong>·<strong>Neil Borden</strong>（ハーバード・ビジネス・スクール）が 1953 / 1964 年に提唱·後に McCarthy（1960）が 4P に簡略化·現代マーケティング教育の標準となる。<br><br><strong>Borden 12 要素</strong>：① Product Planning ② Pricing ③ Branding ④ Channels of Distribution ⑤ Personal Selling ⑥ Advertising ⑦ Promotions ⑧ Packaging ⑨ Display ⑩ Servicing ⑪ Physical Handling ⑫ Fact Finding and Analysis。<br><br><strong>12 から 4P への簡略化</strong>：<br>- ①·②·③·⑧·⑨·⑩ → <strong>Product</strong>（brand·包装含む）<br>- ② → <strong>Price</strong><br>- ④·⑪ → <strong>Place</strong>（物流含む）<br>- ⑤·⑥·⑦ → <strong>Promotion</strong><br>- ⑫ → 独立して marketing research（4P に入らず）<br><br><strong>歴史的意義</strong>：Borden はマーケティング学で初めて「marketing mix（mixed ingredients）」概念を体系化した人——シェフが複数の食材を混合調理する比喩·マーケティング・マネジャーも複数の要素を混合する。この比喩はマーケティング学最も知られる隠喩の一つ。<br><br><strong>主要引用</strong>：Borden（1964）\"The Concept of the Marketing Mix\" in <em>Journal of Advertising Research</em>·同論文で長年の「mixer of ingredients」思想を整理。"
+  },
+  "tags": [
+    "Borden",
+    "12 elements",
+    "Marketing Mix history"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "marketing mix 概念的真正起源·4P 是其简化版",
+      "限": "12 要素过细·实务难记·McCarthy 简化为现代标准",
+      "例": "Borden 1964 论文是历史考点·一橋·京大命题命中",
+      "应": "marketing 史论述题·4P 起源问题"
+    },
+    "ja": {
+      "限": "12 要素は細かすぎ·実務記憶困難·McCarthy 簡略化が現代標準",
+      "例": "Borden 1964 論文は歴史論述題·一橋·京大命題命中"
+    }
+  },
+  "createdAt": "2026-04-30T04:40:25.195Z",
+  "updatedAt": "2026-04-30T13:18:55.531Z"
+}

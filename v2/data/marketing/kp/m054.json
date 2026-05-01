@@ -1,0 +1,43 @@
+{
+  "id": "m054",
+  "discipline": "marketing",
+  "schools": [
+    "imc_communication",
+    "digital_marketing"
+  ],
+  "scholars": [
+    "schultz",
+    "onzo"
+  ],
+  "year": "2005",
+  "title": {
+    "zh": "AISAS·电通互联网时代模型",
+    "ja": "AISAS・電通のインターネット時代モデル",
+    "en": "AISAS Model"
+  },
+  "body": {
+    "zh": "<strong>AISAS（Attention-Interest-Search-Action-Share）</strong>是<strong>電通（Dentsu）2005 年提出</strong>的态度形成模型·替代 AIDMA·成为日本互联网时代 marketing communication 的标准模型。<br><br><strong>5 阶段</strong>：<br>① <strong>A - Attention（注意）</strong>——消费者看到广告 / 内容<br>② <strong>I - Interest（兴趣）</strong>——产生兴趣<br>③ <strong>S - Search（搜索）</strong>⭐——主动用 Google·Amazon 搜索·查 review<br>④ <strong>A - Action（行动）</strong>——做出购买<br>⑤ <strong>S - Share（共享）</strong>⭐——分享购买体验·SNS·blog·review<br><br><strong>2 大革命性创新</strong>（与 AIDMA 比）：<br>① <strong>Search（搜索）</strong>——消费者从被动 Memory 转为主动 Search<br>② <strong>Share（共享）</strong>——消费者从单方接收转为双向传播·成为 brand 的 marketer<br><br><strong>背景</strong>：① Google 搜索普及（2000 年代）② mixi·Twitter（2008）·Facebook 进入日本（2008）等 SNS 兴起 ③ 消费者获得前所未有的信息和发声能力<br><br><strong>marketing 实务影响</strong>：<br>① <strong>SEO·SEM</strong>——投资让消费者「Search 时找到我们」<br>② <strong>KOL·KOC</strong>——影响 review 内容<br>③ <strong>UGC（User Generated Content）</strong>——鼓励消费者 Share<br>④ <strong>brand 体验</strong>——值得 share 的体验设计<br><br><strong>变体</strong>：<br>- <strong>AISCEAS（電通 2005）</strong>——AISAS 的扩展·把 Search 拆成「Search → Compare → Examine → Action」<br>- <strong>Dual AISAS</strong>——把 share 也分成 attention·interest 等<br><br><strong>跨学派关系</strong>：① 与 Kotler 4.0 的 5A（Aware-Appeal-Ask-Act-Advocate）高度对应 ② 与 SIPS（電通 2011）·VISAS·DECAX（電通 2015）一起构成日本独有「态度形成 4 大类」谱系。",
+    "ja": "<strong>AISAS（Attention-Interest-Search-Action-Share）</strong>は<strong>電通 2005 年提唱</strong>の態度形成モデル·AIDMA に代わり日本インターネット時代マーケティング・コミュニケーション標準モデル。<br><br><strong>5 段階</strong>：① Attention ② Interest ③ <strong>Search（検索）</strong>⭐ ④ Action ⑤ <strong>Share（共有）</strong>⭐<br><br><strong>2 大革命的革新</strong>（AIDMA と比較）：① <strong>Search</strong>·受動 Memory から能動 Search へ ② <strong>Share</strong>·単方受信から双方伝播へ·消費者がブランドの marketer に<br><br><strong>背景</strong>：① Google 検索普及（2000 年代）② mixi·Twitter（2008）·Facebook 日本進入（2008）等 SNS 興隆 ③ 消費者が前例ない情報·発声能力<br><br><strong>マーケティング実務影響</strong>：① SEO·SEM ② KOL·KOC ③ UGC（User Generated Content）④ ブランド体験·share に値する体験設計<br><br><strong>バリエーション</strong>：<br>- <strong>AISCEAS（電通 2005）</strong>·AISAS 拡張·Search を「Search → Compare → Examine → Action」に分解<br>- <strong>Dual AISAS</strong>·share も attention·interest 等に分解<br><br><strong>他派との関係</strong>：① Kotler 4.0 の 5A と高度対応 ② SIPS（電通 2011）·VISAS·DECAX（電通 2015）と日本独自「態度形成 4 大類」系譜を構成。"
+  },
+  "tags": [
+    "AISAS",
+    "電通",
+    "Search",
+    "Share"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "日本互联网时代核心 communication 模型·AIDMA 的进化",
+      "限": "5 阶段仍偏线性·SNS 时代行为更复杂",
+      "例": "電通 2005 年模型的全球影响力",
+      "应": "日本院试 IMC 必考·一橋·早大·命题"
+    },
+    "ja": {
+      "限": "5 段階依然線形·SNS 時代行動より複雑",
+      "例": "電通 2005 年モデルの世界影響力"
+    }
+  },
+  "createdAt": "2026-04-30T05:03:55.215Z",
+  "updatedAt": "2026-04-30T13:20:54.265Z"
+}

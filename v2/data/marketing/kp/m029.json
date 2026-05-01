@@ -1,0 +1,40 @@
+{
+  "id": "m029",
+  "discipline": "marketing",
+  "schools": [
+    "consumer_behavior"
+  ],
+  "scholars": [
+    "kahneman"
+  ],
+  "year": "2011",
+  "title": {
+    "zh": "系统 1 / 系统 2·双过程理论",
+    "ja": "システム 1 / システム 2・二重プロセス理論",
+    "en": "System 1 / System 2 Theory"
+  },
+  "body": {
+    "zh": "<strong>System 1 / System 2（システム 1/2·双过程理论）</strong>是 Kahneman 2011 年『Thinking, Fast and Slow』普及的双过程理论·把人类思维分为<strong>2 个系统</strong>·成为 marketing 行为决策研究的标准框架。<br><br><strong>System 1（快·直觉）</strong>：<br>- 自动化·无意识·快速·并行·情感·直觉·联想<br>- 不需要努力·不能关闭<br>- 处理 95% 日常决策<br>- 易受 bias·heuristic 影响（anchoring·availability·representativeness）<br>- 例：开车时直觉避让·看到红色立即注意<br><br><strong>System 2（慢·理性）</strong>：<br>- 主动·有意识·缓慢·串行·分析·逻辑·计算<br>- 需要努力·会疲劳<br>- 处理 5% 复杂决策<br>- 监控 System 1·有时纠正 bias<br>- 例：算账·决定房贷·读 long-form 文章<br><br><strong>核心命题</strong>：人类绝大多数决策是 <strong>System 1 主导</strong>·System 2 只是被动批准——「we are not as rational as we think」。<br><br><strong>marketing 实务应用</strong>：<br>① <strong>brand awareness</strong>——让 brand 进入 System 1 的「awareness」（top of mind）<br>② <strong>包装·色彩·logo</strong>——视觉直觉触发购买（System 1）<br>③ <strong>价格 anchor</strong>——参考价让 System 1 觉得便宜<br>④ <strong>故事 vs 数据</strong>——故事激活 System 1·数据需要 System 2（高介入产品才用）<br>⑤ <strong>FOMO（Fear of Missing Out）</strong>——「限时·限量」激活 System 1 的恐慌<br><br><strong>跨学派关系</strong>：与 ELM（Petty-Cacioppo 1986）的中央/周边路径理论<strong>高度对应</strong>——System 2 ≈ 中央路径·System 1 ≈ 周边路径。两者互补使用。",
+    "ja": "<strong>システム 1/2（二重プロセス理論）</strong>は Kahneman 2011 年『Thinking, Fast and Slow』で普及·人間の思考を<strong>2 システム</strong>に分け·マーケティング行動意思決定研究の標準フレーム。<br><br><strong>システム 1（速·直観）</strong>：<br>- 自動化·無意識·高速·並列·情緒·直観·連想<br>- 努力不要·遮断不可<br>- 日常意思決定 95% 処理<br>- バイアス·ヒューリスティック影響受やすい<br>- 例：運転中直観回避·赤色を即注視<br><br><strong>システム 2（遅·合理）</strong>：<br>- 能動·意識的·低速·直列·分析·論理·計算<br>- 努力要·疲労する<br>- 複雑意思決定 5% 処理<br>- システム 1 を監視·バイアス修正可<br>- 例：会計·住宅ローン決定·long-form 文章閲読<br><br><strong>核心命題</strong>：人類の大半の意思決定は<strong>システム 1 主導</strong>·システム 2 は受動承認——「我々は思うほど合理的ではない」。<br><br><strong>マーケティング実務応用</strong>：① brand awareness（top of mind）② パッケージ·色彩·ロゴ ③ 価格アンカー ④ ストーリー vs データ ⑤ FOMO<br><br><strong>他派との関係</strong>：ELM の中央/周辺ルート理論と<strong>高度対応</strong>——システム 2 ≈ 中央·システム 1 ≈ 周辺。相補使用。"
+  },
+  "tags": [
+    "System 1/2",
+    "Kahneman",
+    "double process"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "marketing 行为决策研究最普及框架·解释为什么消费者非理性",
+      "限": "二分法过简·实际有谱·System 1/2 边界模糊",
+      "例": "购买冲动 = System 1·选 401k = System 2",
+      "应": "marketing 数理·一橋·東大数理派"
+    },
+    "ja": {
+      "限": "二分法過簡·実際スペクトラム·境界曖昧",
+      "例": "衝動購買 = システム 1·401k 選択 = システム 2"
+    }
+  },
+  "createdAt": "2026-04-30T04:51:45.981Z",
+  "updatedAt": "2026-04-30T13:19:37.275Z"
+}

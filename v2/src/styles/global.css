@@ -81,6 +81,22 @@ html.dark {
     @apply text-primary font-semibold;
   }
 
+  /* v0.6.15 form 控件 dark mode base — 对 Tailwind class="border" 之类没显式 set bg
+     的 input/textarea/select 给默认 var bg，dark mode 自动反相。
+     已显式 set bg 的 (.kpedit-input 等) 仍 specificity 高于 base，不受影响。 */
+  input, textarea, select {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+  }
+  input::placeholder, textarea::placeholder {
+    color: var(--color-text-quaternary);
+  }
+  /* Tailwind class="border" 默认走 border-color theme，dark mode 下也要适配 */
+  input.border, textarea.border, select.border,
+  input[class*="border-"], textarea[class*="border-"], select[class*="border-"] {
+    border-color: var(--color-border);
+  }
+
   /* v0.5.90 全站取消 focus outline — 单人 admin / iPad 主力，
      键盘 Tab nav 视觉是噪音（与极简风格冲突，且与 selected 态如
      accent ring/left bar 视觉打架）。a11y trade-off 由用户场景决定。

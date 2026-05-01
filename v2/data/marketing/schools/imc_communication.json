@@ -1,0 +1,26 @@
+{
+  "key": "imc_communication",
+  "discipline": "marketing",
+  "title": {
+    "zh": "统合营销传播学派",
+    "ja": "統合マーケティング・コミュニケーション学派",
+    "en": "IMC School"
+  },
+  "era": "1990– IMC 统合时代 + 日本态度形成模型谱系",
+  "summary": {
+    "zh": "<strong>统合营销传播（IMC）学派</strong>主张所有沟通触点（广告·PR·销售·digital·social·event·包装）必须<strong>整合</strong>。锚点 <strong>Don Schultz·Tannenbaum·Lauterborn</strong>（1993『Integrated Marketing Communications』）。日本本土 <strong>恩藏直人</strong>（早稲田·brand communication）。<br><br><strong>核心范式</strong>：消费者不区分「广告」·「PR」·「销售」——只接受品牌的<strong>整体沟通信号</strong>。所有触点必须策略一致·不一致即损害 brand。<br><br><strong>核心内容</strong>：① <strong>Lasswell communication 模型</strong>（who·says what·through which channel·to whom·with what effect）② <strong>Schramm 沟通模型</strong>（encoder-decoder·noise·feedback）③ <strong>communication 目的设定</strong>（DAGMAR）④ <strong>预算决定方法</strong>（affordable·percentage of sales·objective-and-task）⑤ <strong>媒体计划</strong>·creative strategy·消息发信源（celebrity endorsement·McCracken 1989）⑥ <strong>セールス・プロモーション</strong>分类·パブリシティ vs PR·event marketing·クチコミ·digital IMC。<br><br><strong>⭐ 日本独有谱系（必考）</strong>：<strong>态度形成 4 大类</strong>—— ① <strong>マスメディア型</strong>：AIDA（Lewis 1898·attention-interest-desire-action）→ <strong>AIDMA</strong>（Hall 1924·+memory）→ AMTUL ② <strong>インターネット検索型</strong>：<strong>AISAS</strong>（電通 2005·attention-interest-search-action-share）→ AISCEAS ③ <strong>ソーシャルメディア共有型</strong>：<strong>SIPS</strong>（電通 2011·sympathize-identify-participate-share-spread）·<strong>VISAS</strong>·<strong>ZMOT</strong>（Google 2011 zero moment of truth）④ <strong>コンテンツ発見型</strong>：<strong>DECAX</strong>（電通 2015·discovery-engage-check-action-experience）·<strong>Dual AISAS</strong>。<br><br><strong>跨学派关系</strong>：与 <code>brand_equity</code> 邻近·与 <code>digital_marketing</code> 部分重叠。<br><br><strong>局限</strong>：IMC 概念抽象·实务整合困难·ROI 难计算。",
+    "ja": "<strong>統合マーケティング・コミュニケーション（IMC）学派</strong>はすべての接点を<strong>統合</strong>すべきだと主張。アンカーは <strong>Don Schultz</strong>等（1993）。日本本土の <strong>恩藏直人</strong>（早稲田）。<br><br><strong>核心パラダイム</strong>：消費者はブランドの<strong>全体的シグナル</strong>を受け取る。<br><br><strong>主要内容</strong>：① <strong>Lasswell モデル</strong> ② <strong>Schramm モデル</strong> ③ <strong>DAGMAR</strong> ④ <strong>予算決定方法</strong> ⑤ <strong>メディア計画</strong>·発信源（celebrity endorsement·McCracken 1989）⑥ <strong>セールス・プロモーション</strong>·パブリシティ vs PR·イベント·クチコミ·デジタル IMC。<br><br><strong>⭐ 日本独自系譜（必出題）</strong>：<strong>態度形成 4 大類型</strong>—— ① <strong>マスメディア型</strong>：AIDA（Lewis 1898）→ <strong>AIDMA</strong>（Hall 1924）→ AMTUL ② <strong>インターネット検索型</strong>：<strong>AISAS</strong>（電通 2005）→ AISCEAS ③ <strong>ソーシャルメディア共有型</strong>：<strong>SIPS</strong>（電通 2011）·<strong>VISAS</strong>·<strong>ZMOT</strong>（Google 2011）④ <strong>コンテンツ発見型</strong>：<strong>DECAX</strong>（電通 2015）·<strong>Dual AISAS</strong>。<br><br><strong>他派との関係</strong>：<code>brand_equity</code> と隣接·<code>digital_marketing</code> と部分重複。<br><br><strong>限界</strong>：IMC 概念抽象·実務統合困難·ROI 計算困難。"
+  },
+  "themeKey": "value_communication",
+  "tags": [
+    "Schultz",
+    "AISAS",
+    "AIDMA",
+    "SIPS",
+    "DECAX",
+    "恩藏直人"
+  ],
+  "concepts": [],
+  "createdAt": "2026-04-30T04:28:04.495Z",
+  "updatedAt": "2026-04-30T04:28:04.495Z"
+}

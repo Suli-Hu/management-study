@@ -8,6 +8,7 @@
 import type { APIRoute } from 'astro';
 import { School } from '~/schemas/school';
 import { handlePost } from '~/lib/edit-helpers';
+import { upsertSchoolInD1 } from '~/lib/d1-school-write';
 
 const deprecate = (response: Response): Response => {
   const headers = new Headers(response.headers);
@@ -25,4 +26,5 @@ export const POST: APIRoute = async (ctx) => deprecate(await handlePost({
     const now = new Date().toISOString();
     return { createdAt: now, updatedAt: now } as Partial<typeof School._type>;
   },
+  upsertD1: (db, school) => upsertSchoolInD1(db, school),
 }));

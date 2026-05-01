@@ -1,0 +1,40 @@
+{
+  "id": "m027",
+  "discipline": "marketing",
+  "schools": [
+    "consumer_behavior"
+  ],
+  "scholars": [
+    "bettman"
+  ],
+  "year": "1979",
+  "title": {
+    "zh": "Bettman 信息处理范式",
+    "ja": "Bettman 情報処理パラダイム",
+    "en": "Bettman's Information Processing Paradigm"
+  },
+  "body": {
+    "zh": "<strong>Bettman 信息处理范式</strong>是 1979 年 James Bettman 在『An Information Processing Theory of Consumer Choice』中系统化的消费者决策理论·把<strong>认知心理学的信息处理范式</strong>引入消费者行为研究·开启 1980-1990 年代的<strong>认知派 marketing 主流</strong>。<br><br><strong>核心比喻</strong>：消费者 = <strong>信息处理器（information processor）</strong>。决策过程 = 接收信息 → 编码 → 储存 → 检索 → 使用。<br><br><strong>4 大组件</strong>：<br>① <strong>capacity（处理能力）</strong>——消费者注意力·短期记忆·处理速度有限<br>② <strong>motivation（动机）</strong>——消费者主动搜索程度<br>③ <strong>attention & perceptual encoding</strong>——选择性注意·选择性扭曲<br>④ <strong>memory & search</strong>——内部记忆 vs 外部搜索的取舍<br><br><strong>启发式（heuristic）</strong>：消费者由于处理能力有限·常用<strong>简化策略</strong>而非全面比较：<br>- <strong>linear compensatory（加权补偿）</strong>——所有属性权重加和<br>- <strong>conjunctive（合取）</strong>——所有属性必须达标<br>- <strong>lexicographic（词典序）</strong>——按重要性排序逐次比较<br>- <strong>elimination by aspects（特征淘汰）</strong>——按属性淘汰不合格选项<br><br><strong>marketing 启示</strong>：<br>① 信息<strong>简化</strong>——一个 brand 不要传 10 个卖点·选 1-2 个<br>② <strong>包装信息</strong>——重要属性放显眼·次要属性藏角落<br>③ <strong>chunk</strong>——把多个属性归类·便于消费者短期记忆处理<br><br><strong>跨学派关系</strong>：直接影响 ELM（Petty-Cacioppo 1986）·Kahneman System 1/2（2011）等行为决策理论。",
+    "ja": "<strong>Bettman 情報処理パラダイム</strong>は 1979 年 James Bettman『An Information Processing Theory of Consumer Choice』で体系化·<strong>認知心理学の情報処理パラダイム</strong>を消費者行動研究に導入·1980-1990 年代<strong>認知派マーケティング主流</strong>を開いた。<br><br><strong>核心比喩</strong>：消費者 = <strong>情報処理者</strong>。意思決定 = 情報受信 → エンコード → 保存 → 検索 → 使用。<br><br><strong>4 大コンポーネント</strong>：① capacity ② motivation ③ attention & perceptual encoding ④ memory & search<br><br><strong>ヒューリスティック</strong>：処理能力限界のため<strong>簡略化戦略</strong>を多用：<br>- linear compensatory·conjunctive·lexicographic·elimination by aspects<br><br><strong>マーケティング示唆</strong>：<br>① 情報<strong>簡略化</strong>·brand は 10 のセリングポイントではなく 1-2 を選ぶ<br>② <strong>パッケージング</strong>·重要属性を目立つ場所·副次属性を隅に<br>③ <strong>チャンク</strong>·属性をグループ化·短期記憶処理を支援<br><br><strong>他派との関係</strong>：ELM（Petty-Cacioppo 1986）·Kahneman System 1/2（2011）等行動意思決定理論に直接影響。"
+  },
+  "tags": [
+    "Bettman",
+    "information processing",
+    "heuristic"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "消费者行为学派认知派的范式建构·后续行为决策理论的元框架",
+      "限": "把消费者「机器化」·情感和文化层不足",
+      "例": "买洗衣机：消费者用 lexicographic 启发式（先看价格再看品牌）",
+      "应": "消费者行为深度题·一橋·神戸 命题"
+    },
+    "ja": {
+      "限": "消費者を「機械化」·情緒·文化層不足",
+      "例": "洗濯機購入：消費者は lexicographic ヒューリスティック使用（価格→ブランド）"
+    }
+  },
+  "createdAt": "2026-04-30T04:51:42.753Z",
+  "updatedAt": "2026-04-30T13:19:33.350Z"
+}

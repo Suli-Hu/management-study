@@ -65,7 +65,7 @@ export async function getMetadataForTenant(
     `).bind(tenant.discipline).all<SchoolMetaRow>(),
     db.prepare(`
       SELECT sc.key, sc.name_zh, sc.name_en, sc.tags_json,
-        (SELECT COUNT(*) FROM kp_scholar ksc WHERE ksc.scholar_key = sc.key) as kp_count
+        (SELECT COUNT(*) FROM kp_scholar ksc WHERE ksc.scholar_discipline = sc.discipline AND ksc.scholar_key = sc.key) as kp_count
       FROM scholar sc
       WHERE sc.discipline = ?
       ORDER BY sc.name_zh ASC, sc.key ASC

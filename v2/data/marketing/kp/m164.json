@@ -1,0 +1,40 @@
+{
+  "id": "m164",
+  "discipline": "marketing",
+  "schools": [
+    "managerial"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "成本估算·固定·变动·总成本与经验曲线",
+    "ja": "コスト見積り・固定・変動・総コストと経験曲線",
+    "en": "Cost Estimation"
+  },
+  "body": {
+    "zh": "<strong>Cost Estimation（成本估算）</strong>是 cost-based pricing 的核心·决定<strong>价格底线</strong>。Kotler 11 章·Pro Plus 9 章。<br><br><strong>3 类 cost</strong>：<br>① <strong>Fixed Costs（固定成本）</strong>——不随产量变化（rent·salaries·depreciation）<br>② <strong>Variable Costs（变动成本）</strong>——随产量变化（材料·包装·销售 commission）<br>③ <strong>Total Costs（总成本）</strong>= Fixed + Variable × Volume<br><br><strong>关键公式</strong>：<br><strong>Average Cost = Total Cost / Volume</strong><br><strong>Average Cost 公式</strong>：随 volume 增加而下降·因 fixed cost 摊薄。<br><br><strong>4 大 cost 概念</strong>：<br>① <strong>Experience Curve（经验曲线）</strong>——累计产量翻倍·单位成本下降 10-30%（Boston Consulting Group）<br>② <strong>Activity-Based Costing（ABC）</strong>——更精细的成本分摊<br>③ <strong>Target Costing</strong>——「价格 - 利润 = 目标成本」逆推（日本 Toyota·Sony 主流）<br>④ <strong>Total Cost of Ownership（TCO）</strong>——B2B 客户视角·包含使用·维护·处置成本<br><br><strong>marketing 启示</strong>：<br>① <strong>价格底线</strong>——价格 < average cost = 长期不可持续<br>② <strong>规模 vs 价格</strong>——大量生产可降价·形成 cost leadership<br>③ <strong>experience curve</strong>——先发企业经验积累·后来者难追<br>④ <strong>target costing</strong>——日本企业逆向思维·marketing 决定 target price·R&D + 生产逆推 cost<br><br><strong>典型例</strong>：<br>- Toyota Corolla：target costing（消费者愿付 → 留 profit → 推算 target cost）<br>- Boeing 飞机：experience curve·每 doubling of cumulative production·cost drop ~15%<br>- iPhone：BOM cost vs retail price 公开·marketing 教学常用<br><br><strong>跨学派关系</strong>：与 strategic_marketing 的 cost leadership·new product development·价格 3 base 一致。",
+    "ja": "<strong>Cost Estimation（コスト見積り）</strong>は cost-based pricing の核心·<strong>価格底線</strong>を決定。Kotler 11 章·Pro Plus 9 章。<br><br><strong>3 類 cost</strong>：① Fixed Costs（rent·給与·減価償却）② Variable Costs（材料·包装·販売手数料）③ Total Costs = Fixed + Variable × Volume<br><br><strong>関键公式</strong>：Average Cost = Total Cost / Volume·volume 増で fixed cost 摊薄·下降。<br><br><strong>4 大 cost 概念</strong>：① Experience Curve（累計産量倍·単位 cost 10-30% 低下·BCG）② Activity-Based Costing（ABC）③ Target Costing（価格 - 利益 = 目標 cost·日本 Toyota·Sony 主流）④ Total Cost of Ownership（TCO·B2B 顧客視点）<br><br><strong>マーケティング示唆</strong>：① 価格底線·価格 < average cost = 長期持続不可 ② 規模 vs 価格（cost leadership）③ experience curve（先発優位）④ target costing（日本企業逆向思考·マーケティングが target price 決定·R&D + 生産逆推）<br><br><strong>典型例</strong>：① Toyota Corolla（target costing）② Boeing（experience curve·~15% drop per doubling）③ iPhone（BOM cost vs retail price 公開·教育常用）<br><br><strong>他派との関係</strong>：strategic_marketing の cost leadership·new product development·価格 3 base と一致。"
+  },
+  "tags": [
+    "cost estimation",
+    "experience curve",
+    "target costing"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "定价决策的科学化基础·实务必学",
+      "限": "成本分摊方法多·跨产业差异",
+      "例": "Toyota·Boeing·iPhone 是教科书",
+      "应": "Kotler 11 章·价格题"
+    },
+    "ja": {
+      "限": "コスト分摊方法多·跨産業差",
+      "例": "Toyota·Boeing·iPhone 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T09:26:20.337Z",
+  "updatedAt": "2026-04-30T13:25:10.849Z"
+}

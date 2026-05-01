@@ -1,0 +1,37 @@
+{
+  "id": "m006",
+  "discipline": "marketing",
+  "schools": [
+    "managerial"
+  ],
+  "scholars": [
+    "mccarthy",
+    "kotler"
+  ],
+  "year": "1960",
+  "title": {
+    "zh": "4P",
+    "ja": "4P マーケティング・ミックス・フレーム",
+    "en": "4P / Marketing Mix Framework"
+  },
+  "body": {
+    "zh": "<strong>4P（Marketing Mix）</strong>是 marketing 学最广为传颂的框架·由 <strong>E. Jerome McCarthy</strong>（1960·『Basic Marketing: A Managerial Approach』）把 <strong>Borden（1953/1964）的 12 要素 marketing mix</strong> 简化整合而成。<br><br><strong>4 要素</strong>：<br>① <strong>Product（产品）</strong>——卖什么·包括 brand·品质·包装·保证·特征·设计·变量·服务等<br>② <strong>Price（价格）</strong>——多少钱·包括 list price·折扣·折让·支付期限·信贷条件等<br>③ <strong>Place（流通）</strong>——在哪卖·包括 channel·覆盖·组合·位置·库存·运输等<br>④ <strong>Promotion（促销）</strong>——怎么传·包括 advertising·人员销售·sales promotion·公关·直销等<br><br><strong>核心思想</strong>：marketing 战略 = 在选定 segment 内·**最优化组合 4 要素**·在控制范围内回应市场。<br><br><strong>与 STP 关系</strong>：STP 决定<strong>对谁</strong>（战略层）·4P 决定<strong>做什么</strong>（战术层）。STP 是 4P 的前提。<br><br><strong>扩展</strong>：① <strong>7P</strong>（Booms-Bitner 1981 服务扩展）+ People·Process·Physical Evidence ② <strong>4C</strong>（Lauterborn 1990 消费者视角）→ Customer Value·Cost·Convenience·Communication。<br><br><strong>批判</strong>：① 偏供给侧·忽视消费者主体性 ② 数字时代下 platform·co-creation 等新逻辑 4P 难捕捉 ③ SDL 视角下「商品」是服务的载体·4P 假设过时。",
+    "ja": "<strong>4P（マーケティング・ミックス）</strong>はマーケティング学最も広く知られたフレーム·<strong>E. Jerome McCarthy</strong>（1960·『Basic Marketing: A Managerial Approach』）が <strong>Borden（1953/1964）の 12 要素マーケティング・ミックス</strong> を簡略化統合。<br><br><strong>4 要素</strong>：<br>① <strong>Product（製品）</strong>·何を売るか·brand·品質·包装·保証·特徴·デザイン·バリエーション·サービス等<br>② <strong>Price（価格）</strong>·いくらか·list price·割引·アロウワンス·支払期間·信用条件等<br>③ <strong>Place（流通）</strong>·どこで売るか·channel·覆盖·組合·立地·在庫·輸送等<br>④ <strong>Promotion（プロモーション）</strong>·どう伝えるか·広告·人的販売·sales promotion·PR·ダイレクト等<br><br><strong>核心思想</strong>：マーケティング戦略 = 選定 segment 内で<strong>4 要素の最適組合せ</strong>·制御範囲で市場に対応。<br><br><strong>STP との関係</strong>：STP が<strong>誰に</strong>（戦略層）·4P が<strong>何をするか</strong>（戦術層）。STP が 4P の前提。<br><br><strong>拡張</strong>：① <strong>7P</strong>（Booms-Bitner 1981 サービス拡張）+ People·Process·Physical Evidence ② <strong>4C</strong>（Lauterborn 1990 消費者視点）→ Customer Value·Cost·Convenience·Communication。<br><br><strong>批判</strong>：① 供給側偏重·消費者主体性無視 ② デジタル時代 platform·co-creation 等新ロジックを捕捉困難 ③ SDL 視点では「商品」はサービスの伝達手段·4P 前提時代遅れ。"
+  },
+  "tags": [],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "marketing 学最普及的战术框架·几乎所有教材的基本结构",
+      "限": "供给侧·静态·与 SDL 等新范式张力",
+      "例": "UNIQLO 4P：Lifewear·¥1,990 起·SPA 直营 + 全球·LifeWear 故事 IMC",
+      "应": "Kotler 16 版主线·全 11 校 marketing 必考"
+    },
+    "ja": {
+      "限": "供給側·静的·SDL 等新パラダイムと緊張",
+      "例": "UNIQLO 4P：Lifewear·¥1,990 から·SPA 直営 + 全球·LifeWear ストーリー IMC"
+    }
+  },
+  "createdAt": "2026-04-30T04:40:19.642Z",
+  "updatedAt": "2026-05-01T02:20:38.813Z"
+}

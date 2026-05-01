@@ -1,0 +1,41 @@
+{
+  "id": "m081",
+  "discipline": "marketing",
+  "schools": [
+    "social_marketing",
+    "strategic_marketing"
+  ],
+  "scholars": [
+    "prahalad"
+  ],
+  "year": "2004",
+  "title": {
+    "zh": "金字塔底层市场·BOP·Prahalad 2004",
+    "ja": "ピラミッド底辺市場 BOP・Prahalad 2004",
+    "en": "Bottom of the Pyramid (BOP)"
+  },
+  "body": {
+    "zh": "<strong>BOP（Bottom of the Pyramid·金字塔底层 marketing）</strong>由 C.K. Prahalad 在 2004 年『The Fortune at the Bottom of the Pyramid』提出·把全球最贫困 40 亿人作为<strong>巨大商业机会</strong>·而非慈善对象。塾 11 章核心概念。<br><br><strong>核心命题</strong>：<br>① <strong>BOP 不是「无购买力」·是「不同购买力」</strong>——40 亿人 × 小额消费 = 万亿级市场<br>② <strong>marketing 必须创造适合 BOP 的产品·价格·channel</strong><br>③ <strong>BOP marketing = 商业机会 + 社会价值</strong>双赢<br><br><strong>BOP 战略 4 大原则</strong>：<br>① <strong>Affordable</strong>——价格在 BOP 可承受范围（小包装·低价）<br>例：Unilever 1 cent shampoo sachet（一次用量·1 美分）<br>② <strong>Accessible</strong>——channel 触达 BOP（村·农村·偏远）<br>例：HUL Project Shakti（印度农村女性销售员·达 165,000 村）<br>③ <strong>Acceptable</strong>——文化·价值观适配 BOP<br>例：Nokia Asha 系列（多语言·宗教适配）<br>④ <strong>Aware</strong>——让 BOP 知道产品（教育·媒体）<br><br><strong>典型案例</strong>：<br>① <strong>Hindustan Unilever（HUL）</strong>——1 cent shampoo·Project Shakti·销售额从 BOP 占 20% 增到 40%<br>② <strong>Tata Nano（2008）</strong>——「世界最便宜的车」（约 $2,500）针对印度 motorcycle 用户·虽然商业失败但 BOP 思维代表<br>③ <strong>M-Pesa（Kenya）</strong>——手机银行·农村金融·改变非洲<br>④ <strong>Grameen Bank</strong>——小额贷款（Yunus 2006 诺贝尔和平奖）<br><br><strong>BOP 的 4 大批判</strong>：<br>① <strong>过度商业化贫困</strong>——把贫困当 market·伦理争议<br>② <strong>实际成功率低</strong>——多数 BOP 项目失败<br>③ <strong>需要长期耐心资本</strong>——大多企业短期 ROI 压力<br>④ <strong>不解决根本贫困问题</strong>——是 marketing 不是 development<br><br><strong>跨学派关系</strong>：① 与 social_marketing 学派的 CSR 整合 ② 与 marketing_concept 5 志向最后阶段「社会志向」一致 ③ 与 strategic_marketing 的 blue ocean strategy 共享「市场创造」思维。",
+    "ja": "<strong>BOP（Bottom of the Pyramid·ピラミッド底辺マーケティング）</strong>は C.K. Prahalad 2004 年『The Fortune at the Bottom of the Pyramid』提唱·世界最貧困 40 億人を<strong>巨大な商業機会</strong>として·慈善対象ではない。塾 11 章核心概念。<br><br><strong>核心命題</strong>：① BOP は「無購買力」ではなく「異なる購買力」② マーケティングは BOP に合った製品·価格·チャネルを創造 ③ BOP marketing = 商業機会 + 社会価値の双贏<br><br><strong>BOP 戦略 4 大原則</strong>：① Affordable（小パッケージ·低価·Unilever 1 cent shampoo）② Accessible（HUL Project Shakti·インド農村 165,000 村）③ Acceptable（Nokia Asha 多言語·宗教適配）④ Aware<br><br><strong>典型事例</strong>：① Hindustan Unilever ② Tata Nano（2008·約 $2,500·インド）③ M-Pesa（ケニア·モバイル銀行）④ Grameen Bank（Yunus 2006 ノーベル平和賞）<br><br><strong>4 大批判</strong>：① 貧困の商業化過剰 ② 実際成功率低 ③ 長期耐性資本必要 ④ 根本貧困問題を解決せず<br><br><strong>他派との関係</strong>：① social_marketing CSR と統合 ② marketing_concept 「社会志向」一致 ③ strategic_marketing blue ocean と共有「市場創造」思考。"
+  },
+  "tags": [
+    "BOP",
+    "Prahalad",
+    "HUL"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "social marketing 的全球化扩展·商业 + 社会双赢战略",
+      "限": "成功率低·伦理争议·长期资本需求",
+      "例": "HUL·Tata Nano·M-Pesa·Grameen 是教科书",
+      "应": "social marketing 题·一橋·神戸 高分"
+    },
+    "ja": {
+      "限": "成功率低·倫理論争·長期資本必要",
+      "例": "HUL·Tata Nano·M-Pesa·Grameen 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T05:14:15.193Z",
+  "updatedAt": "2026-04-30T13:21:57.858Z"
+}

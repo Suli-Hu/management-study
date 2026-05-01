@@ -1,0 +1,41 @@
+{
+  "id": "m069",
+  "discipline": "marketing",
+  "schools": [
+    "relationship",
+    "brand_equity"
+  ],
+  "scholars": [
+    "wada"
+  ],
+  "year": "2009",
+  "title": {
+    "zh": "地域品牌·区域营销战略",
+    "ja": "地域ブランド・地域マーケティング戦略",
+    "en": "Place / Regional Branding"
+  },
+  "body": {
+    "zh": "<strong>地域 Brand（地域ブランド·地域营销）</strong>是<strong>和田充夫</strong>等日本学者推动的研究领域·把 brand 概念应用到<strong>地域·城市·国家</strong>·研究地域 brand 的形成·管理·价值。Pro Plus 第 15 章 5 节核心。<br><br><strong>核心命题</strong>：地域 = brand·有 identity·有 image·有 equity·可以管理。<br><br><strong>地域 brand 的 3 个层次</strong>：<br>① <strong>Country Branding（国家 brand）</strong>——「Made in Japan」「Cool Japan」「Made in Italy」<br>② <strong>City Branding（城市 brand）</strong>——「I ❤ NY」·东京·京都·札幌<br>③ <strong>Local Branding（地方 brand）</strong>——「夕張メロン」「松阪牛」「魚沼コシヒカリ」<br><br><strong>地域 brand 的 4 大特殊性</strong>（vs 企业 brand）：<br>① <strong>多 stakeholder</strong>——居民·企业·政府·游客·投资者一起拥有·没有单一 owner<br>② <strong>geo-physical</strong>——绑定土地·气候·文化历史·难以「移动」<br>③ <strong>complex offering</strong>——产品 + 服务 + 体验 + 社区一起·非单一商品<br>④ <strong>governance</strong>——决策机制复杂·政府 + 民间合作<br><br><strong>4 大 marketing 战略</strong>：<br>① <strong>tourism marketing</strong>——吸引游客·visit Japan campaign<br>② <strong>FDI promotion</strong>——吸引外资<br>③ <strong>地域产品营销</strong>——地理标志保护·六次产业化<br>④ <strong>居民 / 企业 attraction</strong>——人口流入·企业总部诱致<br><br><strong>典型日本案例</strong>：<br>① <strong>「Cool Japan」</strong>——内阁府推动的国家 branding（2002 起）<br>② <strong>「ふるさと納税」制度</strong>——结合税制 + 地域产品营销<br>③ <strong>「松阪牛」</strong>——地理标志 + 品牌战略<br>④ <strong>「徳島県上勝町」</strong>——「葉っぱ business」激活山区经济<br><br><strong>跨学派关系</strong>：① 与 brand_equity 的 brand identity·brand portfolio 概念扩展 ② 与 relationship 学派的「对社会的 relationship」（嶋口）一致 ③ 与 social marketing 的地域 sustainability 接轨 ④ 是日本 marketing 学的特色研究领域·和田充夫·恩藏直人·栗木契均涉及。",
+    "ja": "<strong>地域ブランド（地域マーケティング）</strong>は<strong>和田充夫</strong>等日本学者が推進する研究領域·ブランド概念を<strong>地域·都市·国家</strong>に適用·地域ブランドの形成·管理·価値を研究。Pro Plus 第 15 章 5 節核心。<br><br><strong>核心命題</strong>：地域 = ブランド·identity·image·equity を持ち·管理可能。<br><br><strong>3 層次</strong>：① 国家ブランディング（「Made in Japan」「Cool Japan」）② 都市ブランディング（東京·京都）③ 地方ブランディング（夕張メロン·松阪牛）<br><br><strong>4 大特殊性</strong>（vs 企業ブランド）：① 多 stakeholder ② 地理・物理的 ③ 複雑な offering ④ ガバナンス複雑<br><br><strong>4 大マーケティング戦略</strong>：① ツーリズム・マーケティング ② FDI 誘致 ③ 地域製品マーケティング ④ 居住·企業誘致<br><br><strong>典型日本事例</strong>：① 「Cool Japan」（内閣府 2002）② ふるさと納税 ③ 松阪牛 ④ 徳島県上勝町「葉っぱ business」<br><br><strong>他派との関係</strong>：① brand_equity の identity·portfolio 拡張 ② relationship の「対社会のリレーションシップ」（嶋口）と一致 ③ social marketing の地域 sustainability ④ 日本マーケティング学の特色研究領域·和田·恩藏·栗木が関与。"
+  },
+  "tags": [
+    "地域ブランド",
+    "Cool Japan",
+    "ふるさと納税"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "日本特有的 brand 应用领域·和田研究的代表",
+      "限": "复杂 stakeholder·治理难·实证测量难",
+      "例": "Cool Japan·ふるさと納税·松阪牛",
+      "应": "Pro Plus 15 章·慶應·神戸命题"
+    },
+    "ja": {
+      "限": "複雑 stakeholder·ガバナンス困難·実証測定困難",
+      "例": "Cool Japan·ふるさと納税·松阪牛"
+    }
+  },
+  "createdAt": "2026-04-30T05:04:21.295Z",
+  "updatedAt": "2026-04-30T13:21:31.028Z"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "m114",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "brand_equity"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "包装与标签·Packaging & Labeling",
+    "ja": "包装とラベリング",
+    "en": "Packaging & Labeling"
+  },
+  "body": {
+    "zh": "<strong>包装（Packaging）</strong>与<strong>标签（Labeling）</strong>是 marketing 4P 中 Product 的<strong>实物 brand 接触点</strong>·常被忽视但极重要。<br><br><strong>包装的 4 大功能</strong>：<br>① <strong>Protection</strong>——保护产品（运输·储存）<br>② <strong>Utility</strong>——使用便利（开关·分量·携带）<br>③ <strong>Communication</strong>——传 brand·成分·使用说明<br>④ <strong>Differentiation</strong>——视觉差別化·shelf appeal<br><br><strong>包装设计 5 大要素</strong>：① 形状 ② 颜色 ③ 字体 ④ 图像 ⑤ 材质<br><br><strong>典型例</strong>：① Tiffany 蓝盒 = brand 标识本身 ② Apple 开盒体验 = experience design ③ Toblerone 三角形 = 形状 differentiation<br><br><strong>Labeling 法律 / 道德要求</strong>：成分·营养·原产地·过敏警告·环保标识·价格 unit pricing<br><br><strong>marketing 战略</strong>：① <strong>Sustainable packaging</strong>——减塑·可回收（消费者关注）② <strong>Smart packaging</strong>——QR·NFC·AR ③ <strong>Gift packaging</strong>——unboxing 经济（IG·TikTok）<br><br><strong>跨学派关系</strong>：与 brand_equity·IMC·digital_marketing 都有交叉。",
+    "ja": "<strong>包装（Packaging）</strong>と<strong>ラベリング（Labeling）</strong>はマーケティング 4P 中 Product の<strong>実物ブランド接触点</strong>·軽視されがちだが極重要。<br><br><strong>包装の 4 大機能</strong>：① Protection ② Utility ③ Communication ④ Differentiation<br><br><strong>包装設計 5 大要素</strong>：① 形状 ② 色 ③ フォント ④ 画像 ⑤ 材質<br><br><strong>典型例</strong>：① Tiffany ブルーボックス = ブランド標識自体 ② Apple 開包体験 = experience design ③ Toblerone 三角形 = 形状 differentiation<br><br><strong>Labeling 法律 / 倫理要求</strong>：成分·栄養·原産地·アレルギー警告·環保標識·unit pricing<br><br><strong>マーケティング戦略</strong>：① Sustainable packaging（減プラ·リサイクル）② Smart packaging（QR·NFC·AR）③ Gift packaging（unboxing economy·IG·TikTok）<br><br><strong>他派との関係</strong>：brand_equity·IMC·digital_marketing と交差。"
+  },
+  "tags": [
+    "packaging",
+    "labeling",
+    "unboxing"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "产品 marketing 的实物接触点·brand 体验关键",
+      "限": "成本平衡·sustainability 压力",
+      "例": "Tiffany·Apple·Toblerone 是教科书",
+      "应": "Kotler 第 8 章·brand 题"
+    },
+    "ja": {
+      "限": "コスト均衡·sustainability 圧力",
+      "例": "Tiffany·Apple·Toblerone 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:35:28.003Z",
+  "updatedAt": "2026-04-30T13:23:15.788Z"
+}

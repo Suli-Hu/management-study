@@ -1,0 +1,40 @@
+{
+  "id": "m017",
+  "discipline": "marketing",
+  "schools": [
+    "marketing_concept"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "2010",
+  "title": {
+    "zh": "Marketing 2.0·消费者中心时代",
+    "ja": "マーケティング 2.0・消費者中心時代",
+    "en": "Marketing 2.0 · Consumer-Centric"
+  },
+  "body": {
+    "zh": "<strong>Marketing 2.0（消费者中心）</strong>是 Kotler 演化论的<strong>第二阶段</strong>·1990-2000 年代为代表。<br><br><strong>核心特征</strong>：<br>① <strong>视角</strong>：企业把消费者当「<strong>有理性·情感的智能消费者</strong>」<br>② <strong>核心</strong>：差別化·定位·brand 资产·关系建立<br>③ <strong>战略</strong>：STP·brand equity·CRM<br>④ <strong>关键概念</strong>：positioning（Ries-Trout 1981）·brand equity（Aaker 1991·Keller 1993）·CRM<br>⑤ <strong>背景</strong>：信息技术普及·消费者信息获得增强·市场饱和<br><br><strong>典型例</strong>：① iPod「1000 songs in your pocket」明确定位 ② Starbucks 第三空间情感连接 ③ Amazon 早期推荐系统建立 1-1 关系。<br><br><strong>从 1.0 的进化</strong>：① 从「all customers」到「target customer」② 从「standardized product」到「differentiated solution」③ 从「functional value」到「functional + emotional value」。<br><br><strong>批判</strong>：仍然是企业-消费者二元关系·未达到「人间」「社会」更深的视角。Marketing 3.0 起进入更深哲学层。",
+    "ja": "<strong>マーケティング 2.0（消費者中心）</strong>は Kotler 進化論の<strong>第二段階</strong>·1990-2000 年代を代表。<br><br><strong>核心特徴</strong>：<br>① <strong>視点</strong>：企業は消費者を「<strong>理性·感情を持つ知的消費者</strong>」と捉える<br>② <strong>核心</strong>：差別化·ポジショニング·ブランド資産·関係構築<br>③ <strong>戦略</strong>：STP·ブランド・エクイティ·CRM<br>④ <strong>主要概念</strong>：ポジショニング（Ries-Trout 1981）·ブランド・エクイティ（Aaker 1991·Keller 1993）·CRM<br>⑤ <strong>背景</strong>：情報技術普及·消費者情報取得増強·市場飽和<br><br><strong>典型例</strong>：① iPod「1000 songs in your pocket」明確ポジショニング ② Starbucks 第三空間情緒接続 ③ Amazon 初期レコメンドで 1-1 関係構築。<br><br><strong>1.0 からの進化</strong>：① 「all customers」から「target customer」② 「standardized product」から「differentiated solution」③ 「functional value」から「functional + emotional value」。<br><br><strong>批判</strong>：依然企業-消費者二元関係·「人間」「社会」のより深い視点に至らず。3.0 から深哲学層へ。"
+  },
+  "tags": [
+    "Marketing 2.0",
+    "差別化",
+    "brand"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "marketing 进入差別化·brand 资产·关系建立时代",
+      "限": "仍是企业-消费者二元·未达社会层",
+      "例": "iPod·Starbucks·Amazon 早期",
+      "应": "marketing 演化论·brand strategy"
+    },
+    "ja": {
+      "限": "依然企業-消費者二元·社会層に至らず",
+      "例": "iPod·Starbucks·Amazon 初期"
+    }
+  },
+  "createdAt": "2026-04-30T04:51:25.175Z",
+  "updatedAt": "2026-04-30T13:19:13.308Z"
+}

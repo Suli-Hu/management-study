@@ -1,0 +1,42 @@
+{
+  "id": "m117",
+  "discipline": "marketing",
+  "schools": [
+    "sdl",
+    "managerial"
+  ],
+  "scholars": [
+    "vargo",
+    "lusch"
+  ],
+  "year": "1985",
+  "title": {
+    "zh": "服务 4 特性·IHIP·无形性·变动性·不可分·消灭性",
+    "ja": "サービス 4 特性 IHIP・無形性・変動性・不可分性・消滅性",
+    "en": "Services 4 Characteristics (IHIP)"
+  },
+  "body": {
+    "zh": "<strong>サービス 4 特性（IHIP·Services Marketing 基础）</strong>是服务 marketing 的奠基理论·区分服务与有形商品的本质差异。<br><br><strong>4 大特性</strong>：<br>① <strong>Intangibility（無形性）</strong>——服务无法触摸·消费者难评估购买前质量<br>marketing 应对：实体证据（physical evidence）·brand·人员形象<br>② <strong>Heterogeneity / Variability（変動性）</strong>——服务质量因人 / 时间 / 地点不同<br>marketing 应对：标准化训练·service script·QA 系统<br>③ <strong>Inseparability（不可分性）</strong>——生产与消费同时发生·顾客在场<br>marketing 应对：员工训练（前线员工 = marketer）·客户参与设计<br>④ <strong>Perishability（消滅性）</strong>——服务无法库存（空座位·空房间不能存）<br>marketing 应对：动态定价·yield management·需求 / 供给管理<br><br><strong>典型例</strong>：① 航空：variability（不同 crew 服务质量）+ perishability（空座立即蒸发）+ yield management（dynamic 价格）② 酒店：inseparability（顾客 check-in 必现场）+ Marriott loyalty programs<br><br><strong>跨学派关系</strong>：① 与 SDL（m070）的「服务才是经济本质」对照 ② 与 7P（m007）的服务扩展直接对接 ③ 与 relationship 学派的服务质量 / NPS 一致。",
+    "ja": "<strong>サービス 4 特性（IHIP·Services Marketing 基礎）</strong>はサービス・マーケティングの基礎理論·サービスと有形商品の本質差を区分。<br><br><strong>4 大特性</strong>：① <strong>Intangibility（無形性）</strong>·実物証拠·ブランド·人員イメージ ② <strong>Heterogeneity / Variability（変動性）</strong>·標準化訓練·service script·QA ③ <strong>Inseparability（不可分性）</strong>·従業員訓練（前線=marketer）·顧客参加 ④ <strong>Perishability（消滅性）</strong>·動的価格·yield management·需要供給管理<br><br><strong>典型例</strong>：① 航空：variability + perishability + yield management（動的価格）② ホテル：inseparability + Marriott loyalty<br><br><strong>他派との関係</strong>：① SDL（m070）と対照 ② 7P（m007）と直接接続 ③ relationship 学派サービス品質 / NPS と一致。"
+  },
+  "tags": [
+    "IHIP",
+    "services",
+    "intangibility"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "服务 marketing 的基础理论·与有形商品对照",
+      "限": "4 特性边界模糊·SDL 视角下被超越",
+      "例": "航空·酒店·医疗是教科书 IHIP",
+      "应": "Kotler 第 9 章·SDL 题"
+    },
+    "ja": {
+      "限": "4 特性境界曖昧·SDL 視点で超越",
+      "例": "航空·ホテル·医療は教科書 IHIP"
+    }
+  },
+  "createdAt": "2026-04-30T07:35:33.462Z",
+  "updatedAt": "2026-04-30T13:23:22.180Z"
+}

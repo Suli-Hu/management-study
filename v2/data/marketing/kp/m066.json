@@ -1,0 +1,39 @@
+{
+  "id": "m066",
+  "discipline": "marketing",
+  "schools": [
+    "relationship"
+  ],
+  "scholars": [
+    "berry"
+  ],
+  "year": "1990",
+  "title": {
+    "zh": "服务恢复·苦情应对 4A 流程",
+    "ja": "サービス・リカバリー・苦情対応 4A プロセス",
+    "en": "Service Recovery · 4A Process"
+  },
+  "body": {
+    "zh": "<strong>Service Recovery（苦情对应·服务恢复）</strong>是 relationship 学派的<strong>关键实务环节</strong>·指当客户不满时·企业的应对战略。<br><br><strong>核心命题</strong>：服务失败不可避免·但<strong>response to failure</strong> 决定客户是流失还是变更忠诚。<br><br><strong>Service Recovery Paradox</strong>：<br>有研究发现·成功的 service recovery 后·客户忠诚度<strong>比从未失败更高</strong>——因为客户感受到企业重视他们。但 paradox 取决于 recovery 质量。<br><br><strong>4A 应对流程</strong>：<br>① <strong>Acknowledge（承认）</strong>——立即承认问题·不否认·不推卸<br>② <strong>Apologize（道歉）</strong>——具体·真诚·针对性<br>③ <strong>Act（行动）</strong>——立即解决·补偿·改善<br>④ <strong>Amend（修订）</strong>——内部流程改善·避免再发<br><br><strong>4 类客户对失败的反应</strong>：<br>① <strong>Voice（投诉）</strong>——直接告诉企业·服务恢复机会<br>② <strong>Exit（离开）</strong>——直接换 brand·企业失去客户和 feedback<br>③ <strong>Loyalty（忍受）</strong>——继续用·但内心不满<br>④ <strong>Negative WOM（传播负面）</strong>——告诉朋友·SNS 投诉<br><br><strong>Voice 是企业的 gift</strong>——投诉的客户是给企业第二次机会·Exit 客户是「沉默的杀手」。<br><br><strong>marketing 启示</strong>：<br>① <strong>降低投诉门槛</strong>——让客户容易投诉（hotline·email·SNS）<br>② <strong>快速响应</strong>——24 小时是黄金<br>③ <strong>授权员工</strong>——一线员工有权立即解决·不需要层层审批（Ritz-Carlton 给每员工每客户每天 $2000 解决问题的权限）<br>④ <strong>over-deliver</strong>——补偿超出预期·变成 loyalty<br><br><strong>典型成功案例</strong>：<br>① <strong>Ritz-Carlton</strong>——员工权限 $2000 立即解决<br>② <strong>Amazon</strong>——退货政策极宽松·建立信任<br>③ <strong>JetBlue</strong>——2007 年大雪事件·CEO 出 video 道歉·提出 customer bill of rights<br><br><strong>典型失败案例</strong>：<br>① <strong>United Airlines 2017</strong>——拖拽乘客·初期 CEO 的回应「reaccommodate」激怒消费者·brand 大伤<br>② <strong>BP 漏油 2010</strong>——CEO 「I want my life back」言论灾难性<br><br><strong>跨学派关系</strong>：与 brand_equity 的 brand crisis management 直接对接·service recovery 是 brand crisis 的微观版本。",
+    "ja": "<strong>Service Recovery（苦情対応）</strong>は relationship 学派の<strong>キー実務環節</strong>·顧客が不満時·企業の対応戦略。<br><br><strong>核心命題</strong>：サービス失敗は不可避·しかし<strong>失敗への response</strong> が顧客流失か忠誠度向上を決定。<br><br><strong>Service Recovery Paradox</strong>：成功的 recovery 後·顧客忠誠度は<strong>失敗なし時より高い</strong>·企業が大切にしてくれた感覚。但 recovery 品質依存。<br><br><strong>4A 対応フロー</strong>：① Acknowledge（承認）② Apologize（謝罪）③ Act（行動）④ Amend（改修）<br><br><strong>4 類顧客反応</strong>：① Voice（投訴）② Exit（離脱）③ Loyalty（忍耐）④ Negative WOM<br><br><strong>Voice は企業への gift</strong>·投訴顧客は第二の機会·Exit 顧客は「沈黙の殺し屋」。<br><br><strong>マーケティング示唆</strong>：① 投訴閾值下げ ② 24 時間対応 ③ 従業員権限委譲（Ritz-Carlton 1 顧客 1 日 $2000 即決）④ over-deliver<br><br><strong>典型成功事例</strong>：① Ritz-Carlton ② Amazon 返品方針 ③ JetBlue 2007 大雪 CEO video 謝罪<br><br><strong>典型失敗事例</strong>：① United Airlines 2017·乗客引きずり ② BP 漏油 2010 CEO 「I want my life back」災難<br><br><strong>他派との関係</strong>：brand_equity の brand crisis management と直接接続·service recovery は brand crisis のミクロ版。"
+  },
+  "tags": [
+    "service recovery",
+    "Ritz-Carlton",
+    "4A"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "relationship 学派的实务核心·service failure 是关键转折点",
+      "例": "Ritz-Carlton·Amazon·JetBlue 是教科书",
+      "应": "relationship 题·service marketing 题"
+    },
+    "ja": {
+      "限": "実務標準化困難·異文化適用",
+      "例": "Ritz-Carlton·Amazon·JetBlue は教科書"
+    }
+  },
+  "createdAt": "2026-04-30T05:04:16.210Z",
+  "updatedAt": "2026-04-30T13:21:24.669Z"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "m038",
+  "discipline": "marketing",
+  "schools": [
+    "brand_equity"
+  ],
+  "scholars": [
+    "aaker",
+    "keller"
+  ],
+  "year": "1990",
+  "title": {
+    "zh": "品牌拡張战略·Aaker-Keller 1990",
+    "ja": "ブランド拡張戦略・Aaker-Keller 1990",
+    "en": "Brand Extension Strategy"
+  },
+  "body": {
+    "zh": "<strong>Brand 拡張（Brand Extension）</strong>是把既有 brand name 用于新类目产品的战略·Aaker & Keller 1990 年在 <em>Journal of Marketing</em> \"Consumer Evaluations of Brand Extensions\" 系统化研究。<br><br><strong>3 类拡張</strong>：<br><br>① <strong>Line Extension（产品线拡張）</strong>——同类目内增加变量<br>例：Coca-Cola → Diet Coke·Coke Zero·Cherry Coke<br>风险低·常见。<br><br>② <strong>Category Extension（类目拡張）</strong>——跨类目用同 brand<br>例：① Apple Computer → iPod → iPhone → Apple Watch（成功）<br>② Porsche → Porsche Cayenne SUV（成功）<br>③ Harley-Davidson → 香水（失败·品牌不匹配）<br><br>③ <strong>Brand 名 Licensing</strong>——授权他人用 brand<br>例：Disney brand → 各种玩具·服装·主题公园<br><br><strong>brand 拡張成功的 7 大关键</strong>（Aaker-Keller 研究发现）：<br>① <strong>Fit（匹配度）</strong>——新类目与原类目共享属性<br>② <strong>Perceived Quality（原 brand 质量感知）</strong>——原 brand 高质量易扩展<br>③ <strong>Difficulty（制作难度）</strong>——消费者认为新类目对原 brand 不太难做<br>④ <strong>Innovativeness（创新性）</strong>——新品有真正创新<br>⑤ <strong>Marketing Support</strong>——足够的 marketing 投资<br>⑥ <strong>Distribution</strong>——通畅的 channel<br>⑦ <strong>Timing</strong>——市场时机<br><br><strong>brand 拡張的双刃剑</strong>：<br>正面：① 减少新品 trial cost（消费者已认识 brand）② marketing 投资共享 ③ brand 资产做大<br>负面：① 拡張失败损害原 brand（dilution）② 拡張到不匹配类目使 brand 变模糊（如 Harley-Davidson 香水）③ 同 brand 多类目顾客 confused<br><br><strong>实务建议</strong>：拡張前做 fit 分析·消费者意见调查·测试 limited launch。",
+    "ja": "<strong>ブランド拡張（Brand Extension）</strong>は既存ブランド名を新カテゴリー製品に使用する戦略·Aaker & Keller 1990 年 <em>Journal of Marketing</em> \"Consumer Evaluations of Brand Extensions\" で体系化研究。<br><br><strong>3 類の拡張</strong>：<br>① <strong>Line Extension（製品ライン拡張）</strong>·同カテゴリー内バリエーション追加<br>例：Coca-Cola → Diet Coke·Coke Zero·Cherry Coke<br><br>② <strong>Category Extension（カテゴリー拡張）</strong>·カテゴリー越え同ブランド使用<br>例：Apple Computer → iPod → iPhone → Apple Watch（成功）·Porsche → Cayenne SUV（成功）·Harley-Davidson → 香水（失敗）<br><br>③ <strong>ブランド名 Licensing</strong>·許諾他人使用·Disney → 玩具·服装·テーマパーク<br><br><strong>ブランド拡張成功の 7 つのキー</strong>（Aaker-Keller 研究発見）：<br>① Fit（マッチ度）② Perceived Quality（原ブランド品質感知）③ Difficulty ④ Innovativeness ⑤ Marketing Support ⑥ Distribution ⑦ Timing<br><br><strong>ブランド拡張の両刃の剣</strong>：<br>正：① 新品 trial cost 削減 ② マーケティング投資共有 ③ ブランド資産拡大<br>負：① 失敗が原ブランドを損なう（dilution）② 不適合カテゴリー拡張でブランド曖昧化 ③ 多カテゴリーで顧客 confused<br><br><strong>実務提言</strong>：拡張前に fit 分析·消費者意見調査·limited launch テスト。"
+  },
+  "tags": [
+    "brand extension",
+    "Aaker-Keller 1990",
+    "Apple Harley"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "brand 战略最重要的成长决策·失败案例多·有借鉴价值",
+      "限": "fit 评估主观·实证测量难·跨文化适用",
+      "例": "Apple 类目拡張的成功 vs Harley-Davidson 香水的失败",
+      "应": "brand 战略题·新製品開発题"
+    },
+    "ja": {
+      "限": "fit 評価主観·実証測定困難·異文化適用",
+      "例": "Apple のカテゴリー拡張成功 vs Harley-Davidson 香水失敗"
+    }
+  },
+  "createdAt": "2026-04-30T04:52:02.527Z",
+  "updatedAt": "2026-04-30T13:20:18.319Z"
+}

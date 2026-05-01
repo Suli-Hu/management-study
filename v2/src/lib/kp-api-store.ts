@@ -148,8 +148,8 @@ export async function listKpsForTenant(
     binds.push(options.school);
   }
   if (options.scholar) {
-    where.push('EXISTS (SELECT 1 FROM kp_scholar ksch WHERE ksch.kp_id = k.id AND ksch.scholar_key = ?)');
-    binds.push(options.scholar);
+    where.push('EXISTS (SELECT 1 FROM kp_scholar ksch WHERE ksch.kp_id = k.id AND ksch.scholar_discipline = ? AND ksch.scholar_key = ?)');
+    binds.push(tenant.discipline, options.scholar);
   }
 
   const whereSql = where.join(' AND ');
@@ -281,7 +281,7 @@ export async function createKpRecord(
     stmts.push(db.prepare('INSERT INTO kp_school (kp_id, school_key, position) VALUES (?, ?, ?)').bind(id, schoolKey, 1000 + i));
   });
   (input.scholars ?? []).forEach((scholarKey, i) => {
-    stmts.push(db.prepare('INSERT INTO kp_scholar (kp_id, scholar_key, position) VALUES (?, ?, ?)').bind(id, scholarKey, 1000 + i));
+    stmts.push(db.prepare('INSERT INTO kp_scholar (kp_id, scholar_discipline, scholar_key, position) VALUES (?, ?, ?, ?)').bind(id, tenant.discipline, scholarKey, 1000 + i));
   });
 
   await db.batch(stmts);
@@ -360,7 +360,7 @@ export async function patchKpRecord(
     stmts.push(db.prepare('INSERT INTO kp_school (kp_id, school_key, position) VALUES (?, ?, ?)').bind(kpId, schoolKey, 1000 + i));
   });
   next.scholars.forEach((scholarKey, i) => {
-    stmts.push(db.prepare('INSERT INTO kp_scholar (kp_id, scholar_key, position) VALUES (?, ?, ?)').bind(kpId, scholarKey, 1000 + i));
+    stmts.push(db.prepare('INSERT INTO kp_scholar (kp_id, scholar_discipline, scholar_key, position) VALUES (?, ?, ?, ?)').bind(kpId, tenant.discipline, scholarKey, 1000 + i));
   });
 
   await db.batch(stmts);

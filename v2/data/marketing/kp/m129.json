@@ -1,0 +1,41 @@
+{
+  "id": "m129",
+  "discipline": "marketing",
+  "schools": [
+    "b2b_marketing"
+  ],
+  "scholars": [
+    "webster",
+    "wind"
+  ],
+  "year": "1972",
+  "title": {
+    "zh": "B2B 购买中枢·6 角色·Webster-Wind 1972",
+    "ja": "B2B 購買中枢・6 役割・Webster-Wind 1972",
+    "en": "B2B Buying Center · 6 Roles"
+  },
+  "body": {
+    "zh": "<strong>B2B Buying Center（购买中枢）</strong>由 Webster & Wind 1972 年「A General Model for Understanding Organizational Buying Behavior」in <em>JM</em> 系统化·B2B marketing 的奠基概念。<br><br><strong>核心命题</strong>：B2B 购买<strong>不是个人决策</strong>·而是<strong>buying center</strong>（购买中枢）的群体决策——多角色·多动机·多信息。<br><br><strong>6 大角色</strong>：<br>① <strong>Initiator（发起人）</strong>——首先提出需要的人<br>② <strong>User（使用者）</strong>——实际使用产品的人<br>③ <strong>Influencer（影响者）</strong>——影响决策但不决（如技术专家）<br>④ <strong>Decider（决策者）</strong>——做最终决定（CEO·CFO 大单）<br>⑤ <strong>Buyer（采购员）</strong>——执行采购流程<br>⑥ <strong>Gatekeeper（守门员）</strong>——控制信息流（秘书·助理）<br><br><strong>marketing 启示</strong>：<br>① <strong>multi-touch marketing</strong>——同时触达 6 角色·不能只见 buyer<br>② <strong>角色不同·message 不同</strong>——CEO 看战略·user 看功能·gatekeeper 看流程<br>③ <strong>买方权力地图</strong>（mapping power）——找出真正的 decider<br>④ <strong>champion strategy</strong>——找内部支持者帮你推销<br><br><strong>典型例</strong>：<br>买 SaaS（如 Salesforce）：<br>- Initiator = sales director（提出需要 CRM）<br>- User = sales reps（每天用）<br>- Influencer = IT manager（评估技术）<br>- Decider = CFO 或 CEO（签 contract）<br>- Buyer = procurement（执行采购）<br>- Gatekeeper = CEO 助理（控制 calendar）<br><br><strong>跨学派关系</strong>：B2B 学派核心概念·与 KAM（m128）·B2B segmentation·sales 7 步骤一体。",
+    "ja": "<strong>B2B Buying Center（購買中枢）</strong>は Webster & Wind 1972 年「A General Model for Understanding Organizational Buying Behavior」in <em>JM</em> 体系化·B2B マーケティング基礎概念。<br><br><strong>核心命題</strong>：B2B 購買は<strong>個人意思決定ではなく</strong>·<strong>buying center</strong> の集団意思決定——多役割·多動機·多情報。<br><br><strong>6 大役割</strong>：① Initiator（発起人）② User（使用者）③ Influencer（影響者·技術専門家）④ Decider（決定者·CEO·CFO 大単）⑤ Buyer（採購員）⑥ Gatekeeper（守門員·秘書·助手）<br><br><strong>マーケティング示唆</strong>：① multi-touch marketing ② 役割別 message 異 ③ 買方権力地図（power mapping）④ champion strategy<br><br><strong>典型例</strong>：SaaS 購入（Salesforce）·6 役割は sales director·sales reps·IT manager·CFO/CEO·procurement·CEO 助手<br><br><strong>他派との関係</strong>：B2B 学派核心概念·KAM（m128）·B2B segmentation·sales 7 段階と一体。"
+  },
+  "tags": [
+    "buying center",
+    "Webster-Wind",
+    "B2B"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "B2B 学派的奠基模型·B2B sales 必学",
+      "限": "角色界限模糊·实务中重叠",
+      "例": "SaaS·医療機器·企業 IT 都用 buying center",
+      "应": "Pro Plus 第 4 章·B2B 题·神戸命题"
+    },
+    "ja": {
+      "限": "役割境界曖昧·実務重複",
+      "例": "SaaS·医療機器·企業 IT は buying center 使用"
+    }
+  },
+  "createdAt": "2026-04-30T07:35:55.016Z",
+  "updatedAt": "2026-04-30T13:23:51.803Z"
+}

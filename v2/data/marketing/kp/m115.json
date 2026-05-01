@@ -1,0 +1,42 @@
+{
+  "id": "m115",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "relationship"
+  ],
+  "scholars": [
+    "kotler",
+    "reichheld"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "保证 / 保障战略·Warranty 与 Guarantee",
+    "ja": "ワランティ・ギャランティ戦略",
+    "en": "Warranty / Guarantee Strategy"
+  },
+  "body": {
+    "zh": "<strong>Warranty（保证 / 保障）</strong>是 marketing 中降低<strong>感知风险</strong>的关键工具·Kotler 16 版第 8.5 节核心。<br><br><strong>2 类</strong>：① <strong>Express Warranty（明示保证）</strong>——书面承诺（如「2 年保修」）② <strong>Implied Warranty（默示保证）</strong>——法律要求的隐含保证（产品适用性·安全性）<br><br><strong>3 大 marketing 战略</strong>：<br>① <strong>Standard Warranty</strong>——业界标准（如汽车 3 年）<br>② <strong>Extended Warranty</strong>——付费延保（高利润）<br>③ <strong>Lifetime / Unlimited Warranty</strong>——终身保证·brand 信心信号<br><br><strong>典型例</strong>：① Tesla 8 年 / 240,000 km battery warranty ② L.L.Bean lifetime guarantee（开创性）③ Hyundai 10 年 / 100,000 mile（90 年代变革性）④ Patagonia Ironclad Guarantee<br><br><strong>marketing 价值</strong>：<br>① 降低 perceived risk·促进购买<br>② brand quality 信号<br>③ 服务关系建立<br>④ 后续 cross-sell 机会<br><br><strong>批判</strong>：① 成本高（特别是 lifetime）② 道德风险（顾客滥用）③ extended warranty 利润高·消费者实际损失<br><br><strong>跨学派关系</strong>：与 relationship 学派的信赖建立直接相关·与 perceived risk·service recovery 互补。",
+    "ja": "<strong>Warranty（保証·ワランティ）</strong>はマーケティングで<strong>知覚リスク</strong>を低減する主要ツール·Kotler 16 版第 8.5 節核心。<br><br><strong>2 類</strong>：① Express Warranty（明示·書面承諾）② Implied Warranty（黙示·法律要求隠含）<br><br><strong>3 大マーケティング戦略</strong>：① Standard Warranty ② Extended Warranty（有料延長·高利益）③ Lifetime / Unlimited Warranty（終身·ブランド信頼信号）<br><br><strong>典型例</strong>：① Tesla 8 年 / 240,000 km battery warranty ② L.L.Bean lifetime guarantee（開創）③ Hyundai 10 年 / 100,000 mile ④ Patagonia Ironclad Guarantee<br><br><strong>マーケティング価値</strong>：① 知覚リスク低減 ② ブランド品質シグナル ③ サービス関係構築 ④ 後続クロスセル機会<br><br><strong>批判</strong>：① コスト高（特に lifetime）② 道徳リスク（顧客濫用）③ extended warranty 高利益·消費者実損<br><br><strong>他派との関係</strong>：relationship 学派の信頼構築と直接関連·perceived risk·service recovery と相補。"
+  },
+  "tags": [
+    "warranty",
+    "guarantee",
+    "Hyundai"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "product marketing 的关键 trust 工具·perceived risk 解药",
+      "限": "成本·道德风险·消费者教育",
+      "例": "Tesla·L.L.Bean·Hyundai·Patagonia 是教科书",
+      "应": "Kotler 第 8 章·trust 战略"
+    },
+    "ja": {
+      "限": "コスト·道徳リスク·消費者教育",
+      "例": "Tesla·L.L.Bean·Hyundai·Patagonia 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:35:29.801Z",
+  "updatedAt": "2026-04-30T13:23:17.853Z"
+}

@@ -12,6 +12,7 @@
 import type { APIRoute } from 'astro';
 import { View } from '~/schemas/view';
 import { handlePost } from '~/lib/edit-helpers';
+import { upsertViewInD1 } from '~/lib/d1-view-write';
 
 const deprecate = (response: Response): Response => {
   const headers = new Headers(response.headers);
@@ -29,4 +30,5 @@ export const POST: APIRoute = async (ctx) => deprecate(await handlePost({
     const now = new Date().toISOString();
     return { createdAt: now, updatedAt: now } as Partial<typeof View._type>;
   },
+  upsertD1: (db, view) => upsertViewInD1(db, view),
 }));

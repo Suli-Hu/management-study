@@ -1,0 +1,30 @@
+{
+  "key": "smith_w",
+  "discipline": "marketing",
+  "name": {
+    "zh": "温德尔·史密斯",
+    "ja": "ウェンデル・スミス",
+    "en": "Wendell R. Smith"
+  },
+  "schools": [
+    "managerial"
+  ],
+  "schoolsExplicit": true,
+  "contribution": {
+    "zh": "<strong>市场细分概念的提出者</strong>。1956 年在 <em>Journal of Marketing</em> 发表 \"Product Differentiation and Market Segmentation as Alternative Marketing Strategies\"（Vol. 21(1), pp. 3-8）·首次系统化区分了「产品差别化」和「市场细分」两种战略·提出 <strong>Market Segmentation</strong> 概念。这篇论文成为 STP 框架的起点·被 Kotler 在 1972 年起整合进 Marketing Management 教材的 STP 三步骤体系。",
+    "ja": "<strong>市場細分化概念の提唱者</strong>。1956 年 <em>Journal of Marketing</em> 「Product Differentiation and Market Segmentation as Alternative Marketing Strategies」（Vol. 21(1), pp. 3-8）で·「製品差別化」と「市場細分化」の 2 戦略を初めて体系的に区分し·<strong>Market Segmentation</strong> 概念を提唱。これは STP フレームの起点となり·Kotler によって 1972 年以降 Marketing Management 教材の STP 三段階体系に統合された。"
+  },
+  "lifespan": "1916–1973",
+  "institution": "Alderson & Sessions / Wesleyan University",
+  "born": "1916",
+  "died": "",
+  "nationality": "美国",
+  "flag": "🇺🇸",
+  "origin": "",
+  "field": "市场细分",
+  "tags": [],
+  "nobel": null,
+  "kpsOrder": [],
+  "createdAt": "2026-04-30T04:34:24.834Z",
+  "updatedAt": "2026-04-30T04:34:24.834Z"
+}

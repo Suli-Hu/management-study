@@ -176,7 +176,7 @@ const allSchools = schoolsResult.results ?? [];
 
   async function load() {
     setStatus('加载中...');
-    const res = await fetch(`/api/edit/scholar/${scholarKey}`);
+    const res = await fetch(`/api/edit/scholar/${discipline}/${scholarKey}`);
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       setStatus(`加载失败：${res.status} ${err.reason ?? ''}`, 'error');
@@ -247,7 +247,7 @@ const allSchools = schoolsResult.results ?? [];
     e.preventDefault();
     saveBtn.disabled = true;
     saveStatus.textContent = '保存中...';
-    const res = await fetch(`/api/edit/scholar/${scholarKey}`, {
+    const res = await fetch(`/api/edit/scholar/${discipline}/${scholarKey}`, {
       method: 'PUT',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ json: collect(), base_sha: baseSha }),
@@ -272,7 +272,7 @@ const allSchools = schoolsResult.results ?? [];
     if (deleteBtn.disabled) return;
     if (!confirm(`确认删除学者「${scholarKey}」？\n\n• 进 git history 可 revert\n• ~90s 后线上消失`)) return;
     deleteBtn.disabled = true;
-    const res = await fetch(`/api/edit/scholar/${scholarKey}`, {
+    const res = await fetch(`/api/edit/scholar/${discipline}/${scholarKey}`, {
       method: 'DELETE',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ base_sha: baseSha }),

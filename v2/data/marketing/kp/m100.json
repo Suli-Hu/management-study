@@ -1,0 +1,41 @@
+{
+  "id": "m100",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "strategic_marketing"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "2022",
+  "title": {
+    "zh": "市场价值地图·Kotler 16 版可视化战略",
+    "ja": "市場価値マップ・Kotler 16 版可視化戦略",
+    "en": "Market Value Map"
+  },
+  "body": {
+    "zh": "<strong>Market Value Map（市场价值地图）</strong>是 Kotler 16 版第 2 章提出的<strong>战略可视化工具</strong>·把 marketing 战略 3 大主体（target customer·company·collaborator）和 5 个 V（value proposition·value receivers·value enablers·value collaborators·value competitors）整合在一张图。<br><br><strong>5 个 V</strong>：<br>① <strong>Value Proposition</strong>——给顾客的价值<br>② <strong>Value Receivers</strong>——target customer + 间接 stakeholder<br>③ <strong>Value Enablers</strong>——company（资源·能力）<br>④ <strong>Value Collaborators</strong>——partner·channel·supplier<br>⑤ <strong>Value Competitors</strong>——竞争对手<br><br><strong>使用方法</strong>：<br>① 中心写 Value Proposition<br>② 周围 4 个象限分别写 Receivers·Enablers·Collaborators·Competitors<br>③ 用箭头表示 value flow<br>④ 识别 gap 和 opportunity<br><br><strong>marketing 战略价值</strong>：<br>① <strong>visual thinking</strong>——比文字 plan 更易沟通<br>② <strong>整合 5C</strong>——把 5C 分析视觉化<br>③ <strong>identification of gaps</strong>——快速识别战略空白<br>④ <strong>cross-functional alignment</strong>——跨部门 share 同一图<br><br><strong>vs 传统工具</strong>：<br>- vs SWOT：SWOT 是清单·VMM 是关系图<br>- vs Strategy Canvas（蓝海）：Strategy Canvas 比较多个 brand·VMM 聚焦单 brand 战略<br>- vs Business Model Canvas：BMC 偏 business model·VMM 偏 marketing strategy<br><br><strong>跨学派关系</strong>：与 5C 分析·G-STIC·STP 一体使用·strategic_marketing 学派的 visual planning 工具。",
+    "ja": "<strong>Market Value Map（市場価値マップ）</strong>は Kotler 16 版第 2 章提唱の<strong>戦略可視化ツール</strong>·マーケティング戦略 3 主体（target customer·company·collaborator）と 5 つの V を 1 図に統合。<br><br><strong>5 つの V</strong>：① Value Proposition ② Value Receivers ③ Value Enablers ④ Value Collaborators ⑤ Value Competitors<br><br><strong>使用方法</strong>：① 中心に Value Proposition ② 周囲 4 象限に各要素 ③ 矢印で value flow 表示 ④ gap·opportunity 識別<br><br><strong>マーケティング戦略価値</strong>：① visual thinking ② 5C 統合可視化 ③ ギャップ識別 ④ クロス・ファンクショナル整合<br><br><strong>vs 伝統ツール</strong>：vs SWOT（リスト vs 関係図）·vs Strategy Canvas（複数比較 vs 単 brand）·vs Business Model Canvas（business model vs marketing strategy）<br><br><strong>他派との関係</strong>：5C 分析·G-STIC·STP と併用·strategic_marketing 学派の visual planning ツール。"
+  },
+  "tags": [
+    "Market Value Map",
+    "Kotler 16 版",
+    "visual strategy"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "Kotler 16 版独创可视化战略工具·marketing planning 利器",
+      "限": "实务知名度低·学生不易掌握",
+      "例": "Tesla VMM·Apple VMM 都是经典",
+      "应": "Kotler 第 2 章·marketing planning 题"
+    },
+    "ja": {
+      "限": "実務知名度低·学生掌握不易",
+      "例": "Tesla VMM·Apple VMM 古典"
+    }
+  },
+  "createdAt": "2026-04-30T07:24:02.404Z",
+  "updatedAt": "2026-04-30T13:22:41.694Z"
+}

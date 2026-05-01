@@ -15,6 +15,10 @@ import type { APIRoute } from 'astro';
 import { jsonRes, type EditError } from '~/lib/edit-helpers';
 import { getFile, commitMultipleFiles } from '~/lib/github';
 import { View } from '~/schemas/view';
+import { upsertViewInD1 } from '~/lib/d1-view-write';
+import { withRetry } from '~/lib/d1-kp-write';
+
+type ParsedView = ReturnType<typeof View.parse>;
 
 export const POST: APIRoute = async ({ request, locals }) => {
   if (!locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
@@ -46,7 +50,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   // 拉每个 view 文件 → 改 position + isDefault → 收集 multi-file commit payload
+  // v0.6.7: 同时收集 parsed view 数组，commit 后 D1 双写
   const files: Array<{ path: string; content: string }> = [];
+  const parsedViews: ParsedView[] = [];
   const now = new Date().toISOString();
   for (let i = 0; i < viewIds.length; i++) {
     const id = viewIds[i];
@@ -67,6 +73,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     v.isDefault = i === 0;
     v.updatedAt = now;
     files.push({ path, content: JSON.stringify(v, null, 2) + '\n' });
+    parsedViews.push(v);
   }
 
   const adminEmail = locals.user.email ?? 'unknown@admin';
@@ -84,5 +91,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
       detail: res.detail,
     });
   }
+
+  // v0.6.7: D1 双写 — 逐个 view upsert，单条失败不阻断其它
+  if (env.DB) {
+    for (const v of parsedViews) {
+      try { await withRetry(() => upsertViewInD1(env.DB, v)); }
+      catch (d1Err) { console.error(`[reorder/views ${discipline}/${v.id}] D1 dual-write failed:`, d1Err); }
+    }
+  }
+
   return jsonRes(200, { ok: true, commit_sha: res.data.commit_sha, deploy_eta_seconds: 90 });
 };

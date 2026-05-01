@@ -1,0 +1,41 @@
+{
+  "id": "m134",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "strategic_marketing"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "1986",
+  "title": {
+    "zh": "Stage-Gate 新品开发流程·Cooper 1986",
+    "ja": "Stage-Gate 新製品開発プロセス・Cooper 1986",
+    "en": "Stage-Gate Process"
+  },
+  "body": {
+    "zh": "<strong>Stage-Gate（阶段-门）</strong>是 Robert G. Cooper 1986 年提出的<strong>新品开发标准流程</strong>·marketing managerial 学派的实务核心。Kotler 16 版第 18 章主轴。<br><br><strong>5 stage + 5 gate 结构</strong>：<br>**Discovery → Gate 1 → Stage 1 Scoping → Gate 2 → Stage 2 Build Business Case → Gate 3 → Stage 3 Development → Gate 4 → Stage 4 Testing → Gate 5 → Stage 5 Launch → Post-Launch Review**<br><br><strong>5 个 Stage 内容</strong>：<br>① <strong>Scoping（范围确定）</strong>——快速的 preliminary research<br>② <strong>Build Business Case（建商业 case）</strong>——技术·市场·财务可行性<br>③ <strong>Development（开发）</strong>——actual product 设计·原型<br>④ <strong>Testing（测试）</strong>——pilot·beta·alpha test<br>⑤ <strong>Launch（上市）</strong>——市场扩张<br><br><strong>5 个 Gate 决策</strong>：<br>每个 gate 是 go/kill/hold/recycle 决策——基于 deliverables + criteria 评估。<br><br><strong>marketing 角度</strong>：<br>① <strong>Voice of Customer</strong>——每 stage 都做 customer research<br>② <strong>positioning 早期定</strong>——stage 2 商业 case 时<br>③ <strong>marketing planning</strong>——stage 3-4 平行<br>④ <strong>launch readiness</strong>——stage 5 关键<br><br><strong>vs Lean / Agile 方法</strong>：<br>- Stage-Gate：linear·thorough·适合大企业<br>- Lean Startup（Eric Ries 2011）：iterative·MVP·快速试错·适合 startup<br>- 现代 hybrid：Stage-Gate 框架 + 内部 lean execution<br><br><strong>跨学派关系</strong>：① 与 effectuation（m075）形成对照——Stage-Gate 是 causation·effectuation 是从手段出发 ② 与 Rogers 採用曲線（m030）一起设计 launch strategy。",
+    "ja": "<strong>Stage-Gate（段階-ゲート）</strong>は Robert G. Cooper 1986 年提唱の<strong>新製品開発標準プロセス</strong>·マーケティング managerial 学派の実務核心。Kotler 16 版第 18 章主軸。<br><br><strong>5 stage + 5 gate 構造</strong>：Discovery → Gate 1 → Stage 1 Scoping → Gate 2 → Stage 2 Build Business Case → Gate 3 → Stage 3 Development → Gate 4 → Stage 4 Testing → Gate 5 → Stage 5 Launch → Post-Launch Review<br><br><strong>5 Stage 内容</strong>：① Scoping ② Build Business Case ③ Development ④ Testing ⑤ Launch<br><br><strong>5 Gate 意思決定</strong>：each gate は go/kill/hold/recycle·deliverables + criteria 基準で評価。<br><br><strong>マーケティング視点</strong>：① Voice of Customer ② positioning 早期決定 ③ marketing planning（stage 3-4 並行）④ launch readiness<br><br><strong>vs Lean / Agile</strong>：Stage-Gate は linear·thorough·大企業向き·Lean Startup（Eric Ries 2011）は iterative·MVP·迅速試行錯誤·startup 向き·現代 hybrid<br><br><strong>他派との関係</strong>：① effectuation（m075）と対照·Stage-Gate は causation·effectuation は手段から ② Rogers 採用曲線（m030）と launch strategy 設計。"
+  },
+  "tags": [
+    "stage-gate",
+    "Cooper",
+    "new product"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "新品开发的标准流程·大企业 marketing 必学",
+      "限": "线性·慢·与 lean 形成对照",
+      "例": "P&G·Toyota·医药行业新品",
+      "应": "Kotler 18 章·新品开发题"
+    },
+    "ja": {
+      "限": "線形·遅·lean と対照",
+      "例": "P&G·Toyota·医薬産業新製品"
+    }
+  },
+  "createdAt": "2026-04-30T07:36:03.755Z",
+  "updatedAt": "2026-04-30T13:24:02.637Z"
+}

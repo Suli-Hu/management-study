@@ -1,0 +1,40 @@
+{
+  "id": "m025",
+  "discipline": "marketing",
+  "schools": [
+    "consumer_behavior"
+  ],
+  "scholars": [
+    "howard"
+  ],
+  "year": "1968",
+  "title": {
+    "zh": "EBM 模型·Engel-Kollat-Blackwell",
+    "ja": "EBM モデル・Engel-Kollat-Blackwell",
+    "en": "EBM Model"
+  },
+  "body": {
+    "zh": "<strong>EBM モデル（Engel-Kollat-Blackwell Model）</strong>是消费者行为学派的<strong>另一个奠基性模型</strong>·与 Howard-Sheth 模型并列·1968 年 James Engel·David Kollat·Roger Blackwell 提出·后改名为 EKB 或 CDM（Consumer Decision Model）。<br><br><strong>核心结构</strong>：以「<strong>问题识别 → 信息搜索 → 替代品评价 → 购买 → 后购评价</strong>」5 步决策过程为骨架·把内部认知变量·外部环境变量·个人差异变量都整合进同一框架。<br><br><strong>4 大变量类</strong>：<br>① <strong>外部环境影响</strong>——文化·社会层·家庭·个人影响·情境<br>② <strong>个人差异</strong>——consumer resources·motivation·knowledge·attitudes·personality·values·lifestyle<br>③ <strong>心理过程</strong>——information processing·learning·attitude change<br>④ <strong>意思决定过程</strong>——5 步主线<br><br><strong>vs Howard-Sheth 的区别</strong>：<br>- HS 重点在<strong>「学习过程」</strong>（buyer learning to make decisions）<br>- EBM 重点在<strong>「决策过程」</strong>（5 步线性流程）<br>- 实务上 EBM 更易理解·HS 更全面·两者并行使用<br><br><strong>历史地位</strong>：EBM 的<strong>5 步决策流程</strong>成为后来 Kotler 教材的标准·所有现代 marketing 教材的消费者决策章节基本结构都源于 EBM。",
+    "ja": "<strong>EBM モデル（Engel-Kollat-Blackwell Model）</strong>は消費者行動学派の<strong>もう一つの基礎モデル</strong>·Howard-Sheth と並列·1968 年 James Engel·David Kollat·Roger Blackwell が提唱·後に EKB または CDM（Consumer Decision Model）に改称。<br><br><strong>核心構造</strong>：「<strong>問題認識 → 情報探索 → 代替品評価 → 購買 → 購買後評価</strong>」5 段階意思決定プロセスを骨格·内部認知変数·外部環境変数·個人差異変数を同一フレームに統合。<br><br><strong>4 大変数類</strong>：<br>① 外部環境影響·② 個人差異·③ 心理プロセス·④ 意思決定プロセス<br><br><strong>vs Howard-Sheth の違い</strong>：<br>- HS は<strong>「学習プロセス」</strong>重視<br>- EBM は<strong>「意思決定プロセス」</strong>重視<br>- 実務 EBM 理解しやすい·HS より総合·並行使用<br><br><strong>歴史的位置</strong>：EBM の<strong>5 段階意思決定フロー</strong>は後の Kotler 教材標準·全現代マーケティング教材の消費者意思決定章節の基本構造の源。"
+  },
+  "tags": [
+    "EBM",
+    "EKB",
+    "Engel-Kollat-Blackwell"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "消费者决策 5 步的真正起源·Kotler 教材标准的元模型",
+      "限": "模型简化为 5 步·失去复杂性·非线性决策不适用",
+      "例": "买衣服的 5 步实操：缺衣→搜款式→比较 brand→购买→晒朋友圈",
+      "应": "消费者行为基础题"
+    },
+    "ja": {
+      "限": "5 段階に簡略化·複雑性喪失·非線形意思決定に不適用",
+      "例": "服購入 5 段階：欠衣→款式探索→ブランド比較→購買→SNS 投稿"
+    }
+  },
+  "createdAt": "2026-04-30T04:51:39.156Z",
+  "updatedAt": "2026-04-30T13:19:29.478Z"
+}

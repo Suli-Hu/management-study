@@ -1,0 +1,42 @@
+{
+  "id": "m111",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "brand_equity",
+    "imc_communication"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "2022",
+  "title": {
+    "zh": "故事化定位·Kotler 16 版独创",
+    "ja": "ストーリーテリング・ポジショニング・Kotler 16 版独自",
+    "en": "Storytelling Positioning"
+  },
+  "body": {
+    "zh": "<strong>Storytelling Positioning（故事化定位）</strong>是 Kotler 16 版第 7.5 节<strong>独创概念</strong>·marketing 16 版的新增章节·主张 brand 应该用<strong>故事</strong>表达定位·而非 abstract statement。<br><br><strong>核心命题</strong>：<br>消费者不记 abstract value proposition·但记得<strong>故事</strong>。故事激活情感·brand 与消费者的<strong>情感连接</strong>·比理性 statement 更持久。<br><br><strong>故事结构 5 要素</strong>（基于经典叙事学）：<br>① <strong>Hero（英雄）</strong>——主人公（顾客 or brand）<br>② <strong>Villain（反派）</strong>——挑战·问题·痛点<br>③ <strong>Mentor / Magic（导师·法宝）</strong>——brand 是 enabler<br>④ <strong>Quest（旅程）</strong>——主人公的转变过程<br>⑤ <strong>Transformation（蜕变）</strong>——成功·解决·shift<br><br><strong>3 大 brand storytelling 类型</strong>：<br><br>① <strong>Origin Story（起源故事）</strong>——brand 的诞生·创始人·使命<br>例：Apple 的 Steve Jobs 车库·Patagonia 的 Yvon Chouinard 攀岩<br><br>② <strong>Customer Story（顾客故事）</strong>——真实顾客的转变<br>例：Tesla owners 自录 testimonial·Nike「I am Bo」运动员故事<br><br>③ <strong>Purpose Story（使命故事）</strong>——brand 的世界观·价值观<br>例：TOMS Shoes「One for One」·Patagonia 环保<br><br><strong>典型案例</strong>：<br>① <strong>Apple「Think Different」（1997）</strong>——讲叛逆者·疯子·改变世界的人<br>② <strong>Nike「Just Do It」</strong>——每个广告是 athlete 的转变故事<br>③ <strong>Dove Real Beauty</strong>——挑战美的标准·赋权女性<br>④ <strong>Patagonia 环保 documentary</strong>——quest 拯救地球<br><br><strong>vs 传统 positioning statement</strong>：<br>- statement：rational·brief·internal use<br>- storytelling：emotional·rich·external use<br>- 现代 marketing 两者并用<br><br><strong>marketing 实务应用</strong>：<br>① <strong>brand video</strong>——3 分钟以内 storytelling<br>② <strong>content marketing</strong>——blog·podcast·documentary<br>③ <strong>SNS marketing</strong>——故事化 post·UGC<br>④ <strong>sales pitch</strong>——用故事打动客户<br><br><strong>跨学派关系</strong>：① 与 IMC 学派的 SIPS·DECAX（共感·content）一致 ② 与 cct_interpretive 学派的 brand 意味共创呼应 ③ 与 brand_equity 的 brand resonance（CBBE 顶层）直接对应。",
+    "ja": "<strong>Storytelling Positioning（ストーリーテリング・ポジショニング）</strong>は Kotler 16 版第 7.5 節<strong>独自概念</strong>·marketing 16 版の新増節·ブランドは<strong>ストーリー</strong>で定位を表現すべきと主張·abstract statement ではない。<br><br><strong>核心命題</strong>：消費者は abstract value proposition を覚えないが·<strong>ストーリー</strong>を覚える。ストーリーが情緒を起動·ブランドと消費者の<strong>情緒接続</strong>·理性 statement より持続。<br><br><strong>ストーリー構造 5 要素</strong>（古典叙事学基底）：① Hero ② Villain ③ Mentor / Magic ④ Quest ⑤ Transformation<br><br><strong>3 大ブランド・ストーリーテリング類型</strong>：① Origin Story（Apple Steve Jobs 車庫·Patagonia Yvon Chouinard）② Customer Story（Tesla owners testimonial·Nike）③ Purpose Story（TOMS·Patagonia 環保）<br><br><strong>典型事例</strong>：① Apple「Think Different」② Nike「Just Do It」③ Dove Real Beauty ④ Patagonia 環保ドキュメンタリー<br><br><strong>vs 伝統 positioning statement</strong>：statement は rational·brief·internal·storytelling は emotional·rich·external·現代マーケティング両者併用<br><br><strong>マーケティング実務応用</strong>：① brand video（3 分以内）② content marketing ③ SNS マーケティング ④ sales pitch<br><br><strong>他派との関係</strong>：① IMC 学派の SIPS·DECAX（共感·content）一致 ② cct_interpretive 学派のブランド意味共創呼応 ③ brand_equity の brand resonance（CBBE 頂層）直接対応。"
+  },
+  "tags": [
+    "storytelling",
+    "brand narrative",
+    "Kotler 16 版"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "Kotler 16 版独创·brand strategy 的现代演化",
+      "限": "故事质量参差·难量化效果",
+      "例": "Apple·Nike·Dove·Patagonia 是教科书",
+      "应": "Kotler 16 版第 7 章·brand 题"
+    },
+    "ja": {
+      "限": "ストーリー品質参差·効果数量化困難",
+      "例": "Apple·Nike·Dove·Patagonia 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:24:23.768Z",
+  "updatedAt": "2026-04-30T13:23:05.230Z"
+}

@@ -1,0 +1,31 @@
+{
+  "key": "rogers",
+  "discipline": "marketing",
+  "name": {
+    "zh": "埃弗雷特·罗杰斯",
+    "ja": "エヴェレット・ロジャース",
+    "en": "Everett M. Rogers"
+  },
+  "schools": [
+    "consumer_behavior",
+    "strategic_marketing"
+  ],
+  "schoolsExplicit": true,
+  "contribution": {
+    "zh": "<strong>イノベーション普及理論</strong>の提唱者。1962 年『Diffusion of Innovations』提出 <strong>採用曲線</strong>（adoption curve·5 类用户：innovator 2.5%·early adopter 13.5%·early majority 34%·late majority 34%·laggard 16%·正态分布）·这一曲线是 marketing 战略·新製品開発·扩散研究的标准框架。Pro Plus 第 5 章把 Rogers 採用曲線归入<strong>消费者行为学派</strong>下「新製品の普及過程研究」。",
+    "ja": "<strong>イノベーション普及理論</strong>の提唱者。1962 年『Diffusion of Innovations』で <strong>採用曲線</strong>（adoption curve·5 類型：innovator 2.5%·early adopter 13.5%·early majority 34%·late majority 34%·laggard 16%·正規分布）を提唱·マーケティング戦略·新製品開発·拡散研究の標準フレーム。Pro Plus 第 5 章は Rogers 採用曲線を<strong>消費者行動学派</strong>下「新製品の普及過程研究」に位置づける。"
+  },
+  "lifespan": "1931–2004",
+  "institution": "University of New Mexico",
+  "born": "1931",
+  "died": "",
+  "nationality": "美国",
+  "flag": "🇺🇸",
+  "origin": "",
+  "field": "普及理论",
+  "tags": [],
+  "nobel": null,
+  "kpsOrder": [],
+  "createdAt": "2026-04-30T04:34:15.683Z",
+  "updatedAt": "2026-04-30T04:34:15.683Z"
+}

@@ -1,0 +1,40 @@
+{
+  "id": "m026",
+  "discipline": "marketing",
+  "schools": [
+    "consumer_behavior"
+  ],
+  "scholars": [
+    "bettman"
+  ],
+  "year": "1986",
+  "title": {
+    "zh": "ELM 精细加工可能性模型",
+    "ja": "ELM 精緻化見込みモデル",
+    "en": "Elaboration Likelihood Model (ELM)"
+  },
+  "body": {
+    "zh": "<strong>ELM（Elaboration Likelihood Model·精緻化見込みモデル）</strong>是 Petty & Cacioppo 1986 年提出·marketing communication 学的核心理论·解释消费者如何处理说服性信息。<br><br><strong>核心命题</strong>：消费者处理 marketing 信息时·有 <strong>2 条路径</strong>·取决于「精緻化（elaboration）」程度——即认真思考的程度。<br><br><strong>① 中央ルート（Central Route·中心路径）</strong><br>条件：消费者高介入·有动机和能力深入思考<br>处理方式：<strong>仔细评价信息内容</strong>——产品属性·论据强度·逻辑<br>结果：形成的态度<strong>稳定·持久·能预测行为</strong><br>marketing 应对：提供详细信息·理性诉求·data·case study<br>例：购车前研究 review·比较参数·阅读 long-form content<br><br><strong>② 周辺ルート（Peripheral Route·外围路径）</strong><br>条件：消费者低介入·缺乏动机或能力深入思考<br>处理方式：<strong>依赖外围线索</strong>——celebrity endorsement·brand 形象·包装·色彩·情感诉求<br>结果：形成的态度<strong>不稳定·短期·易受干扰</strong><br>marketing 应对：明星代言·情感广告·重复曝光·美感包装<br>例：超市买零食看到包装好看就拿·因为只是 ¥100 不值得思考<br><br><strong>marketing 启示</strong>：<br>① 高介入产品（车·房·保险）→ 中央路径战略·内容 marketing<br>② 低介入产品（FMCG）→ 周边路径战略·brand awareness 重于功能传达<br><br><strong>跨学派关系</strong>：与 IMC 的 message strategy 直接对接·成为 communication 战略的微观心理基础。",
+    "ja": "<strong>ELM（精緻化見込みモデル）</strong>は Petty & Cacioppo 1986 年提唱·マーケティング・コミュニケーション学の核心理論·消費者の説得情報処理を説明。<br><br><strong>核心命題</strong>：消費者がマーケティング情報を処理する際·<strong>2 つの経路</strong>がある·「精緻化（elaboration）」程度·即ち真剣に考える程度に依存。<br><br><strong>① 中央ルート（Central Route）</strong><br>条件：高関与·動機·能力で深く考える<br>処理：<strong>情報内容を慎重に評価</strong>——製品属性·論拠強度·論理<br>結果：形成された態度は<strong>安定·持続·行動予測可</strong><br>マーケティング対応：詳細情報·合理的訴求·データ·ケース<br>例：購車前 review 研究·パラメータ比較·long-form content 閲読<br><br><strong>② 周辺ルート（Peripheral Route）</strong><br>条件：低関与·動機·能力不足<br>処理：<strong>周辺手がかり依存</strong>——celebrity endorsement·ブランド・イメージ·包装·色彩·感情訴求<br>結果：形成態度は<strong>不安定·短期·干渉受やすい</strong><br>マーケティング対応：有名人 endorsement·感情広告·反復露出·美的包装<br>例：スーパーでお菓子購入·包装良いから·¥100 で考える価値ない<br><br><strong>マーケティング示唆</strong>：① 高関与製品（車·家·保険）→ 中央ルート戦略·コンテンツ・マーケティング ② 低関与製品（FMCG）→ 周辺ルート戦略·brand awareness 重視<br><br><strong>他派との関係</strong>：IMC の message strategy と直接接続·コミュニケーション戦略のミクロ心理基礎。"
+  },
+  "tags": [
+    "ELM",
+    "Petty-Cacioppo",
+    "central peripheral"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "消费者说服心理学·解释 marketing 沟通的两种逻辑",
+      "限": "二分法过简·中间情况存在·跨文化适用性争议",
+      "例": "汽车广告 = 中央(参数说服)·零食广告 = 周边(包装+明星)",
+      "应": "marketing communication 题·IMC 题"
+    },
+    "ja": {
+      "限": "二分法過簡·中間ケースあり·異文化適用論争",
+      "例": "自動車広告=中央(パラメータ説得)·お菓子広告=周辺(包装+有名人)"
+    }
+  },
+  "createdAt": "2026-04-30T04:51:41.155Z",
+  "updatedAt": "2026-04-30T13:19:31.397Z"
+}

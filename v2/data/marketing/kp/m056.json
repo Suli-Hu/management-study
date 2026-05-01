@@ -1,0 +1,41 @@
+{
+  "id": "m056",
+  "discipline": "marketing",
+  "schools": [
+    "imc_communication",
+    "digital_marketing"
+  ],
+  "scholars": [
+    "schultz"
+  ],
+  "year": "2015",
+  "title": {
+    "zh": "DECAX·电通内容发现型模型",
+    "ja": "DECAX・電通のコンテンツ発見型モデル",
+    "en": "DECAX Model"
+  },
+  "body": {
+    "zh": "<strong>DECAX（Discovery-Engage-Check-Action-eXperience）</strong>是<strong>電通 2015 年提出</strong>的内容发现型 communication 模型·**反映 content marketing 时代的消费者行为**。<br><br><strong>5 阶段</strong>：<br>① <strong>D - Discovery（発見）</strong>——消费者通过内容（blog·video·podcast）发现 brand<br>② <strong>E - Engage（関係构筑）</strong>——与内容创作者 / brand 建立关系·订阅·关注<br>③ <strong>C - Check（确认）</strong>——确认内容真实性·查 review<br>④ <strong>A - Action（购买）</strong>——做出购买<br>⑤ <strong>X - eXperience（体验·分享）</strong>——使用·分享体验<br><br><strong>核心创新：从「广告」到「内容」</strong><br>传统 AIDMA 假设消费者被广告打断·不情愿地看。DECAX 假设消费者<strong>主动寻找</strong>有价值的内容·brand 通过提供有价值内容（不是广告）来吸引消费者。<br><br><strong>vs AISAS / SIPS 的进化</strong>：<br>- AISAS 起点是「Attention」（被动看广告）<br>- SIPS 起点是「Sympathize」（情感共鸣）<br>- DECAX 起点是「Discovery」（消费者主动发现内容）<br><br><strong>背景</strong>：<br>① <strong>YouTube</strong>·<strong>podcast</strong>·<strong>blog</strong> 成为消费者获取信息的主要渠道<br>② 消费者对传统广告 ad-blind·更信任独立内容<br>③ <strong>content marketing</strong>·<strong>inbound marketing</strong>（HubSpot 推动）成为新主流<br>④ <strong>algorithmic curation</strong>（YouTube·TikTok 算法）让 discovery 更精准<br><br><strong>marketing 实务应用</strong>：<br>① <strong>content marketing 战略</strong>——blog·YouTube·podcast·newsletter 投资<br>② <strong>SEO + content</strong>——让内容被发现<br>③ <strong>thought leadership</strong>——成为类目权威<br>④ <strong>community building</strong>——通过内容建立 community<br><br><strong>典型案例</strong>：① HubSpot inbound marketing ② Red Bull Media House（不仅卖饮料·还产高端 content）③ Patagonia 环保 documentary",
+    "ja": "<strong>DECAX（Discovery-Engage-Check-Action-eXperience）</strong>は<strong>電通 2015 年提唱</strong>のコンテンツ発見型コミュニケーション・モデル·**コンテンツ・マーケティング時代の消費者行動を反映**。<br><br><strong>5 段階</strong>：① Discovery（発見）② Engage（関係構築）③ Check（確認）④ Action（購買）⑤ eXperience（体験·共有）<br><br><strong>核心革新：「広告」から「コンテンツ」へ</strong>·伝統 AIDMA は受動的広告打断·DECAX は消費者が<strong>能動的に</strong>価値あるコンテンツを探す·ブランドは広告ではなく価値あるコンテンツで吸引。<br><br><strong>vs AISAS / SIPS の進化</strong>：AISAS 起点 Attention·SIPS 起点 Sympathize·DECAX 起点 Discovery（能動発見）<br><br><strong>背景</strong>：① YouTube·podcast·blog が情報取得主チャネル ② 消費者が伝統広告に ad-blind·独立コンテンツを信頼 ③ コンテンツ・マーケティング·インバウンド・マーケティング（HubSpot）が新主流 ④ アルゴリズミック curation（YouTube·TikTok）で discovery 精確化<br><br><strong>マーケティング実務応用</strong>：① コンテンツ・マーケティング戦略 ② SEO + コンテンツ ③ thought leadership ④ コミュニティ構築<br><br><strong>典型事例</strong>：① HubSpot inbound marketing ② Red Bull Media House ③ Patagonia 環境ドキュメンタリー"
+  },
+  "tags": [
+    "DECAX",
+    "電通",
+    "content marketing"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "内容时代日本 communication 模型·content marketing 战略基础",
+      "限": "假设消费者主动·实际仍多被动·线性偏重",
+      "例": "HubSpot·Red Bull·Patagonia 是教科书",
+      "应": "Pro Plus 16 章·content marketing 题"
+    },
+    "ja": {
+      "限": "消費者能動仮定·実際依然受動多·線形偏重",
+      "例": "HubSpot·Red Bull·Patagonia 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T05:03:59.073Z",
+  "updatedAt": "2026-04-30T13:20:58.518Z"
+}

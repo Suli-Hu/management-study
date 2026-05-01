@@ -1,0 +1,26 @@
+{
+  "key": "digital_marketing",
+  "discipline": "marketing",
+  "title": {
+    "zh": "数字营销学派",
+    "ja": "デジタル・マーケティング学派",
+    "en": "Digital Marketing School"
+  },
+  "era": "2006– 平台经济·算法时代",
+  "summary": {
+    "zh": "<strong>数字营销学派</strong>研究 digital + platform economics 创造的 marketing 新范式。锚点 <strong>Chris Anderson</strong>（2006『The Long Tail』）·MIT Sloan platform 派 <strong>Parker·Van Alstyne·Choudary</strong>（2016『Platform Revolution』）。日本研究 <strong>三浦俊彦</strong>（中央大学·Pro Plus 第 16 章作者）。<br><br><strong>核心范式</strong>：digital 不是「另一个 channel」·而是<strong>与传统 marketing 完全不同的范式</strong>——平台经济双边市场·算法 reach·data segmentation。<br><br><strong>核心内容</strong>：① <strong>长尾理论</strong>（Anderson 2006）② <strong>platform economics</strong>（双边市场·network effects·tipping point·winner-takes-all）③ <strong>SaaS marketing</strong>·freemium·CAC·LTV ④ <strong>SEO·SEM·programmatic ads·algorithmic marketing</strong> ⑤ <strong>social media marketing</strong>·influencer·content marketing ⑥ <strong>digital consumer 5 特征</strong>（Pro Plus 第 16 章三浦俊彦：自由·対話·共感·信頼·個性）⑦ <strong>POS·EOS·EDI·QR·O2O·OMO</strong> ⑧ <strong>AI marketing</strong>·personalization·privacy 与监管。<br><br><strong>跨学派关系</strong>：与 <code>imc_communication</code> 部分重叠（数字 IMC）·与 <code>channel_retail</code> 在 omnichannel 概念交叉。<br><br><strong>局限</strong>：技术演化快·学派理论滞后·伦理与隐私问题尖锐。",
+    "ja": "<strong>デジタル・マーケティング学派</strong>はデジタル + プラットフォーム経済が創造する新パラダイムを研究する。アンカーは <strong>Chris Anderson</strong>（2006）·MIT Sloan プラットフォーム派 <strong>Parker</strong>等（2016）。日本研究は <strong>三浦俊彦</strong>（中央大学·Pro Plus 第 16 章執筆）。<br><br><strong>核心パラダイム</strong>：デジタルは「もう一つのチャネル」ではなく、<strong>伝統的マーケティングとは全く異なるパラダイム</strong>。<br><br><strong>主要内容</strong>：① <strong>ロングテール</strong>（Anderson 2006）② <strong>プラットフォーム経済学</strong>（両側市場·ネットワーク効果·tipping point·winner-takes-all）③ <strong>SaaS·フリーミアム·CAC·LTV</strong> ④ <strong>SEO·SEM·プログラマティック広告·アルゴリズミック</strong> ⑤ <strong>SNS·インフルエンサー·コンテンツ</strong> ⑥ <strong>デジタル・コンシューマー 5 特徴</strong>（Pro Plus 第 16 章·三浦：自由·対話·共感·信頼·個性）⑦ <strong>POS·EOS·EDI·QR·O2O·OMO</strong> ⑧ <strong>AI マーケティング</strong>·パーソナライゼーション·プライバシー。<br><br><strong>他派との関係</strong>：<code>imc_communication</code> と部分重複·<code>channel_retail</code> と オムニチャネル概念で交差。<br><br><strong>限界</strong>：技術進化が速く·学派理論が遅れる·倫理とプライバシー問題が尖鋭化。"
+  },
+  "themeKey": "value_communication",
+  "tags": [
+    "Anderson",
+    "long tail",
+    "platform",
+    "三浦俊彦",
+    "SaaS",
+    "AI"
+  ],
+  "concepts": [],
+  "createdAt": "2026-04-30T04:28:00.963Z",
+  "updatedAt": "2026-04-30T04:28:00.963Z"
+}

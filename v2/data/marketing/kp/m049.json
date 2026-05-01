@@ -1,0 +1,41 @@
+{
+  "id": "m049",
+  "discipline": "marketing",
+  "schools": [
+    "channel_retail",
+    "relationship"
+  ],
+  "scholars": [
+    "wada"
+  ],
+  "year": "1990",
+  "title": {
+    "zh": "制販同盟·日本独有渠道协作",
+    "ja": "製販同盟・日本独自チャネル協作",
+    "en": "Manufacturer-Retailer Alliance (Japan)"
+  },
+  "body": {
+    "zh": "<strong>製販同盟（製造業 + 販売業の同盟）</strong>是日本流通学派的<strong>独有概念</strong>·和田充夫研究·指厂家与零售商<strong>跳过传统对立</strong>·建立<strong>共同利益的同盟关系</strong>。Pro Plus 第 15 章 relationship 学派的核心案例。<br><br><strong>历史背景</strong>：1990 年代日本流通系列化崩溃·大手小売（AEON·Seven & i）崛起·传统厂家主导 channel 失效。同时 convenience store（CVS）爆发·成为新型流通主力。<br><br><strong>製販同盟的代表：CVS（コンビニ）</strong><br>Seven-Eleven Japan·FamilyMart·Lawson 等 CVS 与厂家建立深度合作：<br>① <strong>共同商品开发</strong>——CVS 提需求·厂家定制<br>例：Seven Premium·FamilyMart Collection（PB+NB 混合）<br>② <strong>POS data 共享</strong>——CVS 把销售数据实时给厂家·厂家精准调整生产<br>③ <strong>共同物流</strong>——一日多次配送系统·厂家配合<br>④ <strong>店内陈列共同设计</strong>——厂家不再「push」·而是与 CVS 一起优化<br><br><strong>製販同盟的特点</strong>：<br>① <strong>对等</strong>——不是厂家压制 channel·也不是 channel 压制厂家·而是<strong>对等合作</strong><br>② <strong>长期</strong>——不是单次交易·而是 10+ 年的合作<br>③ <strong>共同创造价值</strong>——双方都从合作中获益<br>④ <strong>信頼基础</strong>——基于历史合作积累的信任<br><br><strong>vs 流通系列化</strong>：<br>- 系列化：厂家强势·零售从属<br>- 製販同盟：对等·共同创造<br><br><strong>vs 美系 channel 整合</strong>：<br>- 美系（Stern VMS）：契约·power bases<br>- 日系（製販同盟）：信頼·长期·关系性<br><br><strong>跨学派关系</strong>：完美体现了 relationship 学派（嶋口·和田）的「<strong>对流通的 relationship</strong>」概念——日本流通学派与 relationship 学派在此交叉。",
+    "ja": "<strong>製販同盟</strong>は日本流通学派の<strong>独自概念</strong>·和田充夫研究·メーカーと小売が<strong>伝統的対立を超え</strong>·<strong>共同利益の同盟関係</strong>を構築。Pro Plus 第 15 章 relationship 学派の核心事例。<br><br><strong>歴史背景</strong>：1990 年代日本流通系列化崩壊·大手小売（イオン·セブン&アイ）台頭·伝統的メーカー主導チャネル失効。同時にコンビニエンス・ストア（CVS）爆発。<br><br><strong>製販同盟の代表：CVS</strong>·セブン-イレブン Japan·ファミマ·ローソン等 CVS とメーカーが深度協力：<br>① <strong>共同商品開発</strong>·セブンプレミアム·ファミマコレクション<br>② <strong>POS データ共有</strong>·販売データ即時·生産精確調整<br>③ <strong>共同物流</strong>·1 日複数回配送<br>④ <strong>店内陳列共同設計</strong><br><br><strong>製販同盟の特徴</strong>：① 対等 ② 長期 ③ 価値共同創造 ④ 信頼基盤<br><br><strong>vs 流通系列化</strong>：系列化はメーカー強勢·従属·製販同盟は対等·共同創造<br><br><strong>vs 米系チャネル統合</strong>：米系（Stern VMS）は契約·power bases·日系（製販同盟）は信頼·長期·関係性<br><br><strong>他派との関係</strong>：relationship 学派（嶋口·和田）の「<strong>対流通のリレーションシップ</strong>」概念を完璧に体現——日本流通学派と relationship 学派がここで交差。"
+  },
+  "tags": [
+    "製販同盟",
+    "コンビニ",
+    "Seven Premium"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "日本流通学派 + relationship 学派交叉的核心实务",
+      "限": "日本特色·欧美适用性低·实证测量难",
+      "例": "Seven Premium·Family Collection 是教科书",
+      "应": "Pro Plus 15 章·和田研究·神戸·慶應命题"
+    },
+    "ja": {
+      "限": "日本特色·欧米適用性低·実証測定困難",
+      "例": "セブンプレミアム·ファミマコレクションは教科書"
+    }
+  },
+  "createdAt": "2026-04-30T05:03:46.515Z",
+  "updatedAt": "2026-04-30T13:20:42.460Z"
+}

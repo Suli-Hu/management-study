@@ -101,13 +101,13 @@ export async function upsertKpInD1(
     );
   });
 
-  // 3. kp_scholar joins — 同上
+  // 3. kp_scholar joins — 同上 (v0.6.8: scholar 复合 PK，scholar_discipline = kp.discipline)
   stmts.push(db.prepare('DELETE FROM kp_scholar WHERE kp_id = ?').bind(kp.id));
   kp.scholars.forEach((scholarKey, i) => {
     stmts.push(
       db.prepare(
-        'INSERT INTO kp_scholar (kp_id, scholar_key, position) VALUES (?, ?, ?)',
-      ).bind(kp.id, scholarKey, 1000 + i),
+        'INSERT INTO kp_scholar (kp_id, scholar_discipline, scholar_key, position) VALUES (?, ?, ?, ?)',
+      ).bind(kp.id, kp.discipline, scholarKey, 1000 + i),
     );
   });
 

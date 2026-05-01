@@ -1,0 +1,43 @@
+{
+  "id": "m155",
+  "discipline": "marketing",
+  "schools": [
+    "marketing_concept",
+    "relationship",
+    "managerial"
+  ],
+  "scholars": [
+    "drucker",
+    "kotler"
+  ],
+  "year": "1954",
+  "title": {
+    "zh": "顾客中心化·Customer Centricity·Drucker 1954",
+    "ja": "カスタマー・セントリシティ・Drucker 1954",
+    "en": "Customer Centricity"
+  },
+  "body": {
+    "zh": "<strong>Customer Centricity（顾客中心化）</strong>是 marketing concept 学派的<strong>哲学核心</strong>·Drucker 1954·Kotler 后期反复强调·与 product centricity 形成对立。<br><br><strong>vs Product-Centric</strong>：<br>- <strong>Product-Centric</strong>：「我做出好产品·消费者会买」（生产志向）<br>- <strong>Customer-Centric</strong>：「我先理解消费者需要·再设计产品」（顾客志向）<br><br><strong>5 大特征</strong>（Customer-Centric Organization）：<br>① <strong>Customer 视角设计</strong>——4C 而非 4P<br>② <strong>跨部门 customer focus</strong>——非只 marketing 部门<br>③ <strong>customer data 驱动</strong>——decisions based on data<br>④ <strong>customer journey design</strong>——从 awareness 到 advocacy<br>⑤ <strong>customer success organization</strong>——专门负责 customer outcome<br><br><strong>4 个 customer-centric 转型阶段</strong>（Fader 2012）：<br>① <strong>Product Centricity</strong>（出发点）<br>② <strong>Customer Awareness</strong>（觉醒）<br>③ <strong>Customer Centricity</strong>（重组织）<br>④ <strong>Customer Lifetime Value Maximization</strong>（极致）<br><br><strong>典型 customer-centric 企业</strong>：<br>① <strong>Amazon</strong>——Bezos「customer obsession」leadership principle<br>② <strong>Zappos</strong>——CEO Tony Hsieh《Delivering Happiness》customer-centric culture<br>③ <strong>Netflix</strong>——algorithm 全部基于 user behavior<br>④ <strong>Patagonia</strong>——customer + planet 双重 centricity<br><br><strong>vs Customer Obsession</strong>：<br>- Customer Centricity：理解 customer<br>- Customer Obsession（Amazon）：customer 第一原则·甚至牺牲短期 partner<br><br><strong>批判</strong>：<br>① 不是所有 customer 都重要——VIP customer 才创 majority of profit<br>② Steve Jobs 名言：「Customers don't know what they want until you show them」<br>③ 极端 customer-centric 可能失去创新<br><br><strong>跨学派关系</strong>：marketing_concept 学派核心·与 Drucker「creating customer」·5 志向「顾客志向」·Kotler 4C·SDL co-creation 一脉相承。",
+    "ja": "<strong>Customer Centricity（カスタマー・セントリシティ）</strong>は marketing concept 学派の<strong>哲学核心</strong>·Drucker 1954·Kotler 後期反復強調·product centricity と対立。<br><br><strong>vs Product-Centric</strong>：Product-Centric は「良い製品を作れば消費者は買う」（生産志向）·Customer-Centric は「消費者ニーズ理解→製品設計」（顧客志向）<br><br><strong>5 大特徴</strong>（Customer-Centric Organization）：① Customer 視点設計（4C·非 4P）② 跨部門 customer focus ③ customer data 駆動 ④ customer journey design ⑤ customer success organization<br><br><strong>4 個 customer-centric 転換段階</strong>（Fader 2012）：① Product Centricity ② Customer Awareness ③ Customer Centricity ④ CLV Maximization<br><br><strong>典型 customer-centric 企業</strong>：① Amazon（Bezos「customer obsession」）② Zappos（Tony Hsieh）③ Netflix（algorithm based on user behavior）④ Patagonia（customer + planet 双重）<br><br><strong>vs Customer Obsession</strong>：Customer Centricity は customer 理解·Customer Obsession（Amazon）は customer 第一·短期 partner 犠牲も<br><br><strong>批判</strong>：① 全 customer 重要ではない·VIP が majority of profit ② Steve Jobs「Customers don't know what they want until you show them」③ 極端 customer-centric は革新失う<br><br><strong>他派との関係</strong>：marketing_concept 学派核心·Drucker「creating customer」·5 志向「顧客志向」·Kotler 4C·SDL co-creation と一脉相承。"
+  },
+  "tags": [
+    "customer centricity",
+    "Drucker",
+    "Bezos"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "marketing concept 学派的实务核心·marketing 哲学",
+      "限": "极端化失去创新·VIP 不平等",
+      "例": "Amazon·Zappos·Netflix 是教科书",
+      "应": "marketing 哲学题·一橋·慶應命题"
+    },
+    "ja": {
+      "限": "極端化で革新喪失·VIP 不平等",
+      "例": "Amazon·Zappos·Netflix 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:41:23.043Z",
+  "updatedAt": "2026-04-30T13:24:49.651Z"
+}

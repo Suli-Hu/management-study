@@ -1,0 +1,42 @@
+{
+  "id": "m092",
+  "discipline": "marketing",
+  "schools": [
+    "digital_marketing",
+    "consumer_behavior"
+  ],
+  "scholars": [
+    "miura_t"
+  ],
+  "year": "2021",
+  "title": {
+    "zh": "数字消费者 5 大特征·三浦俊彦",
+    "ja": "デジタル・コンシューマー 5 大特徴・三浦俊彦",
+    "en": "Digital Consumer · 5 Characteristics"
+  },
+  "body": {
+    "zh": "<strong>デジタル・コンシューマー 5 特征</strong>是 Pro Plus（『マーケティング戦略 第 6 版』）第 16 章<strong>三浦俊彦</strong>提出的数字时代消费者画像·digital_marketing 学派的日本本土框架。<br><br><strong>5 大特征</strong>：<br><br>① <strong>自由（Freedom）</strong>——消费者从地理·时间·信息·channel 制约中解放<br>- 24 小时·全球任何地方都能 access·shop·learn<br>- 例：Amazon·Netflix·全球 SaaS<br><br>② <strong>対話（Dialogue）</strong>——消费者从单方接收信息变为双方对话<br>- SNS·comment·review·DM·brand 必须回应<br>- 例：UNIQLO 的 SNS 互动·Glossier UGC 模式<br><br>③ <strong>共感（Empathy）</strong>——消费者更看重情感·价值观·brand 的人格<br>- functional benefit < emotional benefit < spiritual benefit（Marketing 3.0）<br>- 例：Patagonia 环保·Tesla 加速可持续<br><br>④ <strong>信頼（Trust）</strong>——消费者对企业 default 不信任·要 earn 信任<br>- review·KOL·UGC > 企业广告<br>- 透明·诚实·真实 = 关键<br>- 例：The Honest Company（Jessica Alba）·Allbirds 透明 carbon footprint<br><br>⑤ <strong>個性（Individuality）</strong>——消费者要 personalization·不要 mass<br>- mass marketing → personalization → 1-to-1 marketing<br>- 例：Spotify Wrapped·Netflix recommendation·Stitch Fix 个性化造型<br><br><strong>5 特征 vs 传统 marketing</strong>：<br>| 维度 | 传统 | Digital Consumer |<br>|---|---|---|<br>| 时间·空间 | 限制 | 自由 |<br>| 沟通 | 单向 | 对话 |<br>| 价值 | 功能 | 共感·情感 |<br>| 信任 | 企业 default | Earn·UGC |<br>| 服务 | mass | 个性化 |<br><br><strong>marketing 战略启示</strong>：<br>① 从「打断式广告」转向「inbound·content·共感 marketing」<br>② 从「单向沟通」转向「community + dialogue」<br>③ 从「mass」转向「1-to-1·personalization」<br>④ 从「企业 brand」转向「人 brand」（CEO 出面·员工 advocate）<br><br><strong>跨学派关系</strong>：① 与 SDL co-creation 一致 ② 与 CCT 学派的「消费者主体性」一致 ③ 与 marketing 4.0·5.0（Kotler 演化论）共鸣 ④ 是日本 digital marketing 学派对全球理论的本土化贡献。",
+    "ja": "<strong>デジタル・コンシューマー 5 特徴</strong>は Pro Plus（『マーケティング戦略 第 6 版』）第 16 章<strong>三浦俊彦</strong>提唱のデジタル時代消費者像·digital_marketing 学派の日本本土フレーム。<br><br><strong>5 大特徴</strong>：① <strong>自由</strong>（地理·時間·情報·チャネル制約解放）② <strong>対話</strong>（双方向）③ <strong>共感</strong>（情緒·価値観·人格）④ <strong>信頼</strong>（企業 default 不信·earn 必要）⑤ <strong>個性</strong>（personalization·1-to-1）<br><br><strong>5 特徴 vs 伝統マーケティング</strong>：時間空間（制限→自由）·コミュニケーション（単方→対話）·価値（機能→共感）·信頼（企業 default→Earn）·サービス（mass→個性化）<br><br><strong>マーケティング戦略示唆</strong>：① 打断式広告→inbound·content·共感 ② 単方→community + dialogue ③ mass→1-to-1·個性化 ④ 企業ブランド→人ブランド<br><br><strong>他派との関係</strong>：① SDL co-creation 一致 ② CCT「消費者主体性」一致 ③ marketing 4.0·5.0（Kotler 進化論）共鳴 ④ 日本 digital marketing 学派の全球理論本土化貢献。"
+  },
+  "tags": [
+    "digital consumer",
+    "三浦俊彦",
+    "Pro Plus",
+    "個性"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "日本 digital marketing 学派的本土化框架·三浦俊彦提出",
+      "限": "5 特征边界模糊·实证验证待",
+      "例": "Patagonia·Spotify·Allbirds·Stitch Fix 是教科书",
+      "应": "Pro Plus 16 章·digital marketing·中央大学命题"
+    },
+    "ja": {
+      "限": "5 特徴境界曖昧·実証検証待",
+      "例": "Patagonia·Spotify·Allbirds·Stitch Fix 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T05:14:34.825Z",
+  "updatedAt": "2026-04-30T13:22:24.726Z"
+}

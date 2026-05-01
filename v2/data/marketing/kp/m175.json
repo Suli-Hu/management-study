@@ -1,0 +1,43 @@
+{
+  "id": "m175",
+  "discipline": "marketing",
+  "schools": [
+    "channel_retail",
+    "sdl",
+    "relationship"
+  ],
+  "scholars": [
+    "stern",
+    "vargo"
+  ],
+  "year": "1990",
+  "title": {
+    "zh": "零售服务战略·4 大服务级别",
+    "ja": "小売サービス戦略・4 大サービス・レベル",
+    "en": "Retail Service Strategy"
+  },
+  "body": {
+    "zh": "<strong>Retail Service Strategy（零售服务战略）</strong>是 retailers 的<strong>差异化关键</strong>·特别在 product 同质化的现代。Kotler 16 章。<br><br><strong>4 大 retail service levels</strong>：<br>① <strong>Self-Service</strong>——消费者完全自助·便宜（Costco·ドンキ）<br>② <strong>Self-Selection</strong>——消费者自找·有员工询问帮助（UNIQLO·MUJI·SuperTarget）<br>③ <strong>Limited Service</strong>——少数 service（一般百货）<br>④ <strong>Full Service</strong>——员工全程陪同·高价（Hermès·高端百货·Nordstrom）<br><br><strong>retail service mix（服务组合）</strong>：<br>- <strong>Pre-purchase</strong>——information·hosiery·credit·hours·delivery·display<br>- <strong>Post-purchase</strong>——alteration·gift wrap·return·customization<br>- <strong>Ancillary</strong>——restroom·food·wifi·child care<br><br><strong>service quality 5 大维度（SERVQUAL·m118）应用 retail</strong>：<br>① Reliability·② Assurance·③ Tangibles·④ Empathy·⑤ Responsiveness<br><br><strong>典型 retail service 战略</strong>：<br>- <strong>Nordstrom</strong>——Full Service·legendary customer service·return-no-questions-asked<br>- <strong>Apple Store Genius Bar</strong>——技术 + 服务·教科书 retail service<br>- <strong>Tesla Showroom</strong>——Apple-inspired retail experience<br>- <strong>Sephora</strong>——beauty consultant·sample·BeautyINSIDER 会员<br>- <strong>Costco</strong>——Self-Service·返货宽松（rare exception）<br><br><strong>service vs product 投资 trade-off</strong>：<br>- 高 service：高 cost·高 margin·loyal customer<br>- 低 service：低 cost·低 margin·price-sensitive customer<br><br><strong>跨学派关系</strong>：与 SDL（service-dominant logic·m070）·service marketing IHIP（m117）·relationship marketing 一体。",
+    "ja": "<strong>Retail Service Strategy（小売サービス戦略）</strong>は retailers の<strong>差別化の鍵</strong>·特に製品同質化の現代で重要。Kotler 16 章。<br><br><strong>4 大 retail service levels</strong>：① Self-Service（Costco·ドンキ）② Self-Selection（UNIQLO·MUJI·SuperTarget）③ Limited Service ④ Full Service（Hermès·高端百貨·Nordstrom）<br><br><strong>retail service mix</strong>：① Pre-purchase（information·credit·hours·delivery）② Post-purchase（alteration·gift wrap·return·customization）③ Ancillary（restroom·food·wifi·child care）<br><br><strong>service quality 5 大次元（SERVQUAL·m118）retail 応用</strong>：① Reliability ② Assurance ③ Tangibles ④ Empathy ⑤ Responsiveness<br><br><strong>典型 retail service 戦略</strong>：① Nordstrom（Full Service·legendary customer service·return-no-questions-asked）② Apple Store Genius Bar ③ Tesla Showroom（Apple-inspired）④ Sephora（beauty consultant·BeautyINSIDER）⑤ Costco（Self-Service·返品寛容·rare exception）<br><br><strong>service vs product 投資トレードオフ</strong>：高 service は高コスト·高 margin·loyal customer·低 service は低コスト·低 margin·価格敏感顧客<br><br><strong>他派との関係</strong>：SDL（m070）·service marketing IHIP（m117）·relationship marketing 一体。"
+  },
+  "tags": [
+    "retail service",
+    "SERVQUAL",
+    "Nordstrom"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "零售差异化的关键·service vs product 投资",
+      "限": "成本高·难量化·跨文化适用",
+      "例": "Nordstrom·Apple Genius·Sephora 是教科书",
+      "应": "Kotler 16 章·retail 题·SDL 题"
+    },
+    "ja": {
+      "限": "コスト高·数量化困難·跨文化適用",
+      "例": "Nordstrom·Apple Genius·Sephora 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T09:26:40.996Z",
+  "updatedAt": "2026-04-30T13:25:34.732Z"
+}

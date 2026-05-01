@@ -1,0 +1,27 @@
+{
+  "key": "relationship",
+  "discipline": "marketing",
+  "title": {
+    "zh": "关系营销学派 / 関係性マーケティング",
+    "ja": "リレーションシップ・マーケティング学派",
+    "en": "Relationship Marketing"
+  },
+  "era": "1983– transaction → relationship 范式转换",
+  "summary": {
+    "zh": "<strong>关系营销学派</strong>主张 marketing 从单次<strong>交易</strong>转向<strong>长期关系</strong>。锚点 <strong>Leonard Berry</strong>（1983 创术语）·<strong>Evert Gummesson</strong>（1987『30Rs』欧洲学派代表）。日本本土代表 <strong>嶋口充輝</strong>（慶應名誉·日本マーケティング学会創設）·<strong>和田充夫</strong>（慶應名誉·『関係性マーケティングの構図』）·<strong>南知惠子</strong>（神戸名誉·B2B 关系）。<br><br><strong>核心范式</strong>：marketing 的本质是<strong>建立·维持·终止·恢复 关系</strong>·不是单次买卖——长期关系才创造可持续 firm value。<br><br><strong>核心内容</strong>：① <strong>CRM</strong> ② <strong>CLV / LTV（顾客生涯价值）</strong> ③ <strong>NPS</strong>（Reichheld 2003 in HBR）④ <strong>顾客忠诚</strong>·loyalty programs·loyalty ladder（aware·explorer·buyer·advocate·partner）⑤ <strong>顾客满足度测量</strong>·苦情对应（service recovery）⑥ <strong>顾客获得 vs 维持 平衡</strong>·acquisition funnel ⑦ <strong>customization</strong>·顾客 empowerment·クチコミ管理 ⑧ <strong>信頼の構築</strong>·<strong>顾客 equity</strong>（Rust-Zeithaml-Lemon 2000）。<br><br><strong>⭐ 日本独自</strong>：① <strong>MAC（Marketing as Communication）</strong>（和田充夫）② <strong>製販同盟</strong>（和田·convenience store の流通革新）③ <strong>对话するマーケティング</strong>（face-to-face·クチコミ·情報プラットフォーム）④ <strong>地域ブランド・マーケティング</strong>（和田）⑤ <strong>对顾客 / 对流通 / 对社会 3 リレーションシップ</strong>（嶋口）。<br><br><strong>跨学派关系</strong>：与 <code>sdl</code> 共享长期关系假设但 SDL 更哲学层。与 <code>b2b_marketing</code> 邻近。与 <code>cct_interpretive</code> 共享 brand community。<br><br><strong>局限</strong>：concept 模糊·实证操作化困难·关系 vs 交易边界不清。",
+    "ja": "<strong>リレーションシップ・マーケティング学派</strong>は単発取引から<strong>長期関係</strong>への転換を主張。アンカーは <strong>Leonard Berry</strong>（1983·用語創出）·<strong>Evert Gummesson</strong>（1987）。日本本土の代表は <strong>嶋口充輝</strong>·<strong>和田充夫</strong>·<strong>南知惠子</strong>。<br><br><strong>核心パラダイム</strong>：マーケティングの本質は<strong>関係の構築·維持·終了·回復</strong>。<br><br><strong>主要内容</strong>：① <strong>CRM</strong> ② <strong>CLV / LTV</strong> ③ <strong>NPS</strong>（Reichheld 2003）④ <strong>顧客ロイヤルティ</strong>·ロイヤルティ・ラダー ⑤ <strong>顧客満足度測定</strong>·service recovery ⑥ <strong>顧客獲得 vs 維持</strong> ⑦ <strong>カスタマイゼーション</strong>·顧客エンパワーメント·クチコミ管理 ⑧ <strong>信頼の構築</strong>·<strong>顧客エクイティ</strong>（Rust-Zeithaml-Lemon 2000）。<br><br><strong>⭐ 日本独自</strong>：① <strong>MAC（Marketing as Communication）</strong>（和田充夫）② <strong>製販同盟</strong>③ <strong>対話するマーケティング</strong>④ <strong>地域ブランド・マーケティング</strong>⑤ <strong>対顧客 / 対流通 / 対社会 3 リレーションシップ</strong>（嶋口）。<br><br><strong>他派との関係</strong>：<code>sdl</code>·<code>b2b_marketing</code>·<code>cct_interpretive</code> と関連。<br><br><strong>限界</strong>：概念曖昧·実証操作化困難·関係 vs 取引の境界不明瞭。"
+  },
+  "themeKey": "growth_relationship",
+  "tags": [
+    "Berry",
+    "Gummesson",
+    "嶋口充輝",
+    "和田充夫",
+    "CRM",
+    "NPS",
+    "MAC"
+  ],
+  "concepts": [],
+  "createdAt": "2026-04-30T04:28:09.805Z",
+  "updatedAt": "2026-04-30T04:28:09.805Z"
+}

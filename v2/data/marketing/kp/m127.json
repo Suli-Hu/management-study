@@ -1,0 +1,41 @@
+{
+  "id": "m127",
+  "discipline": "marketing",
+  "schools": [
+    "imc_communication"
+  ],
+  "scholars": [
+    "schultz",
+    "anderson_c"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "直销战略·Direct Marketing 与 D2C",
+    "ja": "ダイレクト・マーケティング戦略・D2C 含む",
+    "en": "Direct Marketing & D2C"
+  },
+  "body": {
+    "zh": "<strong>Direct Marketing（直销·DM）</strong>是不通过 channel 的<strong>直接 1-on-1 marketing</strong>·Pro Plus 第 14 章·Kotler 14 章核心。<br><br><strong>5 大 channel</strong>：<br>① <strong>Direct Mail（邮件）</strong>——传统但仍有效（catalog·brochure）<br>② <strong>Catalog Marketing</strong>——L.L.Bean·IKEA<br>③ <strong>Telemarketing</strong>——电话销售（B2B 仍主流）<br>④ <strong>Online Marketing</strong>——email·SNS·website<br>⑤ <strong>Mobile Marketing</strong>——SMS·APP push<br><br><strong>核心特征 4</strong>：① <strong>非公开</strong>——message 给个人 ② <strong>可定制</strong>——personalization ③ <strong>实时</strong>——快速准备 / 发送 ④ <strong>可测量</strong>——ROI 清楚<br><br><strong>vs 大众 marketing</strong>：<br>- mass：广覆盖·非定制·难测<br>- DM：精准·定制·可测<br>- ROI：DM 通常 5-10%·mass 通常 0.5-2%<br><br><strong>D2C（Direct-to-Consumer）</strong>——DM 的现代版本：<br>① 不靠 retailer<br>② 直接通过 brand website / APP<br>③ 收集 first-party data<br>④ 控制 brand 体验<br>例：Allbirds·Warby Parker·Glossier·Tesla·Casper<br><br><strong>marketing 实务挑战</strong>：① privacy regulation（GDPR·日本个人情报保护法）② cookie 限制 ③ list quality<br><br><strong>跨学派关系</strong>：与 digital_marketing·CRM·entrepreneurial marketing 紧密。",
+    "ja": "<strong>Direct Marketing（ダイレクト・マーケティング·DM）</strong>はチャネル経由しない<strong>直接 1-on-1 マーケティング</strong>·Pro Plus 第 14 章·Kotler 14 章核心。<br><br><strong>5 大チャネル</strong>：① Direct Mail ② Catalog Marketing（L.L.Bean·IKEA）③ Telemarketing ④ Online Marketing ⑤ Mobile Marketing<br><br><strong>核心特徴 4</strong>：① 非公開 ② カスタマイズ可（personalization）③ 実時間 ④ 測定可<br><br><strong>vs マス・マーケティング</strong>：mass は広覆盖·非カスタマイズ·測定困難·DM は精確·カスタマイズ·測定可·ROI（DM 5-10%·mass 0.5-2%）<br><br><strong>D2C（Direct-to-Consumer）</strong>·DM の現代版：① retailer 経由しない ② brand website / APP ③ first-party data 収集 ④ brand 体験制御·例：Allbirds·Warby Parker·Glossier·Tesla·Casper<br><br><strong>マーケティング実務挑戦</strong>：① プライバシー規制（GDPR·個人情報保護法）② cookie 制限 ③ list quality<br><br><strong>他派との関係</strong>：digital_marketing·CRM·entrepreneurial marketing と密接。"
+  },
+  "tags": [
+    "direct marketing",
+    "D2C",
+    "catalog"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "sales / IMC mix 的精准战略·D2C 时代标配",
+      "限": "privacy 规制·list 质量",
+      "例": "L.L.Bean·Allbirds·Tesla 是教科书",
+      "应": "Kotler 14 章·sales / digital 题"
+    },
+    "ja": {
+      "限": "プライバシー規制·list 品質",
+      "例": "L.L.Bean·Allbirds·Tesla 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:35:51.558Z",
+  "updatedAt": "2026-04-30T13:23:47.700Z"
+}

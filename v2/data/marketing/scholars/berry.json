@@ -1,0 +1,30 @@
+{
+  "key": "berry",
+  "discipline": "marketing",
+  "name": {
+    "zh": "伦纳德·贝瑞",
+    "ja": "レナード・ベリー",
+    "en": "Leonard L. Berry"
+  },
+  "schools": [
+    "relationship"
+  ],
+  "schoolsExplicit": true,
+  "contribution": {
+    "zh": "<strong>关系营销学派</strong>「relationship marketing」术语的创出者。1983 年发表论文 \"Relationship Marketing\" in 服务 marketing 会议·首次正式使用这一术语·开启 marketing 从单次交易向长期关系的<strong>范式转换</strong>。后续著作『On Great Service』『Discovering the Soul of Service』把服务行业的关系营销推向实务深度。",
+    "ja": "<strong>関係性マーケティング学派</strong>「relationship marketing」用語の創出者。1983 年論文「Relationship Marketing」をサービス・マーケティング学会で発表·初めてこの用語を正式に使用·マーケティングを単発取引から長期関係への<strong>パラダイム転換</strong>を開始。後続著作『On Great Service』『Discovering the Soul of Service』でサービス業の関係性マーケティングを実務深度へ推進。"
+  },
+  "lifespan": "1942 – 至今",
+  "institution": "Texas A&M University Mays School",
+  "born": "1942",
+  "died": "",
+  "nationality": "美国",
+  "flag": "🇺🇸",
+  "origin": "",
+  "field": "关系营销",
+  "tags": [],
+  "nobel": null,
+  "kpsOrder": [],
+  "createdAt": "2026-04-30T04:33:39.544Z",
+  "updatedAt": "2026-04-30T04:33:39.544Z"
+}

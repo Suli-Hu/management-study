@@ -1,0 +1,41 @@
+{
+  "id": "m002",
+  "discipline": "marketing",
+  "schools": [
+    "managerial"
+  ],
+  "scholars": [
+    "smith_w",
+    "kotler"
+  ],
+  "year": "1972",
+  "title": {
+    "zh": "STP 框架·三步骤总览",
+    "ja": "STP フレーム・三段階全体",
+    "en": "STP Framework · Three Steps"
+  },
+  "body": {
+    "zh": "<strong>STP 框架</strong>是 marketing 战略最基础的三步骤体系·由 <strong>Kotler</strong>（1972 年起在『Marketing Management』教材中系统化）整合 Smith 1956 的细分概念·Wind 的目标市场理论·Ries-Trout 1981 的定位理论而成。<br><br><strong>三步骤</strong>：<br>① <strong>Segmentation（细分）</strong>——把异质市场切成若干同质 segments·用 4 大细分变量（demographic·geographic·behavioral·psychographic）<br>② <strong>Targeting（选定）</strong>——选 1 个或多个 segments 进入·按「适合性·魅力」2 维评估（Kotler 16 版独创区分战略 vs 战术）<br>③ <strong>Positioning（定位）</strong>——在选定 segments 内·用 POD（差別化点）和 POP（類似化点）确立顾客心智中独特位置<br><br><strong>3 个隐含哲学假设</strong>：① 市场异质性·② 资源有限性·③ 集中胜于普遍。<br><br><strong>跨学派关系</strong>：STP 的 Targeting 步骤与 Porter 的 focus 战略本质同型·都依据「资源约束下集中竞争」的逻辑。Levitt 1960 的 Marketing Myopia 警告以产品为中心的近视症·STP 强迫企业以市场为中心——是 myopia 的解药。<br><br><strong>批判</strong>：CCT 学派批判 STP 假设消费者可被归入 segments·忽视身份流动性。数字时代下「全覆盖品牌」（如 UNIQLO）反而通过 needs-based segmentation 跳出传统 STP。",
+    "ja": "<strong>STP フレーム</strong>はマーケティング戦略最基礎の三段階体系·<strong>Kotler</strong>（1972 年以降『Marketing Management』教材で体系化）が Smith 1956 細分化·Wind の標的市場理論·Ries-Trout 1981 ポジショニング理論を統合。<br><br><strong>三段階</strong>：<br>① <strong>Segmentation（細分化）</strong>·異質市場を同質 segments に切り分け·4 つの細分化変数（人口統計·地理·行動·サイコグラフィック）を用いる<br>② <strong>Targeting（選定）</strong>·1 つまたは複数の segments を選択·「適合性·魅力」2 次元で評価（Kotler 16 版は戦略 vs 戦術を区分）<br>③ <strong>Positioning（ポジショニング）</strong>·選定 segments 内で·POD（差別化ポイント）と POP（類似化ポイント）で顧客心智に独自位置を確立<br><br><strong>3 つの暗黙の哲学的前提</strong>：① 市場の異質性·② 資源の有限性·③ 集中が普遍に勝る。<br><br><strong>他派との関係</strong>：STP の Targeting は Porter の focus 戦略と本質的に同型·共に「資源制約下の集中競争」の論理。Levitt 1960 のマーケティング近視眼に対し·STP は企業を市場中心へ——myopia の解薬。<br><br><strong>批判</strong>：CCT 学派は STP が消費者を segments に分類できると仮定·アイデンティティの流動性を無視と批判。デジタル時代の「全カバーブランド」（UNIQLO 等）は needs-based segmentation で従来 STP を回避。"
+  },
+  "tags": [
+    "STP",
+    "Kotler",
+    "Smith"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "现代 marketing 战略的标准框架·Kotler 系统化的核心成果",
+      "限": "假设市场可清晰切分·对平台经济·CCT 视角解释力有限",
+      "例": "UNIQLO STP：basic-needs segment·适合性高·魅力高·POD「Lifewear」",
+      "应": "Kotler 16 版第 6·7 章·全 11 校 marketing 必考"
+    },
+    "ja": {
+      "限": "市場が明確に切り分けられると仮定·プラットフォーム経済·CCT 視点に説明力限定",
+      "例": "UNIQLO STP：basic-needs segment·適合性高·魅力高·POD「Lifewear」"
+    }
+  },
+  "createdAt": "2026-04-30T04:40:12.767Z",
+  "updatedAt": "2026-04-30T13:18:40.901Z"
+}

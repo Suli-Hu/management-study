@@ -21,24 +21,31 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return jsonRes<EditError>(503, { ok: false, reason: 'config_missing' });
   }
 
-  let body: { scholarKey?: string; kpIds?: string[] };
+  // v0.6.8: discipline 必填（scholar 复合 PK，重名时单 key 无法定位）
+  let body: { discipline?: string; scholarKey?: string; kpIds?: string[] };
   try {
     body = (await request.json()) as typeof body;
   } catch {
     return jsonRes<EditError>(400, { ok: false, reason: 'bad_request', detail: 'body must be JSON' });
   }
-  const { scholarKey, kpIds } = body;
-  if (!scholarKey || !Array.isArray(kpIds) || kpIds.length === 0) {
-    return jsonRes<EditError>(400, { ok: false, reason: 'bad_request', detail: 'scholarKey + kpIds[] required' });
+  const { discipline, scholarKey, kpIds } = body;
+  if (!discipline || !scholarKey || !Array.isArray(kpIds) || kpIds.length === 0) {
+    return jsonRes<EditError>(400, { ok: false, reason: 'bad_request', detail: 'discipline + scholarKey + kpIds[] required' });
   }
+  if (!locals.canEdit(discipline)) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
-  // discipline lookup + admin gate
-  const row = await env.DB.prepare('SELECT discipline FROM scholar WHERE key = ?').bind(scholarKey).first() as { discipline: string } | null;
+  // 验证 (discipline, scholarKey) 存在
+  const row = await env.DB
+    .prepare('SELECT 1 AS x FROM scholar WHERE discipline = ? AND key = ?')
+    .bind(discipline, scholarKey)
+    .first() as { x: number } | null;
   if (!row) return jsonRes<EditError>(404, { ok: false, reason: 'not_found' });
-  if (!locals.canEdit(row.discipline)) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
   // 校验 kpIds 必须是该学者当前 KP 的同集合（防漏 / 防注入）
-  const kpRows = await env.DB.prepare('SELECT kp_id FROM kp_scholar WHERE scholar_key = ?').bind(scholarKey).all<{ kp_id: string }>();
+  const kpRows = await env.DB
+    .prepare('SELECT kp_id FROM kp_scholar WHERE scholar_discipline = ? AND scholar_key = ?')
+    .bind(discipline, scholarKey)
+    .all<{ kp_id: string }>();
   const currentKpIds = new Set((kpRows.results ?? []).map((r) => r.kp_id));
   const next = new Set(kpIds);
   if (currentKpIds.size !== next.size || [...currentKpIds].some((id) => !next.has(id))) {
@@ -49,7 +56,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
   }
 
-  const path = `v2/data/${row.discipline}/scholars/${scholarKey}.json`;
+  const path = `v2/data/${discipline}/scholars/${scholarKey}.json`;
   const fetched = await getFile({ pat: env.GITHUB_PAT, repo: env.GITHUB_REPO }, path);
   if (!fetched.ok) return jsonRes<EditError>(502, { ok: false, reason: 'github_error', detail: fetched.detail });
 

@@ -1,0 +1,30 @@
+{
+  "key": "webster",
+  "discipline": "marketing",
+  "name": {
+    "zh": "弗雷德里克·韦伯斯特",
+    "ja": "フレデリック・ウェブスター",
+    "en": "Frederick E. Webster Jr."
+  },
+  "schools": [
+    "b2b_marketing"
+  ],
+  "schoolsExplicit": true,
+  "contribution": {
+    "zh": "<strong>B2B / 生产财营销学派</strong>的奠基人。1972 年与 <strong>Wind</strong> 合著「A General Model for Understanding Organizational Buying Behavior」in <em>Journal of Marketing</em>·提出 <strong>Webster-Wind 模型</strong>·把组织购买行为系统化·区分 buying center 6 大角色（initiator·user·influencer·decider·buyer·gatekeeper）。1979 年『Industrial Marketing Strategy』把 B2B 学派独立成形。",
+    "ja": "<strong>B2B / 生産財マーケティング学派</strong>の基礎を築いた。1972 年 <strong>Wind</strong> と <em>Journal of Marketing</em>「A General Model for Understanding Organizational Buying Behavior」を共著·<strong>Webster-Wind モデル</strong>を提唱·組織購買行動を体系化·buying center 6 役割（initiator·user·influencer·decider·buyer·gatekeeper）を区分。1979 年『Industrial Marketing Strategy』で B2B 学派を独立形成。"
+  },
+  "lifespan": "1937 – 至今",
+  "institution": "Dartmouth College Tuck School",
+  "born": "1937",
+  "died": "",
+  "nationality": "美国",
+  "flag": "🇺🇸",
+  "origin": "",
+  "field": "B2B 营销",
+  "tags": [],
+  "nobel": null,
+  "kpsOrder": [],
+  "createdAt": "2026-04-30T04:34:34.969Z",
+  "updatedAt": "2026-04-30T04:34:34.969Z"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "m073",
+  "discipline": "marketing",
+  "schools": [
+    "sdl"
+  ],
+  "scholars": [
+    "vargo",
+    "lusch"
+  ],
+  "year": "2004",
+  "title": {
+    "zh": "使用价值 vs 交换价值",
+    "ja": "使用価値 vs 交換価値",
+    "en": "Value-in-Use vs Value-in-Exchange"
+  },
+  "body": {
+    "zh": "<strong>Value-in-Use vs Value-in-Exchange</strong>是 SDL 学派的核心区分·重新定义了「价值」的发生地点。<br><br><strong>Value-in-Exchange（交换中的价值）·G-DL 视角</strong>：<br>- 价值在交易时点决定（顾客付钱时）<br>- 价值由企业「嵌入」产品<br>- 价值是产品的属性·可测量<br>- 测量：售价·成本·利润<br><br><strong>Value-in-Use（使用中的价值）·SDL 视角</strong>：<br>- 价值在使用过程中产生<br>- 价值由顾客主观感知决定（现象学的·phenomenological）<br>- 价值是动态的·随时间·情境变化<br>- 测量：CX·NPS·LTV·retention<br><br><strong>实例对照</strong>：<br>购买 iPhone：<br>- G-DL（Value-in-Exchange）：iPhone 售价 $1000·企业获 $1000 收入<br>- SDL（Value-in-Use）：消费者使用 iPhone 5 年·拍照·导航·支付·社交·与 brand 形成关系——这才是真正的价值·远超 $1000<br><br><strong>SDL 的革命性</strong>：<br>① marketing 焦点从「让顾客买」转向「让顾客用得好」<br>② 客户体验（CX）成为 marketing 核心·而非单纯销售<br>③ post-purchase 是 marketing 主战场<br>④ subscription·service 商业模式的理论支撑——continuous value-in-use<br><br><strong>marketing 实务启示</strong>：<br>① <strong>onboarding 投资</strong>——确保 first-use 顺利·建立 value-in-use<br>② <strong>customer success organization</strong>——专门帮顾客实现 value-in-use<br>③ <strong>continuous engagement</strong>——saas·会员制度·持续 deliver value<br>④ <strong>用户体验设计</strong>——UX/UI 是 marketing 的核心·不是 IT 的<br><br><strong>跨学派关系</strong>：① 与 SDL FP6（axiom 2）核心命题 ② 与 relationship 学派的 LTV·NPS·service recovery 实务对接 ③ 与 CCT 学派的「消费者意味建构」一致。",
+    "ja": "<strong>Value-in-Use vs Value-in-Exchange</strong>は SDL 学派の核心区分·「価値」の発生地点を再定義。<br><br><strong>Value-in-Exchange·G-DL 視点</strong>：<br>- 価値は取引時点決定（顧客支払時）<br>- 企業が製品に「埋め込む」<br>- 製品属性·測定可能<br>- 測定：販売価格·コスト·利益<br><br><strong>Value-in-Use·SDL 視点</strong>：<br>- 価値は使用過程発生<br>- 顧客主観知覚決定（現象学的·phenomenological）<br>- 動的·時間·情境変化<br>- 測定：CX·NPS·LTV·retention<br><br><strong>事例対照</strong>：iPhone 購買·G-DL は売上 $1000·SDL は使用 5 年·撮影·ナビ·支払·SNS·ブランド関係——真の価値は $1000 を遥かに超える。<br><br><strong>SDL の革命性</strong>：① マーケティング焦点が「買わせる」から「使わせて満足」へ ② CX がマーケティング核心 ③ post-purchase が主戦場 ④ サブスク·サービスの理論支援·continuous value-in-use<br><br><strong>マーケティング実務示唆</strong>：① onboarding 投資 ② customer success organization ③ continuous engagement ④ UX/UI 設計<br><br><strong>他派との関係</strong>：① SDL FP6（axiom 2）核心命題 ② relationship 学派 LTV·NPS·service recovery と接続 ③ CCT 学派と一致。"
+  },
+  "tags": [
+    "value-in-use",
+    "value-in-exchange",
+    "SDL"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "SDL 学派对「价值」概念的根本重构",
+      "限": "主观·难量化·与 G-DL 实务标准冲突",
+      "例": "iPhone 5 年使用价值远超售价·subscription 模式核心",
+      "应": "SDL 论述题·一橋·神戸命题"
+    },
+    "ja": {
+      "限": "主観·数量化困難·G-DL 実務標準と衝突",
+      "例": "iPhone 5 年使用価値が販売価格を遥か超·サブスクモデル核心"
+    }
+  },
+  "createdAt": "2026-04-30T05:14:00.479Z",
+  "updatedAt": "2026-04-30T13:21:40.565Z"
+}

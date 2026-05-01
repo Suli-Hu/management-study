@@ -1,0 +1,41 @@
+{
+  "id": "m097",
+  "discipline": "marketing",
+  "schools": [
+    "strategic_marketing",
+    "managerial"
+  ],
+  "scholars": [
+    "porter"
+  ],
+  "year": "1970",
+  "title": {
+    "zh": "BCG 矩阵·成长率与市场份额 4 象限",
+    "ja": "BCG マトリックス・成長率とシェア 4 象限",
+    "en": "BCG Matrix"
+  },
+  "body": {
+    "zh": "<strong>BCG Matrix（Growth-Share Matrix·成长-市场份额矩阵）</strong>由 Boston Consulting Group 在 1970 年提出·企业产品 portfolio 管理的<strong>2x2 经典框架</strong>。<br><br><strong>2x2 矩阵</strong>：<br>纵轴：市场成长率（高 / 低）<br>横轴：相对市场份额（高 / 低）<br>4 象限：<br><br>① <strong>⭐ Star（明星）</strong>——高成长 × 高份额<br>战略：投资·建·成长<br>未来：成熟后变 Cash Cow<br>例：Tesla EV·Apple iPhone（peak）<br><br>② <strong>🐮 Cash Cow（现金牛）</strong>——低成长 × 高份额<br>战略：维持·收割·提供 cash<br>用 cash 投资 Star·Question Mark<br>例：Coca-Cola classic·Apple iMac<br><br>③ <strong>❓ Question Mark（问题儿童）</strong>——高成长 × 低份额<br>战略：选择·投资变 Star 或退出<br>风险高·消耗 cash<br>例：Apple Vision Pro·Tesla Cybertruck<br><br>④ <strong>🐶 Dog（瘦狗）</strong>——低成长 × 低份额<br>战略：剥离·清算<br>例：Microsoft Zune（已废）·Sony Ericsson<br><br><strong>marketing 启示</strong>：<br>① <strong>cash flow 配置</strong>——Cow 的 cash → 投 Star 和 Question Mark<br>② <strong>战略重心</strong>——Star 是未来·Cow 是现在<br>③ <strong>果断剥离 Dog</strong>——避免资源浪费<br><br><strong>批判</strong>：<br>① 仅 2 维度过简——还要看 brand·tech·R&D<br>② 假设市场份额 = 利润——不一定成立（如 Apple 高 margin·非高份额）<br>③ 静态分析——市场动态难捕捉<br>④ GE / McKinsey Matrix 9 格更精细·部分替代 BCG<br><br><strong>跨学派关系</strong>：与 strategic_marketing 的 portfolio strategy 核心·与 Ansoff Matrix 一起构成 marketing 战略 portfolio 工具。",
+    "ja": "<strong>BCG マトリックス（Growth-Share Matrix）</strong>は Boston Consulting Group 1970 年提唱·企業製品ポートフォリオ管理の<strong>2x2 古典フレーム</strong>。<br><br><strong>2x2 マトリックス</strong>：縦軸=市場成長率·横軸=相対市場シェア·4 象限：<br>① ⭐ Star（投資·成長·Tesla EV·iPhone peak）<br>② 🐮 Cash Cow（維持·収穫·Coca-Cola classic·iMac）<br>③ ❓ Question Mark（選択·Apple Vision Pro·Cybertruck）<br>④ 🐶 Dog（撤退·Zune·Sony Ericsson）<br><br><strong>マーケティング示唆</strong>：① キャッシュフロー配置（Cow→Star·Question Mark）② 戦略重心（Star 未来·Cow 現在）③ Dog 果断剥離<br><br><strong>批判</strong>：① 2 次元のみ過簡 ② 市場シェア = 利益とは限らない（Apple 高 margin·非高シェア）③ 静的分析 ④ GE / McKinsey Matrix 9 格がより精緻·一部代替<br><br><strong>他派との関係</strong>：strategic_marketing の portfolio strategy 核心·Ansoff Matrix と並ぶマーケティング戦略 portfolio ツール。"
+  },
+  "tags": [
+    "BCG Matrix",
+    "Boston Consulting",
+    "portfolio"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "产品 portfolio 管理的最经典框架·marketing 战略基础",
+      "限": "过简·静态·实务用 GE Matrix 替代",
+      "例": "Apple·Tesla·Microsoft 各产品象限分析",
+      "应": "Kotler 第 2 章·strategic 题"
+    },
+    "ja": {
+      "限": "過簡·静的·実務 GE Matrix 代替",
+      "例": "Apple·Tesla·Microsoft 各製品象限分析"
+    }
+  },
+  "createdAt": "2026-04-30T07:24:48.111Z",
+  "updatedAt": "2026-04-30T13:22:35.627Z"
+}

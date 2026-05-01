@@ -1,0 +1,42 @@
+{
+  "id": "m165",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "strategic_marketing"
+  ],
+  "scholars": [
+    "kotler",
+    "porter"
+  ],
+  "year": "1980",
+  "title": {
+    "zh": "竞争定价分析·与价格战应对",
+    "ja": "競合価格分析・価格戦争対応",
+    "en": "Competitor Price Analysis"
+  },
+  "body": {
+    "zh": "<strong>Competitor Price Analysis（竞争定价分析）</strong>是 competition-based pricing 的核心·分析<strong>竞争对手价格</strong>来定自己的价格。Kotler 11 章。<br><br><strong>3 大分析维度</strong>：<br>① <strong>Competitor Price Levels</strong>——竞争对手当前价格<br>② <strong>Competitor Cost Structure</strong>——估算其成本基础<br>③ <strong>Competitor Strategy</strong>——pricing objective·long-term 战略<br><br><strong>价格分析 5 大方法</strong>：<br>① <strong>Direct Comparison</strong>——逐 SKU 价格对比<br>② <strong>Value Comparison</strong>——price-to-value ratio<br>③ <strong>Customer Survey</strong>——消费者认为谁便宜<br>④ <strong>Mystery Shopping</strong>——伪装顾客调查<br>⑤ <strong>Industry Reports</strong>——Nielsen·Kantar·NPS 数据<br><br><strong>定价相对策略</strong>：<br>① <strong>Match</strong>——同价（避免价格战）<br>② <strong>Premium</strong>——高 5-30%（差异化战略）<br>③ <strong>Discount</strong>——低 5-30%（penetration / value）<br>④ <strong>Price Lining</strong>——分价格段定位（Toyota Yaris·Camry·Avalon）<br>⑤ <strong>Predatory Pricing</strong>——超低价驱逐对手（违法·反垄断风险）<br><br><strong>price war（价格战）的危险</strong>：<br>- 短期：share gain<br>- 长期：所有玩家利润下降·brand 受损<br>- 4 大 price war 应对：① 不跟（如果有 cost / brand 优势）② 价值反击（增 value 而非降价）③ 拆 segment（高低端分开）④ 退出 segment<br><br><strong>典型例</strong>：<br>- 航空业 price war（多次·LCC vs 传统）<br>- ISP·mobile carrier price war<br>- 智能手机中国市场 price war（Xiaomi·Huawei·OPPO）<br><br><strong>跨学派关系</strong>：与 Porter 5 forces（competitive intensity）·strategic_marketing·pricing 3 base 一致。",
+    "ja": "<strong>Competitor Price Analysis（競合他社価格分析）</strong>は competition-based pricing の核心·<strong>競合価格</strong>分析で自社価格決定。Kotler 11 章。<br><br><strong>3 大分析次元</strong>：① Competitor Price Levels ② Competitor Cost Structure ③ Competitor Strategy<br><br><strong>価格分析 5 大方法</strong>：① Direct Comparison ② Value Comparison ③ Customer Survey ④ Mystery Shopping ⑤ Industry Reports（Nielsen·Kantar·NPS）<br><br><strong>定価相対戦略</strong>：① Match ② Premium（5-30% 高）③ Discount（5-30% 低）④ Price Lining（Toyota Yaris·Camry·Avalon）⑤ Predatory Pricing（違法·反独占リスク）<br><br><strong>price war の危険</strong>：短期 share gain·長期 全プレイヤー利益低下·ブランド受損·4 大対応：① 不跟（cost / brand 優位ある場合）② 価値反撃（増 value·非降価）③ segment 分離（高低端分開）④ segment 撤退<br><br><strong>典型例</strong>：航空 price war·ISP·mobile carrier·中国 smartphone（Xiaomi·Huawei·OPPO）<br><br><strong>他派との関係</strong>：Porter 5 forces·strategic_marketing·pricing 3 base 一致。"
+  },
+  "tags": [
+    "competitor analysis",
+    "price war",
+    "Kotler"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "competition-based pricing 实务核心·避免 price war",
+      "限": "竞争对手 cost 难精确·情报有限",
+      "例": "航空·smartphone·ISP price war 是教科书",
+      "应": "Kotler 11 章·strategic 题"
+    },
+    "ja": {
+      "限": "競合 cost 精確困難·情報限定",
+      "例": "航空·smartphone·ISP price war 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T09:26:22.249Z",
+  "updatedAt": "2026-04-30T13:25:12.948Z"
+}

@@ -1,0 +1,30 @@
+{
+  "key": "arnould",
+  "discipline": "marketing",
+  "name": {
+    "zh": "埃里克·阿诺尔德",
+    "ja": "エリック・アーノルド",
+    "en": "Eric J. Arnould"
+  },
+  "schools": [
+    "cct_interpretive"
+  ],
+  "schoolsExplicit": true,
+  "contribution": {
+    "zh": "<strong>消费者文化理论（CCT）</strong>的命名者与系统化者。2005 年与 Thompson 在 <em>Journal of Consumer Research</em> 发表 \"Consumer Culture Theory: Twenty Years of Research\"·首次把分散的人类学·社会学派 marketing 研究<strong>统称为「CCT」学派</strong>·提出 <strong>4 大研究领域</strong>：consumer identity projects·marketplace cultures·socio-historic patterns·mass-mediated marketplace ideologies——成为 CCT 学派的奠基性宣言。",
+    "ja": "<strong>消費者文化理論（CCT）</strong>の命名者·体系化者。2005 年 Thompson と <em>Journal of Consumer Research</em> 「Consumer Culture Theory: Twenty Years of Research」発表·分散していた人類学·社会学的マーケティング研究を初めて<strong>「CCT」学派と総称</strong>·<strong>4 つの研究領域</strong>を提唱：consumer identity projects·marketplace cultures·socio-historic patterns·mass-mediated marketplace ideologies——CCT 学派基礎宣言。"
+  },
+  "lifespan": "1952 – 至今",
+  "institution": "University of Wyoming / Aalto University",
+  "born": "1952",
+  "died": "",
+  "nationality": "美国",
+  "flag": "🇺🇸",
+  "origin": "",
+  "field": "消费者文化",
+  "tags": [],
+  "nobel": null,
+  "kpsOrder": [],
+  "createdAt": "2026-04-30T04:33:37.768Z",
+  "updatedAt": "2026-04-30T04:33:37.768Z"
+}

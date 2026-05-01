@@ -1,0 +1,42 @@
+{
+  "id": "m171",
+  "discipline": "marketing",
+  "schools": [
+    "channel_retail",
+    "digital_marketing"
+  ],
+  "scholars": [
+    "stern"
+  ],
+  "year": "1990",
+  "title": {
+    "zh": "营销物流·Logistics 5 大决策",
+    "ja": "マーケット・ロジスティクス・5 大決定",
+    "en": "Marketing Logistics"
+  },
+  "body": {
+    "zh": "<strong>Marketing Logistics（マーケット・ロジスティクス·营销物流）</strong>是<strong>把对的产品·对的时间·对的地点·对的成本·送到对的顾客</strong>的活动。Kotler 15 章·digital 时代核心。<br><br><strong>5 大 logistics 决策</strong>：<br>① <strong>Order Processing</strong>——订单接收·处理·跟踪<br>② <strong>Warehousing</strong>——储存·拣货·包装<br>③ <strong>Inventory Management</strong>——库存水平·安全库存·EOQ<br>④ <strong>Transportation</strong>——海运·空运·陆运·铁路·管道<br>⑤ <strong>Logistics Information System</strong>——TMS·WMS·SCM software<br><br><strong>4 大 trade-offs</strong>（成本 vs 服务）：<br>① <strong>Service Level vs Inventory Cost</strong>——高 fill rate 需高库存<br>② <strong>Speed vs Cost</strong>——快 = 贵<br>③ <strong>Flexibility vs Efficiency</strong>——多种 SKU vs 标准化<br>④ <strong>Centralization vs Decentralization</strong>——一仓 vs 多仓<br><br><strong>现代 trends</strong>：<br>① <strong>Just-in-Time（JIT）</strong>——Toyota production system·零库存<br>② <strong>3PL（Third-Party Logistics）</strong>——外包给 logistics provider（FedEx·DHL·Yamato）<br>③ <strong>Last-Mile Delivery</strong>——电商时代核心·dark stores·Q-commerce（quick commerce）<br>④ <strong>Reverse Logistics</strong>——退货·回收·repair·sustainability<br>⑤ <strong>Same-Day Delivery</strong>——Amazon Prime·Walmart<br><br><strong>典型例</strong>：<br>- <strong>Amazon</strong>——FBA（Fulfillment By Amazon）·无人仓·drone delivery 试验<br>- <strong>Toyota Production System</strong>——JIT 鼻祖·influence 全球制造业<br>- <strong>UNIQLO</strong>——自有 SCM + global standardization<br>- <strong>Zara</strong>——2 周 fast fashion logistics<br><br><strong>跨学派关系</strong>：与 channel_retail（VMS）·digital_marketing（omnichannel）·strategic_marketing（cost leadership）一体。",
+    "ja": "<strong>Marketing Logistics（マーケット・ロジスティクス）</strong>は<strong>正しい製品·正しい時間·正しい場所·正しいコスト·正しい顧客に届ける</strong>活動。Kotler 15 章·デジタル時代核心。<br><br><strong>5 大 logistics 決定</strong>：① Order Processing ② Warehousing ③ Inventory Management（EOQ·安全在庫）④ Transportation（海·空·陸·鉄道·パイプライン）⑤ Logistics Information System（TMS·WMS·SCM）<br><br><strong>4 大トレードオフ</strong>：① Service Level vs Inventory Cost ② Speed vs Cost ③ Flexibility vs Efficiency ④ Centralization vs Decentralization<br><br><strong>現代トレンド</strong>：① Just-in-Time（JIT·Toyota）② 3PL（外包·FedEx·DHL·ヤマト）③ Last-Mile Delivery（dark stores·Q-commerce）④ Reverse Logistics（返品·回収·sustainability）⑤ Same-Day Delivery（Amazon Prime·Walmart）<br><br><strong>典型例</strong>：① Amazon（FBA·無人倉·drone）② Toyota Production System（JIT 始祖）③ UNIQLO（自有 SCM）④ Zara（2 週 fast fashion）<br><br><strong>他派との関係</strong>：channel_retail（VMS）·digital_marketing（omnichannel）·strategic_marketing（cost leadership）と一体。"
+  },
+  "tags": [
+    "logistics",
+    "JIT",
+    "Amazon",
+    "Toyota"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "channel 学派的物理层·digital 时代的核心战场",
+      "限": "全球供应链复杂·风险高",
+      "例": "Amazon·Toyota·UNIQLO·Zara 是教科书",
+      "应": "Kotler 15 章·logistics 题"
+    },
+    "ja": {
+      "限": "グローバルサプライチェーン複雑·リスク高",
+      "例": "Amazon·Toyota·UNIQLO·Zara 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T09:26:33.751Z",
+  "updatedAt": "2026-04-30T13:25:26.247Z"
+}

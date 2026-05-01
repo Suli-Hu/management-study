@@ -1,0 +1,40 @@
+{
+  "id": "m032",
+  "discipline": "marketing",
+  "schools": [
+    "consumer_behavior"
+  ],
+  "scholars": [
+    "howard"
+  ],
+  "year": "1942",
+  "title": {
+    "zh": "参考群体研究·所属与志向",
+    "ja": "準拠集団研究・所属と志向",
+    "en": "Reference Group Research"
+  },
+  "body": {
+    "zh": "<strong>準拠集団（reference group·参考群体）</strong>是消费者行为学派的重要概念·指<strong>消费者用以比较·学习·获取价值观的群体</strong>。源于社会心理学·Hyman 1942 提出·后被 marketing 学借入。Pro Plus 第 5 章独立小节「準拠集団研究」。<br><br><strong>3 类参考群体</strong>：<br><br>① <strong>所属集団（Membership Group）</strong>——消费者实际属于<br>- 一次集団（家族·亲友·同事·密接·非正式）<br>- 二次集団（专业组织·教会·正式·有规则）<br><br>② <strong>志向集団（Aspirational Group）</strong>——消费者想加入但还没加入<br>- 例：年轻人想成为「明星·成功人士·上流社会」·购买相关产品来 signal<br>- marketing 应用：奢侈品广告用 aspirational target（年薪 100 万的广告给年薪 50 万看）<br><br>③ <strong>回避集団（Dissociative Group）</strong>——消费者想避免成为的群体<br>- 例：年轻人不想被认为是「老土」「乡下人」「普通」<br>- marketing 应用：广告暗示「不买就成 X 」（loss aversion + dissociation）<br><br><strong>3 种影响</strong>：<br>① <strong>规范性影响（Normative Influence）</strong>——为符合群体规范<br>② <strong>价值表现性影响（Value-Expressive Influence）</strong>——通过消费表达自己的身份<br>③ <strong>信息性影响（Informational Influence）</strong>——参考群体提供信息<br><br><strong>marketing 战略</strong>：① 用 KOL·明星 endorsement 触发 aspirational ② 用 UGC·普通人见证触发 normative ③ 用专家 endorsement 触发 informational。<br><br><strong>跨学派关系</strong>：与 CCT 学派的 brand community 概念邻近——后者强调群体内的<strong>意味共创</strong>·这里强调群体对决策的<strong>影响力</strong>。",
+    "ja": "<strong>準拠集団（reference group）</strong>は消費者行動学派の重要概念·消費者が<strong>比較·学習·価値観取得</strong>に用いる集団。社会心理学起源·Hyman 1942 提唱·後マーケティング学が借入。Pro Plus 第 5 章独立小節「準拠集団研究」。<br><br><strong>3 類の準拠集団</strong>：<br>① <strong>所属集団</strong>·実際所属·一次（家族·親友）·二次（組織·教会）<br>② <strong>志向集団（Aspirational）</strong>·入りたいがまだ入っていない·例：若者が「成功者·上流」を目指し·関連製品で signal<br>③ <strong>回避集団（Dissociative）</strong>·避けたい·例：「ダサい·田舎」と思われたくない<br><br><strong>3 種影響</strong>：① 規範的影響 ② 価値表現的影響 ③ 情報的影響<br><br><strong>マーケティング戦略</strong>：① KOL·有名人 endorsement で aspirational 起動 ② UGC·普通人見証で normative 起動 ③ 専門家 endorsement で informational 起動<br><br><strong>他派との関係</strong>：CCT 学派のブランド・コミュニティと隣接——後者は群体内の<strong>意味共創</strong>·ここは群体の<strong>影響力</strong>を強調。"
+  },
+  "tags": [
+    "reference group",
+    "aspirational",
+    "準拠集団"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "消费者社会影响的核心概念·marketing 中 endorsement / brand community 设计依据",
+      "限": "群体动力学复杂·实证测量难",
+      "例": "Apple = aspirational group·年轻人想加入「smart creative」",
+      "应": "消费者行为·brand 社群题"
+    },
+    "ja": {
+      "限": "グループ・ダイナミクス複雑·実証測定難",
+      "例": "Apple = aspirational group·若者が「smart creative」を目指す"
+    }
+  },
+  "createdAt": "2026-04-30T04:51:51.133Z",
+  "updatedAt": "2026-04-30T13:19:44.137Z"
+}

@@ -1,0 +1,40 @@
+{
+  "id": "m107",
+  "discipline": "marketing",
+  "schools": [
+    "managerial"
+  ],
+  "scholars": [
+    "kotler"
+  ],
+  "year": "2022",
+  "title": {
+    "zh": "价值提案 3 维·功能·心理·金钱",
+    "ja": "価値提案 3 次元・機能・心理・金銭",
+    "en": "Value Proposition · 3 Dimensions"
+  },
+  "body": {
+    "zh": "<strong>价值提案 3 维</strong>是 Kotler 16 版第 7 章独创的<strong>价值结构化分析</strong>·把价值提案分解为 3 个维度·与传统单一价值视角形成对比。<br><br><strong>3 大价值维度</strong>：<br><br>① <strong>Functional Value（功能价值）</strong>——产品 / 服务的<strong>功能性 benefit</strong> 与 cost<br>benefit：性能·可靠性·便利性·设计·特征<br>cost：努力·学习时间·使用难度<br>例：iPhone 的相机像素·电池寿命·处理速度<br><br>② <strong>Psychological Value（心理价值）</strong>——产品 / 服务的<strong>心理 benefit</strong> 与 cost<br>benefit：情感·自我表达·社会认可·brand 形象·安心感<br>cost：心理压力·焦虑·后悔感·社会风险<br>例：iPhone 的 status·apple ecosystem 的归属感<br><br>③ <strong>Monetary Value（金钱价值）</strong>——产品 / 服务的<strong>金钱 benefit</strong> 与 cost<br>benefit：节约·折扣·投资回报<br>cost：购买价·使用费·维护费·机会成本<br>例：iPhone 的总持有成本（购入 + 月费 + accessories + 维修）<br><br><strong>价值的总评价公式</strong>：<br>**Total Value = (Functional + Psychological + Monetary) Benefits - (Functional + Psychological + Monetary) Costs**<br><br>消费者选择 Total Value 最高的 brand。<br><br><strong>marketing 战略启示</strong>：<br>① <strong>brand 设计</strong>——明确强化哪一维度（Apple = psychological·Walmart = monetary·Tesla = functional + psychological）<br>② <strong>价格战略</strong>——不能只看 monetary·要看综合<br>③ <strong>communication</strong>——按 target customer 重视的维度强调<br>④ <strong>3 维不平衡的危险</strong>——只强 1 维容易输给综合好的 brand<br><br><strong>跨学派关系</strong>：① 与 4P / 7T 一起构成 marketing mix 战略 ② 与 STP 的 Targeting 一体——target customer 的 3 维偏好决定价值提案设计 ③ 与 brand_equity 的 brand association 直接对应。",
+    "ja": "<strong>価値提案 3 次元</strong>は Kotler 16 版第 7 章独自の<strong>価値構造化分析</strong>·価値提案を 3 次元に分解·伝統的単一価値視点と対比。<br><br><strong>3 大価値次元</strong>：<br>① <strong>Functional Value（機能的価値）</strong>·性能·信頼性·便利性·iPhone のカメラ画素·電池寿命·処理速度<br>② <strong>Psychological Value（心理的価値）</strong>·情緒·自己表現·社会的認可·iPhone の status·Apple ecosystem の所属感<br>③ <strong>Monetary Value（金銭的価値）</strong>·節約·割引·iPhone の総保有コスト（購入 + 月料 + accessories + 修理）<br><br><strong>価値の総評価公式</strong>：**Total Value = (Functional + Psychological + Monetary) Benefits - (Functional + Psychological + Monetary) Costs**<br><br><strong>マーケティング戦略示唆</strong>：① ブランド設計（どの次元強化·Apple = psychological·Walmart = monetary·Tesla = functional + psychological）② 価格戦略 ③ コミュニケーション ④ 3 次元不均衡のリスク<br><br><strong>他派との関係</strong>：① 4P / 7T と並ぶマーケティング・ミックス戦略 ② STP Targeting と一体 ③ brand_equity の brand association と直接対応。"
+  },
+  "tags": [
+    "value proposition",
+    "3 dimensions",
+    "Kotler 16 版"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "Kotler 16 版独创·价值提案的结构化分析",
+      "限": "3 维度间相互作用·实务难分离",
+      "例": "Apple·Walmart·Tesla 各代表不同维度强项",
+      "应": "Kotler 16 版第 7 章·价值提案题"
+    },
+    "ja": {
+      "限": "3 次元間相互作用·実務分離困難",
+      "例": "Apple·Walmart·Tesla 各次元強み代表"
+    }
+  },
+  "createdAt": "2026-04-30T07:24:15.409Z",
+  "updatedAt": "2026-04-30T13:22:56.461Z"
+}

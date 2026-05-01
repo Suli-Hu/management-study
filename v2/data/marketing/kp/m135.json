@@ -1,0 +1,43 @@
+{
+  "id": "m135",
+  "discipline": "marketing",
+  "schools": [
+    "managerial",
+    "effectuation"
+  ],
+  "scholars": [
+    "kotler",
+    "sarasvathy"
+  ],
+  "year": "2000",
+  "title": {
+    "zh": "创意产生·5 大来源与 5 大技术",
+    "ja": "アイデア創出・5 大源と 5 大技術",
+    "en": "Idea Generation"
+  },
+  "body": {
+    "zh": "<strong>Idea Generation（创意产生）</strong>是新品开发流程的<strong>第一阶段</strong>·决定后续所有开发的方向。<br><br><strong>5 大创意来源</strong>：<br>① <strong>顾客</strong>——观察·调研·complaints·suggestions（Voice of Customer）<br>例：Lego Ideas·MUJI 生活良品研究所<br>② <strong>员工</strong>——内部 hackathon·建议系统·R&D 团队<br>例：Google 20% time（推出 Gmail·AdSense）<br>③ <strong>竞争对手</strong>——reverse engineering·benchmarking<br>例：Samsung 跟踪 Apple<br>④ <strong>外部 inventors / partners</strong>——open innovation·crowdsourcing<br>例：P&G Connect + Develop·NASA crowdsourcing<br>⑤ <strong>市场 trends</strong>——技术·社会·人口·法律变化<br>例：环保 trend → Tesla·Beyond Meat·Patagonia 新品<br><br><strong>5 大 idea generation 技术</strong>：<br>① <strong>Brainstorming</strong>（Osborn 1953）——量先于质·禁评判<br>② <strong>SCAMPER</strong>——Substitute·Combine·Adapt·Modify·Put to other use·Eliminate·Reverse<br>③ <strong>Mind Mapping</strong>——视觉化关联<br>④ <strong>Design Thinking</strong>（IDEO·Stanford d.school）——empathize·define·ideate·prototype·test<br>⑤ <strong>Jobs to be Done</strong>（Christensen）——顾客「雇佣」产品做什么 job<br><br><strong>marketing 启示</strong>：<br>① <strong>idea quantity matters</strong>——研究表明每 100 个 ideas 才有 1 个商业成功<br>② <strong>diversity matters</strong>——多元 team 出更多 ideas<br>③ <strong>idea filtering 危险</strong>——early kill 好 ideas<br><br><strong>跨学派关系</strong>：与 effectuation（m075）「bird-in-hand」一致·与 customer co-creation（SDL）一致。",
+    "ja": "<strong>Idea Generation（アイデア創出）</strong>は新製品開発プロセスの<strong>第一段階</strong>·後続全開発の方向を決定。<br><br><strong>5 大アイデア源</strong>：① 顧客（Voice of Customer·Lego Ideas·MUJI 生活良品研究所）② 従業員（Google 20% time·Gmail·AdSense 創出）③ 競合（Samsung が Apple 追跡）④ 外部 inventors / partners（P&G Connect + Develop·NASA crowdsourcing）⑤ 市場 trends<br><br><strong>5 大 idea generation 技術</strong>：① Brainstorming（Osborn 1953）② SCAMPER ③ Mind Mapping ④ Design Thinking（IDEO·Stanford d.school）⑤ Jobs to be Done（Christensen）<br><br><strong>マーケティング示唆</strong>：① idea quantity matters（100 ideas で 1 商業成功）② diversity matters ③ idea filtering 危険（早期 kill）<br><br><strong>他派との関係</strong>：effectuation（m075）「bird-in-hand」一致·customer co-creation（SDL）一致。"
+  },
+  "tags": [
+    "idea generation",
+    "brainstorming",
+    "SCAMPER",
+    "JTBD"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "新品开发起点·创意管理实务",
+      "限": "创意 vs 商业化的鸿沟·难量化",
+      "例": "Lego Ideas·Google 20% time·P&G C+D 是教科书",
+      "应": "Kotler 18 章·innovation 题"
+    },
+    "ja": {
+      "限": "アイデア vs 商業化の鴻溝·数量化困難",
+      "例": "Lego Ideas·Google 20% time·P&G C+D 教科書"
+    }
+  },
+  "createdAt": "2026-04-30T07:36:05.605Z",
+  "updatedAt": "2026-04-30T13:24:04.832Z"
+}

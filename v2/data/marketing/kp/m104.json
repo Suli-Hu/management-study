@@ -1,0 +1,42 @@
+{
+  "id": "m104",
+  "discipline": "marketing",
+  "schools": [
+    "consumer_behavior",
+    "brand_equity"
+  ],
+  "scholars": [
+    "bettman",
+    "keller"
+  ],
+  "year": "1979",
+  "title": {
+    "zh": "记忆·短期·长期·品牌联想网络",
+    "ja": "記憶・短期・長期・ブランド連想ネットワーク",
+    "en": "Memory & Brand Associative Network"
+  },
+  "body": {
+    "zh": "<strong>记忆（Memory）</strong>是消费者行为学派 + brand_equity 学派的<strong>桥梁概念</strong>·消费者关于 brand 的所有信息都储存在记忆中。Kotler 第 3 章·消费者心理。<br><br><strong>记忆的 2 大系统</strong>：<br>① <strong>Short-Term Memory（STM·短期记忆）</strong><br>容量：7±2 chunks（Miller 1956）<br>持续：几秒到几分钟<br>marketing 启示：广告信息要简短·重点突出<br><br>② <strong>Long-Term Memory（LTM·长期记忆）</strong><br>容量：几乎无限<br>持续：终生<br>结构：<strong>node + link 网络</strong>（associative network model）<br>marketing 启示：建 brand 联想网络是 brand-building 的核心<br><br><strong>Brand Associative Network（brand 联想网络）</strong>：<br>brand 在消费者大脑中是一个<strong>节点</strong>·与多个 attribute / benefit / feeling node 通过 link 连接。<br><br>例：「Coca-Cola」node 连接到：<br>- attributes：红色·瓶身·气泡·甜<br>- benefits：解渴·爽快<br>- feelings：快乐·分享·美式<br>- people：北极熊·圣诞老人·Share-a-Coke<br>- occasions：聚会·烧烤·暑假<br><br><strong>brand-building 4 大原则</strong>（基于联想网络）：<br>① <strong>Strength of association</strong>——联想强度（重复 + 个人相关）<br>② <strong>Favorability</strong>——联想正面性（积极情感）<br>③ <strong>Uniqueness</strong>——独特性（与竞争对手区别）<br>④ <strong>Relevance</strong>——相关性（对消费者重要）<br><br><strong>marketing 实务应用</strong>：<br>① <strong>brand 定位</strong>——选 1-2 个 association 强化<br>② <strong>brand extension</strong>——靠现有 association 借力新品<br>③ <strong>brand crisis 管理</strong>——negative association 是危险<br>④ <strong>storytelling</strong>——故事让 association 持久<br><br><strong>跨学派关系</strong>：与 Keller CBBE Pyramid 第 2-3 层（meaning·response）紧密·与 Aaker brand awareness·brand association 直接对应·与 Bettman 信息处理范式一致。",
+    "ja": "<strong>記憶（Memory）</strong>は消費者行動学派 + brand_equity 学派の<strong>橋渡し概念</strong>·消費者のブランド情報全ては記憶に保存される。Kotler 第 3 章·消費者心理。<br><br><strong>記憶 2 大システム</strong>：① <strong>STM（短期記憶）</strong>·容量 7±2 chunks·持続秒〜分 ② <strong>LTM（長期記憶）</strong>·容量無限·持続終生·構造 node + link ネットワーク<br><br><strong>Brand Associative Network</strong>：ブランドは消費者脳内で<strong>ノード</strong>·多 attribute / benefit / feeling ノードと link 接続。<br>例：「Coca-Cola」ノード→赤·瓶身·気泡·甘·解渴·楽しい·分享·北極熊·クリスマス·Share-a-Coke<br><br><strong>brand-building 4 大原則</strong>（連想ネットワーク基底）：① 連想強度（重複 + 個人相関）② Favorability ③ Uniqueness ④ Relevance<br><br><strong>マーケティング実務応用</strong>：① ブランド定位（1-2 個 association 強化）② ブランド拡張（既有 association で借力）③ ブランド危機管理 ④ ストーリーテリング<br><br><strong>他派との関係</strong>：Keller CBBE Pyramid 第 2-3 層（meaning·response）と密接·Aaker brand awareness·brand association と直接対応·Bettman 情報処理パラダイム一致。"
+  },
+  "tags": [
+    "memory",
+    "associative network",
+    "Keller"
+  ],
+  "format": "narrative",
+  "evalContent": {
+    "zh": {
+      "义": "consumer_behavior 与 brand_equity 学派的桥梁概念",
+      "限": "实证测量难·跨文化适用",
+      "例": "Coca-Cola·Apple·任何强 brand 都有丰富联想网络",
+      "应": "Kotler 第 3 章·brand 战略题"
+    },
+    "ja": {
+      "限": "実証測定困難·異文化適用",
+      "例": "Coca-Cola·Apple 等強ブランドは豊富な連想ネットワーク"
+    }
+  },
+  "createdAt": "2026-04-30T07:24:09.826Z",
+  "updatedAt": "2026-04-30T13:22:49.927Z"
+}
