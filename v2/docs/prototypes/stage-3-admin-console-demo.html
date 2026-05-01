@@ -240,6 +240,15 @@
         background: color-mix(in srgb, var(--accent-warning) 12%, var(--color-bg-primary));
       }
 
+      .chip-action {
+        cursor: pointer;
+      }
+
+      .chip-action:hover {
+        border-color: var(--color-text-quaternary);
+        color: var(--color-text-primary);
+      }
+
       .toolbar {
         display: flex;
         align-items: center;
@@ -324,15 +333,6 @@
       .disc-title-en {
         color: var(--color-text-quaternary);
         font-size: 12px;
-      }
-
-      .disc-key {
-        padding: 1px 6px;
-        border-radius: 4px;
-        background: var(--color-bg-tertiary);
-        color: var(--color-text-quaternary);
-        font-family: var(--mono);
-        font-size: 11px;
       }
 
       .disc-tagline {
@@ -556,6 +556,15 @@
         font-size: 12.5px;
       }
 
+      .advanced-note {
+        padding: 10px 12px;
+        border: 1px dashed var(--color-border);
+        border-radius: 8px;
+        background: var(--color-bg-secondary);
+        color: var(--color-text-tertiary);
+        font-size: 12px;
+      }
+
       .toast {
         position: fixed;
         left: 50%;
@@ -645,7 +654,7 @@
             <h1>学科管理</h1>
             <span class="count" id="disc-count">共 4 个学科</span>
           </div>
-          <p class="subtitle">创建 / 编辑学科元数据，Stage 3 起新写入只走数据库，不再走 GitHub JSON。</p>
+          <p class="subtitle">创建、编辑、删除学科；负责人和 Token 从每个学科进入管理。</p>
         </div>
         <button type="button" class="btn btn-primary" id="open-create-btn">+ 新建学科</button>
       </header>
@@ -653,19 +662,19 @@
       <section class="stage-note" aria-label="Stage 3 compatibility notes">
         <p>
           <strong>这版样机沿用当前 v2 页面。</strong>
-          变化只放在能力层：创建学科时同步创建 tenant；编辑只改 D1 metadata；删除仍保留“空学科才可删”的保护。
+          变化只放在能力层：新学科线上立即可用、不同学科数据自动隔离、负责人可以拿 Token 维护内容。
         </p>
         <div class="chips">
-          <span class="chip chip-success">D1 source</span>
-          <span class="chip chip-success">tenant auto-create</span>
-          <span class="chip chip-warning">Git JSON legacy</span>
+          <span class="chip chip-success">线上立即生效</span>
+          <span class="chip chip-success">学科数据隔离</span>
+          <span class="chip chip-warning">不需要 GitHub</span>
         </div>
       </section>
 
       <div class="toolbar">
-        <div class="toolbar-title">Disciplines</div>
+        <div class="toolbar-title">学科列表</div>
         <div class="filters">
-          <input class="input" type="search" placeholder="搜索学科 / key" id="search-input" />
+          <input class="input" type="search" placeholder="搜索学科" id="search-input" />
           <select class="select" id="status-filter" aria-label="筛选学科状态">
             <option value="all">全部状态</option>
             <option value="ready">已上线</option>
@@ -683,17 +692,17 @@
           <div class="review-card">
             <h3>1. 新建仍在右上角</h3>
             <p>沿用现有 drawer。用户不用重新学习入口。</p>
-            <code>POST /api/admin/disciplines</code>
+            <code>创建后线上立即可用</code>
           </div>
           <div class="review-card">
             <h3>2. 编辑仍在每一行</h3>
-            <p>只改标题和 tagline，key 仍然锁死。</p>
-            <code>PUT /api/admin/disciplines/:key</code>
+            <p>只改名称和一句话定位，不暴露内部字段。</p>
+            <code>不影响已有内容</code>
           </div>
           <div class="review-card">
             <h3>3. 删除仍有内容保护</h3>
             <p>view / school / scholar / KP 全为 0 才允许删除。</p>
-            <code>DELETE /api/admin/disciplines/:key</code>
+            <code>有内容时不可删</code>
           </div>
         </div>
       </section>
@@ -705,7 +714,7 @@
         <div class="drawer-head">
           <div>
             <div class="drawer-title" id="create-title">新建学科</div>
-            <div class="drawer-sub">key 由 English 自动生成，建后锁死。Stage 3 版本只写 D1，并自动创建 tenant。</div>
+            <div class="drawer-sub">填写学科名称和一句话定位。系统会自动处理内部标识和数据隔离。</div>
           </div>
           <button type="button" class="drawer-close" data-close-drawer aria-label="关闭">×</button>
         </div>
@@ -718,7 +727,7 @@
             <label class="field">
               <span class="label">English <span class="required">*</span></span>
               <input class="input" id="form-title-en" value="Finance" />
-              <span class="hint">将生成 key: <span class="mono" id="key-preview">finance</span></span>
+              <span class="hint">英文名用于系统生成内部标识，普通用户不用手动填写内部标识。</span>
             </label>
             <label class="field">
               <span class="label">日本語</span>
@@ -734,7 +743,7 @@
             <input class="input" id="form-tagline-ja" value="" placeholder="可空" />
           </label>
           <section class="stage-note">
-            <p><strong>写入预览：</strong>创建后会写入 `discipline` 和 `tenant`，不会再提交 `v2/data/&lt;key&gt;/discipline.json`。</p>
+            <p><strong>写入预览：</strong>创建后线上立即生效，并自动建立这个学科自己的数据空间；负责人之后可以用 Token 上传知识。</p>
           </section>
         </div>
         <div class="drawer-foot">
@@ -755,11 +764,6 @@
           <button type="button" class="drawer-close" data-close-drawer aria-label="关闭">×</button>
         </div>
         <div class="drawer-body">
-          <div class="field">
-            <span class="label">key</span>
-            <div class="readonly" id="edit-key-display">keiei</div>
-            <span class="hint">key 不可改，避免已有 URL、token scope 和 API 调用失效。</span>
-          </div>
           <label class="field">
             <span class="label">中文名 <span class="required">*</span></span>
             <input class="input" id="edit-title-zh" />
@@ -783,8 +787,9 @@
             <input class="input" id="edit-tagline-ja" />
           </label>
           <section class="stage-note">
-            <p><strong>保存预览：</strong>只更新 D1 metadata。负责人、token、内容数量在详情页继续管理，不塞进这个编辑表单。</p>
+            <p><strong>保存预览：</strong>这里只编辑学科名称和定位。负责人、Token、内容数量在学科详情里管理。</p>
           </section>
+          <div class="advanced-note">内部标识会保持不变，避免已有链接和 API 调用失效。这个字段默认不展示给普通后台用户。</div>
         </div>
         <div class="drawer-foot">
           <button type="button" class="btn" data-close-drawer>取消</button>
@@ -815,7 +820,6 @@
           counts: { view: 3, school: 48, scholar: 132, kp: 562 },
           owner: "Husuli",
           tokens: 4,
-          source: "D1",
         },
         {
           key: "marketing",
@@ -824,7 +828,6 @@
           counts: { view: 1, school: 24, scholar: 40, kp: 178 },
           owner: "",
           tokens: 2,
-          source: "D1",
         },
         {
           key: "finance",
@@ -833,7 +836,6 @@
           counts: { view: 0, school: 0, scholar: 0, kp: 0 },
           owner: "Mika",
           tokens: 0,
-          source: "D1",
         },
         {
           key: "strategy",
@@ -842,7 +844,6 @@
           counts: { view: 1, school: 11, scholar: 18, kp: 91 },
           owner: "Ren",
           tokens: 1,
-          source: "legacy sync",
         },
       ];
 
@@ -904,11 +905,9 @@
           if (c.scholar > 0) blockers.push(`${c.scholar} 学者`);
           if (c.kp > 0) blockers.push(`${c.kp} KP`);
           const ownerChip = discipline.owner
-            ? `<span class="chip">owner ${discipline.owner}</span>`
-            : `<span class="chip chip-warning">owner missing</span>`;
-          const sourceChip = discipline.source === "D1"
-            ? `<span class="chip chip-success">source D1</span>`
-            : `<span class="chip chip-warning">legacy sync</span>`;
+            ? `<button type="button" class="chip chip-action" data-owner="${discipline.key}">负责人 ${discipline.owner}</button>`
+            : `<button type="button" class="chip chip-warning chip-action" data-owner="${discipline.key}">分配负责人</button>`;
+          const tokenChip = `<button type="button" class="chip chip-action" data-token="${discipline.key}">Token ${discipline.tokens}</button>`;
           const deleteButton = empty
             ? `<button type="button" class="btn btn-danger" data-delete="${discipline.key}">删除</button>`
             : `<button type="button" class="btn btn-disabled" disabled title="该学科含 ${blockers.join(" / ")}，清空才能删">含内容</button>`;
@@ -919,14 +918,12 @@
                 <div class="disc-name">
                   <span class="disc-title-zh">${discipline.title.zh}</span>
                   <span class="disc-title-en">${discipline.title.en ?? ""}</span>
-                  <span class="disc-key">${discipline.key}</span>
                 </div>
                 <div class="disc-tagline">${discipline.tagline?.zh ?? ""}</div>
                 <div class="disc-meta">
                   ${ownerChip}
-                  <span class="chip">tokens ${discipline.tokens}</span>
-                  ${sourceChip}
-                  <span class="chip">tenant ${discipline.key}</span>
+                  ${tokenChip}
+                  <span class="chip chip-success">数据已隔离</span>
                 </div>
                 <div class="disc-counts ${empty ? "is-all-zero" : ""}">
                   <span class="disc-count"><span class="disc-count-n">${c.view}</span><span class="disc-count-label">视角</span></span>
@@ -951,7 +948,22 @@
           button.addEventListener("click", () => openDelete(button.dataset.delete));
         });
         document.querySelectorAll("[data-detail]").forEach((button) => {
-          button.addEventListener("click", () => showToast(`${button.dataset.detail} 详情页会承接 owner / token / API guide`));
+          button.addEventListener("click", () => {
+            const discipline = findDiscipline(button.dataset.detail);
+            showToast(`${discipline.title.zh}详情页：负责人、Token、API 指引用 tabs 管理`);
+          });
+        });
+        document.querySelectorAll("[data-owner]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const discipline = findDiscipline(button.dataset.owner);
+            showToast(`进入 ${discipline.title.zh} 的负责人分配页`);
+          });
+        });
+        document.querySelectorAll("[data-token]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const discipline = findDiscipline(button.dataset.token);
+            showToast(`进入 ${discipline.title.zh} 的 Token 管理页`);
+          });
         });
       }
 
@@ -960,12 +972,15 @@
         document.querySelector("#form-title-zh").focus();
       }
 
+      function findDiscipline(key) {
+        return disciplines.find((item) => item.key === key) ?? { title: { zh: key } };
+      }
+
       function openEdit(key) {
-        const discipline = disciplines.find((item) => item.key === key);
+        const discipline = findDiscipline(key);
         if (!discipline) return;
         editingKey = key;
-        document.querySelector("#edit-sub").textContent = `${discipline.title.zh} · ${discipline.key}`;
-        document.querySelector("#edit-key-display").textContent = discipline.key;
+        document.querySelector("#edit-sub").textContent = discipline.title.zh;
         document.querySelector("#edit-title-zh").value = discipline.title.zh ?? "";
         document.querySelector("#edit-title-en").value = discipline.title.en ?? "";
         document.querySelector("#edit-title-ja").value = discipline.title.ja ?? "";
@@ -977,8 +992,9 @@
 
       function openDelete(key) {
         deleteKey = key;
+        const discipline = findDiscipline(key);
         document.querySelector("#delete-copy").textContent =
-          `确认删除 ${key}？该学科没有 view / school / scholar / KP，可以删除。Stage 3 正式实现里建议先做 archive，再开放硬删除。`;
+          `确认删除「${discipline.title.zh}」？该学科没有视角、学派、学者、知识点，可以删除。Stage 3 正式实现里建议先做归档，再开放彻底删除。`;
         deleteConfirm.classList.add("is-open");
       }
 
@@ -1019,15 +1035,14 @@
           counts: { view: 0, school: 0, scholar: 0, kp: 0 },
           owner: "",
           tokens: 0,
-          source: "D1",
         });
         closeLayers();
         render();
-        showToast(`已创建学科 ${key}，并自动创建 tenant`);
+        showToast(`已创建学科 ${titleZh}，线上立即可用`);
       });
 
       document.querySelector("#edit-submit-btn").addEventListener("click", () => {
-        const discipline = disciplines.find((item) => item.key === editingKey);
+        const discipline = findDiscipline(editingKey);
         if (!discipline) return;
         const titleZh = document.querySelector("#edit-title-zh").value.trim();
         if (!titleZh) {
@@ -1040,15 +1055,16 @@
         discipline.tagline.zh = document.querySelector("#edit-tagline-zh").value.trim();
         closeLayers();
         render();
-        showToast(`已保存 ${discipline.key} metadata`);
+        showToast(`已保存「${discipline.title.zh}」学科信息`);
       });
 
       document.querySelector("#confirm-delete-btn").addEventListener("click", () => {
         const index = disciplines.findIndex((item) => item.key === deleteKey);
+        const discipline = findDiscipline(deleteKey);
         if (index >= 0) disciplines.splice(index, 1);
         closeLayers();
         render();
-        showToast(`已删除空学科 ${deleteKey}`);
+        showToast(`已删除空学科「${discipline.title.zh}」`);
       });
 
       searchInput.addEventListener("input", render);

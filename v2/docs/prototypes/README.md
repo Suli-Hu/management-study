@@ -15,8 +15,8 @@
    - 是否足够贴近当前 `/admin/disciplines`，不需要重新学习。
    - `+ 新建学科`、每行 `编辑`、空学科 `删除` 是否清楚。
    - “含内容不可删”的保护是否还保留。
-   - Stage 3 新增的 D1 source / tenant auto-create / Git JSON legacy 提示是否够轻。
-   - 后续学科详情页承接 owner / token / API guide 是否合理。
+   - Stage 3 新增的“线上立即生效 / 学科数据隔离 / 不需要 GitHub”提示是否够轻。
+   - 负责人和 Token 是否应该作为可点击入口进入分配页。
 
 说明：
 
