@@ -2,6 +2,7 @@
 .netlify/
 .claude/
 .wrangler/
+.pnpm-store/
 *.bak
 *.backup
 *.backup2

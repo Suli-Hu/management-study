@@ -59,17 +59,7 @@ jobs:
           GITHUB_SHA: ${{ github.sha }}
 
       - name: Apply D1 data sync (local)
-        run: |
-          shopt -s nullglob
-          shards=(.wrangler/sync/*.sql)
-          if (( ${#shards[@]} == 0 )); then
-            echo "::error::no D1 sync shards found"; exit 1
-          fi
-          for f in "${shards[@]}"; do
-            echo "::group::apply $f"
-            pnpm exec wrangler d1 execute management-study-v2 --local --file="$f"
-            echo "::endgroup::"
-          done
+        run: pnpm sync:d1:apply:local
 
       - name: Write test .dev.vars
         run: |

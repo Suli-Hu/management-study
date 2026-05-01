@@ -18,7 +18,7 @@
  * 执行：pnpm test:learning-flow
  */
 
-import { writeFileSync, unlinkSync, existsSync, readdirSync } from 'node:fs';
+import { writeFileSync, unlinkSync, existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -81,17 +81,8 @@ function parseCount(out: string): number {
 }
 
 function applyAllShards() {
-  const SHARD_DIR = join(V2_ROOT, '.wrangler', 'sync');
-  const files = readdirSync(SHARD_DIR).filter((f) => f.endsWith('.sql')).sort();
-  if (files.length === 0) throw new Error(`no shards in ${SHARD_DIR}`);
-  for (const f of files) {
-    const r = run(
-      'pnpm',
-      ['exec', 'wrangler', 'd1', 'execute', 'management-study-v2', '--local', `--file=.wrangler/sync/${f}`],
-      `apply ${f}`,
-    );
-    if (r.code !== 0) throw new Error(`apply ${f} failed`);
-  }
+  const r = run('pnpm', ['sync:d1:apply:local'], 'apply D1 sync shards');
+  if (r.code !== 0) throw new Error('apply D1 sync shards failed');
 }
 
 function cleanup() {

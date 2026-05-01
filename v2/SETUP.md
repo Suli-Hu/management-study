@@ -87,8 +87,7 @@ cd v2
 wrangler d1 migrations apply management-study-v2 --local
 
 # 生成 sync SQL 并跑到本地 D1
-pnpm sync:d1
-wrangler d1 execute management-study-v2 --local --file=.wrangler/sync.sql
+pnpm sync:d1:local
 
 # 启动 Astro dev server
 pnpm dev
@@ -101,9 +100,8 @@ pnpm dev
 ```bash
 cd v2
 
-# 跑 sync：生成 .wrangler/sync.sql，再用 wrangler 执行
-pnpm sync:d1
-wrangler d1 execute management-study-v2 --remote --file=.wrangler/sync.sql
+# 跑 sync：生成 .wrangler/sync/*.sql 分片，再按顺序执行
+pnpm sync:d1:remote
 
 # Astro build + Pages deploy
 pnpm build

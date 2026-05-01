@@ -157,8 +157,7 @@ ok "migrations applied"
 step "Step 7/7: first production deploy"
 
 # 7a. Sync data to D1
-pnpm sync:d1
-npx wrangler d1 execute management-study-v2 --remote --file=.wrangler/sync.sql
+pnpm sync:d1:remote
 ok "D1 data synced"
 
 # 7b. Build Astro
