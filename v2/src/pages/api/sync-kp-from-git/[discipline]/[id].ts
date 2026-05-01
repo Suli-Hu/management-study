@@ -1,5 +1,8 @@
 /**
- * POST /api/sync-kp-from-git/:discipline/:id  (v0.5.92)
+ * DEPRECATED: POST /api/sync-kp-from-git/:discipline/:id  (v0.5.92)
+ *
+ * API-first 路线下，业务数据的写入入口是 /api/kps。此端点仅保留给
+ * 迁移期旧 GitHub JSON 工作流兜底使用。
  *
  * 用途：让走 git path 的 agent（learning / 任意 worktree）push 完后立即调一下，
  *       把 git 上的 KP 内容直写 D1，让线上 ~3s 生效。不再等 GH Actions 的 90s。
@@ -49,7 +52,11 @@ interface ErrorBody {
 function json<T>(status: number, body: T): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'content-type': 'application/json' },
+    headers: {
+      'content-type': 'application/json',
+      'deprecation': 'true',
+      'link': '</api/kps>; rel="successor-version"',
+    },
   });
 }
 

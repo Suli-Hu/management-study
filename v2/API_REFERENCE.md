@@ -1,5 +1,210 @@
 # API Reference (Claude Code agent 视角)
 
+> **API-first migration note**：新写入路径是 `GET/POST /api/kps` 与
+> `GET/PATCH/DELETE /api/kps/:id`。旧的 GitHub JSON sync 端点仍可用，
+> 但已标记 deprecated，只作为迁移期兜底。
+
+---
+
+## API-first KP endpoints
+
+### Agent 调用流程
+
+1. 用 `/admin/tokens` 给目标用户创建 API token。
+2. 调 `GET /api/me` 确认 token 身份、scope、可读/可写学科。
+3. 调 `GET /api/kps/meta?discipline=<key>` 获取可用 `schools` / `scholars` / `tags` / `formats`。
+4. 调 `POST /api/kps?discipline=<key>` 创建 KP。
+5. 调 `GET /api/kps/:id` 或 `GET /api/kps?discipline=<key>&q=<title>` 确认写入结果。
+6. 如需审计，调 `GET /api/kps/:id/versions` 查看历史快照。
+
+### Tenant 选择与权限
+
+请求可以用 `?discipline=keiei` 或 `x-discipline-key: keiei` 指定目标学科。
+服务端会用当前 session / API token 校验该用户是否属于这个 tenant，并在写入时
+强制注入 `tenant_id`、`created_by`、`updated_by`。请求 body 里的
+`tenant_id` / `discipline` 不会被接受为业务数据源。
+
+角色映射：
+
+| role | 权限 |
+|---|---|
+| `owner` | 全部 |
+| `editor` | KP CRUD |
+| `viewer` | 只读 |
+
+迁移期兼容：旧 `user_permission.admin` 视为可写，`user_permission.guest` 视为只读。
+超级管理员如果使用带 scope 的 API token，也会受 token scope 收窄限制。
+现有 `/admin/users` 权限后台会同时维护旧 `user_permission` 和新 `tenant_member`。
+
+### `GET /api/me`
+
+给外部 agent 的 token 自检端点。它只读取服务端 auth context，不接受客户端传入身份。
+
+```bash
+curl 'https://study.sususu.org/api/me' \
+  -H 'Authorization: Bearer ms_v1_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+```
+
+Response:
+
+```json
+{
+  "ok": true,
+  "user": { "id": "u_xxx", "email": "teacher@example.com", "display_name": null },
+  "auth": {
+    "is_super_admin": false,
+    "is_invite_guest": false,
+    "token_scopes": ["keiei"]
+  },
+  "disciplines": [
+    {
+      "key": "keiei",
+      "tenant_id": "keiei",
+      "title": { "zh": "经营学", "en": "Management" },
+      "role": "editor",
+      "can_read": true,
+      "can_edit": true
+    }
+  ]
+}
+```
+
+### `GET /api/kps/meta?discipline=<key>`
+
+返回创建 KP 前需要引用的学科元数据。读权限即可调用，适合 agent 在生成 KP JSON 前先拿合法 key。
+
+```bash
+curl 'https://study.sususu.org/api/kps/meta?discipline=keiei' \
+  -H 'Authorization: Bearer ms_v1_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+```
+
+Response:
+
+```json
+{
+  "ok": true,
+  "tenant": { "tenantId": "keiei", "discipline": "keiei", "role": "editor" },
+  "formats": ["narrative", "flat-list", "accordion", "compare", "quad"],
+  "tags": [{ "key": "classic", "label": { "zh": "经典" }, "color": "#007AFF" }],
+  "schools": [
+    { "key": "motivation", "title": { "zh": "动机理论", "en": "Motivation Theory" }, "tags": ["classic"], "kp_count": 12 }
+  ],
+  "scholars": [
+    { "key": "maslow", "name": { "zh": "马斯洛", "en": "Abraham Maslow" }, "tags": ["classic"], "kp_count": 3 }
+  ]
+}
+```
+
+### `GET /api/kps?discipline=<key>`
+
+列出当前 tenant 的 KP。
+
+Query：
+
+| 参数 | 说明 |
+|---|---|
+| `discipline` | 目标学科 / tenant |
+| `limit` | 默认 `50`，最大 `200` |
+| `offset` | 默认 `0` |
+| `q` | 可选，匹配 title/body 的 zh/en/ja |
+| `school` | 可选，只列属于该学派的 KP |
+| `scholar` | 可选，只列关联该学者的 KP |
+
+Response 里会返回 `page.total` 和 `page.next_offset`。
+
+### `POST /api/kps?discipline=<key>`
+
+直接写入 D1，创建 KP，并记录版本快照。
+
+```json
+{
+  "id": "k999",
+  "title": { "zh": "需求层次理论", "ja": "欲求階層説", "en": "Hierarchy of Needs" },
+  "body": { "zh": "正文", "ja": "本文" },
+  "format": "narrative",
+  "year": "1943",
+  "schools": ["motivation"],
+  "scholars": ["maslow"],
+  "tags": []
+}
+```
+
+Bearer token 调用示例：
+
+```bash
+curl -X POST 'https://study.sususu.org/api/kps?discipline=keiei' \
+  -H 'Authorization: Bearer ms_v1_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "title": { "zh": "需求层次理论", "ja": "欲求階層説", "en": "Hierarchy of Needs" },
+    "body": { "zh": "正文", "ja": "本文" },
+    "format": "narrative",
+    "year": "1943",
+    "schools": ["motivation"],
+    "scholars": ["maslow"],
+    "tags": []
+  }'
+```
+
+### `GET /api/kps/:id`
+
+读取单个 KP。服务端先查 KP 所属 tenant，再校验当前用户是否可读。
+
+### `PATCH /api/kps/:id`
+
+局部更新 KP。禁止变更 tenant；`schools` / `scholars` 必须属于同一 tenant。
+
+### `DELETE /api/kps/:id`
+
+删除 KP，并在 `knowledge_point_versions` 保留删除前快照。
+
+### `GET /api/kps/:id/versions`
+
+查看单个 KP 的历史快照。读权限即可调用。
+
+```bash
+curl 'https://study.sususu.org/api/kps/k999/versions' \
+  -H 'Authorization: Bearer ms_v1_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+```
+
+Response:
+
+```json
+{
+  "ok": true,
+  "tenant": { "tenantId": "keiei", "discipline": "keiei", "role": "editor" },
+  "kp_id": "k999",
+  "versions": [
+    {
+      "id": 12,
+      "kp_id": "k999",
+      "tenant_id": "keiei",
+      "version": 2,
+      "snapshot": { "id": "k999", "title": { "zh": "需求层次理论" } },
+      "edited_by": "u_xxx",
+      "created_at": "2026-05-01T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+### API-first 错误码
+
+| reason | HTTP | 含义 |
+|---|---:|---|
+| `not_authenticated` | 401 | 未登录或 token 无效 |
+| `discipline_required_for_super_admin` | 400 | super-admin 未指定 discipline |
+| `discipline_required_for_multi_tenant_user` | 400 | 用户有多个学科权限，必须指定 discipline |
+| `tenant_not_found` | 404 | discipline / tenant 不存在 |
+| `not_viewer` | 403 | 没有读取该 tenant 的权限 |
+| `not_editor` | 403 | 没有写入该 tenant 的权限 |
+| `schema_invalid` | 422 | 请求 JSON 不符合 schema |
+| `kp_id_exists` | 409 | 创建时 KP id 已存在 |
+| `kp_not_found` | 404 | KP 不存在或已删除 |
+| `school_not_in_tenant` | 422 | schools 引用了该学科不存在的 key |
+| `scholar_not_in_tenant` | 422 | scholars 引用了该学科不存在的 key |
+| `tenant_mismatch` | 403 | 请求试图操作其它 tenant 的 KP |
+
 > **谁该读**：在任意 worktree / 任意 Claude Code session 想以编程方式管理知识库的 agent。
 > 主要场景：写完 git → 让 D1 立即同步 / 读列表防重复 / 删除前查级联 / 元数据查询。
 

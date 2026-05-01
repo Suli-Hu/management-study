@@ -65,27 +65,50 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
     .first<{ key: string }>();
   if (!disc) return json(404, { ok: false, reason: 'discipline_not_found', detail: body.discipline });
 
+  // API-first migration: ensure every discipline has a tenant row before writing membership.
+  await env.DB.prepare(
+    `INSERT INTO tenant (id, discipline_key, title_zh, title_en, title_ja, created_at, updated_at)
+     SELECT key, key, title_zh, title_en, title_ja, created_at, updated_at
+     FROM discipline
+     WHERE key = ?
+     ON CONFLICT(id) DO NOTHING`,
+  ).bind(body.discipline).run();
+
   // role=null → DELETE
   if (body.role === null || body.role === undefined) {
-    await env.DB
-      .prepare('DELETE FROM user_permission WHERE user_id = ? AND discipline_key = ?')
-      .bind(userId, body.discipline)
-      .run();
+    await env.DB.batch([
+      env.DB.prepare('DELETE FROM user_permission WHERE user_id = ? AND discipline_key = ?').bind(userId, body.discipline),
+      env.DB.prepare('DELETE FROM tenant_member WHERE user_id = ? AND tenant_id = ?').bind(userId, body.discipline),
+    ]);
     return json(200, { ok: true, user_id: userId, discipline: body.discipline, role: null });
   }
 
   // UPSERT
-  await env.DB.prepare(
+  const now = new Date().toISOString();
+  await env.DB.batch([
+    env.DB.prepare(
     `INSERT INTO user_permission (user_id, discipline_key, role, granted_at, granted_by)
      VALUES (?, ?, ?, ?, ?)
      ON CONFLICT(user_id, discipline_key) DO UPDATE SET
        role = excluded.role,
        granted_at = excluded.granted_at,
        granted_by = excluded.granted_by`,
-  ).bind(
-    userId, body.discipline, body.role,
-    new Date().toISOString(), locals.user.email,
-  ).run();
+    ).bind(userId, body.discipline, body.role, now, locals.user.email),
+    env.DB.prepare(
+      `INSERT INTO tenant_member (tenant_id, user_id, role, created_at, created_by)
+       VALUES (?, ?, ?, ?, ?)
+       ON CONFLICT(tenant_id, user_id) DO UPDATE SET
+         role = excluded.role,
+         created_at = excluded.created_at,
+         created_by = excluded.created_by`,
+    ).bind(
+      body.discipline,
+      userId,
+      body.role === 'admin' ? 'editor' : 'viewer',
+      now,
+      locals.user.email,
+    ),
+  ]);
 
   return json(200, { ok: true, user_id: userId, discipline: body.discipline, role: body.role });
 };
