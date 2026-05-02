@@ -546,3 +546,161 @@ export async function buildSignedSessionCookie(
   const signedValue = await signSessionCookie(payload, secret);
   return buildSessionCookie(signedValue, isProd, remember);
 }
+
+// ============================================================
+// v0.7.2 pending_signup —— 注册暂存
+// ============================================================
+//
+// 注册流：/api/auth/signup 写本表 + 发邮箱 6 位 code；用户输 code 触发
+// /api/auth/signup-verify → promote 到 user 表 + 写 session。
+//
+// 同 email 重复 signup → INSERT OR REPLACE 让后到覆盖前面，避免邮箱被
+// 恶意抢注且让用户能纠正密码错误。
+
+const PENDING_SIGNUP_TTL_MS = 30 * 60 * 1000; // 30 分钟
+export const MAX_SIGNUP_CODE_ATTEMPTS = 5;
+
+export interface PendingSignupRow {
+  email: string;
+  password_hash: string;
+  salt: string;
+  display_name: string | null;
+  code: string;
+  attempt_count: number;
+  expires_at: number;
+  created_at: string;
+}
+
+/** 创建（或覆盖）pending_signup 行 + 返回 6 位 code 给调用方发邮件 */
+export async function createPendingSignup(
+  db: D1Database,
+  params: {
+    email: string;
+    passwordHash: string;
+    salt: string;
+    displayName: string | null;
+  },
+): Promise<{ code: string; expiresAt: number }> {
+  const code = generateCode();
+  const expiresAt = Date.now() + PENDING_SIGNUP_TTL_MS;
+  const now = new Date().toISOString();
+  await db
+    .prepare(`
+      INSERT OR REPLACE INTO pending_signup
+        (email, password_hash, salt, display_name, code, attempt_count, expires_at, created_at)
+      VALUES (?, ?, ?, ?, ?, 0, ?, ?)
+    `)
+    .bind(
+      params.email.toLowerCase().trim(),
+      params.passwordHash,
+      params.salt,
+      params.displayName,
+      code,
+      expiresAt,
+      now,
+    )
+    .run();
+  return { code, expiresAt };
+}
+
+/** 取 pending_signup 行（用于校验过期 / 看 attempt_count） */
+export async function findPendingSignup(
+  db: D1Database,
+  email: string,
+): Promise<PendingSignupRow | null> {
+  return db
+    .prepare('SELECT * FROM pending_signup WHERE email = ?')
+    .bind(email.toLowerCase().trim())
+    .first<PendingSignupRow>();
+}
+
+export type ConsumeSignupCodeResult =
+  | { ok: true; row: PendingSignupRow }
+  | { ok: false; reason: 'not_found' | 'expired' | 'wrong_code' | 'locked' };
+
+/**
+ * 按 (email, code) 校验 + consume pending_signup
+ *
+ * - code 对 + 未过期 → 返回 { ok: true, row }；调用方负责 promote 到 user + 删本行
+ * - code 错 → attempt_count++；达 MAX_SIGNUP_CODE_ATTEMPTS 时 row 标记 locked
+ *   下一次输错直接返回 locked
+ * - 过期 → 返回 expired
+ * - row 不存在 → 返回 not_found
+ *
+ * 跟 magic_link 的 consumeByCode 区别：
+ *   pending_signup 不在校验后立刻删除（promote 失败要可重试），由调用方在
+ *   user INSERT 成功后才 deletePendingSignup
+ */
+export async function consumePendingSignupByCode(
+  db: D1Database,
+  email: string,
+  code: string,
+): Promise<ConsumeSignupCodeResult> {
+  const normEmail = email.toLowerCase().trim();
+  const normCode = code.replace(/\D/g, '').trim();
+
+  const row = await findPendingSignup(db, normEmail);
+  if (!row) return { ok: false, reason: 'not_found' };
+  if (row.expires_at < Date.now()) return { ok: false, reason: 'expired' };
+  if (row.attempt_count >= MAX_SIGNUP_CODE_ATTEMPTS) {
+    return { ok: false, reason: 'locked' };
+  }
+
+  if (normCode.length !== 6 || row.code !== normCode) {
+    const nextCount = row.attempt_count + 1;
+    await db
+      .prepare('UPDATE pending_signup SET attempt_count = ? WHERE email = ?')
+      .bind(nextCount, normEmail)
+      .run();
+    if (nextCount >= MAX_SIGNUP_CODE_ATTEMPTS) {
+      return { ok: false, reason: 'locked' };
+    }
+    return { ok: false, reason: 'wrong_code' };
+  }
+
+  return { ok: true, row };
+}
+
+/** 删 pending_signup 行（promote 到 user 之后调用） */
+export async function deletePendingSignup(db: D1Database, email: string): Promise<void> {
+  await db
+    .prepare('DELETE FROM pending_signup WHERE email = ?')
+    .bind(email.toLowerCase().trim())
+    .run();
+}
+
+/** 创建注册的 user —— 区别于 findOrCreateUser（隐式登录用），这里是显式注册 */
+export async function createSignupUser(
+  db: D1Database,
+  params: {
+    email: string;
+    passwordHash: string;
+    salt: string;
+    displayName: string | null;
+  },
+): Promise<User> {
+  const id = generateToken(12);
+  const now = new Date().toISOString();
+  const normEmail = params.email.toLowerCase().trim();
+
+  await db
+    .prepare(`
+      INSERT INTO user
+        (id, email, display_name, created_at, email_verified_at,
+         password_hash, password_salt, password_changed_at, last_login_at,
+         failed_attempts, locked_until)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NULL)
+    `)
+    .bind(
+      id, normEmail, params.displayName, now, now,
+      params.passwordHash, params.salt, now, now,
+    )
+    .run();
+
+  const user = await db
+    .prepare('SELECT * FROM user WHERE email = ?')
+    .bind(normEmail)
+    .first<User>();
+  if (!user) throw new Error(`createSignupUser: user vanished after INSERT for ${normEmail}`);
+  return user;
+}

@@ -112,3 +112,48 @@ export function renderMagicLinkEmail(params: {
 
   return { html, text };
 }
+
+/** v0.7.2 注册验证码邮件模板（仅 6 位 code，无 magic-link） */
+export function renderSignupCodeEmail(params: {
+  email: string;
+  code: string;
+}): { html: string; text: string } {
+  const { email, code } = params;
+  const codeDisplay = `${code.slice(0, 3)} ${code.slice(3)}`;
+
+  const text = `欢迎使用全学科学习笔记。
+
+完成注册请输入下面这个 6 位验证码：
+
+    ${codeDisplay}
+
+验证码 30 分钟内有效。如果不是你发起的注册请求，忽略即可。
+
+— 全学科学习笔记
+`;
+
+  const html = `<!doctype html>
+<html>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', sans-serif; background: #f5f5f7; margin: 0; padding: 32px 16px;">
+  <div style="max-width: 480px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 32px 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
+    <h1 style="font-size: 20px; margin: 0 0 16px; color: #1d1d1f;">完成注册</h1>
+
+    <p style="font-size: 13px; color: #86868b; line-height: 1.7; margin: 0 0 8px;">
+      在注册页面输入这个 6 位验证码：
+    </p>
+    <div style="margin: 0 0 28px; padding: 20px 24px; background: #f5f5f7; border-radius: 10px; text-align: center; font-family: 'SF Mono', Menlo, monospace; font-size: 28px; font-weight: 700; color: #1d1d1f; letter-spacing: 0.15em;">
+      ${codeDisplay}
+    </div>
+
+    <p style="font-size: 12px; color: #86868b; line-height: 1.6; margin: 0;">
+      验证码 30 分钟内有效。如果不是你发起的注册请求，忽略即可。
+    </p>
+  </div>
+  <p style="text-align: center; font-size: 11px; color: #86868b; margin-top: 16px;">
+    发给 ${email} · 全学科学习笔记
+  </p>
+</body>
+</html>`;
+
+  return { html, text };
+}

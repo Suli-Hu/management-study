@@ -27,7 +27,8 @@ const CLEANUP_PROBABILITY = 0.01;
 /** 不需要登录就能访问的路径（前缀匹配） */
 const PUBLIC_PATH_PREFIXES = [
   '/login',          // 登录页 + /login/sent
-  '/api/auth/',      // login / verify / verify-code / logout
+  '/signup',         // v0.7.2: /signup + /signup/sent
+  '/api/auth/',      // login / verify / verify-code / logout / signup / signup-verify
   '/api/v1/webhook/',// v0.6.10: GitHub webhook (HMAC SHA-256 验签代替 cookie auth)
   '/favicon',
   '/robots.txt',
