@@ -368,14 +368,14 @@ if (!disc) return Astro.redirect('/404');
       // 保存后重新拉一次以刷新 ref_counts
       setTimeout(() => { load(); }, 500);
     } else if (res.status === 409 && data.reason === 'has_dependents') {
-      saveStatus.innerHTML = `<span style="color:#FF3B30">${data.detail}</span>`;
+      saveStatus.innerHTML = `<span style="color:var(--s-danger)">${data.detail}</span>`;
     } else if (res.status === 409 && data.reason === 'sha_conflict') {
-      saveStatus.innerHTML = `<span style="color:#FF3B30">冲突：discipline.json 已被其它修改，请刷新</span>`;
+      saveStatus.innerHTML = `<span style="color:var(--s-danger)">冲突：discipline.json 已被其它修改，请刷新</span>`;
     } else if (res.status === 422) {
       const lines = formatZodIssues(data.detail);
-      saveStatus.innerHTML = `<span style="color:#FF3B30">校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
+      saveStatus.innerHTML = `<span style="color:var(--s-danger)">校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
     } else {
-      saveStatus.innerHTML = `<span style="color:#FF3B30">${res.status} ${data.reason ?? 'error'}: ${String(data.detail ?? '').slice(0, 120)}</span>`;
+      saveStatus.innerHTML = `<span style="color:var(--s-danger)">${res.status} ${data.reason ?? 'error'}: ${String(data.detail ?? '').slice(0, 120)}</span>`;
     }
     saveBtn.disabled = false;
   }

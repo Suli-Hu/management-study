@@ -316,7 +316,7 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
     e.preventDefault();
     const json = collect();
     if (json.schools.length === 0) {
-      saveStatus.innerHTML = '<span style="color:#FF3B30">学派必选 ≥1</span>';
+      saveStatus.innerHTML = '<span style="color:var(--s-danger)">学派必选 ≥1</span>';
       return;
     }
     saveBtn.disabled = true;
@@ -334,14 +334,14 @@ const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
       const target = fromIsDetail ? `${fromPath}${sep}kp=${json.id}` : `/${discipline}/kp/${json.id}`;
       setTimeout(() => { location.href = target; }, 1500);
     } else if (res.status === 409) {
-      saveStatus.innerHTML = `<span style="color:#FF3B30">id 已存在</span>`;
+      saveStatus.innerHTML = `<span style="color:var(--s-danger)">id 已存在</span>`;
       saveBtn.disabled = false;
     } else if (res.status === 422) {
       const lines = formatZodIssues(data.detail);
-      saveStatus.innerHTML = `<span style="color:#FF3B30">字段校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
+      saveStatus.innerHTML = `<span style="color:var(--s-danger)">字段校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
       saveBtn.disabled = false;
     } else {
-      saveStatus.innerHTML = `<span style="color:#FF3B30">${res.status} ${data.reason ?? 'error'}</span>`;
+      saveStatus.innerHTML = `<span style="color:var(--s-danger)">${res.status} ${data.reason ?? 'error'}</span>`;
       saveBtn.disabled = false;
     }
   });

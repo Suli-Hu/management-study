@@ -284,7 +284,7 @@
   font-size: 14px;
   cursor: pointer;
 }
-.kpedit-fmt-x:hover{ background: color-mix(in oklab, #c8302c 10%, var(--color-bg-primary)); color: #c8302c; }
+.kpedit-fmt-x:hover{ background: color-mix(in oklab, var(--s-danger) 10%, var(--color-bg-primary)); color: var(--s-danger); }
 .kpedit-fmt-add{
   display: inline-flex; align-items: center; justify-content: center;
   padding: 8px 12px;
@@ -539,10 +539,10 @@
 }
 .kpedit-A-btn-ghost:hover{ background: var(--color-bg-secondary); color: var(--color-text-primary); }
 .kpedit-A-btn-danger{
-  background: transparent; color: #c8302c;
-  border-color: color-mix(in oklab, #c8302c 30%, var(--color-border));
+  background: transparent; color: var(--s-danger);
+  border-color: color-mix(in oklab, var(--s-danger) 30%, var(--color-border));
 }
-.kpedit-A-btn-danger:hover{ background: color-mix(in oklab, #c8302c 8%, var(--color-bg-primary)); }
+.kpedit-A-btn-danger:hover{ background: color-mix(in oklab, var(--s-danger) 8%, var(--color-bg-primary)); }
 .kpedit-A-btn-primary{
   background: var(--accent-strategy); color: #fff;  /* accent button 白字两模式都该白 */
   border-color: var(--accent-strategy);
@@ -688,8 +688,8 @@
 }
 .kpedit-B-fab-btn.is-ghost{ background: transparent; color: var(--color-text-tertiary); width: 36px; padding: 0; }
 .kpedit-B-fab-btn.is-ghost:hover{ background: var(--color-bg-secondary); color: var(--color-text-primary); }
-.kpedit-B-fab-btn.is-danger{ background: transparent; color: #c8302c; width: 36px; padding: 0; }
-.kpedit-B-fab-btn.is-danger:hover{ background: color-mix(in oklab, #c8302c 10%, var(--color-bg-primary)); }
+.kpedit-B-fab-btn.is-danger{ background: transparent; color: var(--s-danger); width: 36px; padding: 0; }
+.kpedit-B-fab-btn.is-danger:hover{ background: color-mix(in oklab, var(--s-danger) 10%, var(--color-bg-primary)); }
 .kpedit-B-fab-btn.is-primary{
   background: var(--accent-strategy); color: #fff; font-weight: 600;
   padding: 0 16px;
@@ -790,11 +790,11 @@
 }
 .kpedit-C-btn-ghost:hover{ background: var(--color-bg-secondary); color: var(--color-text-primary); }
 .kpedit-C-btn-danger{
-  background: transparent; color: #c8302c;
+  background: transparent; color: var(--s-danger);
   border-color: transparent;
   font-size: 12px;
 }
-.kpedit-C-btn-danger:hover{ background: color-mix(in oklab, #c8302c 8%, var(--color-bg-primary)); }
+.kpedit-C-btn-danger:hover{ background: color-mix(in oklab, var(--s-danger) 8%, var(--color-bg-primary)); }
 .kpedit-C-meta{
   font-size: 11px; color: var(--color-text-tertiary);
   display: flex; flex-direction: column; gap: 6px;

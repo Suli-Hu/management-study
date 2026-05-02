@@ -319,7 +319,7 @@ const allScholars = scholarsResult.results ?? [];
     const res = await fetch(`/api/edit/kp/${kpId}`);
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      saveStatus.innerHTML = `<span style="color:#FF3B30">加载失败 ${res.status} ${err.reason ?? ''}</span>`;
+      saveStatus.innerHTML = `<span style="color:var(--s-danger)">加载失败 ${res.status} ${err.reason ?? ''}</span>`;
       return;
     }
     const { json: kp, base_sha, progress_count, note_count, tag_library } = await res.json();
