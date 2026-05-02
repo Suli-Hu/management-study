@@ -2,7 +2,8 @@
   "id": "m046",
   "discipline": "marketing",
   "schools": [
-    "channel_retail"
+    "channel_retail",
+    "retail_management"
   ],
   "scholars": [
     "wada",
@@ -38,5 +39,5 @@
     }
   },
   "createdAt": "2026-04-30T05:03:41.421Z",
-  "updatedAt": "2026-04-30T13:20:35.928Z"
+  "updatedAt": "2026-05-02T11:53:45.145Z"
 }
