@@ -4,7 +4,8 @@
   "schools": [
     "consumer_behavior",
     "managerial",
-    "digital_marketing"
+    "digital_marketing",
+    "marketing_research"
   ],
   "scholars": [
     "abe_m"
@@ -38,5 +39,5 @@
     }
   },
   "createdAt": "2026-04-30T07:41:08.499Z",
-  "updatedAt": "2026-04-30T13:24:31.156Z"
+  "updatedAt": "2026-05-02T11:54:41.207Z"
 }
