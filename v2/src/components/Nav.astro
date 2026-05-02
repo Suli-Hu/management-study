@@ -462,8 +462,10 @@ const isSuperAdmin = Astro.locals.isSuperAdmin;
     render();
 
     btn.addEventListener('click', () => {
-      const next = !document.documentElement.classList.contains('dark');
-      document.documentElement.classList.toggle('dark', next);
+      const root = document.documentElement;
+      const next = !root.classList.contains('dark');
+      root.classList.toggle('dark', next);
+      root.dataset.mode = next ? 'dark' : 'light';  // v0.7.20: 桥接 sumi tokens
       localStorage.setItem('theme', next ? 'dark' : 'light');
       render();
     });

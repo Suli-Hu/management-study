@@ -38,12 +38,15 @@ const fullTitle = title === 'sususu' ? title : `${title} · sususu`;
     <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@700&display=swap" rel="stylesheet" />
     <script is:inline>
       // v0.3.9 夜间模式：无闪烁初始化（在 body 渲染前确定 html.dark）
+      // v0.7.20: 同步写 data-mode（双写桥接，兼容 sumi tokens.css [data-mode] selector）
       (function () {
         try {
           const saved = localStorage.getItem('theme');
           const prefersDark = matchMedia('(prefers-color-scheme: dark)').matches;
           const isDark = saved ? saved === 'dark' : prefersDark;
-          if (isDark) document.documentElement.classList.add('dark');
+          const root = document.documentElement;
+          if (isDark) root.classList.add('dark');
+          root.dataset.mode = isDark ? 'dark' : 'light';
         } catch {}
       })();
     </script>
