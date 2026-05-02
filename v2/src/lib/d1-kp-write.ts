@@ -18,6 +18,8 @@
 import type { Kp as KpType } from '~/schemas/kp';
 import { z } from 'zod';
 import { Kp } from '~/schemas/kp';
+import { KP_TABLE } from './d1-tables';
+import { buildUpsertStmt } from './d1-upsert';
 
 type ParsedKp = z.infer<typeof Kp>;
 
@@ -53,42 +55,22 @@ export async function upsertKpInD1(
 
   // 1. KP 主表 UPSERT
   stmts.push(
-    db.prepare(
-      `INSERT INTO kp (id, discipline, year, title_zh, title_en, title_ja,
-                        body_zh, body_ja, tags_json,
-                        eval_content_zh_json, eval_content_ja_json,
-                        format, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-       ON CONFLICT(id) DO UPDATE SET
-         discipline = excluded.discipline,
-         year = excluded.year,
-         title_zh = excluded.title_zh,
-         title_en = excluded.title_en,
-         title_ja = excluded.title_ja,
-         body_zh = excluded.body_zh,
-         body_ja = excluded.body_ja,
-         tags_json = excluded.tags_json,
-         eval_content_zh_json = excluded.eval_content_zh_json,
-         eval_content_ja_json = excluded.eval_content_ja_json,
-         format = excluded.format,
-         created_at = excluded.created_at,
-         updated_at = excluded.updated_at`,
-    ).bind(
-      kp.id,
-      kp.discipline,
-      kp.year ?? '',
-      kp.title.zh,
-      kp.title.en ?? null,
-      kp.title.ja ?? null,
-      kp.body.zh,
-      kp.body.ja ?? null,
-      JSON.stringify(kp.tags ?? []),
-      JSON.stringify(kp.evalContent?.zh ?? {}),
-      JSON.stringify(kp.evalContent?.ja ?? {}),
-      kp.format,
-      kp.createdAt,
-      kp.updatedAt,
-    ),
+    buildUpsertStmt(db, KP_TABLE, {
+      id: kp.id,
+      discipline: kp.discipline,
+      year: kp.year ?? '',
+      title_zh: kp.title.zh,
+      title_en: kp.title.en ?? null,
+      title_ja: kp.title.ja ?? null,
+      body_zh: kp.body.zh,
+      body_ja: kp.body.ja ?? null,
+      tags_json: JSON.stringify(kp.tags ?? []),
+      eval_content_zh_json: JSON.stringify(kp.evalContent?.zh ?? {}),
+      eval_content_ja_json: JSON.stringify(kp.evalContent?.ja ?? {}),
+      format: kp.format,
+      created_at: kp.createdAt,
+      updated_at: kp.updatedAt,
+    }),
   );
 
   // 2. kp_school joins — 删旧建新（fallback position：1000+i 跟 sync 脚本一致）
