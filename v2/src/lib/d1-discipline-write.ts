@@ -8,7 +8,7 @@
  *   - school / scholar / kp / view 主表（discipline.json 改不影响它们 — themes/tags 是元数据）
  *   - sync_log（caller 决定要不要记）
  *
- * accent 列已废弃（v0.5.0 删 enum），写空字符串 '' 占位 —— 与 scripts/sync-to-d1.ts 行 258 一致。
+ * accent 列已废弃（v0.5.0 删 enum），写空字符串 '' 占位 —— 与 scripts/sync-to-d1.ts 一致。
  *
  * 删除：
  *   - 调用方先做"该 discipline 下无 school / scholar / kp / view"的 0-deps gate。
@@ -17,6 +17,8 @@
 
 import type { z } from 'zod';
 import type { Discipline } from '~/schemas/discipline';
+import { DISCIPLINE_TABLE } from './d1-tables';
+import { buildUpsertStmt } from './d1-upsert';
 
 type ParsedDiscipline = z.infer<typeof Discipline>;
 
@@ -24,39 +26,19 @@ export async function upsertDisciplineInD1(
   db: D1Database,
   disc: ParsedDiscipline,
 ): Promise<void> {
-  await db.prepare(
-    `INSERT INTO discipline (
-       key, title_zh, title_en, title_ja,
-       tagline_zh, tagline_ja, accent,
-       tags_json, themes_json, created_at, updated_at
-     )
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-     ON CONFLICT(key) DO UPDATE SET
-       title_zh = excluded.title_zh,
-       title_en = excluded.title_en,
-       title_ja = excluded.title_ja,
-       tagline_zh = excluded.tagline_zh,
-       tagline_ja = excluded.tagline_ja,
-       accent = excluded.accent,
-       tags_json = excluded.tags_json,
-       themes_json = excluded.themes_json,
-       created_at = excluded.created_at,
-       updated_at = excluded.updated_at`,
-  )
-    .bind(
-      disc.key,
-      disc.title.zh,
-      disc.title.en ?? null,
-      disc.title.ja ?? null,
-      disc.tagline?.zh ?? null,
-      disc.tagline?.ja ?? null,
-      '',
-      JSON.stringify(disc.tags ?? []),
-      JSON.stringify(disc.themes ?? []),
-      disc.createdAt,
-      disc.updatedAt,
-    )
-    .run();
+  await buildUpsertStmt(db, DISCIPLINE_TABLE, {
+    key: disc.key,
+    title_zh: disc.title.zh,
+    title_en: disc.title.en ?? null,
+    title_ja: disc.title.ja ?? null,
+    tagline_zh: disc.tagline?.zh ?? null,
+    tagline_ja: disc.tagline?.ja ?? null,
+    accent: '',
+    tags_json: JSON.stringify(disc.tags ?? []),
+    themes_json: JSON.stringify(disc.themes ?? []),
+    created_at: disc.createdAt,
+    updated_at: disc.updatedAt,
+  }).run();
 }
 
 export async function deleteDisciplineInD1(

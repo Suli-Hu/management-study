@@ -64,12 +64,13 @@
 - 跨 discipline 推 KP 的复用方式（API 已通用）
 - 失败时给用户的反馈话术
 
-**任何 session 想用 API 管理知识库** 📘 — `v2/API_REFERENCE.md`：
-- TL;DR：webhook 配好后 git push 自动 ~5-10s 同步 D1，多数场景 zero API call
-- 所有 endpoint 完整说明（Sync API / Webhook / Edit / New / Read / Search）
-- KP / School / Scholar / View 完整字段定义（zod schema 真源映射）
-- 7 个常用 agent 调用配方（新建 / 移动 / 删除 / 合并 KP）
-- v0.5.94+ 路线图（v1 CRUD + API token RBAC）
+**任何 session 想用 API 管理知识库 / 学习日志** 📘 — `v2/public/docs/api-reference.md`（对外镜像 URL: https://study.sususu.org/docs/api-reference.md）：
+- 快速开始 + 认证（Bearer token / `/admin/tokens` 拿 token / scope 收窄）
+- API-first endpoints：KP / School / Scholar / View 直接 D1 CRUD（GET/POST/PATCH/DELETE）
+- Study Log API：`/api/study-sessions` 学习日志 CRUD
+- 元数据 / 搜索 / 状态：`/api/metadata`、`/api/search`、`/api/v1/index/<discipline>`
+- 完整错误码总表 + agent 调用配方（防重复 / 移动 scholar / 删 KP / 合并）
+- Deprecated · git-sync 兜底：旧的 webhook + sync + edit 端点仍可用但已弃用
 
 ## 核心规则
 

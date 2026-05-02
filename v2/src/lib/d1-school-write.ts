@@ -15,6 +15,8 @@
 
 import type { z } from 'zod';
 import type { School } from '~/schemas/school';
+import { SCHOOL_TABLE } from './d1-tables';
+import { buildUpsertStmt } from './d1-upsert';
 
 type ParsedSchool = z.infer<typeof School>;
 
@@ -26,39 +28,21 @@ export async function upsertSchoolInD1(
 
   // 1. school 主表 UPSERT（accent 列已废弃但仍要写空字符串，跟 sync 脚本一致）
   stmts.push(
-    db.prepare(
-      `INSERT INTO school (key, discipline, title_zh, title_en, title_ja,
-                            era, summary_zh, summary_ja, theme_key, accent,
-                            tags_json, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-       ON CONFLICT(key) DO UPDATE SET
-         discipline = excluded.discipline,
-         title_zh = excluded.title_zh,
-         title_en = excluded.title_en,
-         title_ja = excluded.title_ja,
-         era = excluded.era,
-         summary_zh = excluded.summary_zh,
-         summary_ja = excluded.summary_ja,
-         theme_key = excluded.theme_key,
-         accent = excluded.accent,
-         tags_json = excluded.tags_json,
-         created_at = excluded.created_at,
-         updated_at = excluded.updated_at`,
-    ).bind(
-      school.key,
-      school.discipline,
-      school.title.zh,
-      school.title.en ?? null,
-      school.title.ja ?? null,
-      school.era ?? '',
-      school.summary.zh,
-      school.summary.ja ?? null,
-      school.themeKey,
-      '',
-      JSON.stringify(school.tags ?? []),
-      school.createdAt,
-      school.updatedAt,
-    ),
+    buildUpsertStmt(db, SCHOOL_TABLE, {
+      key: school.key,
+      discipline: school.discipline,
+      title_zh: school.title.zh,
+      title_en: school.title.en ?? null,
+      title_ja: school.title.ja ?? null,
+      era: school.era ?? '',
+      summary_zh: school.summary.zh,
+      summary_ja: school.summary.ja ?? null,
+      theme_key: school.themeKey,
+      accent: '',
+      tags_json: JSON.stringify(school.tags ?? []),
+      created_at: school.createdAt,
+      updated_at: school.updatedAt,
+    }),
   );
 
   // 2. kp_school join — 重建 school-driven 部分（position < 1000）

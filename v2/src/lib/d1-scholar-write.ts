@@ -19,6 +19,8 @@
 
 import type { z } from 'zod';
 import type { Scholar } from '~/schemas/scholar';
+import { SCHOLAR_TABLE } from './d1-tables';
+import { buildUpsertStmt } from './d1-upsert';
 
 type ParsedScholar = z.infer<typeof Scholar>;
 
@@ -28,58 +30,31 @@ export async function upsertScholarInD1(
 ): Promise<void> {
   const stmts: D1PreparedStatement[] = [];
 
-  // 1. scholar 主表 UPSERT — ON CONFLICT 复合 (discipline, key)
+  // 1. scholar 主表 UPSERT — ON CONFLICT 复合 (discipline, key) 由 SCHOLAR_TABLE.pk 派生
   stmts.push(
-    db.prepare(
-      `INSERT INTO scholar (
-        key, discipline, name_zh, name_en, name_ja,
-        contribution_zh, contribution_ja, lifespan, institution,
-        born, died, nationality, flag, origin, field, accent, tags_json,
-        nobel_year, nobel_detail, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      ON CONFLICT(discipline, key) DO UPDATE SET
-        name_zh = excluded.name_zh,
-        name_en = excluded.name_en,
-        name_ja = excluded.name_ja,
-        contribution_zh = excluded.contribution_zh,
-        contribution_ja = excluded.contribution_ja,
-        lifespan = excluded.lifespan,
-        institution = excluded.institution,
-        born = excluded.born,
-        died = excluded.died,
-        nationality = excluded.nationality,
-        flag = excluded.flag,
-        origin = excluded.origin,
-        field = excluded.field,
-        accent = excluded.accent,
-        tags_json = excluded.tags_json,
-        nobel_year = excluded.nobel_year,
-        nobel_detail = excluded.nobel_detail,
-        created_at = excluded.created_at,
-        updated_at = excluded.updated_at`,
-    ).bind(
-      scholar.key,
-      scholar.discipline,
-      scholar.name.zh,
-      scholar.name.en ?? null,
-      scholar.name.ja ?? null,
-      scholar.contribution.zh,
-      scholar.contribution.ja ?? null,
-      scholar.lifespan ?? '',
-      scholar.institution ?? '',
-      scholar.born ?? '',
-      scholar.died ?? '',
-      scholar.nationality ?? '',
-      scholar.flag ?? '',
-      scholar.origin ?? '',
-      scholar.field ?? '',
-      '',
-      JSON.stringify(scholar.tags ?? []),
-      scholar.nobel?.year ?? null,
-      scholar.nobel?.detail ?? null,
-      scholar.createdAt,
-      scholar.updatedAt,
-    ),
+    buildUpsertStmt(db, SCHOLAR_TABLE, {
+      key: scholar.key,
+      discipline: scholar.discipline,
+      name_zh: scholar.name.zh,
+      name_en: scholar.name.en ?? null,
+      name_ja: scholar.name.ja ?? null,
+      contribution_zh: scholar.contribution.zh,
+      contribution_ja: scholar.contribution.ja ?? null,
+      lifespan: scholar.lifespan ?? '',
+      institution: scholar.institution ?? '',
+      born: scholar.born ?? '',
+      died: scholar.died ?? '',
+      nationality: scholar.nationality ?? '',
+      flag: scholar.flag ?? '',
+      origin: scholar.origin ?? '',
+      field: scholar.field ?? '',
+      accent: '',
+      tags_json: JSON.stringify(scholar.tags ?? []),
+      nobel_year: scholar.nobel?.year ?? null,
+      nobel_detail: scholar.nobel?.detail ?? null,
+      created_at: scholar.createdAt,
+      updated_at: scholar.updatedAt,
+    }),
   );
 
   // 2. scholar_school join — 重建 scholar-driven 部分 (position < 1000)
