@@ -1,0 +1,87 @@
+{
+  "id": "school-groups",
+  "discipline": "marketing",
+  "name": "考试 7 领域",
+  "jp": "試験 7 領域",
+  "icon": "🎯",
+  "description": "默认视图。按日本经营学大学院市场营销考试复习逻辑重排理论体系。",
+  "flow": "概念与战略 → STP/品牌 → 市场理解 → 调研测定 → 4P 执行 → 渠道零售 → 服务关系社会",
+  "scope": "public",
+  "kind": "manual",
+  "isDefault": true,
+  "position": 0,
+  "groups": [
+    {
+      "id": "concept_strategy",
+      "title": "营销概念与战略",
+      "flow": "定义·观念·市场导向·竞争与成长",
+      "schoolIds": [
+        "marketing_concept",
+        "managerial",
+        "strategic_marketing",
+        "effectuation"
+      ]
+    },
+    {
+      "id": "stp_brand",
+      "title": "STP、定位与品牌",
+      "flow": "市场选择 → 心智定位 → 品牌资产",
+      "schoolIds": [
+        "stp_positioning",
+        "brand_equity",
+        "global_marketing"
+      ]
+    },
+    {
+      "id": "market_consumer",
+      "title": "市场与消费者理解",
+      "flow": "消费者行为 → 文化消费 → B2B 购买",
+      "schoolIds": [
+        "consumer_behavior",
+        "cct_interpretive",
+        "b2b_marketing"
+      ]
+    },
+    {
+      "id": "research_modeling",
+      "title": "调研、测定与建模",
+      "flow": "调研设计 → 测定 → 模型与仪表盘",
+      "schoolIds": [
+        "marketing_research"
+      ]
+    },
+    {
+      "id": "product_price_comm",
+      "title": "产品、价格与传播",
+      "flow": "产品战略 → 价格战略 → 传播与数字沟通",
+      "schoolIds": [
+        "product_strategy",
+        "pricing_strategy",
+        "imc_communication",
+        "digital_marketing"
+      ]
+    },
+    {
+      "id": "channel_retail",
+      "title": "渠道、流通与零售",
+      "flow": "渠道设计 → 流通制度 → 小售接点",
+      "schoolIds": [
+        "channel_retail",
+        "retail_management"
+      ]
+    },
+    {
+      "id": "service_relation_society",
+      "title": "服务、关系与社会",
+      "flow": "服务质量 → 顾客关系 → SDL → 社会责任",
+      "schoolIds": [
+        "service_marketing",
+        "relationship",
+        "sdl",
+        "social_marketing"
+      ]
+    }
+  ],
+  "createdAt": "2026-05-02T14:39:00.057Z",
+  "updatedAt": "2026-05-02T14:39:00.057Z"
+}
