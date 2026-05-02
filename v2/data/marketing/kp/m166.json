@@ -2,7 +2,8 @@
   "id": "m166",
   "discipline": "marketing",
   "schools": [
-    "managerial"
+    "managerial",
+    "pricing_strategy"
   ],
   "scholars": [
     "kotler"
@@ -36,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T09:26:24.090Z",
-  "updatedAt": "2026-04-30T13:25:15.553Z"
+  "updatedAt": "2026-05-02T11:54:52.288Z"
 }
