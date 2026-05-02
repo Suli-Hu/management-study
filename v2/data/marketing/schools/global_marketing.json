@@ -1,0 +1,25 @@
+{
+  "key": "global_marketing",
+  "discipline": "marketing",
+  "title": {
+    "zh": "全球营销理论体系",
+    "ja": "グローバル・マーケティング理論体系",
+    "en": "Global Marketing"
+  },
+  "era": "1980– 全球市场进入与本地化战略",
+  "summary": {
+    "zh": "<strong>全球营销理论体系</strong>关注企业跨国进入市场时的进入动因、进入方式、标准化与本地化选择、全球品牌管理以及跨文化适应问题。",
+    "ja": "<strong>グローバル・マーケティング理論体系</strong>は，海外市場参入の動因・参入方式・標準化と現地化・グローバルブランド・異文化適応を扱う。"
+  },
+  "themeKey": "marketing_strategy",
+  "tags": [],
+  "concepts": [
+    "m140",
+    "m141",
+    "m142",
+    "m143",
+    "m144"
+  ],
+  "createdAt": "2026-05-02T11:48:37.855Z",
+  "updatedAt": "2026-05-02T11:48:37.855Z"
+}
