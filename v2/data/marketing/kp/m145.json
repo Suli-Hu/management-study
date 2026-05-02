@@ -10,32 +10,32 @@
   ],
   "year": "1980",
   "title": {
-    "zh": "营销调研 6 步骤·Marketing Research 流程",
-    "ja": "マーケティング・リサーチ 6 段階",
-    "en": "Marketing Research · 6 Stages"
+    "zh": "营销调研方法总览·问题定义·定性/定量·分析·报告",
+    "ja": "マーケティング・リサーチ方法総覧・問題定義・定性/定量・分析・報告",
+    "en": "Marketing Research Methods Overview"
   },
   "body": {
-    "zh": "<strong>Marketing Research 6 步骤</strong>是 Kotler 16 章·Pro Plus 第 5 章核心·marketing 调研的标准流程。<br><br><strong>6 步骤</strong>：① <strong>问题定义</strong>（不是 too narrow / too broad）② <strong>调研计划</strong>（data sources·research approach·research instruments·sampling plan·contact methods）③ <strong>信息收集</strong>（survey·interview·observation·experiment·secondary data）④ <strong>信息分析</strong>（statistical·qualitative）⑤ <strong>决策提出</strong>·⑥ <strong>决策执行 + 效果反馈</strong><br><br><strong>2 大调研类型</strong>：<br>① <strong>定性 / 質的（Qualitative）</strong>·Focus Group·Depth Interview·エスノグラフィ·MROC·了解 why·how<br>② <strong>定量 / 量的（Quantitative）</strong>·Survey·Web·POS·Conjoint·了解 what·how much<br><br><strong>research instruments 5 大类</strong>：① questionnaires ② qualitative measures ③ technological devices（GSR·eye-tracking·neuro-marketing）④ POS / behavioral data ⑤ social listening<br><br><strong>5 大 sampling 方法</strong>：① probability（random·stratified）② non-probability（convenience·judgment·quota）<br><br><strong>跨学派关系</strong>：marketing research 是<strong>方法论学派</strong>·支持所有 marketing 学派的实证研究。",
-    "ja": "<strong>Marketing Research 6 段階</strong>は Kotler 16 章·Pro Plus 第 5 章核心·マーケティング調査の標準プロセス。<br><br><strong>6 段階</strong>：① 問題定義 ② 調査計画 ③ 情報収集 ④ 情報分析 ⑤ 意思決定提出 ⑥ 意思決定執行 + 効果フィードバック<br><br><strong>2 大調査類型</strong>：① 質的（Focus Group·Depth Interview·エスノグラフィ·MROC·why·how 理解）② 量的（Survey·Web·POS·Conjoint·what·how much 理解）<br><br><strong>research instruments 5 大類</strong>：① questionnaires ② qualitative measures ③ technological devices（GSR·eye-tracking·neuro-marketing）④ POS / behavioral data ⑤ social listening<br><br><strong>5 大 sampling 方法</strong>：① probability（random·stratified）② non-probability（convenience·judgment·quota）<br><br><strong>他派との関係</strong>：marketing research は<strong>方法論学派</strong>·全マーケティング学派の実証研究を支援。"
+    "zh": "营销调研是把市场不确定性转化为可判断信息的过程，不是单纯做问卷，而是围绕管理问题设计证据：<br>【① 问题定义】<br>①明确管理问题。②转化为调研问题。③界定对象、变量、时间和预算。<br>【② 调研设计】<br>①探索性调研：访谈、FGI、观察，用于发现假设。②描述性调研：把握市场规模、态度、满意度。③因果性调研：检验广告、价格、促销是否造成效果变化。<br>【③ 数据收集】<br>①定性方法：FGI、深度访谈、观察，优点是理解动机，缺点是代表性弱。②定量方法：问卷、实验、二手数据、POS/CRM 数据，优点是可统计推断，缺点是依赖设计质量。③抽样要注意总体、抽样框、样本量和偏差。<br>【④ 分析方法】<br>①基础统计：均值、分散、交叉表、显著性检验。②多变量分析：因子分析、聚类、回归、联合分析。③营销生产性：MMM、仪表盘、ROI。<br>【⑤ 报告与伦理】<br>报告要回答最初管理问题，并说明方法、样本、限制和实务建议；同时注意个人信息保护、诱导性问题、样本偏差和研究伦理。",
+    "ja": "マーケティング・リサーチは，市場の不確実性を判断可能な情報に変えるプロセスであり，単なるアンケート実施ではなく，管理問題に対して証拠を設計する活動である：<br>【① 問題定義】<br>①管理問題を明確にする。②調査問題へ変換する。③対象，変数，期間，予算を定める。<br>【② 調査設計】<br>①探索的調査：面接，FGI，観察で仮説を発見する。②記述的調査：市場規模，態度，満足度を把握する。③因果的調査：広告，価格，販促が効果変化をもたらすかを検証する。<br>【③ データ収集】<br>①定性的方法：FGI，深層面接，観察。動機理解に強いが代表性は弱い。②定量的方法：質問紙，実験，二次データ，POS/CRM データ。統計推論に強いが設計品質に依存する。③サンプリングでは母集団，標本枠，標本数，偏りに注意する。<br>【④ 分析方法】<br>①基礎統計：平均，分散，クロス表，検定。②多変量分析：因子分析，クラスター分析，回帰，コンジョイント分析。③マーケティング生産性：MMM，ダッシュボード，ROI。<br>【⑤ 報告と倫理】<br>報告は最初の管理問題に答え，方法，標本，限界，実務提案を示す。個人情報保護，誘導質問，標本バイアス，研究倫理にも注意する。"
   },
   "tags": [
     "marketing research",
     "6 stages",
     "Kotler"
   ],
-  "format": "narrative",
+  "format": "accordion",
   "evalContent": {
     "zh": {
-      "义": "marketing 调研的标准流程·所有研究的基础",
-      "限": "流程化·实务常迭代",
-      "例": "任何 marketing project 第一步都是 research",
-      "应": "Kotler 5 章·Pro Plus 5 章·调研题"
+      "义": "考试用总览卡，将该领域的零散概念组织成可论述的流程。",
+      "限": "总览会压缩细节，具体题目仍需回到细卡补充术语和案例。",
+      "例": "可作为该领域论述题开头框架。",
+      "应": "用于大学院过去问的综合论述。"
     },
     "ja": {
-      "限": "プロセス化·実務反復多",
-      "例": "全マーケティング・プロジェクトの第一段階は research"
+      "限": "総覧は細部を圧縮するため，具体問題では詳細カードで用語と事例を補う必要がある。",
+      "例": "当該領域の論述問題の冒頭骨格として使える。"
     }
   },
   "createdAt": "2026-04-30T07:41:04.930Z",
-  "updatedAt": "2026-05-02T12:20:23.024Z"
+  "updatedAt": "2026-05-02T12:37:20.033Z"
 }
