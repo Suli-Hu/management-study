@@ -46,21 +46,21 @@ const targetEmail = emailArg ? emailArg.split('=')[1] : 'husuli0623@gmail.com';
 
 /**
  * 12 个有代表性的学派 keys（覆盖 OB / SM / OT 三大类，含早期+现代）。
- * 这些都是 v2/data/keiei/schools/ 下的真实 key。
+ * 实际 KP 主学派分布（按 schools[0] 计），合计 ~135 KP — 足够 200 mock session 抽样。
  */
 const TARGET_SCHOOLS = [
-  'scientific',          // 古典
-  'human_relations',     // 人际
-  'change',              // 组织变革
-  'motivation',          // 动机
-  'decision',            // 决策
-  'contingency',         // 权变
-  'static_structure',    // 静态结构
-  'leadership',          // 领导
-  'strategy_planning',   // 战略规划
-  'core_competence',     // 核心能力
-  'learning_org',        // 学习型组织
-  'institutional',       // 制度学派
+  'scientific',          // 古典科学管理 (6 KPs)
+  'humanrel',            // 人际关系 (5 KPs)
+  'change',              // 组织变革 (16 KPs)
+  'behavioral',          // 行为学派 (19 KPs)
+  'decision_theory',     // 决策理论 (14 KPs)
+  'contingency',         // 权变 (8 KPs)
+  'leadership_theory',   // 领导理论 (14 KPs)
+  'planning_s',          // 战略规划 (19 KPs)
+  'rbv',                 // 资源基础 (5 KPs)
+  'learning_s',          // 学习型组织 (13 KPs)
+  'institutional',       // 制度学派 (5 KPs)
+  'positioning_s',       // 定位学派 (5 KPs)
 ];
 
 // ============================================================
