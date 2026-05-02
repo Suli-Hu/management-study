@@ -2,7 +2,6 @@
   "id": "m142",
   "discipline": "marketing",
   "schools": [
-    "managerial",
     "strategic_marketing",
     "global_marketing"
   ],
@@ -39,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:36:18.268Z",
-  "updatedAt": "2026-05-02T12:01:11.680Z"
+  "updatedAt": "2026-05-02T12:20:18.140Z"
 }
