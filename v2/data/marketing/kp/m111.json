@@ -4,7 +4,8 @@
   "schools": [
     "managerial",
     "brand_equity",
-    "imc_communication"
+    "imc_communication",
+    "stp_positioning"
   ],
   "scholars": [
     "kotler"
@@ -38,5 +39,5 @@
     }
   },
   "createdAt": "2026-04-30T07:24:23.768Z",
-  "updatedAt": "2026-04-30T13:23:05.230Z"
+  "updatedAt": "2026-05-02T11:53:53.390Z"
 }
