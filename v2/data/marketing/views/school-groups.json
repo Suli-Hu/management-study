@@ -8,8 +8,8 @@
   "flow": "",
   "scope": "public",
   "kind": "manual",
-  "isDefault": true,
-  "position": 0,
+  "isDefault": false,
+  "position": 1,
   "groups": [
     {
       "id": "marketing_strategy",
@@ -69,5 +69,5 @@
     }
   ],
   "createdAt": "2026-04-30T06:30:00.000Z",
-  "updatedAt": "2026-05-02T12:01:13.285Z"
+  "updatedAt": "2026-05-02T14:29:04.550Z"
 }
