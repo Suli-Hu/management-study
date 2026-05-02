@@ -2,7 +2,6 @@
   "id": "m116",
   "discipline": "marketing",
   "schools": [
-    "managerial",
     "strategic_marketing",
     "product_strategy"
   ],
@@ -38,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T07:35:31.586Z",
-  "updatedAt": "2026-05-02T11:54:01.695Z"
+  "updatedAt": "2026-05-02T12:19:48.933Z"
 }
