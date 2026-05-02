@@ -638,8 +638,28 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
   }
 
   // ============================================================
-  // 视图 B · 知识点排行（v0.5.5）
+  // 视图 B · 知识点排行（v0.5.5 / v0.7.21 多维度排序）
   // ============================================================
+
+  // 排序状态：默认按累计降序；点同列 toggle 方向，点不同列 reset 到 desc
+  let rankSortField = 'totalMin';  // 'totalMin' | 'count' | 'avg' | 'lastDate'
+  let rankSortDir = 'desc';        // 'desc' | 'asc'
+
+  function setRankSort(field) {
+    if (rankSortField === field) {
+      rankSortDir = rankSortDir === 'desc' ? 'asc' : 'desc';
+    } else {
+      rankSortField = field;
+      rankSortDir = 'desc';
+    }
+    renderRankList();
+  }
+
+  function rankSortValue(row, field) {
+    if (field === 'avg') return row.ratingCount > 0 ? row.ratingSum / row.ratingCount : -1;
+    if (field === 'lastDate') return row.lastDate || '';
+    return row[field] ?? 0;
+  }
 
   function renderRankList() {
     const list = document.querySelector('[data-rank-list]');
@@ -676,17 +696,30 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
       if (s.date > e.lastDate) e.lastDate = s.date;
     }
 
-    const ranked = [...byKp.values()].sort((a, b) => b.totalMin - a.totalMin);
-    const maxMin = ranked[0]?.totalMin ?? 1;
+    // 先按当前 sort 字段排，进度条 maxMin 仍按累计取（条形图视觉与排序解耦）
+    const ranked = [...byKp.values()].sort((a, b) => {
+      const av = rankSortValue(a, rankSortField);
+      const bv = rankSortValue(b, rankSortField);
+      if (av < bv) return rankSortDir === 'desc' ? 1 : -1;
+      if (av > bv) return rankSortDir === 'desc' ? -1 : 1;
+      return 0;
+    });
+    const maxMin = Math.max(...ranked.map((r) => r.totalMin), 1);
     const totalAll = ranked.reduce((s, r) => s + r.totalMin, 0);
+
+    function colHtml(label, field) {
+      const active = rankSortField === field;
+      const arrow = active ? (rankSortDir === 'desc' ? '↓' : '↑') : '';
+      return `<button type="button" class="sl-rank-col-num sl-rank-col-btn${active ? ' is-active' : ''}" data-rank-sort="${field}">${escapeHtml(label)}<span class="sl-rank-arrow">${arrow}</span></button>`;
+    }
 
     list.innerHTML = `
       <div class="sl-rank-head">
         <span class="sl-rank-col-title">知识点</span>
-        <span class="sl-rank-col-num">累计</span>
-        <span class="sl-rank-col-num">次数</span>
-        <span class="sl-rank-col-num">平均评分</span>
-        <span class="sl-rank-col-num">最近</span>
+        ${colHtml('累计', 'totalMin')}
+        ${colHtml('次数', 'count')}
+        ${colHtml('平均评分', 'avg')}
+        ${colHtml('最近', 'lastDate')}
       </div>
       ${ranked.map((r) => {
         const pct = Math.max(2, Math.round((r.totalMin / maxMin) * 100));
@@ -828,6 +861,13 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
 
   renderTierList();
   renderRankList();
+
+  // 知识点排行 column header 排序：event delegation（list 内容会重渲染，header 也重渲染）
+  document.querySelector('[data-rank-list]')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-rank-sort]');
+    if (!btn) return;
+    setRankSort(btn.getAttribute('data-rank-sort'));
+  });
 
   // ============================================================
   // SessionEditor (v0.5.5)
@@ -1581,6 +1621,27 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     text-transform: uppercase;
   }
   .sl-rank-col-num { text-align: right; }
+  .sl-rank-col-btn {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    text-align: right;
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    padding: 2px 0;
+    user-select: none;
+    transition: color .12s;
+  }
+  .sl-rank-col-btn:hover { color: #525252; }
+  .sl-rank-col-btn.is-active { color: #0a0a0a; font-weight: 600; }
+  .sl-rank-arrow {
+    display: inline-block;
+    margin-left: 3px;
+    width: 8px;
+    color: #0a0a0a;
+  }
   .sl-rank-row {
     position: relative;
     border-bottom: 1px solid #f5f5f4;
