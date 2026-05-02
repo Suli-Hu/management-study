@@ -15,33 +15,59 @@
       "id": "marketing_strategy",
       "title": "战略与定位",
       "flow": "如何选择市场 → 如何在选定市场中赢",
-      "schoolIds": ["managerial", "marketing_concept", "strategic_marketing"]
+      "schoolIds": [
+        "managerial",
+        "stp_positioning",
+        "marketing_concept",
+        "strategic_marketing",
+        "global_marketing"
+      ]
     },
     {
       "id": "consumer_market",
       "title": "消费者与市场",
       "flow": "市场内部结构 → 消费者行为 → B2B 视角",
-      "schoolIds": ["consumer_behavior", "cct_interpretive", "b2b_marketing"]
+      "schoolIds": [
+        "consumer_behavior",
+        "marketing_research",
+        "cct_interpretive",
+        "b2b_marketing"
+      ]
     },
     {
       "id": "value_creation",
       "title": "价值创造",
       "flow": "品牌资产化 → 渠道与零售",
-      "schoolIds": ["brand_equity", "channel_retail"]
+      "schoolIds": [
+        "product_strategy",
+        "pricing_strategy",
+        "brand_equity",
+        "channel_retail",
+        "retail_management"
+      ]
     },
     {
       "id": "value_communication",
       "title": "价值传达",
       "flow": "整合传播 → 数字时代",
-      "schoolIds": ["imc_communication", "digital_marketing"]
+      "schoolIds": [
+        "imc_communication",
+        "digital_marketing"
+      ]
     },
     {
       "id": "growth_relationship",
       "title": "成长与关系",
       "flow": "关系营销 → SDL → 社会营销 → 创业营销",
-      "schoolIds": ["relationship", "sdl", "social_marketing", "effectuation"]
+      "schoolIds": [
+        "relationship",
+        "service_marketing",
+        "sdl",
+        "social_marketing",
+        "effectuation"
+      ]
     }
   ],
   "createdAt": "2026-04-30T06:30:00.000Z",
-  "updatedAt": "2026-04-30T06:30:00.000Z"
+  "updatedAt": "2026-05-02T12:01:13.285Z"
 }
