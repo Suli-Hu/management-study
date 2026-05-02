@@ -3,7 +3,8 @@
   "discipline": "marketing",
   "schools": [
     "channel_retail",
-    "imc_communication"
+    "imc_communication",
+    "retail_management"
   ],
   "scholars": [
     "schultz"
@@ -37,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T09:26:42.758Z",
-  "updatedAt": "2026-04-30T13:25:36.669Z"
+  "updatedAt": "2026-05-02T11:55:00.590Z"
 }
