@@ -344,7 +344,7 @@ describe('POST /api/auth/password-reset-confirm', () => {
       token: 'tk1', password: 'NewPass2026', password_confirm: 'NewPass2026',
     });
     const res = await resetConfirmPOST(makeCtx(req, { ...baseEnv, DB: db }));
-    expect(res.headers.get('Location')).toBe('http://localhost/login');
+    expect(res.headers.get('Location')).toBe('http://localhost/signin');
     expect(decodeURIComponent(res.headers.get('Set-Cookie') ?? '')).toContain('"error":"invalid_or_expired"');
   });
 

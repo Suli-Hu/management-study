@@ -136,7 +136,7 @@ function failWith(
   return new Response(null, {
     status: 303,
     headers: {
-      Location: `${origin}/login`,
+      Location: `${origin}/signin`,
       // email 保留方便回填，error 让前端显示文案
       'Set-Cookie': buildFlashCookie({ error: errorKey, email }, isSecure),
     },

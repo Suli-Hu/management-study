@@ -174,7 +174,7 @@ describe('POST /api/auth/login-password — gating', () => {
     const req = formReq('http://localhost/api/auth/login-password', { email: '', password: KNOWN_PASSWORD });
     const res = await loginPasswordPOST(makeCtx(req, { ...baseEnv, DB: createMockD1() }));
     expect(res.status).toBe(303);
-    expect(res.headers.get('Location')).toBe('http://localhost/login');
+    expect(res.headers.get('Location')).toBe('http://localhost/signin');
     expect(decodeURIComponent(res.headers.get('Set-Cookie') ?? '')).toContain('"error":"bad_credentials"');
   });
 

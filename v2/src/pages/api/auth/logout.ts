@@ -1,6 +1,8 @@
 /**
  * POST /api/auth/logout
- *   清 cookie + redirect /（v0.3.5 起 cookie 是 stateless signed，清掉即失效）
+ *   清 cookie + redirect /signin（v0.7.9 改：跳 /signin 而非 /，让真账户
+ *   用户 logout 后直接看到账户登录页；演示访客通常不主动 logout，少数
+ *   走错的可点 footer "演示访问 →" 回 /login）
  */
 
 import type { APIRoute } from 'astro';
@@ -14,7 +16,7 @@ export const POST: APIRoute = async ({ request }) => {
   return new Response(null, {
     status: 302,
     headers: {
-      Location: `${reqOrigin}/`,
+      Location: `${reqOrigin}/signin`,
       'Set-Cookie': buildClearCookie(isSecure),
     },
   });
