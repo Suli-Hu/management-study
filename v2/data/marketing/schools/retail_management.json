@@ -1,0 +1,28 @@
+{
+  "key": "retail_management",
+  "discipline": "marketing",
+  "title": {
+    "zh": "零售与小售管理",
+    "ja": "小売・リテール・マネジメント",
+    "en": "Retail Management"
+  },
+  "era": "1960– 小售业态与店铺管理",
+  "summary": {
+    "zh": "<strong>零售与小售管理</strong>聚焦小售业态、店铺氛围、POP、批发、PB/NB、SPA 与全渠道等靠近消费者接点的流通管理问题。",
+    "ja": "<strong>小売・リテール・マネジメント</strong>は，小売業態，店舗雰囲気，POP，卸売，PB/NB，SPA，全チャネルなど，消費者接点に近い流通管理を扱う。"
+  },
+  "themeKey": "value_creation",
+  "tags": [],
+  "concepts": [
+    "m046",
+    "m047",
+    "m050",
+    "m173",
+    "m174",
+    "m175",
+    "m176",
+    "m177"
+  ],
+  "createdAt": "2026-05-02T11:48:40.987Z",
+  "updatedAt": "2026-05-02T11:48:40.987Z"
+}
