@@ -377,8 +377,8 @@ const { discipline, allSchools } = Astro.props;
     flex-shrink: 0;
     transition: background .12s, color .12s;
   }
-  .ve-root .ve-group-remove:hover { background: #fef2f2; color: #dc2626; }
-  html.dark .ve-root .ve-group-remove:hover { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .ve-root .ve-group-remove:hover { background: var(--s-danger-soft); color: var(--s-danger); }
+  html.dark .ve-root .ve-group-remove:hover { background: var(--s-danger-soft); color: var(--s-danger); }
 
   /* chips inside group card — read-only-ish, click × to remove */
   .ve-root .ve-group-chips {
@@ -426,7 +426,7 @@ const { discipline, allSchools } = Astro.props;
   }
   .ve-root .ve-school-chip-x:hover {
     background: rgba(239,68,68,0.12);
-    color: #dc2626;
+    color: var(--s-danger);
   }
 
   /* === Right rail === */

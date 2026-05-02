@@ -448,8 +448,14 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
   }
 
   function fmtMD(yyyymmdd) {
+    // v0.7.26: 改成 MM/DD 格式（旧 4-23 → 04/23）
     const [, m, d] = yyyymmdd.split('-');
-    return `${parseInt(m, 10)}-${d.padStart(2, '0')}`;
+    return `${m.padStart(2, '0')}/${d.padStart(2, '0')}`;
+  }
+
+  /** v0.7.26: 日期主标签 — 今天 / 昨天 / 前天 / MM/DD（不再带「-」连字符） */
+  function dateLabel(yyyymmdd) {
+    return relativeDay(yyyymmdd) ?? fmtMD(yyyymmdd);
   }
 
   function chineseDay(yyyymmdd) {
@@ -633,8 +639,10 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
 
     const groupsHtml = [...byDate.entries()].map(([date, items]) => {
       const totalMin = items.reduce((sum, x) => sum + x.duration_min, 0);
-      const rel = relativeDay(date);
-      const head = `${rel ? rel + ' · ' : ''}${fmtMD(date)} ${chineseDay(date)} · ${items.length} 次 · ${fmtDuration(totalMin)}`;
+      // v0.7.26: head 拆 split layout — 主标签（今天/MM/DD）+ 周X + 右侧统计，去重
+      const headLabel = escapeHtml(dateLabel(date));
+      const headDow = escapeHtml(chineseDay(date));
+      const headStat = escapeHtml(`${items.length} 次 · ${fmtDuration(totalMin)}`);
       const rows = items.map((s) => {
         const kpTitle = escapeHtml(s.kp_title ?? (s.kp_id ? `[已删除] ${s.kp_id}` : '[KP 信息缺失]'));
         const schoolTitle = escapeHtml(s.school_title ?? '');
@@ -661,7 +669,12 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
       }).join('');
       return `
         <div class="sl-group">
-          <p class="sl-group-head">${escapeHtml(head)}</p>
+          <div class="sl-group-head">
+            <span class="sl-group-head-label">${headLabel}</span>
+            <span class="sl-group-head-dow">${headDow}</span>
+            <span class="sl-group-head-spacer"></span>
+            <span class="sl-group-head-stat">${headStat}</span>
+          </div>
           <div class="sl-group-rows">${rows}</div>
         </div>
       `;
@@ -1824,13 +1837,29 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
   .sl-group + .sl-group {
     border-top: 1px solid #f5f5f4;
   }
+  /* v0.7.26: split layout — 左 dateLabel + 周X，右 stat。日期主标签加重，去重 */
   .sl-group-head {
-    font-size: 11.5px;
-    color: #a3a3a3;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
     margin: 0;
     padding: 12px 20px 6px;
     background: #fafaf9;
-    letter-spacing: 0.02em;
+  }
+  .sl-group-head-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0a0a0a;
+  }
+  .sl-group-head-dow {
+    font-size: 11px;
+    color: #a3a3a3;
+  }
+  .sl-group-head-spacer { flex: 1; }
+  .sl-group-head-stat {
+    font-size: 11px;
+    color: #737373;
+    font-variant-numeric: tabular-nums;
   }
   .sl-group-rows {
     padding: 4px 0;
@@ -2515,18 +2544,48 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     .sl-heatmap-title [data-title-desktop] { display: none; }
     .sl-heatmap-title [data-title-mobile] { display: inline; }
     .sl-heatmap-legend { display: none; }
+    /* v0.7.26: 手机版单行紧凑 ~38px 高（旧多行 64-90px → 单行 ~38px） */
     .sl-row-main {
-      grid-template-columns: 1fr auto;
-      gap: 6px;
-      padding: 10px 16px;
+      grid-template-columns: 36px 1fr auto auto 12px;
+      gap: 8px;
+      padding: 9px 12px;
+      align-items: center;
     }
-    .sl-row-time, .sl-row-school, .sl-row-note-preview, .sl-row-rating, .sl-row-chevron {
-      grid-column: span 2;
+    .sl-row-time {
       font-size: 11px;
+      color: #a3a3a3;
       text-align: left;
     }
-    .sl-row-time { color: #a3a3a3; }
-    .sl-row-dur { font-size: 14px; }
+    .sl-row-kp {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #171717;
+    }
+    /* mobile 收起非主要元素 */
+    .sl-row-school,
+    .sl-row-note-preview,
+    .sl-row-actions {
+      display: none;
+    }
+    .sl-row-rating {
+      font-size: 9px;
+      opacity: 0.85;
+      letter-spacing: 0.5px;
+    }
+    .sl-row-dur {
+      font-size: 12px;
+      font-weight: 600;
+      min-width: 48px;
+    }
+    .sl-row-chevron {
+      font-size: 8px;
+      color: #d4d4d4;
+    }
+    .sl-row-note {
+      padding: 4px 12px 12px 56px;
+      font-size: 12.5px;
+      line-height: 1.6;
+    }
 
     /* 段位榜窄屏：sparkline 隐藏，quiz chip 缩到右下 */
     .sl-tier-row {
@@ -3106,33 +3165,45 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
   }
 
   /* ============================================================
-     @media print — 隐藏 screen UI、唯一显示 #print-root
+     @media print — v0.7.26 增强：保留色块、防溢出
      ============================================================ */
   @media print {
     @page {
       size: A4 portrait;
       margin: 14mm;
     }
-    body {
+    html, body {
       background: #fff !important;
-    }
-    /* 屏幕 UI 全隐 */
-    body > *:not(#print-root) {
-      display: none !important;
-    }
-    /* 但 study-log main 内嵌的 #print-root 也得显式释放 */
-    .study-log,
-    .study-log > * {
-      display: none !important;
-    }
-    #print-root {
+      width: auto !important;
+      margin: 0 !important;
+      padding: 0 !important;
       display: block !important;
-      position: static !important;
-      width: 100% !important;
-      visibility: visible !important;
     }
+    /* 屏幕 UI 用 visibility 隐藏（保留 layout 让 #print-root absolute 浮出） */
+    body * {
+      visibility: hidden !important;
+    }
+    /* #print-root 及后代单独 visible */
+    #print-root,
     #print-root * {
       visibility: visible !important;
+    }
+    #print-root {
+      position: absolute !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      display: block !important;
+      box-sizing: border-box !important;
+      /* 关键：让浏览器打印背景色（默认 Chrome 会去掉，色块会变白） */
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    /* 防子元素溢出 */
+    #print-root *,
+    #print-root *::before,
+    #print-root *::after {
+      box-sizing: border-box !important;
     }
   }
 </style>

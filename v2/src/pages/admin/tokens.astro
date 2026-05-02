@@ -353,8 +353,8 @@ const userAccess = users.map((u) => ({
     font-family: inherit;
   }
   .token-revoke-btn:hover {
-    border-color: #FF3B30;
-    color: #FF3B30;
+    border-color: var(--s-danger);
+    color: var(--s-danger);
   }
 
   /* === 空态 === */
@@ -400,14 +400,14 @@ const userAccess = users.map((u) => ({
     display: flex;
     gap: 12px;
     padding: 12px 14px;
-    background: color-mix(in srgb, #FF9500 9%, var(--color-bg-primary));
-    border: 1px solid color-mix(in srgb, #FF9500 35%, transparent);
+    background: color-mix(in srgb, var(--s-warning) 9%, var(--color-bg-primary));
+    border: 1px solid color-mix(in srgb, var(--s-warning) 35%, transparent);
     border-radius: 8px;
     align-items: flex-start;
   }
   .reveal-warn-icon { font-size: 16px; line-height: 1.2; color: #c46e00; }
-  .reveal-warn-title { font-size: 13px; font-weight: 600; color: #8a5200; }
-  .reveal-warn-sub { font-size: 12px; color: #8a5200; opacity: 0.9; margin-top: 2px; }
+  .reveal-warn-title { font-size: 13px; font-weight: 600; color: var(--s-warning); }
+  .reveal-warn-sub { font-size: 12px; color: var(--s-warning); opacity: 0.9; margin-top: 2px; }
   .reveal-meta {
     font-size: 12px;
     color: var(--color-text-tertiary);
@@ -440,8 +440,8 @@ const userAccess = users.map((u) => ({
     font-family: inherit;
   }
   .reveal-btn-primary.is-copied {
-    background: #34C759;
-    border-color: #34C759;
+    background: var(--s-success);
+    border-color: var(--s-success);
   }
   .reveal-btn-secondary {
     padding: 9px 16px;
@@ -462,7 +462,7 @@ const userAccess = users.map((u) => ({
 <script>
   // @ts-nocheck
   const $ = (s) => document.querySelector(s);
-  const ACCENT_PALETTE = ['#34C759', '#FF9500', '#007AFF'];
+  const ACCENT_PALETTE = ['var(--s-success)', 'var(--s-warning)', '#007AFF'];
   const USER_ACCESS = JSON.parse(document.getElementById('token-user-access').textContent || '[]');
   const DISCIPLINE_LABELS = JSON.parse(document.getElementById('token-discipline-labels').textContent || '{}');
 

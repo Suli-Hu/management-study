@@ -280,12 +280,12 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
   }
   .disc-btn-edit:hover { border-color: var(--color-text-primary); color: var(--color-text-primary); }
   .disc-btn-delete.is-can {
-    color: #FF3B30;
-    border-color: color-mix(in srgb, #FF3B30 30%, var(--color-border));
+    color: var(--s-danger);
+    border-color: color-mix(in srgb, var(--s-danger) 30%, var(--color-border));
   }
   .disc-btn-delete.is-can:hover {
-    background: color-mix(in srgb, #FF3B30 8%, transparent);
-    border-color: #FF3B30;
+    background: color-mix(in srgb, var(--s-danger) 8%, transparent);
+    border-color: var(--s-danger);
   }
   .disc-btn-delete.is-locked {
     cursor: not-allowed;
@@ -389,7 +389,7 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
   .disc-field-row { display: flex; gap: 12px; }
   .disc-field-row .disc-field { flex: 1; }
   .disc-label { font-size: 11px; color: var(--color-text-tertiary); font-weight: 500; }
-  .disc-req { color: #FF3B30; }
+  .disc-req { color: var(--s-danger); }
   .disc-input {
     padding: 8px 10px;
     border: 1px solid var(--color-border);

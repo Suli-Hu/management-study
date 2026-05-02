@@ -83,13 +83,13 @@
 }
 .app-toast-x:hover { opacity: 1; }
 
-/* === 类型 (亮色) — 文字带弱色调，icon 同色更亮一点 === */
-.app-toast--success           { color: #2a7c44; }
-.app-toast--success .app-toast-icon { color: #34C759; opacity: 0.9; }
-.app-toast--warning           { color: #8a5200; }
-.app-toast--warning .app-toast-icon { color: #FF9500; opacity: 0.9; }
-.app-toast--error             { color: #a3231b; }
-.app-toast--error .app-toast-icon   { color: #FF3B30; opacity: 0.9; }
+/* === 类型 (亮色) — v0.7.24 切到 sumi --s-* token === */
+.app-toast--success           { color: var(--s-success); }
+.app-toast--success .app-toast-icon { color: var(--s-success); opacity: 0.9; }
+.app-toast--warning           { color: var(--s-warning); }
+.app-toast--warning .app-toast-icon { color: var(--s-warning); opacity: 0.9; }
+.app-toast--error             { color: var(--s-danger); }
+.app-toast--error .app-toast-icon   { color: var(--s-danger); opacity: 0.9; }
 
 /* info：中性灰半透明 11px，最克制 */
 .app-toast--info              { color: var(--color-text-quaternary); font-size: 11px; }
@@ -100,6 +100,7 @@ html.dark .app-toast {
   background: rgba(40, 40, 44, 0.88);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.2);
 }
-html.dark .app-toast--success { color: #6dd99e; }
-html.dark .app-toast--warning { color: #ffb84d; }
-html.dark .app-toast--error   { color: #ff7c75; }
+/* dark mode 提亮 0.20 L 保证暗底下 contrast */
+html.dark .app-toast--success { color: oklch(from var(--s-success) calc(l + 0.20) c h); }
+html.dark .app-toast--warning { color: oklch(from var(--s-warning) calc(l + 0.20) c h); }
+html.dark .app-toast--error   { color: oklch(from var(--s-danger)  calc(l + 0.20) c h); }

@@ -91,14 +91,14 @@ if (!Astro.locals.canEdit(discipline)) return Astro.redirect(`/${discipline}`);
       saveStatus.innerHTML = `✓ commit <code>${data.commit_sha?.slice(0, 7)}</code>，跳转中...`;
       setTimeout(() => { location.href = `/${discipline}`; }, 1500);
     } else if (res.status === 409 && data.reason === 'key_exists') {
-      saveStatus.innerHTML = `<span style="color:#FF3B30">key 已存在</span>`;
+      saveStatus.innerHTML = `<span style="color:var(--s-danger)">key 已存在</span>`;
       saveBtn.disabled = false;
     } else if (res.status === 422) {
       const lines = formatZodIssues(data.detail);
-      saveStatus.innerHTML = `<span style="color:#FF3B30">字段校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
+      saveStatus.innerHTML = `<span style="color:var(--s-danger)">字段校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
       saveBtn.disabled = false;
     } else {
-      saveStatus.innerHTML = `<span style="color:#FF3B30">${res.status} ${data.reason ?? 'error'}</span>`;
+      saveStatus.innerHTML = `<span style="color:var(--s-danger)">${res.status} ${data.reason ?? 'error'}</span>`;
       saveBtn.disabled = false;
     }
   });

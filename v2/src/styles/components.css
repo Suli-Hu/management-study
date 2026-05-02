@@ -1098,14 +1098,14 @@ details.eval {
   width: 100%;
 }
 .kp-admin-mi:hover { background: var(--color-bg-secondary); }
-.kp-admin-mi.is-danger { color: #c8302c; }
-.kp-admin-mi.is-danger:hover { background: color-mix(in oklab, #c8302c 8%, var(--color-bg-primary)); }
+.kp-admin-mi.is-danger { color: var(--s-danger); }
+.kp-admin-mi.is-danger:hover { background: color-mix(in oklab, var(--s-danger) 8%, var(--color-bg-primary)); }
 .kp-admin-mi-ic {
   display: inline-flex; align-items: center; justify-content: center;
   width: 14px; color: var(--color-text-quaternary);
   font-size: 11px;
 }
-.kp-admin-mi.is-danger .kp-admin-mi-ic { color: #c8302c; opacity: 0.7; }
+.kp-admin-mi.is-danger .kp-admin-mi-ic { color: var(--s-danger); opacity: 0.7; }
 
 
 /* ============================================================

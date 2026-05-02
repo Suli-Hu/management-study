@@ -185,12 +185,12 @@ if (!exists) return Astro.redirect('/404');
       _deployWatcher = watchDeploy({ statusEl: saveStatus, commitSha: data.commit_sha, savedAtIso: new Date().toISOString() });
       baseSha = data.new_blob_sha;
     } else if (res.status === 409) {
-      saveStatus.innerHTML = `<span style="color:#FF3B30">冲突：current=${data.current_sha?.slice(0, 7)}，请刷新</span>`;
+      saveStatus.innerHTML = `<span style="color:var(--s-danger)">冲突：current=${data.current_sha?.slice(0, 7)}，请刷新</span>`;
     } else if (res.status === 422) {
       const lines = formatZodIssues(data.detail);
-      saveStatus.innerHTML = `<span style="color:#FF3B30">字段校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
+      saveStatus.innerHTML = `<span style="color:var(--s-danger)">字段校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
     } else {
-      saveStatus.innerHTML = `<span style="color:#FF3B30">${res.status} ${data.reason ?? 'error'}: ${String(data.detail).slice(0, 80)}</span>`;
+      saveStatus.innerHTML = `<span style="color:var(--s-danger)">${res.status} ${data.reason ?? 'error'}: ${String(data.detail).slice(0, 80)}</span>`;
     }
     saveBtn.disabled = false;
   }
