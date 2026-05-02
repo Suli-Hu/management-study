@@ -3,7 +3,8 @@
   "discipline": "marketing",
   "schools": [
     "managerial",
-    "effectuation"
+    "effectuation",
+    "product_strategy"
   ],
   "scholars": [
     "kotler",
@@ -39,5 +40,5 @@
     }
   },
   "createdAt": "2026-04-30T07:36:05.605Z",
-  "updatedAt": "2026-04-30T13:24:04.832Z"
+  "updatedAt": "2026-05-02T11:54:18.427Z"
 }
