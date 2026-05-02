@@ -21,6 +21,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:learning-flow": "tsx scripts/test-learning-flow.ts",
+    "seed:study-log": "tsx scripts/seed-study-log.ts",
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install --with-deps chromium"
   },
