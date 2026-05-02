@@ -3,7 +3,8 @@
   "discipline": "marketing",
   "schools": [
     "managerial",
-    "brand_equity"
+    "brand_equity",
+    "stp_positioning"
   ],
   "scholars": [
     "kotler"
@@ -37,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:24:21.912Z",
-  "updatedAt": "2026-04-30T13:23:02.580Z"
+  "updatedAt": "2026-05-02T11:53:51.665Z"
 }
