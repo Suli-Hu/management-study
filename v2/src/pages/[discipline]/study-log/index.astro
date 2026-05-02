@@ -1496,34 +1496,33 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     }
 
     function renderHeatmapSection({ heatDays, startDate, days, num }) {
+      // v0.7.29: 改成 7 列 grid (一周一行)，cells flex:1 占满 page 宽
+      // 旧 weeks 列布局让 7 天 = 1-2 列，page 上视觉占比 < 10% → 用户感觉"信息没展开"
       const start = new Date(startDate + 'T00:00:00');
-      const startDow = (start.getDay() + 6) % 7;
+      const startDow = (start.getDay() + 6) % 7; // 周一=0
       const cells = [];
       for (let i = 0; i < startDow; i++) cells.push(null);
       cells.push(...heatDays);
       while (cells.length % 7 !== 0) cells.push(null);
-      const weeks = [];
-      for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
 
       let h = '<section class="sle-section">';
       h += sectionHead(num, '日历热力图', `${days} 天 · 颜色越深表示学习越多`);
-      h += '<div class="sle-heatmap-wrap"><div class="sle-heatmap-dows">';
+      h += '<div class="sle-heatmap-row-dows">';
       for (const d of ['一', '二', '三', '四', '五', '六', '日']) h += `<span>${d}</span>`;
-      h += '</div><div class="sle-heatmap-grid">';
-      for (const wk of weeks) {
-        h += '<div class="sle-heatmap-week">';
-        for (const c of wk) {
-          if (c) {
-            const lvl = heatLevel(c.min);
-            const border = lvl === 0 ? 'border:1px solid #ececec;' : '';
-            h += `<div class="sle-heatmap-cell" style="background:${HEAT_COLORS[lvl]};${border}" title="${c.date} · ${sleFmtDur(c.min)}"></div>`;
-          } else {
-            h += '<div class="sle-heatmap-empty"></div>';
-          }
+      h += '</div>';
+      h += '<div class="sle-heatmap-row-grid">';
+      for (const c of cells) {
+        if (c) {
+          const lvl = heatLevel(c.min);
+          const border = lvl === 0 ? 'border:1px solid #ececec;' : '';
+          const day = parseInt(c.date.split('-')[2], 10);
+          const colorClass = lvl >= 4 ? ' sle-heatmap-row-cell-dark' : '';
+          h += `<div class="sle-heatmap-row-cell${colorClass}" style="background:${HEAT_COLORS[lvl]};${border}" title="${c.date} · ${sleFmtDur(c.min)}">${day}</div>`;
+        } else {
+          h += '<div class="sle-heatmap-row-empty"></div>';
         }
-        h += '</div>';
       }
-      h += '</div></div>';
+      h += '</div>';
       h += '<div class="sle-heatmap-legend"><span>少</span>';
       for (let i = 0; i < HEAT_COLORS.length; i++) {
         const border = i === 0 ? 'border:1px solid #ececec;' : '';
@@ -2999,41 +2998,38 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     color: #737373;
   }
 
-  .sle-heatmap-wrap {
-    display: flex;
-    gap: 18px;
-    align-items: flex-start;
-  }
-  .sle-heatmap-dows {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 10px;
+  /* v0.7.29: heatmap 改 7 列 grid（一周一行），cells flex 等分 page 宽 */
+  .sle-heatmap-row-dows {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    font-size: 11px;
     color: #a3a3a3;
-    padding-top: 2px;
+    text-align: center;
+    margin-bottom: 8px;
   }
-  .sle-heatmap-dows span {
-    height: 16px;
+  .sle-heatmap-row-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .sle-heatmap-row-cell {
+    aspect-ratio: 1;
+    border-radius: 6px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #525252;
+    font-variant-numeric: tabular-nums;
   }
-  .sle-heatmap-grid {
-    display: flex;
-    gap: 4px;
+  .sle-heatmap-row-cell-dark {
+    color: #fff;
+    font-weight: 500;
   }
-  .sle-heatmap-week {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .sle-heatmap-cell {
-    width: 16px;
-    height: 16px;
-    border-radius: 3px;
-  }
-  .sle-heatmap-empty {
-    width: 16px;
-    height: 16px;
+  .sle-heatmap-row-empty {
+    aspect-ratio: 1;
+    /* visually empty 但占位维持 grid layout */
   }
   .sle-heatmap-legend {
     margin-top: 22px;
@@ -3197,11 +3193,16 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
     }
-    /* 防子元素溢出 */
+    /* 防子元素溢出 — 仅 box-sizing，移除 max-width:100%
+       (v0.7.29: max-width:100% 让 grid track 计算异常，封面 stats / rank time 截断) */
     #print-root *,
     #print-root *::before,
     #print-root *::after {
       box-sizing: border-box !important;
+    }
+    /* 仅图片 / table 限 max-width 防溢 */
+    #print-root img,
+    #print-root table {
       max-width: 100% !important;
     }
   }
