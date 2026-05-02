@@ -2,7 +2,8 @@
   "id": "m003",
   "discipline": "marketing",
   "schools": [
-    "managerial"
+    "managerial",
+    "stp_positioning"
   ],
   "scholars": [
     "kotler"
@@ -32,5 +33,5 @@
     }
   },
   "createdAt": "2026-04-30T04:40:14.456Z",
-  "updatedAt": "2026-05-01T02:21:29.923Z"
+  "updatedAt": "2026-05-02T11:53:35.042Z"
 }
