@@ -132,6 +132,34 @@ const tierStatesJson = JSON.stringify(tierStatesEnriched);
 
 // 段位章 / 阈值 SSR 渲染顶部说明
 const tierLevels = TIERS.map((t) => ({ key: t.key, threshold: t.threshold }));
+
+// ============================================================
+// SessionEditor: 拉所有 KP（select 选项，按学派分组）
+// ============================================================
+
+interface KpOptionRow { id: string; title_zh: string; school_key: string | null; school_title: string | null; }
+const kpOptionsResult = await db
+  .prepare(`
+    SELECT
+      k.id, k.title_zh,
+      (SELECT ks.school_key FROM kp_school ks WHERE ks.kp_id = k.id ORDER BY ks.position LIMIT 1) as school_key,
+      (SELECT sc.title_zh FROM kp_school ks INNER JOIN school sc ON sc.key = ks.school_key WHERE ks.kp_id = k.id ORDER BY ks.position LIMIT 1) as school_title
+    FROM kp k
+    WHERE k.discipline = ?
+    ORDER BY k.id
+  `)
+  .bind(discipline)
+  .all<KpOptionRow>();
+const kpOptions = kpOptionsResult.results ?? [];
+
+// 按学派分组：Map<school_title, Array<{id, title_zh}>>
+const kpByGroup = new Map<string, Array<{ id: string; title_zh: string }>>();
+for (const k of kpOptions) {
+  const group = k.school_title ?? '未分组';
+  if (!kpByGroup.has(group)) kpByGroup.set(group, []);
+  kpByGroup.get(group)!.push({ id: k.id, title_zh: k.title_zh });
+}
+const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
 ---
 
 <Layout title={`学习记录 · ${disc.title_zh}`}>
@@ -145,7 +173,7 @@ const tierLevels = TIERS.map((t) => ({ key: t.key, threshold: t.threshold }));
         </p>
         <h1 class="sl-title">学习记录</h1>
       </div>
-      <button type="button" class="sl-add-btn" disabled title="v0.5.5 即将上线">+ 新建记录</button>
+      <button type="button" class="sl-add-btn" data-editor-open>+ 新建记录</button>
     </header>
 
     <div class="sl-switcher" role="tablist">
@@ -204,12 +232,75 @@ const tierLevels = TIERS.map((t) => ({ key: t.key, threshold: t.threshold }));
     </section>
 
     {/* ============================================================ */}
-    {/* 视图 B 占位（v0.5.5） */}
+    {/* 视图 B · 知识点排行（v0.5.5） */}
     {/* ============================================================ */}
-    <section data-view-pane="rank" class="sl-view hidden sl-placeholder">
-      <p>v0.5.5 即将上线 — 知识点排行</p>
-      <p class="sl-placeholder-sub">按累计时长降序，看哪些 KP 占了你最多时间 / 哪些没碰。</p>
+    <section data-view-pane="rank" class="sl-view hidden">
+      <p class="sl-rank-hint">按累计学习时长降序排列；行底 progress 是该 KP 占总时长的百分比。</p>
+      <div data-rank-list class="sl-rank-list">
+        {/* client JS 渲染 */}
+      </div>
+      <p data-rank-empty class="sl-empty hidden">还没有任何学习记录。</p>
     </section>
+
+    {/* ============================================================ */}
+    {/* SessionEditor modal（v0.5.5） */}
+    {/* ============================================================ */}
+    <div data-editor-overlay class="sl-editor-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="sl-editor-title">
+      <div class="sl-editor">
+        <header class="sl-editor-head">
+          <h2 id="sl-editor-title" class="sl-editor-title" data-editor-title>新建学习记录</h2>
+          <button type="button" class="sl-editor-close" data-editor-close aria-label="关闭">×</button>
+        </header>
+        <form data-editor-form class="sl-editor-body">
+          <input type="hidden" name="id" data-editor-id />
+
+          <div class="sl-field">
+            <label class="sl-field-label" for="sl-kp">知识点</label>
+            <select id="sl-kp" name="kp_id" required class="sl-field-input" data-editor-kp></select>
+          </div>
+
+          <div class="sl-field-row">
+            <div class="sl-field">
+              <label class="sl-field-label" for="sl-date">日期</label>
+              <input id="sl-date" type="date" name="date" required class="sl-field-input" data-editor-date />
+            </div>
+            <div class="sl-field">
+              <label class="sl-field-label" for="sl-time">开始时间</label>
+              <input id="sl-time" type="time" name="start_time" required class="sl-field-input" data-editor-time />
+            </div>
+          </div>
+
+          <div class="sl-field-row">
+            <div class="sl-field">
+              <label class="sl-field-label" for="sl-dur">时长（分钟）</label>
+              <input id="sl-dur" type="number" name="duration_min" required min="1" max="600" value="30" class="sl-field-input" data-editor-dur />
+            </div>
+            <div class="sl-field">
+              <label class="sl-field-label">理解度自评</label>
+              <div class="sl-rating" data-editor-rating>
+                {[1,2,3,4,5].map((n) => (
+                  <button type="button" data-rating-val={n} class="sl-rating-star">★</button>
+                ))}
+                <button type="button" data-rating-val="0" class="sl-rating-clear" title="清空">空</button>
+              </div>
+              <input type="hidden" name="rating" data-editor-rating-value value="" />
+            </div>
+          </div>
+
+          <div class="sl-field">
+            <label class="sl-field-label" for="sl-note">心得（可选）</label>
+            <textarea id="sl-note" name="note" rows="3" maxlength="2000" class="sl-field-input sl-field-textarea" placeholder="今天学到什么 · 卡在哪 · 下一步…" data-editor-note></textarea>
+          </div>
+
+          <div data-editor-error class="sl-editor-error hidden"></div>
+
+          <footer class="sl-editor-foot">
+            <button type="button" class="sl-editor-btn-ghost" data-editor-cancel>取消</button>
+            <button type="submit" class="sl-editor-btn-primary" data-editor-submit>保存</button>
+          </footer>
+        </form>
+      </div>
+    </div>
 
     {/* ============================================================ */}
     {/* 视图 C · 学派段位（v0.5.4） */}
@@ -239,6 +330,7 @@ const tierLevels = TIERS.map((t) => ({ key: t.key, threshold: t.threshold }));
 </Layout>
 
 <script is:inline set:html={`window.__SL_TIERS__ = ${tierStatesJson};`}></script>
+<script is:inline set:html={`window.__SL_KPS_GROUPED__ = ${kpGroupedJson};`}></script>
 
 <script is:inline define:vars={{ TODAY, DISCIPLINE: discipline }} set:html={`window.__SL_SESSIONS__ = ${sessionsJson};`}></script>
 
@@ -465,6 +557,10 @@ const tierLevels = TIERS.map((t) => ({ key: t.key, threshold: t.threshold }));
               ${note ? `<span class="sl-row-note-preview">${note.slice(0, 40)}${note.length > 40 ? '…' : ''}</span>` : '<span class="sl-row-note-preview sl-empty-note"></span>'}
               <span class="sl-row-dur">${fmtDuration(s.duration_min)}</span>
               ${rating ? `<span class="sl-row-rating">${rating}</span>` : '<span class="sl-row-rating sl-empty-rating"></span>'}
+              <span class="sl-row-actions">
+                <button type="button" class="sl-row-icon" data-row-edit title="编辑">✎</button>
+                <button type="button" class="sl-row-icon" data-row-delete title="删除">✕</button>
+              </span>
               <span class="sl-row-chevron">▾</span>
             </div>
             ${note ? `<div class="sl-row-note hidden" data-note>${note}</div>` : ''}
@@ -512,6 +608,83 @@ const tierLevels = TIERS.map((t) => ({ key: t.key, threshold: t.threshold }));
     });
     renderStats(days);
     renderList(days);
+    if (typeof bindRowActions === 'function') bindRowActions();
+  }
+
+  // ============================================================
+  // 视图 B · 知识点排行（v0.5.5）
+  // ============================================================
+
+  function renderRankList() {
+    const list = document.querySelector('[data-rank-list]');
+    const empty = document.querySelector('[data-rank-empty]');
+    if (!list || !empty) return;
+
+    if (ALL_SESSIONS.length === 0) {
+      list.innerHTML = '';
+      empty.classList.remove('hidden');
+      return;
+    }
+    empty.classList.add('hidden');
+
+    // 按 kp_id 聚合
+    const byKp = new Map();
+    for (const s of ALL_SESSIONS) {
+      const key = s.kp_id ?? '__deleted__';
+      if (!byKp.has(key)) {
+        byKp.set(key, {
+          kp_id: s.kp_id,
+          kp_title: s.kp_title,
+          school_title: s.school_title,
+          totalMin: 0,
+          count: 0,
+          ratingSum: 0,
+          ratingCount: 0,
+          lastDate: '',
+        });
+      }
+      const e = byKp.get(key);
+      e.totalMin += s.duration_min;
+      e.count += 1;
+      if (s.rating) { e.ratingSum += s.rating; e.ratingCount += 1; }
+      if (s.date > e.lastDate) e.lastDate = s.date;
+    }
+
+    const ranked = [...byKp.values()].sort((a, b) => b.totalMin - a.totalMin);
+    const maxMin = ranked[0]?.totalMin ?? 1;
+    const totalAll = ranked.reduce((s, r) => s + r.totalMin, 0);
+
+    list.innerHTML = `
+      <div class="sl-rank-head">
+        <span class="sl-rank-col-title">知识点</span>
+        <span class="sl-rank-col-num">累计</span>
+        <span class="sl-rank-col-num">次数</span>
+        <span class="sl-rank-col-num">平均评分</span>
+        <span class="sl-rank-col-num">最近</span>
+      </div>
+      ${ranked.map((r) => {
+        const pct = Math.max(2, Math.round((r.totalMin / maxMin) * 100));
+        const avg = r.ratingCount > 0 ? Math.round(r.ratingSum / r.ratingCount) : 0;
+        const stars = avg > 0 ? '★'.repeat(avg) + '☆'.repeat(5 - avg) : '—';
+        const kpDisplay = r.kp_title ?? (r.kp_id ? `[已删除] ${r.kp_id}` : '[KP 信息缺失]');
+        const sharePct = totalAll > 0 ? ((r.totalMin / totalAll) * 100).toFixed(1) : '0';
+        return `
+          <div class="sl-rank-row" title="占总时长 ${sharePct}%">
+            <div class="sl-rank-progress-bg" style="width:${pct}%"></div>
+            <div class="sl-rank-content">
+              <div class="sl-rank-title">
+                <p class="sl-rank-kp">${escapeHtml(kpDisplay)}</p>
+                ${r.school_title ? `<p class="sl-rank-school">${escapeHtml(r.school_title)}</p>` : ''}
+              </div>
+              <span class="sl-rank-num">${fmtDuration(r.totalMin)}</span>
+              <span class="sl-rank-num">${r.count}</span>
+              <span class="sl-rank-num sl-rank-stars">${stars}</span>
+              <span class="sl-rank-num">${fmtMD(r.lastDate)}</span>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    `;
   }
 
   // ============================================================
@@ -628,6 +801,180 @@ const tierLevels = TIERS.map((t) => ({ key: t.key, threshold: t.threshold }));
   });
 
   renderTierList();
+  renderRankList();
+
+  // ============================================================
+  // SessionEditor (v0.5.5)
+  // ============================================================
+
+  const KPS_GROUPED = window.__SL_KPS_GROUPED__ || [];
+  const overlay = document.querySelector('[data-editor-overlay]');
+  const form = document.querySelector('[data-editor-form]');
+  const titleEl = document.querySelector('[data-editor-title]');
+  const idInput = document.querySelector('[data-editor-id]');
+  const kpSelect = document.querySelector('[data-editor-kp]');
+  const dateInput = document.querySelector('[data-editor-date]');
+  const timeInput = document.querySelector('[data-editor-time]');
+  const durInput = document.querySelector('[data-editor-dur]');
+  const ratingValueInput = document.querySelector('[data-editor-rating-value]');
+  const noteInput = document.querySelector('[data-editor-note]');
+  const submitBtn = document.querySelector('[data-editor-submit]');
+  const errorBox = document.querySelector('[data-editor-error]');
+
+  // 初始化 KP select with optgroup
+  if (kpSelect) {
+    kpSelect.innerHTML = '<option value="">— 选择知识点 —</option>' +
+      KPS_GROUPED.map(([group, items]) =>
+        `<optgroup label="${escapeHtml(group)}">${
+          items.map((k) => `<option value="${escapeHtml(k.id)}">${escapeHtml(k.title_zh)}</option>`).join('')
+        }</optgroup>`,
+      ).join('');
+  }
+
+  // Rating star 点击
+  document.querySelectorAll('[data-rating-val]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const val = parseInt(btn.getAttribute('data-rating-val') || '0', 10);
+      ratingValueInput.value = val ? String(val) : '';
+      document.querySelectorAll('[data-rating-val]').forEach((b) => {
+        const v = parseInt(b.getAttribute('data-rating-val') || '0', 10);
+        b.classList.toggle('sl-rating-active', v > 0 && v <= val);
+      });
+    });
+  });
+
+  function nowHM() {
+    const d = new Date();
+    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  }
+
+  function openEditor(session) {
+    if (!overlay || !form) return;
+    errorBox.classList.add('hidden');
+    errorBox.textContent = '';
+    if (session) {
+      titleEl.textContent = '编辑学习记录';
+      idInput.value = session.id;
+      kpSelect.value = session.kp_id ?? '';
+      dateInput.value = session.date;
+      timeInput.value = session.start_time;
+      durInput.value = String(session.duration_min);
+      ratingValueInput.value = session.rating ? String(session.rating) : '';
+      noteInput.value = session.note ?? '';
+      // 同步 rating star UI
+      document.querySelectorAll('[data-rating-val]').forEach((b) => {
+        const v = parseInt(b.getAttribute('data-rating-val') || '0', 10);
+        b.classList.toggle('sl-rating-active', v > 0 && session.rating && v <= session.rating);
+      });
+    } else {
+      titleEl.textContent = '新建学习记录';
+      idInput.value = '';
+      kpSelect.value = '';
+      dateInput.value = TODAY;
+      timeInput.value = nowHM();
+      durInput.value = '30';
+      ratingValueInput.value = '';
+      noteInput.value = '';
+      document.querySelectorAll('[data-rating-val]').forEach((b) => b.classList.remove('sl-rating-active'));
+    }
+    overlay.classList.remove('hidden');
+    setTimeout(() => kpSelect.focus(), 50);
+  }
+
+  function closeEditor() {
+    overlay?.classList.add('hidden');
+  }
+
+  document.querySelector('[data-editor-open]')?.addEventListener('click', () => openEditor(null));
+  document.querySelector('[data-editor-close]')?.addEventListener('click', closeEditor);
+  document.querySelector('[data-editor-cancel]')?.addEventListener('click', closeEditor);
+  // Esc 关闭
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !overlay?.classList.contains('hidden')) closeEditor();
+  });
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorBox.classList.add('hidden');
+    submitBtn.disabled = true;
+    submitBtn.textContent = '保存中…';
+
+    const id = idInput.value.trim();
+    const ratingVal = ratingValueInput.value.trim();
+    const noteVal = noteInput.value.trim();
+    const body = {
+      kp_id: kpSelect.value,
+      date: dateInput.value,
+      start_time: timeInput.value,
+      duration_min: parseInt(durInput.value, 10),
+      rating: ratingVal ? parseInt(ratingVal, 10) : null,
+      note: noteVal || null,
+    };
+    let url, method;
+    if (id) {
+      url = `/api/study-sessions/${encodeURIComponent(id)}`;
+      method = 'PUT';
+    } else {
+      url = '/api/study-sessions';
+      method = 'POST';
+      body.discipline = window.location.pathname.split('/')[1];
+    }
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        // 刷新页面拿最新 SSR 数据
+        window.location.reload();
+        return;
+      }
+      errorBox.textContent = `${data.reason ?? 'error'}${data.detail ? ': ' + (Array.isArray(data.detail) ? data.detail.join('; ') : data.detail) : ''}`;
+      errorBox.classList.remove('hidden');
+    } catch (err) {
+      errorBox.textContent = '网络错误：' + (err?.message ?? err);
+      errorBox.classList.remove('hidden');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = '保存';
+    }
+  });
+
+  // ============================================================
+  // Session 行 hover: 编辑 / 删除按钮（在 renderList 后挂）
+  // ============================================================
+
+  function bindRowActions() {
+    document.querySelectorAll('[data-row]').forEach((row) => {
+      const id = row.getAttribute('data-id');
+      // 已有 click 展开心得；编辑/删除用 button 阻止冒泡
+      const editBtn = row.querySelector('[data-row-edit]');
+      const delBtn = row.querySelector('[data-row-delete]');
+      editBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const s = ALL_SESSIONS.find((x) => x.id === id);
+        if (s) openEditor(s);
+      });
+      delBtn?.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        if (!confirm('确认删除这条学习记录？')) return;
+        try {
+          const r = await fetch(`/api/study-sessions/${encodeURIComponent(id)}`, { method: 'DELETE' });
+          if (r.ok) { window.location.reload(); return; }
+          alert('删除失败：' + r.status);
+        } catch (err) {
+          alert('网络错误：' + err.message);
+        }
+      });
+    });
+  }
+
+  // 启动时已经 setRange(30) 在 init 段调过，但那时 bindRowActions 函数还没定义
+  // → 这里手动 bind 一次
+  bindRowActions();
 
   // 初次渲染：默认 30 天
   renderHeatmap();
@@ -905,12 +1252,32 @@ const tierLevels = TIERS.map((t) => ({ key: t.key, threshold: t.threshold }));
   .sl-row:hover { background: #fafaf9; }
   .sl-row-main {
     display: grid;
-    grid-template-columns: 56px minmax(120px, 1.4fr) auto minmax(0, 2fr) 80px 80px 20px;
+    grid-template-columns: 56px minmax(120px, 1.4fr) auto minmax(0, 2fr) 70px 70px 50px 20px;
     gap: 14px;
     padding: 12px 20px;
     align-items: center;
     font-size: 13px;
   }
+  .sl-row-actions {
+    display: inline-flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity .12s;
+  }
+  .sl-row:hover .sl-row-actions { opacity: 1; }
+  .sl-row-icon {
+    all: unset;
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #a3a3a3;
+    font-size: 12px;
+  }
+  .sl-row-icon:hover { background: #ececec; color: #0a0a0a; }
   .sl-row-time {
     font-variant-numeric: tabular-nums;
     color: #a3a3a3;
@@ -995,6 +1362,81 @@ const tierLevels = TIERS.map((t) => ({ key: t.key, threshold: t.threshold }));
     font-size: 12.5px;
     color: #a3a3a3;
     margin: 0;
+  }
+
+  /* ============================================================
+     视图 B · 知识点排行（v0.5.5）
+     ============================================================ */
+  .sl-rank-hint {
+    font-size: 11.5px;
+    color: #a3a3a3;
+    margin: 0 0 12px;
+  }
+  .sl-rank-list {
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .sl-rank-head {
+    display: grid;
+    grid-template-columns: minmax(200px, 1.6fr) 90px 60px 100px 60px;
+    gap: 14px;
+    padding: 10px 20px;
+    background: #fafaf9;
+    border-bottom: 1px solid #ececec;
+    font-size: 11px;
+    color: #a3a3a3;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .sl-rank-col-num { text-align: right; }
+  .sl-rank-row {
+    position: relative;
+    border-bottom: 1px solid #f5f5f4;
+  }
+  .sl-rank-row:last-child { border-bottom: 0; }
+  .sl-rank-row:hover .sl-rank-progress-bg { background: #ececec; }
+  .sl-rank-progress-bg {
+    position: absolute;
+    inset: 0;
+    background: #f5f5f4;
+    transition: background .12s;
+    z-index: 0;
+  }
+  .sl-rank-content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(200px, 1.6fr) 90px 60px 100px 60px;
+    gap: 14px;
+    padding: 12px 20px;
+    align-items: center;
+    font-size: 13px;
+  }
+  .sl-rank-title { min-width: 0; }
+  .sl-rank-kp {
+    color: #0a0a0a;
+    font-weight: 500;
+    margin: 0 0 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sl-rank-school {
+    font-size: 11px;
+    color: #525252;
+    margin: 0;
+  }
+  .sl-rank-num {
+    text-align: right;
+    color: #0a0a0a;
+    font-variant-numeric: tabular-nums;
+  }
+  .sl-rank-stars {
+    color: #525252;
+    letter-spacing: 1px;
+    font-size: 12px;
   }
 
   /* ============================================================
@@ -1184,6 +1626,162 @@ const tierLevels = TIERS.map((t) => ({ key: t.key, threshold: t.threshold }));
   .sl-tier-c-toggle.hidden { display: none; }
   .sl-view .hidden, .sl-row-note.hidden { display: none; }
 
+  /* ============================================================
+     SessionEditor modal（v0.5.5）
+     ============================================================ */
+  .sl-editor-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 10, 0.18);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .sl-editor-overlay.hidden { display: none; }
+  .sl-editor {
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0,0,0,.16);
+  }
+  .sl-editor-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid #f5f5f4;
+  }
+  .sl-editor-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0a0a0a;
+    margin: 0;
+  }
+  .sl-editor-close {
+    all: unset;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    color: #a3a3a3;
+    font-size: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sl-editor-close:hover { background: #f5f5f4; color: #0a0a0a; }
+  .sl-editor-body {
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .sl-field { display: flex; flex-direction: column; gap: 6px; }
+  .sl-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .sl-field-label {
+    font-size: 11.5px;
+    color: #525252;
+  }
+  .sl-field-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid #ececec;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #0a0a0a;
+    background: #fff;
+    outline: none;
+    transition: border-color .12s;
+  }
+  .sl-field-input:focus { border-color: #0a0a0a; }
+  .sl-field-textarea {
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
+  }
+
+  /* Rating star */
+  .sl-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 0;
+  }
+  .sl-rating-star {
+    all: unset;
+    cursor: pointer;
+    color: #d4d4d4;
+    font-size: 22px;
+    line-height: 1;
+    padding: 0 2px;
+    transition: color .08s;
+  }
+  .sl-rating-star:hover, .sl-rating-star.sl-rating-active {
+    color: #0a0a0a;
+  }
+  .sl-rating-clear {
+    all: unset;
+    cursor: pointer;
+    margin-left: 8px;
+    color: #a3a3a3;
+    font-size: 11px;
+    padding: 2px 6px;
+    border: 1px solid #ececec;
+    border-radius: 4px;
+  }
+  .sl-rating-clear:hover { color: #0a0a0a; border-color: #a3a3a3; }
+
+  .sl-editor-error {
+    padding: 8px 12px;
+    background: #fff7f7;
+    border: 1px solid #f0d5d5;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #c53030;
+  }
+  .sl-editor-error.hidden { display: none; }
+
+  .sl-editor-foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .sl-editor-btn-ghost {
+    all: unset;
+    cursor: pointer;
+    padding: 8px 14px;
+    border-radius: 6px;
+    color: #525252;
+    font-size: 13px;
+  }
+  .sl-editor-btn-ghost:hover { background: #f5f5f4; }
+  .sl-editor-btn-primary {
+    all: unset;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 6px;
+    background: #0a0a0a;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .sl-editor-btn-primary:hover { background: #262626; }
+  .sl-editor-btn-primary[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
   /* 响应式 */
   @media (max-width: 768px) {
     .study-log { padding: 24px 16px 80px; }
@@ -1217,5 +1815,17 @@ const tierLevels = TIERS.map((t) => ({ key: t.key, threshold: t.threshold }));
     }
     .sl-tier-spark-wrap { display: none; }
     .sl-tier-quiz { padding: 3px 8px; font-size: 10px; }
+
+    /* 排行榜窄屏：评分 / 最近 隐藏，留 KP / 累计 / 次数 */
+    .sl-rank-head, .sl-rank-content {
+      grid-template-columns: 1fr 70px 40px;
+      gap: 10px;
+      padding-left: 14px;
+      padding-right: 14px;
+    }
+    .sl-rank-head .sl-rank-col-num:nth-child(4),
+    .sl-rank-head .sl-rank-col-num:nth-child(5),
+    .sl-rank-content .sl-rank-num:nth-child(4),
+    .sl-rank-content .sl-rank-num:nth-child(5) { display: none; }
   }
 </style>
