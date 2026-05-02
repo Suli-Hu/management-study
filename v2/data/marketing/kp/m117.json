@@ -3,7 +3,8 @@
   "discipline": "marketing",
   "schools": [
     "sdl",
-    "managerial"
+    "managerial",
+    "service_marketing"
   ],
   "scholars": [
     "vargo",
@@ -38,5 +39,5 @@
     }
   },
   "createdAt": "2026-04-30T07:35:33.462Z",
-  "updatedAt": "2026-04-30T13:23:22.180Z"
+  "updatedAt": "2026-05-02T11:54:03.247Z"
 }
