@@ -6,6 +6,7 @@
  * - v0.5.3: 完整日志流
  * - v0.5.4: 学派段位视图（55 学派 / C-B-A 三级 / sparkline / quiz 占位）
  * - v0.5.5: 知识点排行 + 编辑器（即将）
+ * - v0.7.18 (= v0.5.x +): mobile 日历只显示 1 个月（当月），desktop 仍 4 个月
  *
  * 视觉：用户决策"第一版不要颜色"，全中性灰 + 单一蓝色 accent（用于
  * 日历热力图 5 级阶梯 + active 状态）。
@@ -162,7 +163,7 @@ for (const k of kpOptions) {
 const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
 ---
 
-<Layout title={`学习记录 · ${disc.title_zh}`}>
+<Layout title={`学习记录 · ${disc.title_zh}`} currentDiscipline={discipline} currentSection="study-log">
   <main class="study-log">
     <header class="sl-header">
       <div>
@@ -210,7 +211,9 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
       </div>
 
       <div class="sl-heatmap-wrap">
-        <p class="sl-heatmap-title">近 4 个月·每日学习时长</p>
+        <p class="sl-heatmap-title">
+          <span data-title-desktop>近 4 个月</span><span data-title-mobile>近 1 个月</span>·每日学习时长
+        </p>
         <div class="sl-heatmap-legend">
           少
           <span class="sl-heat sl-heat-0"></span>
@@ -1166,6 +1169,7 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     color: #525252;
     margin: 0 0 14px;
   }
+  .sl-heatmap-title [data-title-mobile] { display: none; }
   .sl-heatmap-legend {
     position: absolute;
     top: 18px;
@@ -1845,7 +1849,10 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     .study-log { padding: 24px 16px 80px; }
     .sl-stats { grid-template-columns: 1fr; gap: 16px; padding: 18px 20px; }
     .sl-stat-value { font-size: 32px; }
-    .sl-heatmap { grid-template-columns: repeat(2, 1fr); }
+    .sl-heatmap { grid-template-columns: 1fr; }
+    .sl-cal-month:not(:last-child) { display: none; }
+    .sl-heatmap-title [data-title-desktop] { display: none; }
+    .sl-heatmap-title [data-title-mobile] { display: inline; }
     .sl-heatmap-legend { display: none; }
     .sl-row-main {
       grid-template-columns: 1fr auto;
