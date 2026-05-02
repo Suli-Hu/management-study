@@ -44,14 +44,22 @@ wrangler d1 execute management-study-v2 --remote --command \
    ('<alice_user_id>','finance','guest','$(date -u +%FT%TZ)','husuli');"
 ```
 
-新邮箱首次登录会自动建 user 行（magic-link 机制）。
+新用户走 `/signup` 自助注册（v0.7.2 起，邮箱 + 密码 + 6 位 code 验证），注册后默认 0 学科权限——home 页所有学科卡片显示 🔒 灰锁，等 super-admin 加白后才能进。
 
-## 登录
+## 登录 / 注册（v0.7 完整账户系统）
 
-两条路径（`/login`）：
+| 入口 | 路径 | 谁用 |
+|---|---|---|
+| **邮箱 + 密码登录**（主路径） | `/login` | 已注册账号 |
+| **注册** | `/signup` → 6 位邮箱 code | 新用户自助 |
+| **忘记密码** | `/password-reset` → 邮件 reset link | 已注册但忘密 |
+| **账户设置** | `/settings/account` | 改 display_name / 改密 / 改邮箱 / 退出所有 / 注销 |
+| **邀请码**（演示通道） | `/login` footer 切换 → 输 `123` | 给朋友看一眼，全学科只读 |
+| **password 模式**（应急 fallback） | `/login`（AUTH_MODE=password 时） | 考试期断网 / 邮件挂 |
 
-1. **邀请码**（默认 tab）：演示码 `123` → 全学科 guest 视角
-2. **邮箱验证码**：邮箱 + 30 天勾 → 收 magic-link 链接 / 6 位 code，按 `user_permission` 表权限进入
+**安全**：PBKDF2-SHA256 100k 轮 + 16 字节 salt；连续 5 次失败锁 30 分钟；改密 / 改邮箱 / 注销账户都要二次验证当前密码 + 失效所有现存 session（防被盗 cookie）。
+
+**super-admin 设置**：在 `wrangler.toml` 的 `ADMIN_EMAILS` 配邮箱后，跑 `pnpm setup:admin`（密码从 `ADMIN_PASSWORD` env 读，不进 git）。详见 [scripts/setup-admin.ts](scripts/setup-admin.ts)。
 
 ## 4 层数据 schema 速查
 
@@ -102,7 +110,8 @@ git add ... && git commit -m "..." && git push
 ```bash
 pnpm install
 pnpm dev                 # http://localhost:4321
-pnpm test                # 234 vitest + 10 playwright
+pnpm test                # vitest unit + integration（429+ tests）
+pnpm test:e2e            # playwright（password 模式 smoke）
 pnpm typecheck           # CI 卡门
 pnpm validate            # 数据 schema + cross-ref
 pnpm sync:d1             # 生成 .wrangler/sync/*.sql
