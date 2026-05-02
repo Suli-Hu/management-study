@@ -1,0 +1,24 @@
+{
+  "key": "marketing_research",
+  "discipline": "marketing",
+  "title": {
+    "zh": "营销调研方法体系",
+    "ja": "マーケティング・リサーチ方法体系",
+    "en": "Marketing Research Methods"
+  },
+  "era": "1920– 市场信息与消费者调查方法",
+  "summary": {
+    "zh": "<strong>营销调研方法体系</strong>整理市场信息收集、消费者调查、数据分析与营销生产性测定的方法。它连接消费者理解与营销决策，是日本大学院过去问中调查方法、定量/定性、抽样与广告效果测定等问题的基础。",
+    "ja": "<strong>マーケティング・リサーチ方法体系</strong>は，市場情報の収集，消費者調査，データ分析，マーケティング生産性測定を扱う方法体系である。"
+  },
+  "themeKey": "consumer_market",
+  "tags": [],
+  "concepts": [
+    "m145",
+    "m146",
+    "m147",
+    "m148"
+  ],
+  "createdAt": "2026-05-02T11:48:36.382Z",
+  "updatedAt": "2026-05-02T11:48:36.382Z"
+}
