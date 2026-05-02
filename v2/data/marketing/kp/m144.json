@@ -2,7 +2,6 @@
   "id": "m144",
   "discipline": "marketing",
   "schools": [
-    "managerial",
     "cct_interpretive",
     "global_marketing"
   ],
@@ -39,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:36:21.725Z",
-  "updatedAt": "2026-05-02T11:54:36.043Z"
+  "updatedAt": "2026-05-02T12:20:21.110Z"
 }
