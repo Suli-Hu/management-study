@@ -2,7 +2,6 @@
   "id": "m005",
   "discipline": "marketing",
   "schools": [
-    "managerial",
     "brand_equity",
     "stp_positioning"
   ],
@@ -40,5 +39,5 @@
     }
   },
   "createdAt": "2026-04-30T04:40:17.764Z",
-  "updatedAt": "2026-05-02T11:53:38.325Z"
+  "updatedAt": "2026-05-02T12:19:28.082Z"
 }
