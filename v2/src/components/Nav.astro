@@ -19,7 +19,7 @@ import Spotlight from '~/components/Spotlight.astro';
 
 interface Props {
   currentDiscipline?: string;
-  currentSection?: 'schools' | 'scholars' | 'kps' | 'search';
+  currentSection?: 'study-log' | 'schools' | 'scholars' | 'kps' | 'search';
   currentLeafTitle?: string;
 }
 
@@ -37,8 +37,9 @@ if (currentDiscipline) {
   disciplineTitle = row?.title_zh ?? null;
 }
 
-const sections: Array<{ key: 'schools' | 'scholars' | 'kps'; label: string; href: string }> = currentDiscipline
+const sections: Array<{ key: 'study-log' | 'schools' | 'scholars' | 'kps'; label: string; href: string }> = currentDiscipline
   ? [
+      { key: 'study-log', label: '学习记录', href: `/${currentDiscipline}/study-log` },
       { key: 'schools', label: '学派', href: `/${currentDiscipline}` },
       { key: 'scholars', label: '学者', href: `/${currentDiscipline}/scholars` },
       { key: 'kps', label: '知识点', href: `/${currentDiscipline}/kp` },
