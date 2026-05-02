@@ -2,7 +2,6 @@
   "id": "m111",
   "discipline": "marketing",
   "schools": [
-    "managerial",
     "brand_equity",
     "imc_communication",
     "stp_positioning"
@@ -39,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:24:23.768Z",
-  "updatedAt": "2026-05-02T11:53:53.390Z"
+  "updatedAt": "2026-05-02T12:19:39.462Z"
 }
