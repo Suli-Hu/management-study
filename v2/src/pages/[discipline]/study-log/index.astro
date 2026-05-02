@@ -176,6 +176,11 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
       <button type="button" class="sl-add-btn" data-editor-open>+ 新建记录</button>
     </header>
 
+    {/* v0.5.6: 手机版 FAB（仅 ≤ 768px 显示，桌面隐藏） */}
+    <button type="button" class="sl-fab" data-editor-open aria-label="新建记录">
+      <span class="sl-fab-plus">+</span>
+    </button>
+
     <div class="sl-switcher" role="tablist">
       <button type="button" data-view="log" class="sl-seg sl-seg-active" role="tab">日志流</button>
       <button type="button" data-view="rank" class="sl-seg" role="tab">知识点排行</button>
@@ -246,7 +251,9 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     {/* SessionEditor modal（v0.5.5） */}
     {/* ============================================================ */}
     <div data-editor-overlay class="sl-editor-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="sl-editor-title">
-      <div class="sl-editor">
+      <div class="sl-editor" data-editor-sheet>
+        {/* v0.5.6: bottom sheet 手机版的拖拽把手；桌面 modal 不显示 */}
+        <div class="sl-editor-handle" data-editor-handle aria-hidden="true"></div>
         <header class="sl-editor-head">
           <h2 id="sl-editor-title" class="sl-editor-title" data-editor-title>新建学习记录</h2>
           <button type="button" class="sl-editor-close" data-editor-close aria-label="关闭">×</button>
@@ -885,13 +892,50 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     overlay?.classList.add('hidden');
   }
 
-  document.querySelector('[data-editor-open]')?.addEventListener('click', () => openEditor(null));
+  // 多个元素都可能 trigger 编辑器（顶部按钮 + 手机 FAB），全部绑
+  document.querySelectorAll('[data-editor-open]').forEach((el) => {
+    el.addEventListener('click', () => openEditor(null));
+  });
   document.querySelector('[data-editor-close]')?.addEventListener('click', closeEditor);
   document.querySelector('[data-editor-cancel]')?.addEventListener('click', closeEditor);
   // Esc 关闭
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !overlay?.classList.contains('hidden')) closeEditor();
   });
+
+  // v0.5.6: bottom sheet 拖拽把手下滑关闭（仅手机视口）
+  const handle = document.querySelector('[data-editor-handle]');
+  const sheet = document.querySelector('[data-editor-sheet]');
+  if (handle && sheet) {
+    let dragStartY = 0;
+    let currentY = 0;
+    let dragging = false;
+    handle.addEventListener('touchstart', (e) => {
+      if (window.innerWidth > 768) return; // 仅手机
+      dragStartY = e.touches[0].clientY;
+      currentY = 0;
+      dragging = true;
+      sheet.style.transition = 'none';
+    }, { passive: true });
+    handle.addEventListener('touchmove', (e) => {
+      if (!dragging) return;
+      currentY = Math.max(0, e.touches[0].clientY - dragStartY);
+      sheet.style.transform = `translateY(${currentY}px)`;
+    }, { passive: true });
+    handle.addEventListener('touchend', () => {
+      if (!dragging) return;
+      dragging = false;
+      sheet.style.transition = '';
+      if (currentY > 80) {
+        // 滑下 ≥ 80px 关闭
+        closeEditor();
+        // 重置
+        setTimeout(() => { sheet.style.transform = ''; }, 300);
+      } else {
+        sheet.style.transform = '';
+      }
+    });
+  }
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1627,8 +1671,22 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
   .sl-view .hidden, .sl-row-note.hidden { display: none; }
 
   /* ============================================================
-     SessionEditor modal（v0.5.5）
+     v0.5.6: FAB（手机版浮动 + 按钮）
      ============================================================ */
+  .sl-fab {
+    /* 桌面隐藏，仅 ≤ 768 显示（响应式段里 override） */
+    display: none;
+  }
+
+  /* iOS Safari safe area + dvh */
+  .study-log {
+    min-height: 100dvh;
+  }
+
+  /* ============================================================
+     SessionEditor modal（v0.5.5）/ Bottom sheet（v0.5.6 ≤ 768px）
+     ============================================================ */
+  .sl-editor-handle { display: none; /* 桌面隐藏 */ }
   .sl-editor-overlay {
     position: fixed;
     inset: 0;
@@ -1827,5 +1885,72 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     .sl-rank-head .sl-rank-col-num:nth-child(5),
     .sl-rank-content .sl-rank-num:nth-child(4),
     .sl-rank-content .sl-rank-num:nth-child(5) { display: none; }
+
+    /* v0.5.6: 顶部 "+ 新建记录" 按钮隐藏，FAB 替代 */
+    .sl-add-btn { display: none; }
+    .sl-fab {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      right: 18px;
+      bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      background: #0a0a0a;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18), 0 1px 4px rgba(0, 0, 0, 0.24);
+      z-index: 50;
+      transition: transform .12s, box-shadow .12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .sl-fab:active {
+      transform: scale(0.94);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+    }
+    .sl-fab-plus {
+      font-size: 28px;
+      font-weight: 300;
+      line-height: 1;
+      margin-top: -2px; /* visually center */
+    }
+
+    /* v0.5.6: editor 改 bottom sheet —— 滑入 / 拖拽把手 / 88% 高 */
+    .sl-editor-overlay {
+      align-items: flex-end;
+      padding: 0;
+    }
+    .sl-editor {
+      max-width: 100%;
+      width: 100%;
+      max-height: 88dvh;
+      border-radius: 14px 14px 0 0;
+      animation: sl-sheet-in 260ms cubic-bezier(.16,.84,.3,1) both;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      display: flex;
+      flex-direction: column;
+      touch-action: none; /* 防 iOS 拖拽误触系统手势 */
+    }
+    .sl-editor-handle {
+      display: block;
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: #d4d4d4;
+      margin: 8px auto 0;
+      flex-shrink: 0;
+    }
+    .sl-editor-body {
+      overflow-y: auto;
+      flex: 1;
+      touch-action: pan-y; /* form 区域允许内部滚动 */
+    }
+    @keyframes sl-sheet-in {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
   }
 </style>
