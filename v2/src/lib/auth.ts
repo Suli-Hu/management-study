@@ -669,6 +669,60 @@ export async function deletePendingSignup(db: D1Database, email: string): Promis
     .run();
 }
 
+// ============================================================
+// v0.7.3 登录用：读写 user 行的认证字段（password_hash + lock 状态）
+// ============================================================
+
+/** UserAuthRow 用于密码登录验证；故意不含 display_name 等无关字段，便于 mock */
+export interface UserAuthRow {
+  id: string;
+  email: string;
+  password_hash: string | null;
+  password_salt: string | null;
+  failed_attempts: number;
+  locked_until: number | null;
+}
+
+/** 按 email 查 auth row（含密码 + 锁状态） */
+export async function findUserAuthByEmail(
+  db: D1Database,
+  email: string,
+): Promise<UserAuthRow | null> {
+  return db
+    .prepare(
+      `SELECT id, email, password_hash, password_salt, failed_attempts, locked_until
+       FROM user WHERE email = ?`,
+    )
+    .bind(email.toLowerCase().trim())
+    .first<UserAuthRow>();
+}
+
+/** 写失败状态（attempts + locked_until）。调用方决定何时调用。 */
+export async function updateUserLockState(
+  db: D1Database,
+  userId: string,
+  state: { failed_attempts: number; locked_until: number | null },
+): Promise<void> {
+  await db
+    .prepare('UPDATE user SET failed_attempts = ?, locked_until = ? WHERE id = ?')
+    .bind(state.failed_attempts, state.locked_until, userId)
+    .run();
+}
+
+/** 登录成功：last_login_at 刷新 + attempts 归零 + locked_until 清空，一条 SQL */
+export async function updateUserLoginSuccess(
+  db: D1Database,
+  userId: string,
+): Promise<void> {
+  const now = new Date().toISOString();
+  await db
+    .prepare(
+      'UPDATE user SET last_login_at = ?, failed_attempts = 0, locked_until = NULL WHERE id = ?',
+    )
+    .bind(now, userId)
+    .run();
+}
+
 /** 创建注册的 user —— 区别于 findOrCreateUser（隐式登录用），这里是显式注册 */
 export async function createSignupUser(
   db: D1Database,
