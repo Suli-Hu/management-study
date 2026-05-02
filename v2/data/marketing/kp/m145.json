@@ -3,7 +3,8 @@
   "discipline": "marketing",
   "schools": [
     "consumer_behavior",
-    "managerial"
+    "managerial",
+    "marketing_research"
   ],
   "scholars": [
     "howard"
@@ -37,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:41:04.930Z",
-  "updatedAt": "2026-04-30T13:24:26.948Z"
+  "updatedAt": "2026-05-02T11:54:37.612Z"
 }
