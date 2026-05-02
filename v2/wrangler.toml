@@ -35,13 +35,13 @@ AUTH_MODE = "email"
 # password 模式下，访客共用这条 user 记录（所有 123 登录指向同一 user_id）
 GUEST_EMAIL = "guest@local"
 
-# v0.4.33 邀请码登录（无需邮箱）：输 INVITE_CODE_GUEST → 共用 INVITE_GUEST_EMAIL user → guest 视角
-# 共用 user_id：所有邀请码登录指向同一 user（无 user_progress / user_note 区分），便利分享只读
+# v0.4.33 邀请码登录（无需邮箱）：输 INVITE_CODE_GUEST → 共用 INVITE_GUEST_EMAIL user
+# 共用 user_id：所有邀请码登录指向同一行 user（演示通道）
+# v0.7.7 起权限完全走 user_permission 表（同其他 user）：默认 0 学科可读，
+# super-admin 在 /admin/users 给 invite-guest@anytime 加白哪些学科就能看哪些。
+# 老的 INVITE_GUEST_DISCIPLINES env 已删除（admin UI 跟实际权限不一致）。
 INVITE_CODE_GUEST = "123"
 INVITE_GUEST_EMAIL = "invite-guest@anytime"
-# v0.5.74：邀请码访客只能 read 这里列出的 discipline（逗号分隔）。空 / 未设 = 全学科可读（旧默认）。
-# 设成 "keiei" → 邀请码 guest 只能看经营学，市场营销 / 社会学 / 心理学等都被 home 页降级 + 直接访问 redirect 回 /。
-INVITE_GUEST_DISCIPLINES = "keiei"
 
 # v0.7.6 删除 EMAIL_TRUST_DAYS：完整账户系统重做后登录走 "email + 密码" 主
 # 路径（v0.7.3 起），N 天免 code 信任窗口的语义被密码取代。user.trusted_until
