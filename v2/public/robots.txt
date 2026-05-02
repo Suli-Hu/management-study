@@ -1,0 +1,6 @@
+# sususu — robots.txt
+# v0.7.30: /share/ 是用户私人分享 token，禁止索引
+
+User-agent: *
+Disallow: /share/
+Disallow: /api/

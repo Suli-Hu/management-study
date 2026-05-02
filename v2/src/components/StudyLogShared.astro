@@ -1,0 +1,2555 @@
+---
+/**
+ * StudyLogShared.astro (v0.7.30)
+ *
+ * 学习记录页面的公共渲染层 —— 原 /[discipline]/study-log/index.astro 的
+ * HTML body + inline scripts + global style 在这里集中，主页和公开分享页
+ * 都通过 props 复用：
+ *   - /[discipline]/study-log → readOnly=false（编辑器 + 分享 dialog 全开）
+ *   - /share/study-log/[token] → readOnly=true（CSS data-sl-readonly 隐藏写 UI；
+ *     inline JS 通过 window.__SL_READONLY__ 跳过 setupShare 等写动作 setup）
+ */
+interface Props {
+  discipline: string;
+  disciplineTitle: string;
+  sessionsJson: string;
+  tierStatesJson: string;
+  kpGroupedJson: string;
+  today: string;
+  tierLevels: Array<{ key: string; threshold: number }>;
+  readOnly?: boolean;
+}
+
+const {
+  discipline,
+  disciplineTitle,
+  sessionsJson,
+  tierStatesJson,
+  kpGroupedJson,
+  today: TODAY,
+  tierLevels,
+  readOnly = false,
+} = Astro.props;
+---
+  <main class="study-log">
+    <header class="sl-header">
+      <div>
+        <p class="sl-breadcrumb">
+          <a href="/">全科笔记</a>
+          <span class="sl-sep">›</span>
+          <a href={`/${discipline}`}>{disciplineTitle}</a>
+        </p>
+        <h1 class="sl-title">学习记录</h1>
+      </div>
+      <div class="sl-header-actions">
+        <button type="button" class="sl-share-btn" data-share-open aria-label="分享链接">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+          </svg>
+          分享链接
+        </button>
+        <button type="button" class="sl-add-btn" data-editor-open>+ 新建记录</button>
+      </div>
+    </header>
+
+    {/* v0.5.6: 手机版 FAB（仅 ≤ 768px 显示，桌面隐藏） */}
+    <button type="button" class="sl-fab" data-editor-open aria-label="新建记录">
+      <span class="sl-fab-plus">+</span>
+    </button>
+
+    <div class="sl-switcher" role="tablist">
+      <button type="button" data-view="log" class="sl-seg sl-seg-active" role="tab">日志流</button>
+      <button type="button" data-view="rank" class="sl-seg" role="tab">知识点排行</button>
+      <button type="button" data-view="tier" class="sl-seg" role="tab">学派段位</button>
+    </div>
+
+    {/* ============================================================ */}
+    {/* 视图 A · 日志流 */}
+    {/* ============================================================ */}
+    <section data-view-pane="log" class="sl-view">
+      <div class="sl-stats">
+        <div class="sl-stat">
+          <p class="sl-stat-label" data-stat-label-left>近 30 天累计</p>
+          <p class="sl-stat-value">
+            <span data-stat-hours>—</span><span class="sl-unit">h</span>
+            <span data-stat-mins>—</span><span class="sl-unit">min</span>
+          </p>
+          <p class="sl-stat-sub" data-stat-sub-left>—</p>
+        </div>
+        <div class="sl-stat">
+          <p class="sl-stat-label">学习天数</p>
+          <p class="sl-stat-value">
+            <span data-stat-days>—</span><span class="sl-unit">天</span>
+          </p>
+          <p class="sl-stat-sub" data-stat-sub-right>—</p>
+        </div>
+      </div>
+
+      <div class="sl-heatmap-wrap">
+        <p class="sl-heatmap-title">
+          <span data-title-desktop>近 4 个月</span><span data-title-mobile>近 1 个月</span>·每日学习时长
+        </p>
+        <div class="sl-heatmap-legend">
+          少
+          <span class="sl-heat sl-heat-0"></span>
+          <span class="sl-heat sl-heat-1"></span>
+          <span class="sl-heat sl-heat-2"></span>
+          <span class="sl-heat sl-heat-3"></span>
+          <span class="sl-heat sl-heat-4"></span>
+          <span class="sl-heat sl-heat-5"></span>
+          多
+        </div>
+        <div class="sl-heatmap" data-heatmap></div>
+      </div>
+
+      <div class="sl-chips">
+        <button type="button" data-range="7" class="sl-chip">近 7 天</button>
+        <button type="button" data-range="14" class="sl-chip">近 14 天</button>
+        <button type="button" data-range="30" class="sl-chip sl-chip-active">近 30 天</button>
+      </div>
+
+      <div data-session-list class="sl-list">
+        {/* client JS 渲染 */}
+      </div>
+
+      <p data-empty class="sl-empty hidden">这个时间段还没有学习记录。</p>
+    </section>
+
+    {/* ============================================================ */}
+    {/* 视图 B · 知识点排行（v0.5.5） */}
+    {/* ============================================================ */}
+    <section data-view-pane="rank" class="sl-view hidden">
+      <p class="sl-rank-hint">按累计学习时长降序排列；行底 progress 是该 KP 占总时长的百分比。</p>
+      <div data-rank-list class="sl-rank-list">
+        {/* client JS 渲染 */}
+      </div>
+      <p data-rank-empty class="sl-empty hidden">还没有任何学习记录。</p>
+    </section>
+
+    {/* ============================================================ */}
+    {/* SessionEditor modal（v0.5.5） */}
+    {/* ============================================================ */}
+    <div data-editor-overlay class="sl-editor-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="sl-editor-title">
+      <div class="sl-editor" data-editor-sheet>
+        {/* v0.5.6: bottom sheet 手机版的拖拽把手；桌面 modal 不显示 */}
+        <div class="sl-editor-handle" data-editor-handle aria-hidden="true"></div>
+        <header class="sl-editor-head">
+          <h2 id="sl-editor-title" class="sl-editor-title" data-editor-title>新建学习记录</h2>
+          <button type="button" class="sl-editor-close" data-editor-close aria-label="关闭">×</button>
+        </header>
+        <form data-editor-form class="sl-editor-body">
+          <input type="hidden" name="id" data-editor-id />
+
+          <div class="sl-field">
+            <label class="sl-field-label" for="sl-kp">知识点</label>
+            <div class="sl-kp-combo" data-editor-kp-combo>
+              <input type="hidden" name="kp_id" required data-editor-kp-value />
+              <input
+                type="text"
+                id="sl-kp"
+                class="sl-field-input sl-kp-input"
+                placeholder="搜索或选择知识点…"
+                autocomplete="off"
+                role="combobox"
+                aria-expanded="false"
+                aria-autocomplete="list"
+                aria-controls="sl-kp-list"
+                data-editor-kp-input
+              />
+              <button type="button" class="sl-kp-clear hidden" data-editor-kp-clear aria-label="清除选择" tabindex="-1">×</button>
+              <div id="sl-kp-list" class="sl-kp-list hidden" role="listbox" data-editor-kp-list></div>
+            </div>
+          </div>
+
+          <div class="sl-field-row">
+            <div class="sl-field">
+              <label class="sl-field-label" for="sl-date">日期</label>
+              <input id="sl-date" type="date" name="date" required class="sl-field-input" data-editor-date />
+            </div>
+            <div class="sl-field">
+              <label class="sl-field-label" for="sl-time">开始时间</label>
+              <input id="sl-time" type="time" name="start_time" required class="sl-field-input" data-editor-time />
+            </div>
+          </div>
+
+          <div class="sl-field-row">
+            <div class="sl-field">
+              <label class="sl-field-label" for="sl-dur">时长（分钟）</label>
+              <input id="sl-dur" type="number" name="duration_min" required min="1" max="600" value="30" class="sl-field-input" data-editor-dur />
+            </div>
+            <div class="sl-field">
+              <label class="sl-field-label">理解度自评</label>
+              <div class="sl-rating" data-editor-rating>
+                {[1,2,3,4,5].map((n) => (
+                  <button type="button" data-rating-val={n} class="sl-rating-star">★</button>
+                ))}
+                <button type="button" data-rating-val="0" class="sl-rating-clear" title="清空">空</button>
+              </div>
+              <input type="hidden" name="rating" data-editor-rating-value value="" />
+            </div>
+          </div>
+
+          <div class="sl-field">
+            <label class="sl-field-label" for="sl-note">心得（可选）</label>
+            <textarea id="sl-note" name="note" rows="3" maxlength="2000" class="sl-field-input sl-field-textarea" placeholder="今天学到什么 · 卡在哪 · 下一步…" data-editor-note></textarea>
+          </div>
+
+          <div data-editor-error class="sl-editor-error hidden"></div>
+
+          <footer class="sl-editor-foot">
+            <button type="button" class="sl-editor-btn-ghost" data-editor-cancel>取消</button>
+            <button type="submit" class="sl-editor-btn-primary" data-editor-submit>保存</button>
+          </footer>
+        </form>
+      </div>
+    </div>
+
+    {/* ============================================================ */}
+    {/* 视图 C · 学派段位（v0.5.4） */}
+    {/* ============================================================ */}
+    <section data-view-pane="tier" class="sl-view hidden">
+      <div class="sl-tier-ladder">
+        <p class="sl-tier-ladder-title">段位规则 · 1 min = 1 分，每天 0 点 −20，跌破阈值降级</p>
+        <div class="sl-tier-ladder-chips">
+          {tierLevels.map((t, i) => (
+            <span class={`sl-tier-chip sl-tier-chip-${t.key.toLowerCase()}`}>
+              <strong>{t.key}</strong>
+              <em>{t.threshold}{i === tierLevels.length - 1 ? '+' : ''}</em>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div data-tier-list class="sl-tier-list">
+        {/* client JS 渲染 */}
+      </div>
+
+      <button type="button" data-tier-c-toggle class="sl-tier-c-toggle hidden">
+        <span data-tier-c-label>显示全部 0 学派</span>
+      </button>
+    </section>
+
+    {/* ============================================================ */}
+    {/* Share Link Dialog (v0.7.30) —— 7 天 TTL 公开链接 */}
+    {/* ============================================================ */}
+    <div data-share-overlay class="sls-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="sls-title">
+      <div class="sls-sheet">
+        <header class="sls-head">
+          <div>
+            <h2 id="sls-title" class="sls-title">分享链接</h2>
+            <p class="sls-sub">7 天有效 · 对方无需登录 · 仅可查看本学科学习记录</p>
+          </div>
+          <button type="button" class="sls-close" data-share-close aria-label="关闭">×</button>
+        </header>
+        <div class="sls-body">
+          {/* 状态 A：尚无链接 */}
+          <div class="sls-empty hidden" data-share-empty>
+            <p class="sls-empty-text">还没有分享链接。点击下方生成一个 7 天有效的只读链接。</p>
+            <button type="button" class="sls-btn-primary" data-share-create>生成分享链接</button>
+          </div>
+
+          {/* 状态 B：有 active 链接 */}
+          <div class="sls-active hidden" data-share-active>
+            <div class="sls-url-row">
+              <input type="text" readonly class="sls-url" data-share-url />
+              <button type="button" class="sls-copy" data-share-copy aria-label="复制链接">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span data-share-copy-label>复制</span>
+              </button>
+            </div>
+            <p class="sls-meta" data-share-meta>—</p>
+            <button type="button" class="sls-btn-ghost" data-share-regen>重新生成（旧链接立即失效）</button>
+          </div>
+
+          {/* 状态 C：loading */}
+          <div class="sls-loading hidden" data-share-loading>载入中…</div>
+
+          {/* 状态 D：error */}
+          <div class="sls-error hidden" data-share-error></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+{readOnly && (
+  <script is:inline set:html="window.__SL_READONLY__ = true;"></script>
+)}
+
+<script is:inline set:html={`window.__SL_TIERS__ = ${tierStatesJson};`}></script>
+<script is:inline set:html={`window.__SL_KPS_GROUPED__ = ${kpGroupedJson};`}></script>
+
+<script is:inline define:vars={{ TODAY, DISCIPLINE: discipline }} set:html={`window.__SL_SESSIONS__ = ${sessionsJson};`}></script>
+
+<script is:inline define:vars={{ TODAY, DISCIPLINE_TITLE: disciplineTitle }}>
+  // ============================================================
+  // 数据模型 + 工具函数
+  // ============================================================
+
+  /** @type {Array<{id:string,date:string,start_time:string,duration_min:number,rating:number|null,note:string|null,kp_id:string|null,kp_title:string|null,school_key:string|null,school_title:string|null}>} */
+  const ALL_SESSIONS = window.__SL_SESSIONS__ || [];
+
+  function fmtDuration(min) {
+    if (min >= 60) {
+      const h = Math.floor(min / 60);
+      const m = min % 60;
+      return m > 0 ? `${h}h ${m}min` : `${h}h`;
+    }
+    return `${min}min`;
+  }
+
+  function parseDate(yyyymmdd) {
+    const [y, m, d] = yyyymmdd.split('-').map(Number);
+    return new Date(Date.UTC(y, m - 1, d));
+  }
+
+  function fmtMD(yyyymmdd) {
+    // v0.7.26: 改成 MM/DD 格式（旧 4-23 → 04/23）
+    const [, m, d] = yyyymmdd.split('-');
+    return `${m.padStart(2, '0')}/${d.padStart(2, '0')}`;
+  }
+
+  /** v0.7.26: 日期主标签 — 今天 / 昨天 / 前天 / MM/DD（不再带「-」连字符） */
+  function dateLabel(yyyymmdd) {
+    return relativeDay(yyyymmdd) ?? fmtMD(yyyymmdd);
+  }
+
+  function chineseDay(yyyymmdd) {
+    const dow = parseDate(yyyymmdd).getUTCDay();
+    return ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][dow];
+  }
+
+  function relativeDay(yyyymmdd, today = TODAY) {
+    if (yyyymmdd === today) return '今天';
+    const t = parseDate(today);
+    const d = parseDate(yyyymmdd);
+    const diff = Math.round((t - d) / 86_400_000);
+    if (diff === 1) return '昨天';
+    if (diff === 2) return '前天';
+    return null;
+  }
+
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  }
+
+  function daysBetween(start, end) {
+    return Math.round((parseDate(end) - parseDate(start)) / 86_400_000);
+  }
+
+  // ============================================================
+  // 聚合
+  // ============================================================
+
+  /** 给 sessions 数组返回 byDate 字典 */
+  function aggregateByDate(sessions) {
+    const byDate = new Map();
+    for (const s of sessions) {
+      if (!byDate.has(s.date)) byDate.set(s.date, { total: 0, count: 0, items: [] });
+      const e = byDate.get(s.date);
+      e.total += s.duration_min;
+      e.count += 1;
+      e.items.push(s);
+    }
+    return byDate;
+  }
+
+  /** 时间范围内统计 */
+  function computeStats(sessions, days, today) {
+    const totalMin = sessions.reduce((s, x) => s + x.duration_min, 0);
+    const dayKeys = new Set(sessions.map((s) => s.date));
+    const studyDays = dayKeys.size;
+    const avgPerStudyDay = studyDays > 0 ? Math.round(totalMin / studyDays) : 0;
+    const coverage = days > 0 ? Math.round((studyDays / days) * 100) : 0;
+
+    // 最长连续天数（在 today 倒数 days 范围内）
+    let longest = 0;
+    let cur = 0;
+    const t = parseDate(today);
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(t);
+      d.setUTCDate(d.getUTCDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      if (dayKeys.has(key)) { cur++; longest = Math.max(longest, cur); }
+      else cur = 0;
+    }
+
+    return { totalMin, studyDays, avgPerStudyDay, coverage, longest };
+  }
+
+  // ============================================================
+  // 渲染：统计区
+  // ============================================================
+
+  function renderStats(days) {
+    const fromDate = (() => {
+      const d = parseDate(TODAY);
+      d.setUTCDate(d.getUTCDate() - (days - 1));
+      return d.toISOString().slice(0, 10);
+    })();
+    const inRange = ALL_SESSIONS.filter((s) => s.date >= fromDate && s.date <= TODAY);
+    const stats = computeStats(inRange, days, TODAY);
+
+    const h = Math.floor(stats.totalMin / 60);
+    const m = stats.totalMin % 60;
+    document.querySelector('[data-stat-label-left]').textContent = `近 ${days} 天累计`;
+    document.querySelector('[data-stat-hours]').textContent = h > 0 ? String(h) : '0';
+    document.querySelector('[data-stat-mins]').textContent = String(m);
+    document.querySelector('[data-stat-sub-left]').textContent =
+      `学习日平均 ${fmtDuration(stats.avgPerStudyDay)} / 天`;
+    document.querySelector('[data-stat-days]').textContent = String(stats.studyDays);
+    document.querySelector('[data-stat-sub-right]').textContent =
+      `共 ${days} 天 · 覆盖 ${stats.coverage}% · 最长连续 ${stats.longest} 天`;
+  }
+
+  // ============================================================
+  // 渲染：4 月并列日历热力图
+  // ============================================================
+
+  /** v0.7.23: 给 minutes 返回 0-5 等级（设计文档 6 档算法） */
+  function heatLevel(min) {
+    if (min <= 0) return 0;
+    if (min < 15) return 1;
+    if (min < 30) return 2;
+    if (min < 60) return 3;
+    if (min < 120) return 4;
+    return 5;
+  }
+
+  function renderHeatmap() {
+    const wrap = document.querySelector('[data-heatmap]');
+    if (!wrap) return;
+    const byDate = aggregateByDate(ALL_SESSIONS);
+
+    // 取近 4 个月，从 today 往回
+    const today = parseDate(TODAY);
+    const months = [];
+    for (let i = 3; i >= 0; i--) {
+      const d = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - i, 1));
+      months.push({ year: d.getUTCFullYear(), month: d.getUTCMonth() }); // 0-indexed
+    }
+
+    wrap.innerHTML = months.map(({ year, month }) => {
+      const firstDow = new Date(Date.UTC(year, month, 1)).getUTCDay();
+      // 调整为周一开始（0=周一, 6=周日）
+      const offset = (firstDow + 6) % 7;
+      const lastDay = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+      const cells = [];
+      // 前置空格
+      for (let i = 0; i < offset; i++) cells.push('<div class="sl-cal-empty"></div>');
+      for (let day = 1; day <= lastDay; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const e = byDate.get(dateStr);
+        const lvl = heatLevel(e?.total ?? 0);
+        const isFuture = dateStr > TODAY;
+        const isToday = dateStr === TODAY;
+        const cls = [
+          'sl-cal-day',
+          `sl-heat-${lvl}`,
+          isToday ? 'sl-cal-today' : '',
+          isFuture ? 'sl-cal-future' : '',
+        ].filter(Boolean).join(' ');
+        const title = e ? `${dateStr} · ${fmtDuration(e.total)}（${e.count} 次）` : dateStr;
+        cells.push(`<div class="${cls}" title="${title}">${day}</div>`);
+      }
+      return `
+        <div class="sl-cal-month">
+          <p class="sl-cal-month-label">${month + 1} 月</p>
+          <div class="sl-cal-dow">
+            <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
+          </div>
+          <div class="sl-cal-grid">${cells.join('')}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ============================================================
+  // 渲染：Session 列表（按日期分组）
+  // ============================================================
+
+  function renderList(days) {
+    const fromDate = (() => {
+      const d = parseDate(TODAY);
+      d.setUTCDate(d.getUTCDate() - (days - 1));
+      return d.toISOString().slice(0, 10);
+    })();
+    const inRange = ALL_SESSIONS.filter((s) => s.date >= fromDate && s.date <= TODAY);
+    const list = document.querySelector('[data-session-list]');
+    const empty = document.querySelector('[data-empty]');
+    if (!list || !empty) return;
+
+    if (inRange.length === 0) {
+      list.innerHTML = '';
+      empty.classList.remove('hidden');
+      return;
+    }
+    empty.classList.add('hidden');
+
+    // 按日期分组（已按 date DESC 排好序，sessions 顺序保留）
+    const byDate = new Map();
+    for (const s of inRange) {
+      if (!byDate.has(s.date)) byDate.set(s.date, []);
+      byDate.get(s.date).push(s);
+    }
+
+    const groupsHtml = [...byDate.entries()].map(([date, items]) => {
+      const totalMin = items.reduce((sum, x) => sum + x.duration_min, 0);
+      // v0.7.26: head 拆 split layout — 主标签（今天/MM/DD）+ 周X + 右侧统计，去重
+      const headLabel = escapeHtml(dateLabel(date));
+      const headDow = escapeHtml(chineseDay(date));
+      const headStat = escapeHtml(`${items.length} 次 · ${fmtDuration(totalMin)}`);
+      const rows = items.map((s) => {
+        const kpTitle = escapeHtml(s.kp_title ?? (s.kp_id ? `[已删除] ${s.kp_id}` : '[KP 信息缺失]'));
+        const schoolTitle = escapeHtml(s.school_title ?? '');
+        const rating = s.rating ? '★'.repeat(s.rating) + '☆'.repeat(5 - s.rating) : '';
+        const note = s.note ? escapeHtml(s.note) : '';
+        return `
+          <div class="sl-row" data-row data-id="${escapeHtml(s.id)}">
+            <div class="sl-row-main">
+              <span class="sl-row-time">${escapeHtml(s.start_time)}</span>
+              <span class="sl-row-kp" title="${kpTitle}">${kpTitle}</span>
+              ${schoolTitle ? `<span class="sl-row-school">${schoolTitle}</span>` : ''}
+              ${note ? `<span class="sl-row-note-preview">${note.slice(0, 40)}${note.length > 40 ? '…' : ''}</span>` : '<span class="sl-row-note-preview sl-empty-note"></span>'}
+              <span class="sl-row-dur">${fmtDuration(s.duration_min)}</span>
+              ${rating ? `<span class="sl-row-rating">${rating}</span>` : '<span class="sl-row-rating sl-empty-rating"></span>'}
+              <span class="sl-row-actions">
+                <button type="button" class="sl-row-icon" data-row-edit title="编辑">✎</button>
+                <button type="button" class="sl-row-icon" data-row-delete title="删除">✕</button>
+              </span>
+              <span class="sl-row-chevron">▾</span>
+            </div>
+            ${note ? `<div class="sl-row-note hidden" data-note>${note}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+      return `
+        <div class="sl-group">
+          <div class="sl-group-head">
+            <span class="sl-group-head-label">${headLabel}</span>
+            <span class="sl-group-head-dow">${headDow}</span>
+            <span class="sl-group-head-spacer"></span>
+            <span class="sl-group-head-stat">${headStat}</span>
+          </div>
+          <div class="sl-group-rows">${rows}</div>
+        </div>
+      `;
+    }).join('');
+
+    list.innerHTML = groupsHtml;
+
+    // 行展开
+    list.querySelectorAll('[data-row]').forEach((row) => {
+      const note = row.querySelector('[data-note]');
+      if (!note) return;
+      row.style.cursor = 'pointer';
+      row.addEventListener('click', () => {
+        note.classList.toggle('hidden');
+        row.querySelector('.sl-row-chevron').classList.toggle('sl-row-chevron-rot');
+      });
+    });
+  }
+
+  // ============================================================
+  // 视图切换 + 时间筛选
+  // ============================================================
+
+  function setView(view) {
+    document.querySelectorAll('[data-view-pane]').forEach((el) => {
+      el.classList.toggle('hidden', el.getAttribute('data-view-pane') !== view);
+    });
+    document.querySelectorAll('[data-view]').forEach((btn) => {
+      btn.classList.toggle('sl-seg-active', btn.getAttribute('data-view') === view);
+    });
+  }
+
+  function setRange(days) {
+    document.querySelectorAll('[data-range]').forEach((btn) => {
+      btn.classList.toggle('sl-chip-active', btn.getAttribute('data-range') === String(days));
+    });
+    renderStats(days);
+    renderList(days);
+    if (typeof bindRowActions === 'function') bindRowActions();
+  }
+
+  // ============================================================
+  // 视图 B · 知识点排行（v0.5.5 / v0.7.21 多维度排序）
+  // ============================================================
+
+  // 排序状态：默认按累计降序；点同列 toggle 方向，点不同列 reset 到 desc
+  let rankSortField = 'totalMin';  // 'totalMin' | 'count' | 'avg' | 'lastDate'
+  let rankSortDir = 'desc';        // 'desc' | 'asc'
+
+  function setRankSort(field) {
+    if (rankSortField === field) {
+      rankSortDir = rankSortDir === 'desc' ? 'asc' : 'desc';
+    } else {
+      rankSortField = field;
+      rankSortDir = 'desc';
+    }
+    renderRankList();
+  }
+
+  function rankSortValue(row, field) {
+    if (field === 'avg') return row.ratingCount > 0 ? row.ratingSum / row.ratingCount : -1;
+    if (field === 'lastDate') return row.lastDate || '';
+    return row[field] ?? 0;
+  }
+
+  function renderRankList() {
+    const list = document.querySelector('[data-rank-list]');
+    const empty = document.querySelector('[data-rank-empty]');
+    if (!list || !empty) return;
+
+    if (ALL_SESSIONS.length === 0) {
+      list.innerHTML = '';
+      empty.classList.remove('hidden');
+      return;
+    }
+    empty.classList.add('hidden');
+
+    // 按 kp_id 聚合
+    const byKp = new Map();
+    for (const s of ALL_SESSIONS) {
+      const key = s.kp_id ?? '__deleted__';
+      if (!byKp.has(key)) {
+        byKp.set(key, {
+          kp_id: s.kp_id,
+          kp_title: s.kp_title,
+          school_title: s.school_title,
+          totalMin: 0,
+          count: 0,
+          ratingSum: 0,
+          ratingCount: 0,
+          lastDate: '',
+        });
+      }
+      const e = byKp.get(key);
+      e.totalMin += s.duration_min;
+      e.count += 1;
+      if (s.rating) { e.ratingSum += s.rating; e.ratingCount += 1; }
+      if (s.date > e.lastDate) e.lastDate = s.date;
+    }
+
+    // 先按当前 sort 字段排，进度条 maxMin 仍按累计取（条形图视觉与排序解耦）
+    const ranked = [...byKp.values()].sort((a, b) => {
+      const av = rankSortValue(a, rankSortField);
+      const bv = rankSortValue(b, rankSortField);
+      if (av < bv) return rankSortDir === 'desc' ? 1 : -1;
+      if (av > bv) return rankSortDir === 'desc' ? -1 : 1;
+      return 0;
+    });
+    const maxMin = Math.max(...ranked.map((r) => r.totalMin), 1);
+    const totalAll = ranked.reduce((s, r) => s + r.totalMin, 0);
+
+    function colHtml(label, field) {
+      const active = rankSortField === field;
+      const arrow = active ? (rankSortDir === 'desc' ? '↓' : '↑') : '';
+      return `<button type="button" class="sl-rank-col-num sl-rank-col-btn${active ? ' is-active' : ''}" data-rank-sort="${field}">${escapeHtml(label)}<span class="sl-rank-arrow">${arrow}</span></button>`;
+    }
+
+    list.innerHTML = `
+      <div class="sl-rank-head">
+        <span class="sl-rank-col-title">知识点</span>
+        ${colHtml('累计', 'totalMin')}
+        ${colHtml('次数', 'count')}
+        ${colHtml('平均评分', 'avg')}
+        ${colHtml('最近', 'lastDate')}
+      </div>
+      ${ranked.map((r) => {
+        const pct = Math.max(2, Math.round((r.totalMin / maxMin) * 100));
+        const avg = r.ratingCount > 0 ? Math.round(r.ratingSum / r.ratingCount) : 0;
+        const stars = avg > 0 ? '★'.repeat(avg) + '☆'.repeat(5 - avg) : '—';
+        const kpDisplay = r.kp_title ?? (r.kp_id ? `[已删除] ${r.kp_id}` : '[KP 信息缺失]');
+        const sharePct = totalAll > 0 ? ((r.totalMin / totalAll) * 100).toFixed(1) : '0';
+        return `
+          <div class="sl-rank-row" title="占总时长 ${sharePct}%">
+            <div class="sl-rank-progress-bg" style="width:${pct}%"></div>
+            <div class="sl-rank-content">
+              <div class="sl-rank-title">
+                <p class="sl-rank-kp">${escapeHtml(kpDisplay)}</p>
+                ${r.school_title ? `<p class="sl-rank-school">${escapeHtml(r.school_title)}</p>` : ''}
+              </div>
+              <span class="sl-rank-num">${fmtDuration(r.totalMin)}</span>
+              <span class="sl-rank-num">${r.count}</span>
+              <span class="sl-rank-num sl-rank-stars">${stars}</span>
+              <span class="sl-rank-num">${fmtMD(r.lastDate)}</span>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    `;
+  }
+
+  // ============================================================
+  // 视图 C · 学派段位（v0.5.4）
+  // ============================================================
+
+  /** @type {Array<{schoolKey:string,schoolTitle:string,score:number,totalEarned:number,decayApplied:number,tier:string,peakTier:string,toNextTierScore:number|null,nextTierThreshold:number|null,lastActiveDate:string|null,daysSinceLastActive:number,sessionCount:number,timeline:number[]}>} */
+  const ALL_TIERS = window.__SL_TIERS__ || [];
+
+  let cExpanded = false;
+
+  /** SVG sparkline 100x20 viewBox，points = number[] (30) */
+  function sparklineSvg(points) {
+    if (points.length === 0) return '';
+    const w = 100, h = 20;
+    const max = Math.max(...points, 1);
+    const stepX = points.length > 1 ? w / (points.length - 1) : 0;
+    const coords = points
+      .map((p, i) => `${(i * stepX).toFixed(1)},${(h - (p / max) * h).toFixed(1)}`)
+      .join(' ');
+    const last = points[points.length - 1];
+    const lastX = ((points.length - 1) * stepX).toFixed(1);
+    const lastY = (h - (last / max) * h).toFixed(1);
+    return `<svg class="sl-spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+      <polyline points="${coords}" fill="none" stroke="#525252" stroke-width="1" />
+      <circle cx="${lastX}" cy="${lastY}" r="1.6" fill="#0a0a0a" />
+    </svg>`;
+  }
+
+  function renderTierRow(t, idx) {
+    const tierLabel = t.tier;
+    const peakBadge = (t.peakTier && t.peakTier !== t.tier)
+      ? `<span class="sl-tier-peak">曾达 ${escapeHtml(t.peakTier)}</span>`
+      : '';
+    const progressPct = t.nextTierThreshold
+      ? Math.min(100, Math.round((t.score / t.nextTierThreshold) * 100))
+      : 100;
+    const progressLabel = t.nextTierThreshold
+      ? `${t.score} / ${t.nextTierThreshold}`
+      : `${t.score} (顶段)`;
+    const decayHint = t.daysSinceLastActive > 0
+      ? `<span class="sl-tier-decay" title="距上次学习 ${t.daysSinceLastActive} 天，每天 −20 分">${t.daysSinceLastActive > 30 ? '30+' : t.daysSinceLastActive}d 未学</span>`
+      : '';
+    return `
+      <div class="sl-tier-row sl-tier-row-${tierLabel.toLowerCase()}">
+        <span class="sl-tier-rank">#${idx + 1}</span>
+        <span class="sl-tier-badge sl-tier-badge-${tierLabel.toLowerCase()}">${tierLabel}</span>
+        <div class="sl-tier-school">
+          <p class="sl-tier-school-name">${escapeHtml(t.schoolTitle)}</p>
+          <p class="sl-tier-school-meta">${peakBadge} ${decayHint}</p>
+        </div>
+        <div class="sl-tier-progress">
+          <p class="sl-tier-progress-label">${progressLabel}</p>
+          <div class="sl-tier-progress-bar">
+            <div class="sl-tier-progress-fill" style="width:${progressPct}%"></div>
+          </div>
+        </div>
+        <div class="sl-tier-spark-wrap">${sparklineSvg(t.timeline)}</div>
+        <button type="button" class="sl-tier-quiz" disabled title="quiz 入口 (v0.6+ 即将)">练 →</button>
+      </div>
+    `;
+  }
+
+  function renderTierList() {
+    const list = document.querySelector('[data-tier-list]');
+    if (!list || !ALL_TIERS.length) return;
+
+    // 排序：score 降序，相同分数按 schoolKey 字母（已在 SSR 排过 + computeTiers 内部又 sort 一次）
+    const active = ALL_TIERS.filter((t) => t.score > 0 || t.totalEarned > 0);
+    const cFresh = ALL_TIERS.filter((t) => t.score === 0 && t.totalEarned === 0);
+
+    let html = '';
+    if (active.length === 0) {
+      html += '<p class="sl-empty">还没有任何学派有段位分数。</p>';
+    } else {
+      html += active.map((t, i) => renderTierRow(t, i)).join('');
+    }
+
+    if (cFresh.length > 0) {
+      const visible = cExpanded ? cFresh : [];
+      html += visible.map((t, i) => renderTierRow(t, active.length + i)).join('');
+    }
+
+    list.innerHTML = html;
+
+    // C 段折叠按钮
+    const toggle = document.querySelector('[data-tier-c-toggle]');
+    const label = document.querySelector('[data-tier-c-label]');
+    if (toggle && label) {
+      if (cFresh.length > 0) {
+        toggle.classList.remove('hidden');
+        label.textContent = cExpanded
+          ? '收起 0 学派'
+          : `显示全部 ${cFresh.length} 个 0 学派 (C 段)`;
+      } else {
+        toggle.classList.add('hidden');
+      }
+    }
+  }
+
+  // ============================================================
+  // 启动
+  // ============================================================
+
+  document.querySelectorAll('[data-view]').forEach((btn) => {
+    btn.addEventListener('click', () => setView(btn.getAttribute('data-view')));
+  });
+  document.querySelectorAll('[data-range]').forEach((btn) => {
+    btn.addEventListener('click', () => setRange(Number(btn.getAttribute('data-range'))));
+  });
+  document.querySelector('[data-tier-c-toggle]')?.addEventListener('click', () => {
+    cExpanded = !cExpanded;
+    renderTierList();
+  });
+
+  renderTierList();
+  renderRankList();
+
+  // 知识点排行 column header 排序：event delegation（list 内容会重渲染，header 也重渲染）
+  document.querySelector('[data-rank-list]')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-rank-sort]');
+    if (!btn) return;
+    setRankSort(btn.getAttribute('data-rank-sort'));
+  });
+
+  // ============================================================
+  // SessionEditor (v0.5.5)
+  // ============================================================
+
+  const KPS_GROUPED = window.__SL_KPS_GROUPED__ || [];
+  const overlay = document.querySelector('[data-editor-overlay]');
+  const form = document.querySelector('[data-editor-form]');
+  const titleEl = document.querySelector('[data-editor-title]');
+  const idInput = document.querySelector('[data-editor-id]');
+  const kpCombo = document.querySelector('[data-editor-kp-combo]');
+  const kpInput = document.querySelector('[data-editor-kp-input]');
+  const kpValue = document.querySelector('[data-editor-kp-value]');
+  const kpList = document.querySelector('[data-editor-kp-list]');
+  const kpClear = document.querySelector('[data-editor-kp-clear]');
+  const dateInput = document.querySelector('[data-editor-date]');
+  const timeInput = document.querySelector('[data-editor-time]');
+  const durInput = document.querySelector('[data-editor-dur]');
+  const ratingValueInput = document.querySelector('[data-editor-rating-value]');
+  const noteInput = document.querySelector('[data-editor-note]');
+  const submitBtn = document.querySelector('[data-editor-submit]');
+  const errorBox = document.querySelector('[data-editor-error]');
+
+  // KP combobox：搜索 + 学派分组 dropdown（替代原 native select）
+  // 选项数据扁平化方便 keyboard nav；group label 渲染时插入
+  const KP_FLAT = [];
+  const KP_TITLE_BY_ID = new Map();
+  for (const [group, items] of KPS_GROUPED) {
+    for (const k of items) {
+      KP_FLAT.push({ id: k.id, title: k.title_zh, group });
+      KP_TITLE_BY_ID.set(k.id, k.title_zh);
+    }
+  }
+
+  function renderKpList(query) {
+    if (!kpList) return;
+    const q = (query || '').trim().toLowerCase();
+    const buckets = new Map();
+    for (const k of KP_FLAT) {
+      if (q && !k.title.toLowerCase().includes(q)) continue;
+      if (!buckets.has(k.group)) buckets.set(k.group, []);
+      buckets.get(k.group).push(k);
+    }
+    if (buckets.size === 0) {
+      kpList.innerHTML = '<div class="sl-kp-empty">没找到匹配的知识点</div>';
+      return;
+    }
+    let html = '';
+    for (const [group, items] of buckets) {
+      html += `<div class="sl-kp-group-label">${escapeHtml(group)}</div>`;
+      for (const k of items) {
+        const selected = kpValue.value === k.id;
+        html += `<div class="sl-kp-option${selected ? ' is-selected' : ''}" role="option" data-kp-id="${escapeHtml(k.id)}" data-kp-title="${escapeHtml(k.title)}">${escapeHtml(k.title)}</div>`;
+      }
+    }
+    kpList.innerHTML = html;
+  }
+
+  function openKpList() {
+    if (!kpList) return;
+    renderKpList(kpInput.value);
+    kpList.classList.remove('hidden');
+    kpInput.setAttribute('aria-expanded', 'true');
+    // 滚到当前选中
+    const sel = kpList.querySelector('.sl-kp-option.is-selected');
+    if (sel) sel.scrollIntoView({ block: 'nearest' });
+  }
+
+  function closeKpList() {
+    kpList?.classList.add('hidden');
+    kpInput?.setAttribute('aria-expanded', 'false');
+    clearHighlight();
+  }
+
+  function clearHighlight() {
+    kpList?.querySelectorAll('.sl-kp-option.is-highlighted').forEach((el) => el.classList.remove('is-highlighted'));
+  }
+
+  function moveHighlight(dir) {
+    if (!kpList || kpList.classList.contains('hidden')) {
+      openKpList();
+      return;
+    }
+    const opts = Array.from(kpList.querySelectorAll('.sl-kp-option'));
+    if (opts.length === 0) return;
+    const cur = kpList.querySelector('.sl-kp-option.is-highlighted');
+    let idx = cur ? opts.indexOf(cur) : -1;
+    idx = (idx + dir + opts.length) % opts.length;
+    clearHighlight();
+    opts[idx].classList.add('is-highlighted');
+    opts[idx].scrollIntoView({ block: 'nearest' });
+  }
+
+  function setKp(id) {
+    if (!kpInput || !kpValue || !kpClear) return;
+    if (id) {
+      kpValue.value = id;
+      kpInput.value = KP_TITLE_BY_ID.get(id) ?? '';
+      kpClear.classList.remove('hidden');
+    } else {
+      kpValue.value = '';
+      kpInput.value = '';
+      kpClear.classList.add('hidden');
+    }
+  }
+
+  if (kpInput && kpList) {
+    kpInput.addEventListener('focus', openKpList);
+    kpInput.addEventListener('click', openKpList);
+    kpInput.addEventListener('input', () => {
+      // 用户输入 = 重新过滤；意味着当前 hidden value 不再匹配 → 清掉
+      kpValue.value = '';
+      kpClear.classList.toggle('hidden', !kpInput.value);
+      renderKpList(kpInput.value);
+      kpList.classList.remove('hidden');
+      kpInput.setAttribute('aria-expanded', 'true');
+    });
+    kpInput.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveHighlight(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveHighlight(-1); }
+      else if (e.key === 'Enter') {
+        const cur = kpList.querySelector('.sl-kp-option.is-highlighted');
+        if (cur) {
+          e.preventDefault();
+          setKp(cur.getAttribute('data-kp-id'));
+          closeKpList();
+        }
+      } else if (e.key === 'Escape') {
+        if (!kpList.classList.contains('hidden')) {
+          e.preventDefault();
+          closeKpList();
+        }
+      }
+    });
+
+    kpList.addEventListener('mousedown', (e) => {
+      // mousedown 而非 click：避免 input blur 早于 click 关闭 dropdown
+      const opt = e.target.closest('.sl-kp-option');
+      if (!opt) return;
+      e.preventDefault();
+      setKp(opt.getAttribute('data-kp-id'));
+      closeKpList();
+    });
+
+    kpClear.addEventListener('click', () => {
+      setKp(null);
+      kpInput.focus();
+    });
+
+    // 点外部关闭
+    document.addEventListener('click', (e) => {
+      if (!kpCombo.contains(e.target)) closeKpList();
+    });
+  }
+
+  // Rating star 点击
+  document.querySelectorAll('[data-rating-val]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const val = parseInt(btn.getAttribute('data-rating-val') || '0', 10);
+      ratingValueInput.value = val ? String(val) : '';
+      document.querySelectorAll('[data-rating-val]').forEach((b) => {
+        const v = parseInt(b.getAttribute('data-rating-val') || '0', 10);
+        b.classList.toggle('sl-rating-active', v > 0 && v <= val);
+      });
+    });
+  });
+
+  function nowHM() {
+    const d = new Date();
+    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  }
+
+  function openEditor(session) {
+    if (!overlay || !form) return;
+    errorBox.classList.add('hidden');
+    errorBox.textContent = '';
+    if (session) {
+      titleEl.textContent = '编辑学习记录';
+      idInput.value = session.id;
+      setKp(session.kp_id ?? null);
+      dateInput.value = session.date;
+      timeInput.value = session.start_time;
+      durInput.value = String(session.duration_min);
+      ratingValueInput.value = session.rating ? String(session.rating) : '';
+      noteInput.value = session.note ?? '';
+      // 同步 rating star UI
+      document.querySelectorAll('[data-rating-val]').forEach((b) => {
+        const v = parseInt(b.getAttribute('data-rating-val') || '0', 10);
+        b.classList.toggle('sl-rating-active', v > 0 && session.rating && v <= session.rating);
+      });
+    } else {
+      titleEl.textContent = '新建学习记录';
+      idInput.value = '';
+      setKp(null);
+      dateInput.value = TODAY;
+      timeInput.value = nowHM();
+      durInput.value = '30';
+      ratingValueInput.value = '';
+      noteInput.value = '';
+      document.querySelectorAll('[data-rating-val]').forEach((b) => b.classList.remove('sl-rating-active'));
+    }
+    overlay.classList.remove('hidden');
+    setTimeout(() => kpInput?.focus(), 50);
+  }
+
+  function closeEditor() {
+    overlay?.classList.add('hidden');
+  }
+
+  // 多个元素都可能 trigger 编辑器（顶部按钮 + 手机 FAB），全部绑
+  document.querySelectorAll('[data-editor-open]').forEach((el) => {
+    el.addEventListener('click', () => openEditor(null));
+  });
+  document.querySelector('[data-editor-close]')?.addEventListener('click', closeEditor);
+  document.querySelector('[data-editor-cancel]')?.addEventListener('click', closeEditor);
+  // Esc 关闭
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !overlay?.classList.contains('hidden')) closeEditor();
+  });
+
+  // v0.5.6: bottom sheet 拖拽把手下滑关闭（仅手机视口）
+  const handle = document.querySelector('[data-editor-handle]');
+  const sheet = document.querySelector('[data-editor-sheet]');
+  if (handle && sheet) {
+    let dragStartY = 0;
+    let currentY = 0;
+    let dragging = false;
+    handle.addEventListener('touchstart', (e) => {
+      if (window.innerWidth > 768) return; // 仅手机
+      dragStartY = e.touches[0].clientY;
+      currentY = 0;
+      dragging = true;
+      sheet.style.transition = 'none';
+    }, { passive: true });
+    handle.addEventListener('touchmove', (e) => {
+      if (!dragging) return;
+      currentY = Math.max(0, e.touches[0].clientY - dragStartY);
+      sheet.style.transform = `translateY(${currentY}px)`;
+    }, { passive: true });
+    handle.addEventListener('touchend', () => {
+      if (!dragging) return;
+      dragging = false;
+      sheet.style.transition = '';
+      if (currentY > 80) {
+        // 滑下 ≥ 80px 关闭
+        closeEditor();
+        // 重置
+        setTimeout(() => { sheet.style.transform = ''; }, 300);
+      } else {
+        sheet.style.transform = '';
+      }
+    });
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorBox.classList.add('hidden');
+    submitBtn.disabled = true;
+    submitBtn.textContent = '保存中…';
+
+    const id = idInput.value.trim();
+    const ratingVal = ratingValueInput.value.trim();
+    const noteVal = noteInput.value.trim();
+    const body = {
+      kp_id: kpValue.value,
+      date: dateInput.value,
+      start_time: timeInput.value,
+      duration_min: parseInt(durInput.value, 10),
+      rating: ratingVal ? parseInt(ratingVal, 10) : null,
+      note: noteVal || null,
+    };
+    let url, method;
+    if (id) {
+      url = `/api/study-sessions/${encodeURIComponent(id)}`;
+      method = 'PUT';
+    } else {
+      url = '/api/study-sessions';
+      method = 'POST';
+      body.discipline = window.location.pathname.split('/')[1];
+    }
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        // 刷新页面拿最新 SSR 数据
+        window.location.reload();
+        return;
+      }
+      errorBox.textContent = `${data.reason ?? 'error'}${data.detail ? ': ' + (Array.isArray(data.detail) ? data.detail.join('; ') : data.detail) : ''}`;
+      errorBox.classList.remove('hidden');
+    } catch (err) {
+      errorBox.textContent = '网络错误：' + (err?.message ?? err);
+      errorBox.classList.remove('hidden');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = '保存';
+    }
+  });
+
+  // ============================================================
+  // Session 行 hover: 编辑 / 删除按钮（在 renderList 后挂）
+  // ============================================================
+
+  function bindRowActions() {
+    document.querySelectorAll('[data-row]').forEach((row) => {
+      const id = row.getAttribute('data-id');
+      // 已有 click 展开心得；编辑/删除用 button 阻止冒泡
+      const editBtn = row.querySelector('[data-row-edit]');
+      const delBtn = row.querySelector('[data-row-delete]');
+      editBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const s = ALL_SESSIONS.find((x) => x.id === id);
+        if (s) openEditor(s);
+      });
+      delBtn?.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        if (!confirm('确认删除这条学习记录？')) return;
+        try {
+          const r = await fetch(`/api/study-sessions/${encodeURIComponent(id)}`, { method: 'DELETE' });
+          if (r.ok) { window.location.reload(); return; }
+          alert('删除失败：' + r.status);
+        } catch (err) {
+          alert('网络错误：' + err.message);
+        }
+      });
+    });
+  }
+
+  // 启动时已经 setRange(30) 在 init 段调过，但那时 bindRowActions 函数还没定义
+  // → 这里手动 bind 一次
+  bindRowActions();
+
+  // 初次渲染：默认 30 天
+  renderHeatmap();
+  setRange(30);
+
+  // ============================================================
+  // Share Link (v0.7.30) — 7 天 TTL 公开链接 dialog
+  // 状态机：empty / active / loading / error；所有动作走 /api/share-link
+  // ============================================================
+
+  (function setupShare() {
+    // v0.7.30: 分享页（read-only）不走主页 dialog；window.__SL_READONLY__ 由
+    // /share/study-log/[token] SSR 时注入，主页是 undefined → 正常初始化
+    if (window.__SL_READONLY__) return;
+
+    const overlay = document.querySelector('[data-share-overlay]');
+    if (!overlay) return;
+
+    const empty = overlay.querySelector('[data-share-empty]');
+    const active = overlay.querySelector('[data-share-active]');
+    const loading = overlay.querySelector('[data-share-loading]');
+    const errBox = overlay.querySelector('[data-share-error]');
+    const urlInput = overlay.querySelector('[data-share-url]');
+    const meta = overlay.querySelector('[data-share-meta]');
+    const copyBtn = overlay.querySelector('[data-share-copy]');
+    const copyLabel = overlay.querySelector('[data-share-copy-label]');
+    const createBtn = overlay.querySelector('[data-share-create]');
+    const regenBtn = overlay.querySelector('[data-share-regen]');
+
+    function showState(name) {
+      [empty, active, loading, errBox].forEach((el) => el && el.classList.add('hidden'));
+      const map = { empty, active, loading, error: errBox };
+      const node = map[name];
+      if (node) node.classList.remove('hidden');
+    }
+
+    function showError(msg) {
+      errBox.textContent = msg;
+      showState('error');
+    }
+
+    function buildUrl(token) {
+      return `${location.origin}/share/study-log/${token}`;
+    }
+
+    function fmtRemaining(expiresIso) {
+      const ms = new Date(expiresIso).getTime() - Date.now();
+      if (ms <= 0) return '已过期';
+      const d = Math.floor(ms / 86400000);
+      const h = Math.floor((ms % 86400000) / 3600000);
+      if (d > 0) return `还有 ${d} 天 ${h} 小时过期`;
+      const m = Math.floor((ms % 3600000) / 60000);
+      return h > 0 ? `还有 ${h} 小时 ${m} 分钟过期` : `还有 ${m} 分钟过期`;
+    }
+
+    function renderActive(link) {
+      urlInput.value = buildUrl(link.token);
+      meta.textContent = fmtRemaining(link.expires_at);
+      showState('active');
+    }
+
+    async function loadCurrent() {
+      showState('loading');
+      try {
+        const res = await fetch(`/api/share-link?discipline=${encodeURIComponent(DISCIPLINE)}`, {
+          headers: { 'accept': 'application/json' },
+        });
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.detail || data.reason || 'load failed');
+        if (data.link) renderActive(data.link);
+        else showState('empty');
+      } catch (err) {
+        showError('载入失败：' + (err?.message ?? err));
+      }
+    }
+
+    async function createOrRegen() {
+      showState('loading');
+      try {
+        const res = await fetch('/api/share-link', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ discipline: DISCIPLINE }),
+        });
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.detail || data.reason || 'create failed');
+        renderActive(data.link);
+      } catch (err) {
+        showError('生成失败：' + (err?.message ?? err));
+      }
+    }
+
+    document.querySelectorAll('[data-share-open]').forEach((el) => {
+      el.addEventListener('click', () => {
+        overlay.classList.remove('hidden');
+        loadCurrent();
+      });
+    });
+    document.querySelectorAll('[data-share-close]').forEach((el) => {
+      el.addEventListener('click', () => overlay.classList.add('hidden'));
+    });
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.add('hidden');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !overlay.classList.contains('hidden')) overlay.classList.add('hidden');
+    });
+
+    createBtn.addEventListener('click', createOrRegen);
+    regenBtn.addEventListener('click', () => {
+      if (confirm('重新生成会让旧链接立即失效。继续？')) createOrRegen();
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(urlInput.value);
+        copyLabel.textContent = '已复制';
+        setTimeout(() => { copyLabel.textContent = '复制'; }, 1500);
+      } catch {
+        // 回退：select + execCommand
+        urlInput.select();
+        try { document.execCommand('copy'); copyLabel.textContent = '已复制'; }
+        catch { copyLabel.textContent = '复制失败'; }
+        setTimeout(() => { copyLabel.textContent = '复制'; }, 1500);
+      }
+    });
+  })();
+</script>
+
+<style is:global>
+  /* ============================================================
+     学习记录页面样式（v0.5.3）—— 中性灰 + 单色蓝阶梯
+     ============================================================ */
+
+  .study-log {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 36px 32px 120px;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    color: #171717;
+    line-height: 1.6;
+    font-feature-settings: "tnum" 1;
+  }
+
+  .sl-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .sl-breadcrumb {
+    font-size: 12px;
+    color: #a3a3a3;
+    margin: 0 0 6px;
+  }
+  .sl-breadcrumb a {
+    color: #525252;
+    text-decoration: none;
+  }
+  .sl-breadcrumb a:hover { color: #0a0a0a; }
+  .sl-sep { margin: 0 6px; color: #a3a3a3; }
+  .sl-title {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+    margin: 0;
+    color: #0a0a0a;
+  }
+  .sl-add-btn {
+    all: unset;
+    cursor: pointer;
+    padding: 9px 16px;
+    border-radius: 8px;
+    background: #0a0a0a;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .sl-add-btn:hover { background: #262626; }
+  .sl-add-btn[disabled] {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
+  /* 视图切换器 */
+  .sl-switcher {
+    display: inline-flex;
+    background: #f5f5f4;
+    border-radius: 9px;
+    padding: 3px;
+    font-size: 13px;
+    margin-bottom: 22px;
+  }
+  .sl-seg {
+    all: unset;
+    cursor: pointer;
+    padding: 7px 14px;
+    border-radius: 7px;
+    color: #525252;
+    transition: all .12s;
+    font-weight: 400;
+  }
+  .sl-seg:hover { color: #0a0a0a; }
+  .sl-seg-active {
+    background: #ffffff;
+    color: #0a0a0a;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0,0,0,.06);
+  }
+
+  /* ============================================================
+     日志流视图
+     ============================================================ */
+  .sl-view.hidden { display: none; }
+
+  /* 统计区 */
+  .sl-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 24px 28px;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    background: #fff;
+    margin-bottom: 22px;
+  }
+  .sl-stat-label {
+    font-size: 11.5px;
+    color: #a3a3a3;
+    margin: 0 0 8px;
+  }
+  .sl-stat-value {
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1;
+    margin: 0 0 8px;
+    color: #0a0a0a;
+    letter-spacing: -0.02em;
+  }
+  .sl-unit {
+    font-size: 14px;
+    font-weight: 400;
+    color: #525252;
+    margin-left: 4px;
+    margin-right: 12px;
+  }
+  .sl-stat-sub {
+    font-size: 11.5px;
+    color: #a3a3a3;
+    margin: 0;
+  }
+
+  /* 日历热力图 */
+  .sl-heatmap-wrap {
+    padding: 20px 28px;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    background: #fff;
+    margin-bottom: 22px;
+    position: relative;
+  }
+  .sl-heatmap-title {
+    font-size: 12px;
+    color: #525252;
+    margin: 0 0 14px;
+  }
+  .sl-heatmap-title [data-title-mobile] { display: none; }
+  .sl-heatmap-legend {
+    position: absolute;
+    top: 18px;
+    right: 28px;
+    font-size: 11px;
+    color: #a3a3a3;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .sl-heat {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+  /* v0.7.23: 热力图 6 阶 → sumi --i-* token（旧 5 阶蓝色 hex 退役） */
+  .sl-heat-0 { background: var(--i-0); }
+  .sl-heat-1 { background: var(--i-1); }
+  .sl-heat-2 { background: var(--i-2); }
+  .sl-heat-3 { background: var(--i-3); }
+  .sl-heat-4 { background: var(--i-4); }
+  .sl-heat-5 { background: var(--i-5); }
+
+  .sl-heatmap {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  .sl-cal-month {
+    min-width: 0;
+  }
+  .sl-cal-month-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #525252;
+    margin: 0 0 6px;
+  }
+  .sl-cal-dow {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 4px;
+  }
+  .sl-cal-dow span {
+    font-size: 10px;
+    color: #a3a3a3;
+    text-align: center;
+  }
+  .sl-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+  }
+  .sl-cal-day, .sl-cal-empty {
+    aspect-ratio: 1;
+    border-radius: 3px;
+    font-size: 10px;
+    color: #525252;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sl-cal-day {
+    cursor: default;
+  }
+  /* v0.7.23: 高强度阶白字（4 / 5 档背景够深） */
+  .sl-cal-day.sl-heat-4, .sl-cal-day.sl-heat-5 {
+    color: #fff;
+    font-weight: 500;
+  }
+  .sl-cal-today {
+    box-shadow: inset 0 0 0 1.5px #0a0a0a;
+  }
+  .sl-cal-future {
+    color: #d4d4d4;
+    background: transparent !important;
+    border: 1px dashed #ececec;
+  }
+
+  /* 时间筛选 chips */
+  .sl-chips {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .sl-chip {
+    all: unset;
+    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    color: #525252;
+    border: 1px solid #ececec;
+    background: #fff;
+    transition: all .12s;
+  }
+  .sl-chip:hover { border-color: #a3a3a3; }
+  .sl-chip-active {
+    background: #0a0a0a;
+    color: #fff;
+    border-color: #0a0a0a;
+  }
+
+  /* Session 列表 */
+  .sl-list {
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .sl-group + .sl-group {
+    border-top: 1px solid #f5f5f4;
+  }
+  /* v0.7.26: split layout — 左 dateLabel + 周X，右 stat。日期主标签加重，去重 */
+  .sl-group-head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0;
+    padding: 12px 20px 6px;
+    background: #fafaf9;
+  }
+  .sl-group-head-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0a0a0a;
+  }
+  .sl-group-head-dow {
+    font-size: 11px;
+    color: #a3a3a3;
+  }
+  .sl-group-head-spacer { flex: 1; }
+  .sl-group-head-stat {
+    font-size: 11px;
+    color: #737373;
+    font-variant-numeric: tabular-nums;
+  }
+  .sl-group-rows {
+    padding: 4px 0;
+  }
+  .sl-row {
+    border-bottom: 1px solid #f5f5f4;
+    transition: background .08s;
+  }
+  .sl-row:last-child { border-bottom: 0; }
+  .sl-row:hover { background: #fafaf9; }
+  .sl-row-main {
+    display: grid;
+    grid-template-columns: 56px minmax(120px, 1.4fr) auto minmax(0, 2fr) 70px 70px 50px 20px;
+    gap: 14px;
+    padding: 12px 20px;
+    align-items: center;
+    font-size: 13px;
+  }
+  .sl-row-actions {
+    display: inline-flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity .12s;
+  }
+  .sl-row:hover .sl-row-actions { opacity: 1; }
+  .sl-row-icon {
+    all: unset;
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #a3a3a3;
+    font-size: 12px;
+  }
+  .sl-row-icon:hover { background: #ececec; color: #0a0a0a; }
+  .sl-row-time {
+    font-variant-numeric: tabular-nums;
+    color: #a3a3a3;
+    font-size: 12px;
+  }
+  .sl-row-kp {
+    color: #0a0a0a;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sl-row-school {
+    font-size: 11px;
+    color: #525252;
+    background: #f5f5f4;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .sl-row-note-preview {
+    color: #a3a3a3;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sl-row-dur {
+    text-align: right;
+    color: #0a0a0a;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .sl-row-rating {
+    text-align: right;
+    color: #d4d4d4;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  .sl-row-chevron {
+    color: #a3a3a3;
+    transition: transform .15s;
+    font-size: 11px;
+    text-align: center;
+  }
+  .sl-row-chevron-rot {
+    transform: rotate(180deg);
+  }
+  .sl-row-note {
+    padding: 0 20px 12px 90px;
+    font-size: 12.5px;
+    color: #525252;
+    line-height: 1.7;
+    white-space: pre-wrap;
+  }
+  .sl-empty-note, .sl-empty-rating { /* 占位维持网格 */ }
+
+  /* 空状态 */
+  .sl-empty {
+    text-align: center;
+    color: #a3a3a3;
+    font-size: 13px;
+    padding: 40px 20px;
+  }
+  .sl-empty.hidden { display: none; }
+
+  /* 占位视图 */
+  .sl-placeholder {
+    text-align: center;
+    padding: 60px 20px;
+    color: #525252;
+    border: 1px dashed #ececec;
+    border-radius: 12px;
+    background: #fafaf9;
+  }
+  .sl-placeholder p:first-child {
+    font-size: 16px;
+    margin: 0 0 8px;
+    color: #0a0a0a;
+  }
+  .sl-placeholder-sub {
+    font-size: 12.5px;
+    color: #a3a3a3;
+    margin: 0;
+  }
+
+  /* ============================================================
+     视图 B · 知识点排行（v0.5.5）
+     ============================================================ */
+  .sl-rank-hint {
+    font-size: 11.5px;
+    color: #a3a3a3;
+    margin: 0 0 12px;
+  }
+  .sl-rank-list {
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .sl-rank-head {
+    display: grid;
+    grid-template-columns: minmax(200px, 1.6fr) 90px 60px 100px 60px;
+    gap: 14px;
+    padding: 10px 20px;
+    background: #fafaf9;
+    border-bottom: 1px solid #ececec;
+    font-size: 11px;
+    color: #a3a3a3;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .sl-rank-col-num { text-align: right; }
+  .sl-rank-col-btn {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    text-align: right;
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    padding: 2px 0;
+    user-select: none;
+    transition: color .12s;
+  }
+  .sl-rank-col-btn:hover { color: #525252; }
+  .sl-rank-col-btn.is-active { color: #0a0a0a; font-weight: 600; }
+  .sl-rank-arrow {
+    display: inline-block;
+    margin-left: 3px;
+    width: 8px;
+    color: #0a0a0a;
+  }
+  .sl-rank-row {
+    position: relative;
+    border-bottom: 1px solid #f5f5f4;
+  }
+  .sl-rank-row:last-child { border-bottom: 0; }
+  .sl-rank-row:hover .sl-rank-progress-bg { background: #ececec; }
+  .sl-rank-progress-bg {
+    position: absolute;
+    inset: 0;
+    background: #f5f5f4;
+    transition: background .12s;
+    z-index: 0;
+  }
+  .sl-rank-content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(200px, 1.6fr) 90px 60px 100px 60px;
+    gap: 14px;
+    padding: 12px 20px;
+    align-items: center;
+    font-size: 13px;
+  }
+  .sl-rank-title { min-width: 0; }
+  .sl-rank-kp {
+    color: #0a0a0a;
+    font-weight: 500;
+    margin: 0 0 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sl-rank-school {
+    font-size: 11px;
+    color: #525252;
+    margin: 0;
+  }
+  .sl-rank-num {
+    text-align: right;
+    color: #0a0a0a;
+    font-variant-numeric: tabular-nums;
+  }
+  .sl-rank-stars {
+    color: #525252;
+    letter-spacing: 1px;
+    font-size: 12px;
+  }
+
+  /* ============================================================
+     视图 C · 学派段位（v0.5.4）
+     ============================================================ */
+  .sl-tier-ladder {
+    padding: 16px 20px;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    background: #fff;
+    margin-bottom: 16px;
+  }
+  .sl-tier-ladder-title {
+    font-size: 11.5px;
+    color: #a3a3a3;
+    margin: 0 0 10px;
+  }
+  .sl-tier-ladder-chips {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .sl-tier-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid #ececec;
+    font-size: 11px;
+    color: #525252;
+    background: #fff;
+  }
+  .sl-tier-chip strong {
+    color: #0a0a0a;
+    font-weight: 600;
+  }
+  .sl-tier-chip em {
+    font-style: normal;
+    color: #a3a3a3;
+    font-variant-numeric: tabular-nums;
+  }
+  /* 段位章颜色：单色 + 灰阶（无主题色） */
+  /* v0.7.23: 段位说明带 chip — sumi --tier-* 弱底（15% alpha）+ 同色文字 */
+  .sl-tier-chip-c {
+    background: oklch(from var(--tier-c) l c h / 0.10);
+    border-color: oklch(from var(--tier-c) l c h / 0.25);
+  }
+  .sl-tier-chip-c strong { color: var(--tier-c); }
+  .sl-tier-chip-b {
+    background: oklch(from var(--tier-b) l c h / 0.12);
+    border-color: oklch(from var(--tier-b) l c h / 0.30);
+  }
+  .sl-tier-chip-b strong { color: var(--tier-b); }
+  .sl-tier-chip-a {
+    background: oklch(from var(--tier-a) l c h / 0.15);
+    border-color: oklch(from var(--tier-a) l c h / 0.35);
+  }
+  .sl-tier-chip-a strong { color: var(--tier-a); }
+
+  /* 段位榜列表 */
+  .sl-tier-list {
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .sl-tier-row {
+    display: grid;
+    grid-template-columns: 36px 44px minmax(140px, 1.6fr) 130px 100px 56px;
+    gap: 14px;
+    padding: 14px 20px;
+    align-items: center;
+    border-bottom: 1px solid #f5f5f4;
+  }
+  .sl-tier-row:last-child { border-bottom: 0; }
+  .sl-tier-row:hover { background: #fafaf9; }
+
+  .sl-tier-rank {
+    font-size: 12px;
+    color: #a3a3a3;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .sl-tier-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #525252;
+    background: #fafaf9;
+    border: 1px solid #ececec;
+  }
+  /* v0.7.23: 段位榜大徽章 — sumi --tier-* 实色 + 白字（C 用浅底深字保持低对比，B/A 实色白字渐进） */
+  .sl-tier-badge-c {
+    color: var(--tier-c);
+    background: oklch(from var(--tier-c) l c h / 0.12);
+    border-color: oklch(from var(--tier-c) l c h / 0.30);
+  }
+  .sl-tier-badge-b {
+    color: #fff;
+    background: var(--tier-b);
+    border-color: var(--tier-b);
+  }
+  .sl-tier-badge-a {
+    color: #fff;
+    background: var(--tier-a);
+    border-color: var(--tier-a);
+  }
+
+  .sl-tier-school { min-width: 0; }
+  .sl-tier-school-name {
+    font-size: 13px;
+    color: #0a0a0a;
+    margin: 0 0 2px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sl-tier-school-meta {
+    font-size: 11px;
+    color: #a3a3a3;
+    margin: 0;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .sl-tier-peak {
+    color: #525252;
+    background: #f5f5f4;
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+  .sl-tier-decay {
+    color: #a3a3a3;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sl-tier-progress { min-width: 0; }
+  .sl-tier-progress-label {
+    font-size: 11px;
+    color: #525252;
+    margin: 0 0 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  /* v0.7.23: 段位进度条 → sumi --p-track / --p-fill */
+  .sl-tier-progress-bar {
+    height: 4px;
+    background: var(--p-track);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .sl-tier-progress-fill {
+    height: 100%;
+    background: var(--p-fill);
+    transition: width .2s;
+  }
+
+  .sl-tier-spark-wrap {
+    width: 100px;
+    height: 20px;
+  }
+  .sl-spark {
+    width: 100%;
+    height: 100%;
+  }
+
+  .sl-tier-quiz {
+    all: unset;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid #ececec;
+    color: #a3a3a3;
+    font-size: 11px;
+    text-align: center;
+    background: #fff;
+    transition: all .12s;
+  }
+  .sl-tier-quiz:hover:not([disabled]) {
+    border-color: #0a0a0a;
+    color: #0a0a0a;
+  }
+  .sl-tier-quiz[disabled] {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
+  .sl-tier-c-toggle {
+    all: unset;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    margin-top: 12px;
+    border: 1px dashed #ececec;
+    border-radius: 12px;
+    color: #525252;
+    font-size: 12px;
+    background: #fafaf9;
+    transition: all .12s;
+  }
+  .sl-tier-c-toggle:hover {
+    border-color: #a3a3a3;
+    color: #0a0a0a;
+  }
+  .sl-tier-c-toggle.hidden { display: none; }
+  .sl-view .hidden, .sl-row-note.hidden { display: none; }
+
+  /* ============================================================
+     v0.5.6: FAB（手机版浮动 + 按钮）
+     ============================================================ */
+  .sl-fab {
+    /* 桌面隐藏，仅 ≤ 768 显示（响应式段里 override） */
+    display: none;
+  }
+
+  /* iOS Safari safe area + dvh */
+  .study-log {
+    min-height: 100dvh;
+  }
+
+  /* ============================================================
+     SessionEditor modal（v0.5.5）/ Bottom sheet（v0.5.6 ≤ 768px）
+     ============================================================ */
+  .sl-editor-handle { display: none; /* 桌面隐藏 */ }
+  .sl-editor-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 10, 0.18);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .sl-editor-overlay.hidden { display: none; }
+  .sl-editor {
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0,0,0,.16);
+  }
+  .sl-editor-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid #f5f5f4;
+  }
+  .sl-editor-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0a0a0a;
+    margin: 0;
+  }
+  .sl-editor-close {
+    all: unset;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    color: #a3a3a3;
+    font-size: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sl-editor-close:hover { background: #f5f5f4; color: #0a0a0a; }
+  .sl-editor-body {
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .sl-field { display: flex; flex-direction: column; gap: 6px; }
+  .sl-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .sl-field-label {
+    font-size: 11.5px;
+    color: #525252;
+  }
+  .sl-field-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid #ececec;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #0a0a0a;
+    background: #fff;
+    outline: none;
+    transition: border-color .12s;
+  }
+  .sl-field-input:focus { border-color: #0a0a0a; }
+  .sl-field-textarea {
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
+  }
+
+  /* KP combobox（v0.7.19） */
+  .sl-kp-combo { position: relative; }
+  .sl-kp-input { padding-right: 28px; }
+  .sl-kp-clear {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    border: 0;
+    background: #f5f5f4;
+    color: #525252;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sl-kp-clear:hover { background: #e7e5e4; color: #0a0a0a; }
+  .sl-kp-clear.hidden { display: none; }
+  .sl-kp-list {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 10;
+    max-height: 240px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    padding: 4px 0;
+  }
+  .sl-kp-list.hidden { display: none; }
+  .sl-kp-group-label {
+    padding: 6px 12px 4px;
+    font-size: 10.5px;
+    color: #a3a3a3;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .sl-kp-option {
+    padding: 7px 12px;
+    font-size: 13px;
+    color: #0a0a0a;
+    cursor: pointer;
+    line-height: 1.3;
+  }
+  .sl-kp-option:hover,
+  .sl-kp-option.is-highlighted {
+    background: #f5f5f4;
+  }
+  .sl-kp-option.is-selected {
+    color: #0a0a0a;
+    font-weight: 500;
+  }
+  .sl-kp-option.is-selected::before {
+    content: '✓ ';
+    color: #2563eb;
+  }
+  .sl-kp-empty {
+    padding: 14px 12px;
+    font-size: 12px;
+    color: #a3a3a3;
+    text-align: center;
+  }
+
+  /* Rating star */
+  .sl-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 0;
+  }
+  .sl-rating-star {
+    all: unset;
+    cursor: pointer;
+    color: #d4d4d4;
+    font-size: 22px;
+    line-height: 1;
+    padding: 0 2px;
+    transition: color .08s;
+  }
+  .sl-rating-star:hover, .sl-rating-star.sl-rating-active {
+    color: #0a0a0a;
+  }
+  .sl-rating-clear {
+    all: unset;
+    cursor: pointer;
+    margin-left: 8px;
+    color: #a3a3a3;
+    font-size: 11px;
+    padding: 2px 6px;
+    border: 1px solid #ececec;
+    border-radius: 4px;
+  }
+  .sl-rating-clear:hover { color: #0a0a0a; border-color: #a3a3a3; }
+
+  .sl-editor-error {
+    padding: 8px 12px;
+    background: #fff7f7;
+    border: 1px solid #f0d5d5;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #c53030;
+  }
+  .sl-editor-error.hidden { display: none; }
+
+  .sl-editor-foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .sl-editor-btn-ghost {
+    all: unset;
+    cursor: pointer;
+    padding: 8px 14px;
+    border-radius: 6px;
+    color: #525252;
+    font-size: 13px;
+  }
+  .sl-editor-btn-ghost:hover { background: #f5f5f4; }
+  .sl-editor-btn-primary {
+    all: unset;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 6px;
+    background: #0a0a0a;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .sl-editor-btn-primary:hover { background: #262626; }
+  .sl-editor-btn-primary[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  /* 响应式 */
+  @media (max-width: 768px) {
+    .study-log { padding: 24px 16px 80px; }
+    .sl-stats { grid-template-columns: 1fr; gap: 16px; padding: 18px 20px; }
+    .sl-stat-value { font-size: 32px; }
+    .sl-heatmap { grid-template-columns: 1fr; }
+    .sl-cal-month:not(:last-child) { display: none; }
+    .sl-heatmap-title [data-title-desktop] { display: none; }
+    .sl-heatmap-title [data-title-mobile] { display: inline; }
+    .sl-heatmap-legend { display: none; }
+    /* v0.7.26: 手机版单行紧凑 ~38px 高（旧多行 64-90px → 单行 ~38px） */
+    .sl-row-main {
+      grid-template-columns: 36px 1fr auto auto 12px;
+      gap: 8px;
+      padding: 9px 12px;
+      align-items: center;
+    }
+    .sl-row-time {
+      font-size: 11px;
+      color: #a3a3a3;
+      text-align: left;
+    }
+    .sl-row-kp {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #171717;
+    }
+    /* mobile 收起非主要元素 */
+    .sl-row-school,
+    .sl-row-note-preview,
+    .sl-row-actions {
+      display: none;
+    }
+    .sl-row-rating {
+      font-size: 9px;
+      opacity: 0.85;
+      letter-spacing: 0.5px;
+    }
+    .sl-row-dur {
+      font-size: 12px;
+      font-weight: 600;
+      min-width: 48px;
+    }
+    .sl-row-chevron {
+      font-size: 8px;
+      color: #d4d4d4;
+    }
+    .sl-row-note {
+      padding: 4px 12px 12px 56px;
+      font-size: 12.5px;
+      line-height: 1.6;
+    }
+
+    /* 段位榜窄屏：sparkline 隐藏，quiz chip 缩到右下 */
+    .sl-tier-row {
+      grid-template-columns: 28px 36px 1fr 56px;
+      gap: 10px;
+      padding: 12px 14px;
+    }
+    .sl-tier-progress {
+      grid-column: span 4;
+      grid-row: 2;
+      margin-top: 6px;
+    }
+    .sl-tier-spark-wrap { display: none; }
+    .sl-tier-quiz { padding: 3px 8px; font-size: 10px; }
+
+    /* 排行榜窄屏：评分 / 最近 隐藏，留 KP / 累计 / 次数 */
+    .sl-rank-head, .sl-rank-content {
+      grid-template-columns: 1fr 70px 40px;
+      gap: 10px;
+      padding-left: 14px;
+      padding-right: 14px;
+    }
+    .sl-rank-head .sl-rank-col-num:nth-child(4),
+    .sl-rank-head .sl-rank-col-num:nth-child(5),
+    .sl-rank-content .sl-rank-num:nth-child(4),
+    .sl-rank-content .sl-rank-num:nth-child(5) { display: none; }
+
+    /* v0.5.6: 顶部 "+ 新建记录" 按钮隐藏，FAB 替代 */
+    .sl-add-btn { display: none; }
+    .sl-fab {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      right: 18px;
+      bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      background: #0a0a0a;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18), 0 1px 4px rgba(0, 0, 0, 0.24);
+      z-index: 50;
+      transition: transform .12s, box-shadow .12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .sl-fab:active {
+      transform: scale(0.94);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+    }
+    .sl-fab-plus {
+      font-size: 28px;
+      font-weight: 300;
+      line-height: 1;
+      margin-top: -2px; /* visually center */
+    }
+
+    /* v0.5.6: editor 改 bottom sheet —— 滑入 / 拖拽把手 / 88% 高 */
+    .sl-editor-overlay {
+      align-items: flex-end;
+      padding: 0;
+    }
+    .sl-editor {
+      max-width: 100%;
+      width: 100%;
+      max-height: 88dvh;
+      border-radius: 14px 14px 0 0;
+      animation: sl-sheet-in 260ms cubic-bezier(.16,.84,.3,1) both;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      display: flex;
+      flex-direction: column;
+      touch-action: none; /* 防 iOS 拖拽误触系统手势 */
+    }
+    .sl-editor-handle {
+      display: block;
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: #d4d4d4;
+      margin: 8px auto 0;
+      flex-shrink: 0;
+    }
+    .sl-editor-body {
+      overflow-y: auto;
+      flex: 1;
+      touch-action: pan-y; /* form 区域允许内部滚动 */
+    }
+    @keyframes sl-sheet-in {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+  }
+
+  /* ============================================================
+     v0.7.30 · Share Link Dialog + 分享按钮
+     ============================================================ */
+  .sl-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sl-share-btn {
+    all: unset;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #fff;
+    border: 1px solid #ececec;
+    color: #525252;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: border-color .12s, color .12s, background .12s;
+  }
+  .sl-share-btn:hover {
+    color: #0a0a0a;
+    border-color: #d4d4d4;
+    background: #fafaf9;
+  }
+
+  /* === Share Dialog === */
+  .sls-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,10,10,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .sls-overlay.hidden { display: none; }
+  .sls-sheet {
+    background: #fff;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 20px 60px -10px rgba(0,0,0,0.25);
+    overflow: hidden;
+  }
+  .sls-head {
+    padding: 20px 24px 14px;
+    border-bottom: 1px solid #f1f1f0;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .sls-head > div { flex: 1; min-width: 0; }
+  .sls-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0a0a0a;
+    margin: 0;
+  }
+  .sls-sub {
+    font-size: 12px;
+    color: #737373;
+    margin: 4px 0 0;
+    line-height: 1.5;
+  }
+  .sls-close {
+    all: unset;
+    cursor: pointer;
+    padding: 6px;
+    color: #737373;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .sls-close:hover { color: #0a0a0a; }
+  .sls-body { padding: 20px 24px 22px; }
+
+  .sls-empty-text {
+    font-size: 13px;
+    color: #525252;
+    margin: 0 0 14px;
+    line-height: 1.6;
+  }
+  .sls-btn-primary {
+    all: unset;
+    cursor: pointer;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    background: #0a0a0a;
+    color: #fff;
+    display: inline-block;
+    transition: background .12s;
+  }
+  .sls-btn-primary:hover { background: #262626; }
+
+  .sls-url-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .sls-url {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 10px;
+    border: 1px solid #ececec;
+    border-radius: 7px;
+    font-size: 12px;
+    color: #171717;
+    background: #fafaf9;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .sls-url:focus { outline: none; border-color: #d4d4d4; }
+  .sls-copy {
+    all: unset;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    border-radius: 7px;
+    background: #f5f5f4;
+    color: #525252;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background .12s, color .12s;
+  }
+  .sls-copy:hover { background: #e7e5e4; color: #0a0a0a; }
+
+  .sls-meta {
+    font-size: 12px;
+    color: #737373;
+    margin: 0 0 14px;
+  }
+  .sls-btn-ghost {
+    all: unset;
+    cursor: pointer;
+    padding: 7px 0;
+    font-size: 12px;
+    color: #737373;
+    text-decoration: underline;
+    text-decoration-color: #d4d4d4;
+    text-underline-offset: 3px;
+  }
+  .sls-btn-ghost:hover { color: #0a0a0a; }
+
+  .sls-loading {
+    padding: 12px 0;
+    text-align: center;
+    color: #a3a3a3;
+    font-size: 13px;
+  }
+  .sls-error {
+    padding: 10px 12px;
+    background: rgb(254 242 242);
+    color: rgb(185 28 28);
+    border-radius: 7px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+
+  /* v0.7.30: readOnly 模式（公开分享页）— 隐藏所有写 UI（最后一道防线） */
+  body[data-sl-readonly] .sl-add-btn,
+  body[data-sl-readonly] .sl-share-btn,
+  body[data-sl-readonly] .sl-fab,
+  body[data-sl-readonly] .sl-row-actions,
+  body[data-sl-readonly] .sl-editor-overlay,
+  body[data-sl-readonly] .sls-overlay {
+    display: none !important;
+  }
+
+</style>

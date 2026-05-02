@@ -1,0 +1,117 @@
+---
+/**
+ * ShareLayout (v0.7.30) — 学习记录公开分享页布局
+ *
+ * 与 Layout.astro 的差异：
+ *   - 无 Nav（顶部 search/settings/avatar 全无）
+ *   - 无 Footer
+ *   - 无登录态相关 client modules（toast / cooldown / update-watcher / lang-toggle）
+ *   - 顶部仅一条「学习者 · {学科} · 学习记录（公开分享）」匿名 banner，logo 不可点
+ *   - <body data-sl-readonly> 触发 StudyLogShared 内的 CSS 隐藏所有写 UI
+ *
+ * 不暴露 user.email / display_name —— 仅 disciplineTitle 出现在标题栏。
+ */
+import '~/styles/global.css';
+
+interface Props {
+  title?: string;
+  disciplineTitle: string;
+}
+
+const { title, disciplineTitle } = Astro.props;
+const fullTitle = title ?? `学习记录 · ${disciplineTitle}`;
+---
+
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1a1c" media="(prefers-color-scheme: dark)" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{fullTitle}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@700&display=swap" rel="stylesheet" />
+    <script is:inline>
+      // 同 Layout.astro：无闪烁夜间模式初始化
+      (function () {
+        try {
+          const saved = localStorage.getItem('theme');
+          const prefersDark = matchMedia('(prefers-color-scheme: dark)').matches;
+          const isDark = saved ? saved === 'dark' : prefersDark;
+          const root = document.documentElement;
+          if (isDark) root.classList.add('dark');
+          root.dataset.mode = isDark ? 'dark' : 'light';
+        } catch {}
+      })();
+    </script>
+  </head>
+  <body
+    data-sl-readonly
+    class="flex flex-col bg-bg-primary text-secondary min-h-screen"
+  >
+    <header class="share-banner">
+      <div class="share-banner-inner">
+        <span class="share-banner-logo">sususu</span>
+        <span class="share-banner-sep">·</span>
+        <span class="share-banner-id">学习者 · {disciplineTitle}</span>
+        <span class="share-banner-spacer"></span>
+        <span class="share-banner-tag">公开分享 · 7 天有效</span>
+      </div>
+    </header>
+
+    <div class="flex-1">
+      <slot />
+    </div>
+
+    <style is:global>
+      .share-banner {
+        border-bottom: 1px solid #f1f1f0;
+        background: #fff;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+      .share-banner-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 14px 24px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .share-banner-logo {
+        font-family: 'Kalam', cursive;
+        font-weight: 700;
+        font-size: 20px;
+        color: #0a0a0a;
+        letter-spacing: 0.5px;
+      }
+      .share-banner-sep {
+        color: #d4d4d4;
+      }
+      .share-banner-id {
+        font-size: 14px;
+        color: #525252;
+      }
+      .share-banner-spacer { flex: 1; }
+      .share-banner-tag {
+        font-size: 11px;
+        color: #a3a3a3;
+        padding: 3px 8px;
+        border: 1px solid #ececec;
+        border-radius: 6px;
+        white-space: nowrap;
+      }
+      @media (max-width: 640px) {
+        .share-banner-inner { padding: 10px 14px; gap: 8px; }
+        .share-banner-logo { font-size: 17px; }
+        .share-banner-id { font-size: 12px; }
+        .share-banner-tag { font-size: 10px; padding: 2px 6px; }
+      }
+    </style>
+  </body>
+</html>
