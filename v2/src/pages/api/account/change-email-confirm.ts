@@ -77,7 +77,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   // 强制重新登录（cookie sig 还能验过去，但 email 已变 → 让用户重新登录拿新 cookie）
   const headers = new Headers();
-  headers.append('Location', `${reqOrigin}/login`);
+  headers.append('Location', `${reqOrigin}/signin`);
   headers.append('Set-Cookie', buildClearCookie(isSecure));
   headers.append('Set-Cookie', buildFlashCookie({ ok: 'email_changed', email: result.row.new_email }, isSecure));
   return new Response(null, { status: 303, headers });

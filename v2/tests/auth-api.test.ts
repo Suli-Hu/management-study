@@ -100,11 +100,11 @@ function formReq(url: string, body: Record<string, string>): Request {
 // ========== /api/auth/logout ==========
 
 describe('POST /api/auth/logout', () => {
-  test('302 to / + clear cookie（dev, 无 Secure）', async () => {
+  test('302 to /signin + clear cookie（dev, 无 Secure；v0.7.9 改：跳 /signin 而非 /）', async () => {
     const req = new Request('http://localhost:4321/api/auth/logout', { method: 'POST' });
     const res = await logoutPOST(makeCtx(req, {}));
     expect(res.status).toBe(302);
-    expect(res.headers.get('Location')).toBe('http://localhost:4321/');
+    expect(res.headers.get('Location')).toBe('http://localhost:4321/signin');
     const setCookie = res.headers.get('Set-Cookie') ?? '';
     expect(setCookie).toContain('Max-Age=0');
     expect(setCookie).not.toContain('Secure');

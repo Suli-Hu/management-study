@@ -405,7 +405,7 @@ describe('POST /api/account/change-email-confirm', () => {
     const req = formReq('http://localhost/api/account/change-email-confirm', { code: '111111' });
     const res = await changeEmailConfirmPOST(makeCtx(req, { ...baseEnv, DB: db }));
     expect(res.status).toBe(303);
-    expect(res.headers.get('Location')).toBe('http://localhost/login');
+    expect(res.headers.get('Location')).toBe('http://localhost/signin');
     const cookieHeader = res.headers.getSetCookie ? res.headers.getSetCookie() : [res.headers.get('Set-Cookie') ?? ''];
     const all = cookieHeader.join(' ');
     expect(all).toContain('email_changed');
@@ -448,12 +448,12 @@ describe('POST /api/account/logout-all', () => {
     expect(res.status).toBe(401);
   });
 
-  test('登录 → 303 /login + 清 cookie + DELETE session', async () => {
+  test('登录 → 303 /signin + 清 cookie + DELETE session（v0.7.9）', async () => {
     const db = createMockD1();
     const req = formReq('http://localhost/api/account/logout-all', {});
     const res = await logoutAllPOST(makeCtx(req, { ...baseEnv, DB: db }));
     expect(res.status).toBe(303);
-    expect(res.headers.get('Location')).toBe('http://localhost/login');
+    expect(res.headers.get('Location')).toBe('http://localhost/signin');
     const cookies = res.headers.getSetCookie ? res.headers.getSetCookie() : [res.headers.get('Set-Cookie') ?? ''];
     expect(cookies.some((c) => c.includes('session=') && c.includes('Max-Age=0'))).toBe(true);
     expect(db.calls.some((c) => /DELETE FROM session WHERE user_id/.test(c.sql))).toBe(true);
@@ -502,7 +502,7 @@ describe('POST /api/account/delete', () => {
     expect(db.calls.some((c) => /DELETE FROM user/.test(c.sql))).toBe(false);
   });
 
-  test('全合法 → 303 /login + DELETE user + 清 cookie + flash account_deleted', async () => {
+  test('全合法 → 303 /signin + DELETE user + 清 cookie + flash account_deleted（v0.7.9）', async () => {
     const db = createMockD1((sql) => {
       if (/SELECT id, email, password_hash/.test(sql)) return { rows: [authRowMock()] };
       return { rows: [], meta: { success: true } };
@@ -512,7 +512,7 @@ describe('POST /api/account/delete', () => {
     });
     const res = await deletePOST(makeCtx(req, { ...baseEnv, DB: db }));
     expect(res.status).toBe(303);
-    expect(res.headers.get('Location')).toBe('http://localhost/login');
+    expect(res.headers.get('Location')).toBe('http://localhost/signin');
     const cookies = res.headers.getSetCookie ? res.headers.getSetCookie() : [res.headers.get('Set-Cookie') ?? ''];
     const all = cookies.join(' ');
     expect(all).toContain('account_deleted');

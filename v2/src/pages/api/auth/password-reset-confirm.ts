@@ -107,7 +107,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     .first<{ id: string; email: string }>();
   if (!userRow) {
     // 极罕见：user 已被删 → 跳 /login（无法登录）
-    return redirect303(reqOrigin, '/login', { error: 'invalid_or_expired' }, isSecure);
+    return redirect303(reqOrigin, '/signin', { error: 'invalid_or_expired' }, isSecure);
   }
 
   const cookie = await buildSignedSessionCookie(userRow, true, secret, isSecure);

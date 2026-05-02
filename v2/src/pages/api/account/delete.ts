@@ -10,7 +10,7 @@
  *   4. DELETE FROM user → CASCADE 删 session / user_permission /
  *      user_progress / user_note / study_session / pending_email_change /
  *      tenant_member / password_reset 等
- *   5. 清 cookie → 跳 /login + flash"账户已注销"
+ *   5. 清 cookie → 跳 /signin + flash"账户已注销"（v0.7.9）
  */
 
 import type { APIRoute } from 'astro';
@@ -74,7 +74,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   await deleteUserAndCascade(db, user.id);
 
   const headers = new Headers();
-  headers.append('Location', `${reqOrigin}/login`);
+  headers.append('Location', `${reqOrigin}/signin`);
   headers.append('Set-Cookie', buildClearCookie(isSecure));
   headers.append('Set-Cookie', buildFlashCookie({ ok: 'account_deleted' }, isSecure));
   return new Response(null, { status: 303, headers });

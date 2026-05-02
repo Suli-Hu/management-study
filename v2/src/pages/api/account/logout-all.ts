@@ -1,7 +1,7 @@
 /**
  * POST /api/account/logout-all
  *
- * v0.7.5 退出所有设备：DELETE 所有 D1 session 行 + 清当前 cookie → 跳 /login。
+ * v0.7.5 退出所有设备：DELETE 所有 D1 session 行 + 清当前 cookie → 跳 /signin（v0.7.9）。
  *
  * 注意：v0.3.5 后 session 表行只在 cookie-less 路径用（webhook 等），主流
  * 程靠 signed cookie。所以"退出所有设备"主要清 cookie 表行；其他设备的
@@ -25,7 +25,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   await deleteAllSessionsForUser(db, locals.user.id);
 
   const headers = new Headers();
-  headers.append('Location', `${reqOrigin}/login`);
+  headers.append('Location', `${reqOrigin}/signin`);
   headers.append('Set-Cookie', buildClearCookie(isSecure));
   headers.append('Set-Cookie', buildFlashCookie({ ok: 'logged_out_all' }, isSecure));
   return new Response(null, { status: 303, headers });
