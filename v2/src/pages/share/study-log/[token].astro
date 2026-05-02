@@ -1,0 +1,144 @@
+---
+/**
+ * /share/study-log/[token] — 学习记录公开分享页（v0.7.30）
+ *
+ * 公开 + 不需要登录（middleware /share/ 白名单）。token 自带鉴权（256-bit 熵）。
+ *
+ * 流程：
+ *   1) findActiveByToken(db, token) — token 存在 + expires_at > now，否则 404
+ *   2) 用 share_link.user_id + .discipline 拉同样的 SSR 数据（同主页 SQL）
+ *   3) <ShareLayout> + <StudyLogShared readOnly> 渲染只读视图
+ *
+ * 安全：
+ *   - 只读：分享页不发请求 cookie，所有写 API（study-sessions / share-link）
+ *     缺登录态自动 401
+ *   - 数据：仅暴露被分享 user 的 study_session（含 KP/学派 title），
+ *     不暴露 email / display_name / 其他学科记录
+ *   - SEO：ShareLayout 设了 <meta name="robots" content="noindex, nofollow">
+ */
+import ShareLayout from '~/layouts/ShareLayout.astro';
+import StudyLogShared from '~/components/StudyLogShared.astro';
+import { getDb } from '~/lib/db';
+import { findActiveByToken } from '~/lib/share-link';
+import {
+  computeTiers,
+  computeTimeline,
+  TIERS,
+  type TierSession,
+  type SchoolTierState,
+} from '~/lib/tier';
+
+const { token } = Astro.params;
+if (!token) return Astro.redirect('/404');
+
+const db = getDb(Astro.locals.runtime.env);
+
+const link = await findActiveByToken(db, token);
+if (!link) return Astro.redirect('/404');
+if (link.scope !== 'study-log') return Astro.redirect('/404');
+
+const { user_id: userId, discipline } = link;
+
+// discipline 元信息
+const disc = await db
+  .prepare('SELECT key, title_zh FROM discipline WHERE key = ?')
+  .bind(discipline)
+  .first<{ key: string; title_zh: string }>();
+if (!disc) return Astro.redirect('/404');
+
+// 与主页相同的 SSR 数据查询（近 90 天 sessions）
+const fromDate = (() => {
+  const d = new Date();
+  d.setDate(d.getDate() - 90);
+  return d.toISOString().slice(0, 10);
+})();
+
+interface SessionRow {
+  id: string;
+  date: string;
+  start_time: string;
+  duration_min: number;
+  rating: number | null;
+  note: string | null;
+  kp_id: string | null;
+  kp_title: string | null;
+  school_key: string | null;
+  school_title: string | null;
+}
+
+const result = await db
+  .prepare(
+    `SELECT
+       s.id, s.date, s.start_time, s.duration_min, s.rating, s.note, s.kp_id,
+       k.title_zh as kp_title,
+       (SELECT ks.school_key
+        FROM kp_school ks
+        WHERE ks.kp_id = s.kp_id
+        ORDER BY ks.position
+        LIMIT 1) as school_key,
+       (SELECT sc.title_zh
+        FROM kp_school ks
+        INNER JOIN school sc ON sc.key = ks.school_key
+        WHERE ks.kp_id = s.kp_id
+        ORDER BY ks.position
+        LIMIT 1) as school_title
+     FROM study_session s
+     LEFT JOIN kp k ON k.id = s.kp_id
+     WHERE s.user_id = ? AND s.discipline = ? AND s.date >= ?
+     ORDER BY s.date DESC, s.start_time DESC, s.id DESC
+     LIMIT 1000`,
+  )
+  .bind(userId, discipline, fromDate)
+  .all<SessionRow>();
+
+const sessions = result.results ?? [];
+const sessionsJson = JSON.stringify(sessions);
+
+const TODAY = new Date().toISOString().slice(0, 10);
+
+// 段位视图数据（同主页）
+interface SchoolMetaRow { key: string; title_zh: string; }
+const allSchoolsResult = await db
+  .prepare('SELECT key, title_zh FROM school WHERE discipline = ? ORDER BY key')
+  .bind(discipline)
+  .all<SchoolMetaRow>();
+const allSchools = allSchoolsResult.results ?? [];
+const schoolTitleByKey = new Map(allSchools.map((s) => [s.key, s.title_zh]));
+
+const tierSessions: TierSession[] = sessions
+  .filter((s): s is SessionRow & { school_key: string } => s.school_key !== null)
+  .map((s) => ({ schoolKey: s.school_key, date: s.date, durationMin: s.duration_min }));
+
+const tierStates = computeTiers(tierSessions, TODAY, {
+  allSchools: allSchools.map((s) => s.key),
+});
+
+interface TierStateWithMeta extends SchoolTierState {
+  schoolTitle: string;
+  timeline: number[];
+}
+const tierStatesEnriched: TierStateWithMeta[] = tierStates.map((t) => ({
+  ...t,
+  schoolTitle: schoolTitleByKey.get(t.schoolKey) ?? t.schoolKey,
+  timeline: computeTimeline(tierSessions, t.schoolKey, TODAY, 30).map((p) => p.score),
+}));
+
+const tierStatesJson = JSON.stringify(tierStatesEnriched);
+const tierLevels = TIERS.map((t) => ({ key: t.key, threshold: t.threshold }));
+
+// SessionEditor 在分享页是隐藏的（CSS data-sl-readonly），但 inline JS 还要
+// querySelector 编辑器 modal 元素；KP combobox 数据可以传空数组（不会用上）。
+const kpGroupedJson = '[]';
+---
+<ShareLayout disciplineTitle={disc.title_zh}>
+  <StudyLogShared
+    discipline={discipline}
+    disciplineTitle={disc.title_zh}
+    sessionsJson={sessionsJson}
+    tierStatesJson={tierStatesJson}
+    kpGroupedJson={kpGroupedJson}
+    today={TODAY}
+    tierLevels={tierLevels}
+    readOnly={true}
+  />
+</ShareLayout>
