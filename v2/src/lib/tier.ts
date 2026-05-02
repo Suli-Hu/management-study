@@ -204,6 +204,81 @@ export function daysBetween(start: string, end: string): number {
   return Math.round((b - a) / 86_400_000);
 }
 
+// ============================================================
+// v0.5.4: 历史时间线（sparkline 用）
+// ============================================================
+
+export interface TimelinePoint {
+  date: string;   // YYYY-MM-DD
+  score: number;  // 当天结束时的分数（已扣衰减，下界 0）
+}
+
+/**
+ * 给定 sessions + schoolKey + today + days，返回最近 days 天每天 end-of-day
+ * 分数序列。算法跟 computeTierForSchool 一致（按天 loop + 衰减 + 同日累加），
+ * 区别是把每天的 score push 到数组而不是只返回最终值。
+ *
+ * 用于段位榜的 30 天 sparkline。
+ *
+ * 注意：分数演化从 firstSessionDate 起算，但只返回 [today - days + 1, today]
+ * 区间内的点。如果 firstSession 在窗口之前，loop 仍从 firstSession 开始保证
+ * 衰减/peak 算对，只是 push 时筛选窗口内的天。
+ */
+export function computeTimeline(
+  sessions: readonly TierSession[],
+  schoolKey: string,
+  today: string,
+  days: number,
+): TimelinePoint[] {
+  const own = sessions.filter((s) => s.schoolKey === schoolKey);
+
+  // 计算窗口起点
+  const windowStart = (() => {
+    const d = new Date(`${today}T00:00:00Z`);
+    d.setUTCDate(d.getUTCDate() - (days - 1));
+    return d.toISOString().slice(0, 10);
+  })();
+
+  // 窗口内每天先填 score=0（万一 own 完全没数据也能返回完整 days 长度）
+  const window = new Map<string, number>();
+  let cur = windowStart;
+  while (cur <= today) {
+    window.set(cur, 0);
+    cur = nextDay(cur);
+  }
+
+  if (own.length === 0) {
+    return [...window.entries()].map(([date]) => ({ date, score: 0 }));
+  }
+
+  // 按日期累加
+  const byDate = new Map<string, number>();
+  for (const s of own) {
+    byDate.set(s.date, (byDate.get(s.date) ?? 0) + s.durationMin * POINTS_PER_MIN);
+  }
+
+  const dates = [...byDate.keys()].sort();
+  const firstSessionDate = dates[0];
+  // loop 起点：firstSessionDate 和 windowStart 取较早的
+  const loopStart = firstSessionDate < windowStart ? firstSessionDate : windowStart;
+
+  let score = 0;
+  let isFirstDay = true;
+  let p = loopStart;
+  while (p <= today) {
+    if (!isFirstDay) {
+      score = Math.max(0, score - DECAY_PER_DAY);
+    }
+    const earned = byDate.get(p) ?? 0;
+    score += earned;
+    isFirstDay = false;
+    if (window.has(p)) window.set(p, score);
+    p = nextDay(p);
+  }
+
+  return [...window.entries()].map(([date, s]) => ({ date, score: s }));
+}
+
 function emptyTierState(schoolKey: string): SchoolTierState {
   return {
     schoolKey,
