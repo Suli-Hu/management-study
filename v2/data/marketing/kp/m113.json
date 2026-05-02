@@ -2,7 +2,8 @@
   "id": "m113",
   "discipline": "marketing",
   "schools": [
-    "managerial"
+    "managerial",
+    "product_strategy"
   ],
   "scholars": [
     "kotler"
@@ -36,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T07:35:26.150Z",
-  "updatedAt": "2026-04-30T13:23:13.206Z"
+  "updatedAt": "2026-05-02T11:53:56.513Z"
 }
