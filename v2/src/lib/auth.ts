@@ -723,6 +723,97 @@ export async function updateUserLoginSuccess(
     .run();
 }
 
+// ============================================================
+// v0.7.4 password_reset —— 忘记密码 token
+// ============================================================
+
+const PASSWORD_RESET_TTL_MS = 30 * 60 * 1000; // 30 分钟
+
+export interface PasswordResetRow {
+  token: string;
+  user_id: string;
+  expires_at: number;
+  used_at: string | null;
+  created_at: string;
+}
+
+/** 创建 reset token，返回 token 字符串供调用方组邮件链接 */
+export async function createPasswordReset(
+  db: D1Database,
+  userId: string,
+): Promise<{ token: string; expiresAt: number }> {
+  const token = generateToken(32);
+  const expiresAt = Date.now() + PASSWORD_RESET_TTL_MS;
+  const now = new Date().toISOString();
+  await db
+    .prepare(
+      'INSERT INTO password_reset (token, user_id, expires_at, used_at, created_at) VALUES (?, ?, ?, NULL, ?)',
+    )
+    .bind(token, userId, expiresAt, now)
+    .run();
+  return { token, expiresAt };
+}
+
+export type ConsumeResetResult =
+  | { ok: true; userId: string }
+  | { ok: false; reason: 'not_found' | 'expired' | 'used' };
+
+/** 校验 + consume token（标 used_at）。成功返回 user_id 给调用方 UPDATE user。 */
+export async function consumePasswordReset(
+  db: D1Database,
+  token: string,
+): Promise<ConsumeResetResult> {
+  const row = await db
+    .prepare('SELECT * FROM password_reset WHERE token = ?')
+    .bind(token)
+    .first<PasswordResetRow>();
+  if (!row) return { ok: false, reason: 'not_found' };
+  if (row.used_at) return { ok: false, reason: 'used' };
+  if (row.expires_at < Date.now()) return { ok: false, reason: 'expired' };
+
+  await db
+    .prepare('UPDATE password_reset SET used_at = ? WHERE token = ?')
+    .bind(new Date().toISOString(), token)
+    .run();
+  return { ok: true, userId: row.user_id };
+}
+
+/** 更新密码 + 解锁 + 刷新 password_changed_at（重置流 / settings 改密都用） */
+export async function updateUserPassword(
+  db: D1Database,
+  userId: string,
+  passwordHash: string,
+  passwordSalt: string,
+): Promise<void> {
+  const now = new Date().toISOString();
+  await db
+    .prepare(
+      `UPDATE user
+       SET password_hash = ?, password_salt = ?, password_changed_at = ?,
+           failed_attempts = 0, locked_until = NULL
+       WHERE id = ?`,
+    )
+    .bind(passwordHash, passwordSalt, now, userId)
+    .run();
+}
+
+/** 失效该 user 的所有 D1 session 行（重置密码 / 注销账户 / "退出所有设备"用）
+ *
+ *  注意：v0.3.5 后主要靠 signed cookie stateless，session 表行不一定存在；
+ *  无 row 也是 OK 的（DELETE 无 match 不报错）。但 cookie 在 exp 前仍可能
+ *  生效——这是已知 tradeoff（accept 在 README）。如果要绝对失效现存 cookie，
+ *  得加 SESSION_SECRET rotation 或 token blacklist 表（v0.8+ SaaS 阶段再说）。
+ */
+export async function deleteAllSessionsForUser(
+  db: D1Database,
+  userId: string,
+): Promise<void> {
+  await db
+    .prepare('DELETE FROM session WHERE user_id = ?')
+    .bind(userId)
+    .run();
+}
+
 /** 创建注册的 user —— 区别于 findOrCreateUser（隐式登录用），这里是显式注册 */
 export async function createSignupUser(
   db: D1Database,

@@ -113,6 +113,55 @@ export function renderMagicLinkEmail(params: {
   return { html, text };
 }
 
+/** v0.7.4 忘记密码 reset link 邮件模板（含 30 分钟有效链接） */
+export function renderPasswordResetEmail(params: {
+  email: string;
+  url: string;
+}): { html: string; text: string } {
+  const { email, url } = params;
+
+  const text = `你申请了重置密码。
+
+点击下面这个链接设置新密码（30 分钟内有效，仅可使用一次）：
+
+    ${url}
+
+如果不是你发起的请求，忽略即可——你的密码不会改变。
+
+— 全学科学习笔记
+`;
+
+  const html = `<!doctype html>
+<html>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', sans-serif; background: #f5f5f7; margin: 0; padding: 32px 16px;">
+  <div style="max-width: 480px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 32px 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
+    <h1 style="font-size: 20px; margin: 0 0 16px; color: #1d1d1f;">重置密码</h1>
+
+    <p style="font-size: 13px; color: #86868b; line-height: 1.7; margin: 0 0 20px;">
+      点击下面的按钮设置新密码（30 分钟内有效，仅可使用一次）：
+    </p>
+
+    <p style="margin: 0 0 24px;">
+      <a href="${url}" style="display: inline-block; padding: 10px 20px; background: #007AFF; color: #fff; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">设置新密码</a>
+    </p>
+
+    <p style="font-size: 11px; color: #48484a; word-break: break-all; margin: 0 0 24px; padding: 10px; background: #fafafa; border-radius: 6px; border: 1px solid #eee;">
+      ${url}
+    </p>
+
+    <p style="font-size: 12px; color: #86868b; line-height: 1.6; margin: 0;">
+      如果不是你发起的请求，忽略即可——你的密码不会改变。
+    </p>
+  </div>
+  <p style="text-align: center; font-size: 11px; color: #86868b; margin-top: 16px;">
+    发给 ${email} · 全学科学习笔记
+  </p>
+</body>
+</html>`;
+
+  return { html, text };
+}
+
 /** v0.7.2 注册验证码邮件模板（仅 6 位 code，无 magic-link） */
 export function renderSignupCodeEmail(params: {
   email: string;
