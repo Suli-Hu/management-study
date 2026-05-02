@@ -4,7 +4,8 @@
   "schools": [
     "sdl",
     "managerial",
-    "relationship"
+    "relationship",
+    "service_marketing"
   ],
   "scholars": [
     "vargo"
@@ -38,5 +39,5 @@
     }
   },
   "createdAt": "2026-04-30T07:35:35.309Z",
-  "updatedAt": "2026-04-30T13:23:24.482Z"
+  "updatedAt": "2026-05-02T11:54:05.254Z"
 }
