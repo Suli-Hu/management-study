@@ -3,7 +3,8 @@
   "discipline": "marketing",
   "schools": [
     "brand_equity",
-    "strategic_marketing"
+    "strategic_marketing",
+    "global_marketing"
   ],
   "scholars": [
     "aaker",
@@ -39,5 +40,5 @@
     }
   },
   "createdAt": "2026-04-30T07:36:19.975Z",
-  "updatedAt": "2026-04-30T13:24:22.500Z"
+  "updatedAt": "2026-05-02T11:54:34.273Z"
 }
