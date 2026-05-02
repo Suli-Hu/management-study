@@ -231,6 +231,7 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
           <span class="sl-heat sl-heat-2"></span>
           <span class="sl-heat sl-heat-3"></span>
           <span class="sl-heat sl-heat-4"></span>
+          <span class="sl-heat sl-heat-5"></span>
           多
         </div>
         <div class="sl-heatmap" data-heatmap></div>
@@ -543,13 +544,14 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
   // 渲染：4 月并列日历热力图
   // ============================================================
 
-  /** 给 minutes 返回 0-4 等级 */
+  /** v0.7.23: 给 minutes 返回 0-5 等级（设计文档 6 档算法） */
   function heatLevel(min) {
     if (min <= 0) return 0;
-    if (min < 30) return 1;
-    if (min < 60) return 2;
-    if (min < 90) return 3;
-    return 4;
+    if (min < 15) return 1;
+    if (min < 30) return 2;
+    if (min < 60) return 3;
+    if (min < 120) return 4;
+    return 5;
   }
 
   function renderHeatmap() {
@@ -1392,7 +1394,8 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
       if (min < 120) return 4;
       return 5;
     }
-    const HEAT_COLORS = ['#f1f1f0', '#dde7f5', '#b5cef0', '#7fa9e0', '#4d82c8', '#2e62a8'];
+    // v0.7.23: PDF 热力图也走 sumi --i-* token（CSS var 在 inline style 内 print 时正常解析）
+    const HEAT_COLORS = ['var(--i-0)', 'var(--i-1)', 'var(--i-2)', 'var(--i-3)', 'var(--i-4)', 'var(--i-5)'];
 
     function renderReport({ startDate, endDate, days, include }) {
       const sessions = ALL_SESSIONS.filter((s) => s.date >= startDate && s.date <= endDate);
@@ -1723,11 +1726,13 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     border-radius: 2px;
     display: inline-block;
   }
-  .sl-heat-0 { background: #f5f5f4; }
-  .sl-heat-1 { background: #dbe7f7; }
-  .sl-heat-2 { background: #a8c6ed; }
-  .sl-heat-3 { background: #5b8cd1; }
-  .sl-heat-4 { background: #2f5a99; }
+  /* v0.7.23: 热力图 6 阶 → sumi --i-* token（旧 5 阶蓝色 hex 退役） */
+  .sl-heat-0 { background: var(--i-0); }
+  .sl-heat-1 { background: var(--i-1); }
+  .sl-heat-2 { background: var(--i-2); }
+  .sl-heat-3 { background: var(--i-3); }
+  .sl-heat-4 { background: var(--i-4); }
+  .sl-heat-5 { background: var(--i-5); }
 
   .sl-heatmap {
     display: grid;
@@ -1771,7 +1776,8 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
   .sl-cal-day {
     cursor: default;
   }
-  .sl-cal-day.sl-heat-3, .sl-cal-day.sl-heat-4 {
+  /* v0.7.23: 高强度阶白字（4 / 5 档背景够深） */
+  .sl-cal-day.sl-heat-4, .sl-cal-day.sl-heat-5 {
     color: #fff;
     font-weight: 500;
   }
@@ -2086,10 +2092,22 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     font-variant-numeric: tabular-nums;
   }
   /* 段位章颜色：单色 + 灰阶（无主题色） */
-  .sl-tier-chip-c { background: #fafaf9; }
-  .sl-tier-chip-b { background: #f5f5f4; border-color: #d4d4d4; }
-  .sl-tier-chip-a { background: #ececec; border-color: #a3a3a3; }
-  .sl-tier-chip-a strong { color: #0a0a0a; }
+  /* v0.7.23: 段位说明带 chip — sumi --tier-* 弱底（15% alpha）+ 同色文字 */
+  .sl-tier-chip-c {
+    background: oklch(from var(--tier-c) l c h / 0.10);
+    border-color: oklch(from var(--tier-c) l c h / 0.25);
+  }
+  .sl-tier-chip-c strong { color: var(--tier-c); }
+  .sl-tier-chip-b {
+    background: oklch(from var(--tier-b) l c h / 0.12);
+    border-color: oklch(from var(--tier-b) l c h / 0.30);
+  }
+  .sl-tier-chip-b strong { color: var(--tier-b); }
+  .sl-tier-chip-a {
+    background: oklch(from var(--tier-a) l c h / 0.15);
+    border-color: oklch(from var(--tier-a) l c h / 0.35);
+  }
+  .sl-tier-chip-a strong { color: var(--tier-a); }
 
   /* 段位榜列表 */
   .sl-tier-list {
@@ -2128,9 +2146,22 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     background: #fafaf9;
     border: 1px solid #ececec;
   }
-  .sl-tier-badge-c { color: #525252; background: #fafaf9; }
-  .sl-tier-badge-b { color: #171717; background: #f5f5f4; border-color: #d4d4d4; }
-  .sl-tier-badge-a { color: #ffffff; background: #0a0a0a; border-color: #0a0a0a; }
+  /* v0.7.23: 段位榜大徽章 — sumi --tier-* 实色 + 白字（C 用浅底深字保持低对比，B/A 实色白字渐进） */
+  .sl-tier-badge-c {
+    color: var(--tier-c);
+    background: oklch(from var(--tier-c) l c h / 0.12);
+    border-color: oklch(from var(--tier-c) l c h / 0.30);
+  }
+  .sl-tier-badge-b {
+    color: #fff;
+    background: var(--tier-b);
+    border-color: var(--tier-b);
+  }
+  .sl-tier-badge-a {
+    color: #fff;
+    background: var(--tier-a);
+    border-color: var(--tier-a);
+  }
 
   .sl-tier-school { min-width: 0; }
   .sl-tier-school-name {
@@ -2168,15 +2199,16 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     margin: 0 0 4px;
     font-variant-numeric: tabular-nums;
   }
+  /* v0.7.23: 段位进度条 → sumi --p-track / --p-fill */
   .sl-tier-progress-bar {
     height: 4px;
-    background: #f5f5f4;
+    background: var(--p-track);
     border-radius: 2px;
     overflow: hidden;
   }
   .sl-tier-progress-fill {
     height: 100%;
-    background: #0a0a0a;
+    background: var(--p-fill);
     transition: width .2s;
   }
 
