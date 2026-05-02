@@ -266,7 +266,23 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
 
           <div class="sl-field">
             <label class="sl-field-label" for="sl-kp">知识点</label>
-            <select id="sl-kp" name="kp_id" required class="sl-field-input" data-editor-kp></select>
+            <div class="sl-kp-combo" data-editor-kp-combo>
+              <input type="hidden" name="kp_id" required data-editor-kp-value />
+              <input
+                type="text"
+                id="sl-kp"
+                class="sl-field-input sl-kp-input"
+                placeholder="搜索或选择知识点…"
+                autocomplete="off"
+                role="combobox"
+                aria-expanded="false"
+                aria-autocomplete="list"
+                aria-controls="sl-kp-list"
+                data-editor-kp-input
+              />
+              <button type="button" class="sl-kp-clear hidden" data-editor-kp-clear aria-label="清除选择" tabindex="-1">×</button>
+              <div id="sl-kp-list" class="sl-kp-list hidden" role="listbox" data-editor-kp-list></div>
+            </div>
           </div>
 
           <div class="sl-field-row">
@@ -822,7 +838,11 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
   const form = document.querySelector('[data-editor-form]');
   const titleEl = document.querySelector('[data-editor-title]');
   const idInput = document.querySelector('[data-editor-id]');
-  const kpSelect = document.querySelector('[data-editor-kp]');
+  const kpCombo = document.querySelector('[data-editor-kp-combo]');
+  const kpInput = document.querySelector('[data-editor-kp-input]');
+  const kpValue = document.querySelector('[data-editor-kp-value]');
+  const kpList = document.querySelector('[data-editor-kp-list]');
+  const kpClear = document.querySelector('[data-editor-kp-clear]');
   const dateInput = document.querySelector('[data-editor-date]');
   const timeInput = document.querySelector('[data-editor-time]');
   const durInput = document.querySelector('[data-editor-dur]');
@@ -831,14 +851,136 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
   const submitBtn = document.querySelector('[data-editor-submit]');
   const errorBox = document.querySelector('[data-editor-error]');
 
-  // 初始化 KP select with optgroup
-  if (kpSelect) {
-    kpSelect.innerHTML = '<option value="">— 选择知识点 —</option>' +
-      KPS_GROUPED.map(([group, items]) =>
-        `<optgroup label="${escapeHtml(group)}">${
-          items.map((k) => `<option value="${escapeHtml(k.id)}">${escapeHtml(k.title_zh)}</option>`).join('')
-        }</optgroup>`,
-      ).join('');
+  // KP combobox：搜索 + 学派分组 dropdown（替代原 native select）
+  // 选项数据扁平化方便 keyboard nav；group label 渲染时插入
+  const KP_FLAT = [];
+  const KP_TITLE_BY_ID = new Map();
+  for (const [group, items] of KPS_GROUPED) {
+    for (const k of items) {
+      KP_FLAT.push({ id: k.id, title: k.title_zh, group });
+      KP_TITLE_BY_ID.set(k.id, k.title_zh);
+    }
+  }
+
+  function renderKpList(query) {
+    if (!kpList) return;
+    const q = (query || '').trim().toLowerCase();
+    const buckets = new Map();
+    for (const k of KP_FLAT) {
+      if (q && !k.title.toLowerCase().includes(q)) continue;
+      if (!buckets.has(k.group)) buckets.set(k.group, []);
+      buckets.get(k.group).push(k);
+    }
+    if (buckets.size === 0) {
+      kpList.innerHTML = '<div class="sl-kp-empty">没找到匹配的知识点</div>';
+      return;
+    }
+    let html = '';
+    for (const [group, items] of buckets) {
+      html += `<div class="sl-kp-group-label">${escapeHtml(group)}</div>`;
+      for (const k of items) {
+        const selected = kpValue.value === k.id;
+        html += `<div class="sl-kp-option${selected ? ' is-selected' : ''}" role="option" data-kp-id="${escapeHtml(k.id)}" data-kp-title="${escapeHtml(k.title)}">${escapeHtml(k.title)}</div>`;
+      }
+    }
+    kpList.innerHTML = html;
+  }
+
+  function openKpList() {
+    if (!kpList) return;
+    renderKpList(kpInput.value);
+    kpList.classList.remove('hidden');
+    kpInput.setAttribute('aria-expanded', 'true');
+    // 滚到当前选中
+    const sel = kpList.querySelector('.sl-kp-option.is-selected');
+    if (sel) sel.scrollIntoView({ block: 'nearest' });
+  }
+
+  function closeKpList() {
+    kpList?.classList.add('hidden');
+    kpInput?.setAttribute('aria-expanded', 'false');
+    clearHighlight();
+  }
+
+  function clearHighlight() {
+    kpList?.querySelectorAll('.sl-kp-option.is-highlighted').forEach((el) => el.classList.remove('is-highlighted'));
+  }
+
+  function moveHighlight(dir) {
+    if (!kpList || kpList.classList.contains('hidden')) {
+      openKpList();
+      return;
+    }
+    const opts = Array.from(kpList.querySelectorAll('.sl-kp-option'));
+    if (opts.length === 0) return;
+    const cur = kpList.querySelector('.sl-kp-option.is-highlighted');
+    let idx = cur ? opts.indexOf(cur) : -1;
+    idx = (idx + dir + opts.length) % opts.length;
+    clearHighlight();
+    opts[idx].classList.add('is-highlighted');
+    opts[idx].scrollIntoView({ block: 'nearest' });
+  }
+
+  function setKp(id) {
+    if (!kpInput || !kpValue || !kpClear) return;
+    if (id) {
+      kpValue.value = id;
+      kpInput.value = KP_TITLE_BY_ID.get(id) ?? '';
+      kpClear.classList.remove('hidden');
+    } else {
+      kpValue.value = '';
+      kpInput.value = '';
+      kpClear.classList.add('hidden');
+    }
+  }
+
+  if (kpInput && kpList) {
+    kpInput.addEventListener('focus', openKpList);
+    kpInput.addEventListener('click', openKpList);
+    kpInput.addEventListener('input', () => {
+      // 用户输入 = 重新过滤；意味着当前 hidden value 不再匹配 → 清掉
+      kpValue.value = '';
+      kpClear.classList.toggle('hidden', !kpInput.value);
+      renderKpList(kpInput.value);
+      kpList.classList.remove('hidden');
+      kpInput.setAttribute('aria-expanded', 'true');
+    });
+    kpInput.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveHighlight(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveHighlight(-1); }
+      else if (e.key === 'Enter') {
+        const cur = kpList.querySelector('.sl-kp-option.is-highlighted');
+        if (cur) {
+          e.preventDefault();
+          setKp(cur.getAttribute('data-kp-id'));
+          closeKpList();
+        }
+      } else if (e.key === 'Escape') {
+        if (!kpList.classList.contains('hidden')) {
+          e.preventDefault();
+          closeKpList();
+        }
+      }
+    });
+
+    kpList.addEventListener('mousedown', (e) => {
+      // mousedown 而非 click：避免 input blur 早于 click 关闭 dropdown
+      const opt = e.target.closest('.sl-kp-option');
+      if (!opt) return;
+      e.preventDefault();
+      setKp(opt.getAttribute('data-kp-id'));
+      closeKpList();
+    });
+
+    kpClear.addEventListener('click', () => {
+      setKp(null);
+      kpInput.focus();
+    });
+
+    // 点外部关闭
+    document.addEventListener('click', (e) => {
+      if (!kpCombo.contains(e.target)) closeKpList();
+    });
   }
 
   // Rating star 点击
@@ -865,7 +1007,7 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     if (session) {
       titleEl.textContent = '编辑学习记录';
       idInput.value = session.id;
-      kpSelect.value = session.kp_id ?? '';
+      setKp(session.kp_id ?? null);
       dateInput.value = session.date;
       timeInput.value = session.start_time;
       durInput.value = String(session.duration_min);
@@ -879,7 +1021,7 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     } else {
       titleEl.textContent = '新建学习记录';
       idInput.value = '';
-      kpSelect.value = '';
+      setKp(null);
       dateInput.value = TODAY;
       timeInput.value = nowHM();
       durInput.value = '30';
@@ -888,7 +1030,7 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
       document.querySelectorAll('[data-rating-val]').forEach((b) => b.classList.remove('sl-rating-active'));
     }
     overlay.classList.remove('hidden');
-    setTimeout(() => kpSelect.focus(), 50);
+    setTimeout(() => kpInput?.focus(), 50);
   }
 
   function closeEditor() {
@@ -950,7 +1092,7 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     const ratingVal = ratingValueInput.value.trim();
     const noteVal = noteInput.value.trim();
     const body = {
-      kp_id: kpSelect.value,
+      kp_id: kpValue.value,
       date: dateInput.value,
       start_time: timeInput.value,
       duration_min: parseInt(durInput.value, 10),
@@ -1770,6 +1912,77 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     resize: vertical;
     min-height: 60px;
     font-family: inherit;
+  }
+
+  /* KP combobox（v0.7.19） */
+  .sl-kp-combo { position: relative; }
+  .sl-kp-input { padding-right: 28px; }
+  .sl-kp-clear {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    border: 0;
+    background: #f5f5f4;
+    color: #525252;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sl-kp-clear:hover { background: #e7e5e4; color: #0a0a0a; }
+  .sl-kp-clear.hidden { display: none; }
+  .sl-kp-list {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 10;
+    max-height: 240px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    padding: 4px 0;
+  }
+  .sl-kp-list.hidden { display: none; }
+  .sl-kp-group-label {
+    padding: 6px 12px 4px;
+    font-size: 10.5px;
+    color: #a3a3a3;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .sl-kp-option {
+    padding: 7px 12px;
+    font-size: 13px;
+    color: #0a0a0a;
+    cursor: pointer;
+    line-height: 1.3;
+  }
+  .sl-kp-option:hover,
+  .sl-kp-option.is-highlighted {
+    background: #f5f5f4;
+  }
+  .sl-kp-option.is-selected {
+    color: #0a0a0a;
+    font-weight: 500;
+  }
+  .sl-kp-option.is-selected::before {
+    content: '✓ ';
+    color: #2563eb;
+  }
+  .sl-kp-empty {
+    padding: 14px 12px;
+    font-size: 12px;
+    color: #a3a3a3;
+    text-align: center;
   }
 
   /* Rating star */
