@@ -24,7 +24,7 @@ export async function upsertViewInD1(
       scope, kind, is_default, position, groups_json,
       created_at, updated_at
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ON CONFLICT(id) DO UPDATE SET
+    ON CONFLICT(id, discipline) DO UPDATE SET
       discipline = excluded.discipline,
       name = excluded.name,
       jp = excluded.jp,
