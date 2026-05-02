@@ -113,6 +113,51 @@ export function renderMagicLinkEmail(params: {
   return { html, text };
 }
 
+/** v0.7.5 改邮箱验证码邮件模板（发到用户提交的"新邮箱"，确认所有权） */
+export function renderEmailChangeCodeEmail(params: {
+  newEmail: string;
+  code: string;
+}): { html: string; text: string } {
+  const { newEmail, code } = params;
+  const codeDisplay = `${code.slice(0, 3)} ${code.slice(3)}`;
+
+  const text = `有人申请把账号邮箱改为 ${newEmail}。
+
+如果是你本人，回设置页输入这个 6 位验证码确认：
+
+    ${codeDisplay}
+
+验证码 30 分钟内有效。如果不是你发起的，忽略即可——你的账号邮箱不会改变。
+
+— 全学科学习笔记
+`;
+
+  const html = `<!doctype html>
+<html>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', sans-serif; background: #f5f5f7; margin: 0; padding: 32px 16px;">
+  <div style="max-width: 480px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 32px 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
+    <h1 style="font-size: 20px; margin: 0 0 16px; color: #1d1d1f;">确认邮箱变更</h1>
+
+    <p style="font-size: 13px; color: #86868b; line-height: 1.7; margin: 0 0 8px;">
+      回设置页输入这个 6 位验证码：
+    </p>
+    <div style="margin: 0 0 28px; padding: 20px 24px; background: #f5f5f7; border-radius: 10px; text-align: center; font-family: 'SF Mono', Menlo, monospace; font-size: 28px; font-weight: 700; color: #1d1d1f; letter-spacing: 0.15em;">
+      ${codeDisplay}
+    </div>
+
+    <p style="font-size: 12px; color: #86868b; line-height: 1.6; margin: 0;">
+      验证码 30 分钟内有效。如果不是你发起的，忽略即可。
+    </p>
+  </div>
+  <p style="text-align: center; font-size: 11px; color: #86868b; margin-top: 16px;">
+    发给 ${newEmail} · 全学科学习笔记
+  </p>
+</body>
+</html>`;
+
+  return { html, text };
+}
+
 /** v0.7.4 忘记密码 reset link 邮件模板（含 30 分钟有效链接） */
 export function renderPasswordResetEmail(params: {
   email: string;

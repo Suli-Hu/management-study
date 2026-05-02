@@ -724,6 +724,126 @@ export async function updateUserLoginSuccess(
 }
 
 // ============================================================
+// v0.7.5 账户管理 —— display_name / 改邮箱 / 注销账户
+// ============================================================
+
+const PENDING_EMAIL_CHANGE_TTL_MS = 30 * 60 * 1000;
+export const MAX_EMAIL_CHANGE_ATTEMPTS = 5;
+
+export interface PendingEmailChangeRow {
+  user_id: string;
+  new_email: string;
+  code: string;
+  attempt_count: number;
+  expires_at: number;
+  created_at: string;
+}
+
+export async function updateUserDisplayName(
+  db: D1Database,
+  userId: string,
+  displayName: string | null,
+): Promise<void> {
+  await db
+    .prepare('UPDATE user SET display_name = ? WHERE id = ?')
+    .bind(displayName, userId)
+    .run();
+}
+
+/** 创建（或覆盖）pending_email_change 行 + 返回 6 位 code 给调用方发邮件 */
+export async function createPendingEmailChange(
+  db: D1Database,
+  userId: string,
+  newEmail: string,
+): Promise<{ code: string; expiresAt: number }> {
+  const code = generateCode();
+  const expiresAt = Date.now() + PENDING_EMAIL_CHANGE_TTL_MS;
+  const now = new Date().toISOString();
+  await db
+    .prepare(`
+      INSERT OR REPLACE INTO pending_email_change
+        (user_id, new_email, code, attempt_count, expires_at, created_at)
+      VALUES (?, ?, ?, 0, ?, ?)
+    `)
+    .bind(userId, newEmail.toLowerCase().trim(), code, expiresAt, now)
+    .run();
+  return { code, expiresAt };
+}
+
+export async function findPendingEmailChange(
+  db: D1Database,
+  userId: string,
+): Promise<PendingEmailChangeRow | null> {
+  return db
+    .prepare('SELECT * FROM pending_email_change WHERE user_id = ?')
+    .bind(userId)
+    .first<PendingEmailChangeRow>();
+}
+
+export type ConsumeEmailChangeResult =
+  | { ok: true; row: PendingEmailChangeRow }
+  | { ok: false; reason: 'not_found' | 'expired' | 'wrong_code' | 'locked' };
+
+export async function consumePendingEmailChangeByCode(
+  db: D1Database,
+  userId: string,
+  code: string,
+): Promise<ConsumeEmailChangeResult> {
+  const normCode = code.replace(/\D/g, '').trim();
+  const row = await findPendingEmailChange(db, userId);
+  if (!row) return { ok: false, reason: 'not_found' };
+  if (row.expires_at < Date.now()) return { ok: false, reason: 'expired' };
+  if (row.attempt_count >= MAX_EMAIL_CHANGE_ATTEMPTS) {
+    return { ok: false, reason: 'locked' };
+  }
+  if (normCode.length !== 6 || row.code !== normCode) {
+    const next = row.attempt_count + 1;
+    await db
+      .prepare('UPDATE pending_email_change SET attempt_count = ? WHERE user_id = ?')
+      .bind(next, userId)
+      .run();
+    if (next >= MAX_EMAIL_CHANGE_ATTEMPTS) return { ok: false, reason: 'locked' };
+    return { ok: false, reason: 'wrong_code' };
+  }
+  return { ok: true, row };
+}
+
+export async function deletePendingEmailChange(db: D1Database, userId: string): Promise<void> {
+  await db
+    .prepare('DELETE FROM pending_email_change WHERE user_id = ?')
+    .bind(userId)
+    .run();
+}
+
+/** 改邮箱落库（确保 new_email 不冲突由调用方先 check） */
+export async function updateUserEmail(
+  db: D1Database,
+  userId: string,
+  newEmail: string,
+): Promise<void> {
+  const now = new Date().toISOString();
+  await db
+    .prepare(
+      `UPDATE user
+       SET email = ?, email_verified_at = ?
+       WHERE id = ?`,
+    )
+    .bind(newEmail.toLowerCase().trim(), now, userId)
+    .run();
+}
+
+/** 注销账户：删 user 行 → CASCADE 自动删 session / user_permission /
+ *  tenant_member / user_progress / user_note / study_session / pending_email_change /
+ *  password_reset 等（看各表 FK ON DELETE 设置）。
+ *  不删 magic_link（语义上是"邮箱级"暂存，不是用户级）。 */
+export async function deleteUserAndCascade(db: D1Database, userId: string): Promise<void> {
+  await db
+    .prepare('DELETE FROM user WHERE id = ?')
+    .bind(userId)
+    .run();
+}
+
+// ============================================================
 // v0.7.4 password_reset —— 忘记密码 token
 // ============================================================
 
