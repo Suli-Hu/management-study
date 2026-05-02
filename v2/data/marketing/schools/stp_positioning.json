@@ -1,0 +1,28 @@
+{
+  "key": "stp_positioning",
+  "discipline": "marketing",
+  "title": {
+    "zh": "STP 与定位理论",
+    "ja": "STP とポジショニング理論",
+    "en": "STP & Positioning"
+  },
+  "era": "1956– 市场细分与定位战略框架",
+  "summary": {
+    "zh": "<strong>STP 与定位理论</strong>整理市场细分、目标市场选择与定位的一连串战略过程，回答企业如何选择服务对象，并在目标顾客心中建立差异化位置。核心包括 segmentation 的变量、targeting 的适合性与魅力度、positioning 的参照框架、POD/POP 与定位陈述。",
+    "ja": "<strong>STP とポジショニング理論</strong>は，市場細分化・標的市場の選定・ポジショニングを一連の戦略プロセスとして整理し，企業が誰を対象にし，顧客の心の中でどのような差別的位置を築くかを説明する。"
+  },
+  "themeKey": "marketing_strategy",
+  "tags": [],
+  "concepts": [
+    "m001",
+    "m002",
+    "m004",
+    "m003",
+    "m005",
+    "m108",
+    "m110",
+    "m111"
+  ],
+  "createdAt": "2026-05-02T11:48:31.671Z",
+  "updatedAt": "2026-05-02T11:48:31.671Z"
+}
