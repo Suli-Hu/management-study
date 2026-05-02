@@ -1,0 +1,25 @@
+{
+  "key": "service_marketing",
+  "discipline": "marketing",
+  "title": {
+    "zh": "服务营销理论体系",
+    "ja": "サービス・マーケティング理論体系",
+    "en": "Service Marketing"
+  },
+  "era": "1980– 服务经济与服务质量管理",
+  "summary": {
+    "zh": "<strong>服务营销理论体系</strong>研究无形性、不可分性、变动性、消灭性等服务特性，以及 7P、SERVQUAL、服务营销三角和零售服务战略等管理框架。",
+    "ja": "<strong>サービス・マーケティング理論体系</strong>は，サービスの無形性・不可分性・変動性・消滅性，7P，SERVQUAL，サービス・マーケティング三角形を扱う。"
+  },
+  "themeKey": "growth_relationship",
+  "tags": [],
+  "concepts": [
+    "m007",
+    "m117",
+    "m118",
+    "m119",
+    "m175"
+  ],
+  "createdAt": "2026-05-02T11:48:39.522Z",
+  "updatedAt": "2026-05-02T11:48:39.522Z"
+}
