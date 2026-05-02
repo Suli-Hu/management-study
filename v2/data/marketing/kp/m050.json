@@ -3,7 +3,8 @@
   "discipline": "marketing",
   "schools": [
     "channel_retail",
-    "brand_equity"
+    "brand_equity",
+    "retail_management"
   ],
   "scholars": [
     "wakabayashi"
@@ -38,5 +39,5 @@
     }
   },
   "createdAt": "2026-04-30T05:03:48.177Z",
-  "updatedAt": "2026-04-30T13:20:44.805Z"
+  "updatedAt": "2026-05-02T11:53:48.293Z"
 }
