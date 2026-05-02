@@ -3,7 +3,8 @@
   "discipline": "marketing",
   "schools": [
     "managerial",
-    "strategic_marketing"
+    "strategic_marketing",
+    "product_strategy"
   ],
   "scholars": [
     "kotler",
@@ -38,5 +39,5 @@
     }
   },
   "createdAt": "2026-04-30T07:35:56.788Z",
-  "updatedAt": "2026-04-30T13:23:53.947Z"
+  "updatedAt": "2026-05-02T11:54:15.257Z"
 }
