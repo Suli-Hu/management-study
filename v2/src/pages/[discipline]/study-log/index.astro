@@ -1,0 +1,847 @@
+---
+/**
+ * /[discipline]/study-log — 学习记录主页（v0.5.3 / v0.7.13）
+ *
+ * 三视图（PRD v1.0 §5）：日志流（默认）/ 知识点排行 / 学派段位
+ * v0.5.3 范围：完整日志流；排行 + 段位先占位（v0.5.4 / v0.5.5）
+ *
+ * 视觉：用户决策"第一版不要颜色"，全中性灰 + 单一蓝色 accent（用于
+ * 日历热力图 5 级阶梯 + active 状态）。
+ *
+ * 数据：SSR fetch 近 90 天 sessions（join KP title + 主学派 title），
+ * client JS 完全本地 filter/group/expand —— 30 / 14 / 7 天切换零延迟。
+ */
+import Layout from '~/layouts/Layout.astro';
+import { getDb } from '~/lib/db';
+
+const { discipline } = Astro.params;
+if (!discipline) return Astro.redirect('/404');
+if (!Astro.locals.user) return Astro.redirect('/login');
+if (!Astro.locals.canRead(discipline)) return Astro.redirect('/');
+
+const db = getDb(Astro.locals.runtime.env);
+
+// ============================================================
+// SSR fetch
+// ============================================================
+
+// discipline 元信息
+const disc = await db
+  .prepare('SELECT key, title_zh FROM discipline WHERE key = ?')
+  .bind(discipline)
+  .first<{ key: string; title_zh: string }>();
+if (!disc) return Astro.redirect('/404');
+
+// session + kp + 主学派 join。近 90 天足够覆盖 PRD 30 天主视图 + 4 月日历
+// 用 LEFT JOIN：KP 删除后 session 仍保留 kp_id=NULL（migration 0016 保护）
+const fromDate = (() => {
+  const d = new Date();
+  d.setDate(d.getDate() - 90);
+  return d.toISOString().slice(0, 10);
+})();
+
+interface SessionRow {
+  id: string;
+  date: string;
+  start_time: string;
+  duration_min: number;
+  rating: number | null;
+  note: string | null;
+  kp_id: string | null;
+  kp_title: string | null;
+  school_key: string | null;
+  school_title: string | null;
+}
+
+const result = await db
+  .prepare(
+    `SELECT
+       s.id, s.date, s.start_time, s.duration_min, s.rating, s.note, s.kp_id,
+       k.title_zh as kp_title,
+       (SELECT ks.school_key
+        FROM kp_school ks
+        WHERE ks.kp_id = s.kp_id
+        ORDER BY ks.position
+        LIMIT 1) as school_key,
+       (SELECT sc.title_zh
+        FROM kp_school ks
+        INNER JOIN school sc ON sc.key = ks.school_key
+        WHERE ks.kp_id = s.kp_id
+        ORDER BY ks.position
+        LIMIT 1) as school_title
+     FROM study_session s
+     LEFT JOIN kp k ON k.id = s.kp_id
+     WHERE s.user_id = ? AND s.discipline = ? AND s.date >= ?
+     ORDER BY s.date DESC, s.start_time DESC, s.id DESC
+     LIMIT 1000`,
+  )
+  .bind(Astro.locals.user.id, discipline, fromDate)
+  .all<SessionRow>();
+
+const sessions = result.results ?? [];
+
+// SSR 这里就把 sessions 序列化进 inline JSON，client JS 直接消费
+const sessionsJson = JSON.stringify(sessions);
+
+const TODAY = new Date().toISOString().slice(0, 10);
+---
+
+<Layout title={`学习记录 · ${disc.title_zh}`}>
+  <main class="study-log">
+    <header class="sl-header">
+      <div>
+        <p class="sl-breadcrumb">
+          <a href="/">全科笔记</a>
+          <span class="sl-sep">›</span>
+          <a href={`/${discipline}`}>{disc.title_zh}</a>
+        </p>
+        <h1 class="sl-title">学习记录</h1>
+      </div>
+      <button type="button" class="sl-add-btn" disabled title="v0.5.5 即将上线">+ 新建记录</button>
+    </header>
+
+    <div class="sl-switcher" role="tablist">
+      <button type="button" data-view="log" class="sl-seg sl-seg-active" role="tab">日志流</button>
+      <button type="button" data-view="rank" class="sl-seg" role="tab">知识点排行</button>
+      <button type="button" data-view="tier" class="sl-seg" role="tab">学派段位</button>
+    </div>
+
+    {/* ============================================================ */}
+    {/* 视图 A · 日志流 */}
+    {/* ============================================================ */}
+    <section data-view-pane="log" class="sl-view">
+      <div class="sl-stats">
+        <div class="sl-stat">
+          <p class="sl-stat-label" data-stat-label-left>近 30 天累计</p>
+          <p class="sl-stat-value">
+            <span data-stat-hours>—</span><span class="sl-unit">h</span>
+            <span data-stat-mins>—</span><span class="sl-unit">min</span>
+          </p>
+          <p class="sl-stat-sub" data-stat-sub-left>—</p>
+        </div>
+        <div class="sl-stat">
+          <p class="sl-stat-label">学习天数</p>
+          <p class="sl-stat-value">
+            <span data-stat-days>—</span><span class="sl-unit">天</span>
+          </p>
+          <p class="sl-stat-sub" data-stat-sub-right>—</p>
+        </div>
+      </div>
+
+      <div class="sl-heatmap-wrap">
+        <p class="sl-heatmap-title">近 4 个月·每日学习时长</p>
+        <div class="sl-heatmap-legend">
+          少
+          <span class="sl-heat sl-heat-0"></span>
+          <span class="sl-heat sl-heat-1"></span>
+          <span class="sl-heat sl-heat-2"></span>
+          <span class="sl-heat sl-heat-3"></span>
+          <span class="sl-heat sl-heat-4"></span>
+          多
+        </div>
+        <div class="sl-heatmap" data-heatmap></div>
+      </div>
+
+      <div class="sl-chips">
+        <button type="button" data-range="7" class="sl-chip">近 7 天</button>
+        <button type="button" data-range="14" class="sl-chip">近 14 天</button>
+        <button type="button" data-range="30" class="sl-chip sl-chip-active">近 30 天</button>
+      </div>
+
+      <div data-session-list class="sl-list">
+        {/* client JS 渲染 */}
+      </div>
+
+      <p data-empty class="sl-empty hidden">这个时间段还没有学习记录。</p>
+    </section>
+
+    {/* ============================================================ */}
+    {/* 视图 B / C 占位 */}
+    {/* ============================================================ */}
+    <section data-view-pane="rank" class="sl-view hidden sl-placeholder">
+      <p>v0.5.4 即将上线 — 知识点排行</p>
+      <p class="sl-placeholder-sub">按累计时长降序，看哪些 KP 占了你最多时间 / 哪些没碰。</p>
+    </section>
+
+    <section data-view-pane="tier" class="sl-view hidden sl-placeholder">
+      <p>v0.5.5 即将上线 — 学派段位</p>
+      <p class="sl-placeholder-sub">每分钟 = 1 分，每天 0 点 −20，C → B(200) → A(400) 三级。</p>
+    </section>
+  </main>
+</Layout>
+
+<script is:inline define:vars={{ TODAY, DISCIPLINE: discipline }} set:html={`window.__SL_SESSIONS__ = ${sessionsJson};`}></script>
+
+<script is:inline define:vars={{ TODAY }}>
+  // ============================================================
+  // 数据模型 + 工具函数
+  // ============================================================
+
+  /** @type {Array<{id:string,date:string,start_time:string,duration_min:number,rating:number|null,note:string|null,kp_id:string|null,kp_title:string|null,school_key:string|null,school_title:string|null}>} */
+  const ALL_SESSIONS = window.__SL_SESSIONS__ || [];
+
+  function fmtDuration(min) {
+    if (min >= 60) {
+      const h = Math.floor(min / 60);
+      const m = min % 60;
+      return m > 0 ? `${h}h ${m}min` : `${h}h`;
+    }
+    return `${min}min`;
+  }
+
+  function parseDate(yyyymmdd) {
+    const [y, m, d] = yyyymmdd.split('-').map(Number);
+    return new Date(Date.UTC(y, m - 1, d));
+  }
+
+  function fmtMD(yyyymmdd) {
+    const [, m, d] = yyyymmdd.split('-');
+    return `${parseInt(m, 10)}-${d.padStart(2, '0')}`;
+  }
+
+  function chineseDay(yyyymmdd) {
+    const dow = parseDate(yyyymmdd).getUTCDay();
+    return ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][dow];
+  }
+
+  function relativeDay(yyyymmdd, today = TODAY) {
+    if (yyyymmdd === today) return '今天';
+    const t = parseDate(today);
+    const d = parseDate(yyyymmdd);
+    const diff = Math.round((t - d) / 86_400_000);
+    if (diff === 1) return '昨天';
+    if (diff === 2) return '前天';
+    return null;
+  }
+
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  }
+
+  function daysBetween(start, end) {
+    return Math.round((parseDate(end) - parseDate(start)) / 86_400_000);
+  }
+
+  // ============================================================
+  // 聚合
+  // ============================================================
+
+  /** 给 sessions 数组返回 byDate 字典 */
+  function aggregateByDate(sessions) {
+    const byDate = new Map();
+    for (const s of sessions) {
+      if (!byDate.has(s.date)) byDate.set(s.date, { total: 0, count: 0, items: [] });
+      const e = byDate.get(s.date);
+      e.total += s.duration_min;
+      e.count += 1;
+      e.items.push(s);
+    }
+    return byDate;
+  }
+
+  /** 时间范围内统计 */
+  function computeStats(sessions, days, today) {
+    const totalMin = sessions.reduce((s, x) => s + x.duration_min, 0);
+    const dayKeys = new Set(sessions.map((s) => s.date));
+    const studyDays = dayKeys.size;
+    const avgPerStudyDay = studyDays > 0 ? Math.round(totalMin / studyDays) : 0;
+    const coverage = days > 0 ? Math.round((studyDays / days) * 100) : 0;
+
+    // 最长连续天数（在 today 倒数 days 范围内）
+    let longest = 0;
+    let cur = 0;
+    const t = parseDate(today);
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(t);
+      d.setUTCDate(d.getUTCDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      if (dayKeys.has(key)) { cur++; longest = Math.max(longest, cur); }
+      else cur = 0;
+    }
+
+    return { totalMin, studyDays, avgPerStudyDay, coverage, longest };
+  }
+
+  // ============================================================
+  // 渲染：统计区
+  // ============================================================
+
+  function renderStats(days) {
+    const fromDate = (() => {
+      const d = parseDate(TODAY);
+      d.setUTCDate(d.getUTCDate() - (days - 1));
+      return d.toISOString().slice(0, 10);
+    })();
+    const inRange = ALL_SESSIONS.filter((s) => s.date >= fromDate && s.date <= TODAY);
+    const stats = computeStats(inRange, days, TODAY);
+
+    const h = Math.floor(stats.totalMin / 60);
+    const m = stats.totalMin % 60;
+    document.querySelector('[data-stat-label-left]').textContent = `近 ${days} 天累计`;
+    document.querySelector('[data-stat-hours]').textContent = h > 0 ? String(h) : '0';
+    document.querySelector('[data-stat-mins]').textContent = String(m);
+    document.querySelector('[data-stat-sub-left]').textContent =
+      `学习日平均 ${fmtDuration(stats.avgPerStudyDay)} / 天`;
+    document.querySelector('[data-stat-days]').textContent = String(stats.studyDays);
+    document.querySelector('[data-stat-sub-right]').textContent =
+      `共 ${days} 天 · 覆盖 ${stats.coverage}% · 最长连续 ${stats.longest} 天`;
+  }
+
+  // ============================================================
+  // 渲染：4 月并列日历热力图
+  // ============================================================
+
+  /** 给 minutes 返回 0-4 等级 */
+  function heatLevel(min) {
+    if (min <= 0) return 0;
+    if (min < 30) return 1;
+    if (min < 60) return 2;
+    if (min < 90) return 3;
+    return 4;
+  }
+
+  function renderHeatmap() {
+    const wrap = document.querySelector('[data-heatmap]');
+    if (!wrap) return;
+    const byDate = aggregateByDate(ALL_SESSIONS);
+
+    // 取近 4 个月，从 today 往回
+    const today = parseDate(TODAY);
+    const months = [];
+    for (let i = 3; i >= 0; i--) {
+      const d = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - i, 1));
+      months.push({ year: d.getUTCFullYear(), month: d.getUTCMonth() }); // 0-indexed
+    }
+
+    wrap.innerHTML = months.map(({ year, month }) => {
+      const firstDow = new Date(Date.UTC(year, month, 1)).getUTCDay();
+      // 调整为周一开始（0=周一, 6=周日）
+      const offset = (firstDow + 6) % 7;
+      const lastDay = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+      const cells = [];
+      // 前置空格
+      for (let i = 0; i < offset; i++) cells.push('<div class="sl-cal-empty"></div>');
+      for (let day = 1; day <= lastDay; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const e = byDate.get(dateStr);
+        const lvl = heatLevel(e?.total ?? 0);
+        const isFuture = dateStr > TODAY;
+        const isToday = dateStr === TODAY;
+        const cls = [
+          'sl-cal-day',
+          `sl-heat-${lvl}`,
+          isToday ? 'sl-cal-today' : '',
+          isFuture ? 'sl-cal-future' : '',
+        ].filter(Boolean).join(' ');
+        const title = e ? `${dateStr} · ${fmtDuration(e.total)}（${e.count} 次）` : dateStr;
+        cells.push(`<div class="${cls}" title="${title}">${day}</div>`);
+      }
+      return `
+        <div class="sl-cal-month">
+          <p class="sl-cal-month-label">${month + 1} 月</p>
+          <div class="sl-cal-dow">
+            <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
+          </div>
+          <div class="sl-cal-grid">${cells.join('')}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ============================================================
+  // 渲染：Session 列表（按日期分组）
+  // ============================================================
+
+  function renderList(days) {
+    const fromDate = (() => {
+      const d = parseDate(TODAY);
+      d.setUTCDate(d.getUTCDate() - (days - 1));
+      return d.toISOString().slice(0, 10);
+    })();
+    const inRange = ALL_SESSIONS.filter((s) => s.date >= fromDate && s.date <= TODAY);
+    const list = document.querySelector('[data-session-list]');
+    const empty = document.querySelector('[data-empty]');
+    if (!list || !empty) return;
+
+    if (inRange.length === 0) {
+      list.innerHTML = '';
+      empty.classList.remove('hidden');
+      return;
+    }
+    empty.classList.add('hidden');
+
+    // 按日期分组（已按 date DESC 排好序，sessions 顺序保留）
+    const byDate = new Map();
+    for (const s of inRange) {
+      if (!byDate.has(s.date)) byDate.set(s.date, []);
+      byDate.get(s.date).push(s);
+    }
+
+    const groupsHtml = [...byDate.entries()].map(([date, items]) => {
+      const totalMin = items.reduce((sum, x) => sum + x.duration_min, 0);
+      const rel = relativeDay(date);
+      const head = `${rel ? rel + ' · ' : ''}${fmtMD(date)} ${chineseDay(date)} · ${items.length} 次 · ${fmtDuration(totalMin)}`;
+      const rows = items.map((s) => {
+        const kpTitle = escapeHtml(s.kp_title ?? (s.kp_id ? `[已删除] ${s.kp_id}` : '[KP 信息缺失]'));
+        const schoolTitle = escapeHtml(s.school_title ?? '');
+        const rating = s.rating ? '★'.repeat(s.rating) + '☆'.repeat(5 - s.rating) : '';
+        const note = s.note ? escapeHtml(s.note) : '';
+        return `
+          <div class="sl-row" data-row data-id="${escapeHtml(s.id)}">
+            <div class="sl-row-main">
+              <span class="sl-row-time">${escapeHtml(s.start_time)}</span>
+              <span class="sl-row-kp" title="${kpTitle}">${kpTitle}</span>
+              ${schoolTitle ? `<span class="sl-row-school">${schoolTitle}</span>` : ''}
+              ${note ? `<span class="sl-row-note-preview">${note.slice(0, 40)}${note.length > 40 ? '…' : ''}</span>` : '<span class="sl-row-note-preview sl-empty-note"></span>'}
+              <span class="sl-row-dur">${fmtDuration(s.duration_min)}</span>
+              ${rating ? `<span class="sl-row-rating">${rating}</span>` : '<span class="sl-row-rating sl-empty-rating"></span>'}
+              <span class="sl-row-chevron">▾</span>
+            </div>
+            ${note ? `<div class="sl-row-note hidden" data-note>${note}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+      return `
+        <div class="sl-group">
+          <p class="sl-group-head">${escapeHtml(head)}</p>
+          <div class="sl-group-rows">${rows}</div>
+        </div>
+      `;
+    }).join('');
+
+    list.innerHTML = groupsHtml;
+
+    // 行展开
+    list.querySelectorAll('[data-row]').forEach((row) => {
+      const note = row.querySelector('[data-note]');
+      if (!note) return;
+      row.style.cursor = 'pointer';
+      row.addEventListener('click', () => {
+        note.classList.toggle('hidden');
+        row.querySelector('.sl-row-chevron').classList.toggle('sl-row-chevron-rot');
+      });
+    });
+  }
+
+  // ============================================================
+  // 视图切换 + 时间筛选
+  // ============================================================
+
+  function setView(view) {
+    document.querySelectorAll('[data-view-pane]').forEach((el) => {
+      el.classList.toggle('hidden', el.getAttribute('data-view-pane') !== view);
+    });
+    document.querySelectorAll('[data-view]').forEach((btn) => {
+      btn.classList.toggle('sl-seg-active', btn.getAttribute('data-view') === view);
+    });
+  }
+
+  function setRange(days) {
+    document.querySelectorAll('[data-range]').forEach((btn) => {
+      btn.classList.toggle('sl-chip-active', btn.getAttribute('data-range') === String(days));
+    });
+    renderStats(days);
+    renderList(days);
+  }
+
+  // ============================================================
+  // 启动
+  // ============================================================
+
+  document.querySelectorAll('[data-view]').forEach((btn) => {
+    btn.addEventListener('click', () => setView(btn.getAttribute('data-view')));
+  });
+  document.querySelectorAll('[data-range]').forEach((btn) => {
+    btn.addEventListener('click', () => setRange(Number(btn.getAttribute('data-range'))));
+  });
+
+  // 初次渲染：默认 30 天
+  renderHeatmap();
+  setRange(30);
+</script>
+
+<style is:global>
+  /* ============================================================
+     学习记录页面样式（v0.5.3）—— 中性灰 + 单色蓝阶梯
+     ============================================================ */
+
+  .study-log {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 36px 32px 120px;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    color: #171717;
+    line-height: 1.6;
+    font-feature-settings: "tnum" 1;
+  }
+
+  .sl-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .sl-breadcrumb {
+    font-size: 12px;
+    color: #a3a3a3;
+    margin: 0 0 6px;
+  }
+  .sl-breadcrumb a {
+    color: #525252;
+    text-decoration: none;
+  }
+  .sl-breadcrumb a:hover { color: #0a0a0a; }
+  .sl-sep { margin: 0 6px; color: #a3a3a3; }
+  .sl-title {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+    margin: 0;
+    color: #0a0a0a;
+  }
+  .sl-add-btn {
+    all: unset;
+    cursor: pointer;
+    padding: 9px 16px;
+    border-radius: 8px;
+    background: #0a0a0a;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .sl-add-btn:hover { background: #262626; }
+  .sl-add-btn[disabled] {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
+  /* 视图切换器 */
+  .sl-switcher {
+    display: inline-flex;
+    background: #f5f5f4;
+    border-radius: 9px;
+    padding: 3px;
+    font-size: 13px;
+    margin-bottom: 22px;
+  }
+  .sl-seg {
+    all: unset;
+    cursor: pointer;
+    padding: 7px 14px;
+    border-radius: 7px;
+    color: #525252;
+    transition: all .12s;
+    font-weight: 400;
+  }
+  .sl-seg:hover { color: #0a0a0a; }
+  .sl-seg-active {
+    background: #ffffff;
+    color: #0a0a0a;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0,0,0,.06);
+  }
+
+  /* ============================================================
+     日志流视图
+     ============================================================ */
+  .sl-view.hidden { display: none; }
+
+  /* 统计区 */
+  .sl-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 24px 28px;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    background: #fff;
+    margin-bottom: 22px;
+  }
+  .sl-stat-label {
+    font-size: 11.5px;
+    color: #a3a3a3;
+    margin: 0 0 8px;
+  }
+  .sl-stat-value {
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1;
+    margin: 0 0 8px;
+    color: #0a0a0a;
+    letter-spacing: -0.02em;
+  }
+  .sl-unit {
+    font-size: 14px;
+    font-weight: 400;
+    color: #525252;
+    margin-left: 4px;
+    margin-right: 12px;
+  }
+  .sl-stat-sub {
+    font-size: 11.5px;
+    color: #a3a3a3;
+    margin: 0;
+  }
+
+  /* 日历热力图 */
+  .sl-heatmap-wrap {
+    padding: 20px 28px;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    background: #fff;
+    margin-bottom: 22px;
+    position: relative;
+  }
+  .sl-heatmap-title {
+    font-size: 12px;
+    color: #525252;
+    margin: 0 0 14px;
+  }
+  .sl-heatmap-legend {
+    position: absolute;
+    top: 18px;
+    right: 28px;
+    font-size: 11px;
+    color: #a3a3a3;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .sl-heat {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+  .sl-heat-0 { background: #f5f5f4; }
+  .sl-heat-1 { background: #dbe7f7; }
+  .sl-heat-2 { background: #a8c6ed; }
+  .sl-heat-3 { background: #5b8cd1; }
+  .sl-heat-4 { background: #2f5a99; }
+
+  .sl-heatmap {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  .sl-cal-month {
+    min-width: 0;
+  }
+  .sl-cal-month-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #525252;
+    margin: 0 0 6px;
+  }
+  .sl-cal-dow {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 4px;
+  }
+  .sl-cal-dow span {
+    font-size: 10px;
+    color: #a3a3a3;
+    text-align: center;
+  }
+  .sl-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+  }
+  .sl-cal-day, .sl-cal-empty {
+    aspect-ratio: 1;
+    border-radius: 3px;
+    font-size: 10px;
+    color: #525252;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sl-cal-day {
+    cursor: default;
+  }
+  .sl-cal-day.sl-heat-3, .sl-cal-day.sl-heat-4 {
+    color: #fff;
+    font-weight: 500;
+  }
+  .sl-cal-today {
+    box-shadow: inset 0 0 0 1.5px #0a0a0a;
+  }
+  .sl-cal-future {
+    color: #d4d4d4;
+    background: transparent !important;
+    border: 1px dashed #ececec;
+  }
+
+  /* 时间筛选 chips */
+  .sl-chips {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .sl-chip {
+    all: unset;
+    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    color: #525252;
+    border: 1px solid #ececec;
+    background: #fff;
+    transition: all .12s;
+  }
+  .sl-chip:hover { border-color: #a3a3a3; }
+  .sl-chip-active {
+    background: #0a0a0a;
+    color: #fff;
+    border-color: #0a0a0a;
+  }
+
+  /* Session 列表 */
+  .sl-list {
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .sl-group + .sl-group {
+    border-top: 1px solid #f5f5f4;
+  }
+  .sl-group-head {
+    font-size: 11.5px;
+    color: #a3a3a3;
+    margin: 0;
+    padding: 12px 20px 6px;
+    background: #fafaf9;
+    letter-spacing: 0.02em;
+  }
+  .sl-group-rows {
+    padding: 4px 0;
+  }
+  .sl-row {
+    border-bottom: 1px solid #f5f5f4;
+    transition: background .08s;
+  }
+  .sl-row:last-child { border-bottom: 0; }
+  .sl-row:hover { background: #fafaf9; }
+  .sl-row-main {
+    display: grid;
+    grid-template-columns: 56px minmax(120px, 1.4fr) auto minmax(0, 2fr) 80px 80px 20px;
+    gap: 14px;
+    padding: 12px 20px;
+    align-items: center;
+    font-size: 13px;
+  }
+  .sl-row-time {
+    font-variant-numeric: tabular-nums;
+    color: #a3a3a3;
+    font-size: 12px;
+  }
+  .sl-row-kp {
+    color: #0a0a0a;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sl-row-school {
+    font-size: 11px;
+    color: #525252;
+    background: #f5f5f4;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .sl-row-note-preview {
+    color: #a3a3a3;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sl-row-dur {
+    text-align: right;
+    color: #0a0a0a;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .sl-row-rating {
+    text-align: right;
+    color: #d4d4d4;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  .sl-row-chevron {
+    color: #a3a3a3;
+    transition: transform .15s;
+    font-size: 11px;
+    text-align: center;
+  }
+  .sl-row-chevron-rot {
+    transform: rotate(180deg);
+  }
+  .sl-row-note {
+    padding: 0 20px 12px 90px;
+    font-size: 12.5px;
+    color: #525252;
+    line-height: 1.7;
+    white-space: pre-wrap;
+  }
+  .sl-empty-note, .sl-empty-rating { /* 占位维持网格 */ }
+
+  /* 空状态 */
+  .sl-empty {
+    text-align: center;
+    color: #a3a3a3;
+    font-size: 13px;
+    padding: 40px 20px;
+  }
+  .sl-empty.hidden { display: none; }
+
+  /* 占位视图 */
+  .sl-placeholder {
+    text-align: center;
+    padding: 60px 20px;
+    color: #525252;
+    border: 1px dashed #ececec;
+    border-radius: 12px;
+    background: #fafaf9;
+  }
+  .sl-placeholder p:first-child {
+    font-size: 16px;
+    margin: 0 0 8px;
+    color: #0a0a0a;
+  }
+  .sl-placeholder-sub {
+    font-size: 12.5px;
+    color: #a3a3a3;
+    margin: 0;
+  }
+  .sl-view .hidden, .sl-row-note.hidden { display: none; }
+
+  /* 响应式 */
+  @media (max-width: 768px) {
+    .study-log { padding: 24px 16px 80px; }
+    .sl-stats { grid-template-columns: 1fr; gap: 16px; padding: 18px 20px; }
+    .sl-stat-value { font-size: 32px; }
+    .sl-heatmap { grid-template-columns: repeat(2, 1fr); }
+    .sl-heatmap-legend { display: none; }
+    .sl-row-main {
+      grid-template-columns: 1fr auto;
+      gap: 6px;
+      padding: 10px 16px;
+    }
+    .sl-row-time, .sl-row-school, .sl-row-note-preview, .sl-row-rating, .sl-row-chevron {
+      grid-column: span 2;
+      font-size: 11px;
+      text-align: left;
+    }
+    .sl-row-time { color: #a3a3a3; }
+    .sl-row-dur { font-size: 14px; }
+  }
+</style>
