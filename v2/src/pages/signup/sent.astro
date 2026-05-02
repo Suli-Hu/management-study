@@ -2,31 +2,36 @@
 import Layout from '~/layouts/Layout.astro';
 import { readFlash, FLASH_COOKIE } from '~/lib/flash';
 
-// v0.2.9: password 模式下不应到达这里
-if (Astro.locals.runtime.env.AUTH_MODE === 'password') {
-  return Astro.redirect('/login');
-}
+const user = Astro.locals.user;
+if (user) return Astro.redirect('/');
 
-// v0.3.6: email + error 从 flash cookie 读（URL 不留痕）
+const env = Astro.locals.runtime.env;
+if (env.AUTH_MODE === 'password') return Astro.redirect('/login');
+
 const flash = readFlash(Astro.request.headers.get('cookie'));
 if (flash) Astro.cookies.delete(FLASH_COOKIE, { path: '/' });
 
 const email = flash?.email ?? '';
 const err = flash?.error ?? null;
-const errorMsg = err === 'invalid_code'
-  ? 'Code 错了或已过期，检查邮件里的 6 位数字，或去 /login 重新发送。'
-  : null;
+
+const errorMessages: Record<string, string> = {
+  wrong_code: '验证码不对，再试一次（最多 5 次）。',
+  wrong_code_locked: '错误次数过多。请回 /signup 重新申请验证码。',
+  expired: '验证码已过期（30 分钟）。请回 /signup 重新申请。',
+  not_found: '未找到注册请求。请回 /signup 开始。',
+};
+const errorMsg = err ? (errorMessages[err] ?? '验证出错，请重试。') : null;
 
 const maskedEmail = email.replace(/^(.{2}).*(@.*)$/, '$1•••$2');
 ---
 
-<Layout title="输入 code">
+<Layout title="完成注册">
   <main class="max-w-reading mx-auto px-4 py-10">
     <div class="max-w-md mx-auto">
       <header class="mb-6">
         <h1 class="text-2xl mb-2">查收邮箱</h1>
         <p class="text-sm text-tertiary leading-relaxed">
-          我们给 <strong class="text-secondary" id="masked-email">{maskedEmail || '你的邮箱'}</strong> 发了一封登录邮件。
+          我们给 <strong class="text-secondary">{maskedEmail || '你的邮箱'}</strong> 发了一封验证邮件。
         </p>
       </header>
 
@@ -38,10 +43,10 @@ const maskedEmail = email.replace(/^(.{2}).*(@.*)$/, '$1•••$2');
 
       <section class="mb-6">
         <p class="text-sm text-secondary mb-3">
-          输入邮件里的 <strong>6 位 code</strong>：
+          输入邮件里的 <strong>6 位验证码</strong>：
         </p>
-        <form id="code-form" method="POST" action="/api/auth/verify-code">
-          <input type="hidden" name="email" id="login-email-hidden" value={email} />
+        <form id="code-form" method="POST" action="/api/auth/signup-verify">
+          <input type="hidden" name="email" value={email} />
           <input type="hidden" name="code" id="code-hidden" />
           <div class="flex gap-2 justify-center mb-3" id="otp-boxes">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -56,14 +61,13 @@ const maskedEmail = email.replace(/^(.{2}).*(@.*)$/, '$1•••$2');
             ))}
           </div>
           <button type="submit" class="btn-ghost-strategy w-full">
-            登录
+            完成注册
           </button>
         </form>
       </section>
 
       <section class="p-4 rounded-md bg-bg-warm text-xs text-secondary leading-relaxed">
-        <p class="mb-2 text-tertiary font-semibold">或者：直接在收到邮件的那台设备点击邮件里的「在当前设备登录」按钮。</p>
-        <p class="text-quaternary">链接和 code 10 分钟内有效。没收到？检查垃圾邮件，或 <a href="/login" class="text-accent-strategy">重新申请</a>。</p>
+        <p class="text-quaternary">验证码 30 分钟内有效。没收到？检查垃圾邮件，或 <a href="/signup" class="text-accent-strategy">重新申请</a>。</p>
       </section>
     </div>
   </main>
@@ -74,42 +78,7 @@ const maskedEmail = email.replace(/^(.{2}).*(@.*)$/, '$1•••$2');
     const boxes = Array.from(document.querySelectorAll('[data-otp-index]'));
     const hidden = document.getElementById('code-hidden');
     const form = document.getElementById('code-form');
-    const emailHidden = document.getElementById('login-email-hidden');
-    const maskedEmail = document.getElementById('masked-email');
-    if (!boxes.length || !hidden || !form || !emailHidden) return;
-
-    const EMAIL_STORAGE_KEY = 'management-study:last-login-email';
-    const LOCAL_DEFAULT_EMAIL = 'husuli0623@gmail.com';
-    const isLocalDev = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
-
-    function readRememberedEmail() {
-      try {
-        return localStorage.getItem(EMAIL_STORAGE_KEY) || (isLocalDev ? LOCAL_DEFAULT_EMAIL : '');
-      } catch (_) {
-        return isLocalDev ? LOCAL_DEFAULT_EMAIL : '';
-      }
-    }
-
-    function rememberEmail(value) {
-      const email = String(value || '').trim().toLowerCase();
-      if (!email) return;
-      try { localStorage.setItem(EMAIL_STORAGE_KEY, email); } catch (_) { /* ignore */ }
-    }
-
-    function maskEmail(email) {
-      return email.replace(/^(.{2}).*(@.*)$/, '$1•••$2');
-    }
-
-    let email = String(emailHidden.value || '').trim().toLowerCase();
-    if (email) {
-      rememberEmail(email);
-    } else {
-      email = readRememberedEmail();
-      if (email) {
-        emailHidden.value = email;
-        if (maskedEmail) maskedEmail.textContent = maskEmail(email);
-      }
-    }
+    if (!boxes.length || !hidden || !form) return;
 
     function sync() {
       hidden.value = boxes.map((b) => b.value).join('');
@@ -160,7 +129,6 @@ const maskedEmail = email.replace(/^(.{2}).*(@.*)$/, '$1•••$2');
       box.addEventListener('focus', () => box.select());
     });
 
-    // 首次进入聚焦第一格
     focusBox(0);
   })();
 </script>

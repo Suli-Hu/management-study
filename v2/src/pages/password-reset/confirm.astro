@@ -1,0 +1,118 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Brand from '~/components/Brand.astro';
+import { readFlash, FLASH_COOKIE } from '~/lib/flash';
+
+const user = Astro.locals.user;
+if (user) return Astro.redirect('/');
+
+const env = Astro.locals.runtime.env;
+if (env.AUTH_MODE === 'password') return Astro.redirect('/login');
+
+// 从 URL query 拿 token；没 token 直接跳回 /password-reset
+const token = (Astro.url.searchParams.get('token') ?? '').trim();
+if (!token) return Astro.redirect('/password-reset');
+
+const flash = readFlash(Astro.request.headers.get('cookie'));
+if (flash) Astro.cookies.delete(FLASH_COOKIE, { path: '/' });
+
+const error = flash?.error ?? null;
+const weakReason = error?.startsWith('weak_password:') ? error.slice('weak_password:'.length) : null;
+
+const errorMessages: Record<string, string> = {
+  password_mismatch: '两次输入的密码不一致。',
+  'weak_password:too_short': '密码至少 8 位。',
+  'weak_password:no_letter': '密码必须包含字母。',
+  'weak_password:no_digit': '密码必须包含数字。',
+  'weak_password:too_common': '这个密码太常见了，换一个。',
+};
+const errorMsg = error
+  ? (weakReason ? errorMessages[`weak_password:${weakReason}`] : errorMessages[error])
+    ?? '出错了，请重试。'
+  : null;
+---
+
+<Layout title="设置新密码">
+  <main class="max-w-reading mx-auto px-4 py-8 min-h-[calc(100dvh-9rem)] flex items-center">
+    <div class="w-full max-w-md mx-auto">
+      <header class="mb-8 flex justify-center">
+        <Brand href="/" variant="lockup" />
+      </header>
+
+      <h1 class="text-xl font-semibold mb-2 text-center">设置新密码</h1>
+      <p class="text-xs text-tertiary text-center mb-6">设置完成后会自动登录。</p>
+
+      {errorMsg && (
+        <div class="mb-4 p-3 rounded-md bg-badge-limit text-accent-warning text-xs">
+          {errorMsg}
+        </div>
+      )}
+
+      <form method="POST" action="/api/auth/password-reset-confirm" class="space-y-3" id="reset-form">
+        <input type="hidden" name="token" value={token} />
+
+        <div>
+          <label class="block text-xs text-tertiary mb-1">新密码</label>
+          <input
+            type="password"
+            name="password"
+            required
+            autofocus
+            autocomplete="new-password"
+            minlength="8"
+            placeholder="至少 8 位，含字母和数字"
+            class="w-full px-3 py-2.5 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
+            id="password-input"
+          />
+          <p class="text-[11px] text-quaternary mt-1" id="password-hint">
+            8 位以上，至少一个字母 + 一个数字。
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-xs text-tertiary mb-1">确认密码</label>
+          <input
+            type="password"
+            name="password_confirm"
+            required
+            autocomplete="new-password"
+            placeholder="再输一次确认"
+            class="w-full px-3 py-2.5 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
+            id="password-confirm-input"
+          />
+          <p class="text-[11px] text-quaternary mt-1" id="match-hint"></p>
+        </div>
+
+        <button type="submit" class="btn-ghost-strategy w-full">
+          重置并登录
+        </button>
+      </form>
+    </div>
+  </main>
+</Layout>
+
+<script is:inline>
+  (function () {
+    const pw = document.getElementById('password-input');
+    const cf = document.getElementById('password-confirm-input');
+    const hint = document.getElementById('password-hint');
+    const match = document.getElementById('match-hint');
+    if (!pw || !cf || !hint || !match) return;
+
+    function checkStrength() {
+      const v = pw.value;
+      const ok = v.length >= 8 && /[a-zA-Z]/.test(v) && /[0-9]/.test(v);
+      hint.textContent = ok ? '✓ 密码强度合格' : '8 位以上，至少一个字母 + 一个数字。';
+      hint.style.color = ok ? '#22c55e' : '';
+    }
+    function checkMatch() {
+      if (!cf.value) { match.textContent = ''; return; }
+      const same = pw.value === cf.value;
+      match.textContent = same ? '✓ 两次输入一致' : '两次输入不一致';
+      match.style.color = same ? '#22c55e' : '#ef4444';
+    }
+
+    pw.addEventListener('input', () => { checkStrength(); checkMatch(); });
+    cf.addEventListener('input', checkMatch);
+  })();
+</script>

@@ -107,12 +107,38 @@ engineering 会话轮替时读这里对齐。每次 commit 请同步状态列。
 
 ---
 
-## W7+ 长期
+## W7 — 完整账户系统（v0.7.x，2026-05 完成）
 
-- **W7**: 多学科一次扩 3-4 个（marketing / HR / OB / 战略）
-- **W8**: 社区笔记共享（user_note 加 public flag）
-- **W9**: 移动 app（Capacitor / Expo）
-- **W10**: 教师版 admin（批量导入 / 学生进度看板）——如真卖给补习机构
+把 v0.2-v0.6 累积的 5 种登录路径（邀请码 / magic-link / 6 位 code /
+EMAIL_TRUST / password 模式）收敛为 SaaS 标准的"邮箱+密码"主路径，留邀请码作演示通道、password 模式作应急 fallback。
+
+| 版本 | 内容 | commit |
+|---|---|---|
+| v0.7.1 | migration 0017 + `lib/password.ts` PBKDF2-SHA256 + `setup-admin.ts` env-read 注入 + 42 case 单测 | `145cd2f2` |
+| v0.7.2 | `/signup` + 邮箱 6 位 code 验证 + `pending_signup` 表 + 28 case integration test | `c81dbda4` |
+| v0.7.3 | `/login` 默认改 email+password + `login-password` 端点 + 锁定状态机 + 16 case | `99f15a77` |
+| v0.7.4 | `/password-reset` 申请 + confirm + invalidate sessions + 21 case | `082b44a0` |
+| v0.7.5 | `/settings/account` + 6 端点（profile / 改密 / 改邮箱 / 退所有 / 注销）+ migration 0018 + 31 case | `29870e7d` |
+| v0.7.6 | 删 magic-link 路径（3 端点 + 6 helpers）+ EMAIL_TRUST_DAYS + 23 测试 case | `f67f4d2e` |
+| v0.7.0 | E2E smoke spec + README/ROADMAP 更新 + tag | 本 patch |
+
+**设计决策**（PRD v0.7）：
+- D1: 保留邀请码 `123` 作演示通道
+- D2: 删 magic-link 日常登录；reset link 仍用邮件
+- D3: 开放注册，默认 0 学科权限（home 卡片置灰，v0.6.3 已有视觉）
+- D4: super-admin 走 `pnpm setup:admin` 注入 password_hash（值不进 git）
+- D5: 不做 OAuth（v0.8+ SaaS 阶段再说）
+
+**保留护城河**（便于回滚）：`magic_link` 表 + `user.trusted_until` 列 schema 不动；password 模式 secrets 仍在。
+
+---
+
+## W8+ 长期
+
+- **W8**: 多学科一次扩 3-4 个（marketing / HR / OB / 战略）
+- **W9**: 社区笔记共享（user_note 加 public flag）
+- **W10**: 移动 app（Capacitor / Expo）
+- **W11**: 教师版 admin（批量导入 / 学生进度看板）——如真卖给补习机构
 
 ---
 

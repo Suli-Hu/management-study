@@ -36,10 +36,6 @@ export interface Env {
   // v0.5.74 邀请码访客可读 discipline 白名单（逗号分隔）。空 / 未设 = 全学科可读。
   INVITE_GUEST_DISCIPLINES?: string;
 
-  // v0.5.45 邮箱 N 天免 code 信任：白名单 email 在 N 天内任意设备直接登录（不发 code）
-  // 默认 3 天，0 = 关闭（恢复纯 magic link 流程）。仅作用于已存在的 user 行。
-  EMAIL_TRUST_DAYS?: string;
-
   // v0.4.1 编辑器：GitHub Contents API 写 data/*.json
   GITHUB_PAT?: string;       // fine-grained PAT，仅 Contents R/W
   GITHUB_REPO?: string;      // "Suli-Hu/management-study"，默认从 wrangler.toml [vars] 注入

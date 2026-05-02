@@ -1,0 +1,122 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Brand from '~/components/Brand.astro';
+import { readFlash, FLASH_COOKIE } from '~/lib/flash';
+
+// 已登录的人不应该看到注册页
+const user = Astro.locals.user;
+if (user) return Astro.redirect('/');
+
+const env = Astro.locals.runtime.env;
+// password 模式（考试期 fallback）下注册关闭
+if (env.AUTH_MODE === 'password') return Astro.redirect('/login');
+
+const flash = readFlash(Astro.request.headers.get('cookie'));
+if (flash) Astro.cookies.delete(FLASH_COOKIE, { path: '/' });
+
+const error = flash?.error ?? null;
+const lastEmail = flash?.email ?? '';
+
+// weak_password:reason 形式 → 拆出 reason
+const weakReason = error?.startsWith('weak_password:') ? error.slice('weak_password:'.length) : null;
+
+const errorMessages: Record<string, string> = {
+  invalid_email: '请填一个有效的邮箱地址。',
+  'weak_password:too_short': '密码至少 8 位。',
+  'weak_password:no_letter': '密码必须包含字母。',
+  'weak_password:no_digit': '密码必须包含数字。',
+  'weak_password:too_common': '这个密码太常见了，换一个。',
+};
+const errorMsg = error
+  ? (weakReason ? errorMessages[`weak_password:${weakReason}`] : errorMessages[error])
+    ?? '注册出错，请重试。'
+  : null;
+---
+
+<Layout title="注册">
+  <main class="max-w-reading mx-auto px-4 py-8 min-h-[calc(100dvh-9rem)] flex items-center">
+    <div class="w-full max-w-md mx-auto">
+      <header class="mb-8 flex justify-center">
+        <Brand href="/" variant="lockup" />
+      </header>
+
+      <h1 class="text-xl font-semibold mb-6 text-center">创建账号</h1>
+
+      {errorMsg && (
+        <div class="mb-4 p-3 rounded-md bg-badge-limit text-accent-warning text-xs">
+          {errorMsg}
+        </div>
+      )}
+
+      <form method="POST" action="/api/auth/signup" class="space-y-3" id="signup-form">
+        <div>
+          <label class="block text-xs text-tertiary mb-1">邮箱</label>
+          <input
+            type="email"
+            name="email"
+            required
+            autofocus
+            autocomplete="email"
+            value={lastEmail}
+            placeholder="you@example.com"
+            class="w-full px-3 py-2.5 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs text-tertiary mb-1">密码</label>
+          <input
+            type="password"
+            name="password"
+            required
+            autocomplete="new-password"
+            minlength="8"
+            placeholder="至少 8 位，含字母和数字"
+            class="w-full px-3 py-2.5 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
+            id="password-input"
+          />
+          <p class="text-[11px] text-quaternary mt-1" id="password-hint">
+            8 位以上，至少一个字母 + 一个数字。
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-xs text-tertiary mb-1">显示名（可选）</label>
+          <input
+            type="text"
+            name="display_name"
+            autocomplete="nickname"
+            maxlength="40"
+            placeholder="留空则用邮箱前缀"
+            class="w-full px-3 py-2.5 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
+          />
+        </div>
+
+        <button type="submit" class="btn-ghost-strategy w-full">
+          发送验证码
+        </button>
+
+        <p class="text-xs text-quaternary text-center mt-4">
+          已有账号？<a href="/login" class="text-accent-strategy">直接登录</a>
+        </p>
+      </form>
+    </div>
+  </main>
+</Layout>
+
+<script is:inline>
+  // 前端密码强度提示（同 lib/password.ts 规则）
+  (function () {
+    const input = document.getElementById('password-input');
+    const hint = document.getElementById('password-hint');
+    if (!input || !hint) return;
+    input.addEventListener('input', () => {
+      const v = input.value;
+      const ok = v.length >= 8 && /[a-zA-Z]/.test(v) && /[0-9]/.test(v);
+      hint.textContent = ok
+        ? '✓ 密码强度合格'
+        : '8 位以上，至少一个字母 + 一个数字。';
+      hint.style.color = ok ? '#22c55e' : '';
+    });
+  })();
+</script>

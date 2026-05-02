@@ -13,12 +13,17 @@ const flash = readFlash(Astro.request.headers.get('cookie'));
 if (flash) Astro.cookies.delete(FLASH_COOKIE, { path: '/' });
 
 const error = flash?.error ?? null;
+const lastEmail = flash?.email ?? '';
+
 const errorMessages: Record<string, string> = {
-  invalid_or_expired: '登录链接无效或已过期，请重新申请。',
-  missing_token: '链接不完整，请重新申请。',
-  missing_code: '请输入 6 位 code。',
+  // v0.7.3 password login
+  bad_credentials: '邮箱或密码不对。',
+  bad_credentials_locked: '尝试次数过多，账户已锁 30 分钟。请稍后再试，或走"忘记密码"重置。',
+  // 邀请码 / password 模式（保留作演示通道 + 考试期 fallback）
   bad_password: '密码不对。',
   bad_invite_code: '邀请码不对。',
+  // v0.7.4/5 复用：从 password-reset / change-email 跳回 /login 时的提示
+  invalid_or_expired: '会话已失效，请重新登录。',
 };
 const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。') : null;
 ---
@@ -58,27 +63,8 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
         </form>
       ) : (
         <div>
-          {/* v0.5.82: 默认只显示密码（邀请码）表单，邮箱验证码 tab 收起来；
-              入口在 footer 区域的小字 "邮箱登录" 链接（仅 admin 知道路径） */}
-
-          {/* 密码（前身：邀请码）表单 */}
-          <form method="POST" action="/api/auth/invite-code" data-login-pane="invite" class="space-y-3">
-            <input
-              type="password"
-              name="code"
-              required
-              autocomplete="current-password"
-              placeholder="请输入密码"
-              class="w-full px-3 py-2.5 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
-            />
-            <input type="hidden" name="remember" value="1" />
-            <button type="submit" class="btn-ghost-strategy w-full">
-              继续
-            </button>
-          </form>
-
-          {/* 邮箱验证码表单（默认隐藏，靠 footer 区域链接切到这里） */}
-          <form method="POST" action="/api/auth/login" data-login-pane="email" class="space-y-3 hidden">
+          {/* v0.7.3 默认入口：邮箱 + 密码（普通用户） */}
+          <form method="POST" action="/api/auth/login-password" data-login-pane="password" class="space-y-3">
             <div>
               <label class="block text-xs text-tertiary mb-1">邮箱</label>
               <input
@@ -86,8 +72,21 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
                 name="email"
                 data-login-email
                 required
+                autofocus
                 autocomplete="email"
-                placeholder="you@gmail.com"
+                value={lastEmail}
+                placeholder="you@example.com"
+                class="w-full px-3 py-2.5 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
+              />
+            </div>
+            <div>
+              <label class="block text-xs text-tertiary mb-1">密码</label>
+              <input
+                type="password"
+                name="password"
+                required
+                autocomplete="current-password"
+                placeholder="登录密码"
                 class="w-full px-3 py-2.5 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
               />
             </div>
@@ -96,11 +95,30 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
               记住登录 30 天
             </label>
             <button type="submit" class="btn-ghost-strategy w-full">
-              发送验证码
+              登录
             </button>
-            <p class="text-xs text-quaternary text-center mt-4">白名单邮箱按既定权限进入</p>
+            <div class="flex justify-between text-xs text-quaternary mt-3">
+              <a href="/signup" class="text-accent-strategy">还没账号？注册</a>
+              <a href="/password-reset" class="text-accent-strategy">忘记密码？</a>
+            </div>
           </form>
 
+          {/* 邀请码登录（v0.7 决策 D1：保留作演示通道；UI 降级到 footer 链接切换） */}
+          <form method="POST" action="/api/auth/invite-code" data-login-pane="invite" class="space-y-3 hidden">
+            <input
+              type="password"
+              name="code"
+              required
+              autocomplete="off"
+              placeholder="演示访问邀请码"
+              class="w-full px-3 py-2.5 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
+            />
+            <input type="hidden" name="remember" value="1" />
+            <button type="submit" class="btn-ghost-strategy w-full">
+              进入演示
+            </button>
+            <p class="text-xs text-quaternary text-center mt-3">仅可浏览，不能编辑。</p>
+          </form>
         </div>
       )}
     </div>
@@ -108,12 +126,12 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
 </Layout>
 
 <script is:inline>
-  // v0.5.83: 模式切换入口隐到全局 Footer 文案上（"个人笔记，仅云端存储，非公开"）
-  // 点击 footer 文字 → 切换 invite ↔ email 表单。其它页面 footer 仍是普通文本。
+  // v0.7.3: footer 文案点击切换 password ↔ invite-code 表单
+  // （v0.5.83 magic-link 切换替换为 invite-code 切换；password 是默认）
   (function () {
+    const passwordPane = document.querySelector('[data-login-pane="password"]');
     const invitePane = document.querySelector('[data-login-pane="invite"]');
-    const emailPane = document.querySelector('[data-login-pane="email"]');
-    if (!invitePane || !emailPane) return;
+    if (!passwordPane || !invitePane) return;
 
     const EMAIL_STORAGE_KEY = 'management-study:last-login-email';
     const LOCAL_DEFAULT_EMAIL = 'husuli0623@gmail.com';
@@ -138,7 +156,7 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
       emailInput.value = readRememberedEmail();
     }
 
-    emailPane.addEventListener('submit', () => {
+    passwordPane.addEventListener('submit', () => {
       if (emailInput) rememberEmail(emailInput.value);
     });
 
@@ -147,10 +165,10 @@ const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。')
     footerText.style.cursor = 'pointer';
     footerText.setAttribute('title', '点击切换登录方式');
     footerText.addEventListener('click', () => {
-      const inviteVisible = !invitePane.classList.contains('hidden');
-      invitePane.classList.toggle('hidden', inviteVisible);
-      emailPane.classList.toggle('hidden', !inviteVisible);
-      const newPane = inviteVisible ? emailPane : invitePane;
+      const passwordVisible = !passwordPane.classList.contains('hidden');
+      passwordPane.classList.toggle('hidden', passwordVisible);
+      invitePane.classList.toggle('hidden', !passwordVisible);
+      const newPane = passwordVisible ? invitePane : passwordPane;
       const input = newPane.querySelector('input:not([type=hidden]):not([type=checkbox])');
       if (input) input.focus();
     });

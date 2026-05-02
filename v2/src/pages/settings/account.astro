@@ -1,0 +1,209 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import { readFlash, FLASH_COOKIE } from '~/lib/flash';
+import { getDb } from '~/lib/db';
+
+const user = Astro.locals.user;
+if (!user) return Astro.redirect('/login');
+
+const env = Astro.locals.runtime.env;
+const db = getDb(env);
+
+// 取最新 user 信息（locals.user 来自 cookie，display_name 可能 stale）
+const fullUser = await db
+  .prepare('SELECT id, email, display_name, created_at, last_login_at, password_changed_at FROM user WHERE id = ?')
+  .bind(user.id)
+  .first<{
+    id: string; email: string; display_name: string | null;
+    created_at: string; last_login_at: string | null;
+    password_changed_at: string | null;
+  }>();
+
+// 检查是否有 pending email change（如果有，UI 显示"输 code 完成变更"input）
+const pendingEmail = await db
+  .prepare('SELECT new_email, expires_at FROM pending_email_change WHERE user_id = ?')
+  .bind(user.id)
+  .first<{ new_email: string; expires_at: number }>();
+
+const pendingValid = pendingEmail && pendingEmail.expires_at > Date.now();
+
+const flash = readFlash(Astro.request.headers.get('cookie'));
+if (flash) Astro.cookies.delete(FLASH_COOKIE, { path: '/' });
+
+const okMessages: Record<string, string> = {
+  profile_updated: '✓ 显示名已更新',
+  password_updated: '✓ 密码已更新',
+  email_change_sent: `✓ 验证码已发送到 ${flash?.new_email ?? '新邮箱'}，请查收`,
+};
+const errorMessages: Record<string, string> = {
+  missing_current_password: '请输入当前密码。',
+  password_mismatch: '两次输入的新密码不一致。',
+  'weak_password:too_short': '密码至少 8 位。',
+  'weak_password:no_letter': '密码必须包含字母。',
+  'weak_password:no_digit': '密码必须包含数字。',
+  'weak_password:too_common': '这个密码太常见了。',
+  no_password_set: '账号未设密码，请走"忘记密码"重置。',
+  wrong_current_password: '当前密码不对。',
+  invalid_email: '邮箱格式无效。',
+  email_unchanged: '新邮箱跟当前邮箱一样，没必要改。',
+  email_taken: '该邮箱已被占用。',
+  missing_code: '请输入验证码。',
+  wrong_code: '验证码不对。',
+  wrong_code_locked: '尝试次数过多，请重新发起改邮箱。',
+  expired: '验证码已过期。',
+  not_found: '没有进行中的邮箱变更。',
+  confirm_phrase_mismatch: '注销确认语必须输 DELETE（大写）。',
+};
+
+const okMsg = flash?.ok
+  ? (okMessages[flash.ok] ?? null)
+  : null;
+const weak = flash?.error?.startsWith('weak_password:') ? flash.error : null;
+const errKey = flash?.error ?? null;
+const errMsg = errKey
+  ? (weak ? errorMessages[weak] : errorMessages[errKey]) ?? null
+  : null;
+
+const displayName = fullUser?.display_name ?? '';
+const userEmail = fullUser?.email ?? user.email;
+---
+
+<Layout title="账户设置">
+  <main class="max-w-2xl mx-auto px-4 py-8">
+    <header class="mb-8">
+      <a href="/" class="text-xs text-tertiary hover:text-secondary">← 返回</a>
+      <h1 class="text-2xl font-semibold mt-2">账户设置</h1>
+      <p class="text-sm text-tertiary mt-1">{userEmail}</p>
+    </header>
+
+    {okMsg && (
+      <div class="mb-4 p-3 rounded-md bg-bg-warm text-secondary text-xs">
+        {okMsg}
+      </div>
+    )}
+    {errMsg && (
+      <div class="mb-4 p-3 rounded-md bg-badge-limit text-accent-warning text-xs">
+        {errMsg}
+      </div>
+    )}
+
+    {/* === 1. 显示名 === */}
+    <section class="mb-8 p-5 border border-bg-tertiary rounded-md">
+      <h2 class="text-base font-semibold mb-3">显示名</h2>
+      <form method="POST" action="/api/account/profile" class="space-y-3">
+        <input
+          type="text"
+          name="display_name"
+          maxlength="40"
+          value={displayName}
+          placeholder={userEmail.split('@')[0]}
+          class="w-full px-3 py-2 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy"
+        />
+        <p class="text-[11px] text-quaternary">最多 40 字符，留空则用邮箱前缀。</p>
+        <button type="submit" class="btn-ghost-strategy">保存</button>
+      </form>
+    </section>
+
+    {/* === 2. 密码 === */}
+    <section class="mb-8 p-5 border border-bg-tertiary rounded-md">
+      <h2 class="text-base font-semibold mb-1">修改密码</h2>
+      {fullUser?.password_changed_at && (
+        <p class="text-[11px] text-quaternary mb-3">上次更新：{fullUser.password_changed_at.slice(0, 10)}</p>
+      )}
+      <form method="POST" action="/api/account/change-password" class="space-y-3">
+        <div>
+          <label class="block text-xs text-tertiary mb-1">当前密码</label>
+          <input type="password" name="current_password" required autocomplete="current-password"
+            class="w-full px-3 py-2 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy" />
+        </div>
+        <div>
+          <label class="block text-xs text-tertiary mb-1">新密码</label>
+          <input type="password" name="password" required minlength="8" autocomplete="new-password"
+            class="w-full px-3 py-2 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy" />
+          <p class="text-[11px] text-quaternary mt-1">8 位以上，含字母和数字。</p>
+        </div>
+        <div>
+          <label class="block text-xs text-tertiary mb-1">确认新密码</label>
+          <input type="password" name="password_confirm" required autocomplete="new-password"
+            class="w-full px-3 py-2 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy" />
+        </div>
+        <button type="submit" class="btn-ghost-strategy">保存新密码</button>
+      </form>
+    </section>
+
+    {/* === 3. 邮箱 === */}
+    <section class="mb-8 p-5 border border-bg-tertiary rounded-md">
+      <h2 class="text-base font-semibold mb-3">修改邮箱</h2>
+
+      {pendingValid ? (
+        <div>
+          <p class="text-xs text-tertiary mb-3">
+            已发送验证码到 <strong class="text-secondary">{pendingEmail.new_email}</strong>。
+            输入收到的 6 位 code 完成变更：
+          </p>
+          <form method="POST" action="/api/account/change-email-confirm" class="space-y-3">
+            <input
+              type="text"
+              name="code"
+              required
+              inputmode="numeric"
+              pattern="[0-9]*"
+              maxlength="6"
+              placeholder="6 位验证码"
+              class="w-full px-3 py-2 rounded-md border border-bg-tertiary text-sm font-mono tracking-widest focus:outline-none focus:border-accent-strategy"
+            />
+            <button type="submit" class="btn-ghost-strategy">确认变更</button>
+          </form>
+        </div>
+      ) : (
+        <form method="POST" action="/api/account/change-email-request" class="space-y-3">
+          <p class="text-xs text-tertiary mb-2">当前：{userEmail}</p>
+          <div>
+            <label class="block text-xs text-tertiary mb-1">新邮箱</label>
+            <input type="email" name="new_email" required autocomplete="email"
+              class="w-full px-3 py-2 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy" />
+          </div>
+          <div>
+            <label class="block text-xs text-tertiary mb-1">当前密码</label>
+            <input type="password" name="current_password" required autocomplete="current-password"
+              class="w-full px-3 py-2 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-strategy" />
+          </div>
+          <button type="submit" class="btn-ghost-strategy">发送验证码到新邮箱</button>
+        </form>
+      )}
+    </section>
+
+    {/* === 4. 退出所有设备 === */}
+    <section class="mb-8 p-5 border border-bg-tertiary rounded-md">
+      <h2 class="text-base font-semibold mb-3">退出所有设备</h2>
+      <p class="text-xs text-tertiary mb-3">在其他设备上登录的会话会被失效，要重新登录。</p>
+      <form method="POST" action="/api/account/logout-all">
+        <button type="submit" class="btn-ghost-strategy">退出所有设备</button>
+      </form>
+    </section>
+
+    {/* === 5. 注销账户（危险区） === */}
+    <section class="mb-8 p-5 border border-accent-warning/30 rounded-md bg-badge-limit/30">
+      <h2 class="text-base font-semibold mb-1 text-accent-warning">注销账户</h2>
+      <p class="text-xs text-tertiary mb-3">
+        永久删除账户、学习记录和所有数据。<strong>不可恢复</strong>。
+      </p>
+      <form method="POST" action="/api/account/delete" class="space-y-3" id="delete-form">
+        <div>
+          <label class="block text-xs text-tertiary mb-1">输入 <code>DELETE</code> 确认</label>
+          <input type="text" name="confirm" required pattern="DELETE" autocomplete="off"
+            class="w-full px-3 py-2 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-warning" />
+        </div>
+        <div>
+          <label class="block text-xs text-tertiary mb-1">当前密码</label>
+          <input type="password" name="current_password" required autocomplete="current-password"
+            class="w-full px-3 py-2 rounded-md border border-bg-tertiary text-sm focus:outline-none focus:border-accent-warning" />
+        </div>
+        <button type="submit" class="px-4 py-2 rounded-md bg-accent-warning text-white text-sm hover:opacity-90"
+          onclick="return confirm('确认永久删除账户？所有数据无法恢复。')">
+          永久注销账户
+        </button>
+      </form>
+    </section>
+  </main>
+</Layout>

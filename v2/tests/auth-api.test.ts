@@ -1,21 +1,14 @@
 /**
- * Auth API integration tests — 5 路由的 HTTP 层行为
- *   POST /api/auth/login       email-flow 入口（发 magic link）
- *   GET  /api/auth/verify      email-flow token 验证
- *   POST /api/auth/verify-code 跨设备 code 验证
- *   POST /api/auth/password    考试期 password 登录（admin/guest）
- *   POST /api/auth/logout      清 cookie
+ * Auth API integration tests — logout + password 路由的 HTTP 层行为。
  *
- * 覆盖角度：AUTH_MODE 网关 / formData 与 JSON 双重 parser / 错误路径 flash cookie /
- *           状态码 / Location / Set-Cookie / timing-safe 密码比对。
+ * v0.7.6 起 magic-link 登录路径（/api/auth/login / verify / verify-code）
+ * 已删除，相关测试也一并删除；signup / password reset / login-password /
+ * account 等新路径有各自的 *.test.ts。
  *
  * 不重测 lib/auth 内部（已在 auth.test.ts 覆盖），聚焦 route wiring。
  */
 
-import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
-import { POST as loginPOST } from '../src/pages/api/auth/login';
-import { GET as verifyGET } from '../src/pages/api/auth/verify';
-import { POST as verifyCodePOST } from '../src/pages/api/auth/verify-code';
+import { describe, expect, test } from 'vitest';
 import { POST as passwordPOST } from '../src/pages/api/auth/password';
 import { POST as logoutPOST } from '../src/pages/api/auth/logout';
 import type { APIContext } from 'astro';
@@ -101,14 +94,6 @@ function formReq(url: string, body: Record<string, string>): Request {
     method: 'POST',
     headers: { 'content-type': 'application/x-www-form-urlencoded' },
     body: fd.toString(),
-  });
-}
-
-function jsonReq(url: string, body: Record<string, unknown>, method = 'POST'): Request {
-  return new Request(url, {
-    method,
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(body),
   });
 }
 
@@ -239,165 +224,5 @@ describe('POST /api/auth/password', () => {
     const cookie = res.headers.get('Set-Cookie') ?? '';
     expect(cookie).toContain('session=');
     expect(cookie).not.toContain('Max-Age=');
-  });
-});
-
-// ========== /api/auth/login ==========
-
-describe('POST /api/auth/login', () => {
-  beforeEach(() => {
-    // sendEmail 会调 fetch（Resend API）——mock 掉
-    vi.stubGlobal('fetch', vi.fn(async () => new Response(null, { status: 200 })));
-  });
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
-  test('AUTH_MODE=password → 404（email flow 关闭）', async () => {
-    const req = formReq('http://localhost/api/auth/login', { email: 'a@b.c' });
-    const res = await loginPOST(makeCtx(req, { AUTH_MODE: 'password', DB: createMockD1() }));
-    expect(res.status).toBe(404);
-  });
-
-  test('无效 email → 400', async () => {
-    const req = formReq('http://localhost/api/auth/login', { email: 'not-an-email' });
-    const res = await loginPOST(makeCtx(req, { DB: createMockD1() }));
-    expect(res.status).toBe(400);
-  });
-
-  test('空 email → 400', async () => {
-    const req = formReq('http://localhost/api/auth/login', { email: '' });
-    const res = await loginPOST(makeCtx(req, { DB: createMockD1() }));
-    expect(res.status).toBe(400);
-  });
-
-  test('有效 email → 303 /login/sent + flash cookie with email', async () => {
-    // createMagicLink: INSERT into magic_link_code
-    const db = createMockD1(() => ({ meta: { success: true, changes: 1 } }));
-    const req = formReq('http://localhost/api/auth/login', { email: 'user@example.com' });
-    const res = await loginPOST(makeCtx(req, {
-      DB: db,
-      RESEND_API_KEY: 'test-key',
-      RESEND_FROM: 'noreply@test.com',
-      APP_URL: 'http://localhost',
-    }));
-    expect(res.status).toBe(303);
-    expect(res.headers.get('Location')).toBe('http://localhost/login/sent');
-    expect(res.headers.get('Set-Cookie') ?? '').toContain('flash=');
-  });
-
-  test('sendEmail 抛错仍返 303（防 email enumeration）', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => { throw new Error('network'); }));
-    const db = createMockD1(() => ({ meta: { success: true, changes: 1 } }));
-    const req = formReq('http://localhost/api/auth/login', { email: 'user@example.com' });
-    const res = await loginPOST(makeCtx(req, {
-      DB: db,
-      RESEND_API_KEY: 'test-key',
-      RESEND_FROM: 'noreply@test.com',
-    }));
-    expect(res.status).toBe(303);
-  });
-});
-
-// ========== /api/auth/verify ==========
-
-describe('GET /api/auth/verify', () => {
-  test('AUTH_MODE=password → 404', async () => {
-    const req = new Request('http://localhost/api/auth/verify?token=x', { method: 'GET' });
-    const res = await verifyGET(makeCtx(req, { AUTH_MODE: 'password', DB: createMockD1() }));
-    expect(res.status).toBe(404);
-  });
-
-  test('缺 token → 302 /login + missing_token flash', async () => {
-    const req = new Request('http://localhost/api/auth/verify', { method: 'GET' });
-    const res = await verifyGET(makeCtx(req, { DB: createMockD1() }));
-    expect(res.status).toBe(302);
-    expect(res.headers.get('Location')).toBe('http://localhost/login');
-    expect(res.headers.get('Set-Cookie') ?? '').toContain('flash=');
-  });
-
-  test('无效 token → 302 /login + invalid_or_expired flash', async () => {
-    // consumeMagicLink: SELECT FROM magic_link WHERE token — 找不到返回空
-    const db = createMockD1((sql) => {
-      if (/FROM magic_link\b/i.test(sql)) return { rows: [] };
-      return { rows: [], meta: { success: true } };
-    });
-    const req = new Request('http://localhost/api/auth/verify?token=bad-token', { method: 'GET' });
-    const res = await verifyGET(makeCtx(req, { DB: db }));
-    expect(res.status).toBe(302);
-    expect(res.headers.get('Location')).toBe('http://localhost/login');
-  });
-
-  test('有效 token → 302 / + session cookie', async () => {
-    const futureMs = Date.now() + 15 * 60_000;
-    let userCreated = false;
-    const db = createMockD1((sql) => {
-      if (/FROM magic_link\b/i.test(sql) && /WHERE token/i.test(sql)) {
-        return { rows: [{ email: 'alice@test.com', expires_at: futureMs, used_at: null }] };
-      }
-      if (/UPDATE magic_link SET used_at/i.test(sql)) return { meta: { success: true, changes: 1 } };
-      if (/SELECT.*FROM user.*WHERE email/i.test(sql) && !userCreated) return { rows: [] };
-      if (/INSERT.*INTO user/i.test(sql)) { userCreated = true; return { meta: { success: true, changes: 1 } }; }
-      if (/SELECT.*FROM user.*WHERE email/i.test(sql)) {
-        return { rows: [{ id: 'u1', email: 'alice@test.com', display_name: null, created_at: new Date().toISOString(), email_verified_at: new Date().toISOString() }] };
-      }
-      return { rows: [], meta: { success: true } };
-    });
-    const req = new Request('http://localhost/api/auth/verify?token=good', { method: 'GET' });
-    const res = await verifyGET(makeCtx(req, { DB: db, SESSION_SECRET: 'test' }));
-    expect(res.status).toBe(302);
-    expect(res.headers.get('Location')).toBe('http://localhost/');
-    expect(res.headers.get('Set-Cookie') ?? '').toContain('session=');
-  });
-});
-
-// ========== /api/auth/verify-code ==========
-
-describe('POST /api/auth/verify-code', () => {
-  test('AUTH_MODE=password → 404', async () => {
-    const req = formReq('http://localhost/api/auth/verify-code', { email: 'a@b.c', code: '123456' });
-    const res = await verifyCodePOST(makeCtx(req, { AUTH_MODE: 'password', DB: createMockD1() }));
-    expect(res.status).toBe(404);
-  });
-
-  test('缺 email 或 code → 303 /login + missing_code flash', async () => {
-    const req = formReq('http://localhost/api/auth/verify-code', { email: '', code: '123456' });
-    const res = await verifyCodePOST(makeCtx(req, { DB: createMockD1() }));
-    expect(res.status).toBe(303);
-    expect(res.headers.get('Location')).toBe('http://localhost/login');
-  });
-
-  test('错 code → 303 /login/sent + invalid_code flash（带 email 回显）', async () => {
-    const db = createMockD1((sql) => {
-      if (/FROM magic_link\b/i.test(sql)) return { rows: [] };
-      return { rows: [], meta: { success: true } };
-    });
-    const req = formReq('http://localhost/api/auth/verify-code', { email: 'a@b.c', code: '999999' });
-    const res = await verifyCodePOST(makeCtx(req, { DB: db }));
-    expect(res.status).toBe(303);
-    expect(res.headers.get('Location')).toBe('http://localhost/login/sent');
-  });
-
-  test('正确 code → 303 / + session cookie', async () => {
-    const futureMs = Date.now() + 15 * 60_000;
-    let userCreated = false;
-    const db = createMockD1((sql) => {
-      // consumeMagicLinkByCode 第一个查询：WHERE email=? AND code=? AND used_at IS NULL
-      if (/FROM magic_link\b/i.test(sql) && /AND code = \?/i.test(sql)) {
-        return { rows: [{ token: 't-good', expires_at: futureMs, used_at: null, attempt_count: 0 }] };
-      }
-      if (/UPDATE magic_link SET used_at/i.test(sql)) return { meta: { success: true, changes: 1 } };
-      if (/SELECT.*FROM user.*WHERE email/i.test(sql) && !userCreated) return { rows: [] };
-      if (/INSERT.*INTO user/i.test(sql)) { userCreated = true; return { meta: { success: true, changes: 1 } }; }
-      if (/SELECT.*FROM user.*WHERE email/i.test(sql)) {
-        return { rows: [{ id: 'u1', email: 'alice@test.com', display_name: null, created_at: new Date().toISOString(), email_verified_at: new Date().toISOString() }] };
-      }
-      return { rows: [], meta: { success: true } };
-    });
-    const req = formReq('http://localhost/api/auth/verify-code', { email: 'alice@test.com', code: '123456' });
-    const res = await verifyCodePOST(makeCtx(req, { DB: db, SESSION_SECRET: 'test' }));
-    expect(res.status).toBe(303);
-    expect(res.headers.get('Location')).toBe('http://localhost/');
-    expect(res.headers.get('Set-Cookie') ?? '').toContain('session=');
   });
 });
