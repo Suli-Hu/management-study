@@ -1,18 +1,29 @@
 ---
 /**
- * /[discipline]/study-log — 学习记录主页（v0.5.3 / v0.7.13）
+ * /[discipline]/study-log — 学习记录主页（v0.5.3+ / v0.7.13+）
  *
  * 三视图（PRD v1.0 §5）：日志流（默认）/ 知识点排行 / 学派段位
- * v0.5.3 范围：完整日志流；排行 + 段位先占位（v0.5.4 / v0.5.5）
+ * - v0.5.3: 完整日志流
+ * - v0.5.4: 学派段位视图（55 学派 / C-B-A 三级 / sparkline / quiz 占位）
+ * - v0.5.5: 知识点排行 + 编辑器（即将）
  *
  * 视觉：用户决策"第一版不要颜色"，全中性灰 + 单一蓝色 accent（用于
  * 日历热力图 5 级阶梯 + active 状态）。
  *
  * 数据：SSR fetch 近 90 天 sessions（join KP title + 主学派 title），
- * client JS 完全本地 filter/group/expand —— 30 / 14 / 7 天切换零延迟。
+ * 段位 view 用 lib/tier.ts 在 SSR 算 tier states + timelines。
+ * client JS 处理 filter/group/expand/C 段折叠 —— 切换零延迟。
  */
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
+import {
+  computeTiers,
+  computeTimeline,
+  TIERS,
+  DECAY_PER_DAY,
+  type TierSession,
+  type SchoolTierState,
+} from '~/lib/tier';
 
 const { discipline } = Astro.params;
 if (!discipline) return Astro.redirect('/404');
@@ -84,6 +95,43 @@ const sessions = result.results ?? [];
 const sessionsJson = JSON.stringify(sessions);
 
 const TODAY = new Date().toISOString().slice(0, 10);
+
+// ============================================================
+// 学派段位视图数据（v0.5.4）
+// ============================================================
+
+interface SchoolMetaRow { key: string; title_zh: string; }
+const allSchoolsResult = await db
+  .prepare('SELECT key, title_zh FROM school WHERE discipline = ? ORDER BY key')
+  .bind(discipline)
+  .all<SchoolMetaRow>();
+const allSchools = allSchoolsResult.results ?? [];
+const schoolTitleByKey = new Map(allSchools.map((s) => [s.key, s.title_zh]));
+
+// 把 sessions 映射到 TierSession（取 schools[0] 主学派 = session.school_key）
+const tierSessions: TierSession[] = sessions
+  .filter((s): s is SessionRow & { school_key: string } => s.school_key !== null)
+  .map((s) => ({ schoolKey: s.school_key, date: s.date, durationMin: s.duration_min }));
+
+const tierStates = computeTiers(tierSessions, TODAY, {
+  allSchools: allSchools.map((s) => s.key),
+});
+
+// 给每个学派算 30 天 timeline（sparkline 用）
+interface TierStateWithMeta extends SchoolTierState {
+  schoolTitle: string;
+  timeline: number[];   // 30 个数字（不含 date，节省 payload）
+}
+const tierStatesEnriched: TierStateWithMeta[] = tierStates.map((t) => ({
+  ...t,
+  schoolTitle: schoolTitleByKey.get(t.schoolKey) ?? t.schoolKey,
+  timeline: computeTimeline(tierSessions, t.schoolKey, TODAY, 30).map((p) => p.score),
+}));
+
+const tierStatesJson = JSON.stringify(tierStatesEnriched);
+
+// 段位章 / 阈值 SSR 渲染顶部说明
+const tierLevels = TIERS.map((t) => ({ key: t.key, threshold: t.threshold }));
 ---
 
 <Layout title={`学习记录 · ${disc.title_zh}`}>
@@ -156,19 +204,41 @@ const TODAY = new Date().toISOString().slice(0, 10);
     </section>
 
     {/* ============================================================ */}
-    {/* 视图 B / C 占位 */}
+    {/* 视图 B 占位（v0.5.5） */}
     {/* ============================================================ */}
     <section data-view-pane="rank" class="sl-view hidden sl-placeholder">
-      <p>v0.5.4 即将上线 — 知识点排行</p>
+      <p>v0.5.5 即将上线 — 知识点排行</p>
       <p class="sl-placeholder-sub">按累计时长降序，看哪些 KP 占了你最多时间 / 哪些没碰。</p>
     </section>
 
-    <section data-view-pane="tier" class="sl-view hidden sl-placeholder">
-      <p>v0.5.5 即将上线 — 学派段位</p>
-      <p class="sl-placeholder-sub">每分钟 = 1 分，每天 0 点 −20，C → B(200) → A(400) 三级。</p>
+    {/* ============================================================ */}
+    {/* 视图 C · 学派段位（v0.5.4） */}
+    {/* ============================================================ */}
+    <section data-view-pane="tier" class="sl-view hidden">
+      <div class="sl-tier-ladder">
+        <p class="sl-tier-ladder-title">段位规则 · 1 min = 1 分，每天 0 点 −20，跌破阈值降级</p>
+        <div class="sl-tier-ladder-chips">
+          {tierLevels.map((t, i) => (
+            <span class={`sl-tier-chip sl-tier-chip-${t.key.toLowerCase()}`}>
+              <strong>{t.key}</strong>
+              <em>{t.threshold}{i === tierLevels.length - 1 ? '+' : ''}</em>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div data-tier-list class="sl-tier-list">
+        {/* client JS 渲染 */}
+      </div>
+
+      <button type="button" data-tier-c-toggle class="sl-tier-c-toggle hidden">
+        <span data-tier-c-label>显示全部 0 学派</span>
+      </button>
     </section>
   </main>
 </Layout>
+
+<script is:inline set:html={`window.__SL_TIERS__ = ${tierStatesJson};`}></script>
 
 <script is:inline define:vars={{ TODAY, DISCIPLINE: discipline }} set:html={`window.__SL_SESSIONS__ = ${sessionsJson};`}></script>
 
@@ -445,6 +515,104 @@ const TODAY = new Date().toISOString().slice(0, 10);
   }
 
   // ============================================================
+  // 视图 C · 学派段位（v0.5.4）
+  // ============================================================
+
+  /** @type {Array<{schoolKey:string,schoolTitle:string,score:number,totalEarned:number,decayApplied:number,tier:string,peakTier:string,toNextTierScore:number|null,nextTierThreshold:number|null,lastActiveDate:string|null,daysSinceLastActive:number,sessionCount:number,timeline:number[]}>} */
+  const ALL_TIERS = window.__SL_TIERS__ || [];
+
+  let cExpanded = false;
+
+  /** SVG sparkline 100x20 viewBox，points = number[] (30) */
+  function sparklineSvg(points) {
+    if (points.length === 0) return '';
+    const w = 100, h = 20;
+    const max = Math.max(...points, 1);
+    const stepX = points.length > 1 ? w / (points.length - 1) : 0;
+    const coords = points
+      .map((p, i) => `${(i * stepX).toFixed(1)},${(h - (p / max) * h).toFixed(1)}`)
+      .join(' ');
+    const last = points[points.length - 1];
+    const lastX = ((points.length - 1) * stepX).toFixed(1);
+    const lastY = (h - (last / max) * h).toFixed(1);
+    return `<svg class="sl-spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+      <polyline points="${coords}" fill="none" stroke="#525252" stroke-width="1" />
+      <circle cx="${lastX}" cy="${lastY}" r="1.6" fill="#0a0a0a" />
+    </svg>`;
+  }
+
+  function renderTierRow(t, idx) {
+    const tierLabel = t.tier;
+    const peakBadge = (t.peakTier && t.peakTier !== t.tier)
+      ? `<span class="sl-tier-peak">曾达 ${escapeHtml(t.peakTier)}</span>`
+      : '';
+    const progressPct = t.nextTierThreshold
+      ? Math.min(100, Math.round((t.score / t.nextTierThreshold) * 100))
+      : 100;
+    const progressLabel = t.nextTierThreshold
+      ? `${t.score} / ${t.nextTierThreshold}`
+      : `${t.score} (顶段)`;
+    const decayHint = t.daysSinceLastActive > 0
+      ? `<span class="sl-tier-decay" title="距上次学习 ${t.daysSinceLastActive} 天，每天 −20 分">${t.daysSinceLastActive > 30 ? '30+' : t.daysSinceLastActive}d 未学</span>`
+      : '';
+    return `
+      <div class="sl-tier-row sl-tier-row-${tierLabel.toLowerCase()}">
+        <span class="sl-tier-rank">#${idx + 1}</span>
+        <span class="sl-tier-badge sl-tier-badge-${tierLabel.toLowerCase()}">${tierLabel}</span>
+        <div class="sl-tier-school">
+          <p class="sl-tier-school-name">${escapeHtml(t.schoolTitle)}</p>
+          <p class="sl-tier-school-meta">${peakBadge} ${decayHint}</p>
+        </div>
+        <div class="sl-tier-progress">
+          <p class="sl-tier-progress-label">${progressLabel}</p>
+          <div class="sl-tier-progress-bar">
+            <div class="sl-tier-progress-fill" style="width:${progressPct}%"></div>
+          </div>
+        </div>
+        <div class="sl-tier-spark-wrap">${sparklineSvg(t.timeline)}</div>
+        <button type="button" class="sl-tier-quiz" disabled title="quiz 入口 (v0.6+ 即将)">练 →</button>
+      </div>
+    `;
+  }
+
+  function renderTierList() {
+    const list = document.querySelector('[data-tier-list]');
+    if (!list || !ALL_TIERS.length) return;
+
+    // 排序：score 降序，相同分数按 schoolKey 字母（已在 SSR 排过 + computeTiers 内部又 sort 一次）
+    const active = ALL_TIERS.filter((t) => t.score > 0 || t.totalEarned > 0);
+    const cFresh = ALL_TIERS.filter((t) => t.score === 0 && t.totalEarned === 0);
+
+    let html = '';
+    if (active.length === 0) {
+      html += '<p class="sl-empty">还没有任何学派有段位分数。</p>';
+    } else {
+      html += active.map((t, i) => renderTierRow(t, i)).join('');
+    }
+
+    if (cFresh.length > 0) {
+      const visible = cExpanded ? cFresh : [];
+      html += visible.map((t, i) => renderTierRow(t, active.length + i)).join('');
+    }
+
+    list.innerHTML = html;
+
+    // C 段折叠按钮
+    const toggle = document.querySelector('[data-tier-c-toggle]');
+    const label = document.querySelector('[data-tier-c-label]');
+    if (toggle && label) {
+      if (cFresh.length > 0) {
+        toggle.classList.remove('hidden');
+        label.textContent = cExpanded
+          ? '收起 0 学派'
+          : `显示全部 ${cFresh.length} 个 0 学派 (C 段)`;
+      } else {
+        toggle.classList.add('hidden');
+      }
+    }
+  }
+
+  // ============================================================
   // 启动
   // ============================================================
 
@@ -454,6 +622,12 @@ const TODAY = new Date().toISOString().slice(0, 10);
   document.querySelectorAll('[data-range]').forEach((btn) => {
     btn.addEventListener('click', () => setRange(Number(btn.getAttribute('data-range'))));
   });
+  document.querySelector('[data-tier-c-toggle]')?.addEventListener('click', () => {
+    cExpanded = !cExpanded;
+    renderTierList();
+  });
+
+  renderTierList();
 
   // 初次渲染：默认 30 天
   renderHeatmap();
@@ -822,6 +996,192 @@ const TODAY = new Date().toISOString().slice(0, 10);
     color: #a3a3a3;
     margin: 0;
   }
+
+  /* ============================================================
+     视图 C · 学派段位（v0.5.4）
+     ============================================================ */
+  .sl-tier-ladder {
+    padding: 16px 20px;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    background: #fff;
+    margin-bottom: 16px;
+  }
+  .sl-tier-ladder-title {
+    font-size: 11.5px;
+    color: #a3a3a3;
+    margin: 0 0 10px;
+  }
+  .sl-tier-ladder-chips {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .sl-tier-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid #ececec;
+    font-size: 11px;
+    color: #525252;
+    background: #fff;
+  }
+  .sl-tier-chip strong {
+    color: #0a0a0a;
+    font-weight: 600;
+  }
+  .sl-tier-chip em {
+    font-style: normal;
+    color: #a3a3a3;
+    font-variant-numeric: tabular-nums;
+  }
+  /* 段位章颜色：单色 + 灰阶（无主题色） */
+  .sl-tier-chip-c { background: #fafaf9; }
+  .sl-tier-chip-b { background: #f5f5f4; border-color: #d4d4d4; }
+  .sl-tier-chip-a { background: #ececec; border-color: #a3a3a3; }
+  .sl-tier-chip-a strong { color: #0a0a0a; }
+
+  /* 段位榜列表 */
+  .sl-tier-list {
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .sl-tier-row {
+    display: grid;
+    grid-template-columns: 36px 44px minmax(140px, 1.6fr) 130px 100px 56px;
+    gap: 14px;
+    padding: 14px 20px;
+    align-items: center;
+    border-bottom: 1px solid #f5f5f4;
+  }
+  .sl-tier-row:last-child { border-bottom: 0; }
+  .sl-tier-row:hover { background: #fafaf9; }
+
+  .sl-tier-rank {
+    font-size: 12px;
+    color: #a3a3a3;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .sl-tier-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #525252;
+    background: #fafaf9;
+    border: 1px solid #ececec;
+  }
+  .sl-tier-badge-c { color: #525252; background: #fafaf9; }
+  .sl-tier-badge-b { color: #171717; background: #f5f5f4; border-color: #d4d4d4; }
+  .sl-tier-badge-a { color: #ffffff; background: #0a0a0a; border-color: #0a0a0a; }
+
+  .sl-tier-school { min-width: 0; }
+  .sl-tier-school-name {
+    font-size: 13px;
+    color: #0a0a0a;
+    margin: 0 0 2px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sl-tier-school-meta {
+    font-size: 11px;
+    color: #a3a3a3;
+    margin: 0;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .sl-tier-peak {
+    color: #525252;
+    background: #f5f5f4;
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+  .sl-tier-decay {
+    color: #a3a3a3;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sl-tier-progress { min-width: 0; }
+  .sl-tier-progress-label {
+    font-size: 11px;
+    color: #525252;
+    margin: 0 0 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .sl-tier-progress-bar {
+    height: 4px;
+    background: #f5f5f4;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .sl-tier-progress-fill {
+    height: 100%;
+    background: #0a0a0a;
+    transition: width .2s;
+  }
+
+  .sl-tier-spark-wrap {
+    width: 100px;
+    height: 20px;
+  }
+  .sl-spark {
+    width: 100%;
+    height: 100%;
+  }
+
+  .sl-tier-quiz {
+    all: unset;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid #ececec;
+    color: #a3a3a3;
+    font-size: 11px;
+    text-align: center;
+    background: #fff;
+    transition: all .12s;
+  }
+  .sl-tier-quiz:hover:not([disabled]) {
+    border-color: #0a0a0a;
+    color: #0a0a0a;
+  }
+  .sl-tier-quiz[disabled] {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
+  .sl-tier-c-toggle {
+    all: unset;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    margin-top: 12px;
+    border: 1px dashed #ececec;
+    border-radius: 12px;
+    color: #525252;
+    font-size: 12px;
+    background: #fafaf9;
+    transition: all .12s;
+  }
+  .sl-tier-c-toggle:hover {
+    border-color: #a3a3a3;
+    color: #0a0a0a;
+  }
+  .sl-tier-c-toggle.hidden { display: none; }
   .sl-view .hidden, .sl-row-note.hidden { display: none; }
 
   /* 响应式 */
@@ -843,5 +1203,19 @@ const TODAY = new Date().toISOString().slice(0, 10);
     }
     .sl-row-time { color: #a3a3a3; }
     .sl-row-dur { font-size: 14px; }
+
+    /* 段位榜窄屏：sparkline 隐藏，quiz chip 缩到右下 */
+    .sl-tier-row {
+      grid-template-columns: 28px 36px 1fr 56px;
+      gap: 10px;
+      padding: 12px 14px;
+    }
+    .sl-tier-progress {
+      grid-column: span 4;
+      grid-row: 2;
+      margin-top: 6px;
+    }
+    .sl-tier-spark-wrap { display: none; }
+    .sl-tier-quiz { padding: 3px 8px; font-size: 10px; }
   }
 </style>

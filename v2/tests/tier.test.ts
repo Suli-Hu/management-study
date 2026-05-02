@@ -16,6 +16,7 @@ import { describe, expect, test } from 'vitest';
 import {
   computeTiers,
   computeTierForSchool,
+  computeTimeline,
   scoreToTier,
   nextTierAfter,
   nextDay,
@@ -332,5 +333,86 @@ describe('computeTierForSchool — 边界', () => {
   test('衰减常量等于阈值差的一半（数学校验）', () => {
     expect(DECAY_PER_DAY).toBe(20);
     expect(TIERS[1].threshold - TIERS[0].threshold).toBe(200);
+  });
+});
+
+// ============================================================
+// computeTimeline — sparkline 用
+// ============================================================
+
+describe('computeTimeline', () => {
+  test('无 session → 全 0 序列', () => {
+    const tl = computeTimeline([], 'scientific', TODAY, 7);
+    expect(tl).toHaveLength(7);
+    expect(tl.every((p) => p.score === 0)).toBe(true);
+  });
+
+  test('窗口长度 = days', () => {
+    const tl = computeTimeline([], 'scientific', TODAY, 30);
+    expect(tl).toHaveLength(30);
+  });
+
+  test('窗口最后一天 = today', () => {
+    const tl = computeTimeline([], 'scientific', TODAY, 5);
+    expect(tl[tl.length - 1].date).toBe(TODAY);
+  });
+
+  test('单 session 当天 → 最后一天有分数', () => {
+    const sessions: TierSession[] = [
+      { schoolKey: 'scientific', date: TODAY, durationMin: 50 },
+    ];
+    const tl = computeTimeline(sessions, 'scientific', TODAY, 7);
+    expect(tl[tl.length - 1].score).toBe(50);
+    // 之前几天还是 0
+    expect(tl.slice(0, -1).every((p) => p.score === 0)).toBe(true);
+  });
+
+  test('每天 30min 学 7 天 → 序列净 +10/天', () => {
+    const sessions: TierSession[] = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(`${TODAY}T00:00:00Z`);
+      d.setUTCDate(d.getUTCDate() - (6 - i));
+      sessions.push({ schoolKey: 'scientific', date: d.toISOString().slice(0, 10), durationMin: 30 });
+    }
+    const tl = computeTimeline(sessions, 'scientific', TODAY, 7);
+    // day0: +30 = 30; day1: -20+30 = 40; day2: 50; ...; day6: 90
+    expect(tl.map((p) => p.score)).toEqual([30, 40, 50, 60, 70, 80, 90]);
+  });
+
+  test('窗口起点之前的 session 仍按天演化进窗口', () => {
+    // 30 天前学 100 → 之后每天扣 20，10 天后归 0
+    // 窗口 7 天，起点 today-6，session 在 today-30 → 窗口内全 0
+    const sessions: TierSession[] = [
+      { schoolKey: 'scientific', date: '2026-04-02', durationMin: 100 },
+    ];
+    const tl = computeTimeline(sessions, 'scientific', TODAY, 7);
+    expect(tl.every((p) => p.score === 0)).toBe(true);
+  });
+
+  test('跨学派隔离', () => {
+    const sessions: TierSession[] = [
+      { schoolKey: 'scientific', date: TODAY, durationMin: 100 },
+      { schoolKey: 'change', date: TODAY, durationMin: 50 },
+    ];
+    const a = computeTimeline(sessions, 'scientific', TODAY, 3);
+    const b = computeTimeline(sessions, 'change', TODAY, 3);
+    expect(a[a.length - 1].score).toBe(100);
+    expect(b[b.length - 1].score).toBe(50);
+  });
+
+  test('30 天 timeline 性能 < 50ms', () => {
+    const sessions: TierSession[] = [];
+    for (let i = 0; i < 30; i++) {
+      sessions.push({
+        schoolKey: 'scientific',
+        date: TODAY,
+        durationMin: 30,
+      });
+    }
+    const start = Date.now();
+    const tl = computeTimeline(sessions, 'scientific', TODAY, 30);
+    const ms = Date.now() - start;
+    expect(tl).toHaveLength(30);
+    expect(ms).toBeLessThan(50);
   });
 });
