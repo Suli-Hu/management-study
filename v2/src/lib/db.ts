@@ -30,11 +30,9 @@ export interface Env {
   ADMIN_PASSWORD?: string;
   GUEST_PASSWORD?: string;
 
-  // v0.4.33 邀请码登录（共用 user，全学科 guest 视角）
+  // v0.4.33 邀请码登录（共用 user）；v0.7.7 起权限走 user_permission（同其他 user）
   INVITE_CODE_GUEST?: string;
   INVITE_GUEST_EMAIL?: string;
-  // v0.5.74 邀请码访客可读 discipline 白名单（逗号分隔）。空 / 未设 = 全学科可读。
-  INVITE_GUEST_DISCIPLINES?: string;
 
   // v0.4.1 编辑器：GitHub Contents API 写 data/*.json
   GITHUB_PAT?: string;       // fine-grained PAT，仅 Contents R/W

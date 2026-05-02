@@ -41,6 +41,7 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
             <tr>
               <th class="sticky-col">用户</th>
               {/* 学科列 client 注入 */}
+              <th class="action-col">操作</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -209,6 +210,35 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
     letter-spacing: 0.05em;
   }
 
+  /* v0.7.7 删除用户列 */
+  .users-table th.action-col,
+  .users-table td.action-col {
+    text-align: right;
+    padding-right: 14px;
+    width: 80px;
+  }
+  .delete-user-btn {
+    all: unset;
+    cursor: pointer;
+    padding: 6px 10px;
+    border: 1px solid var(--color-bg-tertiary);
+    border-radius: 6px;
+    background: var(--color-bg-primary);
+    color: var(--color-text-quaternary);
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 100ms;
+  }
+  .delete-user-btn:hover {
+    border-color: var(--accent-warning);
+    color: var(--accent-warning);
+    background: var(--color-bg-secondary);
+  }
+  .delete-user-btn[disabled] {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
   @media (max-width: 640px) {
     .user-email { max-width: 130px; }
   }
@@ -266,10 +296,11 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
   function render() {
     $('#user-count').textContent = `共 ${state.users.length} 人`;
 
-    // header — sticky 用户列 + 学科列
+    // header — sticky 用户列 + 学科列 + 操作列
     const thead = $('#users-table thead tr');
     thead.innerHTML = '<th class="sticky-col">用户</th>' +
-      state.disciplines.map((d) => `<th>${escapeHtml(d.title_zh)}</th>`).join('');
+      state.disciplines.map((d) => `<th>${escapeHtml(d.title_zh)}</th>`).join('') +
+      '<th class="action-col">操作</th>';
 
     const tbody = $('#users-table tbody');
     tbody.innerHTML = state.users.map((u) => {
@@ -283,6 +314,11 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
         return `<td>${renderToggle(u.id, d.key, cur)}</td>`;
       }).join('');
 
+      // v0.7.7 删除按钮：super-admin 自己不可删
+      const actionCell = u.is_super_admin
+        ? '<td class="action-col"><span class="perm-lock">—</span></td>'
+        : `<td class="action-col"><button type="button" class="delete-user-btn" data-delete-user-id="${u.id}" data-delete-user-email="${escapeHtml(u.email)}">删除</button></td>`;
+
       return `
         <tr data-user-id="${u.id}">
           <td class="sticky-col">
@@ -295,11 +331,46 @@ if (!Astro.locals.isSuperAdmin) return Astro.redirect('/');
             </div>
           </td>
           ${cells}
+          ${actionCell}
         </tr>
       `;
     }).join('');
 
     bindToggles();
+    bindDeleteButtons();
+  }
+
+  function bindDeleteButtons() {
+    document.querySelectorAll('[data-delete-user-id]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const userId = btn.getAttribute('data-delete-user-id');
+        const email = btn.getAttribute('data-delete-user-email');
+        if (!userId) return;
+
+        const ok = window.confirm(
+          `永久删除 ${email}？\n\n` +
+          `这会同时清除该用户的所有权限、学习记录、笔记等关联数据，且不可恢复。\n\n` +
+          `（用户可以重新走 /signup 注册一个新账号，但旧数据不会回来）`,
+        );
+        if (!ok) return;
+
+        btn.setAttribute('disabled', '');
+        const res = await fetch(`/api/admin/users/${encodeURIComponent(userId)}`, {
+          method: 'DELETE',
+          headers: { 'content-type': 'application/json' },
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok) {
+          // 从 state 移除 + re-render
+          state.users = state.users.filter((u) => u.id !== userId);
+          render();
+          window.toast?.success(`已删除 ${email}`);
+        } else {
+          btn.removeAttribute('disabled');
+          window.toast?.error(`${data.reason ?? 'error'}: ${data.detail ?? ''}`.slice(0, 100));
+        }
+      });
+    });
   }
 
   function renderToggle(userId, discKey, cur) {

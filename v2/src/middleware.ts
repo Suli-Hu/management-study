@@ -124,20 +124,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // v0.2.9: guest flag（password 模式 GUEST_PASSWORD 登录者；未来 user_progress 写入要跳过）
   context.locals.isGuest = isGuest(context.locals.user, env?.GUEST_EMAIL);
 
-  // v0.4.33: invite-code guest（共用 INVITE_GUEST_EMAIL user）
-  // v0.5.74: 默认全学科 read，可由 INVITE_GUEST_DISCIPLINES 收窄到指定 discipline 集合
+  // v0.4.33: invite-code guest（共用 INVITE_GUEST_EMAIL user）—— flag 保留作身份识别，
+  // v0.7.7 起权限完全走 user_permission 表（不再用 INVITE_GUEST_DISCIPLINES env），
+  // 跟其他 user 一致：admin UI 加白才能看学科，未加白默认 0 权限置灰。
   const inviteEmail = env?.INVITE_GUEST_EMAIL;
   context.locals.isInviteGuest =
     !!context.locals.user && !!inviteEmail && context.locals.user.email.toLowerCase() === inviteEmail.toLowerCase();
 
-  const inviteAllowedRaw = env?.INVITE_GUEST_DISCIPLINES?.trim() ?? '';
-  const inviteAllowed = inviteAllowedRaw
-    ? new Set(inviteAllowedRaw.split(',').map((s) => s.trim()).filter(Boolean))
-    : null;   // null = 旧行为，全学科可读
-
-  // v0.4.25 RBAC：load 该 user 的 per-discipline permissions（super-admin / invite-guest 跳过查询）
+  // v0.4.25 RBAC：load 该 user 的 per-discipline permissions（super-admin 跳过 = 全权）
   context.locals.permissions = new Map();
-  if (context.locals.user && env?.DB && !context.locals.isSuperAdmin && !context.locals.isInviteGuest) {
+  if (context.locals.user && env?.DB && !context.locals.isSuperAdmin) {
     const rows = await env.DB
       .prepare('SELECT discipline_key, role FROM user_permission WHERE user_id = ?')
       .bind(context.locals.user.id)
@@ -162,9 +158,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     if (!d) return false;
     if (!tokenAllowsDiscipline(d)) return false;
     if (context.locals.isSuperAdmin) return true;
-    if (context.locals.isInviteGuest) {
-      return inviteAllowed === null || inviteAllowed.has(d);
-    }
+    // v0.7.7: 邀请码不再有"默认全读"特殊路径，跟其他 user 一致走 user_permission
     return context.locals.permissions.has(d);
   };
 
