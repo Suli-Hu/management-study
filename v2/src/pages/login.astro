@@ -79,11 +79,22 @@ const errorMsg = error ? (errorMessages[error] ?? '出错了，请重试。') : 
             进入演示
           </button>
           <p class="text-xs text-quaternary text-center mt-3">仅可浏览，不能编辑。</p>
-          <p class="text-xs text-quaternary text-center mt-4">
-            已有账号？<a href="/signin" class="text-accent-strategy">账号登录 →</a>
-          </p>
         </form>
       )}
     </div>
   </main>
 </Layout>
+
+<script is:inline>
+  // v0.7.10: /signin 隐藏入口 —— 点 footer 文案"个人笔记，仅云端存储，非公开"跳 /signin
+  // （仅在 /login 启用，其他页面 footer 仍是普通文本）
+  (function () {
+    const footerText = document.querySelector('[data-app-footer-text]');
+    if (!footerText) return;
+    footerText.style.cursor = 'pointer';
+    footerText.setAttribute('title', '账号登录');
+    footerText.addEventListener('click', () => {
+      window.location.href = '/signin';
+    });
+  })();
+</script>
