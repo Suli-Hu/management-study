@@ -19,12 +19,11 @@ const errorMessages: Record<string, string> = {
   // v0.7.3 password login
   bad_credentials: '邮箱或密码不对。',
   bad_credentials_locked: '尝试次数过多，账户已锁 30 分钟。请稍后再试，或走"忘记密码"重置。',
-  // 旧 magic-link / 邀请码 / password 模式（兼容暂留）
-  invalid_or_expired: '登录链接无效或已过期，请重新申请。',
-  missing_token: '链接不完整，请重新申请。',
-  missing_code: '请输入 6 位 code。',
+  // 邀请码 / password 模式（保留作演示通道 + 考试期 fallback）
   bad_password: '密码不对。',
   bad_invite_code: '邀请码不对。',
+  // v0.7.4/5 复用：从 password-reset / change-email 跳回 /login 时的提示
+  invalid_or_expired: '会话已失效，请重新登录。',
 };
 const errorMsg = error ? (errorMessages[error] ?? '登录出错，请重试。') : null;
 ---

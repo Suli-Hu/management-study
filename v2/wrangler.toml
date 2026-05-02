@@ -43,18 +43,17 @@ INVITE_GUEST_EMAIL = "invite-guest@anytime"
 # 设成 "keiei" → 邀请码 guest 只能看经营学，市场营销 / 社会学 / 心理学等都被 home 页降级 + 直接访问 redirect 回 /。
 INVITE_GUEST_DISCIPLINES = "keiei"
 
-# v0.5.45 邮箱 N 天免 code 信任：曾验证过的 email 在 N 天内任意设备直接登录（不发 code）
-# 安全 tradeoff：从"持有 email"降级成"知道 email 字符串"，靠 ADMIN_EMAILS 白名单收窄攻击面。
-# 0 = 关闭功能（恢复纯 magic link）。3 = 短窗口降低被滥用风险。
-EMAIL_TRUST_DAYS = "3"
+# v0.7.6 删除 EMAIL_TRUST_DAYS：完整账户系统重做后登录走 "email + 密码" 主
+# 路径（v0.7.3 起），N 天免 code 信任窗口的语义被密码取代。user.trusted_until
+# 列保留作回滚备用，代码层不再读写。
 
 # v0.4.1 编辑器：GitHub Contents API 目标仓库
 GITHUB_REPO = "Suli-Hu/management-study"
 
 # === Secrets（在 CF Pages Dashboard 设，不写 wrangler.toml） ===
-# - RESEND_API_KEY   —— magic link 发邮件 (v0.2.5 起, email 模式用)
-# - SESSION_SECRET   —— 预留（CSRF / signed cookies）
-# - ADMIN_PASSWORD   —— v0.2.9 password 模式 admin 密码
-# - GUEST_PASSWORD   —— v0.2.9 password 模式 guest 密码
+# - RESEND_API_KEY   —— Resend 发邮件（注册 / 重置密码 / 改邮箱 验证码）
+# - SESSION_SECRET   —— signed cookie HMAC 密钥（CSRF / cookie tamper 防御）
+# - ADMIN_PASSWORD   —— v0.2.9 password 模式 admin 密码（emergency fallback）
+# - GUEST_PASSWORD   —— v0.2.9 password 模式 guest 密码（emergency fallback）
 # - GITHUB_PAT       —— v0.4.1 编辑器写 data/*.json（fine-grained，仅 Contents R/W）
 # - STRIPE_SECRET_KEY —— W3 付费时

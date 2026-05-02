@@ -1,20 +1,27 @@
 /**
- * Auth helpers — magic link + session.
+ * Auth helpers — session + password / signup / reset / email-change tokens.
  *
- * 流程：
- *   /api/auth/login  (POST email)   → 生成 token，写 magic_link 表，发邮件
- *   /api/auth/verify (GET ?token=)  → 验证 token，找/建 user，建 session，Set-Cookie，redirect /
- *   /api/auth/logout (POST)         → 删 session，清 cookie
+ * 流程（v0.7 完整账户系统重做后）：
+ *   /api/auth/signup            POST email + password → pending_signup → 邮箱 code
+ *   /api/auth/signup-verify     POST code → user 行 + session
+ *   /api/auth/login-password    POST email + password → session
+ *   /api/auth/password-reset-*  POST email / token → 重置密码
+ *   /api/account/*              改密 / 改邮箱 / 注销
+ *   /api/auth/logout            POST → 清 cookie
+ *
+ * v0.7.6 删除：
+ *   - magic-link 日常登录路径（createMagicLink / consumeMagicLink*）
+ *   - EMAIL_TRUST_DAYS 信任窗口逻辑
+ *   - magic_link 表保留（cleanupExpired 中仍清理过期行，防堆积）+
+ *     user.trusted_until 列保留（D1 schema 不动，便于回滚）
  *
  * 约定：
- *   - magic_link token 10 分钟有效，单次使用（used_at 标记）
  *   - session id 256-bit 随机，30 天滑动窗口
  *   - cookie 名 "session"，HttpOnly + Secure（prod）+ SameSite=Lax + Path=/
  */
 
 import type { D1Database } from '@cloudflare/workers-types';
 
-const MAGIC_LINK_TTL_MS = 10 * 60 * 1000;
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 /** 非 remember 模式：cookie 无 Max-Age（关浏览器就失效），DB 里给 1 小时上限防堆积 */
 const SESSION_EPHEMERAL_TTL_MS = 60 * 60 * 1000;
@@ -43,32 +50,10 @@ export interface User {
   display_name: string | null;
   created_at: string;
   email_verified_at: string | null;
-  /** v0.5.45 unix ms；> now 表示在 EMAIL_TRUST_DAYS 信任窗口内可免 code 登录。
-   *  optional：旧 D1 行为 NULL，SessionUser 不携带（middleware 不查 DB） */
-  trusted_until?: number | null;
+  // v0.7.6 删 trusted_until 字段类型：D1 schema 列保留以备回滚，但代码不再读写
 }
 
-/** v0.5.45 解析 EMAIL_TRUST_DAYS env（默认 3，0 = 关闭功能） */
-export function getEmailTrustDays(env: { EMAIL_TRUST_DAYS?: string }): number {
-  const raw = env.EMAIL_TRUST_DAYS;
-  if (raw === undefined) return 3;
-  const n = parseInt(raw, 10);
-  return Number.isFinite(n) && n >= 0 ? n : 3;
-}
-
-/** v0.5.45 该 user 是否仍在邮箱信任窗口内 */
-export function isEmailTrusted(user: Pick<User, 'trusted_until'> | null): boolean {
-  return !!user?.trusted_until && user.trusted_until > Date.now();
-}
-
-/** v0.5.45 验证成功后续期（找不到 user 直接静默 — 调用方应保证 user 已存在） */
-export async function extendEmailTrust(db: D1Database, userId: string, days: number): Promise<void> {
-  if (days <= 0) return;
-  const until = Date.now() + days * 24 * 60 * 60 * 1000;
-  await db.prepare('UPDATE user SET trusted_until = ? WHERE id = ?').bind(until, userId).run();
-}
-
-/** v0.5.45 按 email 查 user（用于 login 前判断 trust 状态，无 user 返回 null） */
+/** 按 email 查 user（无 user 返回 null） */
 export async function findUserByEmail(db: D1Database, email: string): Promise<User | null> {
   return db
     .prepare('SELECT * FROM user WHERE email = ?')
@@ -119,112 +104,6 @@ export function timingSafeEqual(a: string, b: string): boolean {
     diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
   }
   return diff === 0;
-}
-
-// ========== Magic link ==========
-
-export async function createMagicLink(db: D1Database, email: string, remember = true): Promise<{ token: string; code: string }> {
-  const token = generateToken(32);
-  const code = generateCode();
-  const expiresAt = Date.now() + MAGIC_LINK_TTL_MS;
-  await db
-    .prepare('INSERT INTO magic_link (token, email, code, expires_at, remember) VALUES (?, ?, ?, ?, ?)')
-    .bind(token, email.toLowerCase().trim(), code, expiresAt, remember ? 1 : 0)
-    .run();
-  return { token, code };
-}
-
-/** 验证并 consume token，返回 { email, remember } 或 null（失败 = 不存在/过期/已用） */
-export async function consumeMagicLink(db: D1Database, token: string): Promise<{ email: string; remember: boolean } | null> {
-  const row = await db
-    .prepare('SELECT email, expires_at, used_at, remember FROM magic_link WHERE token = ?')
-    .bind(token)
-    .first() as { email: string; expires_at: number; used_at: string | null; remember: number } | null;
-  if (!row) return null;
-  if (row.used_at) return null;
-  if (row.expires_at < Date.now()) return null;
-
-  await db
-    .prepare('UPDATE magic_link SET used_at = ? WHERE token = ?')
-    .bind(new Date().toISOString(), token)
-    .run();
-  return { email: row.email, remember: row.remember === 1 };
-}
-
-/** 失败 3 次后 code 作废（v0.3.2 修 A4 rate limit） */
-export const MAX_CODE_ATTEMPTS = 3;
-
-/**
- * 按 (email, code) 匹配并 consume —— 带速率限制（v0.3.2 修 A4）
- *
- * 行为：
- *   - code 对 → 置 used_at → 返回 email
- *   - code 错 → 找最新 unused link（不限 code 匹配）attempt_count + 1
- *     - 达到 MAX_CODE_ATTEMPTS 时把该行 used_at 置位（等同作废）
- *     - 无论错多少次，返回 null
- *   - 无 link 或 expired → 返回 null（同静默失败，防 enumeration）
- *
- * 用户视角：错 3 次就要重发；暴力攻击 10^6 / 10min 被压到 3 / 10min。
- */
-export async function consumeMagicLinkByCode(
-  db: D1Database,
-  email: string,
-  code: string,
-): Promise<{ email: string; remember: boolean } | null> {
-  const normEmail = email.toLowerCase().trim();
-  const normCode = code.replace(/\D/g, '').trim();
-  if (normCode.length !== 6) return null;
-
-  // 先查 code 是否匹配
-  const matched = await db
-    .prepare(`
-      SELECT token, expires_at, used_at, attempt_count, remember
-      FROM magic_link
-      WHERE email = ? AND code = ? AND used_at IS NULL
-      ORDER BY expires_at DESC
-      LIMIT 1
-    `)
-    .bind(normEmail, normCode)
-    .first() as { token: string; expires_at: number; used_at: string | null; attempt_count: number; remember: number } | null;
-
-  if (matched && matched.expires_at >= Date.now()) {
-    // 成功 → consume
-    await db
-      .prepare('UPDATE magic_link SET used_at = ? WHERE token = ?')
-      .bind(new Date().toISOString(), matched.token)
-      .run();
-    return { email: normEmail, remember: matched.remember === 1 };
-  }
-
-  // code 不对 or 过期 → 给最新 unused link +1 attempt
-  const latestForEmail = await db
-    .prepare(`
-      SELECT token, attempt_count
-      FROM magic_link
-      WHERE email = ? AND used_at IS NULL AND expires_at >= ?
-      ORDER BY expires_at DESC
-      LIMIT 1
-    `)
-    .bind(normEmail, Date.now())
-    .first() as { token: string; attempt_count: number } | null;
-
-  if (latestForEmail) {
-    const nextCount = latestForEmail.attempt_count + 1;
-    if (nextCount >= MAX_CODE_ATTEMPTS) {
-      // 达到上限 → 作废整条 link
-      await db
-        .prepare('UPDATE magic_link SET used_at = ?, attempt_count = ? WHERE token = ?')
-        .bind(new Date().toISOString(), nextCount, latestForEmail.token)
-        .run();
-    } else {
-      await db
-        .prepare('UPDATE magic_link SET attempt_count = ? WHERE token = ?')
-        .bind(nextCount, latestForEmail.token)
-        .run();
-    }
-  }
-
-  return null;
 }
 
 // ========== User ==========
@@ -627,8 +506,7 @@ export type ConsumeSignupCodeResult =
  * - 过期 → 返回 expired
  * - row 不存在 → 返回 not_found
  *
- * 跟 magic_link 的 consumeByCode 区别：
- *   pending_signup 不在校验后立刻删除（promote 失败要可重试），由调用方在
+ * 注意：pending_signup 不在校验后立刻删除（promote 失败要可重试），由调用方在
  *   user INSERT 成功后才 deletePendingSignup
  */
 export async function consumePendingSignupByCode(
