@@ -2,7 +2,6 @@
   "id": "m002",
   "discipline": "marketing",
   "schools": [
-    "managerial",
     "stp_positioning"
   ],
   "scholars": [
@@ -38,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T04:40:12.767Z",
-  "updatedAt": "2026-05-02T11:53:33.402Z"
+  "updatedAt": "2026-05-02T12:19:22.490Z"
 }
