@@ -2,7 +2,6 @@
   "id": "m165",
   "discipline": "marketing",
   "schools": [
-    "managerial",
     "strategic_marketing",
     "pricing_strategy"
   ],
@@ -39,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T09:26:22.249Z",
-  "updatedAt": "2026-05-02T11:54:50.235Z"
+  "updatedAt": "2026-05-02T12:20:34.748Z"
 }
