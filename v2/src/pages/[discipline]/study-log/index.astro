@@ -174,7 +174,17 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
         </p>
         <h1 class="sl-title">学习记录</h1>
       </div>
-      <button type="button" class="sl-add-btn" data-editor-open>+ 新建记录</button>
+      <div class="sl-header-actions">
+        <button type="button" class="sl-export-btn" data-export-open aria-label="导出 PDF">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          导出 PDF
+        </button>
+        <button type="button" class="sl-add-btn" data-editor-open>+ 新建记录</button>
+      </div>
     </header>
 
     {/* v0.5.6: 手机版 FAB（仅 ≤ 768px 显示，桌面隐藏） */}
@@ -352,6 +362,60 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
         <span data-tier-c-label>显示全部 0 学派</span>
       </button>
     </section>
+
+    {/* ============================================================ */}
+    {/* Export PDF Dialog (v0.7.22) — 触发 window.print() */}
+    {/* ============================================================ */}
+    <div data-export-overlay class="sle-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="sle-title">
+      <div class="sle-sheet" data-export-sheet>
+        <header class="sle-head">
+          <div>
+            <h2 id="sle-title" class="sle-title">导出 PDF</h2>
+            <p class="sle-sub">生成可分享的学习记录报告</p>
+          </div>
+          <button type="button" class="sle-close" data-export-close aria-label="关闭">×</button>
+        </header>
+        <div class="sle-body">
+          <div class="sle-field">
+            <p class="sle-field-label">时间范围</p>
+            <div class="sle-range-chips" role="radiogroup" data-export-range-group>
+              <button type="button" class="sle-chip is-active" data-export-range="7">近 7 天</button>
+              <button type="button" class="sle-chip" data-export-range="14">近 14 天</button>
+              <button type="button" class="sle-chip" data-export-range="30">近 30 天</button>
+              <button type="button" class="sle-chip" data-export-range="90">近 90 天</button>
+            </div>
+            <p class="sle-range-info" data-export-range-info>—</p>
+          </div>
+          <div class="sle-field">
+            <p class="sle-field-label">包含内容</p>
+            <label class="sle-check">
+              <input type="checkbox" data-export-include="overview" checked />
+              <span>总览（总时长 · 学习天数 · 平均 · 最长连续）</span>
+            </label>
+            <label class="sle-check" data-export-heatmap-row>
+              <input type="checkbox" data-export-include="heatmap" checked />
+              <span>日历热力图 <em class="sle-check-note" data-export-heatmap-note></em></span>
+            </label>
+            <label class="sle-check">
+              <input type="checkbox" data-export-include="rank" checked />
+              <span>知识点排行（按时长降序）</span>
+            </label>
+            <label class="sle-check">
+              <input type="checkbox" data-export-include="log" checked />
+              <span>逐日记录列表</span>
+            </label>
+          </div>
+        </div>
+        <footer class="sle-foot">
+          <span class="sle-foot-tip">提示：在系统打印对话框中选择「另存为 PDF」</span>
+          <button type="button" class="sle-btn-ghost" data-export-close>取消</button>
+          <button type="button" class="sle-btn-primary" data-export-submit>生成 PDF</button>
+        </footer>
+      </div>
+    </div>
+
+    {/* 打印渲染容器：屏幕隐藏，只在 @media print 时唯一可见 */}
+    <div id="print-root" data-print-root></div>
   </main>
 </Layout>
 
@@ -360,7 +424,7 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
 
 <script is:inline define:vars={{ TODAY, DISCIPLINE: discipline }} set:html={`window.__SL_SESSIONS__ = ${sessionsJson};`}></script>
 
-<script is:inline define:vars={{ TODAY }}>
+<script is:inline define:vars={{ TODAY, DISCIPLINE_TITLE: disc.title_zh }}>
   // ============================================================
   // 数据模型 + 工具函数
   // ============================================================
@@ -1208,6 +1272,297 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
   // 初次渲染：默认 30 天
   renderHeatmap();
   setRange(30);
+
+  // ============================================================
+  // Export PDF (v0.7.22) — dialog + window.print() 渲染
+  // 数据复用 ALL_SESSIONS；不引入第三方 PDF 库（PRD §12 明确）
+  // ============================================================
+
+  (function setupExport() {
+    const overlay = document.querySelector('[data-export-overlay]');
+    const rangeGroup = document.querySelector('[data-export-range-group]');
+    const rangeInfo = document.querySelector('[data-export-range-info]');
+    const heatmapRow = document.querySelector('[data-export-heatmap-row]');
+    const heatmapNote = document.querySelector('[data-export-heatmap-note]');
+    const submitBtn = document.querySelector('[data-export-submit]');
+    const printRoot = document.querySelector('[data-print-root]');
+    if (!overlay || !rangeGroup || !submitBtn || !printRoot) return;
+
+    let currentRange = 7;
+
+    function getInclude() {
+      const out = {};
+      document.querySelectorAll('[data-export-include]').forEach((el) => {
+        out[el.getAttribute('data-export-include')] = el.checked;
+      });
+      return out;
+    }
+
+    function refreshRangeInfo() {
+      const startDate = sleAddDays(TODAY, -(currentRange - 1));
+      const inRange = ALL_SESSIONS.filter((s) => s.date >= startDate && s.date <= TODAY);
+      rangeInfo.textContent = `${startDate} ~ ${TODAY} · 共 ${inRange.length} 条记录`;
+      const heatBox = heatmapRow.querySelector('input');
+      if (currentRange >= 90) {
+        heatmapRow.classList.add('is-disabled');
+        heatBox.checked = false;
+        heatBox.disabled = true;
+        heatmapNote.textContent = '— 90 天范围太大，本次跳过';
+      } else {
+        heatmapRow.classList.remove('is-disabled');
+        heatBox.disabled = false;
+        heatmapNote.textContent = '';
+      }
+    }
+
+    document.querySelectorAll('[data-export-open]').forEach((el) => {
+      el.addEventListener('click', () => {
+        overlay.classList.remove('hidden');
+        refreshRangeInfo();
+      });
+    });
+    document.querySelectorAll('[data-export-close]').forEach((el) => {
+      el.addEventListener('click', () => overlay.classList.add('hidden'));
+    });
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.add('hidden');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !overlay.classList.contains('hidden')) overlay.classList.add('hidden');
+    });
+
+    rangeGroup.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-export-range]');
+      if (!btn) return;
+      currentRange = parseInt(btn.getAttribute('data-export-range'), 10);
+      rangeGroup.querySelectorAll('[data-export-range]').forEach((b) => {
+        b.classList.toggle('is-active', b === btn);
+      });
+      refreshRangeInfo();
+    });
+
+    submitBtn.addEventListener('click', () => {
+      submitBtn.disabled = true;
+      submitBtn.textContent = '生成中…';
+      try {
+        const startDate = sleAddDays(TODAY, -(currentRange - 1));
+        printRoot.innerHTML = renderReport({
+          startDate, endDate: TODAY, days: currentRange, include: getInclude(),
+        });
+        // 等 DOM paint 一帧再打印（避免 print 拿到空 root）
+        setTimeout(() => {
+          window.print();
+          submitBtn.disabled = false;
+          submitBtn.textContent = '生成 PDF';
+          overlay.classList.add('hidden');
+          // 用户取消打印或保存完成后清空 print-root，避免屏幕残留
+          setTimeout(() => { printRoot.innerHTML = ''; }, 500);
+        }, 300);
+      } catch (err) {
+        alert('生成失败：' + (err?.message ?? err));
+        submitBtn.disabled = false;
+        submitBtn.textContent = '生成 PDF';
+      }
+    });
+
+    // ===== 报告渲染 helpers =====
+    function sleAddDays(dateStr, n) {
+      const [y, m, d] = dateStr.split('-').map(Number);
+      const ms = Date.UTC(y, m - 1, d) + n * 86400000;
+      const dt = new Date(ms);
+      return dt.getUTCFullYear() + '-' + String(dt.getUTCMonth() + 1).padStart(2, '0') + '-' + String(dt.getUTCDate()).padStart(2, '0');
+    }
+    function sleFmtDate(dateStr) {
+      const d = new Date(dateStr + 'T00:00:00');
+      const wk = '日一二三四五六'[d.getDay()];
+      return `${d.getMonth() + 1}月${d.getDate()}日 周${wk}`;
+    }
+    function sleFmtDur(min) {
+      const h = Math.floor(min / 60);
+      const m = min % 60;
+      if (h === 0) return `${m} min`;
+      if (m === 0) return `${h} h`;
+      return `${h} h ${m} min`;
+    }
+    function heatLevel(min) {
+      if (min === 0) return 0;
+      if (min < 15) return 1;
+      if (min < 30) return 2;
+      if (min < 60) return 3;
+      if (min < 120) return 4;
+      return 5;
+    }
+    const HEAT_COLORS = ['#f1f1f0', '#dde7f5', '#b5cef0', '#7fa9e0', '#4d82c8', '#2e62a8'];
+
+    function renderReport({ startDate, endDate, days, include }) {
+      const sessions = ALL_SESSIONS.filter((s) => s.date >= startDate && s.date <= endDate);
+
+      // overview
+      const totalMin = sessions.reduce((sum, s) => sum + s.duration_min, 0);
+      const studiedDates = new Set(sessions.map((s) => s.date));
+      const studiedDays = studiedDates.size;
+      const avgPerDay = studiedDays > 0 ? Math.round(totalMin / studiedDays) : 0;
+      let longestStreak = 0, cur = 0;
+      for (let i = 0; i < days; i++) {
+        const d = sleAddDays(startDate, i);
+        if (studiedDates.has(d)) { cur++; longestStreak = Math.max(longestStreak, cur); }
+        else cur = 0;
+      }
+
+      // by date desc
+      const byDate = {};
+      sessions.forEach((s) => {
+        if (!byDate[s.date]) byDate[s.date] = [];
+        byDate[s.date].push(s);
+      });
+      const dateGroups = Object.keys(byDate).sort((a, b) => b.localeCompare(a)).map((d) => ({
+        date: d,
+        items: byDate[d].sort((a, b) => (b.start_time || '').localeCompare(a.start_time || '')),
+      }));
+
+      // rank by KP
+      const kpMap = {};
+      sessions.forEach((s) => {
+        const kid = s.kp_id ?? '__deleted__';
+        if (!kpMap[kid]) kpMap[kid] = { kp_id: s.kp_id, kp_title: s.kp_title, school_title: s.school_title, totalMin: 0, count: 0 };
+        kpMap[kid].totalMin += s.duration_min;
+        kpMap[kid].count += 1;
+      });
+      const rankRows = Object.values(kpMap).sort((a, b) => b.totalMin - a.totalMin);
+
+      // heatmap days
+      const heatDays = [];
+      for (let i = 0; i < days; i++) {
+        const d = sleAddDays(startDate, i);
+        const dayMin = (byDate[d] || []).reduce((s, x) => s + x.duration_min, 0);
+        heatDays.push({ date: d, min: dayMin });
+      }
+
+      let h = '<div class="sle-report">';
+      h += renderCover({ startDate, endDate, days, include, totalMin, studiedDays, avgPerDay, longestStreak });
+      let secNum = 1;
+      if (include.heatmap) { h += renderHeatmapSection({ heatDays, startDate, days, num: secNum++ }); }
+      if (include.rank && rankRows.length > 0) { h += renderRankSection(rankRows, secNum++); }
+      if (include.log && dateGroups.length > 0) { h += renderLogSection(dateGroups, sessions.length, secNum++); }
+      h += '</div>';
+      return h;
+    }
+
+    function renderCover({ startDate, endDate, days, include, totalMin, studiedDays, avgPerDay, longestStreak }) {
+      let h = '<section class="sle-cover">';
+      h += '<div>';
+      h += `<p class="sle-cover-eyebrow">STUDY LOG · REPORT</p>`;
+      h += `<h1 class="sle-cover-h1">学习记录</h1>`;
+      h += `<p class="sle-cover-sub">${escapeHtml(DISCIPLINE_TITLE)}</p>`;
+      h += '</div>';
+      h += '<div class="sle-cover-range">';
+      h += `<p class="sle-cover-range-label">报告区间</p>`;
+      h += `<p class="sle-cover-range-val">${startDate} ~ ${endDate}</p>`;
+      h += `<p class="sle-cover-range-days">共 ${days} 天</p>`;
+      h += '</div>';
+      if (include.overview) {
+        const cov = days > 0 ? Math.round(studiedDays / days * 100) : 0;
+        h += '<div class="sle-cover-stats">';
+        h += `<div><p class="sle-stat-label">累计学习</p><p class="sle-stat-value">${sleFmtDur(totalMin)}</p></div>`;
+        h += `<div><p class="sle-stat-label">学习天数</p><p class="sle-stat-value">${studiedDays} 天</p><p class="sle-stat-sub">共 ${days} 天 · 覆盖 ${cov}%</p></div>`;
+        h += `<div><p class="sle-stat-label">日均（学习日）</p><p class="sle-stat-value">${sleFmtDur(avgPerDay)}</p></div>`;
+        h += `<div><p class="sle-stat-label">最长连续</p><p class="sle-stat-value">${longestStreak} 天</p></div>`;
+        h += '</div>';
+      }
+      h += `<div class="sle-cover-foot"><span>${escapeHtml(DISCIPLINE_TITLE)}</span><span class="sle-cover-foot-spacer"></span><span>导出于 ${endDate}</span></div>`;
+      h += '</section>';
+      return h;
+    }
+
+    function sectionHead(num, title, sub) {
+      return `<div class="sle-section-head"><p class="sle-section-num">${String(num).padStart(2, '0')}</p><div class="sle-section-title-row"><h3>${escapeHtml(title)}</h3><span class="sle-section-sub">${escapeHtml(sub)}</span></div></div>`;
+    }
+
+    function renderHeatmapSection({ heatDays, startDate, days, num }) {
+      const start = new Date(startDate + 'T00:00:00');
+      const startDow = (start.getDay() + 6) % 7;
+      const cells = [];
+      for (let i = 0; i < startDow; i++) cells.push(null);
+      cells.push(...heatDays);
+      while (cells.length % 7 !== 0) cells.push(null);
+      const weeks = [];
+      for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+
+      let h = '<section class="sle-section">';
+      h += sectionHead(num, '日历热力图', `${days} 天 · 颜色越深表示学习越多`);
+      h += '<div class="sle-heatmap-wrap"><div class="sle-heatmap-dows">';
+      for (const d of ['一', '二', '三', '四', '五', '六', '日']) h += `<span>${d}</span>`;
+      h += '</div><div class="sle-heatmap-grid">';
+      for (const wk of weeks) {
+        h += '<div class="sle-heatmap-week">';
+        for (const c of wk) {
+          if (c) {
+            const lvl = heatLevel(c.min);
+            const border = lvl === 0 ? 'border:1px solid #ececec;' : '';
+            h += `<div class="sle-heatmap-cell" style="background:${HEAT_COLORS[lvl]};${border}" title="${c.date} · ${sleFmtDur(c.min)}"></div>`;
+          } else {
+            h += '<div class="sle-heatmap-empty"></div>';
+          }
+        }
+        h += '</div>';
+      }
+      h += '</div></div>';
+      h += '<div class="sle-heatmap-legend"><span>少</span>';
+      for (let i = 0; i < HEAT_COLORS.length; i++) {
+        const border = i === 0 ? 'border:1px solid #ececec;' : '';
+        h += `<div class="sle-heatmap-legend-cell" style="background:${HEAT_COLORS[i]};${border}"></div>`;
+      }
+      h += '<span>多</span><span class="sle-heatmap-legend-spacer"></span><span class="sle-heatmap-legend-bands">0 · &lt;15min · 15-30 · 30-60 · 1-2h · 2h+</span></div>';
+      h += '</section>';
+      return h;
+    }
+
+    function renderRankSection(rows, num) {
+      const max = rows[0].totalMin || 1;
+      let h = '<section class="sle-section">';
+      h += sectionHead(num, '知识点排行', `按累计时长排序 · 共 ${rows.length} 个`);
+      rows.forEach((r, i) => {
+        const pct = (r.totalMin / max) * 100;
+        const kpDisplay = r.kp_title ?? (r.kp_id ? `[已删除] ${r.kp_id}` : '[KP 信息缺失]');
+        h += '<div class="sle-rank-row">';
+        h += `<div class="sle-rank-num">#${i + 1}</div>`;
+        h += `<div class="sle-rank-kp-wrap"><div class="sle-rank-kp-name">${escapeHtml(kpDisplay)}</div>`;
+        if (r.school_title) h += `<span class="sle-rank-school-chip">${escapeHtml(r.school_title)}</span>`;
+        h += '</div>';
+        h += `<div><div class="sle-rank-bar-bg"><div class="sle-rank-bar-fill" style="width:${pct}%"></div></div></div>`;
+        h += `<div class="sle-rank-time">${sleFmtDur(r.totalMin)}</div>`;
+        h += '</div>';
+      });
+      h += '</section>';
+      return h;
+    }
+
+    function renderLogSection(groups, total, num) {
+      let h = '<section class="sle-section">';
+      h += sectionHead(num, '逐日记录', `共 ${total} 条 session`);
+      for (const g of groups) {
+        const dayMin = g.items.reduce((s, x) => s + x.duration_min, 0);
+        h += `<div class="sle-log-day"><div class="sle-log-day-head"><span class="sle-log-day-title">${sleFmtDate(g.date)}</span><span class="sle-log-day-iso">${g.date}</span><span class="sle-log-day-spacer"></span><span class="sle-log-day-summary">${g.items.length} 条 · ${sleFmtDur(dayMin)}</span></div>`;
+        for (const s of g.items) {
+          const stars = s.rating ? '★'.repeat(s.rating) + '☆'.repeat(5 - s.rating) : '';
+          const kpDisplay = s.kp_title ?? (s.kp_id ? `[已删除] ${s.kp_id}` : '[KP 信息缺失]');
+          h += '<div class="sle-log-row">';
+          h += `<div class="sle-log-time">${escapeHtml(s.start_time || '—')}</div>`;
+          h += `<div class="sle-log-main"><div class="sle-log-row-head"><span class="sle-log-kp">${escapeHtml(kpDisplay)}</span>`;
+          if (s.school_title) h += `<span class="sle-rank-school-chip">${escapeHtml(s.school_title)}</span>`;
+          if (stars) h += `<span class="sle-log-rating">${stars}</span>`;
+          h += '</div>';
+          if (s.note) h += `<p class="sle-log-note">${escapeHtml(s.note)}</p>`;
+          h += '</div>';
+          h += `<div class="sle-log-dur">${sleFmtDur(s.duration_min)}</div>`;
+          h += '</div>';
+        }
+        h += '</div>';
+      }
+      h += '</section>';
+      return h;
+    }
+  })();
 </script>
 
 <style is:global>
@@ -2232,6 +2587,520 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     @keyframes sl-sheet-in {
       from { transform: translateY(100%); }
       to { transform: translateY(0); }
+    }
+  }
+
+  /* ============================================================
+     v0.7.22 · Export PDF Dialog + 打印报告
+     ============================================================ */
+  .sl-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sl-export-btn {
+    all: unset;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #fff;
+    border: 1px solid #ececec;
+    color: #525252;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: border-color .12s, color .12s, background .12s;
+  }
+  .sl-export-btn:hover {
+    color: #0a0a0a;
+    border-color: #d4d4d4;
+    background: #fafaf9;
+  }
+  @media (max-width: 768px) {
+    .sl-export-btn { display: none; } /* 手机版无导出入口 (PRD §10) */
+  }
+
+  /* === Dialog === */
+  .sle-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,10,10,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .sle-overlay.hidden { display: none; }
+  .sle-sheet {
+    background: #fff;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 60px -10px rgba(0,0,0,0.25);
+    overflow: hidden;
+  }
+  .sle-head {
+    padding: 20px 24px 14px;
+    border-bottom: 1px solid #f1f1f0;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .sle-head > div { flex: 1; min-width: 0; }
+  .sle-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0a0a0a;
+    margin: 0;
+  }
+  .sle-sub {
+    font-size: 12px;
+    color: #737373;
+    margin: 2px 0 0;
+  }
+  .sle-close {
+    all: unset;
+    cursor: pointer;
+    padding: 6px;
+    color: #737373;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .sle-close:hover { color: #0a0a0a; }
+  .sle-body { padding: 20px 24px; }
+  .sle-field { margin-bottom: 22px; }
+  .sle-field:last-child { margin-bottom: 0; }
+  .sle-field-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #525252;
+    margin: 0 0 10px;
+    letter-spacing: 0.2px;
+  }
+  .sle-range-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .sle-chip {
+    all: unset;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 7px;
+    background: #f5f5f4;
+    color: #525252;
+    font-size: 13px;
+    transition: background .12s, color .12s;
+  }
+  .sle-chip:hover { background: #e7e5e4; }
+  .sle-chip.is-active {
+    background: #0a0a0a;
+    color: #fff;
+    font-weight: 500;
+  }
+  .sle-range-info {
+    font-size: 11px;
+    color: #a3a3a3;
+    margin: 8px 0 0;
+  }
+  .sle-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    cursor: pointer;
+    font-size: 13px;
+    color: #171717;
+  }
+  .sle-check input[type="checkbox"] {
+    accent-color: #0a0a0a;
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+  }
+  .sle-check.is-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .sle-check.is-disabled input { cursor: not-allowed; }
+  .sle-check-note {
+    font-style: normal;
+    color: #a3a3a3;
+    font-size: 11px;
+  }
+  .sle-foot {
+    padding: 14px 24px;
+    border-top: 1px solid #f1f1f0;
+    background: #fafaf9;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sle-foot-tip {
+    font-size: 11px;
+    color: #a3a3a3;
+    flex: 1;
+  }
+  .sle-btn-ghost {
+    all: unset;
+    cursor: pointer;
+    padding: 7px 14px;
+    border-radius: 7px;
+    font-size: 13px;
+    color: #525252;
+  }
+  .sle-btn-ghost:hover { color: #0a0a0a; }
+  .sle-btn-primary {
+    all: unset;
+    cursor: pointer;
+    padding: 7px 16px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    background: #0a0a0a;
+    color: #fff;
+    transition: background .12s, opacity .12s;
+  }
+  .sle-btn-primary:hover { background: #262626; }
+  .sle-btn-primary[disabled] {
+    cursor: wait;
+    opacity: 0.6;
+  }
+  @media (max-width: 768px) {
+    .sle-foot { flex-wrap: wrap; }
+    .sle-foot-tip { flex-basis: 100%; margin-bottom: 4px; }
+  }
+
+  /* === 打印渲染容器（screen 隐藏，print 时唯一可见） === */
+  #print-root {
+    display: none;
+  }
+
+  /* === 报告内容样式（打印 + 屏幕 preview 通用） === */
+  .sle-report {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    color: #0a0a0a;
+    line-height: 1.5;
+    background: #fff;
+    font-variant-numeric: tabular-nums;
+  }
+  .sle-cover {
+    page-break-after: always;
+    break-after: page;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .sle-cover-eyebrow {
+    font-size: 11px;
+    color: #a3a3a3;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 0 0 14px;
+  }
+  .sle-cover-h1 {
+    font-size: 44px;
+    font-weight: 700;
+    color: #0a0a0a;
+    margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  .sle-cover-sub {
+    font-size: 18px;
+    color: #525252;
+    margin: 12px 0 0;
+    font-weight: 400;
+  }
+  .sle-cover-range {
+    margin-top: 48px;
+    padding-top: 22px;
+    border-top: 1px solid #ececec;
+  }
+  .sle-cover-range-label {
+    font-size: 13px;
+    color: #737373;
+    margin: 0 0 6px;
+  }
+  .sle-cover-range-val {
+    font-size: 22px;
+    color: #0a0a0a;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .sle-cover-range-days {
+    font-size: 13px;
+    color: #737373;
+    margin: 4px 0 0;
+  }
+  .sle-cover-stats {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 32px;
+  }
+  .sle-stat-label {
+    font-size: 11px;
+    color: #a3a3a3;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0 0 4px;
+  }
+  .sle-stat-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #0a0a0a;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .sle-stat-sub {
+    font-size: 11px;
+    color: #737373;
+    margin: 2px 0 0;
+  }
+  .sle-cover-foot {
+    margin-top: auto;
+    padding-top: 24px;
+    border-top: 1px solid #ececec;
+    display: flex;
+    align-items: center;
+    font-size: 11px;
+    color: #a3a3a3;
+  }
+  .sle-cover-foot-spacer { flex: 1; }
+
+  .sle-section {
+    margin-top: 32px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .sle-section-head {
+    margin-bottom: 22px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #ececec;
+  }
+  .sle-section-num {
+    font-size: 11px;
+    color: #a3a3a3;
+    letter-spacing: 2px;
+    margin: 0 0 6px;
+  }
+  .sle-section-title-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .sle-section-title-row h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0a0a0a;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .sle-section-title-row .sle-section-sub {
+    font-size: 12px;
+    color: #737373;
+  }
+
+  .sle-heatmap-wrap {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+  }
+  .sle-heatmap-dows {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 10px;
+    color: #a3a3a3;
+    padding-top: 2px;
+  }
+  .sle-heatmap-dows span {
+    height: 16px;
+    display: flex;
+    align-items: center;
+  }
+  .sle-heatmap-grid {
+    display: flex;
+    gap: 4px;
+  }
+  .sle-heatmap-week {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .sle-heatmap-cell {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+  }
+  .sle-heatmap-empty {
+    width: 16px;
+    height: 16px;
+  }
+  .sle-heatmap-legend {
+    margin-top: 22px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #737373;
+  }
+  .sle-heatmap-legend-cell {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+  .sle-heatmap-legend-spacer { flex: 1; }
+  .sle-heatmap-legend-bands { font-size: 10px; }
+
+  .sle-rank-row {
+    display: grid;
+    grid-template-columns: 28px 1fr 80px 70px;
+    gap: 14px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5f5f4;
+    font-size: 13px;
+  }
+  .sle-rank-row:last-child { border-bottom: 0; }
+  .sle-rank-num {
+    color: #a3a3a3;
+    font-size: 12px;
+  }
+  .sle-rank-kp-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .sle-rank-kp-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #0a0a0a;
+  }
+  .sle-rank-school-chip {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: #f5f5f4;
+    color: #525252;
+    flex-shrink: 0;
+  }
+  .sle-rank-bar-bg {
+    height: 4px;
+    background: #f1f1f0;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .sle-rank-bar-fill {
+    height: 100%;
+    background: #0a0a0a;
+  }
+  .sle-rank-time {
+    text-align: right;
+    color: #525252;
+    font-size: 12px;
+  }
+
+  .sle-log-day {
+    margin-bottom: 24px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .sle-log-day-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ececec;
+    margin-bottom: 8px;
+  }
+  .sle-log-day-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0a0a0a;
+  }
+  .sle-log-day-iso {
+    font-size: 11px;
+    color: #a3a3a3;
+  }
+  .sle-log-day-spacer { flex: 1; }
+  .sle-log-day-summary {
+    font-size: 12px;
+    color: #525252;
+  }
+  .sle-log-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 70px;
+    gap: 14px;
+    padding: 7px 0;
+    font-size: 12.5px;
+    border-bottom: 1px solid #f8f8f7;
+  }
+  .sle-log-row:last-child { border-bottom: 0; }
+  .sle-log-time {
+    color: #737373;
+  }
+  .sle-log-main { min-width: 0; }
+  .sle-log-row-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .sle-log-kp { color: #0a0a0a; font-weight: 500; }
+  .sle-log-rating {
+    color: #a3a3a3;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  .sle-log-note {
+    color: #525252;
+    font-size: 11.5px;
+    margin: 3px 0 0;
+    line-height: 1.55;
+  }
+  .sle-log-dur {
+    text-align: right;
+    color: #525252;
+  }
+
+  /* ============================================================
+     @media print — 隐藏 screen UI、唯一显示 #print-root
+     ============================================================ */
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 14mm;
+    }
+    body {
+      background: #fff !important;
+    }
+    /* 屏幕 UI 全隐 */
+    body > *:not(#print-root) {
+      display: none !important;
+    }
+    /* 但 study-log main 内嵌的 #print-root 也得显式释放 */
+    .study-log,
+    .study-log > * {
+      display: none !important;
+    }
+    #print-root {
+      display: block !important;
+      position: static !important;
+      width: 100% !important;
+      visibility: visible !important;
+    }
+    #print-root * {
+      visibility: visible !important;
     }
   }
 </style>
