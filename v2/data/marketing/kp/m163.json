@@ -3,7 +3,8 @@
   "discipline": "marketing",
   "schools": [
     "managerial",
-    "consumer_behavior"
+    "consumer_behavior",
+    "pricing_strategy"
   ],
   "scholars": [
     "kotler"
@@ -37,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T09:26:18.401Z",
-  "updatedAt": "2026-04-30T13:25:08.422Z"
+  "updatedAt": "2026-05-02T11:54:46.323Z"
 }
