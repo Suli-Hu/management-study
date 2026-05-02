@@ -3,7 +3,8 @@
   "discipline": "marketing",
   "schools": [
     "channel_retail",
-    "digital_marketing"
+    "digital_marketing",
+    "retail_management"
   ],
   "scholars": [
     "stern",
@@ -38,5 +39,5 @@
     }
   },
   "createdAt": "2026-04-30T09:26:37.321Z",
-  "updatedAt": "2026-04-30T13:25:30.495Z"
+  "updatedAt": "2026-05-02T11:54:55.305Z"
 }
