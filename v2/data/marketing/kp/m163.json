@@ -2,7 +2,6 @@
   "id": "m163",
   "discipline": "marketing",
   "schools": [
-    "managerial",
     "consumer_behavior",
     "pricing_strategy"
   ],
@@ -38,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T09:26:18.401Z",
-  "updatedAt": "2026-05-02T11:54:46.323Z"
+  "updatedAt": "2026-05-02T12:21:15.577Z"
 }

@@ -36,16 +36,11 @@ const fullTitle = title ?? `学习记录 · ${disciplineTitle}`;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@700&display=swap" rel="stylesheet" />
     <script is:inline>
-      // 同 Layout.astro：无闪烁夜间模式初始化
+      // v0.7.32: 分享页强制 light —— 不读 localStorage / prefers-color-scheme。
+      // 公开页应该是固定外观（对方设备偏好不影响），且 study-log 内容 CSS
+      // 大量硬编码 light 颜色，dark token 切换会让 body bg + 卡片 fg 撕裂。
       (function () {
-        try {
-          const saved = localStorage.getItem('theme');
-          const prefersDark = matchMedia('(prefers-color-scheme: dark)').matches;
-          const isDark = saved ? saved === 'dark' : prefersDark;
-          const root = document.documentElement;
-          if (isDark) root.classList.add('dark');
-          root.dataset.mode = isDark ? 'dark' : 'light';
-        } catch {}
+        document.documentElement.dataset.mode = 'light';
       })();
     </script>
   </head>

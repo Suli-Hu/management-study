@@ -3,7 +3,6 @@
   "discipline": "marketing",
   "schools": [
     "consumer_behavior",
-    "managerial",
     "marketing_research"
   ],
   "scholars": [
@@ -38,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T07:41:06.756Z",
-  "updatedAt": "2026-05-02T11:54:39.235Z"
+  "updatedAt": "2026-05-02T12:21:10.359Z"
 }

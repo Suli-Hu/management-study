@@ -2,7 +2,6 @@
   "id": "m011",
   "discipline": "marketing",
   "schools": [
-    "managerial",
     "pricing_strategy"
   ],
   "scholars": [
@@ -38,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T04:40:28.584Z",
-  "updatedAt": "2026-05-02T11:53:43.574Z"
+  "updatedAt": "2026-05-02T12:19:34.152Z"
 }

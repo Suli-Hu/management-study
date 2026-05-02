@@ -1,10 +1,10 @@
 {
-  "id": "school-groups",
+  "id": "exam-7-areas",
   "discipline": "marketing",
-  "name": "考试 7 领域",
+  "name": "全集",
   "jp": "試験 7 領域",
   "icon": "🎯",
-  "description": "默认视图。按日本经营学大学院市场营销考试复习逻辑重排理论体系。",
+  "description": "按日本经营学大学院市场营销考试复习逻辑重排理论体系。",
   "flow": "概念与战略 → STP/品牌 → 市场理解 → 调研测定 → 4P 执行 → 渠道零售 → 服务关系社会",
   "scope": "public",
   "kind": "manual",
@@ -82,6 +82,6 @@
       ]
     }
   ],
-  "createdAt": "2026-05-02T14:39:00.057Z",
-  "updatedAt": "2026-05-02T14:39:00.057Z"
+  "createdAt": "2026-05-02T13:44:21.436Z",
+  "updatedAt": "2026-05-02T14:30:45.313Z"
 }

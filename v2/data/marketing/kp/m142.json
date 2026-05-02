@@ -2,8 +2,8 @@
   "id": "m142",
   "discipline": "marketing",
   "schools": [
-    "managerial",
-    "strategic_marketing"
+    "strategic_marketing",
+    "global_marketing"
   ],
   "scholars": [
     "kotler"
@@ -38,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:36:18.268Z",
-  "updatedAt": "2026-04-30T13:24:20.305Z"
+  "updatedAt": "2026-05-02T12:20:18.140Z"
 }

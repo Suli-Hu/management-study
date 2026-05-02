@@ -2,7 +2,6 @@
   "id": "m007",
   "discipline": "marketing",
   "schools": [
-    "managerial",
     "sdl",
     "service_marketing"
   ],
@@ -34,5 +33,5 @@
     }
   },
   "createdAt": "2026-04-30T04:40:21.672Z",
-  "updatedAt": "2026-05-02T11:53:39.939Z"
+  "updatedAt": "2026-05-02T12:19:30.593Z"
 }

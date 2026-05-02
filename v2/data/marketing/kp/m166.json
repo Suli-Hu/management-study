@@ -2,7 +2,6 @@
   "id": "m166",
   "discipline": "marketing",
   "schools": [
-    "managerial",
     "pricing_strategy"
   ],
   "scholars": [
@@ -10,32 +9,32 @@
   ],
   "year": "1980",
   "title": {
-    "zh": "最终价格设定·6 步流程与影响因素",
-    "ja": "最終価格設定・6 段階フローと影響要因",
-    "en": "Final Price Setting"
+    "zh": "价格设定流程·目标·需求·成本·竞争·方法·最终价格",
+    "ja": "価格設定プロセス・目標・需要・コスト・競争・方法・最終価格",
+    "en": "Pricing Process Overview"
   },
   "body": {
-    "zh": "<strong>Final Price Setting（最终价格设定）</strong>是定价 6 步流程的<strong>最后整合</strong>·把所有要素综合定 the price。Kotler 11 章。<br><br><strong>定价 6 步流程</strong>（Kotler）：<br>① 选择 pricing objective（m162）<br>② 决定 demand（m163）<br>③ 估算 cost（m164）<br>④ 分析 competitor price（m165）<br>⑤ 选择 pricing method（m120）<br>⑥ <strong>选 final price</strong>（本 KP）<br><br><strong>影响 final price 的 5 个因素</strong>：<br>① <strong>Psychological Factors</strong>（详见 m122）——end in 9·prestige·reference<br>② <strong>Marketing-Mix Influences</strong>——价格与 product·brand·channel·promotion 一致<br>③ <strong>Company Pricing Policies</strong>——内部规则·avoid arbitrary<br>④ <strong>Gain-and-Risk-Sharing Pricing</strong>——performance-based pricing（B2B·SaaS）<br>⑤ <strong>Impact of Price on Other Parties</strong>——distributors·dealers·suppliers·government·sales force·competitors<br><br><strong>geographical pricing 战略</strong>：① <strong>FOB-origin pricing</strong>（货物离厂时·买方付运费）② <strong>Uniform delivered pricing</strong>（全国统一价）③ <strong>Zone pricing</strong>（按区域）④ <strong>Basing-point pricing</strong>（基点）⑤ <strong>Freight-absorption pricing</strong>（卖方吸收运费）<br><br><strong>discount·allowance 战略</strong>：① cash discount ② quantity discount ③ functional discount（trade discount）④ seasonal discount ⑤ allowance（trade-in·promotional·rebate）<br><br><strong>typical pricing decisions</strong>：<br>- iPhone 15 final price $799：基于 prior models·components cost·BOM·BOM·competitors（Samsung Galaxy S 系列）·target margin<br>- Tesla Model 3 base $40,000：基于 battery cost decline·target margin·EV competitors<br>- Netflix Standard $15.49 / 月：basic + competitor + churn analysis<br><br><strong>跨学派关系</strong>：综合 m120-m165 的所有 pricing decisions。",
-    "ja": "<strong>Final Price Setting（最終価格設定）</strong>は定価 6 段階フローの<strong>最後統合</strong>·全要素総合で price 決定。Kotler 11 章。<br><br><strong>定価 6 段階フロー</strong>（Kotler）：① pricing objective（m162）② demand（m163）③ cost（m164）④ competitor price（m165）⑤ pricing method（m120）⑥ <strong>final price 選定</strong>（本 KP）<br><br><strong>final price 5 大影響要因</strong>：① Psychological Factors（m122）② Marketing-Mix Influences ③ Company Pricing Policies ④ Gain-and-Risk-Sharing Pricing（B2B·SaaS）⑤ Impact on Other Parties（distributors·dealers·government·sales force·competitors）<br><br><strong>geographical pricing 戦略</strong>：① FOB-origin pricing ② Uniform delivered pricing ③ Zone pricing ④ Basing-point pricing ⑤ Freight-absorption pricing<br><br><strong>discount·allowance 戦略</strong>：① cash ② quantity ③ functional（trade）④ seasonal ⑤ allowance（trade-in·promotional·rebate）<br><br><strong>typical pricing decisions</strong>：iPhone 15 ($799·prior models·BOM·Samsung Galaxy S·target margin）·Tesla Model 3 base $40,000（battery cost decline·target margin·EV competitors）·Netflix Standard $15.49 / 月（basic + competitor + churn analysis）<br><br><strong>他派との関係</strong>：m120-m165 の全 pricing decisions を総合。"
+    "zh": "价格战略的核心不是随意定价，而是在目标、需求、成本、竞争与顾客心理之间寻找可持续的价值获取方式：<br>【① 定价目标】<br>①生存 ②当前利润最大化 ③市场份额最大化 ④市场撇脂 ⑤品质领导。<br>【② 需求测定】<br>①估计市场需求与价格弹性。②区分价格敏感型与价值敏感型顾客。③考虑心理价格、参照价格与损失规避。<br>【③ 成本估算】<br>①固定成本、变动成本、总成本决定价格下限。②经验曲线可能降低单位成本。③只看成本会忽视顾客价值与竞争反应。<br>【④ 竞争分析】<br>①观察竞争者价格、品质与定位。②判断是否进入价格战。③价格也传递品质与品牌信号。<br>【⑤ 定价方法】<br>①成本导向：成本加成、目标利润。②需求导向：感知价值、价格弹性。③竞争导向：随行就市、投标、差别化定价。<br>【⑥ 最终价格与调整】<br>①综合渠道、促销、法律、心理和品牌影响设定最终价格。②新品可用撇脂定价或渗透定价。③上市后根据竞争、需求和成本变化调整。",
+    "ja": "価格戦略の核心は恣意的に価格を決めることではなく，目標・需要・コスト・競争・顧客心理の間で持続可能な価値獲得方法を設計することである：<br>【① 価格設定目標】<br>①生存 ②現在利益最大化 ③市場シェア最大化 ④市場上澄み吸収 ⑤品質リーダー。<br>【② 需要の測定】<br>①市場需要と価格弾力性を推定する。②価格敏感型と価値敏感型を区別する。③心理価格，参照価格，損失回避を考慮する。<br>【③ コストの見積り】<br>①固定費，変動費，総費用が価格の下限を規定する。②経験曲線により単位費用が下がることがある。③コストだけでは顧客価値と競争反応を見落とす。<br>【④ 競争分析】<br>①競争者の価格，品質，ポジショニングを観察する。②価格戦争に入るべきか判断する。③価格は品質とブランドのシグナルでもある。<br>【⑤ 価格設定方法】<br>①コスト志向：コスト加算，目標利益。②需要志向：知覚価値，価格弾力性。③競争志向：競争追随，入札，差別的価格設定。<br>【⑥ 最終価格と調整】<br>①チャネル，販促，法律，心理，ブランド影響を統合し最終価格を決める。②新製品には上澄み吸収価格または市場浸透価格を用いる。③上市後は競争，需要，コスト変化に応じて調整する。"
   },
   "tags": [
     "final price",
     "pricing process",
     "Kotler"
   ],
-  "format": "narrative",
+  "format": "accordion",
   "evalContent": {
     "zh": {
-      "义": "定价决策的最后整合·实务关键",
-      "限": "多因素权衡·主观",
-      "例": "iPhone·Tesla·Netflix 是教科书",
-      "应": "Kotler 11 章·价格题"
+      "义": "考试用总览卡，将该领域的零散概念组织成可论述的流程。",
+      "限": "总览会压缩细节，具体题目仍需回到细卡补充术语和案例。",
+      "例": "可作为该领域论述题开头框架。",
+      "应": "用于大学院过去问的综合论述。"
     },
     "ja": {
-      "限": "多要因権衡·主観",
-      "例": "iPhone·Tesla·Netflix 教科書"
+      "限": "総覧は細部を圧縮するため，具体問題では詳細カードで用語と事例を補う必要がある。",
+      "例": "当該領域の論述問題の冒頭骨格として使える。"
     }
   },
   "createdAt": "2026-04-30T09:26:24.090Z",
-  "updatedAt": "2026-05-02T11:54:52.288Z"
+  "updatedAt": "2026-05-02T12:37:11.250Z"
 }

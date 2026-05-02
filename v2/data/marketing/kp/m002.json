@@ -2,7 +2,6 @@
   "id": "m002",
   "discipline": "marketing",
   "schools": [
-    "managerial",
     "stp_positioning"
   ],
   "scholars": [
@@ -11,32 +10,32 @@
   ],
   "year": "1972",
   "title": {
-    "zh": "STP 框架·三步骤总览",
-    "ja": "STP フレーム・三段階全体",
-    "en": "STP Framework · Three Steps"
+    "zh": "STP 战略总览·细分·目标市场选择·定位",
+    "ja": "STP 戦略総覧・市場細分化・標的市場選定・ポジショニング",
+    "en": "STP Strategy Overview"
   },
   "body": {
-    "zh": "<strong>STP 框架</strong>是 marketing 战略最基础的三步骤体系·由 <strong>Kotler</strong>（1972 年起在『Marketing Management』教材中系统化）整合 Smith 1956 的细分概念·Wind 的目标市场理论·Ries-Trout 1981 的定位理论而成。<br><br><strong>三步骤</strong>：<br>① <strong>Segmentation（细分）</strong>——把异质市场切成若干同质 segments·用 4 大细分变量（demographic·geographic·behavioral·psychographic）<br>② <strong>Targeting（选定）</strong>——选 1 个或多个 segments 进入·按「适合性·魅力」2 维评估（Kotler 16 版独创区分战略 vs 战术）<br>③ <strong>Positioning（定位）</strong>——在选定 segments 内·用 POD（差別化点）和 POP（類似化点）确立顾客心智中独特位置<br><br><strong>3 个隐含哲学假设</strong>：① 市场异质性·② 资源有限性·③ 集中胜于普遍。<br><br><strong>跨学派关系</strong>：STP 的 Targeting 步骤与 Porter 的 focus 战略本质同型·都依据「资源约束下集中竞争」的逻辑。Levitt 1960 的 Marketing Myopia 警告以产品为中心的近视症·STP 强迫企业以市场为中心——是 myopia 的解药。<br><br><strong>批判</strong>：CCT 学派批判 STP 假设消费者可被归入 segments·忽视身份流动性。数字时代下「全覆盖品牌」（如 UNIQLO）反而通过 needs-based segmentation 跳出传统 STP。",
-    "ja": "<strong>STP フレーム</strong>はマーケティング戦略最基礎の三段階体系·<strong>Kotler</strong>（1972 年以降『Marketing Management』教材で体系化）が Smith 1956 細分化·Wind の標的市場理論·Ries-Trout 1981 ポジショニング理論を統合。<br><br><strong>三段階</strong>：<br>① <strong>Segmentation（細分化）</strong>·異質市場を同質 segments に切り分け·4 つの細分化変数（人口統計·地理·行動·サイコグラフィック）を用いる<br>② <strong>Targeting（選定）</strong>·1 つまたは複数の segments を選択·「適合性·魅力」2 次元で評価（Kotler 16 版は戦略 vs 戦術を区分）<br>③ <strong>Positioning（ポジショニング）</strong>·選定 segments 内で·POD（差別化ポイント）と POP（類似化ポイント）で顧客心智に独自位置を確立<br><br><strong>3 つの暗黙の哲学的前提</strong>：① 市場の異質性·② 資源の有限性·③ 集中が普遍に勝る。<br><br><strong>他派との関係</strong>：STP の Targeting は Porter の focus 戦略と本質的に同型·共に「資源制約下の集中競争」の論理。Levitt 1960 のマーケティング近視眼に対し·STP は企業を市場中心へ——myopia の解薬。<br><br><strong>批判</strong>：CCT 学派は STP が消費者を segments に分類できると仮定·アイデンティティの流動性を無視と批判。デジタル時代の「全カバーブランド」（UNIQLO 等）は needs-based segmentation で従来 STP を回避。"
+    "zh": "STP 是营销战略的核心流程：先把市场切开，再选择值得服务的顾客，最后在顾客心中建立清楚位置。考试答题时按 S→T→P 展开即可：<br>【总体逻辑】<br>①起点——市场不是同质整体，而是由需求、行为、价值观不同的顾客群组成。<br>②目的——在资源有限下，不服务所有人，而是集中满足最有价值的 segment。<br>③流程——Segmentation 识别差异，Targeting 选择对象，Positioning 建立差异化心智位置。<br>【S：Segmentation 市场细分】<br>①定义——把异质市场切分为内部相对同质、彼此有差异的 segment。<br>②变量——人口统计、地理、行为、心理四类变量；数字时代还强调 needs-based segmentation。<br>③意义——让企业从「卖给所有人」转向「理解具体顾客」。<br>【T：Targeting 目标市场选择】<br>①基本问题——哪些 segment 值得进入。<br>②评价轴——适合性（企业能力、资源、品牌、伙伴网络）与魅力（收益、规模、成本、社会价值、信息价值）。<br>③策略——可选择单一 segment、多 segment，或根据能力积累阶段性进入。<br>【P：Positioning 定位】<br>①定义——在目标顾客心中，为品牌或产品建立相对于竞争者的独特位置。<br>②工具——先确定参照框架，再满足 POP（类似化点），最后建立 POD（差别化点）。<br>③表达——用定位陈述把 target customer、frame of reference、POD、reason to believe 写成一句话。<br>【考试答案模板】<br>①先说明 STP 是市场选择与竞争定位的流程。②说明 S 用变量切分市场。③说明 T 用适合性与魅力选择目标。④说明 P 通过参照框架、POP/POD 与定位陈述建立差异化。⑤最后评价：优点是集中资源、提高适配度；局限是 segment 边界可能流动，数字平台时代需要动态修正。",
+    "ja": "STP はマーケティング戦略の中核的プロセスであり，市場を細分化し，標的顧客を選定し，顧客の心の中に明確な位置を築く枠組みである。答案では S→T→P の順に展開する：<br>【全体ロジック】<br>①出発点——市場は同質的な全体ではなく，ニーズ・行動・価値観の異なる顧客群から成る。<br>②目的——限られた資源の下で全員を対象にせず，価値ある segment に集中する。<br>③流れ——Segmentation が差異を識別し，Targeting が対象を選び，Positioning が差別的な心的位置を築く。<br>【S：Segmentation 市場細分化】<br>①定義——異質な市場を，内部では相対的に同質で，相互には異なる segment に分けること。<br>②変数——人口統計，地理，行動，心理の四類型に加え，近年は needs-based segmentation が重要である。<br>③意義——「全員に売る」発想から「具体的顧客を理解する」発想へ転換する。<br>【T：Targeting 標的市場の選定】<br>①基本問題——どの segment に参入すべきか。<br>②評価軸——適合性（資源・能力・ブランド・パートナー）と魅力度（収益・規模・費用・社会価値・情報価値）。<br>③戦略——単一 segment，複数 segment，段階的参入などを選択する。<br>【P：Positioning ポジショニング】<br>①定義——標的顧客の心の中で，競争者と比較した独自の位置を形成すること。<br>②道具——参照枠を定め，POP を満たし，POD を構築する。<br>③表現——target customer，frame of reference，POD，reason to believe をポジショニング・ステートメントにまとめる。<br>【答案テンプレート】<br>①STP は市場選択と競争的位置づけのプロセスである。②S は変数によって市場を分ける。③T は適合性と魅力度で標的を選ぶ。④P は参照枠，POP/POD，ポジショニング・ステートメントで差別化する。⑤長所は資源集中と適合度向上，限界は segment の流動性と動的修正である。"
   },
   "tags": [
     "STP",
     "Kotler",
     "Smith"
   ],
-  "format": "narrative",
+  "format": "accordion",
   "evalContent": {
     "zh": {
-      "义": "现代 marketing 战略的标准框架·Kotler 系统化的核心成果",
-      "限": "假设市场可清晰切分·对平台经济·CCT 视角解释力有限",
-      "例": "UNIQLO STP：basic-needs segment·适合性高·魅力高·POD「Lifewear」",
-      "应": "Kotler 16 版第 6·7 章·全 11 校 marketing 必考"
+      "义": "STP 是营销战略论述题的基础骨架，可直接组织市场细分、目标选择与定位三段答案。",
+      "限": "假设市场可以被清晰切分，但现实中顾客身份与需求会流动。",
+      "例": "UNIQLO 可理解为选择 basic-needs segment，并以 LifeWear 建立 POD。",
+      "应": "用于回答「市場細分化から標的市場の選定、ポジショニングまでの一連のプロセス」类过去问。"
     },
     "ja": {
-      "限": "市場が明確に切り分けられると仮定·プラットフォーム経済·CCT 視点に説明力限定",
-      "例": "UNIQLO STP：basic-needs segment·適合性高·魅力高·POD「Lifewear」"
+      "限": "市場が明確に分割できることを前提にするが，現実には顧客ニーズは流動的である。",
+      "例": "UNIQLO は basic-needs segment を選び，LifeWear によって POD を構築した例として説明できる。"
     }
   },
   "createdAt": "2026-04-30T04:40:12.767Z",
-  "updatedAt": "2026-05-02T11:53:33.402Z"
+  "updatedAt": "2026-05-02T12:37:05.348Z"
 }

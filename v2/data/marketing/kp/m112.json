@@ -2,7 +2,6 @@
   "id": "m112",
   "discipline": "marketing",
   "schools": [
-    "managerial",
     "product_strategy"
   ],
   "scholars": [
@@ -36,5 +35,5 @@
     }
   },
   "createdAt": "2026-04-30T07:35:24.297Z",
-  "updatedAt": "2026-05-02T11:53:54.881Z"
+  "updatedAt": "2026-05-02T12:19:41.146Z"
 }

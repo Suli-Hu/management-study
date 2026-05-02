@@ -2,7 +2,6 @@
   "id": "m138",
   "discipline": "marketing",
   "schools": [
-    "managerial",
     "product_strategy"
   ],
   "scholars": [
@@ -37,5 +36,5 @@
     }
   },
   "createdAt": "2026-04-30T07:36:11.139Z",
-  "updatedAt": "2026-05-02T11:54:24.215Z"
+  "updatedAt": "2026-05-02T12:20:14.020Z"
 }

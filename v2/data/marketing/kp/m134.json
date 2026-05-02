@@ -2,7 +2,6 @@
   "id": "m134",
   "discipline": "marketing",
   "schools": [
-    "managerial",
     "strategic_marketing",
     "product_strategy"
   ],
@@ -11,32 +10,32 @@
   ],
   "year": "1986",
   "title": {
-    "zh": "Stage-Gate 新品开发流程·Cooper 1986",
-    "ja": "Stage-Gate 新製品開発プロセス・Cooper 1986",
-    "en": "Stage-Gate Process"
+    "zh": "新产品开发流程·创意·概念测试·Stage-Gate·市场测试·采用",
+    "ja": "新製品開発プロセス・アイデア・コンセプトテスト・Stage-Gate・市場テスト・採用",
+    "en": "New Product Development Overview"
   },
   "body": {
-    "zh": "<strong>Stage-Gate（阶段-门）</strong>是 Robert G. Cooper 1986 年提出的<strong>新品开发标准流程</strong>·marketing managerial 学派的实务核心。Kotler 16 版第 18 章主轴。<br><br><strong>5 stage + 5 gate 结构</strong>：<br>**Discovery → Gate 1 → Stage 1 Scoping → Gate 2 → Stage 2 Build Business Case → Gate 3 → Stage 3 Development → Gate 4 → Stage 4 Testing → Gate 5 → Stage 5 Launch → Post-Launch Review**<br><br><strong>5 个 Stage 内容</strong>：<br>① <strong>Scoping（范围确定）</strong>——快速的 preliminary research<br>② <strong>Build Business Case（建商业 case）</strong>——技术·市场·财务可行性<br>③ <strong>Development（开发）</strong>——actual product 设计·原型<br>④ <strong>Testing（测试）</strong>——pilot·beta·alpha test<br>⑤ <strong>Launch（上市）</strong>——市场扩张<br><br><strong>5 个 Gate 决策</strong>：<br>每个 gate 是 go/kill/hold/recycle 决策——基于 deliverables + criteria 评估。<br><br><strong>marketing 角度</strong>：<br>① <strong>Voice of Customer</strong>——每 stage 都做 customer research<br>② <strong>positioning 早期定</strong>——stage 2 商业 case 时<br>③ <strong>marketing planning</strong>——stage 3-4 平行<br>④ <strong>launch readiness</strong>——stage 5 关键<br><br><strong>vs Lean / Agile 方法</strong>：<br>- Stage-Gate：linear·thorough·适合大企业<br>- Lean Startup（Eric Ries 2011）：iterative·MVP·快速试错·适合 startup<br>- 现代 hybrid：Stage-Gate 框架 + 内部 lean execution<br><br><strong>跨学派关系</strong>：① 与 effectuation（m075）形成对照——Stage-Gate 是 causation·effectuation 是从手段出发 ② 与 Rogers 採用曲線（m030）一起设计 launch strategy。",
-    "ja": "<strong>Stage-Gate（段階-ゲート）</strong>は Robert G. Cooper 1986 年提唱の<strong>新製品開発標準プロセス</strong>·マーケティング managerial 学派の実務核心。Kotler 16 版第 18 章主軸。<br><br><strong>5 stage + 5 gate 構造</strong>：Discovery → Gate 1 → Stage 1 Scoping → Gate 2 → Stage 2 Build Business Case → Gate 3 → Stage 3 Development → Gate 4 → Stage 4 Testing → Gate 5 → Stage 5 Launch → Post-Launch Review<br><br><strong>5 Stage 内容</strong>：① Scoping ② Build Business Case ③ Development ④ Testing ⑤ Launch<br><br><strong>5 Gate 意思決定</strong>：each gate は go/kill/hold/recycle·deliverables + criteria 基準で評価。<br><br><strong>マーケティング視点</strong>：① Voice of Customer ② positioning 早期決定 ③ marketing planning（stage 3-4 並行）④ launch readiness<br><br><strong>vs Lean / Agile</strong>：Stage-Gate は linear·thorough·大企業向き·Lean Startup（Eric Ries 2011）は iterative·MVP·迅速試行錯誤·startup 向き·現代 hybrid<br><br><strong>他派との関係</strong>：① effectuation（m075）と対照·Stage-Gate は causation·effectuation は手段から ② Rogers 採用曲線（m030）と launch strategy 設計。"
+    "zh": "新产品开发不是灵感瞬间，而是把创意逐步筛选、验证、商业化，并让市场采用的管理流程：<br>【① 创意产生】<br>①来源：顾客、员工、竞争者、渠道、供应商、技术趋势。②方法：头脑风暴、观察法、lead user、众包、设计思维。③创意必须经过筛选进入可验证概念。<br>【② 概念开发与测试】<br>①把创意转化为顾客能理解的产品概念。②测试顾客是否理解、相信、需要并愿意购买。③降低开发后期失败成本。<br>【③ 商业模式与产品设计】<br>①明确价值主张、目标顾客、收益逻辑与渠道。②产品差异化、包装、服务和价格必须互相一致。③BMC 可用于整理商业模式。<br>【④ Stage-Gate 流程】<br>①每一阶段完成任务，每个 gate 做继续、修改、停止判断。②优点是控制风险、分配资源、提高透明度。③局限是过硬流程可能压制探索性创新。<br>【⑤ 市场测试与上市】<br>①通过测试市场、模拟测试、A/B 测试确认需求与营销组合。②上市后观察采用过程：认知、兴趣、评价、试用、采用。③关注创新者、早期采用者与鸿沟。",
+    "ja": "新製品開発はひらめきではなく，アイデアを段階的に選別・検証・事業化し，市場に採用させる管理プロセスである：<br>【① アイデア創出】<br>①源泉：顧客，従業員，競争者，チャネル，供給業者，技術トレンド。②方法：ブレーンストーミング，観察法，lead user，クラウドソーシング，デザイン思考。③検証可能なコンセプトへ絞り込む。<br>【② コンセプト開発とテスト】<br>①アイデアを顧客が理解できる製品コンセプトへ変換する。②顧客が理解し，信じ，必要とし，購入したいかを検証する。③開発後期の失敗コストを下げる。<br>【③ ビジネスモデルと製品設計】<br>①価値提案，標的顧客，収益論理，チャネルを明確にする。②製品差別化，包装，サービス，価格は整合させる。③BMC は整理に有用である。<br>【④ Stage-Gate プロセス】<br>①各 stage で課題を遂行し，各 gate で継続・修正・中止を判断する。②リスク管理，資源配分，透明性に優れる。③硬直的運用は探索的革新を抑制しうる。<br>【⑤ 市場テストと上市】<br>①テスト市場，模擬テスト，A/B テストで需要とミックスを確認する。②上市後は認知，関心，評価，試用，採用を観察する。③革新者，初期採用者，キャズムに注意する。"
   },
   "tags": [
     "stage-gate",
     "Cooper",
     "new product"
   ],
-  "format": "narrative",
+  "format": "accordion",
   "evalContent": {
     "zh": {
-      "义": "新品开发的标准流程·大企业 marketing 必学",
-      "限": "线性·慢·与 lean 形成对照",
-      "例": "P&G·Toyota·医药行业新品",
-      "应": "Kotler 18 章·新品开发题"
+      "义": "考试用总览卡，将该领域的零散概念组织成可论述的流程。",
+      "限": "总览会压缩细节，具体题目仍需回到细卡补充术语和案例。",
+      "例": "可作为该领域论述题开头框架。",
+      "应": "用于大学院过去问的综合论述。"
     },
     "ja": {
-      "限": "線形·遅·lean と対照",
-      "例": "P&G·Toyota·医薬産業新製品"
+      "限": "総覧は細部を圧縮するため，具体問題では詳細カードで用語と事例を補う必要がある。",
+      "例": "当該領域の論述問題の冒頭骨格として使える。"
     }
   },
   "createdAt": "2026-04-30T07:36:03.755Z",
-  "updatedAt": "2026-05-02T11:54:16.775Z"
+  "updatedAt": "2026-05-02T12:37:13.457Z"
 }

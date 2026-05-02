@@ -3,7 +3,6 @@
   "discipline": "marketing",
   "schools": [
     "sdl",
-    "managerial",
     "service_marketing"
   ],
   "scholars": [
@@ -12,32 +11,32 @@
   ],
   "year": "1985",
   "title": {
-    "zh": "服务 4 特性·IHIP·无形性·变动性·不可分·消灭性",
-    "ja": "サービス 4 特性 IHIP・無形性・変動性・不可分性・消滅性",
-    "en": "Services 4 Characteristics (IHIP)"
+    "zh": "服务营销总览·7P·IHIP·SERVQUAL·服务三角",
+    "ja": "サービス・マーケティング総覧・7P・IHIP・SERVQUAL・サービス三角形",
+    "en": "Service Marketing Overview"
   },
   "body": {
-    "zh": "<strong>サービス 4 特性（IHIP·Services Marketing 基础）</strong>是服务 marketing 的奠基理论·区分服务与有形商品的本质差异。<br><br><strong>4 大特性</strong>：<br>① <strong>Intangibility（無形性）</strong>——服务无法触摸·消费者难评估购买前质量<br>marketing 应对：实体证据（physical evidence）·brand·人员形象<br>② <strong>Heterogeneity / Variability（変動性）</strong>——服务质量因人 / 时间 / 地点不同<br>marketing 应对：标准化训练·service script·QA 系统<br>③ <strong>Inseparability（不可分性）</strong>——生产与消费同时发生·顾客在场<br>marketing 应对：员工训练（前线员工 = marketer）·客户参与设计<br>④ <strong>Perishability（消滅性）</strong>——服务无法库存（空座位·空房间不能存）<br>marketing 应对：动态定价·yield management·需求 / 供给管理<br><br><strong>典型例</strong>：① 航空：variability（不同 crew 服务质量）+ perishability（空座立即蒸发）+ yield management（dynamic 价格）② 酒店：inseparability（顾客 check-in 必现场）+ Marriott loyalty programs<br><br><strong>跨学派关系</strong>：① 与 SDL（m070）的「服务才是经济本质」对照 ② 与 7P（m007）的服务扩展直接对接 ③ 与 relationship 学派的服务质量 / NPS 一致。",
-    "ja": "<strong>サービス 4 特性（IHIP·Services Marketing 基礎）</strong>はサービス・マーケティングの基礎理論·サービスと有形商品の本質差を区分。<br><br><strong>4 大特性</strong>：① <strong>Intangibility（無形性）</strong>·実物証拠·ブランド·人員イメージ ② <strong>Heterogeneity / Variability（変動性）</strong>·標準化訓練·service script·QA ③ <strong>Inseparability（不可分性）</strong>·従業員訓練（前線=marketer）·顧客参加 ④ <strong>Perishability（消滅性）</strong>·動的価格·yield management·需要供給管理<br><br><strong>典型例</strong>：① 航空：variability + perishability + yield management（動的価格）② ホテル：inseparability + Marriott loyalty<br><br><strong>他派との関係</strong>：① SDL（m070）と対照 ② 7P（m007）と直接接続 ③ relationship 学派サービス品質 / NPS と一致。"
+    "zh": "服务营销的核心是：服务不是单纯的无形产品，而是在顾客、员工与组织互动中共同生产和评价的体验：<br>【① 服务 4 特性：IHIP】<br>①无形性——事前难观察。②不可分性——生产与消费同时发生。③变动性——质量受人员、时间、地点影响。④消灭性——不能库存，需求波动会造成供需不匹配。<br>【② 服务营销 7P】<br>①传统 4P：Product、Price、Place、Promotion。②扩展 3P：People、Process、Physical Evidence。③服务质量来自内容、人员、流程与有形线索。<br>【③ SERVQUAL / RATER】<br>①可靠性 ②保证性 ③有形性 ④共感性 ⑤响应性。<br>【④ 服务营销三角】<br>①外部营销：企业向顾客承诺价值。②内部营销：企业培训和激励员工。③互动营销：员工与顾客接触中交付服务。<br>【⑤ 管理启示】<br>①同时管理顾客期待与实际体验。②员工满意、流程设计和顾客参与都会影响结果。③数字化服务仍需要处理信任、响应和体验一致性。",
+    "ja": "サービス・マーケティングの核心は，サービスを単なる無形財ではなく，顧客・従業員・組織の相互作用の中で共同生産され評価される経験として捉える点にある：<br>【① サービス4特性：IHIP】<br>①無形性——事前に観察しにくい。②不可分性——生産と消費が同時に起こる。③変動性——品質は人，時間，場所に影響される。④消滅性——在庫できず需給不一致が生じる。<br>【② サービス・マーケティング 7P】<br>①伝統的 4P：Product，Price，Place，Promotion。②拡張 3P：People，Process，Physical Evidence。③品質は内容，人，プロセス，有形手がかりから生まれる。<br>【③ SERVQUAL / RATER】<br>①信頼性 ②保証性 ③有形性 ④共感性 ⑤反応性。<br>【④ サービス・マーケティング三角形】<br>①外部マーケティング：企業が顧客に価値を約束する。②内部マーケティング：企業が従業員を教育・動機づける。③相互作用マーケティング：接点でサービスが提供される。<br>【⑤ 管理示唆】<br>①顧客期待と実際経験を同時に管理する。②従業員満足，プロセス設計，顧客参加が結果を左右する。③デジタルサービスでも信頼，反応性，一貫性が重要である。"
   },
   "tags": [
     "IHIP",
     "services",
     "intangibility"
   ],
-  "format": "narrative",
+  "format": "accordion",
   "evalContent": {
     "zh": {
-      "义": "服务 marketing 的基础理论·与有形商品对照",
-      "限": "4 特性边界模糊·SDL 视角下被超越",
-      "例": "航空·酒店·医疗是教科书 IHIP",
-      "应": "Kotler 第 9 章·SDL 题"
+      "义": "考试用总览卡，将该领域的零散概念组织成可论述的流程。",
+      "限": "总览会压缩细节，具体题目仍需回到细卡补充术语和案例。",
+      "例": "可作为该领域论述题开头框架。",
+      "应": "用于大学院过去问的综合论述。"
     },
     "ja": {
-      "限": "4 特性境界曖昧·SDL 視点で超越",
-      "例": "航空·ホテル·医療は教科書 IHIP"
+      "限": "総覧は細部を圧縮するため，具体問題では詳細カードで用語と事例を補う必要がある。",
+      "例": "当該領域の論述問題の冒頭骨格として使える。"
     }
   },
   "createdAt": "2026-04-30T07:35:33.462Z",
-  "updatedAt": "2026-05-02T11:54:03.247Z"
+  "updatedAt": "2026-05-02T12:37:15.279Z"
 }
