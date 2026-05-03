@@ -322,6 +322,145 @@ curl -X POST 'https://study.sususu.org/api/kps?discipline=keiei' \
 
 KP 写入专用快捷入口（返 schools/scholars/themes/tags/views/formats）。新代码可直接用更完整的 [`/api/metadata`](#91-get-apimetadatadisciplinekey--统一元数据)。
 
+### 4.8 `PATCH /api/kps/batch?discipline=<key>` — 批量局部编辑
+
+一次提交 ≤ **50 条** KP 的局部更新。支持 dryRun + 乐观锁 + 逐条结果。
+
+**与单条 `PATCH /api/kps/:id` 的关键区别**：`title` / `body` / `evalContent` 走 **shallow merge**（不传的子字段保持原值），不是整体替换。其余字段（`year` / `format` / `schools` / `scholars` / `tags`）整体替换。
+
+#### 请求体
+
+```json
+{
+  "dryRun": false,
+  "updates": [
+    {
+      "id": "m166",
+      "ifMatchVersion": 3,
+      "patch": {
+        "title": { "zh": "价格设定流程" },
+        "schools": ["pricing_strategy"]
+      }
+    }
+  ]
+}
+```
+
+| 字段 | 必填 | 说明 |
+|---|---|---|
+| `dryRun` | 默认 false | true = 不写入，返 diff + current_version |
+| `updates[]` | ✓ | 1-50 条 |
+| `updates[].id` | ✓ | KP id |
+| `updates[].ifMatchVersion` | dryRun 可省，非 dryRun 必传 | 乐观锁 — 不一致返 `version_conflict` |
+| `updates[].patch` | ✓ | 至少 1 个字段；不能含 `id` / `discipline` / `createdAt` / `updatedAt` / `version` 等禁止字段 |
+
+#### Shallow merge 语义
+
+```jsonc
+// 现有 KP
+{ "title": { "zh": "旧", "ja": "旧J", "en": "Old" } }
+
+// patch
+{ "title": { "zh": "新" } }
+
+// 结果（ja/en 保留）
+{ "title": { "zh": "新", "ja": "旧J", "en": "Old" } }
+```
+
+`evalContent` 走 1 层 merge：传 `evalContent.zh` 替换整个 zh Record（不深 merge 到 zh.义 这一级）。
+
+#### 数组字段
+
+| 操作 | 含义 |
+|---|---|
+| `"scholars": ["a", "b"]` | 替换 |
+| `"scholars": []` | **真清空** |
+| 不传 `scholars` key | **保持原值** |
+
+#### 响应（非 dryRun）
+
+```json
+{
+  "ok": true,
+  "dryRun": false,
+  "tenant": { "tenantId": "marketing", "discipline": "marketing", "role": "editor" },
+  "summary": { "total": 50, "succeeded": 48, "failed": 2 },
+  "results": [
+    { "id": "m166", "ok": true, "version": 4, "changed_fields": ["title.zh", "schools"] },
+    { "id": "m178", "ok": false, "reason": "version_conflict", "current_version": 9, "expected_version": 7 },
+    { "id": "m999", "ok": false, "reason": "kp_not_found" }
+  ]
+}
+```
+
+#### dryRun 响应
+
+```json
+{
+  "ok": true,
+  "dryRun": true,
+  "summary": { "total": 50, "succeeded": 48, "failed": 2 },
+  "results": [
+    {
+      "id": "m166",
+      "ok": true,
+      "current_version": 3,
+      "diff": {
+        "title.zh": { "before": "旧", "after": "新" },
+        "schools": { "before": ["pricing"], "after": ["pricing_strategy"] }
+      }
+    }
+  ]
+}
+```
+
+dryRun 模式下，**只要 KP 存在永远返 `current_version`**（即使 patch 校验失败），便于调用方修了 patch 直接重提。
+
+#### 推荐 Workflow
+
+```
+Step 1. dryRun (不带 ifMatchVersion) → 拿 diff + current_version
+Step 2. 人工/自动 review diff
+Step 3. 真实 PATCH (用 Step 1 拿到的 current_version 作 ifMatchVersion)
+```
+
+中间 Step 1→3 之间别人改了某条 KP → Step 3 该条返 `version_conflict` + 新 `current_version`，调用方决定 retry / skip / 重新 dryRun。
+
+#### 逐条 reason
+
+| reason | 含义 | 返 `current_version` |
+|---|---|---|
+| `kp_not_found` | id 不存在 | ❌ |
+| `kp_not_in_tenant` | KP 跨 tenant | ❌ |
+| `version_conflict` | ifMatchVersion 错 | ✅ + `expected_version` |
+| `ifMatchVersion_required` | 非 dryRun 没传 ifMatchVersion | ✅ |
+| `forbidden_field` | patch 含禁止字段 | ✅ |
+| `school_not_in_tenant` | schools 含跨学科 key | ✅ |
+| `scholar_not_in_tenant` | scholars 含跨学科 key | ✅ |
+
+#### 整体错误
+
+| HTTP | reason |
+|---|---|
+| 400 | `body_must_be_json` / `discipline_required` / `updates_empty` / `too_many_items` (>50) |
+| 422 | `schema_invalid` (整体形状错或单条 patch zod 校验失败) |
+
+#### curl 例
+
+```bash
+curl -X PATCH 'https://study.sususu.org/api/kps/batch?discipline=marketing' \
+  -H "Authorization: Bearer $MS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "dryRun": false,
+    "updates": [
+      { "id": "m166", "ifMatchVersion": 3, "patch": { "title": { "zh": "价格设定流程" } } }
+    ]
+  }'
+```
+
+详细 PRD 与实现要求：[v2/docs/BATCH-KP-EDIT-PRD.md](https://github.com/Suli-Hu/management-study/blob/main/v2/docs/BATCH-KP-EDIT-PRD.md)
+
 ---
 
 ## 5. School API
