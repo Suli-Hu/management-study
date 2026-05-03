@@ -182,11 +182,17 @@ Response:
 | `body.ja` | — | string | 日文正文 |
 | `tags` | — | string[] | 颜色标签数组，引用 discipline.tags[].key |
 | `format` | ✓ | enum | `narrative` / `flat-list` / `accordion` / `compare` / `quad` |
-| `evalContent.zh` | — | object | `{义,限,例,应,用,喻}` |
+| `evalContent.zh` | — | object | `{义,限,例,应,用,喻}` 6 个评价字段 — 每个字段含义严格区分，**写之前必读** [kp-field-guide.md §3](kp-field-guide.md#3-evaluations-6-字段语义) |
 | `evalContent.ja` | — | object | `{義,限,例,応,用,喩}` |
 | `createdAt` / `updatedAt` | — | ISO 8601 | 服务端强制刷为 now，可不填 |
 
-**body 5 种 format 的字符串结构**：见 [v2/public/docs/learning-kp-guide.md](learning-kp-guide.md)。
+> ⭐ **写新 KP 之前必读**：[kp-field-guide.md](kp-field-guide.md) — 每个字段的"语义 + 对例 + 错例 + 选择指南"详细教学，特别是：
+> - [Format 选择指南](kp-field-guide.md#1-format-选择指南--最重要的一步) — narrative / flat-list / accordion / compare / quad 怎么选
+> - [Body 字段语义](kp-field-guide.md#2-body-内的字段语义) — lead / items / compare 6 列 / quad 4 cells 每个字段详解
+> - [Evaluations 6 字段](kp-field-guide.md#3-evaluations-6-字段语义) — 义 / 限 / 例 / 应 / 用 / 喻 不可混淆
+> - [关联字段](kp-field-guide.md#4-关联字段) — schools / scholars / tags / year 写法
+
+api-reference 是**字段表参照**，本文件主要回答"叫什么、什么类型、必填吗"。**字段语义、什么时候选 A 不选 B、对例错例**全在 kp-field-guide.md。
 
 ### 3.2 School 字段
 
