@@ -10,8 +10,8 @@
   ],
   "year": "1924",
   "title": {
-    "zh": "AIDMA·AIDA 加记忆·日本广告标准",
-    "ja": "AIDMA・AIDA に記憶を加えた日本広告標準",
+    "zh": "AIDMA 模型",
+    "ja": "AIDMA モデル",
     "en": "AIDMA Model"
   },
   "body": {
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T05:03:53.295Z",
-  "updatedAt": "2026-04-30T13:20:51.889Z"
+  "updatedAt": "2026-05-03T02:53:27.692Z"
 }
