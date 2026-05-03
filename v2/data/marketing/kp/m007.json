@@ -11,8 +11,8 @@
   "year": "1981",
   "title": {
     "zh": "7P",
-    "ja": "7P・サービス業拡張マーケティング・ミックス",
-    "en": "7P · Service Marketing Mix Extension"
+    "ja": "7P",
+    "en": "7P"
   },
   "body": {
     "zh": "<strong>7P</strong>是 Booms & Bitner（1981）针对<strong>服务行业</strong>对 4P 的扩展·因服务的特性（无形性·不可分性·可变性·消滅性）使 4P 不足以描述服务 marketing。<br><br><strong>原 4P</strong>（Product·Price·Place·Promotion）+ <strong>新 3P</strong>：<br>⑤ <strong>People（人）</strong>——员工·顾客·参与者。服务质量直接由人决定·内部 marketing 必要。<br>⑥ <strong>Process（流程）</strong>——服务交付的流程·步骤·标准化程度·顾客参与方式。<br>⑦ <strong>Physical Evidence（物理证据）</strong>——服务发生的环境·设施·标识·氛围·制服·宣传材料等可见信号。<br><br><strong>背景</strong>：服务的特性决定 marketing 不能只看产品·必须把员工·流程·物理环境一起设计。例：星巴克的店内氛围（Physical Evidence）·咖啡师培训（People）·点单流程（Process）一起构成 marketing。<br><br><strong>跨学派关系</strong>：与 SDL（Vargo-Lusch 2004）哲学相通——SDL 强调「服务才是经济本质」·7P 是这一哲学的实务工具版。<br><br><strong>限界</strong>：7P 仍是「企业控制要素」视角·SDL 进一步把价值视为「与顾客共创」而非企业单方决定。",
@@ -33,5 +33,5 @@
     }
   },
   "createdAt": "2026-04-30T04:40:21.672Z",
-  "updatedAt": "2026-05-02T12:19:30.593Z"
+  "updatedAt": "2026-05-03T03:32:12.452Z"
 }
