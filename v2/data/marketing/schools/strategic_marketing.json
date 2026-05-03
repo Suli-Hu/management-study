@@ -2,14 +2,14 @@
   "key": "strategic_marketing",
   "discipline": "marketing",
   "title": {
-    "zh": "市场战略学派",
-    "ja": "戦略マーケティング学派",
-    "en": "Strategic Marketing School"
+    "zh": "战略营销",
+    "ja": "戦略マーケティング",
+    "en": "Strategic Marketing"
   },
   "era": "1980– marketing 与战略管理交融期",
   "summary": {
-    "zh": "<strong>市场战略学派</strong>把 marketing 看作 <strong>firm-level 长期竞争优势的源泉</strong>·与战略管理学派对话·代表 <strong>George Day</strong>（『The Capabilities of Market-Driven Organizations』1994）·<strong>Narver & Slater</strong>（市场导向 1990）·<strong>Jaworski & Kohli</strong>（market orientation 1993）。<br><br><strong>核心范式</strong>：marketing 不是部门活动·而是企业<strong>动态能力</strong>（dynamic capability）和<strong>市场导向文化</strong>的体现——firm performance 由 marketing capability 决定。<br><br><strong>核心内容</strong>：① <strong>市场导向</strong>三要素：customer orientation·competitor orientation·interfunctional coordination（Narver-Slater 1990）② <strong>marketing capability</strong> ③ <strong>Porter 5 forces</strong>（marketing 借入·Pro Plus 第 6 章）④ <strong>Porter 3 基本战略</strong>（cost leadership·differentiation·focus·Pro Plus 第 12 章）⑤ <strong>競争地位別戦略</strong>：リーダー·チャレンジャー·フォロワー·ニッチャー 4 类（Kotler 系列·Pro Plus 第 12 章）⑥ <strong>Ansoff 多角化 matrix</strong>·<strong>Abell 3 维定义</strong>（who·what·how）⑦ <strong>Christensen 破壊イノベーション</strong>（1997『Innovator's Dilemma』）⑧ <strong>Rogers 採用曲線</strong>（部分重叠·主属 consumer_behavior）。<br><br><strong>跨学派关系</strong>：与 <code>managerial</code> 互补——前者程序·这里战略层。与 <code>effectuation</code> 互补——前者重 capability·后者重 entrepreneurial action。<br><br><strong>局限</strong>：与战略管理学派边界模糊·「market orientation」实证测量争议。",
-    "ja": "<strong>戦略マーケティング学派</strong>はマーケティングを <strong>firm レベルの長期的競争優位の源泉</strong>として捉える。代表は <strong>George Day</strong>（『The Capabilities of Market-Driven Organizations』1994）·<strong>Narver & Slater</strong>（市場志向 1990）·<strong>Jaworski & Kohli</strong>（market orientation 1993）。<br><br><strong>核心パラダイム</strong>：マーケティングは部門活動ではなく、企業の<strong>ダイナミック・ケイパビリティ</strong>と<strong>市場志向の文化</strong>の表現である。<br><br><strong>主要内容</strong>：① <strong>市場志向</strong>3 要素 ② <strong>マーケティング・ケイパビリティ</strong> ③ <strong>Porter 5 つの競争要因</strong> ④ <strong>Porter 3 つの基本戦略</strong> ⑤ <strong>競争地位別戦略</strong>（リーダー·チャレンジャー·フォロワー·ニッチャー 4 類型）⑥ <strong>Ansoff 多角化マトリックス</strong>·<strong>Abell 3 次元定義</strong> ⑦ <strong>Christensen 破壊的イノベーション</strong>（1997）⑧ <strong>Rogers 採用曲線</strong>（一部）。<br><br><strong>他派との関係</strong>：<code>managerial</code> と相補。<code>effectuation</code> と相補。<br><br><strong>限界</strong>：戦略経営学派との境界が曖昧·「market orientation」の実証的測定をめぐる論争。"
+    "zh": "<strong>定义：</strong>战略营销研究企业如何通过市场选择、竞争优势、能力构建和成长方向来获得长期成果。<br><strong>考试范围：</strong>常考市场导向、竞争优势、Porter 5 力与基本战略、蓝海战略、BCG、GE、Ansoff、破坏性创新、商业模式和平台经济等。<br><strong>答题作用：</strong>适合回答“企业如何赢”的问题，把营销决策提升到竞争战略和长期成长层面。",
+    "ja": "<strong>定義：</strong>戦略マーケティングは，市場選択，競争優位，能力構築，成長方向を通じて企業が長期成果を得る方法を扱う領域である。<br><strong>試験範囲：</strong>市場志向，競争優位，Porter の 5 力と基本戦略，ブルー・オーシャン戦略，BCG，GE，Ansoff，破壊的イノベーション，ビジネスモデル，プラットフォーム経済が中心となる。<br><strong>答案での役割：</strong>企業がいかに勝つかを，競争戦略と長期成長の視点から説明するために使える。"
   },
   "themeKey": "marketing_strategy",
   "tags": [
@@ -21,5 +21,5 @@
   ],
   "concepts": [],
   "createdAt": "2026-04-30T04:28:15.165Z",
-  "updatedAt": "2026-04-30T04:28:15.165Z"
+  "updatedAt": "2026-05-03T03:48:37.945Z"
 }
