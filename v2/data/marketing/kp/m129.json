@@ -10,9 +10,9 @@
   ],
   "year": "1972",
   "title": {
-    "zh": "B2B 购买中枢·6 角色·Webster-Wind 1972",
-    "ja": "B2B 購買中枢・6 役割・Webster-Wind 1972",
-    "en": "B2B Buying Center · 6 Roles"
+    "zh": "B2B 购买中枢",
+    "ja": "B2B 購買中枢",
+    "en": "B2B Buying Center"
   },
   "body": {
     "zh": "<strong>B2B Buying Center（购买中枢）</strong>由 Webster & Wind 1972 年「A General Model for Understanding Organizational Buying Behavior」in <em>JM</em> 系统化·B2B marketing 的奠基概念。<br><br><strong>核心命题</strong>：B2B 购买<strong>不是个人决策</strong>·而是<strong>buying center</strong>（购买中枢）的群体决策——多角色·多动机·多信息。<br><br><strong>6 大角色</strong>：<br>① <strong>Initiator（发起人）</strong>——首先提出需要的人<br>② <strong>User（使用者）</strong>——实际使用产品的人<br>③ <strong>Influencer（影响者）</strong>——影响决策但不决（如技术专家）<br>④ <strong>Decider（决策者）</strong>——做最终决定（CEO·CFO 大单）<br>⑤ <strong>Buyer（采购员）</strong>——执行采购流程<br>⑥ <strong>Gatekeeper（守门员）</strong>——控制信息流（秘书·助理）<br><br><strong>marketing 启示</strong>：<br>① <strong>multi-touch marketing</strong>——同时触达 6 角色·不能只见 buyer<br>② <strong>角色不同·message 不同</strong>——CEO 看战略·user 看功能·gatekeeper 看流程<br>③ <strong>买方权力地图</strong>（mapping power）——找出真正的 decider<br>④ <strong>champion strategy</strong>——找内部支持者帮你推销<br><br><strong>典型例</strong>：<br>买 SaaS（如 Salesforce）：<br>- Initiator = sales director（提出需要 CRM）<br>- User = sales reps（每天用）<br>- Influencer = IT manager（评估技术）<br>- Decider = CFO 或 CEO（签 contract）<br>- Buyer = procurement（执行采购）<br>- Gatekeeper = CEO 助理（控制 calendar）<br><br><strong>跨学派关系</strong>：B2B 学派核心概念·与 KAM（m128）·B2B segmentation·sales 7 步骤一体。",
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T07:35:55.016Z",
-  "updatedAt": "2026-04-30T13:23:51.803Z"
+  "updatedAt": "2026-05-03T02:52:53.347Z"
 }
