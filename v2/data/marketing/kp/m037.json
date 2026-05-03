@@ -11,8 +11,8 @@
   "year": "2004",
   "title": {
     "zh": "品牌组合战略",
-    "ja": "ブランド・ポートフォリオ戦略・マルチブランド vs 統一ブランド",
-    "en": "Brand Portfolio · House of Brands vs Branded House"
+    "ja": "ブランド・ポートフォリオ戦略",
+    "en": "Brand Portfolio Strategy"
   },
   "body": {
     "zh": "<strong>Brand Portfolio（品牌组合）</strong>是企业管理多个 brand 的战略架构·Aaker 2004 年『Brand Portfolio Strategy』系统化。两种基本架构：<br><br><strong>① House of Brands（多 brand 战略）</strong><br>每个产品有独立 brand·企业母 brand 隐藏或弱化。<br>例：<br>- <strong>P&G</strong>：Tide·Pampers·Gillette·Pantene·Crest 各自独立·消费者不一定知道都是 P&G<br>- <strong>Unilever</strong>：Dove·Lipton·Knorr·Magnum 等<br><br>优势：① 每 brand 针对特定 segment·定位精准 ② 一个 brand 失败不影响其他 ③ 灵活 acquire 新 brand<br>劣势：① marketing 投资分散·成本高 ② 不能交叉受益 ③ 管理复杂<br><br><strong>② Branded House（统一 brand 战略）</strong><br>所有产品共享同一 brand·企业 brand = 产品 brand。<br>例：<br>- <strong>Apple</strong>：iPhone·iPad·MacBook·Apple Watch 都是「Apple」<br>- <strong>BMW</strong>：BMW 1·3·5·7 系列都是「BMW」（M·X 是子品牌）<br>- <strong>Virgin</strong>：Virgin Atlantic·Virgin Records·Virgin Galactic 跨产业<br><br>优势：① marketing 投资集中·成本低 ② brand equity 集中积累 ③ 新品上市 trial cost 低<br>劣势：① 一个产品失败损害整体 ② 难为不同 segment 定位<br><br><strong>③ Sub-Brand 战略</strong>（折中）<br>母 brand + 子 brand·如 Toyota Lexus（独立）·Microsoft Xbox·Sony PlayStation<br><br><strong>④ Endorsed Brand 战略</strong><br>主 brand 用·母 brand 在背后 endorse·如 Courtyard by Marriott·Nestle KitKat<br><br><strong>战略选择逻辑</strong>：<br>- 同质消费者 + 类似产品 → branded house<br>- 异质消费者 + 不同价格段 → house of brands<br>- 中间情况 → sub-brand / endorsed",
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T04:52:00.361Z",
-  "updatedAt": "2026-05-03T03:04:45.889Z"
+  "updatedAt": "2026-05-03T03:31:07.293Z"
 }
