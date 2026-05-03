@@ -19,6 +19,7 @@
  */
 
 import type { z } from 'zod';
+import { EVAL_DEFS } from './body-parser';
 
 const MIGRATION_GUIDE_URL = 'https://study.sususu.org/docs/migration-v0.8.md';
 
@@ -62,6 +63,14 @@ export function detectLegacyContract(payload: unknown): LegacyDetection | null {
     };
   }
 
+  if ('body' in p && typeof p.body === 'string') {
+    return {
+      reason: 'legacy_string_body',
+      message:
+        'v0.8.0 起 body 必须是 { zh: KpBody, ja?: KpBody } 形状，不能是顶层 string。详见 /docs/migration-v0.8.md §3。',
+    };
+  }
+
   if ('body' in p && p.body && typeof p.body === 'object') {
     const body = p.body as Record<string, unknown>;
     if (typeof body.zh === 'string' || typeof body.ja === 'string') {
@@ -91,19 +100,13 @@ function findLegacyEvalMarkerLang(body: Record<string, unknown>): 'zh' | 'ja' | 
 }
 
 /**
- * 6 evaluation tag（zhFull + 別名）的 marker：
- *   ◆意义—— / ◆意義—— / ◆局限—— / ◆限界—— / ◆例子—— / ◆例—— /
- *   ◆应对—— / ◆應對—— / ◆应用—— / ◆應用—— / ◆比喻—— / ◆譬喩——
- *
- * 注意：使用了 EVAL_DEFS 的别名集合（保持单一真源），所以 EVAL_DEFS 加新别名时
- * 这里自动跟。
+ * 直接复用 EVAL_DEFS 的别名集合（单一真源） — EVAL_DEFS 加新别名时这里自动跟，
+ * 不再需要在两处维护硬编码列表。
  */
 const LEGACY_EVAL_MARKER_PATTERN = (() => {
-  // 列出所有可能的全称 + 别名（同 body-parser EVAL_DEFS）
-  const aliases = [
-    '意义', '意義', '局限', '限界', '例子', '例',
-    '应对', '應對', '应用', '應用', '比喻', '譬喩',
-  ];
+  const aliases = EVAL_DEFS.flatMap((d) => d.aliases).map((a) =>
+    a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+  );
   return new RegExp(`◆\\s*(${aliases.join('|')})\\s*—{2,}`);
 })();
 

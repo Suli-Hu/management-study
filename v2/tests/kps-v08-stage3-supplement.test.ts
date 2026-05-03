@@ -861,12 +861,9 @@ describe('类8 legacy detector 边界', () => {
     expect(data.reason).toBe('legacy_eval_in_body');
   });
 
-  test('T8.5 [F1 BUG 复现] body.zh.prose 含 ◆企业例—— → detector hardcode 缺此 alias，绕过拒绝写入', async () => {
+  test('T8.5 body.zh.prose 含 ◆企业例—— → detector 命中 legacy_eval_in_body 422', async () => {
     // EVAL_DEFS (body-parser.ts:44) example 别名: ['例子', '企业例', '例']
-    // detector hardcode (kp-legacy-detector.ts:104): ['例子', '例'] — 缺 '企业例'
-    // 理想：reason='legacy_eval_in_body' + 422
-    // 当前：detector 不抓 → zod 通过 → 201 created（PRD §4.3 被绕过）
-    // 见报告 F1。本断言记录当前 BUGGY 现状；fix 后此 test 会反向 fail，提醒回顾。
+    // detector 直接复用 EVAL_DEFS.flatMap → 13 alias 全覆盖（含 '企业例'）
     const res = await kpsPOST(
       makeCtx(db, {
         method: 'POST',
@@ -884,7 +881,10 @@ describe('类8 legacy detector 边界', () => {
         },
       }),
     );
-    expect(res.status, '【F1】当前 buggy 行为：◆企业例—— 被 detector 漏检并写入 D1').toBe(201);
+    expect(res.status).toBe(422);
+    const data = await readJson(res);
+    expect(data.reason).toBe('legacy_eval_in_body');
+    expect(data.migration_guide).toBeDefined();
   });
 
   test('T8.6 全部 EVAL_DEFS 别名都应被 detector 识别（覆盖 13 alias）', async () => {
@@ -920,15 +920,11 @@ describe('类8 legacy detector 边界', () => {
         failed.push(`${key}/${alias} (got ${res.status} reason=${data.reason})`);
       }
     }
-    // 理想：failed list 空（13 alias 全识别）
-    // 当前：failed 含 'example/企业例 (got 201 reason=undefined)' — F1 BUG
-    // 本断言记录当前 BUGGY 现状；fix 后会反向 fail，提醒。
-    expect(failed, '【F1】当前 buggy 行为：detector 漏检 example/企业例 alias').toEqual([
-      'example/企业例 (got 201 reason=undefined)',
-    ]);
+    // detector 复用 EVAL_DEFS.flatMap → 13 alias 全识别 → failed list 应为空
+    expect(failed).toEqual([]);
   });
 
-  test('T8.7 顶层 `body` 不是 object 而是 string → legacy_string_body 还是 schema_invalid', async () => {
+  test('T8.7 顶层 `body` 不是 object 而是 string → legacy_string_body', async () => {
     const res = await kpsPOST(
       makeCtx(db, {
         method: 'POST',
@@ -943,10 +939,10 @@ describe('类8 legacy detector 边界', () => {
     );
     expect(res.status).toBe(422);
     const data = await readJson(res);
-    // detector 第 65 行检查 `'body' in p && p.body && typeof p.body === 'object'`
-    // string body 被跳过 detector → zod parse fail → body_structure_invalid
-    // 当前行为记录：detector 盲点 — 顶层 body=string 没归 legacy_string_body（F3）
-    expect(data.reason, '【F3】当前行为：顶层 body=string 归 body_structure_invalid 而非 legacy_string_body').toBe('body_structure_invalid');
+    // detector 在 'body in p && typeof p.body === object' 之前先判 typeof p.body === 'string'
+    // → 顶层 body=string 归 legacy_string_body（不再落到 zod → body_structure_invalid）
+    expect(data.reason).toBe('legacy_string_body');
+    expect(data.migration_guide).toBeDefined();
   });
 });
 
