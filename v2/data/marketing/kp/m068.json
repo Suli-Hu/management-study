@@ -10,8 +10,8 @@
   ],
   "year": "2000",
   "title": {
-    "zh": "顾客资产·Rust-Zeithaml-Lemon 2000",
-    "ja": "顧客エクイティ・Rust-Zeithaml-Lemon 2000",
+    "zh": "顾客资产",
+    "ja": "顧客エクイティ",
     "en": "Customer Equity"
   },
   "body": {
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T05:04:19.600Z",
-  "updatedAt": "2026-04-30T13:21:28.786Z"
+  "updatedAt": "2026-05-03T02:53:34.560Z"
 }
