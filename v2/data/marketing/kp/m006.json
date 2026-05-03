@@ -10,9 +10,9 @@
   ],
   "year": "1960",
   "title": {
-    "zh": "Marketing Mix 演化·Borden 12 要素·4P·4C·7T",
-    "ja": "マーケティング・ミックスの進化・Borden 12要素・4P・4C・7T",
-    "en": "Marketing Mix Evolution"
+    "zh": "Marketing Mix 演化",
+    "ja": "マーケティング・ミックスの進化",
+    "en": "Evolution of the Marketing Mix"
   },
   "body": {
     "zh": "Marketing Mix 是把战略转化为可执行战术组合的工具：<compare>Borden 12 要素|组合思想的起源|把营销活动理解为多个可调变量的组合，包括产品计划、价格、品牌、渠道、销售人员、广告、促销、包装、展示、服务、物流、调研等|起源|Borden 1953|优点是全面，缺点是过于复杂，不利于考试快速组织||4P|经典执行框架|Product、Price、Place、Promotion，把企业可控制的营销变量压缩成四类|卖方视角|McCarthy 1960 / Kotler|最适合说明企业如何配置营销手段，是过去问最常用答案骨架||4C|顾客视角的转换|Customer value、Cost、Convenience、Communication，把 4P 从买方视角重新解释|顾客视角|Lauterborn 1990|强调不是卖产品，而是提供顾客价值、降低顾客成本、提高便利性并沟通||7T|Kotler 16 版扩展|Targeting、Technology、Trade、Timing 等扩展要素，强调数字化与行动计划中的执行条件|现代扩展|Kotler 16th|适合说明 4P 并非固定清单，而会随市场环境与技术变化扩展</compare>",
@@ -33,5 +33,5 @@
     }
   },
   "createdAt": "2026-04-30T04:40:19.642Z",
-  "updatedAt": "2026-05-02T12:37:09.160Z"
+  "updatedAt": "2026-05-03T02:52:10.550Z"
 }
