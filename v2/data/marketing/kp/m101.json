@@ -9,9 +9,9 @@
   ],
   "year": "1968",
   "title": {
-    "zh": "消费者特性 3 因素·文化·社会·个人",
-    "ja": "消費者特性 3 要因・文化・社会・個人",
-    "en": "Consumer Characteristics · 3 Factors"
+    "zh": "消费者特性",
+    "ja": "消費者特性",
+    "en": "Consumer Characteristics"
   },
   "body": {
     "zh": "<strong>消费者特性 3 因素</strong>是消费者行为学派分析消费者决策的<strong>外部 + 个人因素</strong>框架·Kotler 第 3 章核心。<br><br><strong>3 大类因素</strong>：<br><br>① <strong>文化的因素（Cultural Factors）</strong>——最广泛影响<br>- <strong>Culture（文化）</strong>——价值观·perception·偏好的根本来源<br>- <strong>Subculture（亚文化）</strong>——nationality·religion·racial group·geographic region<br>- <strong>Social Class（社会阶层）</strong>——相对持久·分等级的群体<br>例：日本人偏好<strong>季节限定</strong>（文化）·关西人 vs 关东人（亚文化）·上流 vs 庶民（阶层）<br><br>② <strong>社会的因素（Social Factors）</strong>——人际影响<br>- <strong>Reference Groups（参考群体）</strong>——所属·志向·回避（详见 m032）<br>- <strong>Family（家族）</strong>——决策影响最大<br>- <strong>Roles & Status（角色·地位）</strong>——社会角色决定消费<br>例：父母选孩子的婴儿用品·CEO 选车显示 status<br><br>③ <strong>个人的因素（Personal Factors）</strong>——个体特性<br>- <strong>Age & Life Stage（年龄·人生阶段）</strong>——婴儿·学生·新婚·退休<br>- <strong>Occupation & Income（职业·收入）</strong>——影响消费力<br>- <strong>Lifestyle（生活方式）</strong>——VALS·AIO（详见 m033）<br>- <strong>Personality & Self-Concept（性格·自我概念）</strong>——self vs ideal self·real vs ideal<br><br><strong>marketing 启示</strong>：<br>① <strong>STP 细分依据</strong>——4 大细分变量与 3 大因素对应<br>② <strong>brand 设计</strong>——brand image 要匹配 target 的 personality / lifestyle<br>③ <strong>跨文化 marketing</strong>——文化因素决定本地化深度<br>④ <strong>family marketing</strong>——多人决策的 segment（如汽车·房子·假期）<br><br><strong>跨学派关系</strong>：① 与 m032 准拠集团 + m033 lifestyle 一体 ② 与 STP 4 变量直接对应 ③ 与 CCT 学派的文化分析有重叠但范式不同（CCT 是人文学派·这里是认知学派）。",
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T07:24:04.243Z",
-  "updatedAt": "2026-04-30T13:22:43.771Z"
+  "updatedAt": "2026-05-03T02:52:55.130Z"
 }
