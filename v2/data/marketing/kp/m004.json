@@ -10,8 +10,8 @@
   "year": "1967",
   "title": {
     "zh": "STP的“S”：4 大细分变量",
-    "ja": "4 つの細分化変数・人口統計・地理・行動・サイコグラフィック",
-    "en": "Four Segmentation Variables"
+    "ja": "細分化変数",
+    "en": "Segmentation Variables"
   },
   "body": {
     "zh": "市场细分使用的 <strong>4 大变量</strong>·Kotler 教材标准分类。记忆口诀：<strong>「地·人·行·心」</strong>。<br><br><strong>① Demographic（人口统计·人）</strong>：年龄·性别·收入·教育·职业·家庭结构·世代（如 Gen Z·Millennial）·人种。<br>例：「25-35 岁·女性·年收 600 万円以上·都市单身」<br><br><strong>② Geographic（地理·地）</strong>：国家·地区·都市规模·气候·人口密度·城乡。<br>例：「沿海大都市（東京·大阪·名古屋）vs 地方都市」<br><br><strong>③ Behavioral（行动·行）</strong>：购入频度·使用场面·brand loyalty·价格敏感度·use rate·benefits sought（追求的利益）。<br>例：「heavy user / 季节性购买 / 价格敏感型 / 时尚追随者」<br><br><strong>④ Psychographic（心理·心）</strong>：性格·价值观·生活方式·关心事·态度·VALS（Values, Attitudes and Lifestyles）分类。<br>例：「环境意识高·minimalist 派·DIY 派·快节奏都市派」<br><br><strong>类型分类</strong>：① 和 ② 是「硬数据」（直接观测）·③ 和 ④ 是「软数据」（需调研推断）。<br><br><strong>实务应用</strong>：通常组合 2-3 个变量切·如「Demographic + Psychographic」（如 25-35 岁 × 环境意识高 = 都市绿色消费者）。<br><br><strong>限界</strong>：传统 4 变量在数字时代显不足·新增了「<strong>needs-based segmentation</strong>」（需求基础细分·Kotler 16 版强调）·按消费者实际需求切分而非身份属性。",
@@ -32,5 +32,5 @@
     }
   },
   "createdAt": "2026-04-30T04:40:16.063Z",
-  "updatedAt": "2026-05-02T12:19:26.164Z"
+  "updatedAt": "2026-05-03T03:31:10.930Z"
 }
