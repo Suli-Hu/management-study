@@ -19,7 +19,10 @@
     "Kahneman",
     "Rogers"
   ],
-  "concepts": [],
+  "concepts": [
+    "m178",
+    "m179"
+  ],
   "createdAt": "2026-04-30T04:27:59.277Z",
-  "updatedAt": "2026-04-30T04:27:59.277Z"
+  "updatedAt": "2026-05-03T02:35:51.195Z"
 }
