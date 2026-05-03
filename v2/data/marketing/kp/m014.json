@@ -12,8 +12,8 @@
   "year": "1950",
   "title": {
     "zh": "营销志向演化",
-    "ja": "マーケティング 5 志向の進化・プロダクトから社会へ",
-    "en": "Five Marketing Orientations Evolution"
+    "ja": "マーケティング志向の進化",
+    "en": "Evolution of Marketing Orientations"
   },
   "body": {
     "zh": "Pro Plus（和田·恩藏·三浦『マーケティング戦略』）序章梳理的 marketing 概念<strong>5 志向演化</strong>·把企业看待市场的方式分为 5 个历史阶段。<br><br>① <strong>プロダクト志向（产品志向）</strong>·1900 年代初·Ford 大量生产时代——「我做出好产品·消费者自然会买」。代表：Ford T 型车「only in black」。<br><br>② <strong>販売志向（销售志向）</strong>·1920-50 年代·大量生产到大量销售——「产品做出来了·要靠 hard sell 推出去」。Drucker 名言「marketing 的目的是让 selling 成为不必要」直接批判这个志向。<br><br>③ <strong>ニーズ志向（需要志向）</strong>·1950-60 年代·Levitt 1960 Marketing Myopia——「先识别消费者需要·再设计产品」。这是<strong>marketing concept 学派的诞生</strong>。<br><br>④ <strong>顧客志向（顾客志向）</strong>·1980-90 年代·关系营销兴起——「不只是单次需要·要建长期关系」。Berry 1983 relationship marketing。<br><br>⑤ <strong>社会志向（社会志向）</strong>·2000 年代起——「marketing 必须考虑社会·伦理·环境责任」。CSR·BOP·sustainable marketing 兴起·Kotler 后期推动。<br><br><strong>各志向递进逻辑</strong>：从「企业 push」到「顾客 pull」·再到「社会 stakeholder」——视野不断扩展。<br><br><strong>跨学派关系</strong>：与 Marketing 1.0→5.0（Kotler 演化论）有部分对应——5 志向是<strong>企业内部视角</strong>·1.0-5.0 是 marketing 系统视角·两者互补不重复。",
@@ -39,5 +39,5 @@
     }
   },
   "createdAt": "2026-04-30T04:51:20.121Z",
-  "updatedAt": "2026-05-03T03:05:20.974Z"
+  "updatedAt": "2026-05-03T03:31:33.282Z"
 }
