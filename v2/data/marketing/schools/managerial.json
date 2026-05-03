@@ -2,13 +2,14 @@
   "key": "managerial",
   "discipline": "marketing",
   "title": {
-    "zh": "管理学派",
-    "ja": "マネジリアル・マーケティング学派",
-    "en": "Managerial Marketing School"
+    "zh": "营销管理总论",
+    "ja": "マーケティング管理総論",
+    "en": "Marketing Management Overview"
   },
   "era": "1960– 现代 marketing 主流",
   "summary": {
-    "zh": "<strong>管理学派</strong>是 marketing 的主流大本营，由 <strong>Kotler</strong>（1967 年初版『Marketing Management』起）系统化，把 marketing 看作企业有计划的<strong>管理过程</strong>（plan → analyze → strategy → tactics → control）。<br><br><strong>核心范式</strong>：marketing 不是单纯的销售技巧或广告艺术，而是一套可标准化的管理流程——所有「如何做 marketing」的程序性框架都属于此派。<br><br><strong>核心内容</strong>：<br>① <strong>STP</strong>（Smith 1956 细分起源 + Wind targeting + Ries-Trout 1981 定位 + Kotler 整合）<br>② <strong>4P / Marketing Mix</strong>（McCarthy 1960·Borden 12 要素）<br>③ <strong>PLC（产品生命周期）</strong>导入·成长·成熟·衰退 4 阶段战略 <br>④ <strong>G-STIC 行动计划</strong>（goal·strategy·tactics·implementation·control）<br>⑤ <strong>5C 分析</strong>（company·customer·collaborator·competitor·context）<br>⑥ marketing audit·成长战略·全球化战略·新製品開発过程。<br><br><strong>跨学派关系</strong>：vs <code>marketing_concept</code>（哲学层）——管理学派是「怎么做」·概念派是「为什么做」。vs <code>strategic_marketing</code>——前者是程序框架·后者是 firm-level 长期战略。<br><br><strong>局限</strong>：被批为「工具箱式 marketing」·过度程序化·对快速变化的数字时代·平台经济适应有限·与 SDL/CCT 等范式革命学派形成张力。"
+    "zh": "<strong>定义：</strong>营销管理总论把营销看作企业有计划的管理过程，围绕分析、计划、执行与控制来组织市场活动。<br><strong>考试范围：</strong>常考 Kotler 的营销管理框架、营销计划、SBU、SWOT、市场价值地图、营销审计、营销 10 大罪、顾客中心化等总论性概念。<br><strong>答题作用：</strong>适合用来搭建综合论述的骨架，把环境分析、战略选择、营销组合与控制评价连接起来。",
+    "ja": "<strong>定義：</strong>マーケティング管理総論は，マーケティングを分析・計画・実行・統制から成る管理プロセスとして整理する領域である。<br><strong>試験範囲：</strong>Kotler の管理枠組み，マーケティング計画，SBU，SWOT，市場価値マップ，マーケティング監査，マーケティング 10 の大罪，顧客中心化などが中心である。<br><strong>答案での役割：</strong>環境分析，戦略選択，マーケティング・ミックス，統制評価を結びつける総合論述の骨格として使える。"
   },
   "themeKey": "marketing_strategy",
   "tags": [],
@@ -38,5 +39,5 @@
     "m155"
   ],
   "createdAt": "2026-04-30T04:28:06.316Z",
-  "updatedAt": "2026-05-02T12:21:17.436Z"
+  "updatedAt": "2026-05-03T03:48:35.886Z"
 }
