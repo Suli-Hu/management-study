@@ -11,8 +11,8 @@
   ],
   "year": "2003",
   "title": {
-    "zh": "参照框架·Frame of Reference·定位基准",
-    "ja": "参照枠・Frame of Reference・定位基準",
+    "zh": "参照框架",
+    "ja": "参照枠",
     "en": "Frame of Reference"
   },
   "body": {
@@ -38,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:24:17.350Z",
-  "updatedAt": "2026-05-02T12:19:36.032Z"
+  "updatedAt": "2026-05-03T02:53:09.853Z"
 }
