@@ -11,8 +11,8 @@
   "year": "1960",
   "title": {
     "zh": "流通系列化",
-    "ja": "流通系列化・日本独自チャネル形態",
-    "en": "Japanese Distribution Keiretsu"
+    "ja": "流通系列化",
+    "en": "Distribution Keiretsu"
   },
   "body": {
     "zh": "<strong>流通系列化（japanese distribution keiretsu）</strong>是日本特有的 channel 形态·指 メーカー（厂家）通过<strong>资本·人事·契约·信用</strong>等手段将批发·零售商纳入自家系统·形成<strong>垂直整合</strong>。Pro Plus 第 7 章日本流通学派核心概念·一橋·京大命题热点。<br><br><strong>4 大手段</strong>：① <strong>资本系列化</strong>·投资入股 ② <strong>人事系列化</strong>·派遣员工 ③ <strong>取引系列化</strong>·テリトリー制·一店一帳合制·店会制 ④ <strong>金融系列化</strong>·建値制·リベート·アロウワンス<br><br><strong>4 个具体制度</strong>（控制流通的工具）：<br>① <strong>テリトリー制</strong>——分销商有专属销售区域·禁止越界<br>② <strong>一店一帳合制</strong>——零售店只能从指定批发商进货<br>③ <strong>店会制</strong>——同 brand 零售店组成「会」·共享情报·标准化<br>④ <strong>建値制</strong>——厂家定零售价·零售商遵守<br><br><strong>历史</strong>：松下电器（Panasonic）1950s 起建立家电 keiretsu·后扩展到化妆品·汽车·药品。1990 年代后受大店法修订·大手小売（永旺·伊藤忠）崛起·flow 系列化逐步崩溃。<br><br><strong>「パワー关系の崩壊」</strong>（Pro Plus 第 7 章关键词）——从厂家主导流通转为大手小売主导·建值制崩溃·二重価格表示·私有 brand 崛起。<br><br><strong>跨学派关系</strong>：与 relationship 学派的「製販同盟」（和田充夫）形成对照——前者是厂家强势的垂直控制·后者是平等的合作伙伴关系。",
@@ -38,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T05:03:34.208Z",
-  "updatedAt": "2026-05-03T03:05:52.368Z"
+  "updatedAt": "2026-05-03T03:33:23.576Z"
 }
