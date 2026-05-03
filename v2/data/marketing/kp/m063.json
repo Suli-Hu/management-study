@@ -10,7 +10,7 @@
   "year": "1990",
   "title": {
     "zh": "CLV 顾客生涯价值",
-    "ja": "CLV 顧客生涯価値・公式と応用",
+    "ja": "CLV 顧客生涯価値",
     "en": "Customer Lifetime Value"
   },
   "body": {
@@ -36,5 +36,5 @@
     }
   },
   "createdAt": "2026-04-30T05:04:10.819Z",
-  "updatedAt": "2026-05-03T03:05:17.142Z"
+  "updatedAt": "2026-05-03T03:33:20.015Z"
 }
