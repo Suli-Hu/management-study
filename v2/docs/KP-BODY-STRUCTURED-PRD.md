@@ -446,7 +446,67 @@ backfill 完成后旧列保留至 §6 hard cut。
 **Soft 部分**：
 - D1 column 双写（Stage 1-5）期间，渲染降级到旧 column 仍可用 — 这是数据层的 soft，不是 API 层的 soft
 
-### 6.3 老师 agent / 外部调用方迁移
+### 6.3 双写过渡的 3 道防线（保证最终切到新列，不会"无限期降级到旧列"）
+
+双写不是"两套渲染并存"—— 是**单向迁移过程**。3 道防线保证迁移**真的会完成**：
+
+#### 防线 1：Stage 2 起渲染层**默认读新列**（旧列仅作 fallback 救命）
+
+```ts
+// 渲染代码 from Stage 2 onward
+const bodyJson = kp.body_zh_json;
+if (!bodyJson) {
+  // 仅在新列写失败的极端情况下兜底，并立即上 sentry 告警
+  console.warn('[KP_RENDER_FALLBACK] new column empty, falling back to legacy', kp.id);
+  return renderLegacyBody(kp.body_zh, kp.format);
+}
+return renderStructuredBody(JSON.parse(bodyJson));
+```
+
+**关键**：默认行为是新列；fallback 触发 = 双写有 bug（监控告警），不是"两套等价二选一"。
+
+#### 防线 2：Stage 4 加双写漂移检测（CI / scheduled job）
+
+```ts
+// scripts/check-kp-double-write-drift.ts
+// 抽 100 条 KP 对比 parseBody(body_zh, format) vs JSON.parse(body_zh_json)
+// 不一致 → 失败 + 列出哪些 id 漂移
+for (const kp of sample(100)) {
+  const fromLegacy = legacyParse(kp.body_zh, kp.format);
+  const fromNew = JSON.parse(kp.body_zh_json);
+  assert(structurallyEqual(fromLegacy, fromNew), `drift on ${kp.id}`);
+}
+```
+
+每天定时跑 + 每次 deploy 跑。**双写漏洞被立即暴露**，不会悄悄漂移几周后才发现。
+
+#### 防线 3：Stage 5 **物理 drop 旧列**（终极保证）
+
+```sql
+-- migration 0021_kp_drop_legacy_columns.sql
+ALTER TABLE kp DROP COLUMN body_zh;
+ALTER TABLE kp DROP COLUMN body_ja;
+ALTER TABLE kp DROP COLUMN format;
+ALTER TABLE kp DROP COLUMN eval_content_zh_json;
+ALTER TABLE kp DROP COLUMN eval_content_ja_json;
+```
+
+旧列**物理消失**。任何想读旧列的代码（包括防线 1 的 fallback 分支）会**编译时报错**或**SQL fail**。
+
+→ **承诺**：从 Stage 2 起用户看到的就是新渲染。Stage 5 drop 旧列后**不可能回头**。
+
+#### 时间线可视化
+
+```
+Stage 1 (Day 1)         加新列 + 双写开始（渲染仍读旧列，因新列还是空）
+Stage 1 backfill        旧列 → 新列填一遍（跑 1 次脚本，~1 min）
+Stage 2 (Day 2-3)       渲染切到读新列（旧列降为"保险箱"，平时不读）
+Stage 3-4 (Day 4-12)    API contract 切 + 编辑器重写
+Stage 4 漂移监控        每天验证旧列 parse vs 新列一致
+Stage 5 (Day 13-14)     物理 drop 旧列 → 切断退路
+```
+
+### 6.4 老师 agent / 外部调用方迁移
 
 新增 `v2/public/docs/migration-v0.8.md`：
 - 旧 vs 新 API contract 对比
@@ -585,16 +645,24 @@ backfill 完成后旧列保留至 §6 hard cut。
 
 ---
 
-## 13. 决策点（需 review 时确认）
+## 13. 决策点（已 confirm，可开工）
 
-请在合并本 PRD 前明确以下决策：
+**Status：CONFIRMED** ✅ 6/6 决策点已 align（产品 + 架构 review 2026-05-03）
 
-1. **`format` 字段位置**：顶层 vs body 内？本 PRD 选「body 内」(§3.2.1)，是否同意？
-2. **D1 column 策略**：双写（保留旧列）vs 直接替换？本 PRD 选「双写过渡 + 最终 drop」(§3.2.4)
-3. **API hard cut vs soft compat**：本 PRD 选 hard cut at v0.8.0 (§6.2)
-4. **evaluations 是否抽出 body 字段独立**：本 PRD 选独立 (§3.2.2)，不再允许 `◆评价——` 嵌 body 内
-5. **quad cells 数量约束**：本 PRD 严格 4 (§3.1)。当前数据是不是都满足？要先 audit
-6. **stage 顺序**：Stage 4 编辑器是否可与 Stage 3 API 并行？取决于人手
+| # | 决策 | 选择 | 选 PRD §|
+|---|---|---|---|
+| 1 | `format` 字段位置 | **body 内** | §3.2.1 |
+| 2 | D1 column 策略 | **双写过渡 + 最终 drop** + 3 道防线 | §3.2.4 + §6.3 |
+| 3 | API contract 切换 | **hard cut at v0.8.0** | §6.2 |
+| 4 | evaluations 字段位置 | **独立顶层字段**，body 内不再允许 `◆评价——` | §3.2.2 |
+| 5 | quad cells 数量 | **严格 4**，但实施前先 audit 现有 4 个 quad KP 数据 | §3.1 |
+| 6 | stage 顺序 | **严格串行**（单人开发，质量优于工期） | §6.1 |
+
+**新增上线前必做**（基于决策 #5）：
+- [ ] **audit 4 个现有 quad KP**：`for f in data/*/kp/*.json; jq 'select(.format=="quad") | {id, cells_len: (.body.zh | ...)}'`，确认每个都是 4 cells；不是 4 的先手动修
+- [ ] migration 0020 写入前再跑一次 audit，防止用户期间又创建了非 4 cell 的 quad
+
+**下一步**：本 PRD 进入 confirmed 状态，可单独排期 implement v0.8.0（不在本 docs PR 范围）。
 
 ---
 
