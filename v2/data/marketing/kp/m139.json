@@ -11,9 +11,9 @@
   ],
   "year": "1962",
   "title": {
-    "zh": "创新采用过程·Rogers 5 阶段与 Moore 鸿沟",
-    "ja": "イノベーション採用プロセス・Rogers 5 段階と Moore 鴻溝",
-    "en": "Innovation Adoption & Crossing the Chasm"
+    "zh": "创新采用过程",
+    "ja": "イノベーション採用プロセス",
+    "en": "Innovation Adoption Process"
   },
   "body": {
     "zh": "<strong>Innovation Adoption（创新采用过程）</strong>是 Rogers 1962 年提出的<strong>消费者层面</strong>采用过程·与 Rogers 採用曲線（m030·5 类用户）互补。<br><br><strong>Rogers 5 阶段采用过程</strong>：<br>① <strong>Awareness（认知）</strong>——首次知道<br>② <strong>Interest（兴趣）</strong>——主动搜索信息<br>③ <strong>Evaluation（评估）</strong>——决定是否值得试<br>④ <strong>Trial（试用）</strong>——小规模尝试<br>⑤ <strong>Adoption（采用）</strong>——决定持续使用<br><br><strong>影响采用速度的 5 大因素</strong>（Rogers 1962）：<br>① <strong>Relative Advantage（相对优势）</strong>——比既有方案优<br>② <strong>Compatibility（兼容性）</strong>——与既有 values·practices 一致<br>③ <strong>Complexity（复杂度）</strong>——容易理解 / 使用<br>④ <strong>Trialability（可试用）</strong>——可低成本尝试<br>⑤ <strong>Observability（可观察）</strong>——结果可见<br><br><strong>marketing 战略</strong>：<br>① 早期 launch 重点：降低 complexity·提升 trialability<br>② awareness 阶段：mass marketing<br>③ trial 阶段：sample·free trial·money-back<br>④ adoption 阶段：retention·loyalty<br><br><strong>Crossing the Chasm（跨越鸿沟·Geoffrey Moore 1991）</strong>：<br>Rogers 5 类用户中·early adopters → early majority 之间有「鸿沟」（chasm）。新製品扩散最易夭折在这。<br><br><strong>marketing 战略跨越 chasm</strong>：<br>① <strong>focus 单一 niche</strong>——而非广撒网<br>② <strong>whole product</strong>——提供 complete solution<br>③ <strong>positioning shift</strong>——从「酷新东西」到「实用 solution」<br><br><strong>典型例</strong>：① Tesla 跨过 chasm（Roadster 跑车 → Model S 高端 → Model 3 大众）② iPhone 1 → iPhone 4 跨 chasm ③ EV 整体 2020 跨 chasm<br><br><strong>跨学派关系</strong>：与 Rogers 採用曲線（m030）·Crossing the Chasm（Moore 1991）·digital_marketing 一体。",
@@ -39,5 +39,5 @@
     }
   },
   "createdAt": "2026-04-30T07:36:12.914Z",
-  "updatedAt": "2026-05-02T11:54:26.017Z"
+  "updatedAt": "2026-05-03T02:53:38.056Z"
 }
