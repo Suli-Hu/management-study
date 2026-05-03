@@ -10,8 +10,8 @@
   "year": "1960",
   "title": {
     "zh": "AMA 营销定义",
-    "ja": "AMA マーケティング定義改訂史・4 回の再定義",
-    "en": "AMA Marketing Definition · 4 Revisions"
+    "ja": "AMA マーケティング定義",
+    "en": "AMA Marketing Definition"
   },
   "body": {
     "zh": "<strong>American Marketing Association（AMA）</strong>1937 年设立·成为 marketing 学定义的<strong>权威标准制定者</strong>。AMA 对 marketing 的定义经历过 <strong>4 次重大改订</strong>·反映 marketing 思想的历史演化。<br><br><strong>① 1960 年定义</strong>（销售导向时代）<br>「<em>The performance of business activities that direct the flow of goods and services from producers to consumers or users.</em>」<br>核心：marketing = 「<strong>商品 producer → consumer 的流动</strong>」·偏物流·偏销售。<br><br><strong>② 1985 年定义</strong>（marketing concept 时代）<br>「<em>The process of planning and executing the conception, pricing, promotion, and distribution of ideas, goods and services to create exchanges that satisfy individual and organizational objectives.</em>」<br>核心：marketing = 「<strong>4P 整合的交换过程</strong>」·明确加入 4P·强调「satisfy」（顾客中心起步）。<br><br><strong>③ 2004 年定义</strong>（关系营销时代）<br>「<em>An organizational function and a set of processes for creating, communicating, and delivering value to customers and for managing customer relationships in ways that benefit the organization and its stakeholders.</em>」<br>核心：marketing = 「<strong>价值创造·传达·提供 + 关系管理</strong>」·首次明确「stakeholder」（社会志向起步）。<br><br><strong>④ 2007 年定义</strong>（社会志向时代·现行）<br>「<em>The activity, set of institutions, and processes for creating, communicating, delivering, and exchanging offerings that have value for customers, clients, partners, and society at large.</em>」<br>核心：marketing = 「<strong>为顾客·客户·伙伴·整个社会创造·传达·交换价值</strong>」·明确「society」·标志 social marketing 时代到来。<br><br><strong>3 个演化趋势</strong>：① 从「物流」到「过程」到「制度」② 从「商品」到「价值」③ 从「顾客」到「stakeholder」到「社会」。",
@@ -36,5 +36,5 @@
     }
   },
   "createdAt": "2026-04-30T04:51:32.314Z",
-  "updatedAt": "2026-05-03T03:04:51.397Z"
+  "updatedAt": "2026-05-03T03:31:46.377Z"
 }
