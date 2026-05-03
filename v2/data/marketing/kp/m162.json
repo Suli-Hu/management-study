@@ -10,8 +10,8 @@
   "year": "1980",
   "title": {
     "zh": "定价目标",
-    "ja": "価格設定目標 5 大類・生存から品質リーダーへ",
-    "en": "Pricing Objectives · 5 Types"
+    "ja": "価格設定目標",
+    "en": "Pricing Objectives"
   },
   "body": {
     "zh": "<strong>Pricing Objectives（价格设定目标）</strong>是定价决策的<strong>第一步</strong>·决定后续所有 pricing 决策。Kotler 第 11 章·Pro Plus 第 9 章核心。<br><br><strong>5 大目标</strong>：<br>① <strong>Survival（生存）</strong>——价格 ≥ 变动成本·渡过短期危机<br>例：疫情期间航空·餐饮 deep discount<br>② <strong>Maximum Current Profit（短期利润最大化）</strong>——基于需求 / 成本估算定 max profit price<br>例：season sale·短期 promotion<br>③ <strong>Maximum Market Share（市场份额最大化·penetration）</strong>——低价快速占领<br>例：Netflix 早期 $7.99 / 月<br>④ <strong>Maximum Market Skimming（撇脂·skimming）</strong>——高价吸收最高 willingness to pay 顾客<br>例：iPhone 新 release·新药<br>⑤ <strong>Product-Quality Leadership（产品质量领导）</strong>——高价表达高质量·brand premium<br>例：Hermès·BMW·Apple<br><br><strong>非营利 / 公共部门 pricing 目标</strong>：<br>① cost recovery（公共服务）② subsidized prices（教育·医疗）③ social price（公益 / cause）<br><br><strong>marketing 战略影响</strong>：<br>① 不同目标 → 完全不同 pricing strategy<br>② 短期 vs 长期 trade-off<br>③ 每 year / quarter 调整 objectives<br><br><strong>典型例</strong>：<br>- Tesla 早期：skimming（Roadster）→ market share（Model 3）<br>- Apple iPhone：skimming（new model）+ 老款留下做 entry-level<br>- Amazon：market share（Prime 低价）→ profitability（高 margin services）<br><br><strong>跨学派关系</strong>：与 marketing strategy（G-STIC 的 Goal）·pricing methods（m120）·PLC（m010）一体。",
@@ -36,5 +36,5 @@
     }
   },
   "createdAt": "2026-04-30T09:26:16.345Z",
-  "updatedAt": "2026-05-03T03:04:35.383Z"
+  "updatedAt": "2026-05-03T03:31:51.714Z"
 }
