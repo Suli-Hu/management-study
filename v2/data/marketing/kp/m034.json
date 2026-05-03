@@ -10,8 +10,8 @@
   "year": "1991",
   "title": {
     "zh": "Aaker 品牌资产 5 维度",
-    "ja": "Aaker ブランド・エクイティ 5 次元",
-    "en": "Aaker's Brand Equity · 5 Dimensions"
+    "ja": "Aaker ブランド・エクイティ",
+    "en": "Aaker Brand Equity"
   },
   "body": {
     "zh": "<strong>Aaker brand equity 5 维度</strong>是 David Aaker 1991 年『Managing Brand Equity』提出的 brand 资产化测量框架·成为品牌资产学派的<strong>基础模型</strong>。<br><br><strong>5 个维度</strong>：<br><br>① <strong>Brand Awareness（品牌认知度）</strong>——消费者识别·回忆 brand 的程度<br>- recognition（认出·辅助）→ recall（回忆·非辅助）→ top of mind（首次想到）<br>- 测量：unaided recall·aided recall·brand recognition<br><br>② <strong>Perceived Quality（感知质量）</strong>——消费者对 brand 整体质量的主观感知<br>- 注意：是「感知」不是「实际」——marketing 影响感知<br>- 例：日本 brand 在亚洲被感知高质量·部分是 brand 形象积累<br><br>③ <strong>Brand Loyalty（品牌忠诚度）</strong>——消费者对 brand 的偏好和持续购买<br>- 5 阶梯：switcher·habitual·satisfied·committed·spiritual loyalty<br>- 高 loyalty = 价格敏感度低 + 抗替代品能力强<br><br>④ <strong>Brand Associations（品牌联想）</strong>——消费者把 brand 与什么联系起来<br>- 类型：产品属性·使用情境·人物·文化·情感<br>- 例：BMW = 「ultimate driving machine」·Volvo = 「safety」<br><br>⑤ <strong>Other Proprietary Assets（其他独有资产）</strong>——专利·商标·channel 关系等<br><br><strong>5 维度的 marketing 价值</strong>：<br>① 价格溢价能力<br>② 进入新类目时减少 trial 成本<br>③ 抗 crisis 韧性<br>④ marketing 投资 ROI 提高<br>⑤ 在 channel 中的议价权<br><br><strong>vs Keller CBBE</strong>：Aaker 的 5 维侧重<strong>从企业角度看 brand 是什么</strong>·CBBE Pyramid 侧重<strong>从消费者角度看 brand 怎么形成</strong>·两者互补。",
@@ -36,5 +36,5 @@
     }
   },
   "createdAt": "2026-04-30T04:51:55.066Z",
-  "updatedAt": "2026-04-30T13:19:48.371Z"
+  "updatedAt": "2026-05-03T03:32:23.992Z"
 }
