@@ -133,6 +133,40 @@ EMAIL_TRUST / password 模式）收敛为 SaaS 标准的"邮箱+密码"主路径
 
 ---
 
+## W8 — KP body 结构化重构（v0.8.x，5 stage）
+
+把 KP `body: string` (DSL) 重构成 discriminated union per format，根除 format/body 不一致 bug。完整 PRD：[KP-BODY-STRUCTURED-PRD.md](docs/KP-BODY-STRUCTURED-PRD.md)。
+
+| 版本 | Stage | 内容 | PR |
+|---|---|---|---|
+| v0.7.7-v0.7.36 | — | 中间版本号（学习 API + admin endpoints + 各种 hotfix），不属本 W 主线 | — |
+| v0.7.37 | Stage 0 | KpBody discriminated union schema + helpers + types | #34 |
+| v0.7.38 | Stage 1 | D1 双写过渡 + backfill admin endpoint | #35 |
+| v0.7.39 | Stage 2 | 渲染层切新列 + fallback 告警 | #36 |
+| v0.7.40 | hotfix | Stage 1+2 typecheck 修 | — |
+| v0.7.41 | Stage 1+2 | 测试补洞 + audit/drift helper（52 invariants） | #38 |
+| v0.7.42 | Stage 1+2 | evals 4 路径写入 null fallback 语义统一 | #39 |
+| **v0.8.0** | **Stage 3** | **API contract hard cut** — POST/PATCH/batch 接 `KpBody`；6 个 `legacy_*` 422 + `migration_guide` URL；`evalContent` → `evaluations` 改名 + 6 子 key 英化；`GET /api/kps/empty-body`；`v2/public/docs/migration-v0.8.md` 真源 | #40 |
+| v0.8.x | Stage 4 | 编辑器重写 5 个 per-format form（5d） | □ |
+| v0.8.x | Stage 5 | drop 旧列 + git JSON 全量迁移（1d） | □ |
+
+**设计决策**（PRD §13 6/6 confirmed，不再 review）：
+
+- D1: `format` 字段在 body 内（不在顶层）
+- D2: D1 双写过渡 + 最终 drop（3 道防线：默认读新 + 漂移检测 + 物理 drop）
+- D3: API hard cut at v0.8.0（无双轨）
+- D4: `evaluations` 独立顶层字段（body 内不再允许 `◆评价——`）
+- D5: quad cells 严格 4
+- D6: 串行 5 stage，单人开发，质量优于工期
+
+**Stage 3 deferred to Stage 4**（Test Eng1 报告 finding，详见 [v0.8-rollout-plan.md](docs/v0.8-rollout-plan.md)）：
+- F4 (P3): `classifyZodFailure` 把非 body 字段错归 `body_structure_invalid` — 应默认归 `schema_invalid`
+- F5 (P2): schema 允许 `zh.format != ja.format`，旧列 `format` 只跟 zh — Stage 5 后自然消失，或编辑器侧强制同步
+
+**老师 agent 通知**：deferred to Stage 5 完成后一并发（避免 Stage 4/5 期间二次迁移），届时给 [migration-v0.8.md](public/docs/migration-v0.8.md) URL。
+
+---
+
 ## W8+ 长期
 
 - **W8**: 多学科一次扩 3-4 个（marketing / HR / OB / 战略）
