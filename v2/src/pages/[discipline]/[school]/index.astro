@@ -16,7 +16,8 @@ import Layout from '~/layouts/Layout.astro';
 import EmptyRight from '~/components/EmptyRight.astro';
 import LangFab from '~/components/LangFab.astro';
 import { getDb } from '~/lib/db';
-import { renderBodyForSchool, renderEvalModule, type KpFormat } from '~/lib/render-body';
+import { renderEvalModule, type KpFormat } from '~/lib/render-body';
+import { renderBodyWithFallback } from '~/lib/render-body-with-fallback';
 import { renderInlineHtml } from '~/lib/render-inline';
 import { editHref } from '~/lib/nav';
 import { tagColor } from '~/lib/tag-color';
@@ -61,6 +62,8 @@ type KpListItem = {
   body_zh: string; body_ja: string | null; format: KpFormat;
   eval_content_zh_json: string; eval_content_ja_json: string;
   scholars_csv: string | null;
+  // v0.8.0 Stage 1 新列（可能 NULL）
+  body_zh_json: string | null; body_ja_json: string | null;
 };
 
 // 完整页用：list query（v0.5.49 的 fat 查询，给左栏 + mobile inline expand 用）
@@ -74,6 +77,7 @@ if (!isPartial) {
       SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year,
         k.body_zh, k.body_ja, k.format,
         k.eval_content_zh_json, k.eval_content_ja_json,
+        k.body_zh_json, k.body_ja_json,
         (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id ORDER BY position) as scholars_csv
       FROM kp k
       INNER JOIN kp_school ks ON ks.kp_id = k.id
@@ -227,7 +231,14 @@ const canEdit = Astro.locals.canEdit(discipline);
               {selectedKp.title_ja && selectedLang === 'zh' && <div class="text-xs text-tertiary mt-1">{selectedKp.title_ja}</div>}
             </div>
           </header>
-          <div class="mt-6" set:html={renderBodyForSchool({ fmt: selectedKp.format, body: selectedBody!, accentHex })} />
+          <div class="mt-6" set:html={renderBodyWithFallback({
+            body_json: selectedUseJa ? selectedKp.body_ja_json : selectedKp.body_zh_json,
+            body_string: selectedBody!,
+            format: selectedKp.format,
+            accentHex,
+            variant: 'school',
+            kp_id: selectedKp.id,
+          })} />
           <div set:html={renderEvalModule(selectedEvalContent)} />
         </>
       ) : (
@@ -367,7 +378,14 @@ const canEdit = Astro.locals.canEdit(discipline);
             // v0.5.78: inline body 跟随页面 ?lang=；该 KP 没 ja → 退回 zh
             const useJa = selectedLang === 'ja' && !!k.body_ja;
             const inlineBody = useJa ? k.body_ja! : k.body_zh;
-            const inlineBodyHtml = renderBodyForSchool({ fmt: k.format, body: inlineBody, accentHex });
+            const inlineBodyHtml = renderBodyWithFallback({
+              body_json: useJa ? k.body_ja_json : k.body_zh_json,
+              body_string: inlineBody,
+              format: k.format,
+              accentHex,
+              variant: 'school',
+              kp_id: k.id,
+            });
             const evalRaw = useJa ? k.eval_content_ja_json : k.eval_content_zh_json;
             let kpEval: EvalContent | null = null;
             try { kpEval = JSON.parse(evalRaw) as EvalContent; }
@@ -462,7 +480,14 @@ const canEdit = Astro.locals.canEdit(discipline);
                 {selectedKp.title_ja && selectedLang === 'zh' && <div class="text-xs text-tertiary mt-1">{selectedKp.title_ja}</div>}
               </div>
             </header>
-            <div class="mt-6" set:html={renderBodyForSchool({ fmt: selectedKp.format, body: selectedBody!, accentHex })} />
+            <div class="mt-6" set:html={renderBodyWithFallback({
+            body_json: selectedUseJa ? selectedKp.body_ja_json : selectedKp.body_zh_json,
+            body_string: selectedBody!,
+            format: selectedKp.format,
+            accentHex,
+            variant: 'school',
+            kp_id: selectedKp.id,
+          })} />
             <div set:html={renderEvalModule(selectedEvalContent)} />
           </>
         ) : (
