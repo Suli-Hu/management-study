@@ -158,6 +158,28 @@ export function parsedToStructured(parsed: ParsedBody): KpBody {
 }
 
 /**
+ * 旧 evalContent dict (key=glyph 字符 '义/限/例/应/用/喻') → 新 KpEvaluationsLang 形态。
+ * 给 v0.8.0 Stage 1 双写时把 evalContent 字段转换到新列用。
+ */
+export function evalContentToEvaluations(evalContent: Record<string, string>): {
+  meaning: string;
+  limit: string;
+  example: string;
+  response: string;
+  application: string;
+  analogy: string;
+} {
+  return {
+    meaning: evalContent['义'] ?? '',
+    limit: evalContent['限'] ?? '',
+    example: evalContent['例'] ?? '',
+    response: evalContent['应'] ?? '',
+    application: evalContent['用'] ?? '',
+    analogy: evalContent['喻'] ?? '',
+  };
+}
+
+/**
  * 抽出 ParsedBody 里的 6 个 evaluations 字段。
  * 旧 ParsedBody 把它们和 body 内容混在一起；新 schema 是独立 KpEvaluations 字段。
  */

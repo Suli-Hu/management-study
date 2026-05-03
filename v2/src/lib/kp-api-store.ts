@@ -1,4 +1,43 @@
 import type { KpCreateInput, KpPatchInput } from '~/schemas/kp-api';
+import { parseBody } from './body-parser';
+import { parsedToStructured, evalContentToEvaluations } from './kp-body-helpers';
+
+/**
+ * v0.8.0 Stage 1 双写 helper：从旧 string body + format + evalContent 派生 5 个新列字段。
+ * 所有 API-first 写入路径（create / patch / batch）共用，保证双写完整性。
+ */
+function deriveStructuredColumns(input: {
+  body: { zh: string; ja?: string | null };
+  format: string;
+  evalContent?: { zh?: Record<string, string>; ja?: Record<string, string> };
+}): {
+  body_zh_json: string;
+  body_ja_json: string | null;
+  evaluations_zh_json: string;
+  evaluations_ja_json: string | null;
+  body_format: string;
+} {
+  const fmt = (input.format ?? 'narrative') as Parameters<typeof parseBody>[1];
+  const parsedZh = parseBody(input.body.zh, fmt);
+  const parsedJa = input.body.ja ? parseBody(input.body.ja, fmt) : null;
+  const structuredZh = parsedToStructured(parsedZh);
+  const structuredJa = parsedJa ? parsedToStructured(parsedJa) : null;
+
+  const evalsZh = input.evalContent?.zh && Object.keys(input.evalContent.zh).length > 0
+    ? evalContentToEvaluations(input.evalContent.zh)
+    : { meaning: '', limit: '', example: '', response: '', application: '', analogy: '' };
+  const evalsJa = input.evalContent?.ja && Object.keys(input.evalContent.ja).length > 0
+    ? evalContentToEvaluations(input.evalContent.ja)
+    : null;
+
+  return {
+    body_zh_json: JSON.stringify(structuredZh),
+    body_ja_json: structuredJa ? JSON.stringify(structuredJa) : null,
+    evaluations_zh_json: JSON.stringify(evalsZh),
+    evaluations_ja_json: evalsJa ? JSON.stringify(evalsJa) : null,
+    body_format: fmt,
+  };
+}
 
 export interface KpApiRecord {
   id: string;
@@ -245,13 +284,20 @@ export async function createKpRecord(
   if (!refs.ok) return { ok: false, status: 422, reason: refs.reason, detail: refs.detail };
 
   const now = new Date().toISOString();
+  // v0.8.0 Stage 1 双写：派生 5 个新列字段
+  const structured = deriveStructuredColumns({
+    body: input.body,
+    format: input.format ?? 'narrative',
+    evalContent: input.evalContent,
+  });
   const stmts: D1PreparedStatement[] = [
     db.prepare(
       `INSERT INTO kp (
         id, tenant_id, discipline, year, title_zh, title_en, title_ja,
         body_zh, body_ja, tags_json, eval_content_zh_json, eval_content_ja_json,
-        format, created_by, updated_by, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        format, created_by, updated_by, created_at, updated_at,
+        body_zh_json, body_ja_json, evaluations_zh_json, evaluations_ja_json, body_format
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     ).bind(
       id,
       tenant.tenantId,
@@ -270,6 +316,12 @@ export async function createKpRecord(
       userId,
       now,
       now,
+      // v0.8.0 Stage 1 新列
+      structured.body_zh_json,
+      structured.body_ja_json,
+      structured.evaluations_zh_json,
+      structured.evaluations_ja_json,
+      structured.body_format,
     ),
     db.prepare('DELETE FROM kp_fts WHERE id = ?').bind(id),
     db.prepare(
@@ -323,13 +375,20 @@ export async function patchKpRecord(
   if (!refs.ok) return { ok: false, status: 422, reason: refs.reason, detail: refs.detail };
 
   const now = new Date().toISOString();
+  // v0.8.0 Stage 1 双写：派生 5 个新列字段
+  const structured = deriveStructuredColumns({
+    body: next.body,
+    format: next.format,
+    evalContent: next.evalContent,
+  });
   const stmts: D1PreparedStatement[] = [
     db.prepare(
       `UPDATE kp SET
         year = ?, title_zh = ?, title_en = ?, title_ja = ?,
         body_zh = ?, body_ja = ?, tags_json = ?,
         eval_content_zh_json = ?, eval_content_ja_json = ?,
-        format = ?, updated_by = ?, updated_at = ?
+        format = ?, updated_by = ?, updated_at = ?,
+        body_zh_json = ?, body_ja_json = ?, evaluations_zh_json = ?, evaluations_ja_json = ?, body_format = ?
        WHERE id = ? AND COALESCE(tenant_id, discipline) = ? AND discipline = ?`,
     ).bind(
       next.year ?? '',
@@ -344,6 +403,12 @@ export async function patchKpRecord(
       next.format,
       userId,
       now,
+      // v0.8.0 Stage 1 新列
+      structured.body_zh_json,
+      structured.body_ja_json,
+      structured.evaluations_zh_json,
+      structured.evaluations_ja_json,
+      structured.body_format,
       kpId,
       tenant.tenantId,
       tenant.discipline,
