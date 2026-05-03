@@ -10,9 +10,9 @@
   ],
   "year": "2011",
   "title": {
-    "zh": "共享价值创造·CSV·Porter-Kramer 2011",
-    "ja": "共有価値創造 CSV・Porter-Kramer 2011",
-    "en": "Creating Shared Value (CSV)"
+    "zh": "共享价值创造",
+    "ja": "共有価値創造",
+    "en": "Creating Shared Value"
   },
   "body": {
     "zh": "<strong>CSV（Creating Shared Value·共享价值创造）</strong>由 Michael Porter 与 Mark Kramer 在 2011 年 <em>Harvard Business Review</em>「Creating Shared Value」提出·主张企业利润和社会价值<strong>不冲突·而是整合</strong>·成为 CSR 的进化版。<br><br><strong>核心命题</strong>：<br>「<em>Creating economic value in a way that also creates value for society by addressing its needs and challenges.</em>」<br><br><strong>vs CSR 的根本区别</strong>：<br>| 维度 | CSR | CSV |<br>|---|---|---|<br>| 价值观 | 慈善义务 | 经济 + 社会一体 |<br>| 投资逻辑 | 利润 - CSR 投资 | CSR = 利润源泉 |<br>| 战略地位 | 边缘部门 | 核心战略 |<br>| 主体 | 企业被动 | 企业主动 |<br>| 测量 | 成本 | ROI |<br><br><strong>CSV 3 大实现路径</strong>：<br>① <strong>Reconceiving Products and Markets</strong>——重塑产品和市场<br>例：Nestlé 「Healthy Kids」——更健康的食品 = 更好生意<br>② <strong>Redefining Productivity in the Value Chain</strong>——重定义价值链生产率<br>例：Walmart 减少包装·节约成本 + 减少环境影响<br>③ <strong>Building Supportive Industry Clusters</strong>——构建支持性产业集群<br>例：Yara Norway 在非洲投资农业基础设施·扩大化肥市场<br><br><strong>典型案例</strong>：<br>① <strong>Nestlé Cocoa Plan</strong>——投资 cocoa 农户教育·提升 cocoa 质量·双赢<br>② <strong>Tesla</strong>——加速 EV·气候 + 商业双赢（Musk 战略明确 CSV）<br>③ <strong>Patagonia</strong>——回收旧衣服·减少环境 + brand 强化<br>④ <strong>Toyota Prius</strong>——hybrid 技术·环保 + 商业成功<br><br><strong>CSV 的 3 大批判</strong>：<br>① <strong>Crane et al. 2014</strong>·「CSV 不是新概念·是包装」<br>② <strong>不解决企业责任的 fundamental conflict</strong>——某些情况下利润和社会真冲突<br>③ <strong>实务难度大</strong>——能找到 win-win 的不多<br><br><strong>跨学派关系</strong>：① 是 CSR 的进化版·把 CSR 整合进 strategic_marketing ② 与 BOP（Prahalad）共享「商业 + 社会双赢」哲学 ③ Pro Plus 第 14 章 4 节「マネジリアル・マーケティングとの統合」表达类似思想。",
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T05:14:17.101Z",
-  "updatedAt": "2026-04-30T13:22:01.539Z"
+  "updatedAt": "2026-05-03T02:53:06.386Z"
 }
