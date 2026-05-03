@@ -13,6 +13,8 @@
 
 import type { KpBatchPatchInput, KpBatchUpdateItem } from '~/schemas/kp-batch-api';
 import { getKpRecord, type KpApiRecord } from './kp-api-store';
+import { parseBody } from './body-parser';
+import { parsedToStructured, evalContentToEvaluations } from './kp-body-helpers';
 
 // 禁止字段（PRD §3.2.5）— 出现在 patch 里立即返 forbidden_field
 // 注意：因为 zod schema strict() 已经会拒绝未知 key，这里再显式 check 是双保险，
@@ -172,13 +174,27 @@ async function writeKpFromMerged(
   userId: string,
 ): Promise<{ ok: true; new_version: number } | { ok: false; reason: string; detail?: unknown }> {
   const now = new Date().toISOString();
+  // v0.8.0 Stage 1 双写：派生 5 个新列字段
+  const fmt = (merged.format ?? 'narrative') as Parameters<typeof parseBody>[1];
+  const parsedZh = parseBody(merged.body.zh, fmt);
+  const parsedJa = merged.body.ja ? parseBody(merged.body.ja, fmt) : null;
+  const structuredZh = parsedToStructured(parsedZh);
+  const structuredJa = parsedJa ? parsedToStructured(parsedJa) : null;
+  const evalsZh = merged.evalContent?.zh && Object.keys(merged.evalContent.zh).length > 0
+    ? evalContentToEvaluations(merged.evalContent.zh)
+    : { meaning: '', limit: '', example: '', response: '', application: '', analogy: '' };
+  const evalsJa = merged.evalContent?.ja && Object.keys(merged.evalContent.ja).length > 0
+    ? evalContentToEvaluations(merged.evalContent.ja)
+    : null;
+
   const stmts: D1PreparedStatement[] = [
     db.prepare(
       `UPDATE kp SET
         year = ?, title_zh = ?, title_en = ?, title_ja = ?,
         body_zh = ?, body_ja = ?, tags_json = ?,
         eval_content_zh_json = ?, eval_content_ja_json = ?,
-        format = ?, updated_by = ?, updated_at = ?
+        format = ?, updated_by = ?, updated_at = ?,
+        body_zh_json = ?, body_ja_json = ?, evaluations_zh_json = ?, evaluations_ja_json = ?, body_format = ?
        WHERE id = ? AND COALESCE(tenant_id, discipline) = ? AND discipline = ?`,
     ).bind(
       merged.year ?? '',
@@ -193,6 +209,12 @@ async function writeKpFromMerged(
       merged.format,
       userId,
       now,
+      // v0.8.0 Stage 1 新列
+      JSON.stringify(structuredZh),
+      structuredJa ? JSON.stringify(structuredJa) : null,
+      JSON.stringify(evalsZh),
+      evalsJa ? JSON.stringify(evalsJa) : null,
+      fmt,
       kpId,
       tenant.tenantId,
       tenant.discipline,

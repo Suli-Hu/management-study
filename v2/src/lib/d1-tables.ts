@@ -27,6 +27,7 @@ export const KP_TABLE = {
   name: 'kp',
   pk: ['id'],
   cols: [
+    // ===== 旧列（v0.8.0 Stage 5 才 drop）=====
     'id',
     'discipline',
     'year',
@@ -41,6 +42,13 @@ export const KP_TABLE = {
     'format',
     'created_at',
     'updated_at',
+    // ===== 新列（v0.8.0 Stage 1 加，双写过渡）=====
+    // 加入 cols 数组 → buildUpsertStmt 自动要求 row 含这些字段 → 强制双写
+    'body_zh_json',           // structured KpBody JSON
+    'body_ja_json',
+    'evaluations_zh_json',    // structured KpEvaluations.zh JSON
+    'evaluations_ja_json',
+    'body_format',            // 冗余：= body_zh_json.format，便于 SQL filter
   ],
 } as const satisfies TableMeta;
 
