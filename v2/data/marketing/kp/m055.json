@@ -11,7 +11,7 @@
   "year": "2011",
   "title": {
     "zh": "SIPS 模型",
-    "ja": "SIPS・電通の SNS 時代モデル",
+    "ja": "SIPS モデル",
     "en": "SIPS Model"
   },
   "body": {
@@ -38,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T05:03:57.011Z",
-  "updatedAt": "2026-05-03T03:05:18.889Z"
+  "updatedAt": "2026-05-03T03:32:56.780Z"
 }
