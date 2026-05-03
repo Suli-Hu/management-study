@@ -10,8 +10,8 @@
   "year": "1969",
   "title": {
     "zh": "VMS 垂直营销系统",
-    "ja": "VMS 垂直マーケティング・システム・3 タイプ",
-    "en": "Vertical Marketing System (VMS)"
+    "ja": "VMS 垂直マーケティング・システム",
+    "en": "Vertical Marketing System"
   },
   "body": {
     "zh": "<strong>VMS（Vertical Marketing System·垂直营销系统）</strong>是 Louis Stern 系统化的 channel 整合战略·把 channel 内多主体（厂家·批发·零售）的关系按整合度分为 3 类。Pro Plus 第 11 章·Kotler 第 15 章核心。<br><br><strong>3 种 VMS 类型</strong>：<br><br>① <strong>Corporate VMS（企业型 VMS）</strong>——单一企业拥有 channel 多个阶段（垂直整合）<br>例：① UNIQLO 的 SPA（製造小売一体）② 豐田直营 dealer ③ 资生堂自营专柜<br>优势：完全控制·一致体验·捕捉 channel 全部利润<br>劣势：投资大·缺乏灵活·风险集中<br><br>② <strong>Contractual VMS（契约型 VMS）</strong>——独立企业通过<strong>契约</strong>整合<br>3 种子类型：<br>- <strong>Wholesaler-Sponsored Voluntary Chain（批发商主导自愿连锁）</strong>——批发商把独立小零售店组织起来<br>- <strong>Retailer Cooperatives（零售合作社）</strong>——独立零售店共同采购·共享 brand<br>- <strong>Franchise（特许经营·最重要）</strong>——例：McDonald's·7-Eleven·Yoshinoya<br>例：7-Eleven Japan 的フランチャイズ系统是<strong>世界最成功的 contractual VMS</strong>之一<br><br>③ <strong>Administered VMS（管理型 VMS）</strong>——通过<strong>规模和市场力量</strong>而非契约协调<br>例：① P&G 用规模力量「软」管理零售店货架陈列 ② Walmart 用议价权要求供应商按其要求供货<br>优势：灵活·无法律约束<br>劣势：依赖 dominant party 的实力<br><br><strong>VMS vs Conventional Channel</strong>：<br>- Conventional：每方独立·短期交易·常 conflict<br>- VMS：整合协调·长期合作·conflict 减少·效率提高<br><br><strong>跨学派关系</strong>：与 relationship 学派的長期取引概念邻近。日本流通系列化是 corporate VMS + contractual VMS 的混合形态。",
@@ -36,5 +36,5 @@
     }
   },
   "createdAt": "2026-04-30T05:03:37.642Z",
-  "updatedAt": "2026-05-03T03:05:39.921Z"
+  "updatedAt": "2026-05-03T03:31:42.818Z"
 }
