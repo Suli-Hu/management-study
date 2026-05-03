@@ -9,8 +9,8 @@
   ],
   "year": "1968",
   "title": {
-    "zh": "EBM 模型·Engel-Kollat-Blackwell",
-    "ja": "EBM モデル・Engel-Kollat-Blackwell",
+    "zh": "EBM 模型",
+    "ja": "EBM モデル",
     "en": "EBM Model"
   },
   "body": {
@@ -36,5 +36,5 @@
     }
   },
   "createdAt": "2026-04-30T04:51:39.156Z",
-  "updatedAt": "2026-04-30T13:19:29.478Z"
+  "updatedAt": "2026-05-03T02:53:36.346Z"
 }
