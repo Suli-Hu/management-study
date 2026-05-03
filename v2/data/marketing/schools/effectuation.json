@@ -2,14 +2,14 @@
   "key": "effectuation",
   "discipline": "marketing",
   "title": {
-    "zh": "市场创造 / エフェクチュエーション",
-    "ja": "エフェクチュエーション·市場創造学派",
-    "en": "Effectuation / Market Creation"
+    "zh": "市场创造与效果推理",
+    "ja": "市場創造とエフェクチュエーション",
+    "en": "Market Creation and Effectuation"
   },
   "era": "2001– entrepreneurial marketing",
   "summary": {
-    "zh": "<strong>市场创造 / エフェクチュエーション学派</strong>主张 marketing 不是「发现 / 应对」市场·而是<strong>主动创造</strong>市场。锚点 <strong>Saras Sarasvathy</strong>（2001『Causation and Effectuation』in <em>Academy of Management Review</em>·2008『Effectuation』）。日本本土代表 <strong>栗木契</strong>（神戸·effectuation 日本研究核心）。<br><br><strong>核心范式</strong>：传统战略 = <strong>causation</strong>（先定目标·再找手段）·effectuation = <strong>从已有手段创造目标</strong>（bird-in-hand·从「我是谁·我知道什么·我认识谁」出发）。这是创业逻辑·不是预测逻辑。<br><br><strong>核心内容</strong>：① <strong>Effectuation 5 原则</strong>：① <strong>Bird-in-hand</strong>（从已有资源出发）② <strong>Affordable Loss</strong>（不算预期收益·算可承受损失）③ <strong>Crazy Quilt</strong>（与利益相关者共建）④ <strong>Lemonade</strong>（拥抱意外·turn-bad-into-good）⑤ <strong>Pilot-in-the-plane</strong>（人控制未来·非预测未来）② <strong>causation vs effectuation 对照</strong> ③ <strong>Blue Ocean Strategy</strong>（Kim & Mauborgne 2005）④ <strong>新製品開発·Stage-Gate vs 创业型</strong> ⑤ <strong>市场感知 vs 市场创造</strong>。<br><br><strong>跨学派关系</strong>：与 <code>strategic_marketing</code> 互补——前者重 capability·effectuation 重 entrepreneurial action。与 <code>managerial</code>（程序化新品开发）形成对照。<br><br><strong>局限</strong>：理论年轻·实证测量难·适用边界（仅创业 / 全企业？）有争议。<br><br><strong>日本研究</strong>：<strong>栗木契</strong>（神戸大学）是日本 effectuation 核心研究者·与 Sarasvathy 直接对话。",
-    "ja": "<strong>エフェクチュエーション·市場創造学派</strong>はマーケティングを「発見 / 対応」ではなく<strong>主体的に創造する</strong>と主張。アンカーは <strong>Saras Sarasvathy</strong>（2001 in <em>AMR</em>·2008）。日本本土の代表は <strong>栗木契</strong>（神戸）。<br><br><strong>核心パラダイム</strong>：伝統的戦略 = <strong>causation</strong>（目標を定めてから手段を探す）·effectuation = <strong>既有手段から目標を創造する</strong>（bird-in-hand）。<br><br><strong>主要内容</strong>：① <strong>エフェクチュエーション 5 原則</strong>：Bird-in-hand·Affordable Loss·Crazy Quilt·Lemonade·Pilot-in-the-plane ② <strong>causation vs effectuation</strong> ③ <strong>ブルー・オーシャン戦略</strong>（Kim & Mauborgne 2005）④ <strong>新製品開発·Stage-Gate vs 起業型</strong> ⑤ <strong>市場感知 vs 市場創造</strong>。<br><br><strong>他派との関係</strong>：<code>strategic_marketing</code>·<code>managerial</code> と相補/対照。<br><br><strong>限界</strong>：理論若く·実証測定難·適用境界に論争。<br><br><strong>日本研究</strong>：<strong>栗木契</strong>（神戸大学）が核心研究者。"
+    "zh": "<strong>定义：</strong>市场创造与效果推理研究企业在不确定环境中，如何通过现有手段、伙伴关系和试错来创造新市场。<br><strong>考试范围：</strong>常考效果推理五原则、创业营销、新市场创造、非顾客转化、精益创业、市场测试和商业模式探索。<br><strong>答题作用：</strong>适合解释新事业和创业情境下，营销不是预测既有市场，而是边行动边创造市场。",
+    "ja": "<strong>定義：</strong>市場創造とエフェクチュエーションは，不確実な環境において企業が既存手段，パートナー関係，試行錯誤を通じて新市場を創造する方法を扱う領域である。<br><strong>試験範囲：</strong>エフェクチュエーションの五原則，アントレプレナー・マーケティング，新市場創造，非顧客転化，リーン・スタートアップ，市場テスト，ビジネスモデル探索が中心である。<br><strong>答案での役割：</strong>新事業や起業の文脈で，マーケティングが既存市場を予測するだけでなく，行動しながら市場を創造することを説明するために使える。"
   },
   "themeKey": "growth_relationship",
   "tags": [
@@ -20,5 +20,5 @@
   ],
   "concepts": [],
   "createdAt": "2026-04-30T04:28:02.650Z",
-  "updatedAt": "2026-04-30T04:28:02.650Z"
+  "updatedAt": "2026-05-03T03:49:10.477Z"
 }
