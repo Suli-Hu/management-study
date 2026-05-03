@@ -2,14 +2,14 @@
   "key": "consumer_behavior",
   "discipline": "marketing",
   "title": {
-    "zh": "消费者行为学派",
-    "ja": "消費者行動学派",
-    "en": "Consumer Behavior School"
+    "zh": "消费者行为",
+    "ja": "消費者行動",
+    "en": "Consumer Behavior"
   },
   "era": "1960– 认知科学派 marketing",
   "summary": {
-    "zh": "<strong>消费者行为学派</strong>把消费者当作<strong>信息处理者 / 决策者</strong>·借用<strong>认知心理学</strong>范式建立科学的行为模型。锚点 <strong>Howard & Sheth</strong>（1969『The Theory of Buyer Behavior』）·<strong>Engel-Kollat-Blackwell</strong>（EBM 模型）·<strong>Bettman</strong>（1979 信息处理范式）。<br><br><strong>核心范式</strong>：消费者购买决策 = 输入（刺激）→ 内部处理 → 输出（行为）·这一过程可建模·可测量·可预测。与 <code>cct_interpretive</code>（人文范式）形成<strong>方法论对照</strong>。<br><br><strong>核心内容</strong>：① <strong>S-O-R モデル</strong>（Stimulus-Organism-Response）② <strong>消费者决策 5 步</strong>（问题识别·信息搜索·替代品评价·购买·后购评价）③ <strong>Howard-Sheth 包括的意思決定模型</strong>·EBM·Bettman 模型 ④ <strong>ELM</strong>（Petty-Cacioppo 1986·中央 vs 周辺ルート）⑤ <strong>态度形成</strong>·知觉·记忆·动机·感知风险 ⑥ <strong>Kahneman 行为决策</strong>（System 1/2·prospect theory 1979·marketing 借入）⑦ <strong>Rogers 採用曲線</strong>（5 类：innovator·early adopter·early majority·late majority·laggard·1962）⑧ <strong>準拠集団研究</strong>·<strong>クチコミ</strong>·社会的影响。<br><br><strong>跨学派关系</strong>：vs <code>cct_interpretive</code> = 科学 vs 人文。与 <code>imc_communication</code> 共享态度形成 / 沟通模型。<br><br><strong>局限</strong>：过度认知化·忽视情感和文化层·对 post-modern 消费者解释力有限。<br><br><strong>日本研究</strong>：<strong>阿部誠</strong>（東大·marketing science·消费者购买模型实证）是日本数理消费者行为派代表。",
-    "ja": "<strong>消費者行動学派</strong>は消費者を<strong>情報処理者 / 意思決定者</strong>として捉え、<strong>認知心理学</strong>のパラダイムで科学的な行動モデルを構築する。代表的文献は <strong>Howard & Sheth</strong>（1969）·<strong>Engel-Kollat-Blackwell</strong>（EBM）·<strong>Bettman</strong>（1979）。<br><br><strong>核心パラダイム</strong>：消費者の購買決定 = 入力（刺激）→ 内部処理 → 出力（行動）·モデル化·測定·予測が可能。<code>cct_interpretive</code>（人文パラダイム）と<strong>方法論的対照</strong>。<br><br><strong>主要内容</strong>：① <strong>S-O-R モデル</strong> ② <strong>消費者意思決定 5 段階</strong> ③ <strong>Howard-Sheth 包括的意思決定モデル</strong>·EBM·Bettman ④ <strong>ELM</strong>（Petty-Cacioppo 1986）⑤ <strong>態度形成</strong>·知覚·記憶·動機·知覚リスク ⑥ <strong>Kahneman 行動意思決定</strong>（プロスペクト理論 1979）⑦ <strong>Rogers 採用曲線</strong>（5 タイプ）⑧ <strong>準拠集団</strong>·クチコミ·社会的影響。<br><br><strong>他派との関係</strong>：vs <code>cct_interpretive</code> = 科学 vs 人文。<code>imc_communication</code> と態度形成 / コミュニケーション・モデルを共有。<br><br><strong>限界</strong>：過度に認知化·情動と文化的層を無視·ポストモダン消費者への説明力が限定的。<br><br><strong>日本研究</strong>：<strong>阿部誠</strong>（東大）が日本数理消費者行動派の代表。"
+    "zh": "<strong>定义：</strong>消费者行为研究消费者如何感知、学习、记忆、形成态度，并在个人、社会和文化因素影响下做出购买决策。<br><strong>考试范围：</strong>常考 S-O-R、信息处理、知觉、记忆、态度、参与、参考群体、生活方式、决策规则、创新采用、外部性消费效应和行为决策理论。<br><strong>答题作用：</strong>适合解释“为什么顾客会这样买”，并为细分、定位、传播和价格设计提供心理机制。",
+    "ja": "<strong>定義：</strong>消費者行動は，消費者がどのように知覚し，学習し，記憶し，態度を形成し，個人的・社会的・文化的要因の下で購買意思決定を行うかを扱う領域である。<br><strong>試験範囲：</strong>S-O-R，情報処理，知覚，記憶，態度，関与，準拠集団，ライフスタイル，選択ルール，イノベーション採用，外部性消費効果，行動決定理論が中心である。<br><strong>答案での役割：</strong>顧客がなぜそのように購買するのかを説明し，細分化，ポジショニング，コミュニケーション，価格設計の心理的根拠を与える。"
   },
   "themeKey": "consumer_market",
   "tags": [
@@ -24,5 +24,5 @@
     "m179"
   ],
   "createdAt": "2026-04-30T04:27:59.277Z",
-  "updatedAt": "2026-05-03T02:35:51.195Z"
+  "updatedAt": "2026-05-03T03:48:43.633Z"
 }
