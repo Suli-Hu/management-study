@@ -10,8 +10,8 @@
   "year": "2022",
   "title": {
     "zh": "STP选定2 维度",
-    "ja": "戦略的ターゲティング・適合性と魅力 2 次元",
-    "en": "Strategic Targeting · Fit & Attractiveness 2D"
+    "ja": "戦略的ターゲティング",
+    "en": "Strategic Targeting"
   },
   "body": {
     "zh": "<strong>战略 ターゲティング</strong>是 Kotler 16 版（2022 与 Keller·Chernev 合著）的<strong>独创区分</strong>·把传统 Targeting 拆成战略层（哪些 segments 值得做）vs 战术层（怎么找到这些 customers）。战略 ターゲティング 用 <strong>适合性·魅力 2 维</strong>评估。<br><br><strong>① 适合性（適合性 / Fit）</strong>——「我能不能服务好这个 segment？」看自己（资源）。包含 8 要素：① 事業基础设施 ② 稀缺资源 ③ 熟练员工 ④ 合作伙伴网络 ⑤ Know-how ⑥ 强 brand ⑦ 确立的生态系统 ⑧ 资本。<br><br><strong>② 魅力（魅力 / Attractiveness）</strong>——「这个 segment 值不值得做？」看市场。包含 5 要素：金钱要素（① 收益 ② 提供成本）+ 战略要素（③ 社会价值 ④ 规模价值 ⑤ 信息价值）。<br><br><strong>2x2 矩阵决策</strong>：<br>- 适合性高 × 魅力高 → ✅ 立即进入（理想）<br>- 适合性低 × 魅力高 → ⚠️ 投资·补能力（陷阱）<br>- 适合性高 × 魅力低 → 👀 关注·待时机<br>- 适合性低 × 魅力低 → ❌ 放弃<br><br><strong>UNIQLO 例</strong>：basic-needs segment·适合性高（SPA·HEATTECH）+ 魅力高（市场大·无专门品牌）→ 进入。fast fashion segment·适合性低（无 ZARA 2 周供应链）→ 放弃（避陷阱）。",
@@ -32,5 +32,5 @@
     }
   },
   "createdAt": "2026-04-30T04:40:14.456Z",
-  "updatedAt": "2026-05-02T12:19:24.233Z"
+  "updatedAt": "2026-05-03T03:32:14.253Z"
 }
