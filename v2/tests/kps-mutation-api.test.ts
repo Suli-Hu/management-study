@@ -22,6 +22,12 @@ const KP_ROW = {
   format: 'narrative',
   eval_content_zh_json: '{}',
   eval_content_ja_json: '{}',
+  // v0.8.0：新列必须有值（patchKpRecord 会读 body_zh_json 做结构化 merge）
+  body_zh_json: JSON.stringify({ format: 'narrative', prose: '旧正文' }),
+  body_ja_json: null,
+  evaluations_zh_json: null,
+  evaluations_ja_json: null,
+  body_format: 'narrative',
   created_by: 'u1',
   updated_by: 'u1',
   created_at: '2026-01-01T00:00:00.000Z',

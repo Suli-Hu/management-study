@@ -41,14 +41,19 @@ async function seedBaseline(db: D1LikeDatabase) {
 }
 
 async function createCleanKp(db: D1LikeDatabase, id: string, body: string, format: string = 'narrative') {
+  // v0.8.0：测试用旧 DSL 字符串表达 body，内部转新结构化 KpBody
+  const { parseBody } = await import('~/lib/body-parser');
+  const { parsedToStructured } = await import('~/lib/kp-body-helpers');
+  const parsed = parseBody(body, format as Parameters<typeof parseBody>[1]);
+  const structured = parsedToStructured(parsed);
+
   await createKpRecord(
     db as unknown as D1Database,
     TENANT,
     {
       id,
       title: { zh: id },
-      body: { zh: body },
-      format: format as Parameters<typeof createKpRecord>[2]['format'],
+      body: { zh: structured },
       year: '',
       schools: ['motivation'],
       scholars: [],
@@ -190,13 +195,21 @@ describe('C3 — evaluations drift 单独识别', () => {
       {
         id: 'kev',
         title: { zh: 'kev' },
-        body: { zh: 'narrative' },
-        format: 'narrative',
+        body: { zh: { format: 'narrative', prose: 'narrative' } },
         year: '',
         schools: ['motivation'],
         scholars: [],
         tags: [],
-        evalContent: { zh: { 义: 'orig meaning' } },
+        evaluations: {
+          zh: {
+            meaning: 'orig meaning',
+            limit: '',
+            example: '',
+            response: '',
+            application: '',
+            analogy: '',
+          },
+        },
       },
       'u_test',
     );

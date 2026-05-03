@@ -1,42 +1,69 @@
-import type { KpCreateInput, KpPatchInput } from '~/schemas/kp-api';
-import { parseBody } from './body-parser';
-import { parsedToStructured, evalContentToEvaluations } from './kp-body-helpers';
-
 /**
- * v0.8.0 Stage 1 双写 helper：从旧 string body + format + evalContent 派生 5 个新列字段。
- * 所有 API-first 写入路径（create / patch / batch）共用，保证双写完整性。
+ * KP API store — v0.8.0 Stage 3 hard cut.
+ *
+ * 写入接受 new structured contract（KpCreateInput / KpPatchInput），写时同时填：
+ *   - 旧列：body_zh / body_ja / format / eval_content_*_json （response 暂兼容用）
+ *   - 新列：body_zh_json / body_ja_json / body_format / evaluations_*_json （render 主读）
+ *
+ * GET response 仍是旧 shape（migration-v0.8.md §1 "response 暂保留旧字段兼容，
+ * Stage 5 才 drop"）。Stage 4/5 才迁 GET 形状。
  */
-function deriveStructuredColumns(input: {
-  body: { zh: string; ja?: string | null };
-  format: string;
-  evalContent?: { zh?: Record<string, string>; ja?: Record<string, string> };
-}): {
+
+import type { KpCreateInput, KpPatchInput } from '~/schemas/kp-api';
+import type { KpBody, KpEvaluationsLang } from '~/schemas/kp-body-structured';
+import {
+  structuredToLegacyDsl,
+  evaluationsLangToLegacyEvalContent,
+  hasEvaluationsContent,
+} from './kp-body-helpers';
+
+interface DualWriteCols {
+  // 旧列（response shape 兼容）
+  legacy_body_zh: string;
+  legacy_body_ja: string | null;
+  legacy_format: string;
+  legacy_eval_content_zh_json: string;
+  legacy_eval_content_ja_json: string;
+  // 新列（render 主读）
   body_zh_json: string;
   body_ja_json: string | null;
   evaluations_zh_json: string | null;
   evaluations_ja_json: string | null;
   body_format: string;
-} {
-  const fmt = (input.format ?? 'narrative') as Parameters<typeof parseBody>[1];
-  const parsedZh = parseBody(input.body.zh, fmt);
-  const parsedJa = input.body.ja ? parseBody(input.body.ja, fmt) : null;
-  const structuredZh = parsedToStructured(parsedZh);
-  const structuredJa = parsedJa ? parsedToStructured(parsedJa) : null;
+}
 
-  // PM 决策 v0.7.42：evalContent 有 → 抽；没有 → null（4 路径一致）
-  const evalsZh = input.evalContent?.zh && Object.keys(input.evalContent.zh).length > 0
-    ? evalContentToEvaluations(input.evalContent.zh)
-    : null;
-  const evalsJa = input.evalContent?.ja && Object.keys(input.evalContent.ja).length > 0
-    ? evalContentToEvaluations(input.evalContent.ja)
-    : null;
+/**
+ * 从结构化 body + evaluations 派生双写列。
+ * 新列直接 JSON.stringify；旧列反推 DSL string + glyph-keyed evalContent。
+ *
+ * v0.7.42 PM 决策：evaluations 任一字段空时整体写 null（4 路径一致）。
+ */
+function deriveDualWriteCols(input: {
+  body: { zh: KpBody; ja?: KpBody };
+  evaluations?: { zh?: KpEvaluationsLang; ja?: KpEvaluationsLang };
+}): DualWriteCols {
+  const evalZh = input.evaluations?.zh;
+  const evalJa = input.evaluations?.ja;
+  const hasZh = hasEvaluationsContent(evalZh);
+  const hasJa = hasEvaluationsContent(evalJa);
 
   return {
-    body_zh_json: JSON.stringify(structuredZh),
-    body_ja_json: structuredJa ? JSON.stringify(structuredJa) : null,
-    evaluations_zh_json: evalsZh ? JSON.stringify(evalsZh) : null,
-    evaluations_ja_json: evalsJa ? JSON.stringify(evalsJa) : null,
-    body_format: fmt,
+    // 旧列
+    legacy_body_zh: structuredToLegacyDsl(input.body.zh),
+    legacy_body_ja: input.body.ja ? structuredToLegacyDsl(input.body.ja) : null,
+    legacy_format: input.body.zh.format,
+    legacy_eval_content_zh_json: hasZh && evalZh
+      ? JSON.stringify(evaluationsLangToLegacyEvalContent(evalZh))
+      : '{}',
+    legacy_eval_content_ja_json: hasJa && evalJa
+      ? JSON.stringify(evaluationsLangToLegacyEvalContent(evalJa))
+      : '{}',
+    // 新列
+    body_zh_json: JSON.stringify(input.body.zh),
+    body_ja_json: input.body.ja ? JSON.stringify(input.body.ja) : null,
+    evaluations_zh_json: hasZh && evalZh ? JSON.stringify(evalZh) : null,
+    evaluations_ja_json: hasJa && evalJa ? JSON.stringify(evalJa) : null,
+    body_format: input.body.zh.format,
   };
 }
 
@@ -95,6 +122,11 @@ interface KpRow {
   format: string;
   eval_content_zh_json?: string | null;
   eval_content_ja_json?: string | null;
+  body_zh_json?: string | null;
+  body_ja_json?: string | null;
+  evaluations_zh_json?: string | null;
+  evaluations_ja_json?: string | null;
+  body_format?: string | null;
   created_by?: string | null;
   updated_by?: string | null;
   created_at: string;
@@ -154,6 +186,41 @@ async function toRecord(db: D1Database, row: KpRow): Promise<KpApiRecord> {
     updated_by: row.updated_by ?? null,
     created_at: row.created_at,
     updated_at: row.updated_at,
+  };
+}
+
+/** 内部 helper：从 D1 row 反序列化结构化 body / evaluations（PATCH 合并时用）。 */
+async function getKpStructured(
+  db: D1Database,
+  kpId: string,
+): Promise<{ body: { zh: KpBody; ja?: KpBody }; evaluations: { zh?: KpEvaluationsLang; ja?: KpEvaluationsLang } } | null> {
+  const row = await db
+    .prepare(
+      'SELECT body_zh_json, body_ja_json, evaluations_zh_json, evaluations_ja_json FROM kp WHERE id = ? AND deleted_at IS NULL',
+    )
+    .bind(kpId)
+    .first<{
+      body_zh_json: string | null;
+      body_ja_json: string | null;
+      evaluations_zh_json: string | null;
+      evaluations_ja_json: string | null;
+    }>();
+  if (!row || !row.body_zh_json) return null;
+  const bodyZh = parseJson<KpBody | null>(row.body_zh_json, null);
+  if (!bodyZh) return null;
+  const bodyJa = row.body_ja_json ? parseJson<KpBody | null>(row.body_ja_json, null) : null;
+  const evalZh = row.evaluations_zh_json
+    ? parseJson<KpEvaluationsLang | null>(row.evaluations_zh_json, null)
+    : null;
+  const evalJa = row.evaluations_ja_json
+    ? parseJson<KpEvaluationsLang | null>(row.evaluations_ja_json, null)
+    : null;
+  return {
+    body: { zh: bodyZh, ...(bodyJa ? { ja: bodyJa } : {}) },
+    evaluations: {
+      ...(evalZh ? { zh: evalZh } : {}),
+      ...(evalJa ? { ja: evalJa } : {}),
+    },
   };
 }
 
@@ -285,12 +352,11 @@ export async function createKpRecord(
   if (!refs.ok) return { ok: false, status: 422, reason: refs.reason, detail: refs.detail };
 
   const now = new Date().toISOString();
-  // v0.8.0 Stage 1 双写：派生 5 个新列字段
-  const structured = deriveStructuredColumns({
+  const cols = deriveDualWriteCols({
     body: input.body,
-    format: input.format ?? 'narrative',
-    evalContent: input.evalContent,
+    evaluations: input.evaluations,
   });
+
   const stmts: D1PreparedStatement[] = [
     db.prepare(
       `INSERT INTO kp (
@@ -307,27 +373,26 @@ export async function createKpRecord(
       input.title.zh,
       input.title.en ?? null,
       input.title.ja ?? null,
-      input.body.zh,
-      input.body.ja ?? null,
+      cols.legacy_body_zh,
+      cols.legacy_body_ja,
       JSON.stringify(input.tags ?? []),
-      JSON.stringify(input.evalContent?.zh ?? {}),
-      JSON.stringify(input.evalContent?.ja ?? {}),
-      input.format ?? 'narrative',
+      cols.legacy_eval_content_zh_json,
+      cols.legacy_eval_content_ja_json,
+      cols.legacy_format,
       userId,
       userId,
       now,
       now,
-      // v0.8.0 Stage 1 新列
-      structured.body_zh_json,
-      structured.body_ja_json,
-      structured.evaluations_zh_json,
-      structured.evaluations_ja_json,
-      structured.body_format,
+      cols.body_zh_json,
+      cols.body_ja_json,
+      cols.evaluations_zh_json,
+      cols.evaluations_ja_json,
+      cols.body_format,
     ),
     db.prepare('DELETE FROM kp_fts WHERE id = ?').bind(id),
     db.prepare(
       'INSERT INTO kp_fts (id, title_zh, title_en, title_ja, body_zh, body_ja) VALUES (?, ?, ?, ?, ?, ?)',
-    ).bind(id, input.title.zh, input.title.en ?? '', input.title.ja ?? '', input.body.zh, input.body.ja ?? ''),
+    ).bind(id, input.title.zh, input.title.en ?? '', input.title.ja ?? '', cols.legacy_body_zh, cols.legacy_body_ja ?? ''),
   ];
 
   input.schools.forEach((schoolKey, i) => {
@@ -361,27 +426,51 @@ export async function patchKpRecord(
     return { ok: false, status: 403, reason: 'tenant_mismatch' };
   }
 
-  const next = {
-    ...current,
-    ...input,
-    title: input.title ?? current.title,
-    body: input.body ?? current.body,
-    schools: input.schools ?? current.schools,
-    scholars: input.scholars ?? current.scholars,
-    tags: input.tags ?? current.tags,
-    evalContent: input.evalContent ?? current.evalContent,
+  const currentStructured = await getKpStructured(db, kpId);
+  if (!currentStructured) {
+    return { ok: false, status: 500, reason: 'kp_structured_missing' };
+  }
+
+  // partial-by-language merge — title/body/evaluations 都按语种 shallow merge
+  const mergedTitle = {
+    zh: input.title?.zh ?? current.title.zh,
+    ...(input.title?.ja !== undefined ? { ja: input.title.ja } : current.title.ja !== undefined ? { ja: current.title.ja } : {}),
+    ...(input.title?.en !== undefined ? { en: input.title.en } : current.title.en !== undefined ? { en: current.title.en } : {}),
   };
 
-  const refs = await assertRefsBelongToTenant(db, tenant.discipline, next.schools, next.scholars);
+  const mergedBody: { zh: KpBody; ja?: KpBody } = {
+    zh: input.body?.zh ?? currentStructured.body.zh,
+    ...(input.body?.ja !== undefined
+      ? { ja: input.body.ja }
+      : currentStructured.body.ja !== undefined
+        ? { ja: currentStructured.body.ja }
+        : {}),
+  };
+
+  const mergedEvaluations: { zh?: KpEvaluationsLang; ja?: KpEvaluationsLang } = {
+    ...(input.evaluations?.zh !== undefined
+      ? { zh: input.evaluations.zh }
+      : currentStructured.evaluations.zh
+        ? { zh: currentStructured.evaluations.zh }
+        : {}),
+    ...(input.evaluations?.ja !== undefined
+      ? { ja: input.evaluations.ja }
+      : currentStructured.evaluations.ja
+        ? { ja: currentStructured.evaluations.ja }
+        : {}),
+  };
+
+  const nextSchools = input.schools ?? current.schools;
+  const nextScholars = input.scholars ?? current.scholars;
+  const nextTags = input.tags ?? current.tags;
+  const nextYear = input.year ?? current.year;
+
+  const refs = await assertRefsBelongToTenant(db, tenant.discipline, nextSchools, nextScholars);
   if (!refs.ok) return { ok: false, status: 422, reason: refs.reason, detail: refs.detail };
 
   const now = new Date().toISOString();
-  // v0.8.0 Stage 1 双写：派生 5 个新列字段
-  const structured = deriveStructuredColumns({
-    body: next.body,
-    format: next.format,
-    evalContent: next.evalContent,
-  });
+  const cols = deriveDualWriteCols({ body: mergedBody, evaluations: mergedEvaluations });
+
   const stmts: D1PreparedStatement[] = [
     db.prepare(
       `UPDATE kp SET
@@ -392,24 +481,23 @@ export async function patchKpRecord(
         body_zh_json = ?, body_ja_json = ?, evaluations_zh_json = ?, evaluations_ja_json = ?, body_format = ?
        WHERE id = ? AND COALESCE(tenant_id, discipline) = ? AND discipline = ?`,
     ).bind(
-      next.year ?? '',
-      next.title.zh,
-      next.title.en ?? null,
-      next.title.ja ?? null,
-      next.body.zh,
-      next.body.ja ?? null,
-      JSON.stringify(next.tags ?? []),
-      JSON.stringify(next.evalContent?.zh ?? {}),
-      JSON.stringify(next.evalContent?.ja ?? {}),
-      next.format,
+      nextYear,
+      mergedTitle.zh,
+      mergedTitle.en ?? null,
+      mergedTitle.ja ?? null,
+      cols.legacy_body_zh,
+      cols.legacy_body_ja,
+      JSON.stringify(nextTags),
+      cols.legacy_eval_content_zh_json,
+      cols.legacy_eval_content_ja_json,
+      cols.legacy_format,
       userId,
       now,
-      // v0.8.0 Stage 1 新列
-      structured.body_zh_json,
-      structured.body_ja_json,
-      structured.evaluations_zh_json,
-      structured.evaluations_ja_json,
-      structured.body_format,
+      cols.body_zh_json,
+      cols.body_ja_json,
+      cols.evaluations_zh_json,
+      cols.evaluations_ja_json,
+      cols.body_format,
       kpId,
       tenant.tenantId,
       tenant.discipline,
@@ -419,13 +507,13 @@ export async function patchKpRecord(
     db.prepare('DELETE FROM kp_fts WHERE id = ?').bind(kpId),
     db.prepare(
       'INSERT INTO kp_fts (id, title_zh, title_en, title_ja, body_zh, body_ja) VALUES (?, ?, ?, ?, ?, ?)',
-    ).bind(kpId, next.title.zh, next.title.en ?? '', next.title.ja ?? '', next.body.zh, next.body.ja ?? ''),
+    ).bind(kpId, mergedTitle.zh, mergedTitle.en ?? '', mergedTitle.ja ?? '', cols.legacy_body_zh, cols.legacy_body_ja ?? ''),
   ];
 
-  next.schools.forEach((schoolKey, i) => {
+  nextSchools.forEach((schoolKey, i) => {
     stmts.push(db.prepare('INSERT INTO kp_school (kp_id, school_key, position) VALUES (?, ?, ?)').bind(kpId, schoolKey, 1000 + i));
   });
-  next.scholars.forEach((scholarKey, i) => {
+  nextScholars.forEach((scholarKey, i) => {
     stmts.push(db.prepare('INSERT INTO kp_scholar (kp_id, scholar_discipline, scholar_key, position) VALUES (?, ?, ?, ?)').bind(kpId, tenant.discipline, scholarKey, 1000 + i));
   });
 
@@ -489,3 +577,7 @@ export async function listKpVersions(
     created_at: row.created_at,
   }));
 }
+
+// Re-export for callers that need to read structured form (e.g., batch store).
+export { getKpStructured };
+export type { KpRow };

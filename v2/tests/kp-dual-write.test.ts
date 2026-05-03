@@ -143,8 +143,7 @@ describe('v0.8.0 Stage 1 — 双写完整性', () => {
       {
         id: 'k010',
         title: { zh: '测试 KP' },
-        body: { zh: '正文 body' },
-        format: 'narrative',
+        body: { zh: { format: 'narrative', prose: '正文 body' } },
         year: '2026',
         schools: ['motivation'],
         scholars: [],
@@ -173,8 +172,7 @@ describe('v0.8.0 Stage 1 — 双写完整性', () => {
       {
         id: 'k020',
         title: { zh: 'orig' },
-        body: { zh: 'orig body' },
-        format: 'narrative',
+        body: { zh: { format: 'narrative', prose: 'orig body' } },
         year: '',
         schools: ['motivation'],
         scholars: [],
@@ -188,7 +186,7 @@ describe('v0.8.0 Stage 1 — 双写完整性', () => {
       db as unknown as D1Database,
       'k020',
       TENANT,
-      { body: { zh: 'patched body' } },
+      { body: { zh: { format: 'narrative', prose: 'patched body' } } },
       'u_test',
     );
     expect(r.ok).toBe(true);
@@ -209,8 +207,7 @@ describe('v0.8.0 Stage 1 — 双写完整性', () => {
       {
         id: 'k030',
         title: { zh: 'orig' },
-        body: { zh: 'orig' },
-        format: 'narrative',
+        body: { zh: { format: 'narrative', prose: 'orig' } },
         year: '',
         schools: ['motivation'],
         scholars: [],
@@ -220,13 +217,12 @@ describe('v0.8.0 Stage 1 — 双写完整性', () => {
     );
 
     const updates = [
-      { id: 'k030', ifMatchVersion: 1, patch: { body: { zh: 'batch patched' } } },
+      { id: 'k030', ifMatchVersion: 1, patch: { body: { zh: { format: 'narrative', prose: 'batch patched' } } } },
     ];
     const out = await patchKpsBatch(
       db as unknown as D1Database,
       updates,
       { dryRun: false, tenant: TENANT, userId: 'u_test' },
-      updates,
     );
     expect(out.results[0].ok).toBe(true);
 

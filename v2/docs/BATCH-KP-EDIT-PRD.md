@@ -2,8 +2,17 @@
 
 > **目标读者**：后台研发 agent。
 > **背景输入**：老师 agent 提的批量编辑需求 + 产品 + 架构评估 + 老师 v1 反馈。
-> **状态**：MVP 待实现，目标 v0.7.35（v0.7.34 为本 PRD 落地）。
-> **变更**：v2 vs v1 — title/body/evalContent 改为浅 merge；dryRun 总返 current_version；加推荐 workflow；明确数组空值语义。
+> **状态**：v0.7.35 已 ship；v0.8.0 Stage 3 hard cut 已对齐 KP body 结构化 contract（详见 [migration-v0.8.md](../public/docs/migration-v0.8.md) + [KP-BODY-STRUCTURED-PRD.md](KP-BODY-STRUCTURED-PRD.md)）。
+> **变更历史**：
+>   - v0.7.35 — title/body/evalContent 改为浅 merge；dryRun 总返 current_version；加推荐 workflow；明确数组空值语义。
+>   - **v0.8.0 Stage 3 — KP body / format / evalContent contract hard cut**（本 PRD 已同步）：
+>     * 顶层 `format` 字段移除（迁到 `body.{zh,ja}.format`）
+>     * `body.zh / body.ja` 从 string DSL 改为 `KpBody` discriminated union（5 format 各自结构化字段）
+>     * `evalContent` 改名 `evaluations`，6 子 key 中文汉字 → 英文（`meaning/limit/example/response/application/analogy`）
+>     * `body.{zh,ja}` 单语种内部不再 deep merge（discriminated union 跨 format 不安全 — 整体替换 KpBody）
+>     * `evaluations.{zh,ja}` 整体替换（不深 merge 到子 key 一级）
+>     * 旧 contract payload → 单条 `results[]` 返 `legacy_top_level_format` / `legacy_string_body` / `legacy_evalcontent_field` / `legacy_eval_in_body`，不影响其它条
+>     * 新增 `body_format_invalid`（discriminator 错）+ `body_structure_invalid`（结构错）取代旧 `body_format_mismatch`
 
 ## 1. 背景与动机
 
@@ -96,11 +105,21 @@ Content-Type: application/json
 
 ### 3.2 patch 字段语义（关键 — 跟单条 PATCH 不同）
 
-新建 schema **`KpBatchPatchInput`**（独立于现有 `KpPatchInput`，不影响单条 PATCH 行为）。
+> **v0.8.0 Stage 3 起**：`KpBatchPatchInput` 与单条 `KpPatchInput` 共享 partial-by-language 语义（题外话：v0.7.x 单条 PATCH 是整体替换，v0.8.0 起统一升级）。
 
-#### 3.2.1 嵌套对象字段：shallow merge
+`KpBatchPatchInput`（[`v2/src/schemas/kp-batch-api.ts`](../src/schemas/kp-batch-api.ts)）字段：
 
-`title` / `body` / `evalContent` 三个字段是嵌套对象，**采用 shallow merge** —— 缺省的 sub-key 保持原值。
+| 字段 | 类型 | 语义 |
+|---|---|---|
+| `title` | `{zh?, ja?, en?}` 任意子集 | 按语种 shallow merge — 缺省语种保留原值 |
+| `body` | `{zh?: KpBody, ja?: KpBody}` 任意子集 | 按语种 shallow merge — 缺省语种保留原值；**单语种内部 KpBody 整体替换**（不能跨 format 深 merge） |
+| `evaluations` | `{zh?: KpEvaluationsLang, ja?: KpEvaluationsLang}` 任意子集 | 按语种 shallow merge — 缺省语种保留原值；**单语种内部 6 字段 Record 整体替换** |
+| `year` | string | replace |
+| `schools` | string[] | replace（至少 1 个） |
+| `scholars` | string[] | replace |
+| `tags` | string[] | replace |
+
+#### 3.2.1 嵌套对象字段：按语种 shallow merge
 
 ```jsonc
 // 现有 KP
@@ -114,33 +133,52 @@ Content-Type: application/json
 //          ^^^^^^^^^^^^^   <-- 只改 zh，ja/en 保持原值
 ```
 
-merge 深度规则：
+#### 3.2.1a body 单语种整体替换（v0.8.0 关键变化）
 
-| 字段 | 第 1 层 (key) | 第 2 层 |
-|---|---|---|
-| `title` | shallow merge：`{zh, ja, en}` 任意子集 | n/a (string) |
-| `body` | shallow merge：`{zh, ja}` 任意子集 | n/a (string) |
-| `evalContent` | shallow merge：`{zh, ja}` 任意子集 | **整体替换**：传了 `evalContent.zh` = 整个 zh Record 替换；防 merge 过深难调试 |
+```jsonc
+// 现有 KP
+{ "body": {
+    "zh": { "format": "flat-list", "lead": "L", "items": [{"name":"A","desc":"a"}] },
+    "ja": { "format": "flat-list", "lead": "L-ja", "items": [{"name":"Aja","desc":"aja"}] }
+} }
 
-例：
+// ❌ 不能这样写：
+{ "body": { "zh": { "items": [{"name":"B","desc":"b"}] } } }
+// → 该条 422-style results[]：reason=body_structure_invalid（zh 不是合法 KpBody — 缺 format / 缺 lead）
+
+// ✅ 必须整体重写 zh：
+{ "body": {
+    "zh": {
+      "format": "flat-list",
+      "lead": "L",
+      "items": [{"name":"A","desc":"a"},{"name":"B","desc":"b"}]
+    }
+} }
+// → ja 保留，zh 整体替换
+```
+
+调用方若想"加一个 item"，必须先 GET 拿当前 body.zh → 本地改 → 整体回写。详见 [migration-v0.8.md §5](../public/docs/migration-v0.8.md#5-patch-语义变化body-不再-shallow-merge)。
+
+#### 3.2.1b evaluations 单语种 Record 整体替换
+
 ```jsonc
 // 现有
-{ "evalContent": {
-    "zh": { "义": "...", "限": "...", "例": "..." },
-    "ja": { "義": "..." }
+{ "evaluations": {
+    "zh": { "meaning": "...", "limit": "...", "example": "..." },
+    "ja": { "meaning": "..." }
 } }
 
 // patch
-{ "evalContent": { "zh": { "义": "新", "应": "新" } } }
+{ "evaluations": { "zh": { "meaning": "新", "response": "新" } } }
 
 // 写入结果（zh 整体替换；ja 保持）
-{ "evalContent": {
-    "zh": { "义": "新", "应": "新" },          // <-- "限"/"例" 没了！
-    "ja": { "義": "..." }
+{ "evaluations": {
+    "zh": { "meaning": "新", "response": "新" },  // <-- limit/example 没了！
+    "ja": { "meaning": "..." }
 } }
 ```
 
-调用方若想保留 `evalContent.zh.限`，必须连 `限` 一起传。这是为了避免 merge 深度无界 — 传 `evalContent.zh.义` 单独 merge 一个字会让 schema 复杂化。
+调用方若想保留 `evaluations.zh.limit`，必须连 `limit` 一起传。理由同 v0.7.x：避免 merge 深度无界 — 单字段 merge 让 schema 复杂化。
 
 #### 3.2.2 数组字段：整体替换；空数组 = 真清空
 
@@ -158,16 +196,17 @@ merge 深度规则：
 
 #### 3.2.3 标量字段：整体替换
 
-`year` / `format` 是标量，传了即覆盖。空字符串 `""` 也算合法值（year 默认就是 ""）。
+`year` 是标量，传了即覆盖。空字符串 `""` 也算合法值。
 
-#### 3.2.4 完整字段表
+> v0.8.0 起 `format` 已不在 batch patch 顶层（移到 `body.{zh,ja}.format`）— 写了 `format` 顶层会返 `forbidden_field`，详见 §3.2.5。
+
+#### 3.2.4 完整字段表（v0.8.0）
 
 | 字段 | 类型 | 语义 | 备注 |
 |---|---|---|---|
-| `title` | `{zh?, ja?, en?}` | shallow merge | 子 key 至少 1 个 |
-| `body` | `{zh?, ja?}` | shallow merge | 子 key 至少 1 个 |
-| `evalContent` | `{zh?: Record, ja?: Record}` | shallow merge（zh/ja 各自整体替换） | |
-| `format` | enum | replace | narrative / flat-list / accordion / compare / quad |
+| `title` | `{zh?, ja?, en?}` | shallow merge by language | 子 key 至少 1 个 |
+| `body` | `{zh?: KpBody, ja?: KpBody}` | shallow merge by language；KpBody 内整体替换 | 子 key 至少 1 个；KpBody 见 [kp-body-structured.ts](../src/schemas/kp-body-structured.ts) |
+| `evaluations` | `{zh?: KpEvaluationsLang, ja?: KpEvaluationsLang}` | shallow merge by language；KpEvaluationsLang Record 整体替换 | KpEvaluationsLang = `{meaning, limit, example, response, application, analogy}` 6 字段 |
 | `year` | string | replace | |
 | `schools` | string[] | replace | 至少 1 个；必须属于该 tenant |
 | `scholars` | string[] | replace | 可空；必须属于该 tenant |
@@ -178,6 +217,10 @@ merge 深度规则：
 写了立即返 `forbidden_field`（不 merge、不替换、整条 patch 失败）：
 
 `id` / `discipline` / `createdAt` / `updatedAt` / `version` / `tenant_id` / `created_by` / `updated_by`
+
+**v0.8.0 起额外禁止**（旧 contract 字段，写了返 `forbidden_field`）：
+
+`format` / `evalContent`
 
 ### 3.3 成功响应（非 dryRun）
 
@@ -299,10 +342,16 @@ merge 深度规则：
 | `kp_not_found` | id 不存在 | ❌ |
 | `kp_not_in_tenant` | KP 存在但不属于当前 discipline | ❌ |
 | `version_conflict` | `ifMatchVersion` ≠ 当前 version | ✅ + `expected_version` |
-| `forbidden_field` | patch 含禁止字段（detail 给字段名） | ✅ |
+| `ifMatchVersion_required` | 非 dryRun 且未传 ifMatchVersion | ✅ |
+| `forbidden_field` | patch 含禁止字段（detail 给字段名）；v0.8.0 起含 `format` / `evalContent` | ✅（同 tenant 才返） |
 | `school_not_in_tenant` | schools 引用了非本 tenant 的 key（detail 给 invalid_keys） | ✅ |
 | `scholar_not_in_tenant` | scholars 引用了非本 tenant 的 key（detail 给 invalid_keys） | ✅ |
-| `invalid_patch` | patch 自身格式错（zod 校验失败，detail 给 issues） | ✅ |
+| `body_format_invalid` | **v0.8.0** body discriminator 不在 5 种合法值（如 `body.zh.format = "list"`） | ✅（同 tenant 才返） |
+| `body_structure_invalid` | **v0.8.0** body 形状对得上 format 但内部字段不合法（如 quad cells != 4，flat-list items 空，缺必填字段等） | ✅（同 tenant 才返） |
+| `legacy_top_level_format` | **v0.8.0** patch 含顶层 `format` 字段（旧 contract） | ✅（同 tenant 才返），detail 含 `migration_guide` URL |
+| `legacy_string_body` | **v0.8.0** `body.zh` 或 `body.ja` 是 string 而非 KpBody object | 同上 |
+| `legacy_evalcontent_field` | **v0.8.0** patch 含 `evalContent` key（应改名 `evaluations` 且子 key 英化） | 同上 |
+| `legacy_eval_in_body` | **v0.8.0** body 内含 ◆评价—— 段（应独立写到 evaluations 字段） | 同上 |
 
 ### 3.7 推荐 Workflow
 

@@ -99,14 +99,14 @@ describe('POST /api/kps', () => {
         tenant_id: 'evil',
         discipline: 'evil',
         title: { zh: '测试' },
-        body: { zh: '正文' },
-        format: 'narrative',
+        body: { zh: { format: 'narrative', prose: '正文' } },
         schools: ['scientific'],
       },
     }));
     expect(res.status).toBe(422);
-    const data = await res.json() as { reason: string; detail: Array<{ path: string[]; code: string }> };
-    expect(data.reason).toBe('schema_invalid');
+    // v0.8.0：strict zod 拒未知 key → reason = body_structure_invalid（zod issue 含 unrecognized_keys）
+    const data = await res.json() as { reason: string; detail: Array<{ code: string }> };
+    expect(data.reason).toBe('body_structure_invalid');
     expect(data.detail.some((issue) => issue.code === 'unrecognized_keys')).toBe(true);
   });
 
