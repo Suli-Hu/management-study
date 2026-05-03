@@ -11,8 +11,8 @@
   ],
   "year": "1985",
   "title": {
-    "zh": "服务营销总览·7P·IHIP·SERVQUAL·服务三角",
-    "ja": "サービス・マーケティング総覧・7P・IHIP・SERVQUAL・サービス三角形",
+    "zh": "服务营销总览",
+    "ja": "サービス・マーケティング総覧",
     "en": "Service Marketing Overview"
   },
   "body": {
@@ -38,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:35:33.462Z",
-  "updatedAt": "2026-05-02T12:37:15.279Z"
+  "updatedAt": "2026-05-03T02:52:16.033Z"
 }
