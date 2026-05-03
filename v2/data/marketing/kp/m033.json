@@ -10,8 +10,8 @@
   "year": "1978",
   "title": {
     "zh": "生活方式研究",
-    "ja": "ライフスタイル研究・VALS と AIO",
-    "en": "Lifestyle Research · VALS / AIO"
+    "ja": "ライフスタイル研究",
+    "en": "Lifestyle Research"
   },
   "body": {
     "zh": "<strong>ライフスタイル研究（Lifestyle Research）</strong>是消费者行为学派的<strong>psychographic 细分</strong>核心方法·从社会学·心理学借入。Pro Plus 第 5 章独立小节·与 S-O-R·情報処理研究并列。<br><br><strong>核心方法 1：AIO 测量</strong>（Wells & Tigert 1971）<br>- <strong>A - Activities（活动）</strong>——工作·爱好·社交·度假·娱乐·体育·购物<br>- <strong>I - Interests（兴趣）</strong>——家庭·家·工作·社区·成就·时尚·食物·媒体<br>- <strong>O - Opinions（意见）</strong>——自己·社会问题·政治·商业·教育·产品·文化·未来<br><br>调查通过 AIO 问卷·识别 patterns·形成 lifestyle segments。<br><br><strong>核心方法 2：VALS（Values, Attitudes and Lifestyles）</strong>（SRI International 1978·后多次更新）<br>美国消费者按价值观和资源分为 8 类：<br>① Innovators（创新者）② Thinkers（思考者）③ Achievers（成就者）④ Experiencers（体验者）⑤ Believers（信仰者）⑥ Strivers（奋斗者）⑦ Makers（实干者）⑧ Survivors（生存者）<br><br><strong>2 维度</strong>：高/低资源 × Ideals/Achievement/Self-expression 主导动机。<br><br><strong>Japan VALS（日本版）</strong>——SRI 与 NTT Data 合作·按日本社会特性调整·识别如「Integrators」「Self-Innovators」「Adapters」「Pragmatists」等。<br><br><strong>marketing 实务应用</strong>：<br>① <strong>brand 定位</strong>——目标 lifestyle 决定 brand identity<br>② <strong>media planning</strong>——不同 lifestyle 看不同 media<br>③ <strong>creative strategy</strong>——广告 visual·音乐·风格匹配 lifestyle<br>④ <strong>新品开发</strong>——对应 lifestyle 痛点·设计专属产品<br><br><strong>批判</strong>：① VALS 8 类过简化 ② 跨文化适用性问题 ③ 数字时代 lifestyle 加速变化·静态分类落后。",
@@ -36,5 +36,5 @@
     }
   },
   "createdAt": "2026-04-30T04:51:52.814Z",
-  "updatedAt": "2026-05-03T03:05:04.239Z"
+  "updatedAt": "2026-05-03T03:32:36.168Z"
 }
