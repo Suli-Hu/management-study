@@ -13,7 +13,7 @@ function deriveStructuredColumns(input: {
 }): {
   body_zh_json: string;
   body_ja_json: string | null;
-  evaluations_zh_json: string;
+  evaluations_zh_json: string | null;
   evaluations_ja_json: string | null;
   body_format: string;
 } {
@@ -23,9 +23,10 @@ function deriveStructuredColumns(input: {
   const structuredZh = parsedToStructured(parsedZh);
   const structuredJa = parsedJa ? parsedToStructured(parsedJa) : null;
 
+  // PM 决策 v0.7.42：evalContent 有 → 抽；没有 → null（4 路径一致）
   const evalsZh = input.evalContent?.zh && Object.keys(input.evalContent.zh).length > 0
     ? evalContentToEvaluations(input.evalContent.zh)
-    : { meaning: '', limit: '', example: '', response: '', application: '', analogy: '' };
+    : null;
   const evalsJa = input.evalContent?.ja && Object.keys(input.evalContent.ja).length > 0
     ? evalContentToEvaluations(input.evalContent.ja)
     : null;
@@ -33,7 +34,7 @@ function deriveStructuredColumns(input: {
   return {
     body_zh_json: JSON.stringify(structuredZh),
     body_ja_json: structuredJa ? JSON.stringify(structuredJa) : null,
-    evaluations_zh_json: JSON.stringify(evalsZh),
+    evaluations_zh_json: evalsZh ? JSON.stringify(evalsZh) : null,
     evaluations_ja_json: evalsJa ? JSON.stringify(evalsJa) : null,
     body_format: fmt,
   };

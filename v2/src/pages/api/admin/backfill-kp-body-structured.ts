@@ -89,9 +89,10 @@ export const POST: APIRoute = async ({ locals, request }) => {
         ? safeJsonParse<Record<string, string>>(row.eval_content_ja_json, {})
         : {};
 
+      // PM 决策 v0.7.42：evalContent 有 → 抽；没有 → null（4 路径一致）
       const evalsZh = Object.keys(evalContentZh).length > 0
         ? evalContentToEvaluations(evalContentZh)
-        : { meaning: '', limit: '', example: '', response: '', application: '', analogy: '' };
+        : null;
       const evalsJa = Object.keys(evalContentJa).length > 0
         ? evalContentToEvaluations(evalContentJa)
         : null;
@@ -107,7 +108,7 @@ export const POST: APIRoute = async ({ locals, request }) => {
         .bind(
           JSON.stringify(structuredZh),
           structuredJa ? JSON.stringify(structuredJa) : null,
-          JSON.stringify(evalsZh),
+          evalsZh ? JSON.stringify(evalsZh) : null,
           evalsJa ? JSON.stringify(evalsJa) : null,
           fmt,
           row.id,

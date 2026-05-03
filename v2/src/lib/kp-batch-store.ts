@@ -180,9 +180,10 @@ async function writeKpFromMerged(
   const parsedJa = merged.body.ja ? parseBody(merged.body.ja, fmt) : null;
   const structuredZh = parsedToStructured(parsedZh);
   const structuredJa = parsedJa ? parsedToStructured(parsedJa) : null;
+  // PM 决策 v0.7.42：evalContent 有 → 抽；没有 → null（4 路径一致）
   const evalsZh = merged.evalContent?.zh && Object.keys(merged.evalContent.zh).length > 0
     ? evalContentToEvaluations(merged.evalContent.zh)
-    : { meaning: '', limit: '', example: '', response: '', application: '', analogy: '' };
+    : null;
   const evalsJa = merged.evalContent?.ja && Object.keys(merged.evalContent.ja).length > 0
     ? evalContentToEvaluations(merged.evalContent.ja)
     : null;
@@ -212,7 +213,7 @@ async function writeKpFromMerged(
       // v0.8.0 Stage 1 新列
       JSON.stringify(structuredZh),
       structuredJa ? JSON.stringify(structuredJa) : null,
-      JSON.stringify(evalsZh),
+      evalsZh ? JSON.stringify(evalsZh) : null,
       evalsJa ? JSON.stringify(evalsJa) : null,
       fmt,
       kpId,
