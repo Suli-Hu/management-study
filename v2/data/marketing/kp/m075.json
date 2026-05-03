@@ -10,9 +10,9 @@
   ],
   "year": "2001",
   "title": {
-    "zh": "效果推理 5 原则·Sarasvathy 2001",
-    "ja": "エフェクチュエーション 5 原則・Sarasvathy 2001",
-    "en": "Effectuation · 5 Principles"
+    "zh": "效果推理原则",
+    "ja": "エフェクチュエーション原則",
+    "en": "Effectuation Principles"
   },
   "body": {
     "zh": "<strong>Effectuation 5 原则</strong>由 Saras Sarasvathy 在 2001 年 <em>Academy of Management Review</em>「Causation and Effectuation: Toward a Theoretical Shift」与 2008 年专著系统化·是 effectuation 学派的<strong>核心方法论</strong>。<br><br><strong>5 原则</strong>：<br><br>① <strong>Bird-in-Hand（手里的鸟）</strong>——从已有手段创造目标<br>3 个 means：① <strong>Who I am</strong>（identity）② <strong>What I know</strong>（knowledge）③ <strong>Whom I know</strong>（network）<br>不是问「我想达到什么」·而是「我现在能做什么」。<br><br>② <strong>Affordable Loss（可承受损失）</strong>——不算预期收益·算可承受损失<br>传统：投资 = 期望收益 - 风险<br>effectuation：投资 = 我能承受失去什么·而不是「我能赚多少」<br>这降低风险·允许快速试错。<br><br>③ <strong>Crazy Quilt（疯狂拼布）</strong>——与利益相关者共建<br>不是「先定计划再找伙伴」·而是「与谁愿意 commit 就一起做」。每个 partner 带来 means + commitment·拼出最终战略。<br><br>④ <strong>Lemonade（柠檬水）</strong>——拥抱意外<br>「When life gives you lemons, make lemonade」——把意外当机会·turn-bad-into-good。<br>例：Tesla 早期遇到资金危机·用 Roadster 高端定位倒推 model 设计。<br><br>⑤ <strong>Pilot-in-the-Plane（飞行员在飞机上）</strong>——人控制未来<br>不是预测未来·是塑造未来。Sarasvathy 名言：「The best way to predict the future is to make it」。<br><br><strong>vs Causation（因果逻辑）</strong>：<br>- Causation：先定目标·再找手段（traditional MBA）<br>- Effectuation：从手段出发·涌现目标（entrepreneurial）<br><br><strong>marketing 启示</strong>：① 新市场创造（不预测·而是塑造）② startup marketing 战略 ③ 产品迭代（lemonade 思维）④ partnership（crazy quilt）。<br><br><strong>跨学派关系</strong>：与 strategic_marketing 形成对照——前者重 capability·effectuation 重 entrepreneurial action·栗木契把这个引入日本研究。",
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T05:14:04.105Z",
-  "updatedAt": "2026-04-30T13:21:44.601Z"
+  "updatedAt": "2026-05-03T02:53:58.306Z"
 }
