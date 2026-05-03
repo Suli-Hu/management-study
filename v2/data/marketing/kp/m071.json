@@ -11,7 +11,7 @@
   "year": "2016",
   "title": {
     "zh": "SDL 基本前提",
-    "ja": "SDL 11 の基本前提・FPs",
+    "ja": "SDL 基本前提",
     "en": "SDL Foundational Premises"
   },
   "body": {
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T05:13:56.934Z",
-  "updatedAt": "2026-05-03T03:07:56.817Z"
+  "updatedAt": "2026-05-03T03:33:18.327Z"
 }
