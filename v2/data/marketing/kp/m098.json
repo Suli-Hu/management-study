@@ -10,9 +10,9 @@
   ],
   "year": "1970",
   "title": {
-    "zh": "战略事业单位 SBU·GE 1970 定义",
-    "ja": "戦略事業単位 SBU・GE 1970 定義",
-    "en": "Strategic Business Unit (SBU)"
+    "zh": "战略事业单位",
+    "ja": "戦略事業単位",
+    "en": "Strategic Business Unit"
   },
   "body": {
     "zh": "<strong>SBU（Strategic Business Unit·战略事业单位）</strong>是企业组织设计的核心概念·把企业拆分为<strong>独立可管理的子单位</strong>·每个 SBU 有独立 mission·战略·KPI。Kotler 第 2 章核心。<br><br><strong>SBU 3 大特征</strong>（GE 1970 定义）：<br>① <strong>独立的事业</strong>——可与其他事业分离·有独立 plan<br>② <strong>独立的竞争对手</strong>——有特定的 competitor<br>③ <strong>独立的 manager</strong>——有 P&L 责任·决策权<br><br><strong>典型 SBU 例</strong>：<br>① <strong>P&G</strong>——Beauty·Health·Home Care 等 10+ SBU<br>② <strong>Sony</strong>——Game·Music·Picture·Imaging Products·Mobile·Financial 等<br>③ <strong>GE</strong>——historically 200+ SBU·后精简<br>④ <strong>Toyota</strong>——Toyota·Lexus·Daihatsu·Hino 各为 SBU<br><br><strong>SBU 资源配置</strong>（Kotler 4 步）：<br>① <strong>识别 SBU</strong>——按事业分类·非按产品<br>② <strong>评估 SBU</strong>——用 BCG matrix 或 GE Matrix<br>③ <strong>分配资源</strong>——投资 Star·收割 Cow·剥离 Dog·选择 Question Mark<br>④ <strong>监控 / 调整</strong>——定期 portfolio review<br><br><strong>4 大战略选择</strong>（每个 SBU）：<br>① <strong>Build（建设）</strong>——投资增长 share<br>② <strong>Hold（保持）</strong>——维持现状<br>③ <strong>Harvest（收割）</strong>——挤出 cash·短期 max·long-term decline<br>④ <strong>Divest（剥离）</strong>——出售或关闭<br><br><strong>跨学派关系</strong>：① 与 BCG Matrix·GE Matrix 一起使用 ② 与 strategic_marketing 的 firm-level strategy 一致 ③ 与 marketing_concept 的多元化 mission 设计相关。",
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T07:24:49.980Z",
-  "updatedAt": "2026-04-30T13:22:37.687Z"
+  "updatedAt": "2026-05-03T02:54:31.153Z"
 }
