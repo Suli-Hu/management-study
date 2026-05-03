@@ -11,7 +11,7 @@
   "year": "1965",
   "title": {
     "zh": "SWOT 分析",
-    "ja": "SWOT 分析・総合環境分析フレーム",
+    "ja": "SWOT 分析",
     "en": "SWOT Analysis"
   },
   "body": {
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T07:41:19.618Z",
-  "updatedAt": "2026-05-03T03:07:55.031Z"
+  "updatedAt": "2026-05-03T03:32:49.284Z"
 }
