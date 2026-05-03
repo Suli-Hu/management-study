@@ -2,7 +2,8 @@
 import Layout from '~/layouts/Layout.astro';
 import LangFab from '~/components/LangFab.astro';
 import { getDb } from '~/lib/db';
-import { renderBody, renderEvalModule, type KpFormat } from '~/lib/render-body';
+import { renderEvalModule, type KpFormat } from '~/lib/render-body';
+import { renderBodyWithFallback } from '~/lib/render-body-with-fallback';
 import type { EvalContent } from '~/lib/eval-tag-defs';
 import { editHref } from '~/lib/nav';
 import { tagColor } from '~/lib/tag-color';
@@ -22,6 +23,8 @@ const kp = await db
     body_zh: string; body_ja: string | null;
     tags_json: string; format: KpFormat;
     eval_content_zh_json: string; eval_content_ja_json: string;
+    // v0.8.0 Stage 1 新列（可能 NULL — backfill 未跑则走旧 renderer fallback）
+    body_zh_json: string | null; body_ja_json: string | null; body_format: string | null;
   }>();
 
 if (!kp) return Astro.redirect('/404');
@@ -128,7 +131,13 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
       </div>
     </header>
 
-    <article class="kp-body text-secondary" set:html={renderBody({ fmt: kp.format, body, accentHex })} />
+    <article class="kp-body text-secondary" set:html={renderBodyWithFallback({
+      body_json: lang === 'ja' ? kp.body_ja_json : kp.body_zh_json,
+      body_string: body,
+      format: kp.format,
+      accentHex,
+      kp_id: kp.id,
+    })} />
     {evalContent && <div set:html={renderEvalModule(evalContent)} />}
   </main>
 
