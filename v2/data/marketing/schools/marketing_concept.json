@@ -2,14 +2,14 @@
   "key": "marketing_concept",
   "discipline": "marketing",
   "title": {
-    "zh": "营销概念派（哲学先驱）",
-    "ja": "マーケティング・コンセプト学派",
-    "en": "Marketing Concept School"
+    "zh": "营销概念与营销思想",
+    "ja": "マーケティング・コンセプトと思想",
+    "en": "Marketing Concept and Thought"
   },
   "era": "1954– marketing 哲学奠基",
   "summary": {
-    "zh": "<strong>营销概念派</strong>是 marketing 的哲学先驱·由 <strong>Drucker</strong>（1954『The Practice of Management』「创造顾客」宣言）和 <strong>Levitt</strong>（1960『Marketing Myopia』in HBR）共同奠基。<br><br><strong>核心范式</strong>：marketing 不是企业的「一个部门的职能」·而是<strong>企业整体的哲学</strong>——组织应围绕「创造和保留顾客」组织一切活动。<br><br><strong>核心内容</strong>：① <strong>5 志向演化</strong>：プロダクト → 販売 → ニーズ → 顧客 → 社会（和田充夫·恩藏直人·三浦俊彦『マーケティング戦略』序章梳理）② <strong>Marketing Myopia 近视眼</strong>（Levitt 1960）③ <strong>Marketing 1.0→5.0 演化论</strong>（Kotler·Kartajaya·Setiawan 系列：1.0 产品 → 2.0 消费者 → 3.0 人间 → 4.0 数字 → 5.0 人间×技术）④ <strong>AMA 定义改订史</strong>（1960·1985·2004·2007 四次重定义）⑤ Customer Centricity 哲学。<br><br><strong>跨学派关系</strong>：是 <code>managerial</code> 学派的<strong>哲学前提</strong>——所有 marketing 实务的价值观源头。与 <code>sdl</code>·<code>cct_interpretive</code> 共享对消费者主体性的承认。<br><br><strong>局限</strong>：偏哲学声明·实证操作化弱·「顾客中心」在某些场景（如教育·医疗·公益）反而可能误导。",
-    "ja": "<strong>マーケティング・コンセプト学派</strong>はマーケティングの哲学的先駆であり、<strong>Drucker</strong>（1954『The Practice of Management』「顧客創造」宣言）と <strong>Levitt</strong>（1960『Marketing Myopia』in HBR）によって基礎づけられた。<br><br><strong>核心パラダイム</strong>：マーケティングは企業の「ある部門の職能」ではなく、<strong>企業全体の哲学</strong>である——組織は「顧客を創造し維持する」ことを軸にすべての活動を組織すべきである。<br><br><strong>主要内容</strong>：① <strong>5 志向の進化</strong>：プロダクト → 販売 → ニーズ → 顧客 → 社会 ② <strong>マーケティング近視眼</strong>（Levitt 1960）③ <strong>マーケティング 1.0→5.0 進化論</strong>（Kotler·Kartajaya·Setiawan）④ <strong>AMA 定義改訂史</strong>（1960·1985·2004·2007 4 回再定義）⑤ Customer Centricity 哲学。<br><br><strong>他派との関係</strong>：<code>managerial</code> 学派の<strong>哲学的前提</strong>。<code>sdl</code>·<code>cct_interpretive</code> と消費者主体性の承認を共有。<br><br><strong>限界</strong>：哲学声明に偏り·実証的操作化が弱い·「顧客中心」が一部の場面（教育·医療·公益）でかえって誤導することもある。"
+    "zh": "<strong>定义：</strong>营销概念与营销思想讨论 marketing 的基本出发点，即企业为何必须从顾客、价值和社会需求出发来理解经营。<br><strong>考试范围：</strong>常考 Drucker 的创造顾客、Levitt 的营销近视症、生产志向/产品志向/销售志向/顾客志向/社会志向，以及 AMA 定义和 Marketing 1.0-5.0 的演化。<br><strong>答题作用：</strong>适合放在论述题开头，用来说明营销不是单纯销售，而是以顾客价值为中心的经营思想。",
+    "ja": "<strong>定義：</strong>マーケティング・コンセプトと思想は，企業がなぜ顧客・価値・社会的需要から経営を捉えるべきかを扱う領域である。<br><strong>試験範囲：</strong>Drucker の顧客創造，Levitt のマーケティング近視眼，生産志向・製品志向・販売志向・顧客志向・社会志向，AMA 定義，Marketing 1.0-5.0 が中心となる。<br><strong>答案での役割：</strong>マーケティングを単なる販売ではなく，顧客価値中心の経営思想として位置づける導入に使える。"
   },
   "themeKey": "marketing_strategy",
   "tags": [
@@ -20,5 +20,5 @@
   ],
   "concepts": [],
   "createdAt": "2026-04-30T04:28:08.023Z",
-  "updatedAt": "2026-04-30T04:28:08.023Z"
+  "updatedAt": "2026-05-03T03:48:34.087Z"
 }
