@@ -9,8 +9,8 @@
   ],
   "year": "1953",
   "title": {
-    "zh": "企业社会责任 CSR·Carroll 金字塔",
-    "ja": "企業の社会責任 CSR・Carroll ピラミッド",
+    "zh": "企业社会责任",
+    "ja": "企業の社会的責任",
     "en": "Corporate Social Responsibility"
   },
   "body": {
@@ -36,5 +36,5 @@
     }
   },
   "createdAt": "2026-04-30T05:14:13.099Z",
-  "updatedAt": "2026-04-30T13:21:55.786Z"
+  "updatedAt": "2026-05-03T02:54:21.878Z"
 }
