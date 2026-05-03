@@ -11,9 +11,9 @@
   ],
   "year": "1988",
   "title": {
-    "zh": "SERVQUAL 服务质量 5 维度·RATER 模型",
-    "ja": "SERVQUAL サービス品質 5 次元・RATER モデル",
-    "en": "SERVQUAL · 5 Service Quality Dimensions"
+    "zh": "SERVQUAL 服务质量模型",
+    "ja": "SERVQUAL サービス品質モデル",
+    "en": "SERVQUAL Service Quality Model"
   },
   "body": {
     "zh": "<strong>SERVQUAL（Service Quality）</strong>是 Parasuraman·Zeithaml·Berry 1988 年在 <em>Journal of Retailing</em> 提出·服务质量测量的<strong>标准框架</strong>·至今广泛使用。<br><br><strong>5 大维度（RATER）</strong>：<br>① <strong>Reliability（可靠性）</strong>——准确·一致地履行承诺<br>② <strong>Assurance（保证性）</strong>——员工的知识·礼貌·能引发信任<br>③ <strong>Tangibles（有形性）</strong>——设施·设备·人员·宣传材料的外观<br>④ <strong>Empathy（共情性）</strong>——为顾客提供个人化关怀<br>⑤ <strong>Responsiveness（响应性）</strong>——快速·愿帮助顾客<br><br><strong>核心命题</strong>：服务质量 = 顾客<strong>期待</strong> vs <strong>感知</strong> 的差距。期待 > 感知 = 不满足；期待 = 感知 = 满足；期待 < 感知 = 喜悦（service excellence）。<br><br><strong>5 大 gap 模型</strong>（Parasuraman 等扩展）：<br>① Knowledge gap（公司不知道顾客期待）② Standards gap（标准设错）③ Delivery gap（执行不到位）④ Communication gap（宣传过度）⑤ Service gap（顾客感知整体差距）<br><br><strong>marketing 实务应用</strong>：① 服务设计 ② 员工训练 ③ 客户调研 ④ NPS·complaint analysis<br><br><strong>跨学派关系</strong>：与 relationship 学派的 NPS·CLV 测量并列·与 SDL value-in-use 概念直接关联。",
@@ -38,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:35:35.309Z",
-  "updatedAt": "2026-05-02T12:19:52.622Z"
+  "updatedAt": "2026-05-03T02:53:45.422Z"
 }
