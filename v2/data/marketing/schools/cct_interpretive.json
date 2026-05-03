@@ -2,14 +2,14 @@
   "key": "cct_interpretive",
   "discipline": "marketing",
   "title": {
-    "zh": "消费者文化理论 / 解釈学派",
-    "ja": "消費者文化理論·解釈学派",
-    "en": "Consumer Culture Theory (CCT)"
+    "zh": "消费者文化理论",
+    "ja": "消費者文化理論",
+    "en": "Consumer Culture Theory"
   },
   "era": "1990– 人文范式 marketing",
   "summary": {
-    "zh": "<strong>消费者文化理论（CCT·解釈学派）</strong>把消费者当作<strong>文化中的意味生产者</strong>·借用<strong>人类学 / 社会学</strong>范式·解构消费的文化意味。锚点 <strong>Arnould & Thompson</strong>（2005『Consumer Culture Theory: Twenty Years of Research』in <em>Journal of Consumer Research</em>）。日本本土代表 <strong>石井淳蔵</strong>（『マーケティングの神話』『ブランド：価値の創造』）·解釈学派 brand 论。<br><br><strong>核心范式</strong>：消费不是经济决策·是<strong>文化实践</strong>。消费者通过消费<strong>生产意味</strong>·建构身份·参与亚文化。与 <code>consumer_behavior</code>（认知科学派）<strong>方法论对照</strong>。<br><br><strong>核心内容</strong>：① <strong>CCT 4 研究领域</strong>（Arnould-Thompson 2005：consumer identity projects·marketplace cultures·socio-historic patterns·mass-mediated marketplace ideologies）② <strong>消费者身份计划</strong>（identity project）③ <strong>Brand Community</strong>（Muniz-O'Guinn 2001·哈雷·苹果用户共同体）④ <strong>亚文化与抵抗</strong>（subcultures of consumption·Schouten-McAlexander 1995 哈雷研究）⑤ <strong>消费意味系</strong> ⑥ <strong>解釈学派 brand 論</strong>（石井淳蔵：brand 是价值共创的「神话」装置）⑦ <strong>ポストモダン消費者</strong>（Pro Plus 第 5 章独立小节）。<br><br><strong>跨学派关系</strong>：vs <code>consumer_behavior</code>（同看消费者·范式相反）。与 <code>brand_equity</code> 形成 brand 论双轨——前者讲 brand 意味·后者讲 brand 资产。与 <code>sdl</code> 共享消费者主体性。<br><br><strong>局限</strong>：质性方法·难规模化·实证测量困难。<br><br><strong>日本研究</strong>：<strong>石井淳蔵</strong>是日本解釈学派最重要研究者·一橋·神戸论述题深度加分必引用。",
-    "ja": "<strong>消費者文化理論（CCT·解釈学派）</strong>は消費者を<strong>文化における意味の生産者</strong>として捉え、<strong>人類学 / 社会学</strong>のパラダイムで消費の文化的意味を解読する。アンカー文献は <strong>Arnould & Thompson</strong>（2005）。日本本土の代表は <strong>石井淳蔵</strong>。<br><br><strong>核心パラダイム</strong>：消費は経済的決定ではなく<strong>文化的実践</strong>である。消費者は消費を通じて<strong>意味を生産</strong>する。<br><br><strong>主要内容</strong>：① <strong>CCT 4 つの研究領域</strong>（Arnould-Thompson 2005）② <strong>消費者アイデンティティ・プロジェクト</strong> ③ <strong>ブランド・コミュニティ</strong>（Muniz-O'Guinn 2001）④ <strong>サブカルチャーと抵抗</strong>（Schouten-McAlexander 1995）⑤ <strong>消費意味系</strong> ⑥ <strong>解釈学派ブランド論</strong>（石井淳蔵）⑦ <strong>ポストモダン消費者</strong>。<br><br><strong>他派との関係</strong>：vs <code>consumer_behavior</code>。<code>brand_equity</code> とブランド論の二軌。<code>sdl</code> と消費者主体性を共有。<br><br><strong>限界</strong>：質的方法·規模化困難·実証測定が難しい。<br><br><strong>日本研究</strong>：<strong>石井淳蔵</strong>が日本解釈学派の最重要研究者。"
+    "zh": "<strong>定义：</strong>消费者文化理论把消费者看作文化意义、身份和生活方式的生产者，而不只是理性的信息处理者。<br><strong>考试范围：</strong>常考后现代消费者、消费亚文化、品牌共同体、消费者身份计划、解释学派品牌论和消费的文化意义。<br><strong>答题作用：</strong>适合解释品牌、社群和消费如何成为身份表达与文化实践，补充传统消费者行为的心理学视角。",
+    "ja": "<strong>定義：</strong>消費者文化理論は，消費者を単なる合理的な情報処理者ではなく，文化的意味，アイデンティティ，ライフスタイルを生み出す主体として捉える領域である。<br><strong>試験範囲：</strong>ポストモダン消費者，消費サブカルチャー，ブランド・コミュニティ，消費者アイデンティティ・プロジェクト，解釈学派ブランド論，消費の文化的意味が中心である。<br><strong>答案での役割：</strong>ブランド，コミュニティ，消費がいかにアイデンティティ表現と文化実践になるかを説明し，心理学的消費者行動を補完する。"
   },
   "themeKey": "consumer_market",
   "tags": [
@@ -20,5 +20,5 @@
   ],
   "concepts": [],
   "createdAt": "2026-04-30T04:27:55.896Z",
-  "updatedAt": "2026-04-30T04:27:55.896Z"
+  "updatedAt": "2026-05-03T03:48:45.353Z"
 }
