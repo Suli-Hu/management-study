@@ -12,8 +12,8 @@
   "year": "1980",
   "title": {
     "zh": "吸收合并",
-    "ja": "吸収合併・M&A 成長戦略",
-    "en": "M&A Growth Strategy"
+    "ja": "吸収合併",
+    "en": "Merger and Acquisition"
   },
   "body": {
     "zh": "<strong>M&A（Merger & Acquisition·吸収合併）</strong>是企业的<strong>外部成长战略</strong>·与有机成长（organic growth）形成对照。Kotler 16 版第 17 章独立讨论。<br><br><strong>3 类 M&A</strong>：<br>① <strong>Horizontal（水平）</strong>——同业·同 product line<br>例：Disney 收购 Pixar·Marvel·Star Wars·Fox<br>② <strong>Vertical（垂直）</strong>——上下游<br>例：Amazon 收购 Whole Foods·向 grocery 整合<br>③ <strong>Conglomerate（多元）</strong>——无关业务<br>例：GE 历史·Berkshire Hathaway<br><br><strong>5 大动机</strong>：① 规模经济 ② 技术 / brand 获取 ③ 进入新市场 ④ 消除竞争对手 ⑤ 财务（税务·diversification）<br><br><strong>M&A 失败率</strong>：研究表明 50-70% M&A 不达预期价值。<br>主要原因：① 文化冲突 ② 整合复杂 ③ 估值过高 ④ 协同效应失败<br><br><strong>marketing 角度</strong>：<br>① <strong>brand portfolio 决策</strong>——保留多 brand vs 合并 vs 替换<br>② <strong>customer base integration</strong>——CRM 系统·客户体验<br>③ <strong>internal marketing</strong>——员工沟通·避免人才流失<br>④ <strong>communication</strong>——对外公告·brand 转换 plan<br><br><strong>典型成功案例</strong>：① Disney 系列收购 ② Facebook 收购 Instagram·WhatsApp ③ Microsoft 收购 LinkedIn·GitHub<br><br><strong>典型失败案例</strong>：① AOL-Time Warner 2000 ② DaimlerChrysler 1998 ③ HP-Autonomy 2011<br><br><strong>跨学派关系</strong>：与 strategic_marketing 的 firm growth 一致·与 brand_equity 的 portfolio·brand crisis（合并失败）相关。",
@@ -38,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:35:58.504Z",
-  "updatedAt": "2026-05-03T03:06:00.967Z"
+  "updatedAt": "2026-05-03T03:33:35.175Z"
 }
