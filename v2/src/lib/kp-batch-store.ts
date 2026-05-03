@@ -1,5 +1,5 @@
 /**
- * Batch KP edit store (v0.7.35).
+ * Batch KP edit store — v0.8.0 Stage 3 hard cut.
  *
  * 实现 PATCH /api/kps/batch 端点的核心逻辑：
  *   - 批量预查 tenant 的 schools/scholars 全集（避免 N+1）
@@ -7,14 +7,30 @@
  *   - dryRun 模式：merge + diff，不写
  *   - 逐条独立结果，不强行整批事务
  *
- * shallow merge 语义：title/body/evalContent 第 1 层 merge；
- *   evalContent.zh / evalContent.ja Record 整体替换。详见 PRD §3.2.1 + §5.5。
+ * shallow merge 语义（v0.8.0，详 migration-v0.8.md §5.2）：
+ *   - title    — 按语种 shallow merge（zh/ja/en 各自独立替换）
+ *   - body     — 按语种 shallow merge（zh/ja 各自整体替换 KpBody；单语种内部不再 deep merge）
+ *   - evaluations — 按语种 shallow merge（zh/ja 各自整体替换 KpEvaluationsLang Record）
+ *   - 数组（schools/scholars/tags） — 整体替换；空数组 = 真清空
  */
 
-import type { KpBatchPatchInput, KpBatchUpdateItem } from '~/schemas/kp-batch-api';
-import { getKpRecord, type KpApiRecord } from './kp-api-store';
-import { parseBody } from './body-parser';
-import { parsedToStructured, evalContentToEvaluations } from './kp-body-helpers';
+import { KpBatchPatchInput } from '~/schemas/kp-batch-api';
+import type { KpBody, KpEvaluationsLang } from '~/schemas/kp-body-structured';
+import {
+  getKpRecord,
+  getKpStructured,
+  type KpApiRecord,
+} from './kp-api-store';
+import {
+  structuredToLegacyDsl,
+  evaluationsLangToLegacyEvalContent,
+  hasEvaluationsContent,
+} from './kp-body-helpers';
+import {
+  detectLegacyContract,
+  classifyZodFailure,
+  MIGRATION_GUIDE_URL,
+} from './kp-legacy-detector';
 
 // 禁止字段（PRD §3.2.5）— 出现在 patch 里立即返 forbidden_field
 // 注意：因为 zod schema strict() 已经会拒绝未知 key，这里再显式 check 是双保险，
@@ -30,6 +46,9 @@ const FORBIDDEN_FIELDS = new Set([
   'tenant_id',
   'created_by',
   'updated_by',
+  // v0.8.0 新增：明确拒绝旧字段（虽然 zod strict 也会拒，但配合 forbidden_field reason 更明确）
+  'format',
+  'evalContent',
 ]);
 
 export interface BatchItemSuccess {
@@ -93,22 +112,100 @@ async function getCurrentVersion(db: D1Database, kpId: string): Promise<number> 
 }
 
 /**
- * Shallow merge：title/body/evalContent 第 1 层 merge；其它字段整体替换。
- * 不传的 key 在 patch 里 = undefined，等价于"保持原值"。
+ * Merged 内部状态：保留 KpApiRecord 的旧 shape（response 兼容）+ 同步保留结构化
+ * body/evaluations，以便 dual-write 旧 + 新列。
  */
-export function mergeBatchPatch(current: KpApiRecord, patch: KpBatchPatchInput): KpApiRecord {
-  return {
+export interface MergedKpState {
+  /** 用于 GET response shape / FTS 索引等旧消费方 */
+  legacy: KpApiRecord;
+  /** 用于 D1 新列写入 + Stage 4+ 编辑器 read */
+  structuredBody: { zh: KpBody; ja?: KpBody };
+  structuredEvaluations: { zh?: KpEvaluationsLang; ja?: KpEvaluationsLang };
+}
+
+/**
+ * partial-by-language merge — title/body/evaluations 按 zh/ja 各自整体替换；
+ * 数组字段整体替换；标量整体替换。
+ *
+ * @param current      KP 旧 shape (DSL string body + format + evalContent)
+ * @param currentS     KP 结构化 shape (KpBody + KpEvaluationsLang)
+ * @param patch        新 contract 的 partial patch
+ */
+export function mergeBatchPatch(
+  current: KpApiRecord,
+  currentS: { body: { zh: KpBody; ja?: KpBody }; evaluations: { zh?: KpEvaluationsLang; ja?: KpEvaluationsLang } },
+  patch: KpBatchPatchInput,
+): MergedKpState {
+  // title — 按语种 shallow merge
+  const mergedTitle: KpApiRecord['title'] = {
+    zh: patch.title?.zh ?? current.title.zh,
+    ...(patch.title?.ja !== undefined
+      ? { ja: patch.title.ja }
+      : current.title.ja !== undefined
+        ? { ja: current.title.ja }
+        : {}),
+    ...(patch.title?.en !== undefined
+      ? { en: patch.title.en }
+      : current.title.en !== undefined
+        ? { en: current.title.en }
+        : {}),
+  };
+
+  // body — 按语种整体替换 KpBody
+  const mergedBody: { zh: KpBody; ja?: KpBody } = {
+    zh: patch.body?.zh ?? currentS.body.zh,
+    ...(patch.body?.ja !== undefined
+      ? { ja: patch.body.ja }
+      : currentS.body.ja !== undefined
+        ? { ja: currentS.body.ja }
+        : {}),
+  };
+
+  // evaluations — 按语种整体替换 KpEvaluationsLang
+  const mergedEvaluations: { zh?: KpEvaluationsLang; ja?: KpEvaluationsLang } = {
+    ...(patch.evaluations?.zh !== undefined
+      ? { zh: patch.evaluations.zh }
+      : currentS.evaluations.zh
+        ? { zh: currentS.evaluations.zh }
+        : {}),
+    ...(patch.evaluations?.ja !== undefined
+      ? { ja: patch.evaluations.ja }
+      : currentS.evaluations.ja
+        ? { ja: currentS.evaluations.ja }
+        : {}),
+  };
+
+  // 派生旧 shape KpApiRecord（GET response / FTS 用）
+  const evalContentLegacy: KpApiRecord['evalContent'] = (() => {
+    const out: { zh?: Record<string, string>; ja?: Record<string, string> } = {};
+    if (mergedEvaluations.zh && hasEvaluationsContent(mergedEvaluations.zh)) {
+      out.zh = evaluationsLangToLegacyEvalContent(mergedEvaluations.zh);
+    }
+    if (mergedEvaluations.ja && hasEvaluationsContent(mergedEvaluations.ja)) {
+      out.ja = evaluationsLangToLegacyEvalContent(mergedEvaluations.ja);
+    }
+    return Object.keys(out).length > 0 ? out : undefined;
+  })();
+
+  const mergedLegacy: KpApiRecord = {
     ...current,
-    ...(patch.year !== undefined ? { year: patch.year } : {}),
-    ...(patch.format !== undefined ? { format: patch.format } : {}),
-    ...(patch.schools !== undefined ? { schools: patch.schools } : {}),
-    ...(patch.scholars !== undefined ? { scholars: patch.scholars } : {}),
-    ...(patch.tags !== undefined ? { tags: patch.tags } : {}),
-    title: patch.title ? { ...current.title, ...patch.title } : current.title,
-    body: patch.body ? { ...current.body, ...patch.body } : current.body,
-    evalContent: patch.evalContent
-      ? { ...(current.evalContent ?? {}), ...patch.evalContent }
-      : current.evalContent,
+    title: mergedTitle,
+    body: {
+      zh: structuredToLegacyDsl(mergedBody.zh),
+      ...(mergedBody.ja ? { ja: structuredToLegacyDsl(mergedBody.ja) } : {}),
+    },
+    format: mergedBody.zh.format,
+    schools: patch.schools ?? current.schools,
+    scholars: patch.scholars ?? current.scholars,
+    tags: patch.tags ?? current.tags,
+    year: patch.year ?? current.year,
+    evalContent: evalContentLegacy,
+  };
+
+  return {
+    legacy: mergedLegacy,
+    structuredBody: mergedBody,
+    structuredEvaluations: mergedEvaluations,
   };
 }
 
@@ -119,12 +216,14 @@ export function computeDiff(
 ): Record<string, { before: unknown; after: unknown }> {
   const diff: Record<string, { before: unknown; after: unknown }> = {};
 
-  // title / body 第 1 层（zh/ja/en）拆 sub-key
+  // title 第 1 层（zh/ja/en）拆 sub-key
   for (const lang of ['zh', 'ja', 'en'] as const) {
     const before = current.title?.[lang];
     const after = merged.title?.[lang];
     if (before !== after) diff[`title.${lang}`] = { before, after };
   }
+  // body 第 1 层（zh/ja）拆 sub-key — 注意 v0.8.0 起 body.zh 是 DSL 反推 string，
+  // 实际 caller 看到的是 legacy shape；diff 仍按字符串比较
   for (const lang of ['zh', 'ja'] as const) {
     const before = current.body?.[lang];
     const after = merged.body?.[lang];
@@ -165,28 +264,22 @@ function arraysEqual(a: string[] | undefined, b: string[] | undefined): boolean 
   return a.every((v, i) => v === b[i]);
 }
 
-/** 写一条 KP 到 D1（含 joins + fts + version 快照）。复用 patchKpRecord 的 SQL 模式但接受 already-merged state。 */
+/** 写一条 KP 到 D1（含 joins + fts + version 快照）。 */
 async function writeKpFromMerged(
   db: D1Database,
   kpId: string,
   tenant: { tenantId: string; discipline: string },
-  merged: KpApiRecord,
+  state: MergedKpState,
   userId: string,
 ): Promise<{ ok: true; new_version: number } | { ok: false; reason: string; detail?: unknown }> {
   const now = new Date().toISOString();
-  // v0.8.0 Stage 1 双写：派生 5 个新列字段
-  const fmt = (merged.format ?? 'narrative') as Parameters<typeof parseBody>[1];
-  const parsedZh = parseBody(merged.body.zh, fmt);
-  const parsedJa = merged.body.ja ? parseBody(merged.body.ja, fmt) : null;
-  const structuredZh = parsedToStructured(parsedZh);
-  const structuredJa = parsedJa ? parsedToStructured(parsedJa) : null;
-  // PM 决策 v0.7.42：evalContent 有 → 抽；没有 → null（4 路径一致）
-  const evalsZh = merged.evalContent?.zh && Object.keys(merged.evalContent.zh).length > 0
-    ? evalContentToEvaluations(merged.evalContent.zh)
-    : null;
-  const evalsJa = merged.evalContent?.ja && Object.keys(merged.evalContent.ja).length > 0
-    ? evalContentToEvaluations(merged.evalContent.ja)
-    : null;
+  const merged = state.legacy;
+
+  // 派生新列
+  const evalsZh = state.structuredEvaluations.zh;
+  const evalsJa = state.structuredEvaluations.ja;
+  const hasZh = hasEvaluationsContent(evalsZh);
+  const hasJa = hasEvaluationsContent(evalsJa);
 
   const stmts: D1PreparedStatement[] = [
     db.prepare(
@@ -205,17 +298,16 @@ async function writeKpFromMerged(
       merged.body.zh,
       merged.body.ja ?? null,
       JSON.stringify(merged.tags ?? []),
-      JSON.stringify(merged.evalContent?.zh ?? {}),
-      JSON.stringify(merged.evalContent?.ja ?? {}),
+      merged.evalContent?.zh ? JSON.stringify(merged.evalContent.zh) : '{}',
+      merged.evalContent?.ja ? JSON.stringify(merged.evalContent.ja) : '{}',
       merged.format,
       userId,
       now,
-      // v0.8.0 Stage 1 新列
-      JSON.stringify(structuredZh),
-      structuredJa ? JSON.stringify(structuredJa) : null,
-      evalsZh ? JSON.stringify(evalsZh) : null,
-      evalsJa ? JSON.stringify(evalsJa) : null,
-      fmt,
+      JSON.stringify(state.structuredBody.zh),
+      state.structuredBody.ja ? JSON.stringify(state.structuredBody.ja) : null,
+      hasZh && evalsZh ? JSON.stringify(evalsZh) : null,
+      hasJa && evalsJa ? JSON.stringify(evalsJa) : null,
+      state.structuredBody.zh.format,
       kpId,
       tenant.tenantId,
       tenant.discipline,
@@ -278,20 +370,27 @@ export interface BatchOptions {
   userId: string;
 }
 
+/**
+ * Outer-validated raw update — id/ifMatchVersion 已规范化，patch 仍是 raw object
+ * 留给 store 内部做 v0.8.0 legacy detector + per-item strict zod parse。
+ */
+export interface RawBatchUpdate {
+  id: string;
+  ifMatchVersion?: number;
+  patch: unknown;
+}
+
 /** 主入口 — 处理一批 updates 返聚合结果。 */
 export async function patchKpsBatch(
   db: D1Database,
-  updates: KpBatchUpdateItem[],
+  rawUpdates: RawBatchUpdate[],
   options: BatchOptions,
-  /** raw updates body：用来检查 forbidden_field（zod parse 后已被 strict 移除，需对原始数据查） */
-  rawUpdates?: unknown[],
 ): Promise<BatchOutcome> {
   const tenantKeys = await prefetchTenantKeys(db, options.tenant.discipline);
   const results: BatchItemResult[] = [];
 
-  for (let i = 0; i < updates.length; i++) {
-    const update = updates[i];
-    const result = await processOne(db, update, options, tenantKeys, rawUpdates?.[i]);
+  for (const rawUpdate of rawUpdates) {
+    const result = await processOne(db, rawUpdate, options, tenantKeys);
     results.push(result);
   }
 
@@ -308,35 +407,73 @@ export async function patchKpsBatch(
 
 async function processOne(
   db: D1Database,
-  update: KpBatchUpdateItem,
+  rawUpdate: RawBatchUpdate,
   options: BatchOptions,
   tenantKeys: TenantKeys,
-  rawUpdate: unknown,
 ): Promise<BatchItemResult> {
-  const { id, ifMatchVersion, patch } = update;
+  const { id, ifMatchVersion, patch: rawPatch } = rawUpdate;
 
-  // 1. forbidden_field 检查（针对 raw input — 对 strict-parsed patch 已没意义，但留着兜底）
-  if (rawUpdate && typeof rawUpdate === 'object') {
-    const rawPatch = (rawUpdate as { patch?: unknown }).patch;
-    const forbidden = findForbiddenFields(rawPatch);
-    if (forbidden.length > 0) {
-      const current = await getKpRecord(db, id);
-      const currentVersion = current ? await getCurrentVersion(db, id) : undefined;
-      return {
-        id,
-        ok: false,
-        reason: 'forbidden_field',
-        current_version: current && current.discipline === options.tenant.discipline ? currentVersion : undefined,
-        detail: { fields: forbidden },
-      };
-    }
+  // 1. v0.8.0 Stage 3：先识别 legacy contract（更具体的 reason），再做 forbidden_field
+  //    + zod parse —— 否则 'format' / 'evalContent' 会被 forbidden_field 集合拦截，
+  //    丢失了更明确的 migration_guide 提示。
+  const legacy = detectLegacyContract(rawPatch);
+  if (legacy) {
+    const current = await getKpRecord(db, id);
+    const currentVersion = current && current.discipline === options.tenant.discipline
+      ? await getCurrentVersion(db, id)
+      : undefined;
+    return {
+      id,
+      ok: false,
+      reason: legacy.reason,
+      current_version: currentVersion,
+      detail: {
+        message: legacy.message,
+        migration_guide: MIGRATION_GUIDE_URL,
+      },
+    };
   }
 
-  // 2. fetch current
+  // 2. forbidden_field（id / discipline / version / created_by 等基础设施字段）
+  const forbidden = findForbiddenFields(rawPatch);
+  if (forbidden.length > 0) {
+    const current = await getKpRecord(db, id);
+    const currentVersion = current ? await getCurrentVersion(db, id) : undefined;
+    return {
+      id,
+      ok: false,
+      reason: 'forbidden_field',
+      current_version: current && current.discipline === options.tenant.discipline ? currentVersion : undefined,
+      detail: { fields: forbidden },
+    };
+  }
+
+  // 3. zod parse strict — 失败分类成 body_format_invalid / body_structure_invalid / invalid_patch
+  const parsedPatch = KpBatchPatchInput.safeParse(rawPatch);
+  if (!parsedPatch.success) {
+    const cls = classifyZodFailure(parsedPatch.error);
+    const current = await getKpRecord(db, id);
+    const currentVersion = current && current.discipline === options.tenant.discipline
+      ? await getCurrentVersion(db, id)
+      : undefined;
+    return {
+      id,
+      ok: false,
+      reason: cls.reason,
+      current_version: currentVersion,
+      detail: {
+        issues: parsedPatch.error.issues,
+        migration_guide: MIGRATION_GUIDE_URL,
+      },
+    };
+  }
+  const patch = parsedPatch.data;
+
+  // 4. fetch current
   const current = await getKpRecord(db, id);
   if (!current) return { id, ok: false, reason: 'kp_not_found' };
 
-  // 3. tenant 校验（KP 存在但跨 tenant — 不返 current_version 防泄露）
+  // 5. tenant 校验（KP 存在但跨 tenant — 不返 current_version 防泄露）
   if (
     current.tenant_id !== options.tenant.tenantId ||
     current.discipline !== options.tenant.discipline
@@ -344,7 +481,7 @@ async function processOne(
     return { id, ok: false, reason: 'kp_not_in_tenant' };
   }
 
-  // 4. version 校验（乐观锁）
+  // 6. version 校验（乐观锁）
   const currentVersion = await getCurrentVersion(db, id);
   if (!options.dryRun) {
     if (ifMatchVersion === undefined) {
@@ -366,11 +503,22 @@ async function processOne(
     }
   }
 
-  // 5. merge
-  const merged = mergeBatchPatch(current, patch);
+  // 7. fetch current structured（merge body/evaluations 时用）
+  const currentStructured = await getKpStructured(db, id);
+  if (!currentStructured) {
+    return {
+      id,
+      ok: false,
+      reason: 'kp_structured_missing',
+      current_version: currentVersion,
+    };
+  }
 
-  // 6. 校验 merged.schools/scholars 是否都属于 tenant（用预查的全集，O(1) 查）
-  const invalidSchools = merged.schools.filter((k) => !tenantKeys.schools.has(k));
+  // 8. merge
+  const merged = mergeBatchPatch(current, currentStructured, patch);
+
+  // 9. 校验 merged.schools/scholars 是否都属于 tenant（用预查的全集，O(1) 查）
+  const invalidSchools = merged.legacy.schools.filter((k) => !tenantKeys.schools.has(k));
   if (invalidSchools.length > 0) {
     return {
       id,
@@ -380,7 +528,7 @@ async function processOne(
       detail: { invalid_keys: invalidSchools },
     };
   }
-  const invalidScholars = merged.scholars.filter((k) => !tenantKeys.scholars.has(k));
+  const invalidScholars = merged.legacy.scholars.filter((k) => !tenantKeys.scholars.has(k));
   if (invalidScholars.length > 0) {
     return {
       id,
@@ -391,17 +539,17 @@ async function processOne(
     };
   }
 
-  // 7. dryRun → 计算 diff 返
+  // 10. dryRun → 计算 diff 返
   if (options.dryRun) {
     return {
       id,
       ok: true,
       current_version: currentVersion,
-      diff: computeDiff(current, merged),
+      diff: computeDiff(current, merged.legacy),
     };
   }
 
-  // 8. 真写
+  // 11. 真写
   const writeResult = await writeKpFromMerged(db, id, options.tenant, merged, options.userId);
   if (!writeResult.ok) {
     return { id, ok: false, reason: writeResult.reason, detail: writeResult.detail };
@@ -411,6 +559,6 @@ async function processOne(
     id,
     ok: true,
     version: writeResult.new_version,
-    changed_fields: Object.keys(computeDiff(current, merged)),
+    changed_fields: Object.keys(computeDiff(current, merged.legacy)),
   };
 }

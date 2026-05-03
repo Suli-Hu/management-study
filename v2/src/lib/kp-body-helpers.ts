@@ -23,8 +23,10 @@ import type {
   AccordionBody,
   CompareBody,
   QuadBody,
+  KpEvaluationsLang,
 } from '~/schemas/kp-body-structured';
-import type { ParsedBody, Format } from './body-parser';
+import type { ParsedBody, Format, Evaluations } from './body-parser';
+import { serializeBody } from './body-parser';
 
 // ============================================================
 // emptyKpBody — 每种 format 的空白模板
@@ -246,4 +248,112 @@ export function structuredToSearchText(body: KpBody): string {
 
 function stripHtml(s: string): string {
   return s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+// ============================================================
+// 反向桥：structured → legacy （v0.8.0 Stage 3 写入时填旧列用）
+//
+// 新 contract 接受 structured KpBody，但 D1 旧列 (body_zh / format / eval_content_*_json)
+// 在 Stage 5 才 drop。Stage 3-4 期间写入路径需要从结构化反推旧列：
+//   - body_zh / body_ja      ← structuredToLegacyDsl(KpBody)
+//   - format                 ← body.zh.format
+//   - eval_content_*_json    ← evaluationsLangToLegacyEvalContent(KpEvaluationsLang)
+//
+// 这些 helper 不嵌入 evaluations 到 DSL（v0.8.0 起 evaluations 必须在独立列），
+// 也保持 lossless：序列化后再 parseBody 能回到等价 ParsedBody。
+// ============================================================
+
+const EMPTY_LEGACY_EVALS: Evaluations = {
+  meaning: '',
+  limit: '',
+  example: '',
+  response: '',
+  application: '',
+  analogy: '',
+};
+
+/**
+ * 把结构化 KpBody 反推成旧 DSL 字符串（不含 ◆评价—— 段）。
+ * 用于 Stage 3-4 双写期 body_zh / body_ja 旧列。
+ *
+ * compare/quad 需特殊处理：序列化时若所有列/格的 trailing 字段为空，serializeBody
+ * 会写出 `|||...` 多余分隔符，与 col separator `||` 撞车，导致 parseBody 反向解析
+ * 多出空 col / cell。这里 inline 实现 compare/quad — trim 每个 col/cell 的 trailing
+ * 空字段，保证 round-trip 干净。flat-list / accordion / narrative 的 serializeBody
+ * 输出本身已 round-trip 干净，复用即可。
+ */
+export function structuredToLegacyDsl(body: KpBody): string {
+  if (body.format === 'narrative') return body.prose;
+
+  if (body.format === 'flat-list') {
+    return serializeBody({
+      format: 'flat-list',
+      lead: body.lead,
+      items: body.items.map((it) => ({ name: it.name, desc: it.desc })),
+      ...EMPTY_LEGACY_EVALS,
+    });
+  }
+  if (body.format === 'accordion') {
+    return serializeBody({
+      format: 'accordion',
+      lead: body.lead,
+      groups: body.groups.map((g) => ({
+        title: g.title,
+        items: g.items.map((it) => ({ name: it.name, desc: it.desc })),
+      })),
+      ...EMPTY_LEGACY_EVALS,
+    });
+  }
+  if (body.format === 'compare') {
+    let s = body.lead;
+    if (s && body.cols.length > 0) s += '：';
+    const colsStr = body.cols
+      .map((c) => trimTrailing([c.title, c.keyword, c.desc, c.type, c.theories, c.detail]).join('|'))
+      .join('||');
+    return `${s}<compare>${colsStr}</compare>`;
+  }
+  // quad
+  let s = body.lead;
+  if (s && (body.cells.length > 0 || body.yAxis || body.xAxis)) s += '：';
+  const cellsStr = body.cells
+    .map((c) => trimTrailing([c.name, c.emoji, c.sub, c.detail]).join('|'))
+    .join('||');
+  return `${s}<quad>${body.yAxis},${body.xAxis}||${cellsStr}</quad>`;
+}
+
+/** 删除数组尾部连续的空字符串（保留至少 1 个元素 — 因为 title/name 是必填）。 */
+function trimTrailing(fields: string[]): string[] {
+  let last = fields.length - 1;
+  while (last > 0 && fields[last] === '') last--;
+  return fields.slice(0, last + 1);
+}
+
+/**
+ * 新 KpEvaluationsLang (英文 key) → 旧 evalContent dict (glyph key)。
+ * 用于 Stage 3-4 双写期 eval_content_*_json 旧列。
+ */
+export function evaluationsLangToLegacyEvalContent(
+  evals: KpEvaluationsLang,
+): Record<string, string> {
+  return {
+    义: evals.meaning ?? '',
+    限: evals.limit ?? '',
+    例: evals.example ?? '',
+    应: evals.response ?? '',
+    用: evals.application ?? '',
+    喻: evals.analogy ?? '',
+  };
+}
+
+/** 判 evaluations 实际有内容（任一字段非空）— 用于决定写 null 还是 JSON。 */
+export function hasEvaluationsContent(evals: KpEvaluationsLang | undefined | null): boolean {
+  if (!evals) return false;
+  return (
+    Boolean(evals.meaning) ||
+    Boolean(evals.limit) ||
+    Boolean(evals.example) ||
+    Boolean(evals.response) ||
+    Boolean(evals.application) ||
+    Boolean(evals.analogy)
+  );
 }

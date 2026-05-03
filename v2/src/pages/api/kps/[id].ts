@@ -3,6 +3,12 @@ import { KpPatchInput } from '~/schemas/kp-api';
 import { json, noStore } from '~/lib/api-response';
 import { deleteKpRecord, getKpRecord, patchKpRecord } from '~/lib/kp-api-store';
 import { tenantForExistingKp } from '~/lib/tenant-context';
+import {
+  detectLegacyContract,
+  classifyZodFailure,
+  legacyContractResponseBody,
+  structureFailureResponseBody,
+} from '~/lib/kp-legacy-detector';
 
 export const GET: APIRoute = async (context) => {
   const id = context.params.id;
@@ -31,9 +37,16 @@ export const PATCH: APIRoute = async (context) => {
     return noStore(json(400, { ok: false, reason: 'body_must_be_json' }));
   }
 
+  // v0.8.0 Stage 3：先识别旧 contract，再 zod parse 新 contract
+  const legacy = detectLegacyContract(raw);
+  if (legacy) {
+    return noStore(json(422, legacyContractResponseBody(legacy)));
+  }
+
   const parsed = KpPatchInput.safeParse(raw);
   if (!parsed.success) {
-    return noStore(json(422, { ok: false, reason: 'schema_invalid', detail: parsed.error.issues }));
+    const cls = classifyZodFailure(parsed.error);
+    return noStore(json(422, structureFailureResponseBody(cls.reason, cls.detail)));
   }
 
   const result = await patchKpRecord(
