@@ -12,8 +12,8 @@
   "year": "1980",
   "title": {
     "zh": "大客户管理",
-    "ja": "Key Account Management・B2B 戦略サービス",
-    "en": "Key Account Management (KAM)"
+    "ja": "キーアカウント・マネジメント",
+    "en": "Key Account Management"
   },
   "body": {
     "zh": "<strong>Key Account Management（KAM·大口顾客管理）</strong>是 B2B marketing 的<strong>战略性大客户深度服务</strong>·Pro Plus 第 14 章·B2B 学派核心实务。<br><br><strong>核心命题</strong>：80/20 原则——80% 利润来自 20% 大客户。这 20% 必须特别对待。<br><br><strong>KAM 的 4 大特征</strong>：<br>① <strong>专属团队</strong>——dedicated key account manager<br>② <strong>多接触点</strong>——CEO-to-CEO·tech-to-tech·sales-to-buying<br>③ <strong>长期关系</strong>——5-10+ 年合作<br>④ <strong>定制化</strong>——产品·服务·价格·合约 都可调<br><br><strong>KAM 4 阶段</strong>（关系深化）：<br>① <strong>Pre-KAM（潜在大客）</strong>——识别·初期接触<br>② <strong>Early KAM（合作中）</strong>——建立信任<br>③ <strong>Partnership KAM（伙伴）</strong>——共同 R&D·联合 marketing<br>④ <strong>Synergistic KAM（协同）</strong>——商业模式深度整合<br><br><strong>典型例</strong>：① Toyota - Denso（电装）50+ 年合作 ② Microsoft - 大企业 enterprise sales ③ 资生堂 - 大手百货店<br><br><strong>制造业服务化（servitization）</strong>——南知惠子研究·制造业不只卖产品·提供「产品 + 服务 + 数据」综合 solution。<br>例：① GE Aviation 不卖发动机·卖「飞行小时数」② Komatsu KOMTRAX 矿山管理服务·非单纯卖设备<br><br><strong>跨学派关系</strong>：与 b2b_marketing·relationship·SDL（co-creation）·strategic_marketing 多重交叉。",
@@ -39,5 +39,5 @@
     }
   },
   "createdAt": "2026-04-30T07:35:53.252Z",
-  "updatedAt": "2026-05-03T03:04:38.710Z"
+  "updatedAt": "2026-05-03T03:31:05.389Z"
 }
