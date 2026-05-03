@@ -9,9 +9,9 @@
   ],
   "year": "1967",
   "title": {
-    "zh": "成本·需求·竞争 3 类定价方法",
-    "ja": "コスト・需要・競争 3 類価格設定方法",
-    "en": "3 Pricing Approaches"
+    "zh": "定价方法",
+    "ja": "価格設定方法",
+    "en": "Pricing Methods"
   },
   "body": {
     "zh": "<strong>3 大定价方法</strong>是 Kotler·Pro Plus 第 9 章核心·企业定价的基本范式。<br><br><strong>① Cost-Based Pricing（成本基底）</strong>：<br>- <strong>Cost-Plus Pricing（成本加成）</strong>——成本 + 利润 margin<br>- <strong>Break-Even Analysis（损益平衡）</strong>——固定成本 / 单位贡献<br>优点：简单·保证利润<br>缺点：忽视需求·竞争<br>例：建筑·政府采购<br><br><strong>② Demand-Based Pricing（需求基底·价值定价）</strong>：<br>- <strong>Value-Based Pricing</strong>——根据顾客感知价值<br>- <strong>Psychological Pricing</strong>——心理价格（端数·威光·慣習）<br>- <strong>Price Elasticity</strong>——价格弹性测量<br>优点：高利润·捕捉 willingness to pay<br>缺点：需要客户调研·成本高<br>例：奢侈品·药品·SaaS<br><br><strong>③ Competition-Based Pricing（竞争基底）</strong>：<br>- <strong>Going-Rate Pricing</strong>——跟随市场价<br>- <strong>Auction Pricing</strong>——拍卖<br>- <strong>Penetration / Skimming</strong>——新品定价（详见 m011）<br>优点：响应市场·避免价格战<br>缺点：跟随策略·失去差別化<br>例：油价·flight·hotel<br><br><strong>实务原则</strong>：<br>3 类不是互斥·而是同时考虑——成本是底线·价值是天花板·竞争是参考。最优价格在 3 者之间动态平衡。<br><br><strong>marketing 启示</strong>：① <strong>cost vs value gap</strong>——好 brand 让 value 远超 cost ② <strong>dynamic pricing</strong>——digital 时代实时调价 ③ <strong>price as positioning</strong>——价格本身是 brand 信号",
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T07:35:39.013Z",
-  "updatedAt": "2026-05-02T12:19:56.014Z"
+  "updatedAt": "2026-05-03T02:53:39.780Z"
 }
