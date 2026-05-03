@@ -10,9 +10,9 @@
   ],
   "year": "1990",
   "title": {
-    "zh": "市场参入方式 5 类·从间接出口到直接投资",
-    "ja": "市場参入方式 5 類・間接出口から直接投資",
-    "en": "Market Entry Modes · 5 Types"
+    "zh": "市场进入方式",
+    "ja": "市場参入方式",
+    "en": "Market Entry Modes"
   },
   "body": {
     "zh": "<strong>参入方式 5 类（Market Entry Modes）</strong>按 commitment·risk·control 程度递增分为 5 类·Kotler 16 版第 20 章核心。<br><br><strong>5 大参入方式</strong>：<br><br>① <strong>Indirect Export（间接出口）</strong><br>方法：通过 export agent / trading company<br>commitment：低·risk：低·control：低<br>例：日本中小企业通过商社出口<br><br>② <strong>Direct Export（直接出口）</strong><br>方法：自营 export department / overseas branch<br>commitment：中·risk：中·control：中<br>例：UNIQLO 早期出口<br><br>③ <strong>Licensing（授权）</strong><br>方法：licensee 拥有生产 / 销售权·付 royalty<br>commitment：低·risk：低·control：低<br>例：Disney character licensing·Calvin Klein licensing<br><br>④ <strong>Joint Venture（合资）</strong><br>方法：与本地伙伴成立合资公司<br>commitment：高·risk：中·control：中<br>例：Toyota-GM NUMMI（1984·美国合资）·星巴克日本最初是合资<br><br>⑤ <strong>Direct Investment（直接投资）</strong><br>方法：自建工厂 / 子公司·完全控制<br>commitment：最高·risk：最高·control：最高<br>例：UNIQLO 美国直营店·Tesla 上海超工厂<br><br><strong>选择逻辑</strong>：<br>- 资源少 + 经验少 → indirect export<br>- 资源多 + 经验丰富 → direct investment<br>- 中间状态 → licensing / JV<br>- 战略性市场 → direct investment<br>- 试探性市场 → export<br><br><strong>典型 evolution path</strong>：indirect export → direct export → licensing / JV → direct investment（Uppsala model）<br><br><strong>跨学派关系</strong>：strategic_marketing·内部经济学·制度学派一体。",
@@ -38,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:36:16.422Z",
-  "updatedAt": "2026-05-02T12:21:08.253Z"
+  "updatedAt": "2026-05-03T02:54:27.088Z"
 }
