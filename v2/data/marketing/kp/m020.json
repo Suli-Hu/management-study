@@ -11,8 +11,8 @@
   "year": "2021",
   "title": {
     "zh": "Marketing 5.0",
-    "ja": "マーケティング 5.0・人間×技術マーケティング",
-    "en": "Marketing 5.0 · Tech for Humanity"
+    "ja": "マーケティング 5.0",
+    "en": "Marketing 5.0"
   },
   "body": {
     "zh": "<strong>Marketing 5.0（人间×技术 marketing）</strong>是 Kotler·Kartajaya·Setiawan 2021 年同名书提出·marketing 演化论的<strong>最新阶段</strong>·主张 AI·data·tech 应服务<strong>人间价值</strong>。<br><br><strong>核心特征</strong>：<br>① <strong>视角</strong>：marketing 要用 next tech（AI·NLP·sensors·robotics·AR/VR·IoT·blockchain）创造 human-like customer experience<br>② <strong>核心</strong>：tech 服务于 humanity·非取代 humanity<br>③ <strong>战略</strong>：data-driven marketing·predictive marketing·contextual marketing·augmented marketing·agile marketing<br>④ <strong>背景</strong>：AI 大爆发·疫情·Z 世代·数字鸿沟<br><br><strong>5 大支柱（5 个 -ing）</strong>：<br>① <strong>Data-Driven</strong>——用 data 决策<br>② <strong>Predictive</strong>——预测顾客行为<br>③ <strong>Contextual</strong>——根据情境个性化<br>④ <strong>Augmented</strong>——AR·VR 增强体验<br>⑤ <strong>Agile</strong>——敏捷迭代<br><br><strong>典型例</strong>：① Spotify Wrapped 个性化 data-driven storytelling ② Tesla Autopilot 的 AR 仪表盘 ③ ChatGPT-driven customer service。<br><br><strong>批判</strong>：① 数据隐私·算法偏见·伦理问题 ② tech 普及不均·digital divide ③ 「人性化技术」是不是悖论。",
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T04:51:30.606Z",
-  "updatedAt": "2026-05-03T03:04:06.168Z"
+  "updatedAt": "2026-05-03T03:31:48.249Z"
 }
