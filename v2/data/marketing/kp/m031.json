@@ -12,8 +12,8 @@
   "year": "1969",
   "title": {
     "zh": "口碑",
-    "ja": "クチコミ・社会的影響マーケティング",
-    "en": "Word-of-Mouth Marketing"
+    "ja": "クチコミ",
+    "en": "Word of Mouth"
   },
   "body": {
     "zh": "<strong>クチコミ（口コミ·Word-of-Mouth, WOM）</strong>是消费者间非商业的信息传递·marketing 学的重要研究领域。Pro Plus 第 5 章把口コミ归入消费者行为派·同时与 IMC·digital marketing 跨派联动。<br><br><strong>分类</strong>：<br>① <strong>传统 WOM</strong>——face-to-face·朋友推荐·邻居议论<br>② <strong>电子 WOM（eWOM）</strong>——SNS·review 网站·blog·影响范围数量级扩大<br>③ <strong>有偿 WOM</strong>——influencer marketing·KOL·KOC<br><br><strong>研究关键发现</strong>：<br>① <strong>消费者更信任 WOM</strong>——比广告高 5-7 倍·因 source 中立<br>② <strong>负面 WOM 传播 2-3 倍快</strong>——「good news travels fast, bad news travels faster」<br>③ <strong>口碑系数（Word-of-Mouth Marketing Coefficient）</strong>——一个满意客户带来约 3-5 个新客·一个不满客户赶走 9-15 个<br><br><strong>NPS（Net Promoter Score·Reichheld 2003）</strong>是 WOM 的实务测量工具——「您会向朋友推荐这个 brand 吗？0-10 分」·9-10 分=promoter·7-8=passive·0-6=detractor。NPS = %promoter - %detractor。<br><br><strong>marketing 战略</strong>：<br>① <strong>主动 seeding</strong>——让 early adopter 体验·让他们传播<br>② <strong>设计可口碑性</strong>——产品本身有「值得说的故事」（story-worthy）<br>③ <strong>管理负面 WOM</strong>——快速响应不满·service recovery<br>④ <strong>amplify</strong>——把好评放大（用户视频·UGC·KOL）<br><br><strong>跨学派关系</strong>：与 IMC（クチコミ marketing）·digital_marketing（SNS）·relationship（NPS）·CCT（brand community）多重交叉。",
@@ -39,5 +39,5 @@
     }
   },
   "createdAt": "2026-04-30T04:51:49.406Z",
-  "updatedAt": "2026-05-03T03:06:21.137Z"
+  "updatedAt": "2026-05-03T03:33:10.539Z"
 }
