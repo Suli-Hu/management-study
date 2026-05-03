@@ -19,6 +19,17 @@ import { POST as backfillPOST } from '~/pages/api/admin/backfill-kp-body-structu
 vi.mock('~/lib/github', () => ({ getFile: vi.fn() }));
 import { getFile } from '~/lib/github';
 
+interface BackfillResponse {
+  ok: boolean;
+  processed: number;
+  remaining: number;
+  errors: Array<{ id: string; reason: string; detail?: string }>;
+}
+
+async function readBackfill(res: Response): Promise<BackfillResponse> {
+  return (await res.json()) as BackfillResponse;
+}
+
 const TENANT = { tenantId: 'keiei', discipline: 'keiei' } as const;
 
 async function seedBaseline(db: D1LikeDatabase) {
@@ -269,7 +280,7 @@ describe('v0.8.0 Stage 1 — backfill endpoint', () => {
 
     const ctx = makeContext(db);
     const res = await backfillPOST(ctx);
-    const body = await res.json();
+    const body = await readBackfill(res);
     expect(body.ok).toBe(true);
     expect(body.processed).toBe(5);
     expect(body.remaining).toBe(0);
@@ -293,13 +304,13 @@ describe('v0.8.0 Stage 1 — backfill endpoint', () => {
 
     // 第一次跑
     const res1 = await backfillPOST(makeContext(db));
-    const body1 = await res1.json();
+    const body1 = await readBackfill(res1);
     expect(body1.processed).toBe(1);
     expect(body1.remaining).toBe(0);
 
     // 第二次跑：没有新的 KP 要填
     const res2 = await backfillPOST(makeContext(db));
-    const body2 = await res2.json();
+    const body2 = await readBackfill(res2);
     expect(body2.processed).toBe(0);
     expect(body2.remaining).toBe(0);
   });
@@ -309,15 +320,15 @@ describe('v0.8.0 Stage 1 — backfill endpoint', () => {
       await seedOldKpRow(db, `k${300 + i}`, 'narrative', `t ${i}`);
     }
 
-    const r1 = await (await backfillPOST(makeContext(db))).json();
+    const r1 = await readBackfill(await backfillPOST(makeContext(db)));
     expect(r1.processed).toBe(10);
     expect(r1.remaining).toBe(15);
 
-    const r2 = await (await backfillPOST(makeContext(db))).json();
+    const r2 = await readBackfill(await backfillPOST(makeContext(db)));
     expect(r2.processed).toBe(10);
     expect(r2.remaining).toBe(5);
 
-    const r3 = await (await backfillPOST(makeContext(db))).json();
+    const r3 = await readBackfill(await backfillPOST(makeContext(db)));
     expect(r3.processed).toBe(5);
     expect(r3.remaining).toBe(0);
   });
