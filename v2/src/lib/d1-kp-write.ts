@@ -21,7 +21,7 @@ import { Kp } from '~/schemas/kp';
 import { KP_TABLE } from './d1-tables';
 import { buildUpsertStmt } from './d1-upsert';
 import { parseBody } from './body-parser';
-import { parsedToStructured, extractEvaluationsFromParsed, evalContentToEvaluations } from './kp-body-helpers';
+import { parsedToStructured, evalContentToEvaluations } from './kp-body-helpers';
 
 type ParsedKp = z.infer<typeof Kp>;
 
@@ -62,17 +62,16 @@ export async function upsertKpInD1(
   const parsedJa = kp.body.ja ? parseBody(kp.body.ja, kp.format) : null;
   const structuredZh = parsedToStructured(parsedZh);
   const structuredJa = parsedJa ? parsedToStructured(parsedJa) : null;
-  // evaluations: 优先从独立 evalContent 字段拿（已是结构化），fallback 到 parsed 抽出
+  // evaluations: 仅从独立 evalContent 字段派生；空时写 null（PM 决策 v0.7.42：4 路径一致）
+  // body 内 ◆评价—— 这类 legacy 数据不再隐式抽到新列，由 audit 工具识别后单独迁移
   const evalsZh =
     kp.evalContent?.zh && Object.keys(kp.evalContent.zh).length > 0
       ? evalContentToEvaluations(kp.evalContent.zh)
-      : extractEvaluationsFromParsed(parsedZh);
+      : null;
   const evalsJa =
     kp.evalContent?.ja && Object.keys(kp.evalContent.ja).length > 0
       ? evalContentToEvaluations(kp.evalContent.ja)
-      : parsedJa
-        ? extractEvaluationsFromParsed(parsedJa)
-        : null;
+      : null;
 
   stmts.push(
     buildUpsertStmt(db, KP_TABLE, {
@@ -94,7 +93,7 @@ export async function upsertKpInD1(
       // 新列（v0.8.0 Stage 1 双写）
       body_zh_json: JSON.stringify(structuredZh),
       body_ja_json: structuredJa ? JSON.stringify(structuredJa) : null,
-      evaluations_zh_json: JSON.stringify(evalsZh),
+      evaluations_zh_json: evalsZh ? JSON.stringify(evalsZh) : null,
       evaluations_ja_json: evalsJa ? JSON.stringify(evalsJa) : null,
       body_format: kp.format,
     }),

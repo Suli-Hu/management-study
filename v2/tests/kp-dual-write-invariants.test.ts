@@ -266,7 +266,7 @@ describe('A2 — evaluations 三路径一致性 (PM 决策: evalContent 有就�
    * 这两条 test.fails 暴露 bug 但不阻 CI；研发改完后翻 test。
    */
 
-  test.fails('A2-ja: JA 三路径一致 (sync 写空对象 vs api/batch 写 null)', async () => {
+  test('A2-ja: JA 三路径一致 (sync 写空对象 vs api/batch 写 null)', async () => {
     // 路径 1: sync (走 upsertKpInD1 — sync 入口最终调的就是这个)
     await upsertKpInD1(db as unknown as D1Database, {
       id: 'ksync',
@@ -354,7 +354,7 @@ describe('A2 — evaluations 三路径一致性 (PM 决策: evalContent 有就�
    *   - 4 路径都返 null（与 PRD §3.2.2 一致 — body 内不再允许 ◆评价——）
    *   - 老数据 evals 仅在 body 的 case 由 audit 工具识别 + 单独迁移
    */
-  test.fails('A2-zh-extracted: ZH 三路径一致 (sync 抽 body vs api/batch 写空对象)', async () => {
+  test('A2-zh-extracted: ZH 三路径一致 (sync 抽 body vs api/batch 写空对象)', async () => {
     const bodyWithEval = '◆item A——descA◆item B——descB◆意义——这是从 body 抽出来的义';
 
     // 路径 1: sync
@@ -432,7 +432,7 @@ describe('A2 — evaluations 三路径一致性 (PM 决策: evalContent 有就�
    * 当前行为: evalContent 空 → 写 6 字段空对象（不是 null）
    * 修法后: 写 null
    */
-  test.fails('A2-backfill: backfill 写 evals 应为 null（evalContent 空时）', async () => {
+  test('A2-backfill: backfill 写 evals 应为 null（evalContent 空时）', async () => {
     // seed 老 KP（evalContent 空）
     await db
       .prepare(

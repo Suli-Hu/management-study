@@ -90,7 +90,7 @@ describe('v0.8.0 Stage 1 — 双写完整性', () => {
     vi.clearAllMocks();
   });
 
-  test('sync 路径写入：5 个新列都填上，且能被 KpBody parse', async () => {
+  test('sync 路径写入：body 列填上 + evalContent 有时 evaluations 列也填', async () => {
     vi.mocked(getFile).mockResolvedValue({
       ok: true,
       data: {
@@ -104,6 +104,8 @@ describe('v0.8.0 Stage 1 — 双写完整性', () => {
           title: { zh: '需求层次', ja: '欲求階層' },
           body: { zh: '导语：◆类型1——desc1◆类型2——desc2', ja: '導語：◆type1——desc1' },
           format: 'flat-list',
+          // 提供 evalContent.zh — evaluations_zh_json 应非 null
+          evalContent: { zh: { '义': '需求层次义', '限': '限', '例': '例' } },
           tags: [],
           createdAt: '2026-01-01T00:00:00.000Z',
           updatedAt: '2026-01-01T00:00:00.000Z',
@@ -118,16 +120,12 @@ describe('v0.8.0 Stage 1 — 双写完整性', () => {
     expect(cols).toBeTruthy();
     expect(cols!.body_format).toBe('flat-list');
 
-    // 5 新列都不为 null（body_ja 存在 → ja evaluations 也写一份哪怕空）
+    // body 列 + body_format 都填上
     expect(cols!.body_zh_json).not.toBeNull();
     expect(cols!.body_ja_json).not.toBeNull();
+    // PM 决策 v0.7.42：evalContent.zh 提供 → 非 null；evalContent.ja 未提供 → null（4 路径一致）
     expect(cols!.evaluations_zh_json).not.toBeNull();
-    expect(cols!.evaluations_ja_json).not.toBeNull();
-    // ja evaluations 是全空 6 字段（input 没给 evalContent.ja）
-    const evalJa = JSON.parse(cols!.evaluations_ja_json!);
-    expect(evalJa).toEqual({
-      meaning: '', limit: '', example: '', response: '', application: '', analogy: '',
-    });
+    expect(cols!.evaluations_ja_json).toBeNull();
 
     // body_zh_json 能被 KpBody schema 解析
     const parsedBody = KpBody.safeParse(JSON.parse(cols!.body_zh_json!));
