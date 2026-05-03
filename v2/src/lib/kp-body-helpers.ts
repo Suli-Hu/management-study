@@ -160,8 +160,11 @@ export function parsedToStructured(parsed: ParsedBody): KpBody {
 /**
  * 旧 evalContent dict (key=glyph 字符 '义/限/例/应/用/喻') → 新 KpEvaluationsLang 形态。
  * 给 v0.8.0 Stage 1 双写时把 evalContent 字段转换到新列用。
+ *
+ * 接受 partial dict（KP schema 里 evalContent 是 Record<string, string | undefined>），
+ * 内部 `?? ''` 处理 undefined 字段。
  */
-export function evalContentToEvaluations(evalContent: Record<string, string>): {
+export function evalContentToEvaluations(evalContent: Record<string, string | undefined>): {
   meaning: string;
   limit: string;
   example: string;
