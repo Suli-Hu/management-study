@@ -12,7 +12,7 @@
   "year": "2005",
   "title": {
     "zh": "AISAS 模型",
-    "ja": "AISAS・電通のインターネット時代モデル",
+    "ja": "AISAS モデル",
     "en": "AISAS Model"
   },
   "body": {
@@ -39,5 +39,5 @@
     }
   },
   "createdAt": "2026-04-30T05:03:55.215Z",
-  "updatedAt": "2026-05-03T03:05:38.213Z"
+  "updatedAt": "2026-05-03T03:32:22.215Z"
 }
