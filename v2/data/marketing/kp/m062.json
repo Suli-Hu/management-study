@@ -10,7 +10,7 @@
   ],
   "year": "1990",
   "title": {
-    "zh": "CRM 顾客关系管理·3 层次",
+    "zh": "CRM 顾客关系管理",
     "ja": "CRM 顧客関係管理・3 層次",
     "en": "Customer Relationship Management"
   },
@@ -37,5 +37,5 @@
     }
   },
   "createdAt": "2026-04-30T05:04:09.181Z",
-  "updatedAt": "2026-04-30T13:21:12.000Z"
+  "updatedAt": "2026-05-03T03:05:33.141Z"
 }
