@@ -12,8 +12,8 @@
   "year": "1990",
   "title": {
     "zh": "营销组合建模",
-    "ja": "マーケティング・ミックス・モデリング MMM",
-    "en": "Marketing Mix Modeling (MMM)"
+    "ja": "マーケティング・ミックス・モデリング",
+    "en": "Marketing Mix Modeling"
   },
   "body": {
     "zh": "<strong>Marketing Mix Modeling（MMM）</strong>是用<strong>统计模型</strong>分析 marketing 各要素（4P / 7T / channel·media·promotion）对销售影响的方法·Kotler 16 章·Pro Plus 5 章核心。<br><br><strong>核心命题</strong>：把销售看作 marketing inputs 的函数·用回归 / time-series 分析得 marginal contribution。<br><br><strong>典型 model</strong>：<br>**Sales = β0 + β1·TV + β2·Digital + β3·Print + β4·Promo + β5·Price + β6·Distribution + β7·Seasonality + ε**<br><br><strong>每个 β 表示每元 marketing input 对销售的贡献</strong>。<br><br><strong>3 大用途</strong>：<br>① <strong>媒体 ROI 分析</strong>——哪个 channel 最 effective<br>② <strong>预算优化</strong>——重新分配 marketing budget<br>③ <strong>scenario planning</strong>——「如果 promotion 增 20%·销售会怎样？」<br><br><strong>4 大挑战</strong>：<br>① <strong>collinearity</strong>——marketing inputs 相关<br>② <strong>endogeneity</strong>——投入和销售互相影响<br>③ <strong>data quality</strong>——多年 historical data 必要<br>④ <strong>digital attribution</strong>——multi-touch journey 难归因<br><br><strong>vs Multi-Touch Attribution（MTA）</strong>：<br>- MMM：top-down·aggregate·long history<br>- MTA：bottom-up·individual·real-time<br>- 现代 marketing 综合两者<br><br><strong>典型例</strong>：① P&G·Unilever·Coca-Cola 大 brand 都用 MMM 多年 ② Google·Meta 提供 lift studies 帮 brand 测 digital ROI ③ Nielsen / Kantar 是 MMM 主要 vendor<br><br><strong>跨学派关系</strong>：与 consumer_behavior 数理派·digital_marketing·strategic_marketing 一致·东大数理派核心方法。",
@@ -38,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:41:08.499Z",
-  "updatedAt": "2026-05-03T03:05:06.393Z"
+  "updatedAt": "2026-05-03T03:32:02.245Z"
 }
