@@ -10,9 +10,9 @@
   ],
   "year": "2010",
   "title": {
-    "zh": "商业模式设计·Osterwalder 9 要素 BMC",
-    "ja": "ビジネスモデル設計・Osterwalder 9 要素 BMC",
-    "en": "Business Model Canvas"
+    "zh": "商业模式设计",
+    "ja": "ビジネスモデル設計",
+    "en": "Business Model Design"
   },
   "body": {
     "zh": "<strong>Business Model Design（商业模式设计）</strong>是新品开发 stage 2 核心·定义企业如何<strong>create·deliver·capture value</strong>。Kotler 16 版第 18.4 节核心。<br><br><strong>Business Model Canvas（Osterwalder 2010）9 要素</strong>：<br>① <strong>Customer Segments</strong>——target<br>② <strong>Value Propositions</strong>——价值<br>③ <strong>Channels</strong>——交付<br>④ <strong>Customer Relationships</strong>——关系<br>⑤ <strong>Revenue Streams</strong>——收入流<br>⑥ <strong>Key Resources</strong>——关键资源<br>⑦ <strong>Key Activities</strong>——关键活动<br>⑧ <strong>Key Partnerships</strong>——关键伙伴<br>⑨ <strong>Cost Structure</strong>——成本结构<br><br><strong>marketing 视角的 5 大核心问题</strong>：<br>① <strong>WHO</strong>——customer segments<br>② <strong>WHAT</strong>——value proposition<br>③ <strong>HOW</strong>——channel·activities<br>④ <strong>HOW MUCH</strong>——revenue model + cost<br>⑤ <strong>WHY</strong>——sustainable competitive advantage<br><br><strong>常见 revenue models</strong>：<br>① <strong>One-Time Sale</strong>（传统购买）<br>② <strong>Subscription</strong>（Netflix·SaaS）<br>③ <strong>Freemium</strong>（Spotify·Dropbox）<br>④ <strong>Advertising</strong>（Google·Facebook）<br>⑤ <strong>Marketplace / Platform</strong>（Amazon·Uber）<br>⑥ <strong>Two-Sided Market</strong>（App Store）<br>⑦ <strong>Razor-Razorblade</strong>（Gillette·Nespresso）<br>⑧ <strong>Pay-per-Use</strong>（cloud services）<br><br><strong>典型 BM 创新</strong>：<br>① Netflix（DVD by mail → streaming subscription·BM 转换）<br>② Adobe（perpetual license → Creative Cloud subscription·2013）<br>③ Tesla（dealer-based → direct + OTA upgrade）<br>④ Spotify（freemium music subscription）<br><br><strong>跨学派关系</strong>：① 与 effectuation（m075）的 means-driven 思维互补 ② 与 strategic_marketing 的 sustainable competitive advantage（m109）一致 ③ 与 SDL（m070）的 service ecosystem 一致。",
@@ -38,5 +38,5 @@
     }
   },
   "createdAt": "2026-04-30T07:36:09.289Z",
-  "updatedAt": "2026-05-02T12:20:12.394Z"
+  "updatedAt": "2026-05-03T02:53:41.881Z"
 }
