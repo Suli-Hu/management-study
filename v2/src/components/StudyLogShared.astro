@@ -709,8 +709,8 @@ const {
     const lastX = ((points.length - 1) * stepX).toFixed(1);
     const lastY = (h - (last / max) * h).toFixed(1);
     return `<svg class="sl-spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
-      <polyline points="${coords}" fill="none" stroke="#525252" stroke-width="1" />
-      <circle cx="${lastX}" cy="${lastY}" r="1.6" fill="#0a0a0a" />
+      <polyline class="sl-spark-line" points="${coords}" fill="none" stroke-width="1" />
+      <circle class="sl-spark-dot" cx="${lastX}" cy="${lastY}" r="1.6" />
     </svg>`;
   }
 
@@ -1284,7 +1284,7 @@ const {
     margin: 0 auto;
     padding: 36px 32px 120px;
     font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
-    color: #171717;
+    color: var(--text);
     line-height: 1.6;
     font-feature-settings: "tnum" 1;
   }
@@ -1299,35 +1299,35 @@ const {
   }
   .sl-breadcrumb {
     font-size: 12px;
-    color: #a3a3a3;
+    color: var(--text-3);
     margin: 0 0 6px;
   }
   .sl-breadcrumb a {
-    color: #525252;
+    color: var(--text-2);
     text-decoration: none;
   }
-  .sl-breadcrumb a:hover { color: #0a0a0a; }
-  .sl-sep { margin: 0 6px; color: #a3a3a3; }
+  .sl-breadcrumb a:hover { color: var(--text); }
+  .sl-sep { margin: 0 6px; color: var(--text-3); }
   .sl-title {
     font-size: 34px;
     font-weight: 700;
     letter-spacing: -0.015em;
     line-height: 1.1;
     margin: 0;
-    color: #0a0a0a;
+    color: var(--text);
   }
   .sl-add-btn {
     all: unset;
     cursor: pointer;
     padding: 9px 16px;
     border-radius: 8px;
-    background: #0a0a0a;
-    color: #fff;
+    background: var(--primary);
+    color: var(--primary-fg);
     font-size: 13px;
     font-weight: 500;
     white-space: nowrap;
   }
-  .sl-add-btn:hover { background: #262626; }
+  .sl-add-btn:hover { background: oklch(from var(--primary) calc(l + 0.08) c h); }
   .sl-add-btn[disabled] {
     cursor: not-allowed;
     opacity: 0.4;
@@ -1336,7 +1336,7 @@ const {
   /* 视图切换器 */
   .sl-switcher {
     display: inline-flex;
-    background: #f5f5f4;
+    background: var(--bg-soft);
     border-radius: 9px;
     padding: 3px;
     font-size: 13px;
@@ -1347,14 +1347,14 @@ const {
     cursor: pointer;
     padding: 7px 14px;
     border-radius: 7px;
-    color: #525252;
+    color: var(--text-2);
     transition: all .12s;
     font-weight: 400;
   }
-  .sl-seg:hover { color: #0a0a0a; }
+  .sl-seg:hover { color: var(--text); }
   .sl-seg-active {
-    background: #ffffff;
-    color: #0a0a0a;
+    background: var(--bg-elev);
+    color: var(--text);
     font-weight: 600;
     box-shadow: 0 1px 2px rgba(0,0,0,.06);
   }
@@ -1370,14 +1370,14 @@ const {
     grid-template-columns: 1fr 1fr;
     gap: 24px;
     padding: 24px 28px;
-    border: 1px solid #ececec;
+    border: 1px solid var(--border);
     border-radius: 12px;
-    background: #fff;
+    background: var(--bg-elev);
     margin-bottom: 22px;
   }
   .sl-stat-label {
     font-size: 11.5px;
-    color: #a3a3a3;
+    color: var(--text-3);
     margin: 0 0 8px;
   }
   .sl-stat-value {
@@ -1385,34 +1385,34 @@ const {
     font-weight: 700;
     line-height: 1;
     margin: 0 0 8px;
-    color: #0a0a0a;
+    color: var(--text);
     letter-spacing: -0.02em;
   }
   .sl-unit {
     font-size: 14px;
     font-weight: 400;
-    color: #525252;
+    color: var(--text-2);
     margin-left: 4px;
     margin-right: 12px;
   }
   .sl-stat-sub {
     font-size: 11.5px;
-    color: #a3a3a3;
+    color: var(--text-3);
     margin: 0;
   }
 
   /* 日历热力图 */
   .sl-heatmap-wrap {
     padding: 20px 28px;
-    border: 1px solid #ececec;
+    border: 1px solid var(--border);
     border-radius: 12px;
-    background: #fff;
+    background: var(--bg-elev);
     margin-bottom: 22px;
     position: relative;
   }
   .sl-heatmap-title {
     font-size: 12px;
-    color: #525252;
+    color: var(--text-2);
     margin: 0 0 14px;
   }
   .sl-heatmap-title [data-title-mobile] { display: none; }
@@ -1421,7 +1421,7 @@ const {
     top: 18px;
     right: 28px;
     font-size: 11px;
-    color: #a3a3a3;
+    color: var(--text-3);
     display: inline-flex;
     align-items: center;
     gap: 3px;
@@ -1451,7 +1451,7 @@ const {
   .sl-cal-month-label {
     font-size: 12px;
     font-weight: 500;
-    color: #525252;
+    color: var(--text-2);
     margin: 0 0 6px;
   }
   .sl-cal-dow {
@@ -1462,7 +1462,7 @@ const {
   }
   .sl-cal-dow span {
     font-size: 10px;
-    color: #a3a3a3;
+    color: var(--text-3);
     text-align: center;
   }
   .sl-cal-grid {
@@ -1474,7 +1474,7 @@ const {
     aspect-ratio: 1;
     border-radius: 3px;
     font-size: 10px;
-    color: #525252;
+    color: var(--text-2);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1484,16 +1484,16 @@ const {
   }
   /* v0.7.23: 高强度阶白字（4 / 5 档背景够深） */
   .sl-cal-day.sl-heat-4, .sl-cal-day.sl-heat-5 {
-    color: #fff;
+    color: var(--primary-fg);
     font-weight: 500;
   }
   .sl-cal-today {
-    box-shadow: inset 0 0 0 1.5px #0a0a0a;
+    box-shadow: inset 0 0 0 1.5px var(--primary);
   }
   .sl-cal-future {
-    color: #d4d4d4;
+    color: var(--border);
     background: transparent !important;
-    border: 1px dashed #ececec;
+    border: 1px dashed var(--border);
   }
 
   /* 时间筛选 chips */
@@ -1508,27 +1508,27 @@ const {
     padding: 6px 14px;
     border-radius: 999px;
     font-size: 12px;
-    color: #525252;
-    border: 1px solid #ececec;
-    background: #fff;
+    color: var(--text-2);
+    border: 1px solid var(--border);
+    background: var(--bg-elev);
     transition: all .12s;
   }
-  .sl-chip:hover { border-color: #a3a3a3; }
+  .sl-chip:hover { border-color: var(--text-3); }
   .sl-chip-active {
-    background: #0a0a0a;
-    color: #fff;
-    border-color: #0a0a0a;
+    background: var(--primary);
+    color: var(--primary-fg);
+    border-color: var(--primary);
   }
 
   /* Session 列表 */
   .sl-list {
-    border: 1px solid #ececec;
+    border: 1px solid var(--border);
     border-radius: 12px;
-    background: #fff;
+    background: var(--bg-elev);
     overflow: hidden;
   }
   .sl-group + .sl-group {
-    border-top: 1px solid #f5f5f4;
+    border-top: 1px solid var(--border-soft);
   }
   /* v0.7.26: split layout — 左 dateLabel + 周X，右 stat。日期主标签加重，去重 */
   .sl-group-head {
@@ -1537,32 +1537,32 @@ const {
     gap: 8px;
     margin: 0;
     padding: 12px 20px 6px;
-    background: #fafaf9;
+    background: var(--bg-soft);
   }
   .sl-group-head-label {
     font-size: 13px;
     font-weight: 600;
-    color: #0a0a0a;
+    color: var(--text);
   }
   .sl-group-head-dow {
     font-size: 11px;
-    color: #a3a3a3;
+    color: var(--text-3);
   }
   .sl-group-head-spacer { flex: 1; }
   .sl-group-head-stat {
     font-size: 11px;
-    color: #737373;
+    color: var(--text-2);
     font-variant-numeric: tabular-nums;
   }
   .sl-group-rows {
     padding: 4px 0;
   }
   .sl-row {
-    border-bottom: 1px solid #f5f5f4;
+    border-bottom: 1px solid var(--border-soft);
     transition: background .08s;
   }
   .sl-row:last-child { border-bottom: 0; }
-  .sl-row:hover { background: #fafaf9; }
+  .sl-row:hover { background: var(--bg-soft); }
   .sl-row-main {
     display: grid;
     grid-template-columns: 56px minmax(120px, 1.4fr) auto minmax(0, 2fr) 70px 70px 50px 20px;
@@ -1587,17 +1587,17 @@ const {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: #a3a3a3;
+    color: var(--text-3);
     font-size: 12px;
   }
-  .sl-row-icon:hover { background: #ececec; color: #0a0a0a; }
+  .sl-row-icon:hover { background: var(--border); color: var(--text); }
   .sl-row-time {
     font-variant-numeric: tabular-nums;
-    color: #a3a3a3;
+    color: var(--text-3);
     font-size: 12px;
   }
   .sl-row-kp {
-    color: #0a0a0a;
+    color: var(--text);
     font-weight: 500;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1605,14 +1605,14 @@ const {
   }
   .sl-row-school {
     font-size: 11px;
-    color: #525252;
-    background: #f5f5f4;
+    color: var(--text-2);
+    background: var(--bg-soft);
     padding: 2px 8px;
     border-radius: 4px;
     white-space: nowrap;
   }
   .sl-row-note-preview {
-    color: #a3a3a3;
+    color: var(--text-3);
     font-size: 12px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1620,18 +1620,18 @@ const {
   }
   .sl-row-dur {
     text-align: right;
-    color: #0a0a0a;
+    color: var(--text);
     font-weight: 500;
     font-variant-numeric: tabular-nums;
   }
   .sl-row-rating {
     text-align: right;
-    color: #d4d4d4;
+    color: var(--border);
     font-size: 12px;
     letter-spacing: 1px;
   }
   .sl-row-chevron {
-    color: #a3a3a3;
+    color: var(--text-3);
     transition: transform .15s;
     font-size: 11px;
     text-align: center;
@@ -1642,7 +1642,7 @@ const {
   .sl-row-note {
     padding: 0 20px 12px 90px;
     font-size: 12.5px;
-    color: #525252;
+    color: var(--text-2);
     line-height: 1.7;
     white-space: pre-wrap;
   }
@@ -1651,7 +1651,7 @@ const {
   /* 空状态 */
   .sl-empty {
     text-align: center;
-    color: #a3a3a3;
+    color: var(--text-3);
     font-size: 13px;
     padding: 40px 20px;
   }
@@ -1661,19 +1661,19 @@ const {
   .sl-placeholder {
     text-align: center;
     padding: 60px 20px;
-    color: #525252;
-    border: 1px dashed #ececec;
+    color: var(--text-2);
+    border: 1px dashed var(--border);
     border-radius: 12px;
-    background: #fafaf9;
+    background: var(--bg-soft);
   }
   .sl-placeholder p:first-child {
     font-size: 16px;
     margin: 0 0 8px;
-    color: #0a0a0a;
+    color: var(--text);
   }
   .sl-placeholder-sub {
     font-size: 12.5px;
-    color: #a3a3a3;
+    color: var(--text-3);
     margin: 0;
   }
 
@@ -1682,13 +1682,13 @@ const {
      ============================================================ */
   .sl-rank-hint {
     font-size: 11.5px;
-    color: #a3a3a3;
+    color: var(--text-3);
     margin: 0 0 12px;
   }
   .sl-rank-list {
-    border: 1px solid #ececec;
+    border: 1px solid var(--border);
     border-radius: 12px;
-    background: #fff;
+    background: var(--bg-elev);
     overflow: hidden;
   }
   .sl-rank-head {
@@ -1696,10 +1696,10 @@ const {
     grid-template-columns: minmax(200px, 1.6fr) 90px 60px 100px 60px;
     gap: 14px;
     padding: 10px 20px;
-    background: #fafaf9;
-    border-bottom: 1px solid #ececec;
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--border);
     font-size: 11px;
-    color: #a3a3a3;
+    color: var(--text-3);
     letter-spacing: 0.04em;
     text-transform: uppercase;
   }
@@ -1717,24 +1717,24 @@ const {
     user-select: none;
     transition: color .12s;
   }
-  .sl-rank-col-btn:hover { color: #525252; }
-  .sl-rank-col-btn.is-active { color: #0a0a0a; font-weight: 600; }
+  .sl-rank-col-btn:hover { color: var(--text-2); }
+  .sl-rank-col-btn.is-active { color: var(--text); font-weight: 600; }
   .sl-rank-arrow {
     display: inline-block;
     margin-left: 3px;
     width: 8px;
-    color: #0a0a0a;
+    color: var(--text);
   }
   .sl-rank-row {
     position: relative;
-    border-bottom: 1px solid #f5f5f4;
+    border-bottom: 1px solid var(--border-soft);
   }
   .sl-rank-row:last-child { border-bottom: 0; }
-  .sl-rank-row:hover .sl-rank-progress-bg { background: #ececec; }
+  .sl-rank-row:hover .sl-rank-progress-bg { background: var(--border); }
   .sl-rank-progress-bg {
     position: absolute;
     inset: 0;
-    background: #f5f5f4;
+    background: var(--bg-soft);
     transition: background .12s;
     z-index: 0;
   }
@@ -1750,7 +1750,7 @@ const {
   }
   .sl-rank-title { min-width: 0; }
   .sl-rank-kp {
-    color: #0a0a0a;
+    color: var(--text);
     font-weight: 500;
     margin: 0 0 2px;
     overflow: hidden;
@@ -1759,16 +1759,16 @@ const {
   }
   .sl-rank-school {
     font-size: 11px;
-    color: #525252;
+    color: var(--text-2);
     margin: 0;
   }
   .sl-rank-num {
     text-align: right;
-    color: #0a0a0a;
+    color: var(--text);
     font-variant-numeric: tabular-nums;
   }
   .sl-rank-stars {
-    color: #525252;
+    color: var(--text-2);
     letter-spacing: 1px;
     font-size: 12px;
   }
@@ -1778,14 +1778,14 @@ const {
      ============================================================ */
   .sl-tier-ladder {
     padding: 16px 20px;
-    border: 1px solid #ececec;
+    border: 1px solid var(--border);
     border-radius: 12px;
-    background: #fff;
+    background: var(--bg-elev);
     margin-bottom: 16px;
   }
   .sl-tier-ladder-title {
     font-size: 11.5px;
-    color: #a3a3a3;
+    color: var(--text-3);
     margin: 0 0 10px;
   }
   .sl-tier-ladder-chips {
@@ -1799,18 +1799,18 @@ const {
     gap: 4px;
     padding: 3px 10px;
     border-radius: 999px;
-    border: 1px solid #ececec;
+    border: 1px solid var(--border);
     font-size: 11px;
-    color: #525252;
-    background: #fff;
+    color: var(--text-2);
+    background: var(--bg-elev);
   }
   .sl-tier-chip strong {
-    color: #0a0a0a;
+    color: var(--text);
     font-weight: 600;
   }
   .sl-tier-chip em {
     font-style: normal;
-    color: #a3a3a3;
+    color: var(--text-3);
     font-variant-numeric: tabular-nums;
   }
   /* 段位章颜色：单色 + 灰阶（无主题色） */
@@ -1833,9 +1833,9 @@ const {
 
   /* 段位榜列表 */
   .sl-tier-list {
-    border: 1px solid #ececec;
+    border: 1px solid var(--border);
     border-radius: 12px;
-    background: #fff;
+    background: var(--bg-elev);
     overflow: hidden;
   }
   .sl-tier-row {
@@ -1844,14 +1844,14 @@ const {
     gap: 14px;
     padding: 14px 20px;
     align-items: center;
-    border-bottom: 1px solid #f5f5f4;
+    border-bottom: 1px solid var(--border-soft);
   }
   .sl-tier-row:last-child { border-bottom: 0; }
-  .sl-tier-row:hover { background: #fafaf9; }
+  .sl-tier-row:hover { background: var(--bg-soft); }
 
   .sl-tier-rank {
     font-size: 12px;
-    color: #a3a3a3;
+    color: var(--text-3);
     font-variant-numeric: tabular-nums;
     text-align: right;
   }
@@ -1864,9 +1864,9 @@ const {
     border-radius: 8px;
     font-weight: 700;
     font-size: 14px;
-    color: #525252;
-    background: #fafaf9;
-    border: 1px solid #ececec;
+    color: var(--text-2);
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
   }
   /* v0.7.23: 段位榜大徽章 — sumi --tier-* 实色 + 白字（C 用浅底深字保持低对比，B/A 实色白字渐进） */
   .sl-tier-badge-c {
@@ -1875,12 +1875,12 @@ const {
     border-color: oklch(from var(--tier-c) l c h / 0.30);
   }
   .sl-tier-badge-b {
-    color: #fff;
+    color: var(--primary-fg);
     background: var(--tier-b);
     border-color: var(--tier-b);
   }
   .sl-tier-badge-a {
-    color: #fff;
+    color: var(--primary-fg);
     background: var(--tier-a);
     border-color: var(--tier-a);
   }
@@ -1888,7 +1888,7 @@ const {
   .sl-tier-school { min-width: 0; }
   .sl-tier-school-name {
     font-size: 13px;
-    color: #0a0a0a;
+    color: var(--text);
     margin: 0 0 2px;
     font-weight: 500;
     white-space: nowrap;
@@ -1897,27 +1897,27 @@ const {
   }
   .sl-tier-school-meta {
     font-size: 11px;
-    color: #a3a3a3;
+    color: var(--text-3);
     margin: 0;
     display: flex;
     gap: 6px;
     align-items: center;
   }
   .sl-tier-peak {
-    color: #525252;
-    background: #f5f5f4;
+    color: var(--text-2);
+    background: var(--bg-soft);
     padding: 1px 6px;
     border-radius: 3px;
   }
   .sl-tier-decay {
-    color: #a3a3a3;
+    color: var(--text-3);
     font-variant-numeric: tabular-nums;
   }
 
   .sl-tier-progress { min-width: 0; }
   .sl-tier-progress-label {
     font-size: 11px;
-    color: #525252;
+    color: var(--text-2);
     margin: 0 0 4px;
     font-variant-numeric: tabular-nums;
   }
@@ -1942,22 +1942,24 @@ const {
     width: 100%;
     height: 100%;
   }
+  .sl-spark-line { stroke: var(--text-2); }
+  .sl-spark-dot { fill: var(--text); }
 
   .sl-tier-quiz {
     all: unset;
     cursor: pointer;
     padding: 4px 10px;
     border-radius: 4px;
-    border: 1px solid #ececec;
-    color: #a3a3a3;
+    border: 1px solid var(--border);
+    color: var(--text-3);
     font-size: 11px;
     text-align: center;
-    background: #fff;
+    background: var(--bg-elev);
     transition: all .12s;
   }
   .sl-tier-quiz:hover:not([disabled]) {
-    border-color: #0a0a0a;
-    color: #0a0a0a;
+    border-color: var(--primary);
+    color: var(--text);
   }
   .sl-tier-quiz[disabled] {
     cursor: not-allowed;
@@ -1972,16 +1974,16 @@ const {
     text-align: center;
     padding: 12px;
     margin-top: 12px;
-    border: 1px dashed #ececec;
+    border: 1px dashed var(--border);
     border-radius: 12px;
-    color: #525252;
+    color: var(--text-2);
     font-size: 12px;
-    background: #fafaf9;
+    background: var(--bg-soft);
     transition: all .12s;
   }
   .sl-tier-c-toggle:hover {
-    border-color: #a3a3a3;
-    color: #0a0a0a;
+    border-color: var(--text-3);
+    color: var(--text);
   }
   .sl-tier-c-toggle.hidden { display: none; }
   .sl-view .hidden, .sl-row-note.hidden { display: none; }
@@ -2017,7 +2019,7 @@ const {
   .sl-editor {
     width: 100%;
     max-width: 480px;
-    background: #fff;
+    background: var(--bg-elev);
     border-radius: 14px;
     overflow: hidden;
     box-shadow: 0 12px 40px rgba(0,0,0,.16);
@@ -2027,12 +2029,12 @@ const {
     align-items: center;
     justify-content: space-between;
     padding: 18px 22px 14px;
-    border-bottom: 1px solid #f5f5f4;
+    border-bottom: 1px solid var(--border-soft);
   }
   .sl-editor-title {
     font-size: 15px;
     font-weight: 600;
-    color: #0a0a0a;
+    color: var(--text);
     margin: 0;
   }
   .sl-editor-close {
@@ -2041,13 +2043,13 @@ const {
     width: 28px;
     height: 28px;
     border-radius: 6px;
-    color: #a3a3a3;
+    color: var(--text-3);
     font-size: 20px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
   }
-  .sl-editor-close:hover { background: #f5f5f4; color: #0a0a0a; }
+  .sl-editor-close:hover { background: var(--bg-soft); color: var(--text); }
   .sl-editor-body {
     padding: 18px 22px;
     display: flex;
@@ -2062,22 +2064,22 @@ const {
   }
   .sl-field-label {
     font-size: 11.5px;
-    color: #525252;
+    color: var(--text-2);
   }
   .sl-field-input {
     width: 100%;
     box-sizing: border-box;
     padding: 8px 10px;
-    border: 1px solid #ececec;
+    border: 1px solid var(--border);
     border-radius: 6px;
     font-size: 13px;
     font-family: inherit;
-    color: #0a0a0a;
-    background: #fff;
+    color: var(--text);
+    background: var(--bg-elev);
     outline: none;
     transition: border-color .12s;
   }
-  .sl-field-input:focus { border-color: #0a0a0a; }
+  .sl-field-input:focus { border-color: var(--primary); }
   .sl-field-textarea {
     resize: vertical;
     min-height: 60px;
@@ -2096,8 +2098,8 @@ const {
     height: 22px;
     border-radius: 999px;
     border: 0;
-    background: #f5f5f4;
-    color: #525252;
+    background: var(--bg-soft);
+    color: var(--text-2);
     font-size: 14px;
     line-height: 1;
     cursor: pointer;
@@ -2105,7 +2107,7 @@ const {
     align-items: center;
     justify-content: center;
   }
-  .sl-kp-clear:hover { background: #e7e5e4; color: #0a0a0a; }
+  .sl-kp-clear:hover { background: var(--border); color: var(--text); }
   .sl-kp-clear.hidden { display: none; }
   .sl-kp-list {
     position: absolute;
@@ -2115,8 +2117,8 @@ const {
     z-index: 10;
     max-height: 240px;
     overflow-y: auto;
-    background: #fff;
-    border: 1px solid #ececec;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
     border-radius: 8px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     padding: 4px 0;
@@ -2125,33 +2127,33 @@ const {
   .sl-kp-group-label {
     padding: 6px 12px 4px;
     font-size: 10.5px;
-    color: #a3a3a3;
+    color: var(--text-3);
     letter-spacing: 0.04em;
     text-transform: uppercase;
   }
   .sl-kp-option {
     padding: 7px 12px;
     font-size: 13px;
-    color: #0a0a0a;
+    color: var(--text);
     cursor: pointer;
     line-height: 1.3;
   }
   .sl-kp-option:hover,
   .sl-kp-option.is-highlighted {
-    background: #f5f5f4;
+    background: var(--bg-soft);
   }
   .sl-kp-option.is-selected {
-    color: #0a0a0a;
+    color: var(--text);
     font-weight: 500;
   }
   .sl-kp-option.is-selected::before {
     content: '✓ ';
-    color: #2563eb;
+    color: var(--text);
   }
   .sl-kp-empty {
     padding: 14px 12px;
     font-size: 12px;
-    color: #a3a3a3;
+    color: var(--text-3);
     text-align: center;
   }
 
@@ -2165,34 +2167,34 @@ const {
   .sl-rating-star {
     all: unset;
     cursor: pointer;
-    color: #d4d4d4;
+    color: var(--border);
     font-size: 22px;
     line-height: 1;
     padding: 0 2px;
     transition: color .08s;
   }
   .sl-rating-star:hover, .sl-rating-star.sl-rating-active {
-    color: #0a0a0a;
+    color: var(--text);
   }
   .sl-rating-clear {
     all: unset;
     cursor: pointer;
     margin-left: 8px;
-    color: #a3a3a3;
+    color: var(--text-3);
     font-size: 11px;
     padding: 2px 6px;
-    border: 1px solid #ececec;
+    border: 1px solid var(--border);
     border-radius: 4px;
   }
-  .sl-rating-clear:hover { color: #0a0a0a; border-color: #a3a3a3; }
+  .sl-rating-clear:hover { color: var(--text); border-color: var(--text-3); }
 
   .sl-editor-error {
     padding: 8px 12px;
-    background: #fff7f7;
-    border: 1px solid #f0d5d5;
+    background: var(--s-danger-soft);
+    border: 1px solid oklch(from var(--s-danger) l c h / 0.25);
     border-radius: 6px;
     font-size: 12px;
-    color: #c53030;
+    color: var(--s-danger);
   }
   .sl-editor-error.hidden { display: none; }
 
@@ -2207,21 +2209,21 @@ const {
     cursor: pointer;
     padding: 8px 14px;
     border-radius: 6px;
-    color: #525252;
+    color: var(--text-2);
     font-size: 13px;
   }
-  .sl-editor-btn-ghost:hover { background: #f5f5f4; }
+  .sl-editor-btn-ghost:hover { background: var(--bg-soft); }
   .sl-editor-btn-primary {
     all: unset;
     cursor: pointer;
     padding: 8px 16px;
     border-radius: 6px;
-    background: #0a0a0a;
-    color: #fff;
+    background: var(--primary);
+    color: var(--primary-fg);
     font-size: 13px;
     font-weight: 500;
   }
-  .sl-editor-btn-primary:hover { background: #262626; }
+  .sl-editor-btn-primary:hover { background: oklch(from var(--primary) calc(l + 0.08) c h); }
   .sl-editor-btn-primary[disabled] {
     cursor: not-allowed;
     opacity: 0.5;
@@ -2246,13 +2248,13 @@ const {
     }
     .sl-row-time {
       font-size: 11px;
-      color: #a3a3a3;
+      color: var(--text-3);
       text-align: left;
     }
     .sl-row-kp {
       font-size: 13.5px;
       font-weight: 500;
-      color: #171717;
+      color: var(--text);
     }
     /* mobile 收起非主要元素 */
     .sl-row-school,
@@ -2272,7 +2274,7 @@ const {
     }
     .sl-row-chevron {
       font-size: 8px;
-      color: #d4d4d4;
+      color: var(--border);
     }
     .sl-row-note {
       padding: 4px 12px 12px 56px;
@@ -2318,8 +2320,8 @@ const {
       width: 56px;
       height: 56px;
       border-radius: 999px;
-      background: #0a0a0a;
-      color: #fff;
+      background: var(--primary);
+      color: var(--primary-fg);
       border: none;
       cursor: pointer;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18), 0 1px 4px rgba(0, 0, 0, 0.24);
@@ -2359,7 +2361,7 @@ const {
       width: 36px;
       height: 4px;
       border-radius: 2px;
-      background: #d4d4d4;
+      background: var(--border);
       margin: 8px auto 0;
       flex-shrink: 0;
     }
@@ -2390,18 +2392,18 @@ const {
     cursor: pointer;
     padding: 8px 14px;
     border-radius: 8px;
-    background: #fff;
-    border: 1px solid #ececec;
-    color: #525252;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    color: var(--text-2);
     font-size: 13px;
     font-weight: 500;
     white-space: nowrap;
     transition: border-color .12s, color .12s, background .12s;
   }
   .sl-share-btn:hover {
-    color: #0a0a0a;
-    border-color: #d4d4d4;
-    background: #fafaf9;
+    color: var(--text);
+    border-color: var(--border);
+    background: var(--bg-soft);
   }
 
   /* === Share Dialog === */
@@ -2417,7 +2419,7 @@ const {
   }
   .sls-overlay.hidden { display: none; }
   .sls-sheet {
-    background: #fff;
+    background: var(--bg-elev);
     border-radius: 14px;
     width: 100%;
     max-width: 440px;
@@ -2426,7 +2428,7 @@ const {
   }
   .sls-head {
     padding: 20px 24px 14px;
-    border-bottom: 1px solid #f1f1f0;
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: flex-start;
     gap: 12px;
@@ -2435,12 +2437,12 @@ const {
   .sls-title {
     font-size: 16px;
     font-weight: 700;
-    color: #0a0a0a;
+    color: var(--text);
     margin: 0;
   }
   .sls-sub {
     font-size: 12px;
-    color: #737373;
+    color: var(--text-2);
     margin: 4px 0 0;
     line-height: 1.5;
   }
@@ -2448,16 +2450,16 @@ const {
     all: unset;
     cursor: pointer;
     padding: 6px;
-    color: #737373;
+    color: var(--text-2);
     font-size: 18px;
     line-height: 1;
   }
-  .sls-close:hover { color: #0a0a0a; }
+  .sls-close:hover { color: var(--text); }
   .sls-body { padding: 20px 24px 22px; }
 
   .sls-empty-text {
     font-size: 13px;
-    color: #525252;
+    color: var(--text-2);
     margin: 0 0 14px;
     line-height: 1.6;
   }
@@ -2468,12 +2470,12 @@ const {
     border-radius: 8px;
     font-size: 13px;
     font-weight: 500;
-    background: #0a0a0a;
-    color: #fff;
+    background: var(--primary);
+    color: var(--primary-fg);
     display: inline-block;
     transition: background .12s;
   }
-  .sls-btn-primary:hover { background: #262626; }
+  .sls-btn-primary:hover { background: oklch(from var(--primary) calc(l + 0.08) c h); }
 
   .sls-url-row {
     display: flex;
@@ -2484,14 +2486,14 @@ const {
     flex: 1;
     min-width: 0;
     padding: 8px 10px;
-    border: 1px solid #ececec;
+    border: 1px solid var(--border);
     border-radius: 7px;
     font-size: 12px;
-    color: #171717;
-    background: #fafaf9;
+    color: var(--text);
+    background: var(--bg-soft);
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
-  .sls-url:focus { outline: none; border-color: #d4d4d4; }
+  .sls-url:focus { outline: none; border-color: var(--border); }
   .sls-copy {
     all: unset;
     cursor: pointer;
@@ -2500,18 +2502,18 @@ const {
     gap: 4px;
     padding: 8px 12px;
     border-radius: 7px;
-    background: #f5f5f4;
-    color: #525252;
+    background: var(--bg-soft);
+    color: var(--text-2);
     font-size: 12px;
     font-weight: 500;
     white-space: nowrap;
     transition: background .12s, color .12s;
   }
-  .sls-copy:hover { background: #e7e5e4; color: #0a0a0a; }
+  .sls-copy:hover { background: var(--border); color: var(--text); }
 
   .sls-meta {
     font-size: 12px;
-    color: #737373;
+    color: var(--text-2);
     margin: 0 0 14px;
   }
   .sls-btn-ghost {
@@ -2519,23 +2521,23 @@ const {
     cursor: pointer;
     padding: 7px 0;
     font-size: 12px;
-    color: #737373;
+    color: var(--text-2);
     text-decoration: underline;
-    text-decoration-color: #d4d4d4;
+    text-decoration-color: var(--border);
     text-underline-offset: 3px;
   }
-  .sls-btn-ghost:hover { color: #0a0a0a; }
+  .sls-btn-ghost:hover { color: var(--text); }
 
   .sls-loading {
     padding: 12px 0;
     text-align: center;
-    color: #a3a3a3;
+    color: var(--text-3);
     font-size: 13px;
   }
   .sls-error {
     padding: 10px 12px;
-    background: rgb(254 242 242);
-    color: rgb(185 28 28);
+    background: var(--s-danger-soft);
+    color: var(--s-danger);
     border-radius: 7px;
     font-size: 12px;
     line-height: 1.5;
