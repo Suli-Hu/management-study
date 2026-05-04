@@ -13,6 +13,7 @@ import type { z } from 'zod';
 import type { View } from '~/schemas/view';
 import { VIEW_TABLE } from './d1-tables';
 import { buildUpsertStmt } from './d1-upsert';
+import { deepStripStrong } from './sanitize-strong';
 
 type ParsedView = z.infer<typeof View>;
 
@@ -20,6 +21,9 @@ export async function upsertViewInD1(
   db: D1Database,
   view: ParsedView,
 ): Promise<void> {
+  // v0.8.7 sanitize: 静默 strip 所有 <strong>/</strong>。见 migration-v0.8.md §11.
+  view = deepStripStrong(view);
+
   await buildUpsertStmt(db, VIEW_TABLE, {
     id: view.id,
     discipline: view.discipline,

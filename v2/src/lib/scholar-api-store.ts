@@ -1,4 +1,5 @@
 import type { ScholarCreateInput, ScholarPatchInput } from '~/schemas/scholar-api';
+import { deepStripStrong } from './sanitize-strong';
 
 export interface ScholarApiRecord {
   key: string;
@@ -235,6 +236,9 @@ export async function createScholarRecord(
   tenant: { tenantId: string; discipline: string },
   input: ScholarCreateInput,
 ): Promise<{ ok: true; record: ScholarApiRecord } | { ok: false; status: number; reason: string; detail?: unknown }> {
+  // v0.8.7 sanitize: 静默 strip 所有 <strong>/</strong>。见 migration-v0.8.md §11.
+  input = deepStripStrong(input);
+
   const existing = await db.prepare('SELECT key FROM scholar WHERE discipline = ? AND key = ?').bind(tenant.discipline, input.key).first<{ key: string }>();
   if (existing) return { ok: false, status: 409, reason: 'scholar_key_exists' };
 
@@ -272,6 +276,9 @@ export async function patchScholarRecord(
   tenant: { tenantId: string; discipline: string },
   input: ScholarPatchInput,
 ): Promise<{ ok: true; record: ScholarApiRecord } | { ok: false; status: number; reason: string; detail?: unknown }> {
+  // v0.8.7 sanitize: 静默 strip 所有 <strong>/</strong>。见 migration-v0.8.md §11.
+  input = deepStripStrong(input);
+
   const current = await getScholarRecord(db, key, tenant);
   if (!current) return { ok: false, status: 404, reason: 'scholar_not_found' };
   const next = {

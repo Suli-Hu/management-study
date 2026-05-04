@@ -21,6 +21,7 @@ import type { z } from 'zod';
 import type { Scholar } from '~/schemas/scholar';
 import { SCHOLAR_TABLE } from './d1-tables';
 import { buildUpsertStmt } from './d1-upsert';
+import { deepStripStrong } from './sanitize-strong';
 
 type ParsedScholar = z.infer<typeof Scholar>;
 
@@ -28,6 +29,9 @@ export async function upsertScholarInD1(
   db: D1Database,
   scholar: ParsedScholar,
 ): Promise<void> {
+  // v0.8.7 sanitize: 静默 strip 所有 <strong>/</strong>。见 migration-v0.8.md §11.
+  scholar = deepStripStrong(scholar);
+
   const stmts: D1PreparedStatement[] = [];
 
   // 1. scholar 主表 UPSERT — ON CONFLICT 复合 (discipline, key) 由 SCHOLAR_TABLE.pk 派生

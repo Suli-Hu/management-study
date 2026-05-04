@@ -195,6 +195,62 @@ describe('v0.8.0 Stage 3: 5 format × POST /api/kps happy path', () => {
     });
   }
 
+  test('v0.8.7 sanitize: POST body 含 <strong> 静默 strip 后写入 D1', async () => {
+    const res = await kpsPOST(
+      makeCtx(db, {
+        method: 'POST',
+        path: '/api/kps?discipline=keiei',
+        body: {
+          id: 'ksz1',
+          title: { zh: '<strong>带粗</strong>标题' },
+          body: {
+            zh: {
+              format: 'flat-list',
+              lead: '<strong>导语</strong>关键',
+              items: [
+                { name: '<strong>线性</strong>', desc: '加权<strong>求和</strong>' },
+              ],
+            },
+          },
+          evaluations: {
+            zh: {
+              meaning: '<strong>意义</strong>段',
+              limit: '',
+              example: '',
+              response: '',
+              application: '',
+              analogy: '',
+            },
+          },
+          schools: ['motivation'],
+        },
+      }),
+    );
+    const data = await readJson(res);
+    expect(res.status, JSON.stringify(data)).toBe(201);
+
+    const cols = await db
+      .prepare(
+        `SELECT title_zh, body_zh_json, evaluations_zh_json FROM kp WHERE id = ?`,
+      )
+      .bind('ksz1')
+      .first<{
+        title_zh: string;
+        body_zh_json: string | null;
+        evaluations_zh_json: string | null;
+      }>();
+    expect(cols!.title_zh, 'title strip').toBe('带粗标题');
+    const body = JSON.parse(cols!.body_zh_json!);
+    expect(body.lead).toBe('导语关键');
+    expect(body.items[0].name).toBe('线性');
+    expect(body.items[0].desc).toBe('加权求和');
+    const evals = JSON.parse(cols!.evaluations_zh_json!);
+    expect(evals.meaning).toBe('意义段');
+    expect(cols!.title_zh).not.toMatch(/<\/?strong/i);
+    expect(cols!.body_zh_json!).not.toMatch(/<\/?strong/i);
+    expect(cols!.evaluations_zh_json!).not.toMatch(/<\/?strong/i);
+  });
+
   test('POST 含 evaluations → evaluations 列写入 + ja 单独保留', async () => {
     const res = await kpsPOST(
       makeCtx(db, {

@@ -1,5 +1,6 @@
 import type { ViewCreateInput, ViewPatchInput, ViewReorderInput } from '~/schemas/view-api';
 import { schoolIdsFromGroups } from '~/schemas/view-api';
+import { deepStripStrong } from './sanitize-strong';
 
 export interface ViewApiRecord {
   id: string;
@@ -128,6 +129,9 @@ export async function createViewRecord(
   tenant: { tenantId: string; discipline: string },
   input: ViewCreateInput,
 ): Promise<{ ok: true; record: ViewApiRecord } | { ok: false; status: number; reason: string; detail?: unknown }> {
+  // v0.8.7 sanitize: 静默 strip 所有 <strong>/</strong>。见 migration-v0.8.md §11.
+  input = deepStripStrong(input);
+
   const existing = await db
     .prepare('SELECT id FROM view WHERE id = ? AND discipline = ?')
     .bind(input.id, tenant.discipline)
@@ -163,6 +167,9 @@ export async function patchViewRecord(
   tenant: { tenantId: string; discipline: string },
   input: ViewPatchInput,
 ): Promise<{ ok: true; record: ViewApiRecord } | { ok: false; status: number; reason: string; detail?: unknown }> {
+  // v0.8.7 sanitize: 静默 strip 所有 <strong>/</strong>。见 migration-v0.8.md §11.
+  input = deepStripStrong(input);
+
   const current = await getViewRecord(db, id, tenant);
   if (!current) return { ok: false, status: 404, reason: 'view_not_found' };
   const next = {
