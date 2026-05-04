@@ -25,7 +25,7 @@ import ViewToast from '~/components/ViewToast.astro';
 import ViewMenu from '~/components/ViewMenu.astro';
 import NewViewDrawer from '~/components/NewViewDrawer.astro';
 import ViewEditor from '~/components/ViewEditor.astro';
-import { toneFromHex, NEUTRAL_TONE } from '~/lib/tag-tone';
+import { hashToTagToken } from '~/lib/editor/dom-helpers';
 import type { ViewGroup } from '~/schemas/view';
 
 const { discipline } = Astro.params;
@@ -84,14 +84,16 @@ const schoolsResult = await db
 
 const schools = (schoolsResult.results ?? []).map((s) => {
   const tagKeys = JSON.parse(s.tags_json || '[]') as string[];
-  const primary = tagKeys.length > 0 ? tagByKey.get(tagKeys[0]) : null;
+  const primaryKey = tagKeys[0] ?? null;
   return {
     key: s.key,
     cn: s.title_zh,
     en: s.title_en,
     meta: s.era,
     count: s.kp_count,
-    tone: primary ? toneFromHex(primary.color) : NEUTRAL_TONE,
+    /* v0.8.12 Stage 6 chip 1 (D6=A): tag.key → 8 v1.0 --tag-* tokens via hash, deterministic.
+       Discards admin's tag.color (v1.0 says color is a system concern, not admin-chosen). */
+    tagToken: primaryKey ? hashToTagToken(primaryKey) : null,
   };
 });
 const schoolByKey = new Map(schools.map((s) => [s.key, s]));
@@ -201,7 +203,7 @@ const showJustCreatedFlash = Boolean(justCreatedSchool && justCreatedThemeTitle)
                 en={s.en}
                 meta={s.meta}
                 count={s.count}
-                tone={s.tone}
+                tagToken={s.tagToken}
               />
             ))}
           </GroupCardCluster>
@@ -288,22 +290,22 @@ const showJustCreatedFlash = Boolean(justCreatedSchool && justCreatedThemeTitle)
     padding-bottom: 0;
   }
 
+  /* v0.8.12 Stage 6 chip 1: discipline 首页 切 v1.0 token —
+     标题 / 副标 / empty state 全部 token 化，dark mode 自动反相 */
   .page-h { margin-bottom: 8px; }
   .page-h-title {
     font-size: 34px;
     font-weight: 700;
-    color: #0a0a0a;
+    color: var(--text);
     margin: 0;
     letter-spacing: -0.015em;
     line-height: 1.1;
   }
-  :global(html.dark) .page-h-title { color: var(--color-text-primary); }
   .page-h-sub {
     font-size: 13px;
-    color: #737373;
+    color: var(--text-2);
     margin: 6px 0 0;
   }
-  :global(html.dark) .page-h-sub { color: var(--color-text-tertiary); }
 
   .groups-stack {
     display: flex;
@@ -312,33 +314,27 @@ const showJustCreatedFlash = Boolean(justCreatedSchool && justCreatedThemeTitle)
   }
 
   .empty-views-cta {
-    background: #fafaf9;
-    border: 1px dashed #e5e5e5;
+    background: var(--bg-soft);
+    border: 1px dashed var(--border);
     border-radius: 12px;
     padding: 24px;
     text-align: center;
     font-size: 13px;
-    color: #525252;
+    color: var(--text-2);
     margin: 18px 0;
-  }
-  :global(html.dark) .empty-views-cta {
-    background: var(--color-bg-secondary);
-    border-color: var(--color-border);
-    color: var(--color-text-tertiary);
   }
   .empty-views-link {
     all: unset;
     cursor: pointer;
-    color: #171717;
+    color: var(--text);
     font-weight: 500;
     text-decoration: underline;
   }
-  :global(html.dark) .empty-views-link { color: var(--color-text-primary); }
 
   .empty-groups {
     padding: 36px 16px;
     text-align: center;
     font-size: 13px;
-    color: #a3a3a3;
+    color: var(--text-3);
   }
 </style>

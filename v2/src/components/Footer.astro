@@ -2,10 +2,18 @@
 import { APP_VERSION, GIT_SHA } from '~/lib/version';
 ---
 
-<footer class="mt-16 py-4 border-t border-bg-tertiary">
-  <div class="max-w-panel mx-auto px-4 text-xs text-quaternary flex justify-between gap-3">
+<footer class="app-footer mt-16 py-4">
+  <div class="max-w-panel mx-auto px-4 text-xs flex justify-between gap-3">
     <span>v{APP_VERSION} · <span class="font-mono">{GIT_SHA}</span></span>
     {/* v0.5.83: 登录页脚本会把这里挂上 click → 切邮箱模式（其它页就是普通文本） */}
     <span data-app-footer-text>个人笔记，仅云端存储，非公开</span>
   </div>
 </footer>
+
+<style>
+  /* v0.8.12 Stage 6 chip 1: Footer 切 v1.0 token — border-soft + text-3 */
+  .app-footer {
+    border-top: 1px solid var(--border-soft);
+    color: var(--text-3);
+  }
+</style>

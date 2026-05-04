@@ -2,16 +2,12 @@
 /**
  * SchoolCard — 视图系统学派卡（CardWhite 风格："Tinted Badge"）
  *
- * 设计稿对齐：bundle/9661d5b3 CardWhite
- *   - 白底 / 圆角 10 / border #ececec / padding 13×14
- *   - 学派名 fontSize 15 fontWeight 600 #171717 letterSpacing 0.01em
- *   - 英文名 fontSize 12 #525252（设计稿写 fontWeight 450，CSS 写 400 即可，weight 450 不是 valid keyword）
- *   - meta（era / count / 等）fontSize 11 #a3a3a3 lineHeight 1.5
- *   - 右上角 TintedBadge（minWidth 26 / height 19 / radius 999 / soft 底 deep 字）
- *   - hover：border #d4d4d4 + shadow
+ * v0.8.12 Stage 6 chip 1: 切 v1.0 token + tag-* data-attr 着色
+ *   - 卡身：--bg-elev / --border / --text / --text-2 / --text-3（dark 自动反相）
+ *   - badge 着色：data-tag={tagToken} → CSS 选择器 [data-tag="tag-mgmt"] etc.
+ *     使用 oklch(from --tag-* l c h / 0.15) soft 底 + calc(l - 0.35) deep 字（v1.0 IMPLEMENTATION）
+ *   - tagToken=null 时退中性灰
  */
-
-import type { Tone } from '~/lib/tag-tone';
 
 interface Props {
   href: string;
@@ -19,22 +15,25 @@ interface Props {
   en?: string | null;
   meta?: string;
   count: number;
-  tone: Tone;
+  /** v1.0 tag token name (without `--`), e.g. 'tag-mgmt'. null = neutral gray. */
+  tagToken?: string | null;
 }
 
-const { href, cn, en, meta, count, tone } = Astro.props;
+const { href, cn, en, meta, count, tagToken } = Astro.props;
 ---
 
-<a href={href} class="school-card" data-school-card>
+<a
+  href={href}
+  class="school-card"
+  data-school-card
+  {...(tagToken ? { 'data-tag': tagToken } : {})}
+>
   <div class="sc-body">
     <div class="sc-cn">{cn}</div>
     {en && <div class="sc-en">{en}</div>}
     {meta && <div class="sc-meta">{meta}</div>}
   </div>
-  <span
-    class="sc-badge"
-    style={`background:${tone.soft};color:${tone.deep};`}
-  >{count}</span>
+  <span class="sc-badge">{count}</span>
 </a>
 
 <style>
@@ -42,9 +41,9 @@ const { href, cn, en, meta, count, tone } = Astro.props;
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    background: #ffffff;
+    background: var(--bg-elev);
     border-radius: 10px;
-    border: 1px solid #ececec;
+    border: 1px solid var(--border);
     padding: 13px 14px;
     text-decoration: none;
     transition: border-color .14s, box-shadow .14s, transform .14s;
@@ -52,41 +51,34 @@ const { href, cn, en, meta, count, tone } = Astro.props;
     font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
   }
   .school-card:hover {
-    border-color: #d4d4d4;
+    border-color: var(--text-3);
     box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04);
     opacity: 1;          /* 抵消 global a:hover { opacity: 0.8 } */
   }
-  :global(html.dark) .school-card {
-    background: var(--color-bg-secondary);
-    border-color: var(--color-border);
-  }
-  :global(html.dark) .school-card:hover {
-    border-color: var(--color-text-quaternary);
+  :global(html.dark) .school-card:hover,
+  :global([data-mode="dark"]) .school-card:hover {
     box-shadow: 0 1px 2px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.3);
   }
   .sc-body { flex: 1; min-width: 0; }
   .sc-cn {
     font-size: 15px;
     font-weight: 600;
-    color: #171717;
+    color: var(--text);
     letter-spacing: 0.01em;
     line-height: 1.3;
   }
-  :global(html.dark) .sc-cn { color: var(--color-text-primary); }
   .sc-en {
     font-size: 12px;
-    color: #525252;
+    color: var(--text-2);
     margin-top: 4px;
     font-weight: 400;
   }
-  :global(html.dark) .sc-en { color: var(--color-text-tertiary); }
   .sc-meta {
     font-size: 11px;
-    color: #a3a3a3;
+    color: var(--text-3);
     margin-top: 4px;
     line-height: 1.5;
   }
-  :global(html.dark) .sc-meta { color: var(--color-text-quaternary); }
   .sc-badge {
     display: inline-flex;
     align-items: center;
@@ -100,5 +92,17 @@ const { href, cn, en, meta, count, tone } = Astro.props;
     letter-spacing: 0.2px;
     font-variant-numeric: tabular-nums;
     flex-shrink: 0;
+    /* default neutral — 学派无 tag 时退中性灰 */
+    background: var(--bg-soft);
+    color: var(--text-2);
   }
+  /* 学派 tag 着色（D6=A，按 discipline.tags[].key 映射 8 token） */
+  .school-card[data-tag="tag-mgmt"]   .sc-badge { background: oklch(from var(--tag-mgmt)   l c h / 0.18); color: oklch(from var(--tag-mgmt)   calc(l - 0.40) c h); }
+  .school-card[data-tag="tag-mkt"]    .sc-badge { background: oklch(from var(--tag-mkt)    l c h / 0.18); color: oklch(from var(--tag-mkt)    calc(l - 0.40) c h); }
+  .school-card[data-tag="tag-soc"]    .sc-badge { background: oklch(from var(--tag-soc)    l c h / 0.18); color: oklch(from var(--tag-soc)    calc(l - 0.40) c h); }
+  .school-card[data-tag="tag-purple"] .sc-badge { background: oklch(from var(--tag-purple) l c h / 0.18); color: oklch(from var(--tag-purple) calc(l - 0.40) c h); }
+  .school-card[data-tag="tag-pink"]   .sc-badge { background: oklch(from var(--tag-pink)   l c h / 0.18); color: oklch(from var(--tag-pink)   calc(l - 0.40) c h); }
+  .school-card[data-tag="tag-cyan"]   .sc-badge { background: oklch(from var(--tag-cyan)   l c h / 0.18); color: oklch(from var(--tag-cyan)   calc(l - 0.40) c h); }
+  .school-card[data-tag="tag-blue"]   .sc-badge { background: oklch(from var(--tag-blue)   l c h / 0.18); color: oklch(from var(--tag-blue)   calc(l - 0.40) c h); }
+  .school-card[data-tag="tag-orange"] .sc-badge { background: oklch(from var(--tag-orange) l c h / 0.18); color: oklch(from var(--tag-orange) calc(l - 0.40) c h); }
 </style>
