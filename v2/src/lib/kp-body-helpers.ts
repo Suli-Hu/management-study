@@ -86,24 +86,42 @@ export function emptyQuadBody(): QuadBody {
 /**
  * Smart split — 把旧 string yAxis/xAxis（v0.8.3 及以前）拆成 v0.8.4 QuadAxis。
  *
- * 优先级：
- *   1. 含 `-`：split → 3 段返 {low, label, high} / 2 段返 {low, '', high}
- *   2. 不含 `-` 但含 `/`：split → 同 1（k071 SWOT 用 `/` 分隔）
- *   3. 0/1 段（既无 `-` 也无 `/`，或单段）→ null（无法 split，caller 处理）
+ * 优先级（v0.8.6 扩展）：`-` > `/` > `→` > `↑` > `↓` > `~`
+ *   1. 含某个 sep：split → 3 段返 {low, label, high} / 2 段返 {low, '', high}
+ *   2. 2 段且 sep 是箭头（→/↑/↓）且 first 段含空格：识为 "[label] [low]→[high]" 模式
+ *      （prod 真实数据 k223 风：`市場成長率 低→高` → label="市場成長率", low="低", high="高"）
+ *   3. 都失败 → null（无法 split，caller 处理）
  *
- * 返回 QuadAxis 时所有字段已 trim。
+ * 注意：
+ *   - `-` / `/` / `~` 的两段语义不带 label-low 模式（避免误识 `优势-劣势` 这种）
+ *   - 4+ 段或首/尾空 → 试下一个 sep（保持原有兜底）
+ *   - 返回 QuadAxis 时所有字段已 trim
  */
+const SPLIT_DELIMITERS = ['-', '/', '→', '↑', '↓', '~'] as const;
+const ARROW_DELIMITERS: ReadonlySet<string> = new Set(['→', '↑', '↓']);
+
 export function splitQuadAxisString(s: string): QuadAxis | null {
   const trimmed = (s ?? '').trim();
   if (!trimmed) return null;
 
-  for (const sep of ['-', '/'] as const) {
+  for (const sep of SPLIT_DELIMITERS) {
     if (!trimmed.includes(sep)) continue;
     const parts = trimmed.split(sep).map((p) => p.trim());
     if (parts.length === 3 && parts[0] && parts[2]) {
       return { low: parts[0]!, label: parts[1] ?? '', high: parts[2]! };
     }
     if (parts.length === 2 && parts[0] && parts[1]) {
+      // 箭头 sep + first 段含空格 → "[label words] [low]→[high]" 三段空格模式
+      if (ARROW_DELIMITERS.has(sep)) {
+        const firstWords = parts[0]!.split(/\s+/).filter(Boolean);
+        if (firstWords.length >= 2) {
+          return {
+            low: firstWords[firstWords.length - 1]!,
+            label: firstWords.slice(0, -1).join(' '),
+            high: parts[1]!,
+          };
+        }
+      }
       return { low: parts[0]!, label: '', high: parts[1]! };
     }
     // 4+ 段或首/尾空 — 试下一个分隔符

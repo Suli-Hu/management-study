@@ -293,4 +293,64 @@ describe('B6 — splitQuadAxisString smart split 边界', () => {
       high: '低',
     });
   });
+
+  // v0.8.6: 加箭头分隔符 + "label low→high" 三段空格模式
+  test('箭头 → + first 段含空格 → label-low pattern (k223 prod case)', () => {
+    expect(splitQuadAxisString('市場成長率 低→高')).toEqual({
+      low: '低',
+      label: '市場成長率',
+      high: '高',
+    });
+  });
+
+  test('箭头 ↑ 普通两段 — "低↑高" first 段无空格 → label=""', () => {
+    expect(splitQuadAxisString('低↑高')).toEqual({
+      low: '低',
+      label: '',
+      high: '高',
+    });
+  });
+
+  test('波浪 ~ 普通两段 — "A~B"（不触发 label-low pattern）', () => {
+    expect(splitQuadAxisString('A~B')).toEqual({
+      low: 'A',
+      label: '',
+      high: 'B',
+    });
+  });
+
+  test('箭头 ↓ 普通两段 — "低↓高"', () => {
+    expect(splitQuadAxisString('低↓高')).toEqual({
+      low: '低',
+      label: '',
+      high: '高',
+    });
+  });
+
+  test('箭头 + multi-word label — "市場 成長率 低→高"', () => {
+    expect(splitQuadAxisString('市場 成長率 低→高')).toEqual({
+      low: '低',
+      label: '市場 成長率',
+      high: '高',
+    });
+  });
+
+  test('"-" 两段含空格不触发 label-low（"优势 - 劣势" 仍只 trim → 普通两段）', () => {
+    // "-" 不在 ARROW_DELIMITERS，即使 first 段历史上含空格也不进 label-low pattern
+    expect(splitQuadAxisString('优势 - 劣势')).toEqual({
+      low: '优势',
+      label: '',
+      high: '劣势',
+    });
+  });
+
+  test('hyphen 优先于箭头 — "低-增长率-高→x" 走 - 路径（4 段 fail）→ 落到 →（2 段）', () => {
+    // sep '-' split: ["低", "增长率", "高→x"], length 3 → {low:'低', label:'增长率', high:'高→x'}
+    // 即 hyphen 优先匹配，箭头不会被检查
+    expect(splitQuadAxisString('低-增长率-高→x')).toEqual({
+      low: '低',
+      label: '增长率',
+      high: '高→x',
+    });
+  });
 });
