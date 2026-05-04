@@ -149,8 +149,14 @@ EMAIL_TRUST / password 模式）收敛为 SaaS 标准的"邮箱+密码"主路径
 | **v0.8.0** | **Stage 3** | **API contract hard cut** — POST/PATCH/batch 接 `KpBody`；6 个 `legacy_*` 422 + `migration_guide` URL；`evalContent` → `evaluations` 改名 + 6 子 key 英化；`GET /api/kps/empty-body`；`v2/public/docs/migration-v0.8.md` 真源 | #40 |
 | v0.8.1 | Stage 3 docs | retrospective + fallback monitoring cheatsheet + ROADMAP W8 | #41 |
 | **v0.8.2-0.8.4** | **Stage 4** | **编辑器整页重写 + F4/F5 backend** — 12 个 editor module (vanilla TS DOM) + design system v1.0 token swap + `kp-editor-v0.8` scope；F4 classifyZodFailure 默认 schema_invalid；F5 zh/ja format 强制一致；删全编辑器 ⓘ；compare cols UI max 4；**QuadAxis schema breaking** (yAxis/xAxis 拆 `{low, label?, high}` 对象)；migrate-quad-axes admin endpoint smart split | #42 |
-| v0.8.5 | Stage 4 docs | PRD + Test plan + Test report + ROADMAP/memory update | 本 PR |
-| v0.8.x | Stage 5 | drop 旧列 + git JSON 全量迁移（1d） | □ |
+| v0.8.5 | Stage 4 docs | PRD + Test plan + Test report + ROADMAP/memory update | #43 |
+| v0.8.6 | follow-up | splitQuadAxisString 加 `→`/`↑`/`↓` 等箭头分隔符（修 prod k223 BCG） | #44 |
+| v0.8.7 | follow-up | 全站清 `<strong>`（317 文件 / 0 残留）+ deepStripStrong sanitize 机制接入 6 写入路径 + admin endpoint + 文档 §11 禁止 inline HTML | #45 |
+| **v0.8.8** | **Stage 4.5** | **school + scholar + theme editor v0.8 重写** — 沿用 KP editor v0.8 helpers / design system / `<body class="kp-editor-v08">` scope；3 entity × 2 mode = 6 页面；scholar 4 section；D6=B 不暴露 concepts/kpsOrder（自动派生 + 字典序）；新建页 = 编辑页 layout 一致 | #46 |
+| v0.8.9 | Stage 4.6 fix | scholar.lifespan schema breaking 删 + migration 0021 + smart split born/died；server 端 slugFromTitleEn 自动生成 key（form 不暴露）；school.themeKey new 默认 `themes[0].key`（form 不暴露） | #47 |
+| **v0.8.10** | **Stage 5** | **drop 旧列收尾** — migration 0022 ALTER TABLE kp DROP 5 旧列；GET response 切新（不再返 legacy body string / 顶层 format / evalContent）；删 render-body.ts + render-body-with-fallback.ts；删 fallback-monitoring-cheatsheet；git data 一次性迁移 702 KP JSON 到 v0.8 shape（661 clean + 41 降级 narrative 保 prose）；migration-v0.8.md §13 通告 GET response breaking | #48 |
+| v0.8.11 | docs | Stage 4.5/4.6/5 PRD 归档 + Stage 6 PRD 起稿 | 本 PR |
+| v0.8.x | Stage 6 | 全站 design system v1.0 swap（详情页/学派页/学者页/列表/首页/学习日志） — D1=A 遗留实施 | □ |
 
 **设计决策**（PRD §13 6/6 confirmed，不再 review）：
 
