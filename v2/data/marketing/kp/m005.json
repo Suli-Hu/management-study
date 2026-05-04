@@ -16,8 +16,188 @@
     "en": "Positioning Tools"
   },
   "body": {
-    "zh": "定位不是一句广告语，而是一组操作工具：先决定和谁比较，再决定必须相同的门槛与必须不同的亮点，最后把位置写成清楚的陈述或故事：<br>【参照框架 Frame of Reference】<br>①含义——消费者评价品牌时使用的类目、竞争者或替代品基准。<br>②作用——参照框架决定 POP 与 POD；同一品牌换参照框架，定位会完全不同。<br>③例子——Tesla 可参照豪华车、电动车，也可参照科技产品。<br>【POP：类似化点】<br>①含义——消费者认为该类目品牌必须具备的属性，是进入竞争的合格门槛。<br>②作用——POP 不让品牌被排除；没有 POP，POD 再强也难被接受。<br>③例子——智能手机必须能通话、拍照、联网。<br>【POD：差别化点】<br>①含义——消费者认为本品牌独有且有价值的属性或利益，是被选择的理由。<br>②判断标准——desirability、deliverability、differentiability，即顾客想要、企业能交付、竞争者难模仿。<br>③例子——UNIQLO 的 LifeWear、Volvo 的安全、Apple 的整合体验。<br>【定位陈述】<br>①作用——把定位压缩为一句内部战略语言。<br>②模板——For [target customer], [brand] is the [frame of reference] that [POD] because [reason to believe].<br>③注意——不是漂亮口号，而是战略约束：目标顾客、竞争范围、差异点和相信理由必须一致。<br>【故事化定位】<br>①含义——Kotler 16 版强调用故事表达定位，让顾客记住冲突、旅程与转变。<br>②结构——hero、problem、brand as enabler、quest、transformation。<br>③意义——比抽象陈述更容易形成情感连接，但效果难量化。",
-    "ja": "ポジショニングは単なる広告コピーではなく，操作可能な道具の集合である。まず何と比較されるかを定め，次に満たすべき同質性と示すべき差異を決め，最後にそれをステートメントまたは物語として表現する：<br>【参照枠 Frame of Reference】<br>①意味——消費者がブランドを評価するときのカテゴリー，競争者，代替品の基準。<br>②役割——参照枠が POP と POD を決める。同じブランドでも参照枠が変われば位置づけも変わる。<br>③例——Tesla は高級車，電気自動車，技術製品のいずれとも比較されうる。<br>【POP：類似化点】<br>①意味——カテゴリー内のブランドが備えるべき最低限の属性であり，競争参加の条件である。<br>②役割——POP はブランドが排除されないための条件であり，POP がなければ強い POD も受け入れられにくい。<br>③例——スマートフォンには通話，撮影，ネット接続が期待される。<br>【POD：差別化点】<br>①意味——消費者がそのブランドに固有で価値あるものと認識する属性や便益。<br>②基準——望ましさ，提供可能性，差別化可能性。<br>③例——UNIQLO の LifeWear，Volvo の安全性，Apple の統合体験。<br>【ポジショニング・ステートメント】<br>①役割——ポジショニングを一文の戦略言語に圧縮する。<br>②テンプレート——For [target customer], [brand] is the [frame of reference] that [POD] because [reason to believe].<br>③注意——美しい標語ではなく，標的顧客，競争範囲，差別化点，信じる理由を整合させる制約である。<br>【物語化ポジショニング】<br>①意味——Kotler 第16版では，ポジショニングを物語として表現し，葛藤・旅・変化を通じて記憶させることが重視される。<br>②構造——hero，problem，brand as enabler，quest，transformation。<br>③意義——抽象的な陳述より感情的結びつきを作りやすいが，効果測定は難しい。"
+    "zh": {
+      "format": "accordion",
+      "lead": "定位不是一句广告语，而是一组操作工具：先决定和谁比较，再决定必须相同的门槛与必须不同的亮点，最后把位置写成清楚的陈述或故事：",
+      "groups": [
+        {
+          "title": "参照框架 Frame of Reference",
+          "items": [
+            {
+              "name": "含义",
+              "desc": "消费者评价品牌时使用的类目、竞争者或替代品基准。"
+            },
+            {
+              "name": "作用",
+              "desc": "参照框架决定 POP 与 POD；同一品牌换参照框架，定位会完全不同。"
+            },
+            {
+              "name": "例子",
+              "desc": "Tesla 可参照豪华车、电动车，也可参照科技产品。"
+            }
+          ]
+        },
+        {
+          "title": "POP：类似化点",
+          "items": [
+            {
+              "name": "含义",
+              "desc": "消费者认为该类目品牌必须具备的属性，是进入竞争的合格门槛。"
+            },
+            {
+              "name": "作用",
+              "desc": "POP 不让品牌被排除；没有 POP，POD 再强也难被接受。"
+            },
+            {
+              "name": "例子",
+              "desc": "智能手机必须能通话、拍照、联网。"
+            }
+          ]
+        },
+        {
+          "title": "POD：差别化点",
+          "items": [
+            {
+              "name": "含义",
+              "desc": "消费者认为本品牌独有且有价值的属性或利益，是被选择的理由。"
+            },
+            {
+              "name": "判断标准",
+              "desc": "desirability、deliverability、differentiability，即顾客想要、企业能交付、竞争者难模仿。"
+            },
+            {
+              "name": "例子",
+              "desc": "UNIQLO 的 LifeWear、Volvo 的安全、Apple 的整合体验。"
+            }
+          ]
+        },
+        {
+          "title": "定位陈述",
+          "items": [
+            {
+              "name": "作用",
+              "desc": "把定位压缩为一句内部战略语言。"
+            },
+            {
+              "name": "模板",
+              "desc": "For [target customer], [brand] is the [frame of reference] that [POD] because [reason to believe]."
+            },
+            {
+              "name": "注意",
+              "desc": "不是漂亮口号，而是战略约束：目标顾客、竞争范围、差异点和相信理由必须一致。"
+            }
+          ]
+        },
+        {
+          "title": "故事化定位",
+          "items": [
+            {
+              "name": "含义",
+              "desc": "Kotler 16 版强调用故事表达定位，让顾客记住冲突、旅程与转变。"
+            },
+            {
+              "name": "结构",
+              "desc": "hero、problem、brand as enabler、quest、transformation。"
+            },
+            {
+              "name": "意义",
+              "desc": "比抽象陈述更容易形成情感连接，但效果难量化。"
+            }
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "format": "accordion",
+      "lead": "ポジショニングは単なる広告コピーではなく，操作可能な道具の集合である。まず何と比較されるかを定め，次に満たすべき同質性と示すべき差異を決め，最後にそれをステートメントまたは物語として表現する：",
+      "groups": [
+        {
+          "title": "参照枠 Frame of Reference",
+          "items": [
+            {
+              "name": "意味",
+              "desc": "消費者がブランドを評価するときのカテゴリー，競争者，代替品の基準。"
+            },
+            {
+              "name": "役割",
+              "desc": "参照枠が POP と POD を決める。同じブランドでも参照枠が変われば位置づけも変わる。"
+            },
+            {
+              "name": "例",
+              "desc": "Tesla は高級車，電気自動車，技術製品のいずれとも比較されうる。"
+            }
+          ]
+        },
+        {
+          "title": "POP：類似化点",
+          "items": [
+            {
+              "name": "意味",
+              "desc": "カテゴリー内のブランドが備えるべき最低限の属性であり，競争参加の条件である。"
+            },
+            {
+              "name": "役割",
+              "desc": "POP はブランドが排除されないための条件であり，POP がなければ強い POD も受け入れられにくい。"
+            },
+            {
+              "name": "例",
+              "desc": "スマートフォンには通話，撮影，ネット接続が期待される。"
+            }
+          ]
+        },
+        {
+          "title": "POD：差別化点",
+          "items": [
+            {
+              "name": "意味",
+              "desc": "消費者がそのブランドに固有で価値あるものと認識する属性や便益。"
+            },
+            {
+              "name": "基準",
+              "desc": "望ましさ，提供可能性，差別化可能性。"
+            },
+            {
+              "name": "例",
+              "desc": "UNIQLO の LifeWear，Volvo の安全性，Apple の統合体験。"
+            }
+          ]
+        },
+        {
+          "title": "ポジショニング・ステートメント",
+          "items": [
+            {
+              "name": "役割",
+              "desc": "ポジショニングを一文の戦略言語に圧縮する。"
+            },
+            {
+              "name": "テンプレート",
+              "desc": "For [target customer], [brand] is the [frame of reference] that [POD] because [reason to believe]."
+            },
+            {
+              "name": "注意",
+              "desc": "美しい標語ではなく，標的顧客，競争範囲，差別化点，信じる理由を整合させる制約である。"
+            }
+          ]
+        },
+        {
+          "title": "物語化ポジショニング",
+          "items": [
+            {
+              "name": "意味",
+              "desc": "Kotler 第16版では，ポジショニングを物語として表現し，葛藤・旅・変化を通じて記憶させることが重視される。"
+            },
+            {
+              "name": "構造",
+              "desc": "hero，problem，brand as enabler，quest，transformation。"
+            },
+            {
+              "name": "意義",
+              "desc": "抽象的な陳述より感情的結びつきを作りやすいが，効果測定は難しい。"
+            }
+          ]
+        }
+      ]
+    }
   },
   "tags": [
     "Positioning",
@@ -25,17 +205,22 @@
     "POP",
     "Keller"
   ],
-  "format": "accordion",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "把定位从抽象概念变成可操作步骤：参照框架决定战场，POP 决定入场资格，POD 决定被选择理由。",
-      "限": "POD/POP 边界会随市场成熟而变化，故事化定位也可能流于空洞叙事。",
-      "例": "Volvo=安全、UNIQLO=LifeWear、Apple=整合体验，都是 POD 与参照框架配合的结果。",
-      "应": "适合回答定位、品牌差异化、价值提案和广告表达相关论述题。"
+      "meaning": "把定位从抽象概念变成可操作步骤：参照框架决定战场，POP 决定入场资格，POD 决定被选择理由。",
+      "limit": "POD/POP 边界会随市场成熟而变化，故事化定位也可能流于空洞叙事。",
+      "example": "Volvo=安全、UNIQLO=LifeWear、Apple=整合体验，都是 POD 与参照框架配合的结果。",
+      "response": "适合回答定位、品牌差异化、价值提案和广告表达相关论述题。",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "POD と POP の境界は市場成熟とともに変化し，物語化は空疎な語りになる危険もある。",
-      "例": "Volvo の安全，UNIQLO の LifeWear，Apple の統合体験は，参照枠と POD が結びついた例である。"
+      "meaning": "",
+      "limit": "POD と POP の境界は市場成熟とともに変化し，物語化は空疎な語りになる危険もある。",
+      "example": "Volvo の安全，UNIQLO の LifeWear，Apple の統合体験は，参照枠と POD が結びついた例である。",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:40:17.764Z",

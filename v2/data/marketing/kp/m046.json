@@ -16,8 +16,14 @@
     "en": "SPA Strategy"
   },
   "body": {
-    "zh": "SPA（Specialty store retailer of Private label Apparel·製造小売一体）是企业自己设计·生产·销售的垂直整合战略·1986 年 GAP CEO Donald Fisher 首次使用此术语。Pro Plus 第 11 章日本流通学派核心实践案例。<br><br>核心特征：<br>① 垂直整合——从产品企划到店铺销售一手包办<br>② private brand——所有商品都是自家 brand<br>③ 快速响应——直接收集销售数据·快速调整生产<br>④ 成本控制——剔除中间商利润<br>⑤ 店铺直接管理——保证 brand 一致体验<br><br>3 大成功案例：<br>① UNIQLO（柳井正·1984 起）——日本 SPA 之王·全球 1500 店·HEATTECH·AIRism 等独有面料<br>② ZARA（Inditex·1975 起）——西班牙 fast fashion SPA·2 周从设计到货架<br>③ GAP·H&M·MUJI 都是 SPA 模式<br><br>SPA 在 channel 学派的位置：<br>- 与 Stern VMS 中的 corporate VMS 相对应<br>- 颠覆传统的「厂家 → 批发 → 零售」3 层流通结构<br>- 日本流通系列化的对立面：keiretsu 是厂家控制 channel·SPA 是企业完全拥有 channel<br><br>SPA 的优势：① 反应速度（市场→店铺 1-2 周）② 成本（剔除中间商）③ brand 一致 ④ 数据闭环（销售即时反馈）<br><br>SPA 的挑战：① 投资规模（自有工厂·店铺·物流）② 全球扩张时本地化困难 ③ 库存风险全部自担 ④ 需求预测能力要求极高<br><br>跨学派关系：与 marketing 战略学派的动态能力（dynamic capability·George Day）概念高度匹配——SPA 是动态能力的实务载体。",
-    "ja": "SPA（Specialty store retailer of Private label Apparel·製造小売一体）は企業が自ら設計·生産·販売する垂直統合戦略·1986 年 GAP CEO Donald Fisher が初使用。Pro Plus 第 11 章日本流通学派核心実践事例。<br><br>核心特徴：① 垂直統合 ② プライベート・ブランド ③ 迅速応答 ④ コスト制御 ⑤ 店舗直接管理<br><br>3 大成功事例：① UNIQLO（柳井正·1984）·日本 SPA 王·全球 1500 店·HEATTECH·AIRism ② ZARA（Inditex·1975）·西班牙 fast fashion·2 週で設計から店頭 ③ GAP·H&M·MUJI<br><br>SPA のチャネル学派内の位置：Stern VMS の corporate VMS に対応·伝統的「メーカー → 卸 → 小売」3 段流通構造を覆す·日本流通系列化の対立面：keiretsu はメーカー制御·SPA は企業完全所有。<br><br>優位：① 速度（市場→店舗 1-2 週）② コスト（中間商除去）③ ブランド一致 ④ データ・ループ<br><br>挑戦：① 投資規模 ② グローバル拡張時の現地化困難 ③ 在庫リスク全部自担 ④ 需要予測能力極要求高<br><br>他派との関係：マーケティング戦略学派のダイナミック・ケイパビリティ（George Day）と高度マッチ·SPA はダイナミック・ケイパビリティの実務載体。"
+    "zh": {
+      "format": "narrative",
+      "prose": "SPA（Specialty store retailer of Private label Apparel·製造小売一体）是企业自己设计·生产·销售的垂直整合战略·1986 年 GAP CEO Donald Fisher 首次使用此术语。Pro Plus 第 11 章日本流通学派核心实践案例。<br><br>核心特征：<br>① 垂直整合——从产品企划到店铺销售一手包办<br>② private brand——所有商品都是自家 brand<br>③ 快速响应——直接收集销售数据·快速调整生产<br>④ 成本控制——剔除中间商利润<br>⑤ 店铺直接管理——保证 brand 一致体验<br><br>3 大成功案例：<br>① UNIQLO（柳井正·1984 起）——日本 SPA 之王·全球 1500 店·HEATTECH·AIRism 等独有面料<br>② ZARA（Inditex·1975 起）——西班牙 fast fashion SPA·2 周从设计到货架<br>③ GAP·H&M·MUJI 都是 SPA 模式<br><br>SPA 在 channel 学派的位置：<br>- 与 Stern VMS 中的 corporate VMS 相对应<br>- 颠覆传统的「厂家 → 批发 → 零售」3 层流通结构<br>- 日本流通系列化的对立面：keiretsu 是厂家控制 channel·SPA 是企业完全拥有 channel<br><br>SPA 的优势：① 反应速度（市场→店铺 1-2 周）② 成本（剔除中间商）③ brand 一致 ④ 数据闭环（销售即时反馈）<br><br>SPA 的挑战：① 投资规模（自有工厂·店铺·物流）② 全球扩张时本地化困难 ③ 库存风险全部自担 ④ 需求预测能力要求极高<br><br>跨学派关系：与 marketing 战略学派的动态能力（dynamic capability·George Day）概念高度匹配——SPA 是动态能力的实务载体。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "SPA（Specialty store retailer of Private label Apparel·製造小売一体）は企業が自ら設計·生産·販売する垂直統合戦略·1986 年 GAP CEO Donald Fisher が初使用。Pro Plus 第 11 章日本流通学派核心実践事例。<br><br>核心特徴：① 垂直統合 ② プライベート・ブランド ③ 迅速応答 ④ コスト制御 ⑤ 店舗直接管理<br><br>3 大成功事例：① UNIQLO（柳井正·1984）·日本 SPA 王·全球 1500 店·HEATTECH·AIRism ② ZARA（Inditex·1975）·西班牙 fast fashion·2 週で設計から店頭 ③ GAP·H&M·MUJI<br><br>SPA のチャネル学派内の位置：Stern VMS の corporate VMS に対応·伝統的「メーカー → 卸 → 小売」3 段流通構造を覆す·日本流通系列化の対立面：keiretsu はメーカー制御·SPA は企業完全所有。<br><br>優位：① 速度（市場→店舗 1-2 週）② コスト（中間商除去）③ ブランド一致 ④ データ・ループ<br><br>挑戦：① 投資規模 ② グローバル拡張時の現地化困難 ③ 在庫リスク全部自担 ④ 需要予測能力極要求高<br><br>他派との関係：マーケティング戦略学派のダイナミック・ケイパビリティ（George Day）と高度マッチ·SPA はダイナミック・ケイパビリティの実務載体。"
+    }
   },
   "tags": [
     "SPA",
@@ -25,17 +31,22 @@
     "ZARA",
     "製造小売"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "日本流通革新的代表战略·UNIQLO 全球化的根基",
-      "限": "投资重·全球化挑战大·非所有产品适用",
-      "例": "UNIQLO·ZARA·MUJI 是教科书 SPA",
-      "应": "Pro Plus 11 章·UNIQLO 案例分析"
+      "meaning": "日本流通革新的代表战略·UNIQLO 全球化的根基",
+      "limit": "投资重·全球化挑战大·非所有产品适用",
+      "example": "UNIQLO·ZARA·MUJI 是教科书 SPA",
+      "response": "Pro Plus 11 章·UNIQLO 案例分析",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "投資重·グローバル化挑戦大·全製品適用ではない",
-      "例": "UNIQLO·ZARA·MUJI は教科書 SPA"
+      "meaning": "",
+      "limit": "投資重·グローバル化挑戦大·全製品適用ではない",
+      "example": "UNIQLO·ZARA·MUJI は教科書 SPA",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:03:41.421Z",

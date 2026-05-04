@@ -15,25 +15,36 @@
     "en": "AIDMA Model"
   },
   "body": {
-    "zh": "AIDMA（Attention-Interest-Desire-Memory-Action）是 AIDA 模型的日本演化版·1924 年 Samuel Roland Hall 提出·后被日本广告业广泛采用·成为日本マスメディア型广告的核心模型。<br><br>5 阶段（与 AIDA 比多了 M）：<br>① A - Attention（注意）——消费者注意到广告<br>② I - Interest（关心）——产生兴趣<br>③ D - Desire（欲望）——产生欲望<br>④ M - Memory（记忆）⭐——记住 brand·重复看到时还能记得<br>⑤ A - Action（行动）——做出购买<br><br>核心创新：Memory（记忆）<br>AIDA 假设消费者看到广告 → 立即购买。但实际中·消费者通常需要多次接触·先记住 brand·下次购物时回忆出·才行动。Memory 这一步是 marketing 投资的基础假设。<br><br>对 marketing 的影响：<br>① 反复曝光（frequency）——一次广告不够·要多次<br>② brand awareness 战略——构建 top-of-mind awareness<br>③ 媒体投放计划——reach × frequency 决定 memory<br>④ 广告创意——slogan·jingle·visual hook 帮助记忆<br><br>历史地位：AIDMA 是日本マスメディア时代（1950-2000）的标准 communication 模型·影响了所有日本广告业的实务训练。<br><br>跨学派关系：与 Bettman 信息处理范式中的 memory 模块呼应——AIDMA 是 marketing 实务版的「记忆-检索」过程。<br><br>到 AISAS 的演化：互联网时代消费者不再被动·而是主动 search 与 share——電通 2005 年 AISAS 取代 AIDMA 作为新主流模型。",
-    "ja": "AIDMA（Attention-Interest-Desire-Memory-Action）は AIDA モデルの日本進化版·1924 年 Samuel Roland Hall 提唱·後日本広告業に広く採用·日本マスメディア型広告の核心モデル。<br><br>5 段階（AIDA に M 追加）：① Attention ② Interest ③ Desire ④ Memory（記憶）⭐ ⑤ Action<br><br>核心革新：Memory（記憶）<br>AIDA は消費者が広告を見て即購入と仮定。しかし実際は複数回接触·brand を記憶·次回購買時想起·後行動。Memory はマーケティング投資の基礎前提。<br><br>マーケティング影響：① 反復曝露（frequency）② ブランド認知度戦略·top-of-mind ③ メディア投下計画·reach × frequency が memory を決定 ④ 広告クリエイティブ·スローガン·ジングル·visual hook<br><br>歴史的位置：AIDMA は日本マスメディア時代（1950-2000）の標準コミュニケーション・モデル·全日本広告業実務訓練に影響。<br><br>他派との関係：Bettman 情報処理パラダイムの memory モジュールと呼応——AIDMA は marketing 実務版の「記憶-検索」プロセス。<br><br>AISAS への進化：インターネット時代消費者は受動的でなく·能動 search·share——電通 2005 年 AISAS が AIDMA に代わり新主流。"
+    "zh": {
+      "format": "narrative",
+      "prose": "AIDMA（Attention-Interest-Desire-Memory-Action）是 AIDA 模型的日本演化版·1924 年 Samuel Roland Hall 提出·后被日本广告业广泛采用·成为日本マスメディア型广告的核心模型。<br><br>5 阶段（与 AIDA 比多了 M）：<br>① A - Attention（注意）——消费者注意到广告<br>② I - Interest（关心）——产生兴趣<br>③ D - Desire（欲望）——产生欲望<br>④ M - Memory（记忆）⭐——记住 brand·重复看到时还能记得<br>⑤ A - Action（行动）——做出购买<br><br>核心创新：Memory（记忆）<br>AIDA 假设消费者看到广告 → 立即购买。但实际中·消费者通常需要多次接触·先记住 brand·下次购物时回忆出·才行动。Memory 这一步是 marketing 投资的基础假设。<br><br>对 marketing 的影响：<br>① 反复曝光（frequency）——一次广告不够·要多次<br>② brand awareness 战略——构建 top-of-mind awareness<br>③ 媒体投放计划——reach × frequency 决定 memory<br>④ 广告创意——slogan·jingle·visual hook 帮助记忆<br><br>历史地位：AIDMA 是日本マスメディア时代（1950-2000）的标准 communication 模型·影响了所有日本广告业的实务训练。<br><br>跨学派关系：与 Bettman 信息处理范式中的 memory 模块呼应——AIDMA 是 marketing 实务版的「记忆-检索」过程。<br><br>到 AISAS 的演化：互联网时代消费者不再被动·而是主动 search 与 share——電通 2005 年 AISAS 取代 AIDMA 作为新主流模型。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "AIDMA（Attention-Interest-Desire-Memory-Action）は AIDA モデルの日本進化版·1924 年 Samuel Roland Hall 提唱·後日本広告業に広く採用·日本マスメディア型広告の核心モデル。<br><br>5 段階（AIDA に M 追加）：① Attention ② Interest ③ Desire ④ Memory（記憶）⭐ ⑤ Action<br><br>核心革新：Memory（記憶）<br>AIDA は消費者が広告を見て即購入と仮定。しかし実際は複数回接触·brand を記憶·次回購買時想起·後行動。Memory はマーケティング投資の基礎前提。<br><br>マーケティング影響：① 反復曝露（frequency）② ブランド認知度戦略·top-of-mind ③ メディア投下計画·reach × frequency が memory を決定 ④ 広告クリエイティブ·スローガン·ジングル·visual hook<br><br>歴史的位置：AIDMA は日本マスメディア時代（1950-2000）の標準コミュニケーション・モデル·全日本広告業実務訓練に影響。<br><br>他派との関係：Bettman 情報処理パラダイムの memory モジュールと呼応——AIDMA は marketing 実務版の「記憶-検索」プロセス。<br><br>AISAS への進化：インターネット時代消費者は受動的でなく·能動 search·share——電通 2005 年 AISAS が AIDMA に代わり新主流。"
+    }
   },
   "tags": [
     "AIDMA",
     "Hall 1924",
     "memory"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "日本マスメディア时代标准模型·AIDA 的实务化版",
-      "限": "互联网时代被 AISAS 取代·静态",
-      "例": "100 年间日本广告创作的标准",
-      "应": "日本院试 IMC 必考·态度形成谱系起点"
+      "meaning": "日本マスメディア时代标准模型·AIDA 的实务化版",
+      "limit": "互联网时代被 AISAS 取代·静态",
+      "example": "100 年间日本广告创作的标准",
+      "response": "日本院试 IMC 必考·态度形成谱系起点",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "インターネット時代 AISAS に代替·静的",
-      "例": "100 年間日本広告作成標準"
+      "meaning": "",
+      "limit": "インターネット時代 AISAS に代替·静的",
+      "example": "100 年間日本広告作成標準",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:03:53.295Z",

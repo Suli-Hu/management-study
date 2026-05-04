@@ -15,25 +15,36 @@
     "en": "Customer Equity"
   },
   "body": {
-    "zh": "Customer Equity（顾客资产）是 Roland Rust·Valarie Zeithaml·Katherine Lemon 在 2000 年『Driving Customer Equity』提出·把所有客户的 LTV 总和当成企业最重要的财务资产·与 brand equity 并列。<br><br>核心命题：<br>**Customer Equity = Σ (CLV of all customers)**<br>企业的真实价值不是 brand equity·而是 customer equity。<br><br>Customer Equity 的 3 个驱动因子（Rust-Zeithaml-Lemon framework）：<br><br>① Value Equity——客户感知的产品 / 服务价值<br>包含：quality·price·convenience·performance<br>提升方法：产品改进·定价优化·客户体验<br><br>② Brand Equity——客户对 brand 的情感连接<br>包含：brand awareness·brand attitude·brand ethics<br>提升方法：marketing communication·brand building<br><br>③ Retention Equity——客户与企业的关系强度<br>包含：loyalty programs·special recognition·affinity·community·knowledge·learning<br>提升方法：CRM·service recovery·VIP programs<br><br>3 因子的相对重要性因行业而异：<br>- 低介入产品（如 toilet paper）→ Brand Equity 重要<br>- 高介入产品（如车）→ Value Equity 重要<br>- 关系型产品（如 SaaS·会员）→ Retention Equity 重要<br><br>marketing 战略启示：<br>① marketing 投资从「产品」转向「客户」——按客户终生价值分配资源·而非按产品类目<br>② customer-centric organization——按客户而非产品组织 marketing<br>③ 跨产品 cross-sell——同一客户的多产品 LTV 比单产品 LTV 高<br><br>vs Brand Equity：<br>- Brand Equity（Aaker·Keller）：企业角度的 brand 资产<br>- Customer Equity（Rust-Zeithaml-Lemon）：财务角度的客户资产<br>- 现代 marketing 综合两者：customer equity 包含 brand equity 作为子因子<br><br>跨学派关系：① 整合 brand_equity + relationship 学派 ② 与 CLV 直接相关——Customer Equity 是 CLV 的总和 ③ 影响 financial marketing·marketing ROI 测量。",
-    "ja": "Customer Equity（顧客エクイティ）は Roland Rust·Valarie Zeithaml·Katherine Lemon 2000 年『Driving Customer Equity』で提唱·全顧客の LTV 総和を企業最重要の財務資産として brand equity と並列。<br><br>核心命題：**Customer Equity = Σ (CLV of all customers)**·企業の真の価値は brand equity ではなく customer equity。<br><br>3 駆動因子（Rust-Zeithaml-Lemon framework）：① Value Equity·② Brand Equity·③ Retention Equity<br><br>3 因子の相対重要性は業界依存：低関与製品（Brand 重要）·高関与製品（Value 重要）·関係型製品（Retention 重要）<br><br>マーケティング戦略示唆：① マーケティング投資が「製品」から「顧客」へ ② customer-centric organization ③ クロスセル<br><br>vs Brand Equity：Brand Equity（Aaker·Keller）は企業視点のブランド資産·Customer Equity は財務視点の顧客資産·現代マーケティングは customer equity 包含 brand equity。<br><br>他派との関係：① brand_equity + relationship 学派統合 ② CLV と直接関連 ③ financial marketing·マーケティング ROI 測定に影響。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Customer Equity（顾客资产）是 Roland Rust·Valarie Zeithaml·Katherine Lemon 在 2000 年『Driving Customer Equity』提出·把所有客户的 LTV 总和当成企业最重要的财务资产·与 brand equity 并列。<br><br>核心命题：<br>**Customer Equity = Σ (CLV of all customers)**<br>企业的真实价值不是 brand equity·而是 customer equity。<br><br>Customer Equity 的 3 个驱动因子（Rust-Zeithaml-Lemon framework）：<br><br>① Value Equity——客户感知的产品 / 服务价值<br>包含：quality·price·convenience·performance<br>提升方法：产品改进·定价优化·客户体验<br><br>② Brand Equity——客户对 brand 的情感连接<br>包含：brand awareness·brand attitude·brand ethics<br>提升方法：marketing communication·brand building<br><br>③ Retention Equity——客户与企业的关系强度<br>包含：loyalty programs·special recognition·affinity·community·knowledge·learning<br>提升方法：CRM·service recovery·VIP programs<br><br>3 因子的相对重要性因行业而异：<br>- 低介入产品（如 toilet paper）→ Brand Equity 重要<br>- 高介入产品（如车）→ Value Equity 重要<br>- 关系型产品（如 SaaS·会员）→ Retention Equity 重要<br><br>marketing 战略启示：<br>① marketing 投资从「产品」转向「客户」——按客户终生价值分配资源·而非按产品类目<br>② customer-centric organization——按客户而非产品组织 marketing<br>③ 跨产品 cross-sell——同一客户的多产品 LTV 比单产品 LTV 高<br><br>vs Brand Equity：<br>- Brand Equity（Aaker·Keller）：企业角度的 brand 资产<br>- Customer Equity（Rust-Zeithaml-Lemon）：财务角度的客户资产<br>- 现代 marketing 综合两者：customer equity 包含 brand equity 作为子因子<br><br>跨学派关系：① 整合 brand_equity + relationship 学派 ② 与 CLV 直接相关——Customer Equity 是 CLV 的总和 ③ 影响 financial marketing·marketing ROI 测量。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Customer Equity（顧客エクイティ）は Roland Rust·Valarie Zeithaml·Katherine Lemon 2000 年『Driving Customer Equity』で提唱·全顧客の LTV 総和を企業最重要の財務資産として brand equity と並列。<br><br>核心命題：**Customer Equity = Σ (CLV of all customers)**·企業の真の価値は brand equity ではなく customer equity。<br><br>3 駆動因子（Rust-Zeithaml-Lemon framework）：① Value Equity·② Brand Equity·③ Retention Equity<br><br>3 因子の相対重要性は業界依存：低関与製品（Brand 重要）·高関与製品（Value 重要）·関係型製品（Retention 重要）<br><br>マーケティング戦略示唆：① マーケティング投資が「製品」から「顧客」へ ② customer-centric organization ③ クロスセル<br><br>vs Brand Equity：Brand Equity（Aaker·Keller）は企業視点のブランド資産·Customer Equity は財務視点の顧客資産·現代マーケティングは customer equity 包含 brand equity。<br><br>他派との関係：① brand_equity + relationship 学派統合 ② CLV と直接関連 ③ financial marketing·マーケティング ROI 測定に影響。"
+    }
   },
   "tags": [
     "Customer Equity",
     "Rust-Zeithaml-Lemon",
     "Driving Customer Equity"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "relationship + brand 学派交叉的财务化框架·marketing 资产化",
-      "限": "3 因子分离实证难·跨产业适用",
-      "例": "SaaS 公司用 Customer Equity 估值",
-      "应": "relationship 题·brand 题·一橋·神戸 命题"
+      "meaning": "relationship + brand 学派交叉的财务化框架·marketing 资产化",
+      "limit": "3 因子分离实证难·跨产业适用",
+      "example": "SaaS 公司用 Customer Equity 估值",
+      "response": "relationship 题·brand 题·一橋·神戸 命题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "3 因子分離実証困難·跨業界適用",
-      "例": "SaaS 企業が Customer Equity で評価"
+      "meaning": "",
+      "limit": "3 因子分離実証困難·跨業界適用",
+      "example": "SaaS 企業が Customer Equity で評価",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:04:19.600Z",

@@ -13,13 +13,54 @@
     "ja": "国際人的資源管理"
   },
   "body": {
-    "zh": "企业在全球化经营中跨国界管理人的资源的活动体系。◆ 人员配置策略——①PCN（Parent Country Nationals，母国人员派遣）：直接控制强但成本高、本地适应难②HCN（Host Country Nationals，现地采用）：本地适应强但总部控制弱③TCN（Third Country Nationals，第三国人才）：灵活但忠诚度课题◆ EPRG框架（Perlmutter）——企业国际化的四种志向：本国中心（Ethnocentric）→多中心（Polycentric）→地域中心（Regiocentric）→世界中心（Geocentric）◆ 海外派遣者管理——选拔（异文化适应力评估）→赴任前研修（语言·文化训练）→赴任中支援（家属随行支援·导师制度）→归任管理（再适应·经验活用）◆ 课题——跨文化管理·当地人才培养·全球统一评价制度构建",
-    "ja": "——企業がグローバル経営において国境を越えて人的資源を管理する活動体系。◆ 人員配置戦略——①PCN（Parent Country Nationals：本国人員派遣）：直接統制は強いがコスト高・現地適応困難②HCN（Host Country Nationals：現地採用）：現地適応は強いが本社統制が弱い③TCN（Third Country Nationals：第三国人材）：柔軟だがロイヤリティの課題◆ EPRGフレームワーク（Perlmutter）——企業の国際化志向の四類型：本国中心（Ethnocentric）→多中心（Polycentric）→地域中心（Regiocentric）→世界中心（Geocentric）◆ 海外派遣者管理——選抜（異文化適応力評価）→赴任前研修（語学・文化訓練）→赴任中支援（家族帯同支援・メンター制度）→帰任管理（再適応・キャリア活用）◆ 課題——異文化マネジメント・現地人材育成・グローバル共通の評価制度構築"
+    "zh": {
+      "format": "flat-list",
+      "lead": "企业在全球化经营中跨国界管理人的资源的活动体系。",
+      "items": [
+        {
+          "name": "人员配置策略",
+          "desc": "①PCN（Parent Country Nationals，母国人员派遣）：直接控制强但成本高、本地适应难②HCN（Host Country Nationals，现地采用）：本地适应强但总部控制弱③TCN（Third Country Nationals，第三国人才）：灵活但忠诚度课题"
+        },
+        {
+          "name": "EPRG框架（Perlmutter）",
+          "desc": "企业国际化的四种志向：本国中心（Ethnocentric）→多中心（Polycentric）→地域中心（Regiocentric）→世界中心（Geocentric）"
+        },
+        {
+          "name": "海外派遣者管理",
+          "desc": "选拔（异文化适应力评估）→赴任前研修（语言·文化训练）→赴任中支援（家属随行支援·导师制度）→归任管理（再适应·经验活用）"
+        },
+        {
+          "name": "课题",
+          "desc": "跨文化管理·当地人才培养·全球统一评价制度构建"
+        }
+      ]
+    },
+    "ja": {
+      "format": "flat-list",
+      "lead": "——企業がグローバル経営において国境を越えて人的資源を管理する活動体系。",
+      "items": [
+        {
+          "name": "人員配置戦略",
+          "desc": "①PCN（Parent Country Nationals：本国人員派遣）：直接統制は強いがコスト高・現地適応困難②HCN（Host Country Nationals：現地採用）：現地適応は強いが本社統制が弱い③TCN（Third Country Nationals：第三国人材）：柔軟だがロイヤリティの課題"
+        },
+        {
+          "name": "EPRGフレームワーク（Perlmutter）",
+          "desc": "企業の国際化志向の四類型：本国中心（Ethnocentric）→多中心（Polycentric）→地域中心（Regiocentric）→世界中心（Geocentric）"
+        },
+        {
+          "name": "海外派遣者管理",
+          "desc": "選抜（異文化適応力評価）→赴任前研修（語学・文化訓練）→赴任中支援（家族帯同支援・メンター制度）→帰任管理（再適応・キャリア活用）"
+        },
+        {
+          "name": "課題",
+          "desc": "異文化マネジメント・現地人材育成・グローバル共通の評価制度構築"
+        }
+      ]
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

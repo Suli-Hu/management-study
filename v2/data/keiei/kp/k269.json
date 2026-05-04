@@ -14,13 +14,18 @@
     "ja": "サーバント・リーダーシップ"
   },
   "body": {
-    "zh": "领导者以奉仕者自居，优先服务追随者的成长和福祉。10大特性：倾听（Listening）、共情（Empathy）、疗愈（Healing）、自我觉察（Awareness）、说服（Persuasion）、概念化（Conceptualization）、远见（Foresight）、管家意识（Stewardship）、致力于他人成长（Commitment to Growth）、构建共同体（Building Community）",
-    "ja": "——リーダーが奉仕者として自らを位置づけ、フォロワーの成長と幸福に優先的に仕える。十大特性：傾聴（Listening）、共感（Empathy）、癒し（Healing）、自己認識（Awareness）、説得（Persuasion）、概念化（Conceptualization）、先見性（Foresight）、執事意識（Stewardship）、他者の成長への献身（Commitment to Growth）、共同体の構築（Building Community）"
+    "zh": {
+      "format": "narrative",
+      "prose": "领导者以奉仕者自居，优先服务追随者的成长和福祉。10大特性：倾听（Listening）、共情（Empathy）、疗愈（Healing）、自我觉察（Awareness）、说服（Persuasion）、概念化（Conceptualization）、远见（Foresight）、管家意识（Stewardship）、致力于他人成长（Commitment to Growth）、构建共同体（Building Community）"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "——リーダーが奉仕者として自らを位置づけ、フォロワーの成長と幸福に優先的に仕える。十大特性：傾聴（Listening）、共感（Empathy）、癒し（Healing）、自己認識（Awareness）、説得（Persuasion）、概念化（Conceptualization）、先見性（Foresight）、執事意識（Stewardship）、他者の成長への献身（Commitment to Growth）、共同体の構築（Building Community）"
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "narrative",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

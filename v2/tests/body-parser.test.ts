@@ -239,27 +239,6 @@ describe('detectFormatFromBody — 自动 detect 真实 format', () => {
   });
 });
 
-describe('真实 data/keiei/kp/*.json 全 parse + serialize 不抛', () => {
-  const files = readdirSync(KP_DIR).filter((f) => f.endsWith('.json') && !f.startsWith('_'));
-  test(`${files.length} 个 KP 文件 parse + serialize 全通过`, () => {
-    let success = 0;
-    let failures: string[] = [];
-    for (const f of files) {
-      try {
-        const kp = JSON.parse(readFileSync(join(KP_DIR, f), 'utf-8'));
-        const format = kp.format as Format;
-        const body = kp.body?.zh ?? '';
-        const p = parseBody(body, format);
-        serializeBody(p);
-        success++;
-      } catch (err) {
-        failures.push(`${f}: ${(err as Error).message}`);
-      }
-    }
-    if (failures.length > 0) {
-      console.error('parse 失败：', failures.slice(0, 5));
-    }
-    expect(failures).toEqual([]);
-    expect(success).toBe(files.length);
-  });
-});
+// v0.8.10 Stage 5: 旧的"全 KP 文件 parse + serialize 不抛"测试随 git 数据迁移到
+// v0.8 shape 后不再适用 — body.zh 已是 object，parseBody (legacy DSL parser) 不再吃。
+// body-parser.ts 仅保留作 v0.8 编辑器的格式互转工具，覆盖在前面 30 条单测里。

@@ -15,25 +15,36 @@
     "en": "Consumerism"
   },
   "body": {
-    "zh": "コンシューマリズム（Consumerism·消费者主义）是 1960 年代美国兴起的消费者权利运动·marketing 学的关键社会运动·从根本上推动 marketing 概念向「社会志向」演化。Pro Plus 第 14 章·塾 11 章核心。<br><br>历史背景：<br>1960 年代美国——<br>① 越战 + 公民权运动 + 学生运动 + 反企业情绪<br>② 企业不当行为暴露——汽车安全（Ralph Nader 1965 *Unsafe at Any Speed* 攻击通用汽车）·药品副作用（Thalidomide）·虚假广告<br>③ 消费者立场弱·企业立场强·社会要求平衡<br><br>Kennedy 1962 消费者 4 つの権利（核心宣言）：<br>1962 年 3 月 15 日·美国总统肯尼迪在国会演讲提出 4 项消费者权利：<br>① Right to Safety（安全权）——免受危险产品<br>② Right to be Informed（知情权）——免受虚假广告<br>③ Right to Choose（选择权）——多种产品供选<br>④ Right to be Heard（表达权）——意见反映到企业·政府<br><br>这一天后被定为世界消费者权利日。<br><br>消费者主义对 marketing 的影响：<br>① 消费者保护法立法——FTC 加强·欧美制定 lemon law·日本 1968 消费者保护基本法<br>② marketing concept 学派升级到「社会志向」（5 志向中第 5）<br>③ CSR / sustainable marketing 起源——marketing 必须考虑外部性<br>④ brand crisis management——消费者声音的力量倒逼企业<br><br>vs 数字时代消费者主义：<br>- 1960s 消费者主义靠 NGO·media·政府<br>- 数字时代靠 SNS·UGC·boycott·activism<br>- 力量更大·企业必须更敏感<br><br>跨学派关系：① 与 social_marketing 学派的 CSR·BOP 概念紧密 ② 与 marketing_concept 学派的「社会志向」演化一致 ③ 与 brand_equity 学派的 brand crisis management 实务对接。",
-    "ja": "コンシューマリズム（Consumerism·消費者主義）は 1960 年代米国で興隆した消費者権利運動·マーケティング学のキー社会運動·マーケティング概念の「社会志向」進化を根本的に推進。Pro Plus 第 14 章·塾 11 章核心。<br><br>歴史背景：1960 年代米国——① ベトナム戦争 + 公民権運動 + 学生運動 + 反企業感情 ② 企業不当行為暴露（Ralph Nader 1965『Unsafe at Any Speed』·Thalidomide 副作用·虚偽広告）③ 消費者弱·企業強·社会平衡要求<br><br>Kennedy 1962 消費者 4 つの権利（核心宣言）：1962 年 3 月 15 日·米国大統領ケネディが議会演説で 4 つの消費者権利を提唱：<br>① Right to Safety（安全）② Right to be Informed（知らされる）③ Right to Choose（選択）④ Right to be Heard（意見反映）<br>この日は後に世界消費者権利デーとなる。<br><br>マーケティングへの影響：① 消費者保護法立法（米 FTC·日本 1968 消費者保護基本法）② マーケティング・コンセプト 5 志向中の「社会志向」へ ③ CSR / sustainable marketing 起源 ④ brand crisis management<br><br>vs デジタル時代消費者主義：1960s は NGO·media·政府·デジタル時代は SNS·UGC·boycott·activism·力大·企業敏感必要。<br><br>他派との関係：① social_marketing 学派 CSR·BOP と密接 ② marketing_concept「社会志向」進化一致 ③ brand_equity の crisis management と接続。"
+    "zh": {
+      "format": "narrative",
+      "prose": "コンシューマリズム（Consumerism·消费者主义）是 1960 年代美国兴起的消费者权利运动·marketing 学的关键社会运动·从根本上推动 marketing 概念向「社会志向」演化。Pro Plus 第 14 章·塾 11 章核心。<br><br>历史背景：<br>1960 年代美国——<br>① 越战 + 公民权运动 + 学生运动 + 反企业情绪<br>② 企业不当行为暴露——汽车安全（Ralph Nader 1965 *Unsafe at Any Speed* 攻击通用汽车）·药品副作用（Thalidomide）·虚假广告<br>③ 消费者立场弱·企业立场强·社会要求平衡<br><br>Kennedy 1962 消费者 4 つの権利（核心宣言）：<br>1962 年 3 月 15 日·美国总统肯尼迪在国会演讲提出 4 项消费者权利：<br>① Right to Safety（安全权）——免受危险产品<br>② Right to be Informed（知情权）——免受虚假广告<br>③ Right to Choose（选择权）——多种产品供选<br>④ Right to be Heard（表达权）——意见反映到企业·政府<br><br>这一天后被定为世界消费者权利日。<br><br>消费者主义对 marketing 的影响：<br>① 消费者保护法立法——FTC 加强·欧美制定 lemon law·日本 1968 消费者保护基本法<br>② marketing concept 学派升级到「社会志向」（5 志向中第 5）<br>③ CSR / sustainable marketing 起源——marketing 必须考虑外部性<br>④ brand crisis management——消费者声音的力量倒逼企业<br><br>vs 数字时代消费者主义：<br>- 1960s 消费者主义靠 NGO·media·政府<br>- 数字时代靠 SNS·UGC·boycott·activism<br>- 力量更大·企业必须更敏感<br><br>跨学派关系：① 与 social_marketing 学派的 CSR·BOP 概念紧密 ② 与 marketing_concept 学派的「社会志向」演化一致 ③ 与 brand_equity 学派的 brand crisis management 实务对接。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "コンシューマリズム（Consumerism·消費者主義）は 1960 年代米国で興隆した消費者権利運動·マーケティング学のキー社会運動·マーケティング概念の「社会志向」進化を根本的に推進。Pro Plus 第 14 章·塾 11 章核心。<br><br>歴史背景：1960 年代米国——① ベトナム戦争 + 公民権運動 + 学生運動 + 反企業感情 ② 企業不当行為暴露（Ralph Nader 1965『Unsafe at Any Speed』·Thalidomide 副作用·虚偽広告）③ 消費者弱·企業強·社会平衡要求<br><br>Kennedy 1962 消費者 4 つの権利（核心宣言）：1962 年 3 月 15 日·米国大統領ケネディが議会演説で 4 つの消費者権利を提唱：<br>① Right to Safety（安全）② Right to be Informed（知らされる）③ Right to Choose（選択）④ Right to be Heard（意見反映）<br>この日は後に世界消費者権利デーとなる。<br><br>マーケティングへの影響：① 消費者保護法立法（米 FTC·日本 1968 消費者保護基本法）② マーケティング・コンセプト 5 志向中の「社会志向」へ ③ CSR / sustainable marketing 起源 ④ brand crisis management<br><br>vs デジタル時代消費者主義：1960s は NGO·media·政府·デジタル時代は SNS·UGC·boycott·activism·力大·企業敏感必要。<br><br>他派との関係：① social_marketing 学派 CSR·BOP と密接 ② marketing_concept「社会志向」進化一致 ③ brand_equity の crisis management と接続。"
+    }
   },
   "tags": [
     "コンシューマリズム",
     "Kennedy 1962",
     "4 権利"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "marketing 与社会的关系起点·marketing concept 5 志向第 5 阶段",
-      "限": "历史性概念·当代演化为不同形式",
-      "例": "Kennedy 1962 4 权利·Ralph Nader 倒通用汽车",
-      "应": "Pro Plus 14 章·marketing 史·一橋 命题"
+      "meaning": "marketing 与社会的关系起点·marketing concept 5 志向第 5 阶段",
+      "limit": "历史性概念·当代演化为不同形式",
+      "example": "Kennedy 1962 4 权利·Ralph Nader 倒通用汽车",
+      "response": "Pro Plus 14 章·marketing 史·一橋 命题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "歴史的概念·現代は異形態に進化",
-      "例": "Kennedy 1962 4 権利·Ralph Nader 対 GM"
+      "meaning": "",
+      "limit": "歴史的概念·現代は異形態に進化",
+      "example": "Kennedy 1962 4 権利·Ralph Nader 対 GM",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:14:11.270Z",

@@ -12,13 +12,38 @@
     "ja": "ベスト・プラクティスvsベスト・フィット論争"
   },
   "body": {
-    "zh": "SHRM研究中最重要的理论争论之一：◆ 最佳实践派（Best Practice / Universalistic Approach）——主张存在不分行业和情境的普遍有效的HR实践组合（如高绩效工作系统），可直接提升组织绩效◆ 最佳匹配派（Best Fit / Contingency Approach）——主张HR实践必须与企业战略、组织文化、外部环境等情境因素相匹配才能发挥效果。两者之争至今未有定论，是SHRM理论的核心课题",
-    "ja": "——SHRM研究における最も重要な理論的論争の一つ。◆ ベスト・プラクティス（Best Practice / Universalistic Approach）——産業や文脈を問わず普遍的に有効なHR施策の組み合わせ（高業績ワークシステム等）が存在するとする立場◆ ベスト・フィット（Best Fit / Contingency Approach）——HR施策は企業戦略・組織文化・外部環境などの状況要因に適合させなければならないとする立場。両者の論争は今日に至るまで決着がついておらず、SHRM理論の中核的課題であり続けている"
+    "zh": {
+      "format": "flat-list",
+      "lead": "SHRM研究中最重要的理论争论之一",
+      "items": [
+        {
+          "name": "最佳实践派（Best Practice / Universalistic Approach）",
+          "desc": "主张存在不分行业和情境的普遍有效的HR实践组合（如高绩效工作系统），可直接提升组织绩效"
+        },
+        {
+          "name": "最佳匹配派（Best Fit / Contingency Approach）",
+          "desc": "主张HR实践必须与企业战略、组织文化、外部环境等情境因素相匹配才能发挥效果。两者之争至今未有定论，是SHRM理论的核心课题"
+        }
+      ]
+    },
+    "ja": {
+      "format": "flat-list",
+      "lead": "——SHRM研究における最も重要な理論的論争の一つ。",
+      "items": [
+        {
+          "name": "ベスト・プラクティス（Best Practice / Universalistic Approach）",
+          "desc": "産業や文脈を問わず普遍的に有効なHR施策の組み合わせ（高業績ワークシステム等）が存在するとする立場"
+        },
+        {
+          "name": "ベスト・フィット（Best Fit / Contingency Approach）",
+          "desc": "HR施策は企業戦略・組織文化・外部環境などの状況要因に適合させなければならないとする立場。両者の論争は今日に至るまで決着がついておらず、SHRM理論の中核的課題であり続けている"
+        }
+      ]
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

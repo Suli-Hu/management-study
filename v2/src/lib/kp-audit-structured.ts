@@ -1,15 +1,13 @@
 /**
- * v0.8.0 Stage 1+2 — KP body 结构化新列 audit (PM 决策：Stage 3 hard cut go/no-go gate)
+ * KP body 结构化列 audit（v0.8.0 Stage 3 hard cut go/no-go gate）。
  *
  * 用途：
- *   - Stage 1/2 期间监控：哪些 KP 的 body_zh_json 不能被 KpBody.parse 通过
- *     （脏数据双写产物 — 见 PRD §6.3 防线 1，被 fallback 救命的 KP）
- *   - Stage 3 hard cut 前必跑：清单 = 0 才允许 cut，否则先修数据
+ *   - 扫全表识别 body_zh_json / body_ja_json 不能被 KpBody.parse 通过的脏数据
+ *   - Stage 5 后旧列已 drop，唯一真源就是 body_*_json — 所以 audit = 新列 zod gate
  *
  * 设计：
  *   - auditKpStructured(db) — 扫全表，返脏 KP 清单 + 概览
  *   - 不修改任何数据（read-only）
- *   - 与 render-body-with-fallback 的 try-catch 一致 — 同样的 schema gate
  */
 
 import { KpBody } from '~/schemas/kp-body-structured';

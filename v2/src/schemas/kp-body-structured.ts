@@ -16,7 +16,6 @@
  */
 
 import { z } from 'zod';
-import { SchoolKey, ScholarKey } from './kp';
 
 // ============================================================
 // 5 种 format 的 body schema
@@ -179,37 +178,5 @@ export const KpEvaluations = z
 export type KpEvaluations = z.infer<typeof KpEvaluations>;
 export type KpEvaluationsLang = z.infer<typeof KpEvaluationsLang>;
 
-// ============================================================
-// 全 KP 重构后的形态（参考 PRD §3.1）
-// 不直接 export 替换现有 Kp，等 Stage 3 API contract 切换时再替换
-// ============================================================
-
-/** v0.8.0 重构后的 KP 全 schema —— Stage 0 仅定义，Stage 3 才接入 API */
-export const KpV08 = z
-  .object({
-    id: z.string().regex(/^[a-z]{1,3}\d+$/),
-    discipline: z.string().regex(/^[a-z][a-z0-9_]{1,30}$/),
-    schools: z.array(SchoolKey).min(1),
-    scholars: z.array(ScholarKey).default([]),
-    year: z.string().default(''),
-    title: z
-      .object({
-        zh: z.string().min(1),
-        ja: z.string().optional(),
-        en: z.string().optional(),
-      })
-      .strict(),
-    body: z
-      .object({
-        zh: KpBody,
-        ja: KpBody.optional(),
-      })
-      .strict(),
-    evaluations: KpEvaluations.optional(),
-    tags: z.array(z.string()).default([]),
-    createdAt: z.string().datetime({ offset: false }),
-    updatedAt: z.string().datetime({ offset: false }),
-  })
-  .strict();
-
-export type KpV08 = z.infer<typeof KpV08>;
+// v0.8.10 Stage 5: 旧 KpV08 占位（Stage 0 引入做迁移期 placeholder）已并入
+// ./kp.ts 的 Kp schema —— 不再单独 export，避免与真源 Kp 双轨。

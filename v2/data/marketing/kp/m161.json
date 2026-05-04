@@ -15,25 +15,36 @@
     "en": "Brand Value Chain"
   },
   "body": {
-    "zh": "Brand Value Chain（ブランド・バリュー・チェーン）是 Keller 系统化的 brand 价值产生过程模型·从 marketing investment 到 shareholder value 的4 阶段链条。<br><br>4 阶段链条：<br><br>① Marketing Program Investment（投资）<br>↓ Multiplier 1: Program Quality（程序质量·clarity·relevance·distinctiveness·consistency·contribution）<br>② Customer Mindset（顾客心智）<br>- awareness·associations·attitudes·attachments·activities<br>↓ Multiplier 2: Marketplace Conditions（市场条件·competitive reactions·channel support·customer size & profile）<br>③ Market Performance（市场表现）<br>- price premiums·price elasticity·market share·brand expansion success·cost structure·profitability<br>↓ Multiplier 3: Investor Sentiment（投资者情绪·market dynamics·growth potential·risk profile·brand contribution）<br>④ Shareholder Value（股东价值）<br>- stock price·P/E ratio·market cap<br><br>核心命题：marketing 投资不直接转化为股东价值·每个阶段间有multiplier影响转化效率。理解 multiplier 是 marketing ROI 优化的关键。<br><br>marketing 实务应用：<br>① brand audit——逐阶段诊断哪里 leak<br>② resource allocation——哪个 multiplier 最弱·投资在哪<br>③ communication 战略——consistency 的 multiplier 影响<br>④ investor relations——讲 brand story 给投资者<br><br>跨学派关系：是 brand_equity 学派与财务·strategic_marketing的连接桥梁·让 brand 的财务价值可见。",
-    "ja": "Brand Value Chain（ブランド・バリュー・チェーン）は Keller 体系化の brand 価値生成プロセス・モデル·marketing investment から shareholder value までの4 段階チェーン。<br><br>4 段階チェーン：① Marketing Program Investment（投資）→ Multiplier 1: Program Quality → ② Customer Mindset（awareness·associations·attitudes·attachments·activities）→ Multiplier 2: Marketplace Conditions → ③ Market Performance（price premium·elasticity·share·expansion·cost·profit）→ Multiplier 3: Investor Sentiment → ④ Shareholder Value（stock price·P/E·market cap）<br><br>核心命題：marketing 投資は直接株主価値に転化せず·各段階間にmultiplier が転化効率に影響·multiplier 理解が ROI 最適化の鍵。<br><br>マーケティング実務応用：① brand audit（段階別 leak 診断）② resource allocation ③ communication 戦略（consistency multiplier）④ investor relations（投資家にブランド・ストーリー）<br><br>他派との関係：brand_equity 学派と財務·strategic_marketingの連接橋梁·ブランドの財務価値を可視化。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Brand Value Chain（ブランド・バリュー・チェーン）是 Keller 系统化的 brand 价值产生过程模型·从 marketing investment 到 shareholder value 的4 阶段链条。<br><br>4 阶段链条：<br><br>① Marketing Program Investment（投资）<br>↓ Multiplier 1: Program Quality（程序质量·clarity·relevance·distinctiveness·consistency·contribution）<br>② Customer Mindset（顾客心智）<br>- awareness·associations·attitudes·attachments·activities<br>↓ Multiplier 2: Marketplace Conditions（市场条件·competitive reactions·channel support·customer size & profile）<br>③ Market Performance（市场表现）<br>- price premiums·price elasticity·market share·brand expansion success·cost structure·profitability<br>↓ Multiplier 3: Investor Sentiment（投资者情绪·market dynamics·growth potential·risk profile·brand contribution）<br>④ Shareholder Value（股东价值）<br>- stock price·P/E ratio·market cap<br><br>核心命题：marketing 投资不直接转化为股东价值·每个阶段间有multiplier影响转化效率。理解 multiplier 是 marketing ROI 优化的关键。<br><br>marketing 实务应用：<br>① brand audit——逐阶段诊断哪里 leak<br>② resource allocation——哪个 multiplier 最弱·投资在哪<br>③ communication 战略——consistency 的 multiplier 影响<br>④ investor relations——讲 brand story 给投资者<br><br>跨学派关系：是 brand_equity 学派与财务·strategic_marketing的连接桥梁·让 brand 的财务价值可见。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Brand Value Chain（ブランド・バリュー・チェーン）は Keller 体系化の brand 価値生成プロセス・モデル·marketing investment から shareholder value までの4 段階チェーン。<br><br>4 段階チェーン：① Marketing Program Investment（投資）→ Multiplier 1: Program Quality → ② Customer Mindset（awareness·associations·attitudes·attachments·activities）→ Multiplier 2: Marketplace Conditions → ③ Market Performance（price premium·elasticity·share·expansion·cost·profit）→ Multiplier 3: Investor Sentiment → ④ Shareholder Value（stock price·P/E·market cap）<br><br>核心命題：marketing 投資は直接株主価値に転化せず·各段階間にmultiplier が転化効率に影響·multiplier 理解が ROI 最適化の鍵。<br><br>マーケティング実務応用：① brand audit（段階別 leak 診断）② resource allocation ③ communication 戦略（consistency multiplier）④ investor relations（投資家にブランド・ストーリー）<br><br>他派との関係：brand_equity 学派と財務·strategic_marketingの連接橋梁·ブランドの財務価値を可視化。"
+    }
   },
   "tags": [
     "brand value chain",
     "Keller",
     "multiplier"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "brand 学派的财务化模型·marketing ROI 系统化分析",
-      "限": "模型抽象·multiplier 难量化",
-      "例": "P&G·Coca-Cola·Apple 是教科书 brand value chain",
-      "应": "Kotler 10 章·brand 财务题"
+      "meaning": "brand 学派的财务化模型·marketing ROI 系统化分析",
+      "limit": "模型抽象·multiplier 难量化",
+      "example": "P&G·Coca-Cola·Apple 是教科书 brand value chain",
+      "response": "Kotler 10 章·brand 财务题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "モデル抽象·multiplier 数量化困難",
-      "例": "P&G·Coca-Cola·Apple は教科書 brand value chain"
+      "meaning": "",
+      "limit": "モデル抽象·multiplier 数量化困難",
+      "example": "P&G·Coca-Cola·Apple は教科書 brand value chain",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T09:26:14.490Z",

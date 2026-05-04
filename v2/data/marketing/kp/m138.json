@@ -14,25 +14,36 @@
     "en": "Market Testing"
   },
   "body": {
-    "zh": "Market Test（市场测试）是新品在 full launch 前的real-world 测试·新品开发 stage 4 核心。Kotler 18 章。<br><br>3 大类测试：<br>① Sales-Wave Research——给消费者免费 sample·之后多次跟踪购买行为·测 repeat purchase<br>② Simulated Test Marketing——实验室或模拟超市·量化购买决策<br>③ Test Marketing（最现实）——选 1-3 个 city / region launch·测真实表现·后扩展<br><br>Test Marketing 设计 5 决策：<br>① 城市选择——representative size·media 可用·channel 完整<br>② 测试时间——short（季度）vs long（年）<br>③ 测试预算——marketing mix 如何分配<br>④ 测量指标——sales·share·trial·repeat·awareness<br>⑤ 样本量——足够推断<br><br>typical test cities：<br>美国：Albany·Wichita·Indianapolis（中型·representative）<br>日本：札幌·仙台·広島·福岡（地方都市）<br><br>4 大决策（市场测试后）：<br>① Go ahead——全面 launch<br>② Modify——产品 / marketing 调整后再 launch<br>③ Drop——放弃<br>④ Re-test——再做测试<br><br>典型成功例：① P&G Pringles（多年 test marketing 后 1968 全国 launch）② McDonald's McRib（test marketing 测季节性需求）<br><br>批判：① 慢 → 让 competitor 抄袭 ② 高成本 ③ 选 city 偏差<br><br>vs Lean Startup MVP：传统 test marketing 是 thorough·MVP 是 minimum + iterative。<br><br>跨学派关系：与 marketing research·consumer behavior·新品开发流程 一体。",
-    "ja": "Market Test（マーケット・テスト）は新製品 full launch 前のreal-world テスト·新製品開発 stage 4 核心。Kotler 18 章。<br><br>3 大類テスト：① Sales-Wave Research（無料 sample·repeat purchase 追跡）② Simulated Test Marketing（実験室·模擬超市）③ Test Marketing（最現実·1-3 city / region launch）<br><br>Test Marketing 設計 5 決定：① 都市選択 ② テスト時間 ③ テスト予算 ④ 測定指標 ⑤ サンプル量<br><br>typical test cities：米国 Albany·Wichita·Indianapolis·日本 札幌·仙台·広島·福岡<br><br>4 大決定（テスト後）：① Go ahead ② Modify ③ Drop ④ Re-test<br><br>典型成功例：① P&G Pringles（1968 全国 launch）② McDonald's McRib（季節需要）<br><br>批判：① 遅·競合模倣 ② 高コスト ③ 都市選択バイアス<br><br>vs Lean Startup MVP：伝統 test marketing thorough·MVP minimum + iterative<br><br>他派との関係：marketing research·consumer behavior·新製品開発プロセス と一体。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Market Test（市场测试）是新品在 full launch 前的real-world 测试·新品开发 stage 4 核心。Kotler 18 章。<br><br>3 大类测试：<br>① Sales-Wave Research——给消费者免费 sample·之后多次跟踪购买行为·测 repeat purchase<br>② Simulated Test Marketing——实验室或模拟超市·量化购买决策<br>③ Test Marketing（最现实）——选 1-3 个 city / region launch·测真实表现·后扩展<br><br>Test Marketing 设计 5 决策：<br>① 城市选择——representative size·media 可用·channel 完整<br>② 测试时间——short（季度）vs long（年）<br>③ 测试预算——marketing mix 如何分配<br>④ 测量指标——sales·share·trial·repeat·awareness<br>⑤ 样本量——足够推断<br><br>typical test cities：<br>美国：Albany·Wichita·Indianapolis（中型·representative）<br>日本：札幌·仙台·広島·福岡（地方都市）<br><br>4 大决策（市场测试后）：<br>① Go ahead——全面 launch<br>② Modify——产品 / marketing 调整后再 launch<br>③ Drop——放弃<br>④ Re-test——再做测试<br><br>典型成功例：① P&G Pringles（多年 test marketing 后 1968 全国 launch）② McDonald's McRib（test marketing 测季节性需求）<br><br>批判：① 慢 → 让 competitor 抄袭 ② 高成本 ③ 选 city 偏差<br><br>vs Lean Startup MVP：传统 test marketing 是 thorough·MVP 是 minimum + iterative。<br><br>跨学派关系：与 marketing research·consumer behavior·新品开发流程 一体。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Market Test（マーケット・テスト）は新製品 full launch 前のreal-world テスト·新製品開発 stage 4 核心。Kotler 18 章。<br><br>3 大類テスト：① Sales-Wave Research（無料 sample·repeat purchase 追跡）② Simulated Test Marketing（実験室·模擬超市）③ Test Marketing（最現実·1-3 city / region launch）<br><br>Test Marketing 設計 5 決定：① 都市選択 ② テスト時間 ③ テスト予算 ④ 測定指標 ⑤ サンプル量<br><br>typical test cities：米国 Albany·Wichita·Indianapolis·日本 札幌·仙台·広島·福岡<br><br>4 大決定（テスト後）：① Go ahead ② Modify ③ Drop ④ Re-test<br><br>典型成功例：① P&G Pringles（1968 全国 launch）② McDonald's McRib（季節需要）<br><br>批判：① 遅·競合模倣 ② 高コスト ③ 都市選択バイアス<br><br>vs Lean Startup MVP：伝統 test marketing thorough·MVP minimum + iterative<br><br>他派との関係：marketing research·consumer behavior·新製品開発プロセス と一体。"
+    }
   },
   "tags": [
     "market test",
     "P&G Pringles",
     "test cities"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "新品开发的真实测试阶段·决定是否 launch",
-      "限": "慢·成本高·城市选择主观",
-      "例": "P&G Pringles·McDonald's McRib 是教科书",
-      "应": "Kotler 18 章·新品 launch 题"
+      "meaning": "新品开发的真实测试阶段·决定是否 launch",
+      "limit": "慢·成本高·城市选择主观",
+      "example": "P&G Pringles·McDonald's McRib 是教科书",
+      "response": "Kotler 18 章·新品 launch 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "遅·コスト高·都市選択主観",
-      "例": "P&G Pringles·McDonald's McRib 教科書"
+      "meaning": "",
+      "limit": "遅·コスト高·都市選択主観",
+      "example": "P&G Pringles·McDonald's McRib 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:36:11.139Z",

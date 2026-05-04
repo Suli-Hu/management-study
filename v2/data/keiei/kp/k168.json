@@ -14,13 +14,36 @@
     "ja": "ミシガン・モデル"
   },
   "body": {
-    "zh": "冯布伦（Fombrun）、蒂奇（Tichy）、德瓦纳（Devanna）1984年提出，被称为硬性HRM的代表模型。◆ HRM循环（HRM Cycle）——选拔（Selection）→评价（Appraisal）→报酬（Rewards）→培养（Development）四个功能相互关联构成闭环◆ 纵向匹配（Vertical Fit / External Fit）——HRM系统必须与企业的经营战略保持一致，不同战略需要不同的HRM配置◆ 横向一致（Horizontal Fit / Internal Fit）——HRM各项实践（选拔、评价、报酬、培养）之间必须相互协调，避免内部矛盾◆ 与哈佛模型的对比——密歇根模型将人视为需要与战略匹配的资源（硬性视角），重点在于绩效驱动；哈佛模型将人视为有多方利益诉求的相关者（软性视角），重点在于承诺培育。两者分别代表了SHRM的两种基本取向",
-    "ja": "——フォンブランらが提唱したモデルであり、HRMシステムと企業戦略の縦方向の適合（Vertical Fit）、およびHR諸施策間の横方向の一貫性（Horizontal Fit）を強調する。選抜（Selection）・評価（Appraisal）・報酬（Rewards）・人材開発（Development）の四つのHR機能が企業の戦略的目標と密接に連動し、戦略実行を支える統合システムを構成すべきとする"
+    "zh": {
+      "format": "flat-list",
+      "lead": "冯布伦（Fombrun）、蒂奇（Tichy）、德瓦纳（Devanna）1984年提出，被称为硬性HRM的代表模型。",
+      "items": [
+        {
+          "name": "HRM循环（HRM Cycle）",
+          "desc": "选拔（Selection）→评价（Appraisal）→报酬（Rewards）→培养（Development）四个功能相互关联构成闭环"
+        },
+        {
+          "name": "纵向匹配（Vertical Fit / External Fit）",
+          "desc": "HRM系统必须与企业的经营战略保持一致，不同战略需要不同的HRM配置"
+        },
+        {
+          "name": "横向一致（Horizontal Fit / Internal Fit）",
+          "desc": "HRM各项实践（选拔、评价、报酬、培养）之间必须相互协调，避免内部矛盾"
+        },
+        {
+          "name": "与哈佛模型的对比",
+          "desc": "密歇根模型将人视为需要与战略匹配的资源（硬性视角），重点在于绩效驱动；哈佛模型将人视为有多方利益诉求的相关者（软性视角），重点在于承诺培育。两者分别代表了SHRM的两种基本取向"
+        }
+      ]
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "——フォンブランらが提唱したモデルであり、HRMシステムと企業戦略の縦方向の適合（Vertical Fit）、およびHR諸施策間の横方向の一貫性（Horizontal Fit）を強調する。選抜（Selection）・評価（Appraisal）・報酬（Rewards）・人材開発（Development）の四つのHR機能が企業の戦略的目標と密接に連動し、戦略実行を支える統合システムを構成すべきとする"
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

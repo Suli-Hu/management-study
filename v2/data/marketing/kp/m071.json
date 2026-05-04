@@ -15,25 +15,36 @@
     "en": "SDL Foundational Premises"
   },
   "body": {
-    "zh": "SDL Foundational Premises（FPs·基本前提）是 Vargo-Lusch 系统化 SDL 学派的命题集合。2004 年初版 8 个·经 2008 / 2016 修订扩展为 11 个（含 5 个 axioms）。<br><br>11 个 FPs（2016 版·按 axioms 排序）：<br>**Axiom 1（FP1）**：服务是经济交换的根本基础（Service is the fundamental basis of exchange）<br>**Axiom 2（FP6）**：价值由 beneficiary 唯一且现象学地决定（Value is uniquely and phenomenologically determined by the beneficiary）<br>**Axiom 3（FP9）**：所有社会和经济主体都是 resource integrators<br>**Axiom 4（FP10）**：value co-creation 由 actors 通过 institutions / institutional arrangements 协调（**2016 新增**）<br>**Axiom 5（FP11·新加 2016）**：service ecosystem 是 self-adjusting system of resource-integrating actors<br><br>其他 FPs：<br>FP2：间接交换 mask 服务交换的根本性<br>FP3：商品是服务交付的载体<br>FP4：operant resources 是竞争优势的根本源泉<br>FP5：所有经济都是 service economy<br>FP7：actors 不能 deliver 价值·只能 propose 价值<br>FP8：service-centered view 本质上是顾客导向和关系性<br><br>FPs 演化的 3 大趋势：<br>① 从「企业」到「actors」——不区分企业和顾客·都是 actors<br>② 从「dyadic」到「ecosystem」——从二元关系到多边生态<br>③ institutions 重要性——actors 通过 institutional arrangements 协调（2016 新增）<br><br>marketing 实务启示：<br>① 不再「卖产品」·而是 propose 价值<br>② 客户是 co-creator·要积极参与<br>③ Service ecosystem 设计——平台·伙伴·客户全是 actors<br><br>跨学派关系：与 platform economics·co-creation·service design·CX management 等多领域研究高度交叉。",
-    "ja": "SDL Foundational Premises（FPs·基本前提）は Vargo-Lusch が SDL 学派を体系化する命題集。2004 年初版 8 個·2008 / 2016 改訂で 11 個（5 axioms 含）に拡張。<br><br>11 FPs（2016 版·axioms 順）：<br>**Axiom 1（FP1）**：サービスは経済交換の根本基盤<br>**Axiom 2（FP6）**：価値は beneficiary によって唯一かつ現象学的に決定<br>**Axiom 3（FP9）**：すべての社会·経済主体は resource integrators<br>**Axiom 4（FP10）**：value co-creation は actors が institutions で調整（**2016 新増**）<br>**Axiom 5（FP11·2016 新加）**：service ecosystem は self-adjusting system<br><br>その他 FPs：FP2-5·FP7·FP8<br><br>3 大進化トレンド：① 「企業」から「actors」② 「dyadic」から「ecosystem」③ institutions 重要性<br><br>マーケティング実務示唆：① 「製品販売」から価値 propose ② 顧客は co-creator ③ Service ecosystem 設計<br><br>他派との関係：プラットフォーム経済·co-creation·サービス設計·CX management と高度交差。"
+    "zh": {
+      "format": "narrative",
+      "prose": "SDL Foundational Premises（FPs·基本前提）是 Vargo-Lusch 系统化 SDL 学派的命题集合。2004 年初版 8 个·经 2008 / 2016 修订扩展为 11 个（含 5 个 axioms）。<br><br>11 个 FPs（2016 版·按 axioms 排序）：<br>**Axiom 1（FP1）**：服务是经济交换的根本基础（Service is the fundamental basis of exchange）<br>**Axiom 2（FP6）**：价值由 beneficiary 唯一且现象学地决定（Value is uniquely and phenomenologically determined by the beneficiary）<br>**Axiom 3（FP9）**：所有社会和经济主体都是 resource integrators<br>**Axiom 4（FP10）**：value co-creation 由 actors 通过 institutions / institutional arrangements 协调（**2016 新增**）<br>**Axiom 5（FP11·新加 2016）**：service ecosystem 是 self-adjusting system of resource-integrating actors<br><br>其他 FPs：<br>FP2：间接交换 mask 服务交换的根本性<br>FP3：商品是服务交付的载体<br>FP4：operant resources 是竞争优势的根本源泉<br>FP5：所有经济都是 service economy<br>FP7：actors 不能 deliver 价值·只能 propose 价值<br>FP8：service-centered view 本质上是顾客导向和关系性<br><br>FPs 演化的 3 大趋势：<br>① 从「企业」到「actors」——不区分企业和顾客·都是 actors<br>② 从「dyadic」到「ecosystem」——从二元关系到多边生态<br>③ institutions 重要性——actors 通过 institutional arrangements 协调（2016 新增）<br><br>marketing 实务启示：<br>① 不再「卖产品」·而是 propose 价值<br>② 客户是 co-creator·要积极参与<br>③ Service ecosystem 设计——平台·伙伴·客户全是 actors<br><br>跨学派关系：与 platform economics·co-creation·service design·CX management 等多领域研究高度交叉。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "SDL Foundational Premises（FPs·基本前提）は Vargo-Lusch が SDL 学派を体系化する命題集。2004 年初版 8 個·2008 / 2016 改訂で 11 個（5 axioms 含）に拡張。<br><br>11 FPs（2016 版·axioms 順）：<br>**Axiom 1（FP1）**：サービスは経済交換の根本基盤<br>**Axiom 2（FP6）**：価値は beneficiary によって唯一かつ現象学的に決定<br>**Axiom 3（FP9）**：すべての社会·経済主体は resource integrators<br>**Axiom 4（FP10）**：value co-creation は actors が institutions で調整（**2016 新増**）<br>**Axiom 5（FP11·2016 新加）**：service ecosystem は self-adjusting system<br><br>その他 FPs：FP2-5·FP7·FP8<br><br>3 大進化トレンド：① 「企業」から「actors」② 「dyadic」から「ecosystem」③ institutions 重要性<br><br>マーケティング実務示唆：① 「製品販売」から価値 propose ② 顧客は co-creator ③ Service ecosystem 設計<br><br>他派との関係：プラットフォーム経済·co-creation·サービス設計·CX management と高度交差。"
+    }
   },
   "tags": [
     "FPs",
     "axioms",
     "Vargo-Lusch"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "SDL 学派的命题体系·哲学层框架",
-      "限": "过抽象·实务操作化困难·学术争议",
-      "例": "FP6 value-in-use 是 SaaS·共享经济的理论基础",
-      "应": "SDL 论述题·一橋·神戸 高分加分"
+      "meaning": "SDL 学派的命题体系·哲学层框架",
+      "limit": "过抽象·实务操作化困难·学术争议",
+      "example": "FP6 value-in-use 是 SaaS·共享经济的理论基础",
+      "response": "SDL 论述题·一橋·神戸 高分加分",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "過抽象·実務操作化困難·学術論争",
-      "例": "FP6 value-in-use は SaaS·共有経済の理論基盤"
+      "meaning": "",
+      "limit": "過抽象·実務操作化困難·学術論争",
+      "example": "FP6 value-in-use は SaaS·共有経済の理論基盤",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:13:56.934Z",

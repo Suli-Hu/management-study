@@ -14,13 +14,18 @@
     "ja": "自己決定理論"
   },
   "body": {
-    "zh": "将人的动机区分为内发动机（Intrinsic Motivation，因兴趣和享受而行动）和外发动机（Extrinsic Motivation，因外部奖惩而行动）。内发动机需要三种基本心理需要的满足：①自律性（Autonomy）——对自身行为的主导感；②能力感（Competence）——胜任挑战的感觉；③关系性（Relatedness）——与他人连接的归属感。SDT强调过度的外部控制会削弱内发动机",
-    "ja": "——人間の動機を内発的動機づけ（Intrinsic Motivation、興味と楽しみから行動する）と外発的動機づけ（Extrinsic Motivation、外部の賞罰から行動する）に区別した。内発的動機づけには三つの基本的心理欲求の充足が必要である：①自律性（Autonomy）——自己の行動に対する主導感；②有能感（Competence）——課題を遂行できるという感覚；③関係性（Relatedness）——他者とのつながりの帰属感。SDTは過度な外的統制が内発的動機づけを弱体化させることを強調する"
+    "zh": {
+      "format": "narrative",
+      "prose": "将人的动机区分为内发动机（Intrinsic Motivation，因兴趣和享受而行动）和外发动机（Extrinsic Motivation，因外部奖惩而行动）。内发动机需要三种基本心理需要的满足：①自律性（Autonomy）——对自身行为的主导感；②能力感（Competence）——胜任挑战的感觉；③关系性（Relatedness）——与他人连接的归属感。SDT强调过度的外部控制会削弱内发动机"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "——人間の動機を内発的動機づけ（Intrinsic Motivation、興味と楽しみから行動する）と外発的動機づけ（Extrinsic Motivation、外部の賞罰から行動する）に区別した。内発的動機づけには三つの基本的心理欲求の充足が必要である：①自律性（Autonomy）——自己の行動に対する主導感；②有能感（Competence）——課題を遂行できるという感覚；③関係性（Relatedness）——他者とのつながりの帰属感。SDTは過度な外的統制が内発的動機づけを弱体化させることを強調する"
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

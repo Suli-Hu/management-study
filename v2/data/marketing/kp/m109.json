@@ -16,25 +16,36 @@
     "en": "Sustainable Competitive Advantage"
   },
   "body": {
-    "zh": "持続可能な競争優位（Sustainable Competitive Advantage·SCA）是 Kotler 16 版第 7.4 节系统化的概念·指企业能长期保持的·难被竞争对手模仿的优势。<br><br>3 大战略实现 SCA：<br><br>① 既存属性での差別化（Differentiation on Existing Attributes）<br>方法：在现有维度做到极致·让竞争对手难追<br>例：Toyota Production System（lean）·Walmart 物流效率<br>挑战：竞争对手会模仿·门槛降低<br><br>② 新しい属性の導入（Introducing New Attributes）<br>方法：创造新的维度·重定义类目<br>例：① Tesla 的 OTA 升级·② Dyson 的无叶风扇·③ iPhone 的多点触控<br>挑战：教育市场需要时间·风险高<br><br>③ 強いブランドの構築（Building Strong Brand）<br>方法：通过 brand 的抽象资产建立优势·难复制<br>例：Coca-Cola brand value·Hermès craftsmanship reputation·Apple ecosystem<br>挑战：长期投资·短期 ROI 难<br><br>3 战略的对照：<br>| 战略 | 复制难度 | 时间 | 风险 |<br>|---|---|---|---|<br>| 既有属性差别化 | 中 | 短-中 | 中 |<br>| 新属性引入 | 中-高 | 中-长 | 高 |<br>| 强 brand 构建 | 极高 | 长 | 中 |<br><br>SCA 的 4 大检验标准（VRIO 框架·Barney 1991 借入）：<br>① Valuable——创造价值<br>② Rare——稀缺<br>③ Inimitable——难模仿<br>④ Organized——组织能 deliver<br><br>marketing 实务启示：<br>① brand-based SCA——长期投资 brand·建立无形护城河<br>② combination strategy——多个 SCA 战略组合（Apple = brand + 新属性 + ecosystem）<br>③ continuous renewal——SCA 不是 once-and-for-all·要持续 reinvest<br><br>跨学派关系：① 与 strategic_marketing 的 dynamic capability·market orientation 一脉相承 ② 与 brand_equity 的 brand portfolio·brand value 直接对应 ③ 与 Porter 3 战略形成 marketing 视角的对照。",
-    "ja": "持続可能な競争優位（Sustainable Competitive Advantage·SCA）は Kotler 16 版第 7.4 節体系化概念·企業が長期維持·競合に模倣困難な優位。<br><br>3 大戦略：① 既存属性での差別化（TPS·Walmart 物流）② 新しい属性の導入（Tesla OTA·Dyson 羽なし扇·iPhone マルチタッチ）③ 強いブランドの構築（Coca-Cola·Hermès·Apple ecosystem）<br><br>3 戦略対照：複製難度·時間·リスク·brand 構築が長期·最強·無形護城河<br><br>SCA 4 大検証基準（VRIO·Barney 1991）：① Valuable ② Rare ③ Inimitable ④ Organized<br><br>マーケティング実務示唆：① brand-based SCA（長期 brand 投資·無形護城河）② combination strategy（Apple = brand + 新属性 + ecosystem）③ continuous renewal<br><br>他派との関係：① strategic_marketing の dynamic capability·market orientation 一脉相承 ② brand_equity の brand portfolio·brand value 直接対応 ③ Porter 3 戦略とマーケティング視点の対照。"
+    "zh": {
+      "format": "narrative",
+      "prose": "持続可能な競争優位（Sustainable Competitive Advantage·SCA）是 Kotler 16 版第 7.4 节系统化的概念·指企业能长期保持的·难被竞争对手模仿的优势。<br><br>3 大战略实现 SCA：<br><br>① 既存属性での差別化（Differentiation on Existing Attributes）<br>方法：在现有维度做到极致·让竞争对手难追<br>例：Toyota Production System（lean）·Walmart 物流效率<br>挑战：竞争对手会模仿·门槛降低<br><br>② 新しい属性の導入（Introducing New Attributes）<br>方法：创造新的维度·重定义类目<br>例：① Tesla 的 OTA 升级·② Dyson 的无叶风扇·③ iPhone 的多点触控<br>挑战：教育市场需要时间·风险高<br><br>③ 強いブランドの構築（Building Strong Brand）<br>方法：通过 brand 的抽象资产建立优势·难复制<br>例：Coca-Cola brand value·Hermès craftsmanship reputation·Apple ecosystem<br>挑战：长期投资·短期 ROI 难<br><br>3 战略的对照：<br>| 战略 | 复制难度 | 时间 | 风险 |<br>|---|---|---|---|<br>| 既有属性差别化 | 中 | 短-中 | 中 |<br>| 新属性引入 | 中-高 | 中-长 | 高 |<br>| 强 brand 构建 | 极高 | 长 | 中 |<br><br>SCA 的 4 大检验标准（VRIO 框架·Barney 1991 借入）：<br>① Valuable——创造价值<br>② Rare——稀缺<br>③ Inimitable——难模仿<br>④ Organized——组织能 deliver<br><br>marketing 实务启示：<br>① brand-based SCA——长期投资 brand·建立无形护城河<br>② combination strategy——多个 SCA 战略组合（Apple = brand + 新属性 + ecosystem）<br>③ continuous renewal——SCA 不是 once-and-for-all·要持续 reinvest<br><br>跨学派关系：① 与 strategic_marketing 的 dynamic capability·market orientation 一脉相承 ② 与 brand_equity 的 brand portfolio·brand value 直接对应 ③ 与 Porter 3 战略形成 marketing 视角的对照。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "持続可能な競争優位（Sustainable Competitive Advantage·SCA）は Kotler 16 版第 7.4 節体系化概念·企業が長期維持·競合に模倣困難な優位。<br><br>3 大戦略：① 既存属性での差別化（TPS·Walmart 物流）② 新しい属性の導入（Tesla OTA·Dyson 羽なし扇·iPhone マルチタッチ）③ 強いブランドの構築（Coca-Cola·Hermès·Apple ecosystem）<br><br>3 戦略対照：複製難度·時間·リスク·brand 構築が長期·最強·無形護城河<br><br>SCA 4 大検証基準（VRIO·Barney 1991）：① Valuable ② Rare ③ Inimitable ④ Organized<br><br>マーケティング実務示唆：① brand-based SCA（長期 brand 投資·無形護城河）② combination strategy（Apple = brand + 新属性 + ecosystem）③ continuous renewal<br><br>他派との関係：① strategic_marketing の dynamic capability·market orientation 一脉相承 ② brand_equity の brand portfolio·brand value 直接対応 ③ Porter 3 戦略とマーケティング視点の対照。"
+    }
   },
   "tags": [
     "SCA",
     "VRIO",
     "sustainable advantage"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "marketing 战略的最高目标·SCA 是 firm value 之源",
-      "限": "长期·难量化·short-term ROI 压力",
-      "例": "Apple·Toyota·Hermès 是 SCA 教科书",
-      "应": "Kotler 第 7 章·strategic 题"
+      "meaning": "marketing 战略的最高目标·SCA 是 firm value 之源",
+      "limit": "长期·难量化·short-term ROI 压力",
+      "example": "Apple·Toyota·Hermès 是 SCA 教科书",
+      "response": "Kotler 第 7 章·strategic 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "長期·数量化困難·short-term ROI 圧力",
-      "例": "Apple·Toyota·Hermès は SCA 教科書"
+      "meaning": "",
+      "limit": "長期·数量化困難·short-term ROI 圧力",
+      "example": "Apple·Toyota·Hermès は SCA 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:24:19.156Z",

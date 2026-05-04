@@ -14,24 +14,36 @@
     "en": "Brand Crisis Management"
   },
   "body": {
-    "zh": "Brand 危机管理（Brand Crisis Management）是 brand_equity 学派的实务延伸·研究 brand 在产品缺陷·公司丑闻·公关事故等危机下的损害控制和恢复战略。<br><br>5 类典型 brand 危机：<br>① 产品缺陷——Tylenol 1982 投毒·Toyota 2010 召回·Samsung Galaxy Note 7 2016 爆炸<br>② 公司丑闻——Enron 财务造假·Volkswagen 2015 排放门<br>③ 公关事故——United Airlines 2017 拖拽乘客·BP 2010 漏油<br>④ 员工不当行为——CEO 性骚扰·种族歧视言论<br>⑤ 社会议题误对——Pepsi 2017 Kendall Jenner 广告·Dolce & Gabbana 中国广告<br><br>危机管理 6 步流程：<br>① Detect（检测）——SNS 监控·消费者反馈·内部预警<br>② Acknowledge（承认）——快速·诚恳承认问题（24 小时黄金）<br>③ Apologize（道歉）——具体·真诚·CEO 出面<br>④ Act（行动）——召回·补偿·内部改革（具体动作）<br>⑤ Communicate（沟通）——持续向利益相关者更新进展<br>⑥ Recover（恢复）——重建信任·marketing 战略调整·brand reposition<br><br>经典正面案例：Tylenol 1982<br>有人把氰化物投入 Tylenol 胶囊·导致 7 人死亡。Johnson & Johnson 立即全美召回 3100 万瓶（损失 1 亿美元）·重新设计防篡改包装·CEO 公开道歉。结果 Tylenol 一年内恢复市场份额——成为 brand 危机管理的教科书案例。<br><br>反面案例：Volkswagen 排放门<br>2015 年被发现 diesel 汽车作弊排放测试。VW 起初否认·后被迫承认·赔偿超 300 亿美元·brand 受伤多年。<br><br>marketing 启示：危机不是要不要发生·是什么时候发生。每个 brand 都应该有 crisis playbook。",
-    "ja": "ブランド危機管理（Brand Crisis Management）はブランド・エクイティ学派の実務延長·製品欠陥·会社スキャンダル·PR 事故等の危機下のダメージ制御·回復戦略を研究。<br><br>5 類の典型ブランド危機：<br>① 製品欠陥（Tylenol 1982 毒物·Toyota 2010 リコール·Samsung Note 7 2016 爆発）② 会社スキャンダル（Enron·Volkswagen 排出ゲート 2015）③ PR 事故（United Airlines 2017 乗客引きずり·BP 2010 漏油）④ 従業員不当行為 ⑤ 社会議題誤対応（Pepsi 2017·Dolce & Gabbana 中国）<br><br>危機管理 6 段階：① Detect ② Acknowledge（24 時間黄金）③ Apologize（CEO 出席）④ Act（具体動作）⑤ Communicate ⑥ Recover<br><br>古典正面事例：Tylenol 1982·氰化物がカプセルに混入·7 名死亡。J&J が即座に全米 3100 万本リコール（1 億 USD 損失）·防篡改包装再設計·CEO 公開謝罪。1 年内に市場シェア回復——ブランド危機管理の教科書事例。<br><br>反面事例：Volkswagen 排出ゲート·2015 年 diesel 排出試験不正発覚。VW 当初否定·後に被迫承認·賠償 300 億 USD 超·ブランド数年負傷。<br><br>マーケティング示唆：危機は発生するかではなく·いつ発生するか。各ブランドは crisis playbook を持つべき。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Brand 危机管理（Brand Crisis Management）是 brand_equity 学派的实务延伸·研究 brand 在产品缺陷·公司丑闻·公关事故等危机下的损害控制和恢复战略。<br><br>5 类典型 brand 危机：<br>① 产品缺陷——Tylenol 1982 投毒·Toyota 2010 召回·Samsung Galaxy Note 7 2016 爆炸<br>② 公司丑闻——Enron 财务造假·Volkswagen 2015 排放门<br>③ 公关事故——United Airlines 2017 拖拽乘客·BP 2010 漏油<br>④ 员工不当行为——CEO 性骚扰·种族歧视言论<br>⑤ 社会议题误对——Pepsi 2017 Kendall Jenner 广告·Dolce & Gabbana 中国广告<br><br>危机管理 6 步流程：<br>① Detect（检测）——SNS 监控·消费者反馈·内部预警<br>② Acknowledge（承认）——快速·诚恳承认问题（24 小时黄金）<br>③ Apologize（道歉）——具体·真诚·CEO 出面<br>④ Act（行动）——召回·补偿·内部改革（具体动作）<br>⑤ Communicate（沟通）——持续向利益相关者更新进展<br>⑥ Recover（恢复）——重建信任·marketing 战略调整·brand reposition<br><br>经典正面案例：Tylenol 1982<br>有人把氰化物投入 Tylenol 胶囊·导致 7 人死亡。Johnson & Johnson 立即全美召回 3100 万瓶（损失 1 亿美元）·重新设计防篡改包装·CEO 公开道歉。结果 Tylenol 一年内恢复市场份额——成为 brand 危机管理的教科书案例。<br><br>反面案例：Volkswagen 排放门<br>2015 年被发现 diesel 汽车作弊排放测试。VW 起初否认·后被迫承认·赔偿超 300 亿美元·brand 受伤多年。<br><br>marketing 启示：危机不是要不要发生·是什么时候发生。每个 brand 都应该有 crisis playbook。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "ブランド危機管理（Brand Crisis Management）はブランド・エクイティ学派の実務延長·製品欠陥·会社スキャンダル·PR 事故等の危機下のダメージ制御·回復戦略を研究。<br><br>5 類の典型ブランド危機：<br>① 製品欠陥（Tylenol 1982 毒物·Toyota 2010 リコール·Samsung Note 7 2016 爆発）② 会社スキャンダル（Enron·Volkswagen 排出ゲート 2015）③ PR 事故（United Airlines 2017 乗客引きずり·BP 2010 漏油）④ 従業員不当行為 ⑤ 社会議題誤対応（Pepsi 2017·Dolce & Gabbana 中国）<br><br>危機管理 6 段階：① Detect ② Acknowledge（24 時間黄金）③ Apologize（CEO 出席）④ Act（具体動作）⑤ Communicate ⑥ Recover<br><br>古典正面事例：Tylenol 1982·氰化物がカプセルに混入·7 名死亡。J&J が即座に全米 3100 万本リコール（1 億 USD 損失）·防篡改包装再設計·CEO 公開謝罪。1 年内に市場シェア回復——ブランド危機管理の教科書事例。<br><br>反面事例：Volkswagen 排出ゲート·2015 年 diesel 排出試験不正発覚。VW 当初否定·後に被迫承認·賠償 300 億 USD 超·ブランド数年負傷。<br><br>マーケティング示唆：危機は発生するかではなく·いつ発生するか。各ブランドは crisis playbook を持つべき。"
+    }
   },
   "tags": [
     "brand crisis",
     "Tylenol",
     "Volkswagen"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "brand 实务的危机应对框架·考论述题加分",
-      "限": "案例驱动·跨文化适用性·SNS 时代速度更快",
-      "应": "brand 战略·一橋·早大命题"
+      "meaning": "brand 实务的危机应对框架·考论述题加分",
+      "limit": "案例驱动·跨文化适用性·SNS 时代速度更快",
+      "example": "",
+      "response": "brand 战略·一橋·早大命题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "事例駆動·異文化適用性·SNS 時代速度向上",
-      "例": "Tylenol = positive 教科書·Volkswagen = negative"
+      "meaning": "",
+      "limit": "事例駆動·異文化適用性·SNS 時代速度向上",
+      "example": "Tylenol = positive 教科書·Volkswagen = negative",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:52:04.171Z",

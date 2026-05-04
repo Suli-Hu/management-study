@@ -14,13 +14,46 @@
     "ja": "集団発展段階と集団意思決定方法"
   },
   "body": {
-    "zh": "塔克曼五阶段模型（Tuckman，1965）：形成（Forming，试探性互动）→风暴（Storming，冲突与磨合）→规范（Norming，规则建立）→执行（Performing，高效运作）→解散（Adjourning，任务完成）。间断平衡模型（Punctuated Equilibrium Model，Gersick，1988）：群体以惯性运行至生命周期中间节点发生跃变，不遵循线性渐进规律。三种群体决策方法：<br>①互动群体（Interacting Groups）——最常见，面对面，但易受从众压力与优势意见主导；<br>②头脑风暴（Brainstorming，Osborn）——禁止批评、鼓励数量，克服从众但观点多而不精；<br>③名义小组技术（Nominal Group Technique，NGT）——沉默书写+轮流提交+排序投票，保持独立思维，实证研究显示优于头脑风暴",
-    "ja": "——タックマンの五段階モデル（Tuckman、1965）：形成期（Forming、探索的相互作用）→混乱期（Storming、葛藤と摩擦）→統一期（Norming、規則の確立）→遂行期（Performing、高効率の運営）→散会期（Adjourning、課題の完了）。断続的均衡モデル（Punctuated Equilibrium Model、Gersick、1988）：集団は慣性により運営し、ライフサイクルの中間点で飛躍的変化を起こし、線形的漸進の法則に従わない。三つの集団意思決定方法：<br>①相互作用集団（Interacting Groups）——最も一般的、対面形式だが、同調圧力と優勢意見の支配を受けやすい；<br>②ブレインストーミング（Brainstorming、Osborn）——批判禁止・量の奨励により同調を克服するが、アイデアが多い反面精度に欠ける；<br>③名目集団法（Nominal Group Technique、NGT）——沈黙の書面記入→順番に提出→順位投票により独立した思考を維持する。実証研究ではブレインストーミングより優れた結果を示す"
+    "zh": {
+      "format": "flat-list",
+      "lead": "塔克曼五阶段模型（Tuckman，1965）：形成（Forming，试探性互动）→风暴（Storming，冲突与磨合）→规范（Norming，规则建立）→执行（Performing，高效运作）→解散（Adjourning，任务完成）。间断平衡模型（Punctuated Equilibrium Model，Gersick，1988）：群体以惯性运行至生命周期中间节点发生跃变，不遵循线性渐进规律。三种群体决策方法",
+      "items": [
+        {
+          "name": "互动群体（Interacting Groups）",
+          "desc": "最常见，面对面，但易受从众压力与优势意见主导；"
+        },
+        {
+          "name": "头脑风暴（Brainstorming，Osborn）",
+          "desc": "禁止批评、鼓励数量，克服从众但观点多而不精；"
+        },
+        {
+          "name": "名义小组技术（Nominal Group Technique，NGT）",
+          "desc": "沉默书写+轮流提交+排序投票，保持独立思维，实证研究显示优于头脑风暴"
+        }
+      ]
+    },
+    "ja": {
+      "format": "flat-list",
+      "lead": "——タックマンの五段階モデル（Tuckman、1965）：形成期（Forming、探索的相互作用）→混乱期（Storming、葛藤と摩擦）→統一期（Norming、規則の確立）→遂行期（Performing、高効率の運営）→散会期（Adjourning、課題の完了）。断続的均衡モデル（Punctuated Equilibrium Model、Gersick、1988）：集団は慣性により運営し、ライフサイクルの中間点で飛躍的変化を起こし、線形的漸進の法則に従わない。三つの集団意思決定方法",
+      "items": [
+        {
+          "name": "相互作用集団（Interacting Groups）",
+          "desc": "最も一般的、対面形式だが、同調圧力と優勢意見の支配を受けやすい；"
+        },
+        {
+          "name": "ブレインストーミング（Brainstorming、Osborn）",
+          "desc": "批判禁止・量の奨励により同調を克服するが、アイデアが多い反面精度に欠ける；"
+        },
+        {
+          "name": "名目集団法（Nominal Group Technique、NGT）",
+          "desc": "沈黙の書面記入→順番に提出→順位投票により独立した思考を維持する。実証研究ではブレインストーミングより優れた結果を示す"
+        }
+      ]
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

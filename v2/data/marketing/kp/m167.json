@@ -14,25 +14,36 @@
     "en": "Price Adjustment Strategy"
   },
   "body": {
-    "zh": "Price Changes（价格变更）是 launch 后的动态价格管理·包括 initiating（主动变价）和 responding（应对竞争对手变价）。Kotler 11 章。<br><br>3 类 initiating price changes：<br>① Price Cut（值下げ）——理由：① 过剩 capacity ② 市场份额下降 ③ 通过低价驱逐对手<br>风险：① cheap brand image ② 引发 price war ③ 顾客觉得是 quality 问题<br>② Price Increase（値上げ）——理由：① 成本上升 ② over-demand ③ market share leadership<br>风险：① 顾客流失 ② 竞争对手不跟进<br>③ Price Discrimination——同产品不同价格（B2B vs B2C·会员 vs 非会员）<br><br>price change 的 3 大策略：<br>① Direct change——直接调价<br>② Indirect change——通过 packaging（少装·shrinkflation）·feature 削减·service 削减<br>③ Future signaling——预告未来涨价·诱导现在购买<br><br>消费者对 price change 的反应：<br>① 价格上涨：① 「质量更好」② 「将来更涨」③ 「企业贪婪」<br>② 价格下降：① 「不好卖」② 「质量降低」③ 「企业财务危机」④ 「短期 promotion·快抢」<br><br>3 类 responding to competitor price changes：<br>① Match——跟随<br>② Counter-attack——更激进的反击<br>③ Diferentiate——不变价·增 value<br><br>典型例：<br>- Apple iPhone 13 vs 14 vs 15：维持 $799 base·incremental upgrade<br>- 日本商品 shrinkflation 普遍（包装变小·价格不变·实质涨价）<br>- Netflix 多次 price increase（从 $7.99 → $15.49）·subscriber 反弹<br>- 麦当劳 1 ドルメニュー → 価格 inflation 调整<br><br>跨学派关系：与 strategic_marketing·consumer_behavior（loss aversion·m028）·brand_equity（价格 = quality 信号）一致。",
-    "ja": "Price Changes（価格変更）は launch 後の動的価格管理·initiating（主動変価）と responding（競合変価対応）含む。Kotler 11 章。<br><br>3 類 initiating price changes：① Price Cut（値下げ）·理由：過剰 capacity·share 低下·低価で対手駆逐·リスク：cheap image·price war·quality 疑い ② Price Increase（値上げ）·理由：cost 上昇·over-demand·market share leadership·リスク：顧客流失·競合非追随 ③ Price Discrimination（B2B vs B2C·会員 vs 非会員）<br><br>price change 3 大戦略：① Direct change ② Indirect change（shrinkflation·feature 削減·service 削減）③ Future signaling（将来値上げ予告·現在購買誘導）<br><br>消費者反応：価格上昇は「質向上·将来更涨·企業貪婪」·価格低下は「不売·品質低·企業危機·短期 promotion」<br><br>3 類 responding：① Match ② Counter-attack ③ Differentiate（不変価·増 value）<br><br>典型例：① Apple iPhone（$799 維持·incremental upgrade）② 日本商品 shrinkflation 普遍 ③ Netflix 多次値上げ（$7.99 → $15.49·subscriber 反発）④ McDonald 1 ドルメニュー → inflation 調整<br><br>他派との関係：strategic_marketing·consumer_behavior（loss aversion·m028）·brand_equity（価格 = quality シグナル）一致。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Price Changes（价格变更）是 launch 后的动态价格管理·包括 initiating（主动变价）和 responding（应对竞争对手变价）。Kotler 11 章。<br><br>3 类 initiating price changes：<br>① Price Cut（值下げ）——理由：① 过剩 capacity ② 市场份额下降 ③ 通过低价驱逐对手<br>风险：① cheap brand image ② 引发 price war ③ 顾客觉得是 quality 问题<br>② Price Increase（値上げ）——理由：① 成本上升 ② over-demand ③ market share leadership<br>风险：① 顾客流失 ② 竞争对手不跟进<br>③ Price Discrimination——同产品不同价格（B2B vs B2C·会员 vs 非会员）<br><br>price change 的 3 大策略：<br>① Direct change——直接调价<br>② Indirect change——通过 packaging（少装·shrinkflation）·feature 削减·service 削减<br>③ Future signaling——预告未来涨价·诱导现在购买<br><br>消费者对 price change 的反应：<br>① 价格上涨：① 「质量更好」② 「将来更涨」③ 「企业贪婪」<br>② 价格下降：① 「不好卖」② 「质量降低」③ 「企业财务危机」④ 「短期 promotion·快抢」<br><br>3 类 responding to competitor price changes：<br>① Match——跟随<br>② Counter-attack——更激进的反击<br>③ Diferentiate——不变价·增 value<br><br>典型例：<br>- Apple iPhone 13 vs 14 vs 15：维持 $799 base·incremental upgrade<br>- 日本商品 shrinkflation 普遍（包装变小·价格不变·实质涨价）<br>- Netflix 多次 price increase（从 $7.99 → $15.49）·subscriber 反弹<br>- 麦当劳 1 ドルメニュー → 価格 inflation 调整<br><br>跨学派关系：与 strategic_marketing·consumer_behavior（loss aversion·m028）·brand_equity（价格 = quality 信号）一致。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Price Changes（価格変更）は launch 後の動的価格管理·initiating（主動変価）と responding（競合変価対応）含む。Kotler 11 章。<br><br>3 類 initiating price changes：① Price Cut（値下げ）·理由：過剰 capacity·share 低下·低価で対手駆逐·リスク：cheap image·price war·quality 疑い ② Price Increase（値上げ）·理由：cost 上昇·over-demand·market share leadership·リスク：顧客流失·競合非追随 ③ Price Discrimination（B2B vs B2C·会員 vs 非会員）<br><br>price change 3 大戦略：① Direct change ② Indirect change（shrinkflation·feature 削減·service 削減）③ Future signaling（将来値上げ予告·現在購買誘導）<br><br>消費者反応：価格上昇は「質向上·将来更涨·企業貪婪」·価格低下は「不売·品質低·企業危機·短期 promotion」<br><br>3 類 responding：① Match ② Counter-attack ③ Differentiate（不変価·増 value）<br><br>典型例：① Apple iPhone（$799 維持·incremental upgrade）② 日本商品 shrinkflation 普遍 ③ Netflix 多次値上げ（$7.99 → $15.49·subscriber 反発）④ McDonald 1 ドルメニュー → inflation 調整<br><br>他派との関係：strategic_marketing·consumer_behavior（loss aversion·m028）·brand_equity（価格 = quality シグナル）一致。"
+    }
   },
   "tags": [
     "price changes",
     "shrinkflation",
     "Netflix"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "价格动态管理实务·launch 后必学",
-      "限": "消费者反应难预测·跨产业差",
-      "例": "Apple·shrinkflation·Netflix 是教科书",
-      "应": "Kotler 11 章·价格题"
+      "meaning": "价格动态管理实务·launch 后必学",
+      "limit": "消费者反应难预测·跨产业差",
+      "example": "Apple·shrinkflation·Netflix 是教科书",
+      "response": "Kotler 11 章·价格题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "消費者反応予測困難·跨産業差",
-      "例": "Apple·shrinkflation·Netflix 教科書"
+      "meaning": "",
+      "limit": "消費者反応予測困難·跨産業差",
+      "example": "Apple·shrinkflation·Netflix 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T09:26:25.977Z",

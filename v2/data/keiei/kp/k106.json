@@ -12,13 +12,18 @@
     "ja": "リーン・スタートアップ"
   },
   "body": {
-    "zh": "构建→测量→学习（Build-Measure-Learn）的快速迭代循环。核心概念：最小可行产品（MVP）、验证性学习（Validated Learning）、转向（Pivot）。将科学实验方法论应用于创业和新产品开发",
-    "ja": "——構築→計測→学習の高速反復サイクル。◆ MVP——最小限の機能で仮説検証◆ 検証された学習——体系的学習◆ ピボット——戦略の根本的転換"
+    "zh": {
+      "format": "narrative",
+      "prose": "构建→测量→学习（Build-Measure-Learn）的快速迭代循环。核心概念：最小可行产品（MVP）、验证性学习（Validated Learning）、转向（Pivot）。将科学实验方法论应用于创业和新产品开发"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "——構築→計測→学習の高速反復サイクル。◆ MVP——最小限の機能で仮説検証◆ 検証された学習——体系的学習◆ ピボット——戦略の根本的転換"
+    }
   },
   "tags": [
     "t_jg440q"
   ],
-  "format": "narrative",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

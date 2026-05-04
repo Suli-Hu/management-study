@@ -15,8 +15,14 @@
     "en": "Multi-Channel Distribution"
   },
   "body": {
-    "zh": "Multichannel Distribution（多渠道分销）是企业同时使用多个 channel触达消费者·从 single → multi → omnichannel 的进化中间阶段。Kotler 15 章。<br><br>3 大模式：<br>① Single Channel——只 1 个 channel（如纯电商或纯实体）<br>② Multichannel——多 channel·但不互通（实体 + 电商分别运营）<br>③ Omnichannel——多 channel无缝整合（详见 m047）<br><br>multichannel 5 大优势：<br>① 更广市场覆盖——触达不同 channel 偏好的消费者<br>② 不同 segment——B2B·B2C·D2C<br>③ 分散风险——一个 channel 失败不致命<br>④ 价格 / 服务区分——不同 channel 不同 mix<br>⑤ cost 优化——不同 channel 服务不同 demand<br><br>multichannel 4 大挑战：<br>① Channel Conflict——线上 vs 线下争客户（详见 m048）<br>② Brand Inconsistency——不同 channel 体验不一致<br>③ Pricing Conflicts——不同 channel 价格差<br>④ Inventory Issues——多 channel 库存不同步<br><br>multichannel pricing 战略：① Same Price——避免冲突·但失去灵活 ② Channel Pricing——不同 channel 不同价（实体高·电商低）③ Bundle Pricing——不同 channel 不同 bundle<br><br>典型例：<br>- Apple：Apple Store + apple.com + Apple Premium Reseller + Best Buy + carrier·omnichannel 整合<br>- Toyota：dealer + 直营展览（Lexus）·multichannel 但 dealer 主导<br>- Nike：Nike Store + nike.com + Foot Locker·近年减少 wholesale 重视 D2C<br><br>跨学派关系：是 single channel → omnichannel 的过渡阶段·与 channel functions（m168）·channel conflict（m048）·omnichannel（m047）一体。",
-    "ja": "Multichannel Distribution（マルチチャネル流通）は企業が同時に複数チャネルを使用·single → multi → omnichannel 進化中間段階。Kotler 15 章。<br><br>3 大モード：① Single Channel ② Multichannel（複数·非互通）③ Omnichannel（無縫統合·m047）<br><br>multichannel 5 大優位：① 広覆盖 ② 異 segment（B2B·B2C·D2C）③ リスク分散 ④ 価格 / サービス区分 ⑤ コスト最適化<br><br>multichannel 4 大挑戦：① Channel Conflict（オンライン vs オフライン·m048）② Brand Inconsistency ③ Pricing Conflicts ④ Inventory Issues<br><br>multichannel pricing 戦略：① Same Price（衝突回避·非柔軟）② Channel Pricing（実店高·EC 低）③ Bundle Pricing<br><br>典型例：① Apple（Apple Store + apple.com + Premium Reseller + Best Buy + carrier·omnichannel 統合）② Toyota（dealer + 直営展示·dealer 主導）③ Nike（Store + nike.com + Foot Locker·近年 D2C 重視）<br><br>他派との関係：single → omnichannel の過渡段階·channel functions（m168）·channel conflict（m048）·omnichannel（m047）と一体。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Multichannel Distribution（多渠道分销）是企业同时使用多个 channel触达消费者·从 single → multi → omnichannel 的进化中间阶段。Kotler 15 章。<br><br>3 大模式：<br>① Single Channel——只 1 个 channel（如纯电商或纯实体）<br>② Multichannel——多 channel·但不互通（实体 + 电商分别运营）<br>③ Omnichannel——多 channel无缝整合（详见 m047）<br><br>multichannel 5 大优势：<br>① 更广市场覆盖——触达不同 channel 偏好的消费者<br>② 不同 segment——B2B·B2C·D2C<br>③ 分散风险——一个 channel 失败不致命<br>④ 价格 / 服务区分——不同 channel 不同 mix<br>⑤ cost 优化——不同 channel 服务不同 demand<br><br>multichannel 4 大挑战：<br>① Channel Conflict——线上 vs 线下争客户（详见 m048）<br>② Brand Inconsistency——不同 channel 体验不一致<br>③ Pricing Conflicts——不同 channel 价格差<br>④ Inventory Issues——多 channel 库存不同步<br><br>multichannel pricing 战略：① Same Price——避免冲突·但失去灵活 ② Channel Pricing——不同 channel 不同价（实体高·电商低）③ Bundle Pricing——不同 channel 不同 bundle<br><br>典型例：<br>- Apple：Apple Store + apple.com + Apple Premium Reseller + Best Buy + carrier·omnichannel 整合<br>- Toyota：dealer + 直营展览（Lexus）·multichannel 但 dealer 主导<br>- Nike：Nike Store + nike.com + Foot Locker·近年减少 wholesale 重视 D2C<br><br>跨学派关系：是 single channel → omnichannel 的过渡阶段·与 channel functions（m168）·channel conflict（m048）·omnichannel（m047）一体。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Multichannel Distribution（マルチチャネル流通）は企業が同時に複数チャネルを使用·single → multi → omnichannel 進化中間段階。Kotler 15 章。<br><br>3 大モード：① Single Channel ② Multichannel（複数·非互通）③ Omnichannel（無縫統合·m047）<br><br>multichannel 5 大優位：① 広覆盖 ② 異 segment（B2B·B2C·D2C）③ リスク分散 ④ 価格 / サービス区分 ⑤ コスト最適化<br><br>multichannel 4 大挑戦：① Channel Conflict（オンライン vs オフライン·m048）② Brand Inconsistency ③ Pricing Conflicts ④ Inventory Issues<br><br>multichannel pricing 戦略：① Same Price（衝突回避·非柔軟）② Channel Pricing（実店高·EC 低）③ Bundle Pricing<br><br>典型例：① Apple（Apple Store + apple.com + Premium Reseller + Best Buy + carrier·omnichannel 統合）② Toyota（dealer + 直営展示·dealer 主導）③ Nike（Store + nike.com + Foot Locker·近年 D2C 重視）<br><br>他派との関係：single → omnichannel の過渡段階·channel functions（m168）·channel conflict（m048）·omnichannel（m047）と一体。"
+    }
   },
   "tags": [
     "multichannel",
@@ -24,17 +30,22 @@
     "Nike",
     "Apple"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "channel 战略的现代演化阶段·single → omnichannel 中间",
-      "限": "channel conflict 和不一致风险",
-      "例": "Apple·Toyota·Nike 是教科书",
-      "应": "Kotler 15 章·channel 题"
+      "meaning": "channel 战略的现代演化阶段·single → omnichannel 中间",
+      "limit": "channel conflict 和不一致风险",
+      "example": "Apple·Toyota·Nike 是教科书",
+      "response": "Kotler 15 章·channel 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "channel conflict と不一致リスク",
-      "例": "Apple·Toyota·Nike 教科書"
+      "meaning": "",
+      "limit": "channel conflict と不一致リスク",
+      "example": "Apple·Toyota·Nike 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T09:26:35.562Z",

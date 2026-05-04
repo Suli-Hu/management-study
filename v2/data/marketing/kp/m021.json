@@ -14,25 +14,36 @@
     "en": "AMA Marketing Definition"
   },
   "body": {
-    "zh": "American Marketing Association（AMA）1937 年设立·成为 marketing 学定义的权威标准制定者。AMA 对 marketing 的定义经历过 4 次重大改订·反映 marketing 思想的历史演化。<br><br>① 1960 年定义（销售导向时代）<br>「<em>The performance of business activities that direct the flow of goods and services from producers to consumers or users.</em>」<br>核心：marketing = 「商品 producer → consumer 的流动」·偏物流·偏销售。<br><br>② 1985 年定义（marketing concept 时代）<br>「<em>The process of planning and executing the conception, pricing, promotion, and distribution of ideas, goods and services to create exchanges that satisfy individual and organizational objectives.</em>」<br>核心：marketing = 「4P 整合的交换过程」·明确加入 4P·强调「satisfy」（顾客中心起步）。<br><br>③ 2004 年定义（关系营销时代）<br>「<em>An organizational function and a set of processes for creating, communicating, and delivering value to customers and for managing customer relationships in ways that benefit the organization and its stakeholders.</em>」<br>核心：marketing = 「价值创造·传达·提供 + 关系管理」·首次明确「stakeholder」（社会志向起步）。<br><br>④ 2007 年定义（社会志向时代·现行）<br>「<em>The activity, set of institutions, and processes for creating, communicating, delivering, and exchanging offerings that have value for customers, clients, partners, and society at large.</em>」<br>核心：marketing = 「为顾客·客户·伙伴·整个社会创造·传达·交换价值」·明确「society」·标志 social marketing 时代到来。<br><br>3 个演化趋势：① 从「物流」到「过程」到「制度」② 从「商品」到「价值」③ 从「顾客」到「stakeholder」到「社会」。",
-    "ja": "American Marketing Association（AMA）1937 年設立·マーケティング学定義の権威標準制定者。AMA のマーケティング定義は 4 回の重大改訂を経て·マーケティング思想の歴史的進化を反映。<br><br>① 1960 年定義（販売志向時代）<br>「商品 producer → consumer の流動」·物流偏重·販売偏重。<br><br>② 1985 年定義（マーケティング・コンセプト時代）<br>「4P 統合の交換プロセス」·4P 明確に追加·「satisfy」（顧客中心起点）強調。<br><br>③ 2004 年定義（関係性マーケティング時代）<br>「価値創造·伝達·提供 + 関係管理」·初めて「stakeholder」明確化（社会志向起点）。<br><br>④ 2007 年定義（社会志向時代·現行）<br>「顧客·クライアント·パートナー·社会全体に価値を創造·伝達·交換」·「society」明確化·ソーシャル・マーケティング時代到来の象徴。<br><br>3 つの進化トレンド：① 「物流」から「プロセス」「制度」へ ② 「商品」から「価値」へ ③ 「顧客」から「stakeholder」「社会」へ。"
+    "zh": {
+      "format": "narrative",
+      "prose": "American Marketing Association（AMA）1937 年设立·成为 marketing 学定义的权威标准制定者。AMA 对 marketing 的定义经历过 4 次重大改订·反映 marketing 思想的历史演化。<br><br>① 1960 年定义（销售导向时代）<br>「<em>The performance of business activities that direct the flow of goods and services from producers to consumers or users.</em>」<br>核心：marketing = 「商品 producer → consumer 的流动」·偏物流·偏销售。<br><br>② 1985 年定义（marketing concept 时代）<br>「<em>The process of planning and executing the conception, pricing, promotion, and distribution of ideas, goods and services to create exchanges that satisfy individual and organizational objectives.</em>」<br>核心：marketing = 「4P 整合的交换过程」·明确加入 4P·强调「satisfy」（顾客中心起步）。<br><br>③ 2004 年定义（关系营销时代）<br>「<em>An organizational function and a set of processes for creating, communicating, and delivering value to customers and for managing customer relationships in ways that benefit the organization and its stakeholders.</em>」<br>核心：marketing = 「价值创造·传达·提供 + 关系管理」·首次明确「stakeholder」（社会志向起步）。<br><br>④ 2007 年定义（社会志向时代·现行）<br>「<em>The activity, set of institutions, and processes for creating, communicating, delivering, and exchanging offerings that have value for customers, clients, partners, and society at large.</em>」<br>核心：marketing = 「为顾客·客户·伙伴·整个社会创造·传达·交换价值」·明确「society」·标志 social marketing 时代到来。<br><br>3 个演化趋势：① 从「物流」到「过程」到「制度」② 从「商品」到「价值」③ 从「顾客」到「stakeholder」到「社会」。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "American Marketing Association（AMA）1937 年設立·マーケティング学定義の権威標準制定者。AMA のマーケティング定義は 4 回の重大改訂を経て·マーケティング思想の歴史的進化を反映。<br><br>① 1960 年定義（販売志向時代）<br>「商品 producer → consumer の流動」·物流偏重·販売偏重。<br><br>② 1985 年定義（マーケティング・コンセプト時代）<br>「4P 統合の交換プロセス」·4P 明確に追加·「satisfy」（顧客中心起点）強調。<br><br>③ 2004 年定義（関係性マーケティング時代）<br>「価値創造·伝達·提供 + 関係管理」·初めて「stakeholder」明確化（社会志向起点）。<br><br>④ 2007 年定義（社会志向時代·現行）<br>「顧客·クライアント·パートナー·社会全体に価値を創造·伝達·交換」·「society」明確化·ソーシャル・マーケティング時代到来の象徴。<br><br>3 つの進化トレンド：① 「物流」から「プロセス」「制度」へ ② 「商品」から「価値」へ ③ 「顧客」から「stakeholder」「社会」へ。"
+    }
   },
   "tags": [
     "AMA",
     "定义改订",
     "marketing 史"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "marketing 思想史的最权威官方记录·4 次定义反映 4 个时代",
-      "限": "定义的具体应用边界仍在争议",
-      "例": "考题：「比较 1985 vs 2007 AMA 定义·讨论 marketing 哲学演变」",
-      "应": "Pro Plus 第 1 章·marketing 史论述题命中"
+      "meaning": "marketing 思想史的最权威官方记录·4 次定义反映 4 个时代",
+      "limit": "定义的具体应用边界仍在争议",
+      "example": "考题：「比较 1985 vs 2007 AMA 定义·讨论 marketing 哲学演变」",
+      "response": "Pro Plus 第 1 章·marketing 史论述题命中",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "定義の具体的応用境界に論争",
-      "例": "問題：「1985 vs 2007 AMA 定義を比較·マーケティング哲学進化を論じる」"
+      "meaning": "",
+      "limit": "定義の具体的応用境界に論争",
+      "example": "問題：「1985 vs 2007 AMA 定義を比較·マーケティング哲学進化を論じる」",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:51:32.314Z",

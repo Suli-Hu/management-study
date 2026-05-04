@@ -15,25 +15,36 @@
     "en": "Howard-Sheth Model"
   },
   "body": {
-    "zh": "Howard-Sheth モデル（Howard-Sheth Model of Buyer Behavior）是消费者行为学派的奠基性综合模型·1969 年 John Howard 与 Jagdish Sheth 合著『The Theory of Buyer Behavior』提出。<br><br>4 大模块：<br><br>① Input Variables（输入变量）——3 类刺激<br>- significative stimuli（显著刺激·产品的实际属性如价格·质量·包装）<br>- symbolic stimuli（符号刺激·marketing 沟通中的产品形象）<br>- social stimuli（社会刺激·家人·朋友的影响）<br><br>② Perceptual Constructs（知觉变量）——5 个内部知觉过程<br>- attention（注意）·perceptual bias（知觉偏差）·overt search（明显搜索）·stimulus ambiguity（刺激模糊）·confidence（确信度）<br><br>③ Learning Constructs（学习变量）——6 个学习过程<br>- motives（动机）·choice criteria（选择基准）·brand comprehension（brand 理解）·attitude（态度）·intention（意图）·confidence（确信度）<br><br>④ Output Variables（输出变量）——5 类反应<br>- attention（注意）·brand comprehension·attitude·intention·purchase（购买）<br><br>3 类购买类型：<br>① Extensive Problem Solving（EPS·扩展问题解决）——首次购买高介入产品·需要全部 5 步<br>② Limited Problem Solving（LPS·限定问题解决）——一定经验·部分简化<br>③ Routinized Response Behavior（RRB·习惯反应）——日常品·无意识购买<br><br>历史地位：Howard-Sheth 是 marketing 学第一个真正系统化的消费者综合模型·影响 EBM 模型·Bettman 模型等所有后续研究·成为消费者行为学派的范式建构。",
-    "ja": "Howard-Sheth モデル（Howard-Sheth Model of Buyer Behavior）は消費者行動学派の基礎総合モデル·1969 年 John Howard と Jagdish Sheth が共著『The Theory of Buyer Behavior』で提唱。<br><br>4 大モジュール：<br><br>① Input Variables（入力変数）·3 類刺激（significative·symbolic·social）<br>② Perceptual Constructs（知覚変数）·attention·perceptual bias·overt search·stimulus ambiguity·confidence<br>③ Learning Constructs（学習変数）·motives·choice criteria·brand comprehension·attitude·intention·confidence<br>④ Output Variables（出力変数）·attention·brand comprehension·attitude·intention·purchase<br><br>3 類の購買タイプ：<br>① EPS（Extensive Problem Solving）·初購入高関与製品·5 段階全て<br>② LPS（Limited Problem Solving）·経験あり·部分簡略化<br>③ RRB（Routinized Response Behavior）·日用品·無意識購買<br><br>歴史的位置：Howard-Sheth はマーケティング学初の真に体系化された消費者総合モデル·EBM·Bettman 等後続全研究に影響·消費者行動学派のパラダイム構築。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Howard-Sheth モデル（Howard-Sheth Model of Buyer Behavior）是消费者行为学派的奠基性综合模型·1969 年 John Howard 与 Jagdish Sheth 合著『The Theory of Buyer Behavior』提出。<br><br>4 大模块：<br><br>① Input Variables（输入变量）——3 类刺激<br>- significative stimuli（显著刺激·产品的实际属性如价格·质量·包装）<br>- symbolic stimuli（符号刺激·marketing 沟通中的产品形象）<br>- social stimuli（社会刺激·家人·朋友的影响）<br><br>② Perceptual Constructs（知觉变量）——5 个内部知觉过程<br>- attention（注意）·perceptual bias（知觉偏差）·overt search（明显搜索）·stimulus ambiguity（刺激模糊）·confidence（确信度）<br><br>③ Learning Constructs（学习变量）——6 个学习过程<br>- motives（动机）·choice criteria（选择基准）·brand comprehension（brand 理解）·attitude（态度）·intention（意图）·confidence（确信度）<br><br>④ Output Variables（输出变量）——5 类反应<br>- attention（注意）·brand comprehension·attitude·intention·purchase（购买）<br><br>3 类购买类型：<br>① Extensive Problem Solving（EPS·扩展问题解决）——首次购买高介入产品·需要全部 5 步<br>② Limited Problem Solving（LPS·限定问题解决）——一定经验·部分简化<br>③ Routinized Response Behavior（RRB·习惯反应）——日常品·无意识购买<br><br>历史地位：Howard-Sheth 是 marketing 学第一个真正系统化的消费者综合模型·影响 EBM 模型·Bettman 模型等所有后续研究·成为消费者行为学派的范式建构。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Howard-Sheth モデル（Howard-Sheth Model of Buyer Behavior）は消費者行動学派の基礎総合モデル·1969 年 John Howard と Jagdish Sheth が共著『The Theory of Buyer Behavior』で提唱。<br><br>4 大モジュール：<br><br>① Input Variables（入力変数）·3 類刺激（significative·symbolic·social）<br>② Perceptual Constructs（知覚変数）·attention·perceptual bias·overt search·stimulus ambiguity·confidence<br>③ Learning Constructs（学習変数）·motives·choice criteria·brand comprehension·attitude·intention·confidence<br>④ Output Variables（出力変数）·attention·brand comprehension·attitude·intention·purchase<br><br>3 類の購買タイプ：<br>① EPS（Extensive Problem Solving）·初購入高関与製品·5 段階全て<br>② LPS（Limited Problem Solving）·経験あり·部分簡略化<br>③ RRB（Routinized Response Behavior）·日用品·無意識購買<br><br>歴史的位置：Howard-Sheth はマーケティング学初の真に体系化された消費者総合モデル·EBM·Bettman 等後続全研究に影響·消費者行動学派のパラダイム構築。"
+    }
   },
   "tags": [
     "Howard-Sheth",
     "consumer behavior",
     "EPS LPS RRB"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "消费者行为学派的奠基模型·后续模型的元参照",
-      "限": "模型复杂·难以全部实证·偏认知化",
-      "例": "首次购车 EPS·重复买洗发水 RRB·偶尔买衣 LPS",
-      "应": "消费者行为题·一桥·神戸命题点"
+      "meaning": "消费者行为学派的奠基模型·后续模型的元参照",
+      "limit": "模型复杂·难以全部实证·偏认知化",
+      "example": "首次购车 EPS·重复买洗发水 RRB·偶尔买衣 LPS",
+      "response": "消费者行为题·一桥·神戸命题点",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "モデル複雑·全実証困難·認知化偏重",
-      "例": "初購車 EPS·シャンプー反復 RRB·たまの服 LPS"
+      "meaning": "",
+      "limit": "モデル複雑·全実証困難·認知化偏重",
+      "example": "初購車 EPS·シャンプー反復 RRB·たまの服 LPS",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:51:37.421Z",

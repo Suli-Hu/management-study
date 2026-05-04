@@ -14,24 +14,35 @@
     "en": "Product Differentiation · 5 Dimensions"
   },
   "body": {
-    "zh": "产品差別化 5 大维度是 Kotler 16 版第 8 章系统化的产品 differentiation 框架。<br><br>5 大维度：① Product Form（形态·尺寸·形状·结构）② Features（特征·选项·变量）③ Performance Quality（性能质量·低·中·高·超）④ Conformance Quality（一致性·所有产品达到 spec）⑤ Durability（耐久·寿命）+ Reliability（可靠性·故障率）+ Repairability（可修理）+ Style（外观·感觉）+ Customization（定制化）<br><br>marketing 实务：每个维度都可作为 POD 来源·选择 1-2 个最重要维度强化。<br><br>典型例：Apple = Style + Performance·Toyota = Reliability + Durability·Tesla = Performance + Customization（OTA）。",
-    "ja": "製品差別化 5 大次元は Kotler 16 版第 8 章体系化の差別化フレーム。<br><br>5 大次元：① Product Form（形態）② Features（特徴）③ Performance Quality ④ Conformance Quality ⑤ Durability + Reliability + Repairability + Style + Customization<br><br>マーケティング実務：各次元 POD 源·1-2 個重要次元強化。<br><br>典型例：Apple = Style + Performance·Toyota = Reliability + Durability·Tesla = Performance + Customization。"
+    "zh": {
+      "format": "narrative",
+      "prose": "产品差別化 5 大维度是 Kotler 16 版第 8 章系统化的产品 differentiation 框架。<br><br>5 大维度：① Product Form（形态·尺寸·形状·结构）② Features（特征·选项·变量）③ Performance Quality（性能质量·低·中·高·超）④ Conformance Quality（一致性·所有产品达到 spec）⑤ Durability（耐久·寿命）+ Reliability（可靠性·故障率）+ Repairability（可修理）+ Style（外观·感觉）+ Customization（定制化）<br><br>marketing 实务：每个维度都可作为 POD 来源·选择 1-2 个最重要维度强化。<br><br>典型例：Apple = Style + Performance·Toyota = Reliability + Durability·Tesla = Performance + Customization（OTA）。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "製品差別化 5 大次元は Kotler 16 版第 8 章体系化の差別化フレーム。<br><br>5 大次元：① Product Form（形態）② Features（特徴）③ Performance Quality ④ Conformance Quality ⑤ Durability + Reliability + Repairability + Style + Customization<br><br>マーケティング実務：各次元 POD 源·1-2 個重要次元強化。<br><br>典型例：Apple = Style + Performance·Toyota = Reliability + Durability·Tesla = Performance + Customization。"
+    }
   },
   "tags": [
     "product differentiation",
     "Kotler"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "产品差別化的具体维度·POD 选择依据",
-      "限": "维度间相关·不能全部强化",
-      "例": "Apple·Toyota·Tesla 各代表不同维度",
-      "应": "Kotler 第 8 章·产品题"
+      "meaning": "产品差別化的具体维度·POD 选择依据",
+      "limit": "维度间相关·不能全部强化",
+      "example": "Apple·Toyota·Tesla 各代表不同维度",
+      "response": "Kotler 第 8 章·产品题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "次元間相関·全て強化不可",
-      "例": "Apple·Toyota·Tesla 各次元代表"
+      "meaning": "",
+      "limit": "次元間相関·全て強化不可",
+      "example": "Apple·Toyota·Tesla 各次元代表",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:35:24.297Z",

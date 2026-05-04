@@ -12,13 +12,18 @@
     "ja": "オーセンティック・リーダーシップ"
   },
   "body": {
-    "zh": "强调领导者的内在一致性和真实性。四个核心维度：自我认识（Self-Awareness）、平衡信息处理（Balanced Processing）、内在化道德观（Internalized Moral Perspective）、关系透明性（Relational Transparency）",
-    "ja": "——リーダーの内面的一貫性と真実性を強調する理論。四つの中核次元：自己認識（Self-Awareness）、均衡的情報処理（Balanced Processing）、内面化された道徳観（Internalized Moral Perspective）、関係の透明性（Relational Transparency）"
+    "zh": {
+      "format": "narrative",
+      "prose": "强调领导者的内在一致性和真实性。四个核心维度：自我认识（Self-Awareness）、平衡信息处理（Balanced Processing）、内在化道德观（Internalized Moral Perspective）、关系透明性（Relational Transparency）"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "——リーダーの内面的一貫性と真実性を強調する理論。四つの中核次元：自己認識（Self-Awareness）、均衡的情報処理（Balanced Processing）、内面化された道徳観（Internalized Moral Perspective）、関係の透明性（Relational Transparency）"
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "narrative",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

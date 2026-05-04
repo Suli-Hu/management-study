@@ -14,13 +14,18 @@
     "ja": "組織の独自的能力"
   },
   "body": {
-    "zh": "通过制度化过程形成的组织独特能力和性格。塞尔兹尼克在《TVA and the Grass Roots》（1949）和《Leadership in Administration》（1957）中论述了组织通过历史经验和价值注入而获得的固有能力。这一概念是后来资源基础理论（RBV）中「核心能力」概念的思想先驱",
-    "ja": "——制度化のプロセスを通じて形成される組織独自の能力と性格。セルズニックは『TVA and the Grass Roots』（1949）及び『Leadership in Administration』（1957）において、組織が歴史的経験と価値注入を通じて獲得する固有の能力を論じた。この概念は後の資源ベース理論（RBV）における「コア・コンピタンス」概念の思想的先駆と位置づけられる"
+    "zh": {
+      "format": "narrative",
+      "prose": "通过制度化过程形成的组织独特能力和性格。塞尔兹尼克在《TVA and the Grass Roots》（1949）和《Leadership in Administration》（1957）中论述了组织通过历史经验和价值注入而获得的固有能力。这一概念是后来资源基础理论（RBV）中「核心能力」概念的思想先驱"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "——制度化のプロセスを通じて形成される組織独自の能力と性格。セルズニックは『TVA and the Grass Roots』（1949）及び『Leadership in Administration』（1957）において、組織が歴史的経験と価値注入を通じて獲得する固有の能力を論じた。この概念は後の資源ベース理論（RBV）における「コア・コンピタンス」概念の思想的先駆と位置づけられる"
+    }
   },
   "tags": [
     "t_93nqjd"
   ],
-  "format": "narrative",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

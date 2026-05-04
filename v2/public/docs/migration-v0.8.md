@@ -23,6 +23,8 @@
 9. [Schedule](#9-schedule)
 10. [FAQ](#10-faq)
 11. [禁止的 inline HTML：`<strong>`](#11-禁止的-inline-html-strong)
+12. [v0.8.9：scholar.lifespan 删除 + key 自动生成 + school.themeKey default](#12-v089scholarlifespan-删除--key-自动生成--schoolthemekey-default)
+13. [v0.8.10 Stage 5：GET response shape breaking + 旧列物理 drop](#13-v0810-stage-5get-response-shape-breaking--旧列物理-drop)
 
 ---
 
@@ -656,6 +658,71 @@ POST 时 `key` 字段改可选。不传则 server 端从 title.en / name.en slug
 学派建好后跳 `/${discipline}?just_created_school=key&theme=key`，overview 弹 toast 提示「暂在「{theme}」，可拖动到正确分组」。
 
 PATCH `/api/schools/:key` 仍接受 `themeKey` 字段（编辑器表单暂留 store 但不渲染；如需移动学派到别的主题，目前需手动调 API 或在 view editor 拖卡）。
+
+---
+
+## 13. v0.8.10 Stage 5：GET response shape breaking + 旧列物理 drop
+
+v0.8.10 起 **GET API response 不再返 legacy 字段**。v0.8.0 hard cut 写入 contract 已 12 天，调用方都在用新 contract；read 路径 Stage 2 起也已默认走新列，本次拆双轨把 GET response 也对齐 contract 真源。
+
+### 13.1 字段对照
+
+| 字段 | v0.8.0–v0.8.9（response 兼容旧字段） | v0.8.10+ |
+|---|---|---|
+| `body.zh` / `body.ja` | string（DSL 兼容，回写自结构化新列） | **`KpBody` object** — 同写入 contract |
+| 顶层 `format` | enum 字符串 | **删除** — 等价信息在 `body.zh.format` |
+| `evalContent` | object（glyph key：`义/限/例/...`） | **删除** — 用 `evaluations` + 英文 key |
+
+### 13.2 例（GET `/api/kps/k562`）
+
+**v0.8.0–v0.8.9 旧 response**：
+```jsonc
+{
+  "id": "k562",
+  "title": { "zh": "双元组织" },
+  "format": "accordion",
+  "body": {
+    "zh": "James G. March...<br>【根本矛盾（March 1991）】<br>①Exploration——..."
+  },
+  "evalContent": { "zh": { "义": "...", "限": "..." } },
+  "schools": [...], "scholars": [...]
+}
+```
+
+**v0.8.10+ 新 response**：
+```jsonc
+{
+  "id": "k562",
+  "title": { "zh": "双元组织" },
+  "body": {
+    "zh": {
+      "format": "accordion",
+      "lead": "James G. March...",
+      "groups": [
+        { "title": "根本矛盾（March 1991）", "items": [
+          { "name": "Exploration（探索）", "desc": "..." }
+        ]}
+      ]
+    }
+  },
+  "evaluations": { "zh": { "meaning": "...", "limit": "..." } },
+  "schools": [...], "scholars": [...]
+}
+```
+
+### 13.3 调用方该怎么做
+
+- 解析 GET response 时按 v0.8 shape：`body.zh.format` 取 format，`body.zh.lead/items/groups/cols/cells` 等按 format 各自字段集（详见 [kp-field-guide.md](kp-field-guide.md)）。
+- 不再读顶层 `format` / `evalContent` / `body.zh: string`。
+- 老师 agent 若以前先 GET → 改一字段 → 再 PATCH 回写整体：现在 GET 出来的就是新 shape，原样回写仍合法（写入 contract 自 v0.8.0 起就是结构化）。
+- 兼容性：Stage 5 后 D1 `kp` 表的 `body_zh / body_ja / format / eval_content_*_json` 5 列已物理 drop（migration `0022_kp_drop_legacy_columns.sql`）—— 任何残留代码读这些列会 SQL 错。
+
+### 13.4 服务端配套改动
+
+- 写入：`kp-api-store.ts` / `kp-batch-store.ts` / `d1-kp-write.ts` / `sync-to-d1.ts` 不再写 5 个旧列。FTS body 字段由 `structuredToSearchText(body)` 派生纯文本写入。
+- 渲染：`render-body.ts` + `render-body-with-fallback.ts` 删除（fallback 救命路径过期）。3 个 .astro 页面（KP 详情 / 学派详情 / 学者详情）直接调 `renderStructuredBody({ body, accentHex, variant })`。
+- 数据迁移：`v2/data/**/kp/*.json` 一次性迁移到 v0.8 shape（脚本 `v2/scripts/migrate-data-to-v08-schema.ts`）— `body.zh: string` → `KpBody`、`evalContent` → `evaluations`、顶层 `format` 删；解析后 schema 不通过的 KP（typically：`flat-list` 但 body 无 `◆` marker）降级为 `narrative`，prose 保留全文。
+- `Kp` schema（`v2/src/schemas/kp.ts`）切到 v0.8 shape，校验 git JSON / `/api/edit/kp/:id` PUT 的 body。
 
 ---
 

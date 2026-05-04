@@ -499,9 +499,12 @@ describe('patchKpsBatch — 真 SQLite 集成测试', () => {
   });
 
   test('mergeBatchPatch unit: 数组 [] = 真清空，不传 = 保持', () => {
+    // v0.8.10 Stage 5: KpApiRecord 已是 v0.8 shape — body 是 KpBody object，无顶层 format / evalContent。
     const current: KpApiRecord = {
-      id: 'x', tenant_id: 'k', discipline: 'k', year: '', title: { zh: 'T' }, body: { zh: 'B' },
-      tags: ['old'], format: 'narrative', schools: ['s1'], scholars: ['sc1'],
+      id: 'x', tenant_id: 'k', discipline: 'k', year: '',
+      title: { zh: 'T' },
+      body: { zh: { format: 'narrative', prose: 'B' } },
+      tags: ['old'], schools: ['s1'], scholars: ['sc1'],
       created_by: null, updated_by: null, created_at: '', updated_at: '',
     };
     const currentS = {
@@ -510,16 +513,18 @@ describe('patchKpsBatch — 真 SQLite 集成测试', () => {
     };
 
     const cleared = mergeBatchPatch(current, currentS, { tags: [] });
-    expect(cleared.legacy.tags).toEqual([]); // 空数组真清空
+    expect(cleared.record.tags).toEqual([]); // 空数组真清空
 
     const kept = mergeBatchPatch(current, currentS, { year: '2020' });
-    expect(kept.legacy.tags).toEqual(['old']); // 不传 = 保持
+    expect(kept.record.tags).toEqual(['old']); // 不传 = 保持
   });
 
   test('computeDiff unit: title.zh 改了，title.ja 没改 → diff 只列 title.zh', () => {
     const current: KpApiRecord = {
-      id: 'x', tenant_id: 'k', discipline: 'k', year: '', title: { zh: '旧', ja: '保持' }, body: { zh: 'B' },
-      tags: [], format: 'narrative', schools: [], scholars: [],
+      id: 'x', tenant_id: 'k', discipline: 'k', year: '',
+      title: { zh: '旧', ja: '保持' },
+      body: { zh: { format: 'narrative', prose: 'B' } },
+      tags: [], schools: [], scholars: [],
       created_by: null, updated_by: null, created_at: '', updated_at: '',
     };
     const merged: KpApiRecord = { ...current, title: { zh: '新', ja: '保持' } };

@@ -15,13 +15,18 @@
     "ja": "三種の技術類型分類"
   },
   "body": {
-    "zh": "单件/小批生产（Unit Production）、大批/批量生产（Mass Production）、连续流程生产（Process Production）三类技术各自对应不同的最优组织结构和管理幅度",
-    "ja": "——単品/小ロット生産（Unit Production）・大ロット/量産生産（Mass Production）・連続工程生産（Process Production）の三類型の技術はそれぞれ異なる最適な組織構造と管理スパンに対応する"
+    "zh": {
+      "format": "narrative",
+      "prose": "单件/小批生产（Unit Production）、大批/批量生产（Mass Production）、连续流程生产（Process Production）三类技术各自对应不同的最优组织结构和管理幅度"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "——単品/小ロット生産（Unit Production）・大ロット/量産生産（Mass Production）・連続工程生産（Process Production）の三類型の技術はそれぞれ異なる最適な組織構造と管理スパンに対応する"
+    }
   },
   "tags": [
     "t_93nqjd"
   ],
-  "format": "narrative",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

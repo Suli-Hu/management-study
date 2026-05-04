@@ -1,5 +1,5 @@
 /**
- * Batch KP edit store — v0.8.0 Stage 3 hard cut.
+ * Batch KP edit store — v0.8.10 Stage 5: 拆双轨后只读写新列。
  *
  * 实现 PATCH /api/kps/batch 端点的核心逻辑：
  *   - 批量预查 tenant 的 schools/scholars 全集（避免 N+1）
@@ -7,7 +7,7 @@
  *   - dryRun 模式：merge + diff，不写
  *   - 逐条独立结果，不强行整批事务
  *
- * shallow merge 语义（v0.8.0，详 migration-v0.8.md §5.2）：
+ * shallow merge 语义（v0.8.0 起，详 migration-v0.8.md §5.2）：
  *   - title    — 按语种 shallow merge（zh/ja/en 各自独立替换）
  *   - body     — 按语种 shallow merge（zh/ja 各自整体替换 KpBody；单语种内部不再 deep merge）
  *   - evaluations — 按语种 shallow merge（zh/ja 各自整体替换 KpEvaluationsLang Record）
@@ -21,11 +21,7 @@ import {
   getKpStructured,
   type KpApiRecord,
 } from './kp-api-store';
-import {
-  structuredToLegacyDsl,
-  evaluationsLangToLegacyEvalContent,
-  hasEvaluationsContent,
-} from './kp-body-helpers';
+import { hasEvaluationsContent, structuredToSearchText } from './kp-body-helpers';
 import {
   detectLegacyContract,
   classifyZodFailure,
@@ -47,7 +43,7 @@ const FORBIDDEN_FIELDS = new Set([
   'tenant_id',
   'created_by',
   'updated_by',
-  // v0.8.0 新增：明确拒绝旧字段（虽然 zod strict 也会拒，但配合 forbidden_field reason 更明确）
+  // v0.8.0 起明确拒绝旧字段（虽然 zod strict 也会拒，但配合 forbidden_field reason 更明确）
   'format',
   'evalContent',
 ]);
@@ -113,23 +109,21 @@ async function getCurrentVersion(db: D1Database, kpId: string): Promise<number> 
 }
 
 /**
- * Merged 内部状态：保留 KpApiRecord 的旧 shape（response 兼容）+ 同步保留结构化
- * body/evaluations，以便 dual-write 旧 + 新列。
+ * Merged 内部状态：v0.8.10 Stage 5 起 KpApiRecord 已是 v0.8 shape（body 结构化），
+ * 不再需要单独保存 structured 副本。保留 record + 派生 evaluations metadata。
  */
 export interface MergedKpState {
-  /** 用于 GET response shape / FTS 索引等旧消费方 */
-  legacy: KpApiRecord;
-  /** 用于 D1 新列写入 + Stage 4+ 编辑器 read */
-  structuredBody: { zh: KpBody; ja?: KpBody };
-  structuredEvaluations: { zh?: KpEvaluationsLang; ja?: KpEvaluationsLang };
+  record: KpApiRecord;
+  body: { zh: KpBody; ja?: KpBody };
+  evaluations: { zh?: KpEvaluationsLang; ja?: KpEvaluationsLang };
 }
 
 /**
  * partial-by-language merge — title/body/evaluations 按 zh/ja 各自整体替换；
  * 数组字段整体替换；标量整体替换。
  *
- * @param current      KP 旧 shape (DSL string body + format + evalContent)
- * @param currentS     KP 结构化 shape (KpBody + KpEvaluationsLang)
+ * @param current      当前 KP record（已是 v0.8 shape）
+ * @param currentS     KP 结构化 shape（与 current.body / current.evaluations 等价，单独 query 防 race）
  * @param patch        新 contract 的 partial patch
  */
 export function mergeBatchPatch(
@@ -176,37 +170,33 @@ export function mergeBatchPatch(
         : {}),
   };
 
-  // 派生旧 shape KpApiRecord（GET response / FTS 用）
-  const evalContentLegacy: KpApiRecord['evalContent'] = (() => {
-    const out: { zh?: Record<string, string>; ja?: Record<string, string> } = {};
+  // 仅含非空 evaluations 才放进 record（GET response 用）
+  const evalForRecord: KpApiRecord['evaluations'] = (() => {
+    const out: { zh?: KpEvaluationsLang; ja?: KpEvaluationsLang } = {};
     if (mergedEvaluations.zh && hasEvaluationsContent(mergedEvaluations.zh)) {
-      out.zh = evaluationsLangToLegacyEvalContent(mergedEvaluations.zh);
+      out.zh = mergedEvaluations.zh;
     }
     if (mergedEvaluations.ja && hasEvaluationsContent(mergedEvaluations.ja)) {
-      out.ja = evaluationsLangToLegacyEvalContent(mergedEvaluations.ja);
+      out.ja = mergedEvaluations.ja;
     }
     return Object.keys(out).length > 0 ? out : undefined;
   })();
 
-  const mergedLegacy: KpApiRecord = {
+  const mergedRecord: KpApiRecord = {
     ...current,
     title: mergedTitle,
-    body: {
-      zh: structuredToLegacyDsl(mergedBody.zh),
-      ...(mergedBody.ja ? { ja: structuredToLegacyDsl(mergedBody.ja) } : {}),
-    },
-    format: mergedBody.zh.format,
+    body: mergedBody,
     schools: patch.schools ?? current.schools,
     scholars: patch.scholars ?? current.scholars,
     tags: patch.tags ?? current.tags,
     year: patch.year ?? current.year,
-    evalContent: evalContentLegacy,
+    evaluations: evalForRecord,
   };
 
   return {
-    legacy: mergedLegacy,
-    structuredBody: mergedBody,
-    structuredEvaluations: mergedEvaluations,
+    record: mergedRecord,
+    body: mergedBody,
+    evaluations: mergedEvaluations,
   };
 }
 
@@ -223,26 +213,26 @@ export function computeDiff(
     const after = merged.title?.[lang];
     if (before !== after) diff[`title.${lang}`] = { before, after };
   }
-  // body 第 1 层（zh/ja）拆 sub-key — 注意 v0.8.0 起 body.zh 是 DSL 反推 string，
-  // 实际 caller 看到的是 legacy shape；diff 仍按字符串比较
+  // body 按语种整体比对（discriminated union 不再 sub-merge）— JSON.stringify 算结构等价
   for (const lang of ['zh', 'ja'] as const) {
     const before = current.body?.[lang];
     const after = merged.body?.[lang];
-    if (before !== after) diff[`body.${lang}`] = { before, after };
+    if (JSON.stringify(before) !== JSON.stringify(after)) {
+      diff[`body.${lang}`] = { before, after };
+    }
   }
 
-  // evalContent.zh / evalContent.ja 整体比对（Record 整体替换语义）
+  // evaluations.zh / evaluations.ja 整体比对（Record 整体替换语义）
   for (const lang of ['zh', 'ja'] as const) {
-    const before = current.evalContent?.[lang];
-    const after = merged.evalContent?.[lang];
+    const before = current.evaluations?.[lang];
+    const after = merged.evaluations?.[lang];
     if (JSON.stringify(before) !== JSON.stringify(after)) {
-      diff[`evalContent.${lang}`] = { before, after };
+      diff[`evaluations.${lang}`] = { before, after };
     }
   }
 
   // 标量
   if (current.year !== merged.year) diff['year'] = { before: current.year, after: merged.year };
-  if (current.format !== merged.format) diff['format'] = { before: current.format, after: merged.format };
 
   // 数组：整体 before/after
   if (!arraysEqual(current.schools, merged.schools)) {
@@ -274,21 +264,21 @@ async function writeKpFromMerged(
   userId: string,
 ): Promise<{ ok: true; new_version: number } | { ok: false; reason: string; detail?: unknown }> {
   const now = new Date().toISOString();
-  const merged = state.legacy;
+  const merged = state.record;
 
-  // 派生新列
-  const evalsZh = state.structuredEvaluations.zh;
-  const evalsJa = state.structuredEvaluations.ja;
+  const evalsZh = state.evaluations.zh;
+  const evalsJa = state.evaluations.ja;
   const hasZh = hasEvaluationsContent(evalsZh);
   const hasJa = hasEvaluationsContent(evalsJa);
+
+  const ftsTextZh = structuredToSearchText(state.body.zh);
+  const ftsTextJa = state.body.ja ? structuredToSearchText(state.body.ja) : '';
 
   const stmts: D1PreparedStatement[] = [
     db.prepare(
       `UPDATE kp SET
         year = ?, title_zh = ?, title_en = ?, title_ja = ?,
-        body_zh = ?, body_ja = ?, tags_json = ?,
-        eval_content_zh_json = ?, eval_content_ja_json = ?,
-        format = ?, updated_by = ?, updated_at = ?,
+        tags_json = ?, updated_by = ?, updated_at = ?,
         body_zh_json = ?, body_ja_json = ?, evaluations_zh_json = ?, evaluations_ja_json = ?, body_format = ?
        WHERE id = ? AND COALESCE(tenant_id, discipline) = ? AND discipline = ?`,
     ).bind(
@@ -296,19 +286,14 @@ async function writeKpFromMerged(
       merged.title.zh,
       merged.title.en ?? null,
       merged.title.ja ?? null,
-      merged.body.zh,
-      merged.body.ja ?? null,
       JSON.stringify(merged.tags ?? []),
-      merged.evalContent?.zh ? JSON.stringify(merged.evalContent.zh) : '{}',
-      merged.evalContent?.ja ? JSON.stringify(merged.evalContent.ja) : '{}',
-      merged.format,
       userId,
       now,
-      JSON.stringify(state.structuredBody.zh),
-      state.structuredBody.ja ? JSON.stringify(state.structuredBody.ja) : null,
+      JSON.stringify(state.body.zh),
+      state.body.ja ? JSON.stringify(state.body.ja) : null,
       hasZh && evalsZh ? JSON.stringify(evalsZh) : null,
       hasJa && evalsJa ? JSON.stringify(evalsJa) : null,
-      state.structuredBody.zh.format,
+      state.body.zh.format,
       kpId,
       tenant.tenantId,
       tenant.discipline,
@@ -318,7 +303,7 @@ async function writeKpFromMerged(
     db.prepare('DELETE FROM kp_fts WHERE id = ?').bind(kpId),
     db.prepare(
       'INSERT INTO kp_fts (id, title_zh, title_en, title_ja, body_zh, body_ja) VALUES (?, ?, ?, ?, ?, ?)',
-    ).bind(kpId, merged.title.zh, merged.title.en ?? '', merged.title.ja ?? '', merged.body.zh, merged.body.ja ?? ''),
+    ).bind(kpId, merged.title.zh, merged.title.en ?? '', merged.title.ja ?? '', ftsTextZh, ftsTextJa),
   ];
 
   merged.schools.forEach((schoolKey, i) => {
@@ -520,7 +505,7 @@ async function processOne(
   const merged = mergeBatchPatch(current, currentStructured, patch);
 
   // 9. 校验 merged.schools/scholars 是否都属于 tenant（用预查的全集，O(1) 查）
-  const invalidSchools = merged.legacy.schools.filter((k) => !tenantKeys.schools.has(k));
+  const invalidSchools = merged.record.schools.filter((k) => !tenantKeys.schools.has(k));
   if (invalidSchools.length > 0) {
     return {
       id,
@@ -530,7 +515,7 @@ async function processOne(
       detail: { invalid_keys: invalidSchools },
     };
   }
-  const invalidScholars = merged.legacy.scholars.filter((k) => !tenantKeys.scholars.has(k));
+  const invalidScholars = merged.record.scholars.filter((k) => !tenantKeys.scholars.has(k));
   if (invalidScholars.length > 0) {
     return {
       id,
@@ -547,7 +532,7 @@ async function processOne(
       id,
       ok: true,
       current_version: currentVersion,
-      diff: computeDiff(current, merged.legacy),
+      diff: computeDiff(current, merged.record),
     };
   }
 
@@ -561,6 +546,6 @@ async function processOne(
     id,
     ok: true,
     version: writeResult.new_version,
-    changed_fields: Object.keys(computeDiff(current, merged.legacy)),
+    changed_fields: Object.keys(computeDiff(current, merged.record)),
   };
 }

@@ -16,8 +16,14 @@
     "en": "Competitive Position Strategy"
   },
   "body": {
-    "zh": "競争地位別戦略是 Kotler 系统化的 4 类企业战略·按企业在市场中的地位（leader·challenger·follower·nicher）区分。Pro Plus 第 12 章核心·日本院试核心。<br><br>4 类企业战略：<br><br>① Market Leader（リーダー）——产业第一<br>市场份额：通常 40%+<br>战略目标：① 扩大总市场（pie expansion）② 防御现有份额 ③ 扩张 share<br>具体战术：① 鼓励整体使用（Kellogg's「make breakfast great again」）② 防御创新者攻击（preemptive defense）③ flank·counter-offensive·position·mobile defense<br>例：Toyota 在日本·Coca-Cola·Apple iPhone（部分市场）<br><br>② Market Challenger（チャレンジャー）——挑战领导者的第二·三位<br>市场份额：通常 30%+<br>战略目标：直接攻击或绕道·夺取 share<br>具体战术：① 价格攻击（Pepsi vs Coca-Cola）② 产品创新攻击（iPhone vs BlackBerry）③ marketing 投入攻击 ④ niche-by-niche 攻击<br>例：Pepsi·Samsung·Toyota 在美国（vs GM）<br><br>③ Market Follower（フォロワー）——跟随领导者·不正面竞争<br>市场份额：通常 10-30%<br>战略目标：保持现有份额·避免 leader 报复<br>具体战术：① cloner（克隆）② imitator（模仿但有差异）③ adapter（改良）<br>例：日本电视行业的二线品牌·普通日本汽车 brand<br><br>④ Market Nicher（ニッチャー）——专注 niche·避免与 leader 对抗<br>市场份额：通常 < 10%<br>战略目标：在 niche 内成为 leader·获 niche 利润<br>具体战术：① customer specialization ② product specialization ③ geographic specialization ④ price-quality specialization<br>例：Ferrari·Porsche·MINI Cooper·Patagonia<br><br>2 大原则：<br>① 不同地位 = 不同战略——leader 战略不能用于 follower<br>② 地位可变——today's challenger 可能是 tomorrow's leader<br><br>跨学派关系：① Pro Plus 把这归入 strategic_marketing·与 Porter 3 战略形成补充 ② 与 STP 一体——Targeting 决定 nicher / leader 角色 ③ marketing strategy 必学。",
-    "ja": "競争地位別戦略は Kotler 体系化の 4 類企業戦略·企業の市場における地位（リーダー·チャレンジャー·フォロワー·ニッチャー）で区分。Pro Plus 第 12 章核心·日本院試核心。<br><br>4 類：<br>① リーダー·40%+·総市場拡大·現有シェア防御·シェア拡張·Toyota 日本·Coca-Cola·iPhone<br>② チャレンジャー·30%+·直接攻撃または迂回·Pepsi vs Coca-Cola·Samsung·Toyota 米国<br>③ フォロワー·10-30%·リーダー追随·非正面競争·cloner/imitator/adapter·日本テレビ二線·普通日本車<br>④ ニッチャー·< 10%·niche 集中·niche 内 leader·Ferrari·Porsche·MINI Cooper·Patagonia<br><br>2 大原則：① 地位 = 戦略·② 地位は可変<br><br>他派との関係：① Pro Plus は strategic_marketing 位置·Porter 3 戦略補完 ② STP 一体·Targeting がリーダー / ニッチャー役割決定 ③ marketing strategy 必学。"
+    "zh": {
+      "format": "narrative",
+      "prose": "競争地位別戦略是 Kotler 系统化的 4 类企业战略·按企业在市场中的地位（leader·challenger·follower·nicher）区分。Pro Plus 第 12 章核心·日本院试核心。<br><br>4 类企业战略：<br><br>① Market Leader（リーダー）——产业第一<br>市场份额：通常 40%+<br>战略目标：① 扩大总市场（pie expansion）② 防御现有份额 ③ 扩张 share<br>具体战术：① 鼓励整体使用（Kellogg's「make breakfast great again」）② 防御创新者攻击（preemptive defense）③ flank·counter-offensive·position·mobile defense<br>例：Toyota 在日本·Coca-Cola·Apple iPhone（部分市场）<br><br>② Market Challenger（チャレンジャー）——挑战领导者的第二·三位<br>市场份额：通常 30%+<br>战略目标：直接攻击或绕道·夺取 share<br>具体战术：① 价格攻击（Pepsi vs Coca-Cola）② 产品创新攻击（iPhone vs BlackBerry）③ marketing 投入攻击 ④ niche-by-niche 攻击<br>例：Pepsi·Samsung·Toyota 在美国（vs GM）<br><br>③ Market Follower（フォロワー）——跟随领导者·不正面竞争<br>市场份额：通常 10-30%<br>战略目标：保持现有份额·避免 leader 报复<br>具体战术：① cloner（克隆）② imitator（模仿但有差异）③ adapter（改良）<br>例：日本电视行业的二线品牌·普通日本汽车 brand<br><br>④ Market Nicher（ニッチャー）——专注 niche·避免与 leader 对抗<br>市场份额：通常 < 10%<br>战略目标：在 niche 内成为 leader·获 niche 利润<br>具体战术：① customer specialization ② product specialization ③ geographic specialization ④ price-quality specialization<br>例：Ferrari·Porsche·MINI Cooper·Patagonia<br><br>2 大原则：<br>① 不同地位 = 不同战略——leader 战略不能用于 follower<br>② 地位可变——today's challenger 可能是 tomorrow's leader<br><br>跨学派关系：① Pro Plus 把这归入 strategic_marketing·与 Porter 3 战略形成补充 ② 与 STP 一体——Targeting 决定 nicher / leader 角色 ③ marketing strategy 必学。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "競争地位別戦略は Kotler 体系化の 4 類企業戦略·企業の市場における地位（リーダー·チャレンジャー·フォロワー·ニッチャー）で区分。Pro Plus 第 12 章核心·日本院試核心。<br><br>4 類：<br>① リーダー·40%+·総市場拡大·現有シェア防御·シェア拡張·Toyota 日本·Coca-Cola·iPhone<br>② チャレンジャー·30%+·直接攻撃または迂回·Pepsi vs Coca-Cola·Samsung·Toyota 米国<br>③ フォロワー·10-30%·リーダー追随·非正面競争·cloner/imitator/adapter·日本テレビ二線·普通日本車<br>④ ニッチャー·< 10%·niche 集中·niche 内 leader·Ferrari·Porsche·MINI Cooper·Patagonia<br><br>2 大原則：① 地位 = 戦略·② 地位は可変<br><br>他派との関係：① Pro Plus は strategic_marketing 位置·Porter 3 戦略補完 ② STP 一体·Targeting がリーダー / ニッチャー役割決定 ③ marketing strategy 必学。"
+    }
   },
   "tags": [
     "competitive position",
@@ -26,17 +32,22 @@
     "follower",
     "nicher"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "日本院试 marketing 战略核心·企业地位决定战略",
-      "限": "地位判断主观·边界模糊",
-      "例": "Toyota·Pepsi·Ferrari 是教科书 4 类代表",
-      "应": "Pro Plus 12 章·一橋·早大 命题命中"
+      "meaning": "日本院试 marketing 战略核心·企业地位决定战略",
+      "limit": "地位判断主观·边界模糊",
+      "example": "Toyota·Pepsi·Ferrari 是教科书 4 类代表",
+      "response": "Pro Plus 12 章·一橋·早大 命题命中",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "地位判断主観·境界曖昧",
-      "例": "Toyota·Pepsi·Ferrari は教科書 4 類代表"
+      "meaning": "",
+      "limit": "地位判断主観·境界曖昧",
+      "example": "Toyota·Pepsi·Ferrari は教科書 4 類代表",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:14:26.275Z",

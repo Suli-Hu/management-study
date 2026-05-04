@@ -15,25 +15,36 @@
     "en": "Incentive Management"
   },
   "body": {
-    "zh": "Incentives Management（促销激励管理）是 Kotler 16 版第 11 章独立的战略层面讨论·把传统 sales promotion 提升为系统化战略。<br><br>2 类 incentives：<br>① Consumer Incentives（详见 m060）——coupon·rebate·sample·点数·会员<br>② Trade Incentives——给 channel 的 allowance·rebate·display fee<br><br>Incentives 5 大功能：<br>① 促进 trial——新顾客试用<br>② 提升 frequency——既有顾客增加购买<br>③ 反 cannibalization——保护既有产品免被竞争夺走<br>④ 清库存——季末·过时品<br>⑤ 积累 data——会员·loyalty 数据<br><br>Incentives 战略 4 决策（Kotler 16 版）：<br>① 类型——financial vs experiential·short-term vs long-term<br>② 规模——多大 discount<br>③ 时机——何时·多久<br>④ 目标——所有顾客 vs target segments<br><br>Brand-building vs Sales Promotion 平衡：<br>- 长期 brand-building：投资 brand·提高 brand equity<br>- 短期 sales promotion：incentives·快速销售<br>- 80/20 原则：80% brand-building + 20% incentives = 健康<br>- 反例：100% incentives = brand erosion<br><br>典型案例：① Starbucks Stars·loyalty + experiential ② Amazon Prime Day·event-driven ③ Costco 会员价·exclusive ④ Toyota 0% financing·promotional<br><br>跨学派关系：与 IMC（m060 sales promotion）·brand_equity·relationship 学派交叉。",
-    "ja": "Incentives Management（インセンティブ・マネジメント）は Kotler 16 版第 11 章独立戦略層議論·伝統 sales promotion を体系戦略へ昇格。<br><br>2 類 incentives：① Consumer Incentives（m060）② Trade Incentives<br><br>5 大機能：① trial 促進 ② frequency 向上 ③ 反 cannibalization ④ 在庫処分 ⑤ data 蓄積<br><br>Incentives 戦略 4 決定：① 類型（financial vs experiential·short vs long）② 規模 ③ 時期 ④ 目標<br><br>Brand-building vs Sales Promotion バランス：80/20 原則·100% incentives = ブランド侵食<br><br>典型事例：① Starbucks Stars ② Amazon Prime Day ③ Costco 会員価 ④ Toyota 0% financing<br><br>他派との関係：IMC（m060）·brand_equity·relationship と交差。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Incentives Management（促销激励管理）是 Kotler 16 版第 11 章独立的战略层面讨论·把传统 sales promotion 提升为系统化战略。<br><br>2 类 incentives：<br>① Consumer Incentives（详见 m060）——coupon·rebate·sample·点数·会员<br>② Trade Incentives——给 channel 的 allowance·rebate·display fee<br><br>Incentives 5 大功能：<br>① 促进 trial——新顾客试用<br>② 提升 frequency——既有顾客增加购买<br>③ 反 cannibalization——保护既有产品免被竞争夺走<br>④ 清库存——季末·过时品<br>⑤ 积累 data——会员·loyalty 数据<br><br>Incentives 战略 4 决策（Kotler 16 版）：<br>① 类型——financial vs experiential·short-term vs long-term<br>② 规模——多大 discount<br>③ 时机——何时·多久<br>④ 目标——所有顾客 vs target segments<br><br>Brand-building vs Sales Promotion 平衡：<br>- 长期 brand-building：投资 brand·提高 brand equity<br>- 短期 sales promotion：incentives·快速销售<br>- 80/20 原则：80% brand-building + 20% incentives = 健康<br>- 反例：100% incentives = brand erosion<br><br>典型案例：① Starbucks Stars·loyalty + experiential ② Amazon Prime Day·event-driven ③ Costco 会员价·exclusive ④ Toyota 0% financing·promotional<br><br>跨学派关系：与 IMC（m060 sales promotion）·brand_equity·relationship 学派交叉。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Incentives Management（インセンティブ・マネジメント）は Kotler 16 版第 11 章独立戦略層議論·伝統 sales promotion を体系戦略へ昇格。<br><br>2 類 incentives：① Consumer Incentives（m060）② Trade Incentives<br><br>5 大機能：① trial 促進 ② frequency 向上 ③ 反 cannibalization ④ 在庫処分 ⑤ data 蓄積<br><br>Incentives 戦略 4 決定：① 類型（financial vs experiential·short vs long）② 規模 ③ 時期 ④ 目標<br><br>Brand-building vs Sales Promotion バランス：80/20 原則·100% incentives = ブランド侵食<br><br>典型事例：① Starbucks Stars ② Amazon Prime Day ③ Costco 会員価 ④ Toyota 0% financing<br><br>他派との関係：IMC（m060）·brand_equity·relationship と交差。"
+    }
   },
   "tags": [
     "incentives",
     "Kotler 16",
     "Starbucks Stars"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "Kotler 16 版独立化讨论·sales promotion 战略化",
-      "限": "过度使用 brand erosion·测量难",
-      "例": "Starbucks·Amazon·Costco 是教科书",
-      "应": "Kotler 16 版第 11 章·价格 + IMC"
+      "meaning": "Kotler 16 版独立化讨论·sales promotion 战略化",
+      "limit": "过度使用 brand erosion·测量难",
+      "example": "Starbucks·Amazon·Costco 是教科书",
+      "response": "Kotler 16 版第 11 章·价格 + IMC",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "過剰使用ブランド侵食·測定困難",
-      "例": "Starbucks·Amazon·Costco 教科書"
+      "meaning": "",
+      "limit": "過剰使用ブランド侵食·測定困難",
+      "example": "Starbucks·Amazon·Costco 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:35:46.196Z",

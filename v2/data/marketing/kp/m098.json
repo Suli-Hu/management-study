@@ -15,25 +15,36 @@
     "en": "Strategic Business Unit"
   },
   "body": {
-    "zh": "SBU（Strategic Business Unit·战略事业单位）是企业组织设计的核心概念·把企业拆分为独立可管理的子单位·每个 SBU 有独立 mission·战略·KPI。Kotler 第 2 章核心。<br><br>SBU 3 大特征（GE 1970 定义）：<br>① 独立的事业——可与其他事业分离·有独立 plan<br>② 独立的竞争对手——有特定的 competitor<br>③ 独立的 manager——有 P&L 责任·决策权<br><br>典型 SBU 例：<br>① P&G——Beauty·Health·Home Care 等 10+ SBU<br>② Sony——Game·Music·Picture·Imaging Products·Mobile·Financial 等<br>③ GE——historically 200+ SBU·后精简<br>④ Toyota——Toyota·Lexus·Daihatsu·Hino 各为 SBU<br><br>SBU 资源配置（Kotler 4 步）：<br>① 识别 SBU——按事业分类·非按产品<br>② 评估 SBU——用 BCG matrix 或 GE Matrix<br>③ 分配资源——投资 Star·收割 Cow·剥离 Dog·选择 Question Mark<br>④ 监控 / 调整——定期 portfolio review<br><br>4 大战略选择（每个 SBU）：<br>① Build（建设）——投资增长 share<br>② Hold（保持）——维持现状<br>③ Harvest（收割）——挤出 cash·短期 max·long-term decline<br>④ Divest（剥离）——出售或关闭<br><br>跨学派关系：① 与 BCG Matrix·GE Matrix 一起使用 ② 与 strategic_marketing 的 firm-level strategy 一致 ③ 与 marketing_concept 的多元化 mission 设计相关。",
-    "ja": "SBU（戦略事業単位）は企業組織設計の核心概念·企業を独立管理可能な子単位に分割·各 SBU が独立ミッション·戦略·KPI を持つ。Kotler 第 2 章核心。<br><br>SBU 3 大特徴（GE 1970 定義）：① 独立事業 ② 独立競合 ③ 独立 manager（P&L 責任）<br><br>典型 SBU 例：① P&G 10+ SBU ② Sony（Game·Music·Picture 等）③ GE（200+ → 精簡）④ Toyota（Toyota·Lexus·Daihatsu·Hino）<br><br>SBU 資源配置（Kotler 4 段階）：① SBU 識別 ② SBU 評価（BCG·GE Matrix）③ 資源配分 ④ 監視·調整<br><br>4 大戦略選択（各 SBU）：① Build ② Hold ③ Harvest ④ Divest<br><br>他派との関係：① BCG·GE Matrix と併用 ② strategic_marketing の firm-level strategy 一致 ③ marketing_concept の多角化ミッション設計関連。"
+    "zh": {
+      "format": "narrative",
+      "prose": "SBU（Strategic Business Unit·战略事业单位）是企业组织设计的核心概念·把企业拆分为独立可管理的子单位·每个 SBU 有独立 mission·战略·KPI。Kotler 第 2 章核心。<br><br>SBU 3 大特征（GE 1970 定义）：<br>① 独立的事业——可与其他事业分离·有独立 plan<br>② 独立的竞争对手——有特定的 competitor<br>③ 独立的 manager——有 P&L 责任·决策权<br><br>典型 SBU 例：<br>① P&G——Beauty·Health·Home Care 等 10+ SBU<br>② Sony——Game·Music·Picture·Imaging Products·Mobile·Financial 等<br>③ GE——historically 200+ SBU·后精简<br>④ Toyota——Toyota·Lexus·Daihatsu·Hino 各为 SBU<br><br>SBU 资源配置（Kotler 4 步）：<br>① 识别 SBU——按事业分类·非按产品<br>② 评估 SBU——用 BCG matrix 或 GE Matrix<br>③ 分配资源——投资 Star·收割 Cow·剥离 Dog·选择 Question Mark<br>④ 监控 / 调整——定期 portfolio review<br><br>4 大战略选择（每个 SBU）：<br>① Build（建设）——投资增长 share<br>② Hold（保持）——维持现状<br>③ Harvest（收割）——挤出 cash·短期 max·long-term decline<br>④ Divest（剥离）——出售或关闭<br><br>跨学派关系：① 与 BCG Matrix·GE Matrix 一起使用 ② 与 strategic_marketing 的 firm-level strategy 一致 ③ 与 marketing_concept 的多元化 mission 设计相关。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "SBU（戦略事業単位）は企業組織設計の核心概念·企業を独立管理可能な子単位に分割·各 SBU が独立ミッション·戦略·KPI を持つ。Kotler 第 2 章核心。<br><br>SBU 3 大特徴（GE 1970 定義）：① 独立事業 ② 独立競合 ③ 独立 manager（P&L 責任）<br><br>典型 SBU 例：① P&G 10+ SBU ② Sony（Game·Music·Picture 等）③ GE（200+ → 精簡）④ Toyota（Toyota·Lexus·Daihatsu·Hino）<br><br>SBU 資源配置（Kotler 4 段階）：① SBU 識別 ② SBU 評価（BCG·GE Matrix）③ 資源配分 ④ 監視·調整<br><br>4 大戦略選択（各 SBU）：① Build ② Hold ③ Harvest ④ Divest<br><br>他派との関係：① BCG·GE Matrix と併用 ② strategic_marketing の firm-level strategy 一致 ③ marketing_concept の多角化ミッション設計関連。"
+    }
   },
   "tags": [
     "SBU",
     "BCG",
     "portfolio"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "企业组织设计的战略概念·marketing 资源配置依据",
-      "限": "边界划分主观·SBU 间协同难",
-      "例": "P&G·Sony·Toyota 是 SBU 设计经典",
-      "应": "Kotler 第 2 章·strategic 题"
+      "meaning": "企业组织设计的战略概念·marketing 资源配置依据",
+      "limit": "边界划分主观·SBU 间协同难",
+      "example": "P&G·Sony·Toyota 是 SBU 设计经典",
+      "response": "Kotler 第 2 章·strategic 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "境界画定主観·SBU 間協同困難",
-      "例": "P&G·Sony·Toyota は SBU 設計古典"
+      "meaning": "",
+      "limit": "境界画定主観·SBU 間協同困難",
+      "example": "P&G·Sony·Toyota は SBU 設計古典",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:24:49.980Z",

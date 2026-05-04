@@ -17,25 +17,36 @@
     "en": "Modern Retail Environment"
   },
   "body": {
-    "zh": "Modern Retail Environment（现代零售环境）是 Kotler 16 版第 16 章·digital 时代零售业态的全景概述。<br><br>10 大零售业态：<br>① Specialty Store（专卖店）——单类目深度·UNIQLO·Apple Store<br>② Department Store（百货店）——多类目宽度·伊勢丹·三越（衰退）<br>③ Supermarket（超市）——食品 + 日用品·AEON·Seiyu<br>④ Convenience Store（便利店）——24h·小店·Seven-Eleven·FamilyMart<br>⑤ Discount Store（折扣店）——低价·Costco·Don Quixote·ドンキ<br>⑥ Off-Price Retailer——清仓·TJ Maxx·Outlet Mall<br>⑦ Superstore（大店）——10万+ ㎡·AEON Mall·LaLaport<br>⑧ Catalog Showroom——已基本消失（曾经 IKEA 模式）<br>⑨ Hypermarket——超超市·Walmart·Carrefour<br>⑩ E-Retailer——纯电商·Amazon·楽天·Z アカデミア<br><br>5 大 retail 趋势（Pro Plus·Kotler）：<br>① E-commerce 持续增长——Amazon·Alibaba·楽天<br>② Convenience 优先——CVS·快 delivery<br>③ Experience Retail——把店变体验空间（Apple Store·Tesla Showroom·MUJI 旗舰）<br>④ Private Brand 崛起（详见 m050）<br>⑤ Digital + Physical Integration（omnichannel·m047）<br><br>3 大 disruptive forces：<br>① Amazon Effect——电商颠覆传统 retail（Sears·Toys R Us·百货倒闭潮）<br>② D2C Brands（详见 m127）——绕过 retail<br>③ Quick Commerce——10-30 分钟 delivery（GoPuff·Wolt）<br><br>日本 retail 特色：① Convenience Store 全球独有的密度（日本人均 1 店 / 2,500 人）② Vending machine 文化（500 万台·全球最多）③ Department store 衰退（伊勢丹·三越合并）④ ドンキホーテ（Don Quixote）的 messy retailing 革新<br><br>跨学派关系：与 channel_retail·digital_marketing·omnichannel 一体。",
-    "ja": "Modern Retail Environment（現代の小売環境）は Kotler 16 版第 16 章·デジタル時代小売業態の全景概述。<br><br>10 大小売業態：① Specialty Store（UNIQLO·Apple Store）② Department Store（伊勢丹·三越·衰退）③ Supermarket（AEON·西友）④ Convenience Store（セブン-イレブン·ファミマ）⑤ Discount Store（Costco·ドンキ）⑥ Off-Price Retailer（TJ Maxx·アウトレット）⑦ Superstore（AEON Mall·LaLaport）⑧ Catalog Showroom（消失）⑨ Hypermarket（Walmart·Carrefour）⑩ E-Retailer（Amazon·楽天）<br><br>5 大 retail トレンド：① E-commerce 持続成長 ② Convenience 優先 ③ Experience Retail（Apple Store·Tesla·MUJI 旗艦）④ Private Brand 台頭（m050）⑤ Digital + Physical Integration（omnichannel·m047）<br><br>3 大 disruptive forces：① Amazon Effect（Sears·Toys R Us 倒産·百貨店 衰退）② D2C Brands（m127）③ Quick Commerce（GoPuff·Wolt·10-30 分配送）<br><br>日本 retail 特色：① コンビニ世界最高密度（人 2,500 人 / 1 店）② 自動販売機文化（500 万台·世界最多）③ デパート衰退（伊勢丹·三越合併）④ ドン・キホーテの messy retailing 革新<br><br>他派との関係：channel_retail·digital_marketing·omnichannel と一体。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Modern Retail Environment（现代零售环境）是 Kotler 16 版第 16 章·digital 时代零售业态的全景概述。<br><br>10 大零售业态：<br>① Specialty Store（专卖店）——单类目深度·UNIQLO·Apple Store<br>② Department Store（百货店）——多类目宽度·伊勢丹·三越（衰退）<br>③ Supermarket（超市）——食品 + 日用品·AEON·Seiyu<br>④ Convenience Store（便利店）——24h·小店·Seven-Eleven·FamilyMart<br>⑤ Discount Store（折扣店）——低价·Costco·Don Quixote·ドンキ<br>⑥ Off-Price Retailer——清仓·TJ Maxx·Outlet Mall<br>⑦ Superstore（大店）——10万+ ㎡·AEON Mall·LaLaport<br>⑧ Catalog Showroom——已基本消失（曾经 IKEA 模式）<br>⑨ Hypermarket——超超市·Walmart·Carrefour<br>⑩ E-Retailer——纯电商·Amazon·楽天·Z アカデミア<br><br>5 大 retail 趋势（Pro Plus·Kotler）：<br>① E-commerce 持续增长——Amazon·Alibaba·楽天<br>② Convenience 优先——CVS·快 delivery<br>③ Experience Retail——把店变体验空间（Apple Store·Tesla Showroom·MUJI 旗舰）<br>④ Private Brand 崛起（详见 m050）<br>⑤ Digital + Physical Integration（omnichannel·m047）<br><br>3 大 disruptive forces：<br>① Amazon Effect——电商颠覆传统 retail（Sears·Toys R Us·百货倒闭潮）<br>② D2C Brands（详见 m127）——绕过 retail<br>③ Quick Commerce——10-30 分钟 delivery（GoPuff·Wolt）<br><br>日本 retail 特色：① Convenience Store 全球独有的密度（日本人均 1 店 / 2,500 人）② Vending machine 文化（500 万台·全球最多）③ Department store 衰退（伊勢丹·三越合并）④ ドンキホーテ（Don Quixote）的 messy retailing 革新<br><br>跨学派关系：与 channel_retail·digital_marketing·omnichannel 一体。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Modern Retail Environment（現代の小売環境）は Kotler 16 版第 16 章·デジタル時代小売業態の全景概述。<br><br>10 大小売業態：① Specialty Store（UNIQLO·Apple Store）② Department Store（伊勢丹·三越·衰退）③ Supermarket（AEON·西友）④ Convenience Store（セブン-イレブン·ファミマ）⑤ Discount Store（Costco·ドンキ）⑥ Off-Price Retailer（TJ Maxx·アウトレット）⑦ Superstore（AEON Mall·LaLaport）⑧ Catalog Showroom（消失）⑨ Hypermarket（Walmart·Carrefour）⑩ E-Retailer（Amazon·楽天）<br><br>5 大 retail トレンド：① E-commerce 持続成長 ② Convenience 優先 ③ Experience Retail（Apple Store·Tesla·MUJI 旗艦）④ Private Brand 台頭（m050）⑤ Digital + Physical Integration（omnichannel·m047）<br><br>3 大 disruptive forces：① Amazon Effect（Sears·Toys R Us 倒産·百貨店 衰退）② D2C Brands（m127）③ Quick Commerce（GoPuff·Wolt·10-30 分配送）<br><br>日本 retail 特色：① コンビニ世界最高密度（人 2,500 人 / 1 店）② 自動販売機文化（500 万台·世界最多）③ デパート衰退（伊勢丹·三越合併）④ ドン・キホーテの messy retailing 革新<br><br>他派との関係：channel_retail·digital_marketing·omnichannel と一体。"
+    }
   },
   "tags": [
     "retail",
     "convenience",
     "Amazon"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "零售业态的全景框架·marketing 实务必学",
-      "限": "业态边界模糊·跨地域差异大",
-      "例": "日本 CVS·Amazon·Apple Store 是教科书",
-      "应": "Kotler 16 章·Pro Plus 11 章·retail 题"
+      "meaning": "零售业态的全景框架·marketing 实务必学",
+      "limit": "业态边界模糊·跨地域差异大",
+      "example": "日本 CVS·Amazon·Apple Store 是教科书",
+      "response": "Kotler 16 章·Pro Plus 11 章·retail 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "業態境界曖昧·跨地域差大",
-      "例": "日本コンビニ·Amazon·Apple Store 教科書"
+      "meaning": "",
+      "limit": "業態境界曖昧·跨地域差大",
+      "example": "日本コンビニ·Amazon·Apple Store 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T09:26:37.321Z",

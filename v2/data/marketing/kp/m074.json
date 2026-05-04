@@ -15,25 +15,36 @@
     "en": "Service Ecosystem"
   },
   "body": {
-    "zh": "Service Ecosystem（服务生态系统）是 SDL 学派 2016 年扩展的核心概念（FP11/Axiom 5）·把 marketing 看作多 actors 在 institutional arrangements 下协调的 self-adjusting system。<br><br>核心定义：<br>「<em>A relatively self-contained, self-adjusting system of resource-integrating actors connected by shared institutional arrangements and mutual value creation through service exchange.</em>」<br><br>4 大特征：<br>① Self-Contained——相对自给自足·内部循环<br>② Self-Adjusting——通过 feedback 自动调整<br>③ Resource-Integrating Actors——所有参与者都是资源整合者<br>④ Institutional Arrangements——共享的规则·norms·法律·文化<br><br>3 个层次：<br>① Micro level——个体 actors（个人·企业）的 dyadic 互动<br>② Meso level——community·industry·platform<br>③ Macro level——society·culture·regulatory environment<br><br>典型案例：<br>① Apple ecosystem——iPhone + App Store + iCloud + 第三方开发者 + 用户·所有 actors 通过 Apple's institutional arrangements（API·revenue share·design guidelines）协调<br>② Tokyo 都市作为 service ecosystem——居民·企业·政府·游客·基础设施 self-adjusting<br>③ SaaS 平台（Salesforce·Shopify）——多 vendor + 多 user 在共享平台上 co-create<br><br>vs 传统 channel / supply chain 视角：<br>- 传统：linear chain·企业控制<br>- ecosystem：网络·multi-actor·self-adjusting<br><br>marketing 战略启示：<br>① 从「企业战略」转向「ecosystem 战略」——如何 orchestrate 多 actors<br>② platform marketing——marketing 自己 = 设计 ecosystem<br>③ partnership 重要性——marketing 不能单干·要建 ecosystem<br>④ institutions 设计——规则·激励·治理是核心<br><br>跨学派关系：① 与 platform economics·digital_marketing 高度交叉 ② 与 strategic_marketing 的 dynamic capability 一致 ③ 是 SDL 从「dyadic」向「systemic」升级的标志。",
-    "ja": "Service Ecosystem（サービス・エコシステム）は SDL 学派 2016 年拡張の核心概念（FP11/Axiom 5）·マーケティングを多 actors が institutional arrangements 下で協調する self-adjusting systemとして捉える。<br><br>核心定義：「<em>A relatively self-contained, self-adjusting system of resource-integrating actors connected by shared institutional arrangements and mutual value creation through service exchange.</em>」<br><br>4 大特徴：① Self-Contained ② Self-Adjusting ③ Resource-Integrating Actors ④ Institutional Arrangements<br><br>3 層次：① Micro（個体 dyadic）② Meso（community·industry·platform）③ Macro（society·culture·regulatory）<br><br>典型事例：① Apple ecosystem（iPhone + App Store + iCloud + 第三者開発者 + ユーザー）② 東京都市 ③ SaaS プラットフォーム（Salesforce·Shopify）<br><br>vs 伝統 channel / supply chain：伝統は linear chain·企業制御·ecosystem は網絡·multi-actor·self-adjusting<br><br>マーケティング戦略示唆：① 企業戦略→エコシステム戦略 ② プラットフォーム・マーケティング ③ パートナーシップ重要 ④ institutions 設計<br><br>他派との関係：① プラットフォーム経済·digital_marketing と高度交差 ② strategic_marketing の dynamic capability と一致 ③ SDL の dyadic→systemic 升级象徴。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Service Ecosystem（服务生态系统）是 SDL 学派 2016 年扩展的核心概念（FP11/Axiom 5）·把 marketing 看作多 actors 在 institutional arrangements 下协调的 self-adjusting system。<br><br>核心定义：<br>「<em>A relatively self-contained, self-adjusting system of resource-integrating actors connected by shared institutional arrangements and mutual value creation through service exchange.</em>」<br><br>4 大特征：<br>① Self-Contained——相对自给自足·内部循环<br>② Self-Adjusting——通过 feedback 自动调整<br>③ Resource-Integrating Actors——所有参与者都是资源整合者<br>④ Institutional Arrangements——共享的规则·norms·法律·文化<br><br>3 个层次：<br>① Micro level——个体 actors（个人·企业）的 dyadic 互动<br>② Meso level——community·industry·platform<br>③ Macro level——society·culture·regulatory environment<br><br>典型案例：<br>① Apple ecosystem——iPhone + App Store + iCloud + 第三方开发者 + 用户·所有 actors 通过 Apple's institutional arrangements（API·revenue share·design guidelines）协调<br>② Tokyo 都市作为 service ecosystem——居民·企业·政府·游客·基础设施 self-adjusting<br>③ SaaS 平台（Salesforce·Shopify）——多 vendor + 多 user 在共享平台上 co-create<br><br>vs 传统 channel / supply chain 视角：<br>- 传统：linear chain·企业控制<br>- ecosystem：网络·multi-actor·self-adjusting<br><br>marketing 战略启示：<br>① 从「企业战略」转向「ecosystem 战略」——如何 orchestrate 多 actors<br>② platform marketing——marketing 自己 = 设计 ecosystem<br>③ partnership 重要性——marketing 不能单干·要建 ecosystem<br>④ institutions 设计——规则·激励·治理是核心<br><br>跨学派关系：① 与 platform economics·digital_marketing 高度交叉 ② 与 strategic_marketing 的 dynamic capability 一致 ③ 是 SDL 从「dyadic」向「systemic」升级的标志。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Service Ecosystem（サービス・エコシステム）は SDL 学派 2016 年拡張の核心概念（FP11/Axiom 5）·マーケティングを多 actors が institutional arrangements 下で協調する self-adjusting systemとして捉える。<br><br>核心定義：「<em>A relatively self-contained, self-adjusting system of resource-integrating actors connected by shared institutional arrangements and mutual value creation through service exchange.</em>」<br><br>4 大特徴：① Self-Contained ② Self-Adjusting ③ Resource-Integrating Actors ④ Institutional Arrangements<br><br>3 層次：① Micro（個体 dyadic）② Meso（community·industry·platform）③ Macro（society·culture·regulatory）<br><br>典型事例：① Apple ecosystem（iPhone + App Store + iCloud + 第三者開発者 + ユーザー）② 東京都市 ③ SaaS プラットフォーム（Salesforce·Shopify）<br><br>vs 伝統 channel / supply chain：伝統は linear chain·企業制御·ecosystem は網絡·multi-actor·self-adjusting<br><br>マーケティング戦略示唆：① 企業戦略→エコシステム戦略 ② プラットフォーム・マーケティング ③ パートナーシップ重要 ④ institutions 設計<br><br>他派との関係：① プラットフォーム経済·digital_marketing と高度交差 ② strategic_marketing の dynamic capability と一致 ③ SDL の dyadic→systemic 升级象徴。"
+    }
   },
   "tags": [
     "service ecosystem",
     "platform",
     "institutions"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "SDL 学派的最新理论·multi-actor 视角",
-      "限": "理论复杂·难实证·实务应用初期",
-      "例": "Apple ecosystem·Salesforce platform 是教科书",
-      "应": "SDL 进阶论述·一橋 高分题"
+      "meaning": "SDL 学派的最新理论·multi-actor 视角",
+      "limit": "理论复杂·难实证·实务应用初期",
+      "example": "Apple ecosystem·Salesforce platform 是教科书",
+      "response": "SDL 进阶论述·一橋 高分题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "理論複雑·実証困難·実務応用初期",
-      "例": "Apple ecosystem·Salesforce platform は教科書"
+      "meaning": "",
+      "limit": "理論複雑·実証困難·実務応用初期",
+      "example": "Apple ecosystem·Salesforce platform は教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:14:02.282Z",

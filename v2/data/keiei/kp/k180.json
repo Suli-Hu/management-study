@@ -14,13 +14,46 @@
     "ja": "相互依存の類型"
   },
   "body": {
-    "zh": "汤普森将组织内部的相互依存关系区分为三种类型：◆ 集合型依存（Pooled Interdependence）——各部门独立地对整体做出贡献，直接互动较少，通过规则和标准即可协调◆ 顺序型依存（Sequential Interdependence）——一方的产出是另一方的投入，形成串联关系，需要通过计划和日程安排来协调◆ 交互型依存（Reciprocal Interdependence）——各部门双向交换产出，需要相互调整（Mutual Adjustment），协调成本最高。依存程度越高，所需的协调机制越复杂、成本越高",
-    "ja": "——トンプソンは組織内部の相互依存関係を三つに類型化した：◆ 集合型依存（Pooled Interdependence）——各部門が独立に全体に貢献し、直接的やり取りは少ない。規則・標準による調整で足りる◆ 連鎖型依存（Sequential Interdependence）——一方の産出が他方の投入となる直列的関係。計画・スケジュールによる調整を要する◆ 相互型依存（Reciprocal Interdependence）——各部門が双方向に産出物を交換し合う。相互調整（Mutual Adjustment）を必要とし、調整コストが最も高い。依存の程度が高まるほど、より複雑で高コストな調整メカニズムが必要となる"
+    "zh": {
+      "format": "flat-list",
+      "lead": "汤普森将组织内部的相互依存关系区分为三种类型",
+      "items": [
+        {
+          "name": "集合型依存（Pooled Interdependence）",
+          "desc": "各部门独立地对整体做出贡献，直接互动较少，通过规则和标准即可协调"
+        },
+        {
+          "name": "顺序型依存（Sequential Interdependence）",
+          "desc": "一方的产出是另一方的投入，形成串联关系，需要通过计划和日程安排来协调"
+        },
+        {
+          "name": "交互型依存（Reciprocal Interdependence）",
+          "desc": "各部门双向交换产出，需要相互调整（Mutual Adjustment），协调成本最高。依存程度越高，所需的协调机制越复杂、成本越高"
+        }
+      ]
+    },
+    "ja": {
+      "format": "flat-list",
+      "lead": "——トンプソンは組織内部の相互依存関係を三つに類型化した",
+      "items": [
+        {
+          "name": "集合型依存（Pooled Interdependence）",
+          "desc": "各部門が独立に全体に貢献し、直接的やり取りは少ない。規則・標準による調整で足りる"
+        },
+        {
+          "name": "連鎖型依存（Sequential Interdependence）",
+          "desc": "一方の産出が他方の投入となる直列的関係。計画・スケジュールによる調整を要する"
+        },
+        {
+          "name": "相互型依存（Reciprocal Interdependence）",
+          "desc": "各部門が双方向に産出物を交換し合う。相互調整（Mutual Adjustment）を必要とし、調整コストが最も高い。依存の程度が高まるほど、より複雑で高コストな調整メカニズムが必要となる"
+        }
+      ]
+    }
   },
   "tags": [
     "t_93nqjd"
   ],
-  "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

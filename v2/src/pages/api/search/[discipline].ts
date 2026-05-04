@@ -100,7 +100,7 @@ export const GET: APIRoute = async ({ params, url, locals }) => {
         WHERE k.discipline = ?
           AND (
             k.title_zh LIKE ? OR k.title_en LIKE ? OR k.title_ja LIKE ?
-            OR k.body_zh LIKE ? OR k.body_ja LIKE ?
+            OR k.body_zh_json LIKE ? OR k.body_ja_json LIKE ?
           )
         ORDER BY
           CASE WHEN k.title_zh LIKE ? OR k.title_en LIKE ? OR k.title_ja LIKE ? THEN 0 ELSE 1 END,

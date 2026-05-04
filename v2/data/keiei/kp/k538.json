@@ -12,13 +12,38 @@
     "ja": "人的資源管理の定義と機能"
   },
   "body": {
-    "zh": "人的资源管理（HRM）是将员工定位为重要经营资源，通过能力开发与动机激发实现企业长期业绩提升的管理活动体系。◆ 核心功能——①确保（Staffing：采用·配置）②培养（Development：教育训练·职业发展）③评价（Appraisal：人事考课·反馈）④报酬（Compensation：基本薪·奖金·福利厚生）⑤维持（Maintenance：劳使关系·安全卫生·组织承诺）◆ 人事部的角色——从管理事务的执行者转变为经营战略的伙伴（Strategic Partner），兼顾制度设计（Architect）、变革推动（Change Agent）和员工代言（Employee Champion）",
-    "ja": "——人的資源管理（HRM）とは、従業員を重要な経営資源と位置づけ、能力開発と動機づけを通じて企業の長期的業績向上を目指す管理活動体系である。◆ 中核機能——①確保（Staffing：採用・配置）②育成（Development：教育訓練・キャリア開発）③評価（Appraisal：人事考課・フィードバック）④報酬（Compensation：基本給・賞与・福利厚生）⑤維持（Maintenance：労使関係・安全衛生・組織コミットメント）◆ 人事部の役割——管理事務の執行者から経営戦略のパートナー（Strategic Partner）へ転換し、制度設計（Architect）・変革推進（Change Agent）・従業員の代弁者（Employee Champion）を兼務する"
+    "zh": {
+      "format": "flat-list",
+      "lead": "人的资源管理（HRM）是将员工定位为重要经营资源，通过能力开发与动机激发实现企业长期业绩提升的管理活动体系。",
+      "items": [
+        {
+          "name": "核心功能",
+          "desc": "①确保（Staffing：采用·配置）②培养（Development：教育训练·职业发展）③评价（Appraisal：人事考课·反馈）④报酬（Compensation：基本薪·奖金·福利厚生）⑤维持（Maintenance：劳使关系·安全卫生·组织承诺）"
+        },
+        {
+          "name": "人事部的角色",
+          "desc": "从管理事务的执行者转变为经营战略的伙伴（Strategic Partner），兼顾制度设计（Architect）、变革推动（Change Agent）和员工代言（Employee Champion）"
+        }
+      ]
+    },
+    "ja": {
+      "format": "flat-list",
+      "lead": "——人的資源管理（HRM）とは、従業員を重要な経営資源と位置づけ、能力開発と動機づけを通じて企業の長期的業績向上を目指す管理活動体系である。",
+      "items": [
+        {
+          "name": "中核機能",
+          "desc": "①確保（Staffing：採用・配置）②育成（Development：教育訓練・キャリア開発）③評価（Appraisal：人事考課・フィードバック）④報酬（Compensation：基本給・賞与・福利厚生）⑤維持（Maintenance：労使関係・安全衛生・組織コミットメント）"
+        },
+        {
+          "name": "人事部の役割",
+          "desc": "管理事務の執行者から経営戦略のパートナー（Strategic Partner）へ転換し、制度設計（Architect）・変革推進（Change Agent）・従業員の代弁者（Employee Champion）を兼務する"
+        }
+      ]
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

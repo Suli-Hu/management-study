@@ -12,13 +12,18 @@
     "ja": "トリプル・ボトムライン"
   },
   "body": {
-    "zh": "企业绩效评价应同时考量经济（Profit）、社会（People）、环境（Planet）三个维度，而非仅关注财务利润",
-    "ja": "——Profit・People・Planetの三次元評価"
+    "zh": {
+      "format": "narrative",
+      "prose": "企业绩效评价应同时考量经济（Profit）、社会（People）、环境（Planet）三个维度，而非仅关注财务利润"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "——Profit・People・Planetの三次元評価"
+    }
   },
   "tags": [
     "t_jg440q"
   ],
-  "format": "narrative",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

@@ -14,11 +14,16 @@
     "ja": "リーダーシップ二次元モデル"
   },
   "body": {
-    "zh": "归纳出关怀（Consideration）和定规（Initiating Structure）两个独立的领导行为维度，标志领导力研究从特质论转向行为论",
-    "ja": "——配慮（Consideration）と構造づくり（Initiating Structure）という二つの独立したリーダー行動次元を帰納的に抽出し、リーダーシップ研究が特性論から行動論へ転換する画期となった"
+    "zh": {
+      "format": "narrative",
+      "prose": "归纳出关怀（Consideration）和定规（Initiating Structure）两个独立的领导行为维度，标志领导力研究从特质论转向行为论"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "——配慮（Consideration）と構造づくり（Initiating Structure）という二つの独立したリーダー行動次元を帰納的に抽出し、リーダーシップ研究が特性論から行動論へ転換する画期となった"
+    }
   },
   "tags": [],
-  "format": "narrative",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

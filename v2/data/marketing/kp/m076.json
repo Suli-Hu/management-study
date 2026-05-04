@@ -15,25 +15,36 @@
     "en": "Causation vs Effectuation"
   },
   "body": {
-    "zh": "Causation vs Effectuation是 Sarasvathy 2001 年提出的 2 种对立的战略行动逻辑·effectuation 学派的元区分。<br><br>5 维度对照：<br><br>| 维度 | Causation | Effectuation |<br>|---|---|---|<br>| 起点 | 明确目标 | 已有手段 |<br>| 决策依据 | 预期收益最大化 | 可承受损失 |<br>| 与他人关系 | 竞争·有利的合作 | 非竞争性合作（crazy quilt）|<br>| 对意外 | 避免·控制 | 拥抱·利用（lemonade）|<br>| 对未来 | 预测·适应 | 塑造·控制（pilot in the plane）|<br><br>实例对照：<br>开餐厅：<br>- Causation：① 市场调研「人们想吃什么」② 选定菜系（如意大利菜）③ 找好厨师 ④ 选好地段 ⑤ 大投资开店<br>- Effectuation：① 我会做意大利菜（means: skill）② 朋友想合伙（means: network）③ 我有 ¥500 万储蓄·最多失去 ¥200 万（affordable loss）④ 在朋友家附近的小店开始（resource-based）⑤ 试 pop-up·根据反馈迭代<br><br>使用 context：<br>- Causation 适用：已知市场·成熟产业·大企业（环境可预测）<br>- Effectuation 适用：未知市场·创新·startup·entrepreneur（环境不可预测）<br><br>marketing 启示：<br>① 不是「Causation 好 vs Effectuation 好」·而是看 context<br>② 创新型 marketing campaign 多用 effectuation 思维<br>③ 既有 brand 战略多用 causation<br>④ 实务中常混合·hybrid 模式<br><br>实证研究：Sarasvathy 研究 27 位「专家创业者」（成功创立 1 家以上 IPO 公司·有 15 年以上经验）·发现他们普遍用 effectuation·而非 causation——这是 effectuation 理论的实证基础。<br><br>跨学派关系：与 strategic_marketing 的传统 SWOT·5 forces 分析对立·但实务中可结合。",
-    "ja": "Causation vs Effectuationは Sarasvathy 2001 年提唱の 2 つの対立的戦略行動論理·effectuation 学派のメタ区分。<br><br>5 次元対照：<br>| 次元 | Causation | Effectuation |<br>|---|---|---|<br>| 起点 | 明確な目標 | 既有手段 |<br>| 意思決定依拠 | 期待収益最大化 | 可承受損失 |<br>| 他者との関係 | 競争·有利協力 | 非競争協力（crazy quilt）|<br>| 予期外への対応 | 回避·制御 | 抱擁·利用（lemonade）|<br>| 未来への態度 | 予測·適応 | 塑造·制御（pilot in the plane）|<br><br>事例対照：レストラン開業·Causation は市場調査·メニュー選定·投資·effectuation は手段（skill·network）·affordable loss·pop-up 反復。<br><br>使用 context：Causation は既知市場·成熟産業·大企業（予測可能）·Effectuation は未知市場·イノベーション·スタートアップ（予測不可能）<br><br>マーケティング示唆：① 「Causation 良 vs Effectuation 良」ではなくcontext 依存 ② 革新型キャンペーン effectuation ③ 既存ブランド戦略 causation ④ 実務 hybrid<br><br>実証研究：Sarasvathy 研究 27 位専門起業家（IPO 1 社以上·15 年以上経験）·effectuation 普遍使用·causation ではない——effectuation 理論の実証基盤。<br><br>他派との関係：strategic_marketing の伝統 SWOT·5 forces と対立·実務結合可。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Causation vs Effectuation是 Sarasvathy 2001 年提出的 2 种对立的战略行动逻辑·effectuation 学派的元区分。<br><br>5 维度对照：<br><br>| 维度 | Causation | Effectuation |<br>|---|---|---|<br>| 起点 | 明确目标 | 已有手段 |<br>| 决策依据 | 预期收益最大化 | 可承受损失 |<br>| 与他人关系 | 竞争·有利的合作 | 非竞争性合作（crazy quilt）|<br>| 对意外 | 避免·控制 | 拥抱·利用（lemonade）|<br>| 对未来 | 预测·适应 | 塑造·控制（pilot in the plane）|<br><br>实例对照：<br>开餐厅：<br>- Causation：① 市场调研「人们想吃什么」② 选定菜系（如意大利菜）③ 找好厨师 ④ 选好地段 ⑤ 大投资开店<br>- Effectuation：① 我会做意大利菜（means: skill）② 朋友想合伙（means: network）③ 我有 ¥500 万储蓄·最多失去 ¥200 万（affordable loss）④ 在朋友家附近的小店开始（resource-based）⑤ 试 pop-up·根据反馈迭代<br><br>使用 context：<br>- Causation 适用：已知市场·成熟产业·大企业（环境可预测）<br>- Effectuation 适用：未知市场·创新·startup·entrepreneur（环境不可预测）<br><br>marketing 启示：<br>① 不是「Causation 好 vs Effectuation 好」·而是看 context<br>② 创新型 marketing campaign 多用 effectuation 思维<br>③ 既有 brand 战略多用 causation<br>④ 实务中常混合·hybrid 模式<br><br>实证研究：Sarasvathy 研究 27 位「专家创业者」（成功创立 1 家以上 IPO 公司·有 15 年以上经验）·发现他们普遍用 effectuation·而非 causation——这是 effectuation 理论的实证基础。<br><br>跨学派关系：与 strategic_marketing 的传统 SWOT·5 forces 分析对立·但实务中可结合。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Causation vs Effectuationは Sarasvathy 2001 年提唱の 2 つの対立的戦略行動論理·effectuation 学派のメタ区分。<br><br>5 次元対照：<br>| 次元 | Causation | Effectuation |<br>|---|---|---|<br>| 起点 | 明確な目標 | 既有手段 |<br>| 意思決定依拠 | 期待収益最大化 | 可承受損失 |<br>| 他者との関係 | 競争·有利協力 | 非競争協力（crazy quilt）|<br>| 予期外への対応 | 回避·制御 | 抱擁·利用（lemonade）|<br>| 未来への態度 | 予測·適応 | 塑造·制御（pilot in the plane）|<br><br>事例対照：レストラン開業·Causation は市場調査·メニュー選定·投資·effectuation は手段（skill·network）·affordable loss·pop-up 反復。<br><br>使用 context：Causation は既知市場·成熟産業·大企業（予測可能）·Effectuation は未知市場·イノベーション·スタートアップ（予測不可能）<br><br>マーケティング示唆：① 「Causation 良 vs Effectuation 良」ではなくcontext 依存 ② 革新型キャンペーン effectuation ③ 既存ブランド戦略 causation ④ 実務 hybrid<br><br>実証研究：Sarasvathy 研究 27 位専門起業家（IPO 1 社以上·15 年以上経験）·effectuation 普遍使用·causation ではない——effectuation 理論の実証基盤。<br><br>他派との関係：strategic_marketing の伝統 SWOT·5 forces と対立·実務結合可。"
+    }
   },
   "tags": [
     "causation",
     "effectuation",
     "Sarasvathy"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "effectuation 学派的元理论·2 大行动逻辑对照",
-      "限": "二分法过简·实际混合·context 判断主观",
-      "例": "成熟企业 = Causation·startup = Effectuation",
-      "应": "effectuation 论述·strategic 题"
+      "meaning": "effectuation 学派的元理论·2 大行动逻辑对照",
+      "limit": "二分法过简·实际混合·context 判断主观",
+      "example": "成熟企业 = Causation·startup = Effectuation",
+      "response": "effectuation 论述·strategic 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "二分法過簡·実際混合·context 判断主観",
-      "例": "成熟企業 = Causation·startup = Effectuation"
+      "meaning": "",
+      "limit": "二分法過簡·実際混合·context 判断主観",
+      "example": "成熟企業 = Causation·startup = Effectuation",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:14:05.826Z",

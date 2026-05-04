@@ -14,25 +14,36 @@
     "en": "Channel Conflict Management"
   },
   "body": {
-    "zh": "Channel Conflict（チャネル・コンフリクト·渠道冲突）是 channel 内多主体（厂家·批发·零售）目标·利益·决策权不一致导致的冲突·Stern 系统化研究。<br><br>3 类 channel conflict：<br>① Vertical Conflict（垂直冲突）——不同层级间（如厂家 vs 经销商关于价格·区域）<br>② Horizontal Conflict（水平冲突）——同一层级内（如同区域多家经销商互相挖客）<br>③ Multichannel Conflict（多 channel 冲突）——同公司不同 channel 之间（如线上 vs 线下争客户）<br><br>5 大冲突原因：① 目标不一致——厂家要利润·经销商要销量 ② 角色模糊——谁负责什么不清 ③ 资源稀缺——好货优先给谁 ④ 感知差异——对市场判断不同 ⑤ 沟通不足——信息不对称<br><br>5 大解决方法（Stern·French-Raven 5 power bases·1959）：<br>① Reward Power（奖励权）——给好的回报来引导<br>② Coercive Power（强制权）——惩罚或威胁（最后手段）<br>③ Legitimate Power（合法权）——契约规定·法律义务<br>④ Expert Power（专家权）——技术·知识优势<br>⑤ Referent Power（参照权）——基于 brand·关系的认同<br><br>实务策略：① 建立明确的 channel 协议 ② 定期沟通 ③ 公平的利益分配 ④ 区域和角色的清晰划分 ⑤ 共同培训和品牌活动 ⑥ 仲裁机制<br><br>典型案例：<br>① Apple 早期 vs Best Buy——线上苹果店 vs 实体经销商利益冲突<br>② 汽车厂家 vs dealer——电动车直销（Tesla 模式）vs 传统 dealer 模式的根本冲突<br>③ Nike vs Foot Locker——Nike DTC 战略削减经销商利益<br><br>跨学派关系：与 relationship 学派的「3 つのリレーションシップ」（嶋口）·「製販同盟」（和田）形成对照——前者讲冲突·后者讲合作。",
-    "ja": "Channel Conflict（チャネル・コンフリクト）はチャネル内多主体（メーカー·卸·小売）の目標·利益·意思決定権不一致によるコンフリクト·Stern が体系化研究。<br><br>3 類のチャネル・コンフリクト：① 垂直 ② 水平 ③ マルチチャネル<br><br>5 大原因：① 目標不一致 ② 役割曖昧 ③ 資源希少 ④ 知覚差異 ⑤ コミュニケーション不足<br><br>5 大解決方法（Stern·French-Raven 5 power bases·1959）：① Reward Power ② Coercive Power ③ Legitimate Power ④ Expert Power ⑤ Referent Power<br><br>実務戦略：① 明確なチャネル契約 ② 定期コミュニケーション ③ 公平な利益配分 ④ 区域·役割の明確区分 ⑤ 共同訓練·ブランド活動 ⑥ 仲裁機構<br><br>典型事例：① Apple 初期 vs Best Buy ② 自動車メーカー vs ディーラー（Tesla 直販モデルの根本コンフリクト）③ Nike vs Foot Locker（Nike DTC 戦略）<br><br>他派との関係：relationship 学派の「3 つのリレーションシップ」（嶋口）·「製販同盟」（和田）と対照——前者はコンフリクト·後者は協力。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Channel Conflict（チャネル・コンフリクト·渠道冲突）是 channel 内多主体（厂家·批发·零售）目标·利益·决策权不一致导致的冲突·Stern 系统化研究。<br><br>3 类 channel conflict：<br>① Vertical Conflict（垂直冲突）——不同层级间（如厂家 vs 经销商关于价格·区域）<br>② Horizontal Conflict（水平冲突）——同一层级内（如同区域多家经销商互相挖客）<br>③ Multichannel Conflict（多 channel 冲突）——同公司不同 channel 之间（如线上 vs 线下争客户）<br><br>5 大冲突原因：① 目标不一致——厂家要利润·经销商要销量 ② 角色模糊——谁负责什么不清 ③ 资源稀缺——好货优先给谁 ④ 感知差异——对市场判断不同 ⑤ 沟通不足——信息不对称<br><br>5 大解决方法（Stern·French-Raven 5 power bases·1959）：<br>① Reward Power（奖励权）——给好的回报来引导<br>② Coercive Power（强制权）——惩罚或威胁（最后手段）<br>③ Legitimate Power（合法权）——契约规定·法律义务<br>④ Expert Power（专家权）——技术·知识优势<br>⑤ Referent Power（参照权）——基于 brand·关系的认同<br><br>实务策略：① 建立明确的 channel 协议 ② 定期沟通 ③ 公平的利益分配 ④ 区域和角色的清晰划分 ⑤ 共同培训和品牌活动 ⑥ 仲裁机制<br><br>典型案例：<br>① Apple 早期 vs Best Buy——线上苹果店 vs 实体经销商利益冲突<br>② 汽车厂家 vs dealer——电动车直销（Tesla 模式）vs 传统 dealer 模式的根本冲突<br>③ Nike vs Foot Locker——Nike DTC 战略削减经销商利益<br><br>跨学派关系：与 relationship 学派的「3 つのリレーションシップ」（嶋口）·「製販同盟」（和田）形成对照——前者讲冲突·后者讲合作。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Channel Conflict（チャネル・コンフリクト）はチャネル内多主体（メーカー·卸·小売）の目標·利益·意思決定権不一致によるコンフリクト·Stern が体系化研究。<br><br>3 類のチャネル・コンフリクト：① 垂直 ② 水平 ③ マルチチャネル<br><br>5 大原因：① 目標不一致 ② 役割曖昧 ③ 資源希少 ④ 知覚差異 ⑤ コミュニケーション不足<br><br>5 大解決方法（Stern·French-Raven 5 power bases·1959）：① Reward Power ② Coercive Power ③ Legitimate Power ④ Expert Power ⑤ Referent Power<br><br>実務戦略：① 明確なチャネル契約 ② 定期コミュニケーション ③ 公平な利益配分 ④ 区域·役割の明確区分 ⑤ 共同訓練·ブランド活動 ⑥ 仲裁機構<br><br>典型事例：① Apple 初期 vs Best Buy ② 自動車メーカー vs ディーラー（Tesla 直販モデルの根本コンフリクト）③ Nike vs Foot Locker（Nike DTC 戦略）<br><br>他派との関係：relationship 学派の「3 つのリレーションシップ」（嶋口）·「製販同盟」（和田）と対照——前者はコンフリクト·後者は協力。"
+    }
   },
   "tags": [
     "channel conflict",
     "French-Raven",
     "power bases"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "channel 学派的核心实务问题·conflict 管理是 channel 战略关键",
-      "限": "5 power bases 应用主观·跨文化适用",
-      "例": "Tesla 直销 vs 传统 dealer 是教科书冲突案例",
-      "应": "Kotler 15 章·channel 题"
+      "meaning": "channel 学派的核心实务问题·conflict 管理是 channel 战略关键",
+      "limit": "5 power bases 应用主观·跨文化适用",
+      "example": "Tesla 直销 vs 传统 dealer 是教科书冲突案例",
+      "response": "Kotler 15 章·channel 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "5 power bases 応用主観·異文化適用",
-      "例": "Tesla 直販 vs 伝統ディーラーは教科書コンフリクト事例"
+      "meaning": "",
+      "limit": "5 power bases 応用主観·異文化適用",
+      "example": "Tesla 直販 vs 伝統ディーラーは教科書コンフリクト事例",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:03:44.728Z",

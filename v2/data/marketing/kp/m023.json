@@ -14,24 +14,35 @@
     "en": "S-O-R Model"
   },
   "body": {
-    "zh": "S-O-R モデル（Stimulus-Organism-Response）是消费者行为学派的基础概念框架·把消费者决策分解为「输入-处理-输出」。<br><br>3 部分：<br><br>① S（Stimulus·刺激）——外部输入<br>来源：marketing 刺激（4P：产品·价格·渠道·促销）·环境刺激（经济·技术·政治·文化）。<br><br>② O（Organism·机体）——消费者内部处理<br>包含：消费者特性（文化·社会·个人·心理因素）+ 决策过程（5 步：问题识别→信息搜索→评价→购买→后购）。<br><br>③ R（Response·反应）——输出<br>包括：产品选择·brand 选择·购买时机·购买数量·购买频度。<br><br>核心思想：marketing 不能直接控制 R·只能通过 S·让 O 内部处理后输出有利的 R。「black box」（黑盒）的 O 是 marketing 研究的核心对象。<br><br>历史地位：S-O-R 是认知心理学派 marketing 的范式起点·Howard-Sheth 1969·EBM 1968·Bettman 1979 等具体模型都建立在 S-O-R 框架之上。<br><br>跨学派关系：与 CCT 学派（人文范式）形成对照——CCT 拒绝把消费者当成可以输入-输出建模的「机体」·而是视为意味生产者。",
-    "ja": "S-O-R モデル（Stimulus-Organism-Response）は消費者行動学派の基礎概念フレーム·消費者意思決定を「入力-処理-出力」に分解。<br><br>3 部分：<br><br>① S（Stimulus·刺激）·外部入力<br>源：マーケティング刺激（4P）·環境刺激（経済·技術·政治·文化）。<br><br>② O（Organism·機体）·消費者内部処理<br>消費者特性（文化·社会·個人·心理）+ 意思決定プロセス（5 段階）。<br><br>③ R（Response·反応）·出力<br>製品選択·ブランド選択·購買時期·購買量·購買頻度。<br><br>核心思想：マーケティングは R を直接制御できず·S を通じて O が内部処理後·有利な R を出力。「ブラックボックス」の O がマーケティング研究の核心対象。<br><br>歴史的位置：S-O-R は認知心理学派マーケティングのパラダイム起点·Howard-Sheth 1969·EBM 1968·Bettman 1979 等具体モデルが S-O-R 上に構築。<br><br>他派との関係：CCT 学派（人文パラダイム）と対照——CCT は消費者を input-output モデル化可能な「機体」と見做さず·意味生産者と捉える。"
+    "zh": {
+      "format": "narrative",
+      "prose": "S-O-R モデル（Stimulus-Organism-Response）是消费者行为学派的基础概念框架·把消费者决策分解为「输入-处理-输出」。<br><br>3 部分：<br><br>① S（Stimulus·刺激）——外部输入<br>来源：marketing 刺激（4P：产品·价格·渠道·促销）·环境刺激（经济·技术·政治·文化）。<br><br>② O（Organism·机体）——消费者内部处理<br>包含：消费者特性（文化·社会·个人·心理因素）+ 决策过程（5 步：问题识别→信息搜索→评价→购买→后购）。<br><br>③ R（Response·反应）——输出<br>包括：产品选择·brand 选择·购买时机·购买数量·购买频度。<br><br>核心思想：marketing 不能直接控制 R·只能通过 S·让 O 内部处理后输出有利的 R。「black box」（黑盒）的 O 是 marketing 研究的核心对象。<br><br>历史地位：S-O-R 是认知心理学派 marketing 的范式起点·Howard-Sheth 1969·EBM 1968·Bettman 1979 等具体模型都建立在 S-O-R 框架之上。<br><br>跨学派关系：与 CCT 学派（人文范式）形成对照——CCT 拒绝把消费者当成可以输入-输出建模的「机体」·而是视为意味生产者。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "S-O-R モデル（Stimulus-Organism-Response）は消費者行動学派の基礎概念フレーム·消費者意思決定を「入力-処理-出力」に分解。<br><br>3 部分：<br><br>① S（Stimulus·刺激）·外部入力<br>源：マーケティング刺激（4P）·環境刺激（経済·技術·政治·文化）。<br><br>② O（Organism·機体）·消費者内部処理<br>消費者特性（文化·社会·個人·心理）+ 意思決定プロセス（5 段階）。<br><br>③ R（Response·反応）·出力<br>製品選択·ブランド選択·購買時期·購買量·購買頻度。<br><br>核心思想：マーケティングは R を直接制御できず·S を通じて O が内部処理後·有利な R を出力。「ブラックボックス」の O がマーケティング研究の核心対象。<br><br>歴史的位置：S-O-R は認知心理学派マーケティングのパラダイム起点·Howard-Sheth 1969·EBM 1968·Bettman 1979 等具体モデルが S-O-R 上に構築。<br><br>他派との関係：CCT 学派（人文パラダイム）と対照——CCT は消費者を input-output モデル化可能な「機体」と見做さず·意味生産者と捉える。"
+    }
   },
   "tags": [
     "S-O-R",
     "consumer behavior"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "消费者行为认知学派的范式起点·所有具体模型的元框架",
-      "限": "把消费者「黑盒化」·失去主体性维度",
-      "例": "S=促销广告·O=Howard-Sheth 内部决策·R=购买行为",
-      "应": "Kotler 第 3 章·消费者行为题前置框架"
+      "meaning": "消费者行为认知学派的范式起点·所有具体模型的元框架",
+      "limit": "把消费者「黑盒化」·失去主体性维度",
+      "example": "S=促销广告·O=Howard-Sheth 内部决策·R=购买行为",
+      "response": "Kotler 第 3 章·消费者行为题前置框架",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "消費者を「ブラックボックス化」·主体性次元喪失",
-      "例": "S=プロモーション広告·O=Howard-Sheth 内部意思決定·R=購買行動"
+      "meaning": "",
+      "limit": "消費者を「ブラックボックス化」·主体性次元喪失",
+      "example": "S=プロモーション広告·O=Howard-Sheth 内部意思決定·R=購買行動",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:51:35.791Z",

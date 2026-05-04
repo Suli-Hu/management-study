@@ -16,8 +16,14 @@
     "en": "Psychological Pricing"
   },
   "body": {
-    "zh": "Psychological Pricing（心理价格）是利用消费者非理性认知偏差设计价格的战略·Kotler 11 章·Pro Plus 第 9 章核心。<br><br>5 大心理价格类型：<br>① Odd Pricing（端数价格·9 分尾）——¥1,990 比 ¥2,000 感觉便宜很多（left-digit effect）<br>② Prestige Pricing（威光价格）——高价 = 高质量信号·奢侈品定价<br>③ Customary Pricing（慣習价格）——日本巧克力 ¥100·消费者期待<br>④ Reference Pricing（参照价格）——「原价 ¥10,000 → 现价 ¥7,000」激活 anchor + loss aversion<br>⑤ Bundling Pricing（组合定价）——「3 件套 ¥1,500」比单买 3×¥600 感觉便宜<br><br>背后的认知机制（行为经济学）：<br>① Anchoring（锚定）—— reference price<br>② Loss Aversion（损失厌恶）——「错过折扣 = 损失」<br>③ Mental Accounting（心理账户）—— bundle 价格被算作一项<br>④ Left-Digit Effect—— 9 vs 0 的强烈差异感<br><br>典型例：① iPhone 起价 $799（不是 $800）② 711 商品 ¥98·¥138（端数）③ Hermès 高价制造稀缺感 ④ Costco 三明治套餐捆绑<br><br>跨学派关系：与 consumer_behavior BDT（m106）·Prospect Theory（m028）直接对接·是行为经济学 marketing 的具体应用。",
-    "ja": "Psychological Pricing（心理価格）は消費者の非合理認知バイアスを利用する価格戦略·Kotler 11 章·Pro Plus 第 9 章核心。<br><br>5 大心理価格類型：① Odd Pricing（端数·¥1,990 vs ¥2,000） ② Prestige Pricing（威光·高価=高品質シグナル） ③ Customary Pricing（慣習·日本チョコ ¥100） ④ Reference Pricing（参照·「元価 → 現価」） ⑤ Bundling Pricing（組合·3 件 ¥1,500）<br><br>背後の認知メカニズム：① Anchoring ② Loss Aversion ③ Mental Accounting ④ Left-Digit Effect<br><br>典型例：① iPhone 起価 $799 ② 711 商品 ¥98·¥138 ③ Hermès 高価·稀少感 ④ Costco サンドイッチ組合<br><br>他派との関係：consumer_behavior BDT（m106）·プロスペクト理論（m028）と直接接続·行動経済学マーケティングの具体応用。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Psychological Pricing（心理价格）是利用消费者非理性认知偏差设计价格的战略·Kotler 11 章·Pro Plus 第 9 章核心。<br><br>5 大心理价格类型：<br>① Odd Pricing（端数价格·9 分尾）——¥1,990 比 ¥2,000 感觉便宜很多（left-digit effect）<br>② Prestige Pricing（威光价格）——高价 = 高质量信号·奢侈品定价<br>③ Customary Pricing（慣習价格）——日本巧克力 ¥100·消费者期待<br>④ Reference Pricing（参照价格）——「原价 ¥10,000 → 现价 ¥7,000」激活 anchor + loss aversion<br>⑤ Bundling Pricing（组合定价）——「3 件套 ¥1,500」比单买 3×¥600 感觉便宜<br><br>背后的认知机制（行为经济学）：<br>① Anchoring（锚定）—— reference price<br>② Loss Aversion（损失厌恶）——「错过折扣 = 损失」<br>③ Mental Accounting（心理账户）—— bundle 价格被算作一项<br>④ Left-Digit Effect—— 9 vs 0 的强烈差异感<br><br>典型例：① iPhone 起价 $799（不是 $800）② 711 商品 ¥98·¥138（端数）③ Hermès 高价制造稀缺感 ④ Costco 三明治套餐捆绑<br><br>跨学派关系：与 consumer_behavior BDT（m106）·Prospect Theory（m028）直接对接·是行为经济学 marketing 的具体应用。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Psychological Pricing（心理価格）は消費者の非合理認知バイアスを利用する価格戦略·Kotler 11 章·Pro Plus 第 9 章核心。<br><br>5 大心理価格類型：① Odd Pricing（端数·¥1,990 vs ¥2,000） ② Prestige Pricing（威光·高価=高品質シグナル） ③ Customary Pricing（慣習·日本チョコ ¥100） ④ Reference Pricing（参照·「元価 → 現価」） ⑤ Bundling Pricing（組合·3 件 ¥1,500）<br><br>背後の認知メカニズム：① Anchoring ② Loss Aversion ③ Mental Accounting ④ Left-Digit Effect<br><br>典型例：① iPhone 起価 $799 ② 711 商品 ¥98·¥138 ③ Hermès 高価·稀少感 ④ Costco サンドイッチ組合<br><br>他派との関係：consumer_behavior BDT（m106）·プロスペクト理論（m028）と直接接続·行動経済学マーケティングの具体応用。"
+    }
   },
   "tags": [
     "psychological pricing",
@@ -25,17 +31,22 @@
     "prestige",
     "reference"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "价格战略的认知科学化·marketing 实务工具",
-      "限": "过度使用消费者反感·跨文化适用",
-      "例": "iPhone $799·Hermès·Costco bundle 是教科书",
-      "应": "Kotler 11 章·价格 + BDT 题"
+      "meaning": "价格战略的认知科学化·marketing 实务工具",
+      "limit": "过度使用消费者反感·跨文化适用",
+      "example": "iPhone $799·Hermès·Costco bundle 是教科书",
+      "response": "Kotler 11 章·价格 + BDT 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "過剰使用は消費者反感·異文化適用",
-      "例": "iPhone $799·Hermès·Costco bundle 教科書"
+      "meaning": "",
+      "limit": "過剰使用は消費者反感·異文化適用",
+      "example": "iPhone $799·Hermès·Costco bundle 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:35:42.624Z",

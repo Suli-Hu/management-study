@@ -15,13 +15,18 @@
     "ja": "組織化"
   },
   "body": {
-    "zh": "组织是持续进行中的过程而非静态结构，成员通过行为循环（Act-Interact-Double Interact）维持松散耦合的协调秩序",
-    "ja": "——組織は静態的な構造ではなく、持続的に進行するプロセスである。メンバーは行動の循環（Act-Interact-Double Interact）を通じて疎結合の調整秩序を維持する"
+    "zh": {
+      "format": "narrative",
+      "prose": "组织是持续进行中的过程而非静态结构，成员通过行为循环（Act-Interact-Double Interact）维持松散耦合的协调秩序"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "——組織は静態的な構造ではなく、持続的に進行するプロセスである。メンバーは行動の循環（Act-Interact-Double Interact）を通じて疎結合の調整秩序を維持する"
+    }
   },
   "tags": [
     "t_93nqjd"
   ],
-  "format": "narrative",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

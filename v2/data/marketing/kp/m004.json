@@ -14,21 +14,32 @@
     "en": "Segmentation Variables"
   },
   "body": {
-    "zh": "市场细分使用的 4 大变量·Kotler 教材标准分类。记忆口诀：「地·人·行·心」。<br><br>① Demographic（人口统计·人）：年龄·性别·收入·教育·职业·家庭结构·世代（如 Gen Z·Millennial）·人种。<br>例：「25-35 岁·女性·年收 600 万円以上·都市单身」<br><br>② Geographic（地理·地）：国家·地区·都市规模·气候·人口密度·城乡。<br>例：「沿海大都市（東京·大阪·名古屋）vs 地方都市」<br><br>③ Behavioral（行动·行）：购入频度·使用场面·brand loyalty·价格敏感度·use rate·benefits sought（追求的利益）。<br>例：「heavy user / 季节性购买 / 价格敏感型 / 时尚追随者」<br><br>④ Psychographic（心理·心）：性格·价值观·生活方式·关心事·态度·VALS（Values, Attitudes and Lifestyles）分类。<br>例：「环境意识高·minimalist 派·DIY 派·快节奏都市派」<br><br>类型分类：① 和 ② 是「硬数据」（直接观测）·③ 和 ④ 是「软数据」（需调研推断）。<br><br>实务应用：通常组合 2-3 个变量切·如「Demographic + Psychographic」（如 25-35 岁 × 环境意识高 = 都市绿色消费者）。<br><br>限界：传统 4 变量在数字时代显不足·新增了「needs-based segmentation」（需求基础细分·Kotler 16 版强调）·按消费者实际需求切分而非身份属性。",
-    "ja": "市場細分化に使用する 4 つの変数·Kotler 教材の標準分類。記憶口訣：「地·人·行·心」。<br><br>① Demographic（人口統計·人）：年齢·性別·収入·教育·職業·家族構成·世代（Gen Z·Millennial 等）·人種。<br>例：「25-35 歳·女性·年収 600 万円以上·都市独身」<br><br>② Geographic（地理·地）：国·地域·都市規模·気候·人口密度·都市/地方。<br>例：「沿海大都市（東京·大阪·名古屋）vs 地方都市」<br><br>③ Behavioral（行動·行）：購入頻度·使用場面·ブランド・ロイヤルティ·価格感応度·use rate·benefits sought（追求利益）。<br>例：「heavy user / 季節購入 / 価格敏感 / 流行追随」<br><br>④ Psychographic（サイコグラフィック·心）：性格·価値観·ライフスタイル·関心事·態度·VALS 分類。<br>例：「環境意識高·minimalist 派·DIY 派·都市快ペース派」<br><br>タイプ分類：① と ② は「ハードデータ」（直接観測）·③ と ④ は「ソフトデータ」（調査推論必要）。<br><br>実務応用：通常 2-3 変数を組合せ·例「Demographic + Psychographic」（25-35 歳 × 環境意識高 = 都市グリーン消費者）。<br><br>限界：伝統 4 変数はデジタル時代で不足·新たに「needs-based segmentation」（ニーズ基底細分化·Kotler 16 版強調）が登場·消費者の実際のニーズで切り分け。"
-  },
-  "tags": [],
-  "format": "narrative",
-  "evalContent": {
     "zh": {
-      "义": "市场细分的标准操作工具·从抽象「细分」到具体「怎么切」",
-      "限": "4 变量在数字时代显不足·needs-based 是新方向",
-      "例": "UNIQLO 用 psychographic+behavioral 切美国市场为「basic-needs 派」",
-      "应": "Kotler 16 版第 6.5 节·STP 第一步实操"
+      "format": "narrative",
+      "prose": "市场细分使用的 4 大变量·Kotler 教材标准分类。记忆口诀：「地·人·行·心」。<br><br>① Demographic（人口统计·人）：年龄·性别·收入·教育·职业·家庭结构·世代（如 Gen Z·Millennial）·人种。<br>例：「25-35 岁·女性·年收 600 万円以上·都市单身」<br><br>② Geographic（地理·地）：国家·地区·都市规模·气候·人口密度·城乡。<br>例：「沿海大都市（東京·大阪·名古屋）vs 地方都市」<br><br>③ Behavioral（行动·行）：购入频度·使用场面·brand loyalty·价格敏感度·use rate·benefits sought（追求的利益）。<br>例：「heavy user / 季节性购买 / 价格敏感型 / 时尚追随者」<br><br>④ Psychographic（心理·心）：性格·价值观·生活方式·关心事·态度·VALS（Values, Attitudes and Lifestyles）分类。<br>例：「环境意识高·minimalist 派·DIY 派·快节奏都市派」<br><br>类型分类：① 和 ② 是「硬数据」（直接观测）·③ 和 ④ 是「软数据」（需调研推断）。<br><br>实务应用：通常组合 2-3 个变量切·如「Demographic + Psychographic」（如 25-35 岁 × 环境意识高 = 都市绿色消费者）。<br><br>限界：传统 4 变量在数字时代显不足·新增了「needs-based segmentation」（需求基础细分·Kotler 16 版强调）·按消费者实际需求切分而非身份属性。"
     },
     "ja": {
-      "限": "4 変数はデジタル時代で不足·needs-based が新方向",
-      "例": "UNIQLO は psychographic+behavioral で米国市場を「basic-needs 派」に"
+      "format": "narrative",
+      "prose": "市場細分化に使用する 4 つの変数·Kotler 教材の標準分類。記憶口訣：「地·人·行·心」。<br><br>① Demographic（人口統計·人）：年齢·性別·収入·教育·職業·家族構成·世代（Gen Z·Millennial 等）·人種。<br>例：「25-35 歳·女性·年収 600 万円以上·都市独身」<br><br>② Geographic（地理·地）：国·地域·都市規模·気候·人口密度·都市/地方。<br>例：「沿海大都市（東京·大阪·名古屋）vs 地方都市」<br><br>③ Behavioral（行動·行）：購入頻度·使用場面·ブランド・ロイヤルティ·価格感応度·use rate·benefits sought（追求利益）。<br>例：「heavy user / 季節購入 / 価格敏感 / 流行追随」<br><br>④ Psychographic（サイコグラフィック·心）：性格·価値観·ライフスタイル·関心事·態度·VALS 分類。<br>例：「環境意識高·minimalist 派·DIY 派·都市快ペース派」<br><br>タイプ分類：① と ② は「ハードデータ」（直接観測）·③ と ④ は「ソフトデータ」（調査推論必要）。<br><br>実務応用：通常 2-3 変数を組合せ·例「Demographic + Psychographic」（25-35 歳 × 環境意識高 = 都市グリーン消費者）。<br><br>限界：伝統 4 変数はデジタル時代で不足·新たに「needs-based segmentation」（ニーズ基底細分化·Kotler 16 版強調）が登場·消費者の実際のニーズで切り分け。"
+    }
+  },
+  "tags": [],
+  "evaluations": {
+    "zh": {
+      "meaning": "市场细分的标准操作工具·从抽象「细分」到具体「怎么切」",
+      "limit": "4 变量在数字时代显不足·needs-based 是新方向",
+      "example": "UNIQLO 用 psychographic+behavioral 切美国市场为「basic-needs 派」",
+      "response": "Kotler 16 版第 6.5 节·STP 第一步实操",
+      "application": "",
+      "analogy": ""
+    },
+    "ja": {
+      "meaning": "",
+      "limit": "4 変数はデジタル時代で不足·needs-based が新方向",
+      "example": "UNIQLO は psychographic+behavioral で米国市場を「basic-needs 派」に",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:40:16.063Z",

@@ -14,25 +14,36 @@
     "en": "Ten Deadly Marketing Sins"
   },
   "body": {
-    "zh": "マーケティング 10 大罪是 Kotler 在 2004 年同名书提出的 marketing 战略10 个常见错误·marketing 自查工具。Kotler 16 版第 1 章 Marketing Insight 引用。<br><br>10 大罪：<br>① 市场没聚焦·定位差——什么都做·什么都不擅长<br>② 不充分理解 target customer——没做客户调研·假设客户需求<br>③ 没有定义 / 监控竞争对手——只看直接 competitor·忽视 substitutes<br>④ 没建立 / 维护与利益相关者的关系——只关注交易·不建关系<br>⑤ 找不到新机会——只做既有产品·不创新<br>⑥ marketing plan 不完善——计划过简·没系统<br>⑦ 产品和服务政策需要严肃化——产品 line 太长·没差异化<br>⑧ brand building 与沟通技能弱——不会建 brand·不会讲故事<br>⑨ 非組織化·非有效率——marketing 部门内部混乱<br>⑩ 没充分用技术——digital marketing·data·AI 落后<br><br>实务用途：<br>① marketing audit checklist——逐条检查企业 marketing 是否健康<br>② consultant diagnostic 工具<br>③ marketing 学生分析企业 case 时的 frame<br><br>跨学派关系：是 Kotler managerial 学派的实务延伸·与 marketing_concept 的「marketing 是企业哲学」一致。",
-    "ja": "マーケティング 10 の大罪は Kotler 2004 年同名書提唱·マーケティング戦略の10 のよくある誤り·マーケティング自己診断ツール。Kotler 16 版第 1 章 Marketing Insight 引用。<br><br>10 大罪：① 市場集中·位置決めが弱い ② 標的顧客を充分理解せず ③ 競合を定義·監視せず ④ 利害関係者と関係構築せず ⑤ 新機会を見つけられない ⑥ マーケティング計画不完備 ⑦ 製品·サービス政策の厳格化必要 ⑧ ブランド構築·コミュニケーション技能弱い ⑨ 非組織化·非効率 ⑩ 技術活用不充分<br><br>実務用途：① マーケティング監査チェックリスト ② コンサルタント診断ツール ③ マーケティング学生のケース分析フレーム<br><br>他派との関係：Kotler managerial 学派の実務延長·marketing_concept の「マーケティングは企業哲学」一致。"
+    "zh": {
+      "format": "narrative",
+      "prose": "マーケティング 10 大罪是 Kotler 在 2004 年同名书提出的 marketing 战略10 个常见错误·marketing 自查工具。Kotler 16 版第 1 章 Marketing Insight 引用。<br><br>10 大罪：<br>① 市场没聚焦·定位差——什么都做·什么都不擅长<br>② 不充分理解 target customer——没做客户调研·假设客户需求<br>③ 没有定义 / 监控竞争对手——只看直接 competitor·忽视 substitutes<br>④ 没建立 / 维护与利益相关者的关系——只关注交易·不建关系<br>⑤ 找不到新机会——只做既有产品·不创新<br>⑥ marketing plan 不完善——计划过简·没系统<br>⑦ 产品和服务政策需要严肃化——产品 line 太长·没差异化<br>⑧ brand building 与沟通技能弱——不会建 brand·不会讲故事<br>⑨ 非組織化·非有效率——marketing 部门内部混乱<br>⑩ 没充分用技术——digital marketing·data·AI 落后<br><br>实务用途：<br>① marketing audit checklist——逐条检查企业 marketing 是否健康<br>② consultant diagnostic 工具<br>③ marketing 学生分析企业 case 时的 frame<br><br>跨学派关系：是 Kotler managerial 学派的实务延伸·与 marketing_concept 的「marketing 是企业哲学」一致。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "マーケティング 10 の大罪は Kotler 2004 年同名書提唱·マーケティング戦略の10 のよくある誤り·マーケティング自己診断ツール。Kotler 16 版第 1 章 Marketing Insight 引用。<br><br>10 大罪：① 市場集中·位置決めが弱い ② 標的顧客を充分理解せず ③ 競合を定義·監視せず ④ 利害関係者と関係構築せず ⑤ 新機会を見つけられない ⑥ マーケティング計画不完備 ⑦ 製品·サービス政策の厳格化必要 ⑧ ブランド構築·コミュニケーション技能弱い ⑨ 非組織化·非効率 ⑩ 技術活用不充分<br><br>実務用途：① マーケティング監査チェックリスト ② コンサルタント診断ツール ③ マーケティング学生のケース分析フレーム<br><br>他派との関係：Kotler managerial 学派の実務延長·marketing_concept の「マーケティングは企業哲学」一致。"
+    }
   },
   "tags": [
     "10 sins",
     "Kotler",
     "marketing audit"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "Kotler marketing 自查框架·实务诊断工具",
-      "限": "过抽象·难量化·case 应用主观",
-      "例": "任何 marketing case 分析都可用 10 sins 检查",
-      "应": "Kotler 第 1 章·marketing 实务"
+      "meaning": "Kotler marketing 自查框架·实务诊断工具",
+      "limit": "过抽象·难量化·case 应用主观",
+      "example": "任何 marketing case 分析都可用 10 sins 检查",
+      "response": "Kotler 第 1 章·marketing 实务",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "過抽象·数量化困難·ケース応用主観",
-      "例": "全マーケティング・ケース分析に 10 sins 適用可"
+      "meaning": "",
+      "limit": "過抽象·数量化困難·ケース応用主観",
+      "example": "全マーケティング・ケース分析に 10 sins 適用可",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:24:44.516Z",

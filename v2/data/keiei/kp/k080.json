@@ -14,13 +14,54 @@
     "ja": "資源ベース理論の核心枠組み"
   },
   "body": {
-    "zh": "企业持续竞争优势来源于其拥有的异质性资源：◆ VRIN条件——有价值、稀缺、难以模仿、不可替代是资源产生持续竞争优势的四个条件；◆ VRIO修订——将\"不可替代\"修订为\"组织\"（Organization），强调企业须有制度能力来利用资源；◆ 资源异质性——不同企业拥有不同的资源禀赋，这种差异性是竞争优势的基础假设；◆ 路径依赖——资源的获取和积累受历史过程制约，无法在要素市场上自由买卖",
-    "ja": "——企業の持続的競争優位の源泉を企業が保有する異質的資源に求める戦略理論の中核フレームワーク：◆ VRIN条件（Value・Rareness・Inimitability・Non-substitutability）——価値があり、希少で、模倣困難かつ代替不可能な資源のみが持続的競争優位をもたらす◆ VRIOへの修訂——バーニーは後にNon-substitutabilityをOrganization（組織）に修訂し、企業が資源を活用するための組織的制度・プロセスの整備を条件に加えた◆ 資源の異質性（Resource Heterogeneity）——企業間で資源賦存が異なるという基本仮定。同一産業内の業績差異を資源の異質性から説明する◆ 経路依存性（Path Dependence）——資源の獲得・蓄積は歴史的過程に制約され、要素市場で自由に売買できない。時間圧縮の不経済（Time Compression Diseconomies）と因果曖昧性（Causal Ambiguity）が模倣障壁を形成する"
+    "zh": {
+      "format": "flat-list",
+      "lead": "企业持续竞争优势来源于其拥有的异质性资源",
+      "items": [
+        {
+          "name": "VRIN条件",
+          "desc": "有价值、稀缺、难以模仿、不可替代是资源产生持续竞争优势的四个条件"
+        },
+        {
+          "name": "VRIO修订",
+          "desc": "将\"不可替代\"修订为\"组织\"（Organization），强调企业须有制度能力来利用资源"
+        },
+        {
+          "name": "资源异质性",
+          "desc": "不同企业拥有不同的资源禀赋，这种差异性是竞争优势的基础假设"
+        },
+        {
+          "name": "路径依赖",
+          "desc": "资源的获取和积累受历史过程制约，无法在要素市场上自由买卖"
+        }
+      ]
+    },
+    "ja": {
+      "format": "flat-list",
+      "lead": "——企業の持続的競争優位の源泉を企業が保有する異質的資源に求める戦略理論の中核フレームワーク",
+      "items": [
+        {
+          "name": "VRIN条件（Value・Rareness・Inimitability・Non-substitutability）",
+          "desc": "価値があり、希少で、模倣困難かつ代替不可能な資源のみが持続的競争優位をもたらす"
+        },
+        {
+          "name": "VRIOへの修訂",
+          "desc": "バーニーは後にNon-substitutabilityをOrganization（組織）に修訂し、企業が資源を活用するための組織的制度・プロセスの整備を条件に加えた"
+        },
+        {
+          "name": "資源の異質性（Resource Heterogeneity）",
+          "desc": "企業間で資源賦存が異なるという基本仮定。同一産業内の業績差異を資源の異質性から説明する"
+        },
+        {
+          "name": "経路依存性（Path Dependence）",
+          "desc": "資源の獲得・蓄積は歴史的過程に制約され、要素市場で自由に売買できない。時間圧縮の不経済（Time Compression Diseconomies）と因果曖昧性（Causal Ambiguity）が模倣障壁を形成する"
+        }
+      ]
+    }
   },
   "tags": [
     "t_jg440q"
   ],
-  "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

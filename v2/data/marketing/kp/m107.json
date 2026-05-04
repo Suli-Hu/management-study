@@ -14,25 +14,36 @@
     "en": "Value Proposition"
   },
   "body": {
-    "zh": "价值提案 3 维是 Kotler 16 版第 7 章独创的价值结构化分析·把价值提案分解为 3 个维度·与传统单一价值视角形成对比。<br><br>3 大价值维度：<br><br>① Functional Value（功能价值）——产品 / 服务的功能性 benefit 与 cost<br>benefit：性能·可靠性·便利性·设计·特征<br>cost：努力·学习时间·使用难度<br>例：iPhone 的相机像素·电池寿命·处理速度<br><br>② Psychological Value（心理价值）——产品 / 服务的心理 benefit 与 cost<br>benefit：情感·自我表达·社会认可·brand 形象·安心感<br>cost：心理压力·焦虑·后悔感·社会风险<br>例：iPhone 的 status·apple ecosystem 的归属感<br><br>③ Monetary Value（金钱价值）——产品 / 服务的金钱 benefit 与 cost<br>benefit：节约·折扣·投资回报<br>cost：购买价·使用费·维护费·机会成本<br>例：iPhone 的总持有成本（购入 + 月费 + accessories + 维修）<br><br>价值的总评价公式：<br>**Total Value = (Functional + Psychological + Monetary) Benefits - (Functional + Psychological + Monetary) Costs**<br><br>消费者选择 Total Value 最高的 brand。<br><br>marketing 战略启示：<br>① brand 设计——明确强化哪一维度（Apple = psychological·Walmart = monetary·Tesla = functional + psychological）<br>② 价格战略——不能只看 monetary·要看综合<br>③ communication——按 target customer 重视的维度强调<br>④ 3 维不平衡的危险——只强 1 维容易输给综合好的 brand<br><br>跨学派关系：① 与 4P / 7T 一起构成 marketing mix 战略 ② 与 STP 的 Targeting 一体——target customer 的 3 维偏好决定价值提案设计 ③ 与 brand_equity 的 brand association 直接对应。",
-    "ja": "価値提案 3 次元は Kotler 16 版第 7 章独自の価値構造化分析·価値提案を 3 次元に分解·伝統的単一価値視点と対比。<br><br>3 大価値次元：<br>① Functional Value（機能的価値）·性能·信頼性·便利性·iPhone のカメラ画素·電池寿命·処理速度<br>② Psychological Value（心理的価値）·情緒·自己表現·社会的認可·iPhone の status·Apple ecosystem の所属感<br>③ Monetary Value（金銭的価値）·節約·割引·iPhone の総保有コスト（購入 + 月料 + accessories + 修理）<br><br>価値の総評価公式：**Total Value = (Functional + Psychological + Monetary) Benefits - (Functional + Psychological + Monetary) Costs**<br><br>マーケティング戦略示唆：① ブランド設計（どの次元強化·Apple = psychological·Walmart = monetary·Tesla = functional + psychological）② 価格戦略 ③ コミュニケーション ④ 3 次元不均衡のリスク<br><br>他派との関係：① 4P / 7T と並ぶマーケティング・ミックス戦略 ② STP Targeting と一体 ③ brand_equity の brand association と直接対応。"
+    "zh": {
+      "format": "narrative",
+      "prose": "价值提案 3 维是 Kotler 16 版第 7 章独创的价值结构化分析·把价值提案分解为 3 个维度·与传统单一价值视角形成对比。<br><br>3 大价值维度：<br><br>① Functional Value（功能价值）——产品 / 服务的功能性 benefit 与 cost<br>benefit：性能·可靠性·便利性·设计·特征<br>cost：努力·学习时间·使用难度<br>例：iPhone 的相机像素·电池寿命·处理速度<br><br>② Psychological Value（心理价值）——产品 / 服务的心理 benefit 与 cost<br>benefit：情感·自我表达·社会认可·brand 形象·安心感<br>cost：心理压力·焦虑·后悔感·社会风险<br>例：iPhone 的 status·apple ecosystem 的归属感<br><br>③ Monetary Value（金钱价值）——产品 / 服务的金钱 benefit 与 cost<br>benefit：节约·折扣·投资回报<br>cost：购买价·使用费·维护费·机会成本<br>例：iPhone 的总持有成本（购入 + 月费 + accessories + 维修）<br><br>价值的总评价公式：<br>**Total Value = (Functional + Psychological + Monetary) Benefits - (Functional + Psychological + Monetary) Costs**<br><br>消费者选择 Total Value 最高的 brand。<br><br>marketing 战略启示：<br>① brand 设计——明确强化哪一维度（Apple = psychological·Walmart = monetary·Tesla = functional + psychological）<br>② 价格战略——不能只看 monetary·要看综合<br>③ communication——按 target customer 重视的维度强调<br>④ 3 维不平衡的危险——只强 1 维容易输给综合好的 brand<br><br>跨学派关系：① 与 4P / 7T 一起构成 marketing mix 战略 ② 与 STP 的 Targeting 一体——target customer 的 3 维偏好决定价值提案设计 ③ 与 brand_equity 的 brand association 直接对应。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "価値提案 3 次元は Kotler 16 版第 7 章独自の価値構造化分析·価値提案を 3 次元に分解·伝統的単一価値視点と対比。<br><br>3 大価値次元：<br>① Functional Value（機能的価値）·性能·信頼性·便利性·iPhone のカメラ画素·電池寿命·処理速度<br>② Psychological Value（心理的価値）·情緒·自己表現·社会的認可·iPhone の status·Apple ecosystem の所属感<br>③ Monetary Value（金銭的価値）·節約·割引·iPhone の総保有コスト（購入 + 月料 + accessories + 修理）<br><br>価値の総評価公式：**Total Value = (Functional + Psychological + Monetary) Benefits - (Functional + Psychological + Monetary) Costs**<br><br>マーケティング戦略示唆：① ブランド設計（どの次元強化·Apple = psychological·Walmart = monetary·Tesla = functional + psychological）② 価格戦略 ③ コミュニケーション ④ 3 次元不均衡のリスク<br><br>他派との関係：① 4P / 7T と並ぶマーケティング・ミックス戦略 ② STP Targeting と一体 ③ brand_equity の brand association と直接対応。"
+    }
   },
   "tags": [
     "value proposition",
     "3 dimensions",
     "Kotler 16 版"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "Kotler 16 版独创·价值提案的结构化分析",
-      "限": "3 维度间相互作用·实务难分离",
-      "例": "Apple·Walmart·Tesla 各代表不同维度强项",
-      "应": "Kotler 16 版第 7 章·价值提案题"
+      "meaning": "Kotler 16 版独创·价值提案的结构化分析",
+      "limit": "3 维度间相互作用·实务难分离",
+      "example": "Apple·Walmart·Tesla 各代表不同维度强项",
+      "response": "Kotler 16 版第 7 章·价值提案题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "3 次元間相互作用·実務分離困難",
-      "例": "Apple·Walmart·Tesla 各次元強み代表"
+      "meaning": "",
+      "limit": "3 次元間相互作用·実務分離困難",
+      "example": "Apple·Walmart·Tesla 各次元強み代表",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:24:15.409Z",

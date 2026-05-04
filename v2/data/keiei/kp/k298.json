@@ -14,13 +14,32 @@
     "ja": "フレキシブル・ファーム・モデル"
   },
   "body": {
-    "zh": "将企业劳动力分为核心层（正式员工，提供功能柔性）和周边层（非正规雇员，提供数量柔性）。三种柔性：①功能柔性（Functional Flexibility）——核心员工多技能、可跨岗调配；②数量柔性（Numerical Flexibility）——通过非正规雇员调节劳动力数量；③财务柔性（Financial Flexibility）——薪酬与业绩挂钩的弹性薪酬制度",
-    "ja": "——企業の労働力を核心層（正社員、機能的柔軟性を提供）と周辺層（非正規雇用者、数量的柔軟性を提供）に区分する。三つの柔軟性：◆ 機能的柔軟性（Functional Flexibility）——コア従業員の多能工化・配置転換可能性◆ 数量的柔軟性（Numerical Flexibility）——非正規雇用者による労働力量の調整◆ 財務的柔軟性（Financial Flexibility）——業績連動型の弾力的賃金制度"
+    "zh": {
+      "format": "narrative",
+      "prose": "将企业劳动力分为核心层（正式员工，提供功能柔性）和周边层（非正规雇员，提供数量柔性）。三种柔性：①功能柔性（Functional Flexibility）——核心员工多技能、可跨岗调配；②数量柔性（Numerical Flexibility）——通过非正规雇员调节劳动力数量；③财务柔性（Financial Flexibility）——薪酬与业绩挂钩的弹性薪酬制度"
+    },
+    "ja": {
+      "format": "flat-list",
+      "lead": "——企業の労働力を核心層（正社員、機能的柔軟性を提供）と周辺層（非正規雇用者、数量的柔軟性を提供）に区分する。三つの柔軟性",
+      "items": [
+        {
+          "name": "機能的柔軟性（Functional Flexibility）",
+          "desc": "コア従業員の多能工化・配置転換可能性"
+        },
+        {
+          "name": "数量的柔軟性（Numerical Flexibility）",
+          "desc": "非正規雇用者による労働力量の調整"
+        },
+        {
+          "name": "財務的柔軟性（Financial Flexibility）",
+          "desc": "業績連動型の弾力的賃金制度"
+        }
+      ]
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

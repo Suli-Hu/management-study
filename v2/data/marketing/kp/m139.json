@@ -16,8 +16,14 @@
     "en": "Innovation Adoption Process"
   },
   "body": {
-    "zh": "Innovation Adoption（创新采用过程）是 Rogers 1962 年提出的消费者层面采用过程·与 Rogers 採用曲線（m030·5 类用户）互补。<br><br>Rogers 5 阶段采用过程：<br>① Awareness（认知）——首次知道<br>② Interest（兴趣）——主动搜索信息<br>③ Evaluation（评估）——决定是否值得试<br>④ Trial（试用）——小规模尝试<br>⑤ Adoption（采用）——决定持续使用<br><br>影响采用速度的 5 大因素（Rogers 1962）：<br>① Relative Advantage（相对优势）——比既有方案优<br>② Compatibility（兼容性）——与既有 values·practices 一致<br>③ Complexity（复杂度）——容易理解 / 使用<br>④ Trialability（可试用）——可低成本尝试<br>⑤ Observability（可观察）——结果可见<br><br>marketing 战略：<br>① 早期 launch 重点：降低 complexity·提升 trialability<br>② awareness 阶段：mass marketing<br>③ trial 阶段：sample·free trial·money-back<br>④ adoption 阶段：retention·loyalty<br><br>Crossing the Chasm（跨越鸿沟·Geoffrey Moore 1991）：<br>Rogers 5 类用户中·early adopters → early majority 之间有「鸿沟」（chasm）。新製品扩散最易夭折在这。<br><br>marketing 战略跨越 chasm：<br>① focus 单一 niche——而非广撒网<br>② whole product——提供 complete solution<br>③ positioning shift——从「酷新东西」到「实用 solution」<br><br>典型例：① Tesla 跨过 chasm（Roadster 跑车 → Model S 高端 → Model 3 大众）② iPhone 1 → iPhone 4 跨 chasm ③ EV 整体 2020 跨 chasm<br><br>跨学派关系：与 Rogers 採用曲線（m030）·Crossing the Chasm（Moore 1991）·digital_marketing 一体。",
-    "ja": "Innovation Adoption（イノベーション採用過程）は Rogers 1962 年提唱の消費者層採用プロセス·Rogers 採用曲線（m030·5 タイプ）と相補。<br><br>Rogers 5 段階採用プロセス：① Awareness ② Interest ③ Evaluation ④ Trial ⑤ Adoption<br><br>採用速度影響 5 大要因（Rogers 1962）：① Relative Advantage ② Compatibility ③ Complexity ④ Trialability ⑤ Observability<br><br>マーケティング戦略：① 早期 launch は complexity 低減·trialability 向上 ② awareness 段階は mass marketing ③ trial 段階は sample·free trial·money-back ④ adoption 段階は retention·loyalty<br><br>Crossing the Chasm（鴻溝越え·Geoffrey Moore 1991）：early adopters → early majority に「鴻溝」·新製品拡散はここで頓挫しやすい。<br><br>chasm 越えマーケティング戦略：① 単一 niche 集中 ② whole product（complete solution）③ positioning shift（「クール」から「実用」）<br><br>典型例：① Tesla（Roadster → Model S → Model 3 で chasm 越え）② iPhone 1 → iPhone 4 ③ EV 2020 全体 chasm 越え<br><br>他派との関係：Rogers 採用曲線（m030）·Crossing the Chasm·digital_marketing と一体。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Innovation Adoption（创新采用过程）是 Rogers 1962 年提出的消费者层面采用过程·与 Rogers 採用曲線（m030·5 类用户）互补。<br><br>Rogers 5 阶段采用过程：<br>① Awareness（认知）——首次知道<br>② Interest（兴趣）——主动搜索信息<br>③ Evaluation（评估）——决定是否值得试<br>④ Trial（试用）——小规模尝试<br>⑤ Adoption（采用）——决定持续使用<br><br>影响采用速度的 5 大因素（Rogers 1962）：<br>① Relative Advantage（相对优势）——比既有方案优<br>② Compatibility（兼容性）——与既有 values·practices 一致<br>③ Complexity（复杂度）——容易理解 / 使用<br>④ Trialability（可试用）——可低成本尝试<br>⑤ Observability（可观察）——结果可见<br><br>marketing 战略：<br>① 早期 launch 重点：降低 complexity·提升 trialability<br>② awareness 阶段：mass marketing<br>③ trial 阶段：sample·free trial·money-back<br>④ adoption 阶段：retention·loyalty<br><br>Crossing the Chasm（跨越鸿沟·Geoffrey Moore 1991）：<br>Rogers 5 类用户中·early adopters → early majority 之间有「鸿沟」（chasm）。新製品扩散最易夭折在这。<br><br>marketing 战略跨越 chasm：<br>① focus 单一 niche——而非广撒网<br>② whole product——提供 complete solution<br>③ positioning shift——从「酷新东西」到「实用 solution」<br><br>典型例：① Tesla 跨过 chasm（Roadster 跑车 → Model S 高端 → Model 3 大众）② iPhone 1 → iPhone 4 跨 chasm ③ EV 整体 2020 跨 chasm<br><br>跨学派关系：与 Rogers 採用曲線（m030）·Crossing the Chasm（Moore 1991）·digital_marketing 一体。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Innovation Adoption（イノベーション採用過程）は Rogers 1962 年提唱の消費者層採用プロセス·Rogers 採用曲線（m030·5 タイプ）と相補。<br><br>Rogers 5 段階採用プロセス：① Awareness ② Interest ③ Evaluation ④ Trial ⑤ Adoption<br><br>採用速度影響 5 大要因（Rogers 1962）：① Relative Advantage ② Compatibility ③ Complexity ④ Trialability ⑤ Observability<br><br>マーケティング戦略：① 早期 launch は complexity 低減·trialability 向上 ② awareness 段階は mass marketing ③ trial 段階は sample·free trial·money-back ④ adoption 段階は retention·loyalty<br><br>Crossing the Chasm（鴻溝越え·Geoffrey Moore 1991）：early adopters → early majority に「鴻溝」·新製品拡散はここで頓挫しやすい。<br><br>chasm 越えマーケティング戦略：① 単一 niche 集中 ② whole product（complete solution）③ positioning shift（「クール」から「実用」）<br><br>典型例：① Tesla（Roadster → Model S → Model 3 で chasm 越え）② iPhone 1 → iPhone 4 ③ EV 2020 全体 chasm 越え<br><br>他派との関係：Rogers 採用曲線（m030）·Crossing the Chasm·digital_marketing と一体。"
+    }
   },
   "tags": [
     "innovation adoption",
@@ -25,17 +31,22 @@
     "chasm",
     "Moore"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "新品扩散的微观心理过程·与 Rogers 採用曲線互补",
-      "限": "线性·跨文化适用·SNS 时代演化",
-      "例": "Tesla·iPhone·EV chasm 跨越是教科书",
-      "应": "Kotler 18 章·新品 marketing 题"
+      "meaning": "新品扩散的微观心理过程·与 Rogers 採用曲線互补",
+      "limit": "线性·跨文化适用·SNS 时代演化",
+      "example": "Tesla·iPhone·EV chasm 跨越是教科书",
+      "response": "Kotler 18 章·新品 marketing 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "線形·異文化適用·SNS 時代進化",
-      "例": "Tesla·iPhone·EV chasm 越え教科書"
+      "meaning": "",
+      "limit": "線形·異文化適用·SNS 時代進化",
+      "example": "Tesla·iPhone·EV chasm 越え教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:36:12.914Z",

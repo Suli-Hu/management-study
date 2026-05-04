@@ -1,15 +1,6 @@
 import { z } from 'zod';
-import { I18nString, BilingualBody } from './i18n';
-import { EVAL_GLYPHS } from '../lib/eval-tag-defs';
-
-/** 评价内容 — glyph → 文本（HTML 允许）。zh / ja 各一份 */
-const EvalContentDict = z.object(
-  Object.fromEntries(EVAL_GLYPHS.map((g) => [g, z.string()])) as Record<string, z.ZodString>,
-).partial();
-const EvalContentBilingual = z.object({
-  zh: EvalContentDict.optional(),
-  ja: EvalContentDict.optional(),
-}).strict();
+import { I18nString } from './i18n';
+import { KpBody, KpEvaluations } from './kp-body-structured';
 
 /**
  * KP id 格式：小写字母前缀 + 数字。
@@ -41,11 +32,17 @@ export const IsoTimestamp = z.string().datetime({ offset: false, message: 'updat
 /**
  * KP（知识点）— 一个文件 = 一个 KP。
  *
- * 文件路径：data/<discipline>/kp/<id>.json
+ * 文件路径：v2/data/<discipline>/kp/<id>.json
+ *
+ * v0.8.10 Stage 5 起 schema 完全切 v0.8 shape（PRD §3.1）：
+ *   - body.zh / body.ja 是 KpBody discriminated union（5 format 各自结构化），
+ *     不再是 string DSL；format 字段在 body 内部
+ *   - evaluations 替代 evalContent：6 字段英文 key（meaning/limit/example/...）
+ *   - 顶层 format 字段已删（信息冗余于 body.zh.format）
  *
  * 设计原则：
- * 1. 中日同文件（不再 cnKey lookup 跨文件，杜绝 v1 那类 bug）
- * 2. 每个交叉引用（schools / scholars）必须在对应文件存在 — 由回归测试 cross-ref 校验
+ * 1. 中日同文件（不再 cnKey lookup 跨文件）
+ * 2. 每个交叉引用（schools / scholars）必须在对应文件存在 — 由 sync-to-d1 cross-ref 校验
  * 3. updatedAt 必填 — 用于 stale 检测和 D1 sync 增量逻辑
  */
 export const Kp = z.object({
@@ -55,20 +52,18 @@ export const Kp = z.object({
   scholars: z.array(ScholarKey).default([]),
   year: z.string().trim().default(''),
   title: I18nString,
-  body: BilingualBody,
 
-  /** 标签 — 引用 discipline.tags[].key；第一个决定 KP 颜色。空 = 中性灰
-   *  v0.5.0 起语义彻底换：从 body 标记可见性（义/限/例…）→ 颜色标签 */
+  /** v0.8.10：body 完全结构化 — discriminated union by format，5 种 format 各自字段集 */
+  body: z.object({
+    zh: KpBody,
+    ja: KpBody.optional(),
+  }).strict(),
+
+  /** 标签 — 引用 discipline.tags[].key；第一个决定 KP 颜色。空 = 中性灰 */
   tags: z.array(z.string()).default([]),
 
-  /** UI 渲染相关的 hint（可选） */
-  format: z.enum(['narrative', 'flat-list', 'accordion', 'compare', 'quad']).default('narrative')
-    .describe('正文渲染格式提示 — 见 v1 CONTRIBUTING §1'),
-
-  /** v0.5.1 评价内容结构化 — 义/限/例/应/用/喻 → 文本（中日各一份）
-   *  老数据通过 scripts/extract-eval-from-body.ts 一次性迁移注入；
-   *  新写入由编辑器直接结构化保存，不再混入 body */
-  evalContent: EvalContentBilingual.optional(),
+  /** v0.8.10：evaluations 取代旧 evalContent — 6 字段英文 key（meaning/limit/example/response/application/analogy） */
+  evaluations: KpEvaluations.optional(),
 
   createdAt: IsoTimestamp,
   updatedAt: IsoTimestamp,

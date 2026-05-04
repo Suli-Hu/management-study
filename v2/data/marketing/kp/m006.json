@@ -15,21 +15,100 @@
     "en": "Evolution of the Marketing Mix"
   },
   "body": {
-    "zh": "Marketing Mix 是把战略转化为可执行战术组合的工具：<compare>Borden 12 要素|组合思想的起源|把营销活动理解为多个可调变量的组合，包括产品计划、价格、品牌、渠道、销售人员、广告、促销、包装、展示、服务、物流、调研等|起源|Borden 1953|优点是全面，缺点是过于复杂，不利于考试快速组织||4P|经典执行框架|Product、Price、Place、Promotion，把企业可控制的营销变量压缩成四类|卖方视角|McCarthy 1960 / Kotler|最适合说明企业如何配置营销手段，是过去问最常用答案骨架||4C|顾客视角的转换|Customer value、Cost、Convenience、Communication，把 4P 从买方视角重新解释|顾客视角|Lauterborn 1990|强调不是卖产品，而是提供顾客价值、降低顾客成本、提高便利性并沟通||7T|Kotler 16 版扩展|Targeting、Technology、Trade、Timing 等扩展要素，强调数字化与行动计划中的执行条件|现代扩展|Kotler 16th|适合说明 4P 并非固定清单，而会随市场环境与技术变化扩展</compare>",
-    "ja": "マーケティング・ミックスは，戦略を実行可能な戦術の組み合わせへ変換する道具である：<compare>Borden 12要素|ミックス思想の起源|製品計画，価格，ブランド，チャネル，販売員，広告，販売促進，包装，陳列，サービス，物流，調査などを含む多数の可変要素の組み合わせ|起源|Borden 1953|包括的だが複雑で，答案では整理しにくい||4P|古典的実行枠組み|Product，Price，Place，Promotion という企業が統制可能な四つの変数|売り手視点|McCarthy 1960 / Kotler|企業がどのようにマーケティング手段を組み合わせるかを説明する標準的骨格||4C|顧客視点への転換|Customer value，Cost，Convenience，Communication によって 4P を買い手側から再解釈する|顧客視点|Lauterborn 1990|製品を売るのではなく，顧客価値を提供し，負担を下げ，便利性と対話を高める||7T|Kotler 第16版の拡張|Targeting，Technology，Trade，Timing など，デジタル化と実行条件を含めて拡張する|現代的拡張|Kotler 16th|4P は固定的リストではなく，市場環境や技術変化に応じて拡張されることを示す</compare>"
-  },
-  "tags": [],
-  "format": "compare",
-  "evalContent": {
     "zh": {
-      "义": "Marketing Mix 是从战略到执行的桥梁，4P 是标准骨架，4C 是顾客视角修正，7T 体现现代扩展。",
-      "限": "容易变成工具清单，若不连接 STP、顾客价值与执行控制，就会缺少战略性。",
-      "例": "新产品上市可用 4P 组织上市方案，再用 4C 检查顾客价值。",
-      "应": "用于回答「マーケティング・ミックスとは何か、その今日的意義と問題点」类题。"
+      "format": "compare",
+      "lead": "Marketing Mix 是把战略转化为可执行战术组合的工具",
+      "cols": [
+        {
+          "title": "Borden 12 要素",
+          "keyword": "组合思想的起源",
+          "desc": "把营销活动理解为多个可调变量的组合，包括产品计划、价格、品牌、渠道、销售人员、广告、促销、包装、展示、服务、物流、调研等",
+          "type": "起源",
+          "theories": "Borden 1953",
+          "detail": "优点是全面，缺点是过于复杂，不利于考试快速组织"
+        },
+        {
+          "title": "4P",
+          "keyword": "经典执行框架",
+          "desc": "Product、Price、Place、Promotion，把企业可控制的营销变量压缩成四类",
+          "type": "卖方视角",
+          "theories": "McCarthy 1960 / Kotler",
+          "detail": "最适合说明企业如何配置营销手段，是过去问最常用答案骨架"
+        },
+        {
+          "title": "4C",
+          "keyword": "顾客视角的转换",
+          "desc": "Customer value、Cost、Convenience、Communication，把 4P 从买方视角重新解释",
+          "type": "顾客视角",
+          "theories": "Lauterborn 1990",
+          "detail": "强调不是卖产品，而是提供顾客价值、降低顾客成本、提高便利性并沟通"
+        },
+        {
+          "title": "7T",
+          "keyword": "Kotler 16 版扩展",
+          "desc": "Targeting、Technology、Trade、Timing 等扩展要素，强调数字化与行动计划中的执行条件",
+          "type": "现代扩展",
+          "theories": "Kotler 16th",
+          "detail": "适合说明 4P 并非固定清单，而会随市场环境与技术变化扩展"
+        }
+      ]
     },
     "ja": {
-      "限": "単なる道具リストになりやすく，STP・顧客価値・実行管理と結びつけなければ戦略性を失う。",
-      "例": "新製品導入では 4P で施策を組み，4C で顧客価値・費用・便利性・コミュニケーションを点検できる。"
+      "format": "compare",
+      "lead": "マーケティング・ミックスは，戦略を実行可能な戦術の組み合わせへ変換する道具である",
+      "cols": [
+        {
+          "title": "Borden 12要素",
+          "keyword": "ミックス思想の起源",
+          "desc": "製品計画，価格，ブランド，チャネル，販売員，広告，販売促進，包装，陳列，サービス，物流，調査などを含む多数の可変要素の組み合わせ",
+          "type": "起源",
+          "theories": "Borden 1953",
+          "detail": "包括的だが複雑で，答案では整理しにくい"
+        },
+        {
+          "title": "4P",
+          "keyword": "古典的実行枠組み",
+          "desc": "Product，Price，Place，Promotion という企業が統制可能な四つの変数",
+          "type": "売り手視点",
+          "theories": "McCarthy 1960 / Kotler",
+          "detail": "企業がどのようにマーケティング手段を組み合わせるかを説明する標準的骨格"
+        },
+        {
+          "title": "4C",
+          "keyword": "顧客視点への転換",
+          "desc": "Customer value，Cost，Convenience，Communication によって 4P を買い手側から再解釈する",
+          "type": "顧客視点",
+          "theories": "Lauterborn 1990",
+          "detail": "製品を売るのではなく，顧客価値を提供し，負担を下げ，便利性と対話を高める"
+        },
+        {
+          "title": "7T",
+          "keyword": "Kotler 第16版の拡張",
+          "desc": "Targeting，Technology，Trade，Timing など，デジタル化と実行条件を含めて拡張する",
+          "type": "現代的拡張",
+          "theories": "Kotler 16th",
+          "detail": "4P は固定的リストではなく，市場環境や技術変化に応じて拡張されることを示す"
+        }
+      ]
+    }
+  },
+  "tags": [],
+  "evaluations": {
+    "zh": {
+      "meaning": "Marketing Mix 是从战略到执行的桥梁，4P 是标准骨架，4C 是顾客视角修正，7T 体现现代扩展。",
+      "limit": "容易变成工具清单，若不连接 STP、顾客价值与执行控制，就会缺少战略性。",
+      "example": "新产品上市可用 4P 组织上市方案，再用 4C 检查顾客价值。",
+      "response": "用于回答「マーケティング・ミックスとは何か、その今日的意義と問題点」类题。",
+      "application": "",
+      "analogy": ""
+    },
+    "ja": {
+      "meaning": "",
+      "limit": "単なる道具リストになりやすく，STP・顧客価値・実行管理と結びつけなければ戦略性を失う。",
+      "example": "新製品導入では 4P で施策を組み，4C で顧客価値・費用・便利性・コミュニケーションを点検できる。",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:40:19.642Z",

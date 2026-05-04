@@ -15,25 +15,194 @@
     "en": "STP Strategy Overview"
   },
   "body": {
-    "zh": "STP 是营销战略的核心流程：先把市场切开，再选择值得服务的顾客，最后在顾客心中建立清楚位置。考试答题时按 S→T→P 展开即可：<br>【总体逻辑】<br>①起点——市场不是同质整体，而是由需求、行为、价值观不同的顾客群组成。<br>②目的——在资源有限下，不服务所有人，而是集中满足最有价值的 segment。<br>③流程——Segmentation 识别差异，Targeting 选择对象，Positioning 建立差异化心智位置。<br>【S：Segmentation 市场细分】<br>①定义——把异质市场切分为内部相对同质、彼此有差异的 segment。<br>②变量——人口统计、地理、行为、心理四类变量；数字时代还强调 needs-based segmentation。<br>③意义——让企业从「卖给所有人」转向「理解具体顾客」。<br>【T：Targeting 目标市场选择】<br>①基本问题——哪些 segment 值得进入。<br>②评价轴——适合性（企业能力、资源、品牌、伙伴网络）与魅力（收益、规模、成本、社会价值、信息价值）。<br>③策略——可选择单一 segment、多 segment，或根据能力积累阶段性进入。<br>【P：Positioning 定位】<br>①定义——在目标顾客心中，为品牌或产品建立相对于竞争者的独特位置。<br>②工具——先确定参照框架，再满足 POP（类似化点），最后建立 POD（差别化点）。<br>③表达——用定位陈述把 target customer、frame of reference、POD、reason to believe 写成一句话。<br>【考试答案模板】<br>①先说明 STP 是市场选择与竞争定位的流程。②说明 S 用变量切分市场。③说明 T 用适合性与魅力选择目标。④说明 P 通过参照框架、POP/POD 与定位陈述建立差异化。⑤最后评价：优点是集中资源、提高适配度；局限是 segment 边界可能流动，数字平台时代需要动态修正。",
-    "ja": "STP はマーケティング戦略の中核的プロセスであり，市場を細分化し，標的顧客を選定し，顧客の心の中に明確な位置を築く枠組みである。答案では S→T→P の順に展開する：<br>【全体ロジック】<br>①出発点——市場は同質的な全体ではなく，ニーズ・行動・価値観の異なる顧客群から成る。<br>②目的——限られた資源の下で全員を対象にせず，価値ある segment に集中する。<br>③流れ——Segmentation が差異を識別し，Targeting が対象を選び，Positioning が差別的な心的位置を築く。<br>【S：Segmentation 市場細分化】<br>①定義——異質な市場を，内部では相対的に同質で，相互には異なる segment に分けること。<br>②変数——人口統計，地理，行動，心理の四類型に加え，近年は needs-based segmentation が重要である。<br>③意義——「全員に売る」発想から「具体的顧客を理解する」発想へ転換する。<br>【T：Targeting 標的市場の選定】<br>①基本問題——どの segment に参入すべきか。<br>②評価軸——適合性（資源・能力・ブランド・パートナー）と魅力度（収益・規模・費用・社会価値・情報価値）。<br>③戦略——単一 segment，複数 segment，段階的参入などを選択する。<br>【P：Positioning ポジショニング】<br>①定義——標的顧客の心の中で，競争者と比較した独自の位置を形成すること。<br>②道具——参照枠を定め，POP を満たし，POD を構築する。<br>③表現——target customer，frame of reference，POD，reason to believe をポジショニング・ステートメントにまとめる。<br>【答案テンプレート】<br>①STP は市場選択と競争的位置づけのプロセスである。②S は変数によって市場を分ける。③T は適合性と魅力度で標的を選ぶ。④P は参照枠，POP/POD，ポジショニング・ステートメントで差別化する。⑤長所は資源集中と適合度向上，限界は segment の流動性と動的修正である。"
+    "zh": {
+      "format": "accordion",
+      "lead": "STP 是营销战略的核心流程：先把市场切开，再选择值得服务的顾客，最后在顾客心中建立清楚位置。考试答题时按 S→T→P 展开即可：",
+      "groups": [
+        {
+          "title": "总体逻辑",
+          "items": [
+            {
+              "name": "起点",
+              "desc": "市场不是同质整体，而是由需求、行为、价值观不同的顾客群组成。"
+            },
+            {
+              "name": "目的",
+              "desc": "在资源有限下，不服务所有人，而是集中满足最有价值的 segment。"
+            },
+            {
+              "name": "流程",
+              "desc": "Segmentation 识别差异，Targeting 选择对象，Positioning 建立差异化心智位置。"
+            }
+          ]
+        },
+        {
+          "title": "S：Segmentation 市场细分",
+          "items": [
+            {
+              "name": "定义",
+              "desc": "把异质市场切分为内部相对同质、彼此有差异的 segment。"
+            },
+            {
+              "name": "变量",
+              "desc": "人口统计、地理、行为、心理四类变量；数字时代还强调 needs-based segmentation。"
+            },
+            {
+              "name": "意义",
+              "desc": "让企业从「卖给所有人」转向「理解具体顾客」。"
+            }
+          ]
+        },
+        {
+          "title": "T：Targeting 目标市场选择",
+          "items": [
+            {
+              "name": "基本问题",
+              "desc": "哪些 segment 值得进入。"
+            },
+            {
+              "name": "评价轴",
+              "desc": "适合性（企业能力、资源、品牌、伙伴网络）与魅力（收益、规模、成本、社会价值、信息价值）。"
+            },
+            {
+              "name": "策略",
+              "desc": "可选择单一 segment、多 segment，或根据能力积累阶段性进入。"
+            }
+          ]
+        },
+        {
+          "title": "P：Positioning 定位",
+          "items": [
+            {
+              "name": "定义",
+              "desc": "在目标顾客心中，为品牌或产品建立相对于竞争者的独特位置。"
+            },
+            {
+              "name": "工具",
+              "desc": "先确定参照框架，再满足 POP（类似化点），最后建立 POD（差别化点）。"
+            },
+            {
+              "name": "表达",
+              "desc": "用定位陈述把 target customer、frame of reference、POD、reason to believe 写成一句话。"
+            }
+          ]
+        },
+        {
+          "title": "考试答案模板",
+          "items": [
+            {
+              "name": "先说明 STP 是市场选择与竞争定位的流程。②说明 S 用变量切分市场。③说明 T 用适合性与魅力选择目标。④说明 P 通过参照框架、POP/POD 与定位陈述建立差异化。⑤最后评价：优点是集中资源、提高适配度；局限是 segment 边界可能流动，数字平台时代需要动态修正。",
+              "desc": ""
+            }
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "format": "accordion",
+      "lead": "STP はマーケティング戦略の中核的プロセスであり，市場を細分化し，標的顧客を選定し，顧客の心の中に明確な位置を築く枠組みである。答案では S→T→P の順に展開する：",
+      "groups": [
+        {
+          "title": "全体ロジック",
+          "items": [
+            {
+              "name": "出発点",
+              "desc": "市場は同質的な全体ではなく，ニーズ・行動・価値観の異なる顧客群から成る。"
+            },
+            {
+              "name": "目的",
+              "desc": "限られた資源の下で全員を対象にせず，価値ある segment に集中する。"
+            },
+            {
+              "name": "流れ",
+              "desc": "Segmentation が差異を識別し，Targeting が対象を選び，Positioning が差別的な心的位置を築く。"
+            }
+          ]
+        },
+        {
+          "title": "S：Segmentation 市場細分化",
+          "items": [
+            {
+              "name": "定義",
+              "desc": "異質な市場を，内部では相対的に同質で，相互には異なる segment に分けること。"
+            },
+            {
+              "name": "変数",
+              "desc": "人口統計，地理，行動，心理の四類型に加え，近年は needs-based segmentation が重要である。"
+            },
+            {
+              "name": "意義",
+              "desc": "「全員に売る」発想から「具体的顧客を理解する」発想へ転換する。"
+            }
+          ]
+        },
+        {
+          "title": "T：Targeting 標的市場の選定",
+          "items": [
+            {
+              "name": "基本問題",
+              "desc": "どの segment に参入すべきか。"
+            },
+            {
+              "name": "評価軸",
+              "desc": "適合性（資源・能力・ブランド・パートナー）と魅力度（収益・規模・費用・社会価値・情報価値）。"
+            },
+            {
+              "name": "戦略",
+              "desc": "単一 segment，複数 segment，段階的参入などを選択する。"
+            }
+          ]
+        },
+        {
+          "title": "P：Positioning ポジショニング",
+          "items": [
+            {
+              "name": "定義",
+              "desc": "標的顧客の心の中で，競争者と比較した独自の位置を形成すること。"
+            },
+            {
+              "name": "道具",
+              "desc": "参照枠を定め，POP を満たし，POD を構築する。"
+            },
+            {
+              "name": "表現",
+              "desc": "target customer，frame of reference，POD，reason to believe をポジショニング・ステートメントにまとめる。"
+            }
+          ]
+        },
+        {
+          "title": "答案テンプレート",
+          "items": [
+            {
+              "name": "STP は市場選択と競争的位置づけのプロセスである。②S は変数によって市場を分ける。③T は適合性と魅力度で標的を選ぶ。④P は参照枠，POP/POD，ポジショニング・ステートメントで差別化する。⑤長所は資源集中と適合度向上，限界は segment の流動性と動的修正である。",
+              "desc": ""
+            }
+          ]
+        }
+      ]
+    }
   },
   "tags": [
     "STP",
     "Kotler",
     "Smith"
   ],
-  "format": "accordion",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "STP 是营销战略论述题的基础骨架，可直接组织市场细分、目标选择与定位三段答案。",
-      "限": "假设市场可以被清晰切分，但现实中顾客身份与需求会流动。",
-      "例": "UNIQLO 可理解为选择 basic-needs segment，并以 LifeWear 建立 POD。",
-      "应": "用于回答「市場細分化から標的市場の選定、ポジショニングまでの一連のプロセス」类过去问。"
+      "meaning": "STP 是营销战略论述题的基础骨架，可直接组织市场细分、目标选择与定位三段答案。",
+      "limit": "假设市场可以被清晰切分，但现实中顾客身份与需求会流动。",
+      "example": "UNIQLO 可理解为选择 basic-needs segment，并以 LifeWear 建立 POD。",
+      "response": "用于回答「市場細分化から標的市場の選定、ポジショニングまでの一連のプロセス」类过去问。",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "市場が明確に分割できることを前提にするが，現実には顧客ニーズは流動的である。",
-      "例": "UNIQLO は basic-needs segment を選び，LifeWear によって POD を構築した例として説明できる。"
+      "meaning": "",
+      "limit": "市場が明確に分割できることを前提にするが，現実には顧客ニーズは流動的である。",
+      "example": "UNIQLO は basic-needs segment を選び，LifeWear によって POD を構築した例として説明できる。",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:40:12.767Z",

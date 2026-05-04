@@ -14,13 +14,18 @@
     "ja": "職務特性モデルと職務再設計"
   },
   "body": {
-    "zh": "五个核心工作维度→三种关键心理状态→工作内在动机与满意度。五维度：技能多样性（Skill Variety）、任务完整性（Task Identity）、任务重要性（Task Significance）三者共同产生工作意义感（Meaningfulness of Work）；工作自主性（Autonomy）产生对工作结果的责任感；反馈（Feedback）提供工作绩效的知识。激励潜力分数（Motivating Potential Score，MPS）=（多样性+完整性+重要性）÷3×自主性×反馈，用于量化评估工作的激励潜力。三种工作再设计方式：工作丰富化（Job Enrichment，纵向扩展计划/控制/评价自主权，源自Herzberg）；工作扩大化（Job Enlargement，横向增加任务数量）；工作轮换（Job Rotation，定期更换岗位，提升多能性）",
-    "ja": "——五つの中核的職務次元→三つの重要な心理状態→職務の内発的動機づけと満足度。五次元：技能多様性（Skill Variety）・課題完結性（Task Identity）・課題重要性（Task Significance）の三者が共同して仕事の有意味感（Meaningfulness of Work）を生み出す；職務自律性（Autonomy）が仕事の成果に対する責任感を生み出す；フィードバック（Feedback）が職務業績についての知識を提供する。動機づけ潜在力得点（Motivating Potential Score、MPS）＝（多様性＋完結性＋重要性）÷3×自律性×フィードバック。職務の動機づけ潜在力を定量的に評価する。三つの職務再設計方式：職務充実化（Job Enrichment、計画・統制・評価の自律権を縦方向に拡大、Herzbergに由来）；職務拡大化（Job Enlargement、課題の数を横方向に増加）；職務ローテーション（Job Rotation、定期的に職位を変更し多能性を高める）"
+    "zh": {
+      "format": "narrative",
+      "prose": "五个核心工作维度→三种关键心理状态→工作内在动机与满意度。五维度：技能多样性（Skill Variety）、任务完整性（Task Identity）、任务重要性（Task Significance）三者共同产生工作意义感（Meaningfulness of Work）；工作自主性（Autonomy）产生对工作结果的责任感；反馈（Feedback）提供工作绩效的知识。激励潜力分数（Motivating Potential Score，MPS）=（多样性+完整性+重要性）÷3×自主性×反馈，用于量化评估工作的激励潜力。三种工作再设计方式：工作丰富化（Job Enrichment，纵向扩展计划/控制/评价自主权，源自Herzberg）；工作扩大化（Job Enlargement，横向增加任务数量）；工作轮换（Job Rotation，定期更换岗位，提升多能性）"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "——五つの中核的職務次元→三つの重要な心理状態→職務の内発的動機づけと満足度。五次元：技能多様性（Skill Variety）・課題完結性（Task Identity）・課題重要性（Task Significance）の三者が共同して仕事の有意味感（Meaningfulness of Work）を生み出す；職務自律性（Autonomy）が仕事の成果に対する責任感を生み出す；フィードバック（Feedback）が職務業績についての知識を提供する。動機づけ潜在力得点（Motivating Potential Score、MPS）＝（多様性＋完結性＋重要性）÷3×自律性×フィードバック。職務の動機づけ潜在力を定量的に評価する。三つの職務再設計方式：職務充実化（Job Enrichment、計画・統制・評価の自律権を縦方向に拡大、Herzbergに由来）；職務拡大化（Job Enlargement、課題の数を横方向に増加）；職務ローテーション（Job Rotation、定期的に職位を変更し多能性を高める）"
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "narrative",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }
