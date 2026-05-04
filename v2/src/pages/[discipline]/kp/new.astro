@@ -1,348 +1,97 @@
 ---
 /**
- * 新增 KP — OptionC 紧凑版（v0.5.1）
+ * KP 新建页 v0.8 Stage 4 — 独立路由 (D6=A 决策)
  *
- * 与 edit.astro 同骨架。区别：
- *   - 没有 load() — 起始空白
- *   - 没有 delete 按钮
- *   - id 字段可编辑（提交后不可改）
- *   - school/scholar 支持 ?school= / ?scholar= 预选
- *   - eval 起始空白
- *   - 保存用 POST /api/new/kp（不带 base_sha）
+ * 与 edit.astro 同 shell，区别：
+ *   - mode = 'new'
+ *   - initialState = makeNewState
+ *   - 保存按钮 → POST /api/kps?discipline=<key>，跳转到 edit 页
+ *
+ * 见 v2/docs/KP-EDITOR-V0.8-PRD.md §6.3 ("新建页 = 编辑页 layout 完全一致")
  */
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
 import { parseFrom, fromLabel } from '~/lib/nav';
-import { EVAL_TAG_DEFS } from '~/lib/eval-tag-defs';
+import { getMetadataForTenant } from '~/lib/metadata-api-store';
+import type { EditorMetadata } from '~/lib/editor/state';
 
 const { discipline } = Astro.params;
+if (!discipline) return Astro.redirect('/404');
 if (!Astro.locals.canEdit(discipline)) return Astro.redirect(`/${discipline}/kp`);
 
 const fromPath = parseFrom(Astro.url.searchParams.get('from'), `/${discipline}/kp`);
 const fromLbl = fromLabel(fromPath);
 
 const db = getDb(Astro.locals.runtime.env);
-const schoolsResult = await db
-  .prepare('SELECT key, title_zh FROM school WHERE discipline = ? ORDER BY title_zh')
-  .bind(discipline)
-  .all<{ key: string; title_zh: string }>();
-const allSchools = schoolsResult.results ?? [];
+const tenantRow = await db
+  .prepare('SELECT id FROM tenant WHERE discipline_key = ? OR id = ?')
+  .bind(discipline, discipline)
+  .first<{ id: string }>();
+if (!tenantRow) return Astro.redirect('/404');
 
-const scholarsResult = await db
-  .prepare('SELECT key, name_zh, name_en FROM scholar WHERE discipline = ? ORDER BY key')
-  .bind(discipline)
-  .all<{ key: string; name_zh: string; name_en: string | null }>();
-const allScholars = scholarsResult.results ?? [];
+const metadata = await getMetadataForTenant(db, { tenantId: tenantRow.id, discipline });
+const disciplineLabel = metadata.discipline?.title.zh ?? discipline;
 
-const tagsRow = await db
-  .prepare('SELECT tags_json FROM discipline WHERE key = ?')
-  .bind(discipline)
-  .first<{ tags_json: string }>();
-const tagLibrary: Array<{ key: string; label: { zh: string }; color: string }> = tagsRow?.tags_json
-  ? JSON.parse(tagsRow.tags_json) : [];
+const editorMetadata: EditorMetadata = {
+  schools: metadata.schools.map((s) => ({ key: s.key, label: s.title.zh })),
+  scholars: metadata.scholars.map((s) => ({
+    key: s.key,
+    label: s.name.zh,
+    sub: s.name.en ?? '',
+  })),
+  tags: (metadata.tags as Array<{ key: string; label: { zh: string }; color?: string }>).map((t) => ({
+    key: t.key,
+    label: t.label?.zh ?? t.key,
+    color: t.color ?? null,
+  })),
+  disciplineLabel,
+  disciplineKey: discipline,
+  fromPath,
+  fromLabel: fromLbl,
+};
 
-const ctxSchool = Astro.url.searchParams.get('school') ?? '';
-const ctxScholar = Astro.url.searchParams.get('scholar') ?? '';
+// preselect from query param (?school=xxx / ?scholar=yyy)
+const preselectSchool = Astro.url.searchParams.get('school') ?? '';
+const preselectScholar = Astro.url.searchParams.get('scholar') ?? '';
 ---
 
-<Layout title="新增 KP" currentDiscipline={discipline} currentSection="kps">
-  <div class="kpedit-C" data-discipline={discipline} data-from={fromPath} data-from-label={fromLbl}>
+<Layout title={`新建 KP · ${disciplineLabel}`} currentDiscipline={discipline} currentSection="kps">
+  <div class="kp-editor-v08" id="kp-editor-root" data-mode="new"></div>
 
-    <aside class="kpedit-C-nav">
-      <a class="kpedit-C-back" href={fromPath}>← 返回{fromLbl}</a>
-      <div class="kpedit-C-eyebrow">新增 KP</div>
-      <h2 class="kpedit-C-title" id="nav-title">（未命名）</h2>
-
-      <nav class="kpedit-C-jump">
-        <a class="kpedit-C-jump-i is-active" href="#sec-basic" data-jump="basic"><span class="kpedit-C-jump-l">基本信息</span><span class="kpedit-C-jump-c">5 字段</span></a>
-        <a class="kpedit-C-jump-i" href="#sec-rel" data-jump="rel"><span class="kpedit-C-jump-l">关联</span><span class="kpedit-C-jump-c" id="rel-count">0个学派 / 0个学者</span></a>
-        <a class="kpedit-C-jump-i" href="#sec-body" data-jump="body"><span class="kpedit-C-jump-l">正文</span><span class="kpedit-C-jump-c" id="body-count">叙事</span></a>
-        <a class="kpedit-C-jump-i" href="#sec-eval" data-jump="eval"><span class="kpedit-C-jump-l">评价</span><span class="kpedit-C-jump-c" id="tags-count">0 / 6</span></a>
-        <a class="kpedit-C-jump-i" href="#sec-tag" data-jump="tag"><span class="kpedit-C-jump-l">标签</span><span class="kpedit-C-jump-c" id="tag-count">无</span></a>
-      </nav>
-
-      <div class="kpedit-C-actions">
-        <button id="save-btn" class="kpedit-C-btn-ghost" type="button">创建</button>
-      </div>
-
-      <div id="save-status" class="text-xs text-tertiary mt-2"></div>
-    </aside>
-
-    <form id="kp-new-form" class="kpedit-C-form" autocomplete="off">
-
-      <section id="sec-basic" class="kpedit-C-sec">
-        <div class="kpedit-C-sec-h"><h3>基本信息</h3><span class="kpedit-C-sec-hint">中文必填，其他可空</span></div>
-        <div class="kpedit-row kpedit-grid-2">
-          <div class="kpedit-field">
-            <div class="kpedit-field-h"><label class="kpedit-label">ID<span class="kpedit-req">*</span></label><span class="kpedit-hint">小写字母 + 数字，如 k999</span></div>
-            <input name="id" type="text" required pattern="[a-z]{1,3}[0-9]+" placeholder="k999" class="kpedit-input is-mono" />
-          </div>
-          <div class="kpedit-field">
-            <div class="kpedit-field-h"><label class="kpedit-label">年份</label></div>
-            <input name="year" type="text" class="kpedit-input" />
-          </div>
-        </div>
-        <div class="kpedit-field">
-          <div class="kpedit-field-h"><label class="kpedit-label">中文标题<span class="kpedit-req">*</span></label></div>
-          <input name="title_zh" type="text" required class="kpedit-input is-lg" />
-        </div>
-        <div class="kpedit-row kpedit-grid-2">
-          <div class="kpedit-field"><div class="kpedit-field-h"><label class="kpedit-label">English</label></div><input name="title_en" type="text" class="kpedit-input" /></div>
-          <div class="kpedit-field"><div class="kpedit-field-h"><label class="kpedit-label">日本語</label></div><input name="title_ja" type="text" class="kpedit-input" /></div>
-        </div>
-      </section>
-
-      <section id="sec-rel" class="kpedit-C-sec">
-        <div class="kpedit-C-sec-h"><h3>关联</h3><span class="kpedit-C-sec-hint">学派必选 ≥1</span></div>
-        <div class="kpedit-field">
-          <div class="kpedit-field-h"><label class="kpedit-label">所属学派<span class="kpedit-req">*</span></label></div>
-          <div id="schools-multi" data-options={JSON.stringify(allSchools.map((s) => ({ key: s.key, label: s.title_zh })))} data-preselect={ctxSchool}></div>
-        </div>
-        <div class="kpedit-field">
-          <div class="kpedit-field-h"><label class="kpedit-label">关联学者</label></div>
-          <div id="scholars-multi" data-options={JSON.stringify(allScholars.map((s) => ({ key: s.key, label: s.name_zh, sub: s.name_en ?? '' })))} data-preselect={ctxScholar}></div>
-        </div>
-      </section>
-
-      <section id="sec-body" class="kpedit-C-sec">
-        <div class="kpedit-C-sec-h"><h3>正文</h3><span class="kpedit-C-sec-hint">中/日同结构，分别保存</span></div>
-        <div id="body-editor-mount" class="border rounded-md p-3 bg-bg-primary"></div>
-      </section>
-
-      <section id="sec-eval" class="kpedit-C-sec">
-        <div class="kpedit-C-sec-h"><h3>评价</h3>
-          <div class="kpedit-langseg" id="eval-langseg" role="tablist">
-            <button type="button" class="kpedit-langseg-b is-on" data-eval-lang="zh">中</button>
-            <button type="button" class="kpedit-langseg-b" data-eval-lang="ja">日</button>
-          </div>
-        </div>
-        <div class="kpedit-tagfields" id="eval-fields">
-          {EVAL_TAG_DEFS.map((d) => (
-            <div class="kpedit-tagrow" data-eval-glyph={d.glyph}>
-              <div class="kpedit-tagrow-l">
-                <span class="kpedit-tagrow-glyph">{d.glyph}</span>
-                <span class="kpedit-tagrow-name">{d.name}</span>
-              </div>
-              <textarea class="kpedit-tagrow-input" rows="2" placeholder={`${d.name}的内容（留空则不显示）`} data-eval-input={d.glyph}></textarea>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="sec-tag" class="kpedit-C-sec">
-        <div class="kpedit-C-sec-h"><h3>标签</h3><span class="kpedit-C-sec-hint">单选，决定卡片色</span></div>
-        <div
-          id="tag-picker"
-          data-options={JSON.stringify(tagLibrary.map((t) => ({ key: t.key, label: t.label?.zh ?? t.key, color: t.color })))}
-        ></div>
-      </section>
-
-    </form>
-  </div>
+  <script
+    type="application/json"
+    is:inline
+    id="kp-editor-init"
+    set:html={JSON.stringify({
+      metadata: editorMetadata,
+      preselectSchool,
+      preselectScholar,
+    })}
+  ></script>
 </Layout>
 
 <script>
-  // @ts-nocheck
-  import { mountBodyEditor } from '~/lib/body-editor-client';
-  import { mountMultiSelect } from '~/lib/multi-select-client';
-  import { mountTagSinglePicker } from '~/lib/tag-single-picker-client';
-  import { formatZodIssues } from '~/lib/zod-errors-zh';
+  import { makeNewState, type EditorMetadata } from '~/lib/editor/state';
+  import { initEditor } from '~/lib/editor/index';
 
-  const $ = (s) => document.querySelector(s);
-  const root = document.querySelector('.kpedit-C');
-  const discipline = root.dataset.discipline;
-  const fromPath = root.dataset.from;
-  const form = $('#kp-new-form');
-  const saveBtn = $('#save-btn');
-  const saveStatus = $('#save-status');
-  const editorMount = $('#body-editor-mount');
-
-  let currentBodyZh = '';
-  let currentBodyJa = '';
-  let currentFormat = 'narrative';
-  let evalContent = { zh: {}, ja: {} };
-  let evalLang = 'zh';
-
-  // body editor
-  const FMT_LABEL = {
-    'narrative': '叙事',
-    'flat-list': '条目',
-    'accordion': '折叠',
-    'compare': '对比',
-    'quad': '四象限',
-  };
-  mountBodyEditor(editorMount, {
-    initialFormat: 'narrative',
-    initialZhBody: '',
-    initialJaBody: '',
-    onChange: (zh, ja, fmt) => {
-      currentBodyZh = zh;
-      currentBodyJa = ja;
-      currentFormat = fmt;
-      $('#body-count').textContent = FMT_LABEL[fmt] ?? fmt;
-    },
-  });
-
-  // multi-selects
-  const schoolsMount = $('#schools-multi');
-  const scholarsMount = $('#scholars-multi');
-  const schoolsMS = mountMultiSelect(schoolsMount, {
-    inputName: 'school',
-    options: JSON.parse(schoolsMount.dataset.options ?? '[]'),
-    selected: schoolsMount.dataset.preselect ? [schoolsMount.dataset.preselect] : [],
-    placeholder: '搜索学派（必选 ≥1）',
-    required: true,
-    onChange: updateRelCount,
-  });
-  const scholarsMS = mountMultiSelect(scholarsMount, {
-    inputName: 'scholar',
-    options: JSON.parse(scholarsMount.dataset.options ?? '[]'),
-    selected: scholarsMount.dataset.preselect ? [scholarsMount.dataset.preselect] : [],
-    placeholder: '搜索学者（可空）',
-    onChange: updateRelCount,
-  });
-  updateRelCount();
-  function updateRelCount() {
-    const s = schoolsMS?.getSelected().length ?? 0;
-    const sc = scholarsMS?.getSelected().length ?? 0;
-    $('#rel-count').textContent = `${s}个学派 / ${sc}个学者`;
-  }
-
-  // eval
-  function refreshEvalFields() {
-    const dict = evalContent[evalLang] ?? {};
-    document.querySelectorAll('[data-eval-input]').forEach((ta) => {
-      const g = ta.getAttribute('data-eval-input');
-      ta.value = dict[g] ?? '';
-      ta.parentElement.classList.toggle('is-filled', !!ta.value.trim());
-    });
-    updateTagsCount();
-  }
-  function updateTagsCount() {
-    const filled = Object.values(evalContent[evalLang] ?? {}).filter((v) => v && v.trim()).length;
-    $('#tags-count').textContent = `${filled} / 6`;
-  }
-  document.querySelectorAll('[data-eval-input]').forEach((ta) => {
-    ta.addEventListener('input', () => {
-      const g = ta.getAttribute('data-eval-input');
-      if (!evalContent[evalLang]) evalContent[evalLang] = {};
-      evalContent[evalLang][g] = ta.value;
-      ta.parentElement.classList.toggle('is-filled', !!ta.value.trim());
-      updateTagsCount();
-    });
-  });
-  document.querySelectorAll('[data-eval-lang]').forEach((b) => {
-    b.addEventListener('click', () => {
-      evalLang = b.getAttribute('data-eval-lang');
-      document.querySelectorAll('[data-eval-lang]').forEach((x) => x.classList.toggle('is-on', x === b));
-      refreshEvalFields();
-    });
-  });
-
-  // tag picker
-  const tagPickerMount = $('#tag-picker');
-  const tagPicker = mountTagSinglePicker(tagPickerMount, {
-    options: JSON.parse(tagPickerMount.dataset.options ?? '[]'),
-    initial: null,
-    onChange: updateTagCount,
-  });
-  function updateTagCount() {
-    const v = tagPicker?.getValue();
-    $('#tag-count').textContent = v ? '1 / 1' : '无';
-  }
-
-  // Title shadow display in nav
-  form.title_zh.addEventListener('input', () => {
-    $('#nav-title').textContent = form.title_zh.value || '（未命名）';
-  });
-
-  // Jump nav scroll spy
-  (function initSpy() {
-    const ids = ['basic','rel','body','eval','tag'].map((s) => 'sec-' + s);
-    const sections = ids.map((id) => document.getElementById(id)).filter(Boolean);
-    const observer = new IntersectionObserver((entries) => {
-      const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-      if (visible.length === 0) return;
-      const id = visible[0].target.id.replace('sec-', '');
-      document.querySelectorAll('[data-jump]').forEach((el) => el.classList.toggle('is-active', el.getAttribute('data-jump') === id));
-    }, { rootMargin: '-100px 0px -60% 0px' });
-    sections.forEach((s) => observer.observe(s));
-  })();
-
-  // submit
-  function buildI18n(zh, en, ja) {
-    const o = { zh: zh.trim() };
-    if (en?.trim()) o.en = en.trim();
-    if (ja?.trim()) o.ja = ja.trim();
-    return o;
-  }
-  function buildBody(zh, ja) {
-    const o = { zh };
-    if (ja?.trim()) o.ja = ja;
-    return o;
-  }
-  function cleanEvalContent(dict) {
-    const out = {};
-    for (const [k, v] of Object.entries(dict ?? {})) {
-      if (v && v.trim()) out[k] = v;
-    }
-    return out;
-  }
-  function collect() {
-    const id = form.id.value.trim();
-    const schools = schoolsMS.getSelected();
-    const scholars = scholarsMS.getSelected();
-    const tagKey = tagPicker?.getValue();
-    const now = new Date().toISOString();
-    const ec = {};
-    const zh = cleanEvalContent(evalContent.zh);
-    const ja = cleanEvalContent(evalContent.ja);
-    if (Object.keys(zh).length) ec.zh = zh;
-    if (Object.keys(ja).length) ec.ja = ja;
-    return {
-      id, discipline, schools, scholars,
-      year: form.year.value.trim(),
-      title: buildI18n(form.title_zh.value, form.title_en.value, form.title_ja.value),
-      body: buildBody(currentBodyZh, currentBodyJa),
-      tags: tagKey ? [tagKey] : [],
-      format: currentFormat,
-      ...(Object.keys(ec).length ? { evalContent: ec } : {}),
-      createdAt: now,
-      updatedAt: now,
+  const root = document.getElementById('kp-editor-root');
+  const initJson = document.getElementById('kp-editor-init')?.textContent;
+  if (!root || !initJson) {
+    console.error('[kp-editor] init payload missing');
+  } else {
+    const { metadata, preselectSchool, preselectScholar } = JSON.parse(initJson) as {
+      metadata: EditorMetadata;
+      preselectSchool: string;
+      preselectScholar: string;
     };
-  }
-
-  saveBtn.addEventListener('click', async (e) => {
-    e.preventDefault();
-    const json = collect();
-    if (json.schools.length === 0) {
-      saveStatus.innerHTML = '<span style="color:var(--s-danger)">学派必选 ≥1</span>';
-      return;
-    }
-    saveBtn.disabled = true;
-    saveStatus.textContent = '创建中...';
-    const res = await fetch('/api/new/kp', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ json }),
+    const initialState = makeNewState(metadata.disciplineKey);
+    if (preselectSchool) initialState.schools = [preselectSchool];
+    if (preselectScholar) initialState.scholars = [preselectScholar];
+    initEditor({
+      root: root as HTMLElement,
+      initialState,
+      metadata,
+      mode: 'new',
     });
-    const data = await res.json().catch(() => ({}));
-    if (res.ok) {
-      saveStatus.innerHTML = `✓ 已创建 commit <code>${data.commit_sha?.slice(0, 7)}</code>，~${data.deploy_eta_seconds}s 后跳转`;
-      const fromIsDetail = /^\/[^/]+\/(?:[^/]+|scholars\/[^/]+)$/.test(fromPath);
-      const sep = fromPath.includes('?') ? '&' : '?';
-      const target = fromIsDetail ? `${fromPath}${sep}kp=${json.id}` : `/${discipline}/kp/${json.id}`;
-      setTimeout(() => { location.href = target; }, 1500);
-    } else if (res.status === 409) {
-      saveStatus.innerHTML = `<span style="color:var(--s-danger)">id 已存在</span>`;
-      saveBtn.disabled = false;
-    } else if (res.status === 422) {
-      const lines = formatZodIssues(data.detail);
-      saveStatus.innerHTML = `<span style="color:var(--s-danger)">字段校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
-      saveBtn.disabled = false;
-    } else {
-      saveStatus.innerHTML = `<span style="color:var(--s-danger)">${res.status} ${data.reason ?? 'error'}</span>`;
-      saveBtn.disabled = false;
-    }
-  });
+  }
 </script>

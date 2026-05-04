@@ -177,7 +177,7 @@ describe('类2 多语种边界', () => {
     expect(cols!.body_ja_json).toBeNull();
   });
 
-  test('T2.2 POST zh + ja 不同 format（schema 灵活，产品强制一致）', async () => {
+  test('T2.2 POST zh + ja 不同 format → v0.8.2 F5 schema-level 拒 (body_structure_invalid)', async () => {
     const res = await kpsPOST(
       makeCtx(db, {
         method: 'POST',
@@ -193,15 +193,11 @@ describe('类2 多语种边界', () => {
         },
       }),
     );
-    expect(res.status).toBe(201);
-    const cols = await db
-      .prepare('SELECT body_format, body_zh_json, body_ja_json FROM kp WHERE id = ?')
-      .bind('k201')
-      .first<{ body_format: string; body_zh_json: string; body_ja_json: string }>();
-    // body_format 跟 zh.format（v0.8.0 helper deriveDualWriteCols 单一 source）
-    expect(cols!.body_format).toBe('narrative');
-    expect(JSON.parse(cols!.body_zh_json).format).toBe('narrative');
-    expect(JSON.parse(cols!.body_ja_json).format).toBe('flat-list');
+    expect(res.status, 'F5 强制 zh.format===ja.format').toBe(422);
+    const data = await readJson(res);
+    // refine path=['ja','format'] 在 KpBodyBilingual 内 → full path=['body','ja','format'] → 触及 body
+    expect(data.reason).toBe('body_structure_invalid');
+    expect(JSON.stringify(data.detail)).toMatch(/format.*必须一致/);
   });
 
   test('T2.3 PATCH 只动 ja → zh 保留', async () => {
@@ -593,6 +589,7 @@ describe('类5 特殊字符 / 边界值', () => {
       { name: 'Q3', emoji: '🌊', sub: 'sub', detail: 'd' },
       { name: 'Q4', emoji: '❄️', sub: 'sub', detail: 'd' },
     ];
+    const okAxis = { low: '低', label: '', high: '高' };
     const res = await kpsPOST(
       makeCtx(db, {
         method: 'POST',
@@ -601,7 +598,7 @@ describe('类5 特殊字符 / 边界值', () => {
           id: 'k506',
           title: { zh: 't' },
           body: {
-            zh: { format: 'quad', lead: '', yAxis: 'Y', xAxis: 'X', cells },
+            zh: { format: 'quad', lead: '', yAxis: okAxis, xAxis: okAxis, cells },
           },
           schools: ['motivation'],
         },
@@ -621,8 +618,8 @@ describe('类5 特殊字符 / 边界值', () => {
             zh: {
               format: 'quad',
               lead: '',
-              yAxis: 'Y',
-              xAxis: 'X',
+              yAxis: okAxis,
+              xAxis: okAxis,
               cells: [
                 { name: '', emoji: '', sub: '', detail: '' },
                 { name: 'b', emoji: '', sub: '', detail: '' },
@@ -687,11 +684,11 @@ describe('类6 ID 生成 / 冲突', () => {
     expect(data.reason).toBe('kp_id_exists');
   });
 
-  test('T6.3 KpId 非法格式（大写 / 数字开头）→ 422 schema_invalid path', async () => {
+  test('T6.3 KpId 非法格式（大写 / 数字开头）→ 422 schema_invalid (F4 修复后)', async () => {
     const cases = [
-      { id: 'K123', expectStatus: 422 }, // uppercase
-      { id: '123abc', expectStatus: 422 }, // starts with digit
-      { id: 'abcd123', expectStatus: 422 }, // prefix > 3 letters
+      { id: 'K123' }, // uppercase
+      { id: '123abc' }, // starts with digit
+      { id: 'abcd123' }, // prefix > 3 letters
     ];
     for (const c of cases) {
       const res = await kpsPOST(
@@ -706,7 +703,9 @@ describe('类6 ID 生成 / 冲突', () => {
           },
         }),
       );
-      expect(res.status, `${c.id} should be 422`).toBe(c.expectStatus);
+      expect(res.status, `${c.id} should be 422`).toBe(422);
+      // v0.8.2 F4：path 不触及 body 的 zod fail 应归 schema_invalid（之前误归 body_structure_invalid）
+      expect((await readJson(res)).reason, `${c.id} reason`).toBe('schema_invalid');
     }
   });
 });
@@ -791,8 +790,8 @@ describe('类8 legacy detector 边界', () => {
     expect(res.status).toBe(422);
     const data = await readJson(res);
     expect(data.reason, '大写 Format 不应命中 legacy_top_level_format').not.toBe('legacy_top_level_format');
-    // zod strict() 对未知 key 报 unrecognized_keys，归到 body_structure_invalid
-    expect(data.reason).toBe('body_structure_invalid');
+    // v0.8.2 F4：未知顶层 key 报 unrecognized_keys，path=[]（顶层）→ 归 schema_invalid
+    expect(data.reason).toBe('schema_invalid');
   });
 
   test('T8.2 同时含顶层 `format` + `evalContent` → 命中 legacy_top_level_format（先序检查）', async () => {
@@ -1207,5 +1206,200 @@ describe('类11 forbidden_field / 删后 patch / 评价', () => {
     expect(res.status).toBe(200);
     const data = await readJson(res);
     expect(data.results![0].reason).toBe('kp_not_found');
+  });
+});
+
+// ============================================================
+// 类 12: v0.8.2 Stage 4 — F4 (classifyZodFailure 默认 schema_invalid) + F5 (zh/ja format 强制)
+// ============================================================
+describe('类12 F4 + F5 (v0.8.2 Stage 4)', () => {
+  let db: D1LikeDatabase;
+  beforeEach(async () => {
+    db = createTestD1();
+    await applyAllMigrations(db);
+    await seedBaseline(db);
+  });
+
+  test('F4.1 schools 为空数组 → schema_invalid (path=schools 不触及 body)', async () => {
+    const res = await kpsPOST(
+      makeCtx(db, {
+        method: 'POST',
+        path: '/api/kps?discipline=keiei',
+        body: {
+          id: 'kf401',
+          title: { zh: 't' },
+          body: { zh: NARRATIVE_BODY },
+          schools: [],
+        },
+      }),
+    );
+    expect(res.status).toBe(422);
+    expect((await readJson(res)).reason).toBe('schema_invalid');
+  });
+
+  test('F4.2 title 缺 zh → schema_invalid (path=title 不触及 body)', async () => {
+    const res = await kpsPOST(
+      makeCtx(db, {
+        method: 'POST',
+        path: '/api/kps?discipline=keiei',
+        body: {
+          id: 'kf402',
+          title: {},
+          body: { zh: NARRATIVE_BODY },
+          schools: ['motivation'],
+        },
+      }),
+    );
+    expect(res.status).toBe(422);
+    expect((await readJson(res)).reason).toBe('schema_invalid');
+  });
+
+  test('F4.3 body.zh 内字段错 → 仍 body_structure_invalid (path 触及 body 不变)', async () => {
+    const res = await kpsPOST(
+      makeCtx(db, {
+        method: 'POST',
+        path: '/api/kps?discipline=keiei',
+        body: {
+          id: 'kf403',
+          title: { zh: 't' },
+          body: { zh: { format: 'flat-list', lead: '', items: [] } }, // items 空
+          schools: ['motivation'],
+        },
+      }),
+    );
+    expect(res.status).toBe(422);
+    expect((await readJson(res)).reason).toBe('body_structure_invalid');
+  });
+
+  test('F4.4 body.zh.format 不在枚举 → 仍 body_format_invalid (path 触及 body discriminator)', async () => {
+    const res = await kpsPOST(
+      makeCtx(db, {
+        method: 'POST',
+        path: '/api/kps?discipline=keiei',
+        body: {
+          id: 'kf404',
+          title: { zh: 't' },
+          body: { zh: { format: 'unknown-fmt' } },
+          schools: ['motivation'],
+        },
+      }),
+    );
+    expect(res.status).toBe(422);
+    expect((await readJson(res)).reason).toBe('body_format_invalid');
+  });
+
+  test('F4.5 batch updates path 触及 body → body_structure_invalid (向后兼容 batch shape)', async () => {
+    await seedKp(db, 'kf405');
+    const res = await kpsBatchPATCH(
+      makeCtx(db, {
+        method: 'PATCH',
+        path: '/api/kps/batch?discipline=keiei',
+        body: {
+          updates: [
+            {
+              id: 'kf405',
+              ifMatchVersion: 1,
+              patch: { body: { zh: { format: 'flat-list', lead: '', items: [] } } },
+            },
+          ],
+        },
+      }),
+    );
+    expect(res.status).toBe(200);
+    expect((await readJson(res)).results![0].reason).toBe('body_structure_invalid');
+  });
+
+  test('F5.1 POST zh.format ≠ ja.format → 422 body_structure_invalid (refine path=body.ja.format)', async () => {
+    const res = await kpsPOST(
+      makeCtx(db, {
+        method: 'POST',
+        path: '/api/kps?discipline=keiei',
+        body: {
+          id: 'kf501',
+          title: { zh: 't', ja: 't-ja' },
+          body: {
+            zh: { format: 'narrative', prose: 'zh' },
+            ja: { format: 'flat-list', lead: '', items: [{ name: 'a', desc: 'b' }] },
+          },
+          schools: ['motivation'],
+        },
+      }),
+    );
+    expect(res.status).toBe(422);
+    const data = await readJson(res);
+    expect(data.reason).toBe('body_structure_invalid');
+    expect(JSON.stringify(data.detail)).toMatch(/format.*必须一致/);
+  });
+
+  test('F5.2 POST 同 format → 通过', async () => {
+    const res = await kpsPOST(
+      makeCtx(db, {
+        method: 'POST',
+        path: '/api/kps?discipline=keiei',
+        body: {
+          id: 'kf502',
+          title: { zh: 't', ja: 't-ja' },
+          body: {
+            zh: { format: 'narrative', prose: 'zh' },
+            ja: { format: 'narrative', prose: 'ja' },
+          },
+          schools: ['motivation'],
+        },
+      }),
+    );
+    expect(res.status).toBe(201);
+  });
+
+  test('F5.3 POST 仅 zh，无 ja → 通过（refine 跳过）', async () => {
+    const res = await kpsPOST(
+      makeCtx(db, {
+        method: 'POST',
+        path: '/api/kps?discipline=keiei',
+        body: {
+          id: 'kf503',
+          title: { zh: 't' },
+          body: { zh: { format: 'narrative', prose: 'zh-only' } },
+          schools: ['motivation'],
+        },
+      }),
+    );
+    expect(res.status).toBe(201);
+  });
+
+  test('F5.4 PATCH 同时改 zh + ja 不同 format → 422 body_structure_invalid', async () => {
+    await seedKp(db, 'kf504');
+    const res = await kpPATCH(
+      makeCtx(db, {
+        method: 'PATCH',
+        path: '/api/kps/kf504',
+        params: { id: 'kf504' },
+        body: {
+          body: {
+            zh: { format: 'narrative', prose: 'zh' },
+            ja: { format: 'compare', lead: '', cols: [
+              { title: 'a', keyword: '', desc: '', type: '', theories: '', detail: '' },
+              { title: 'b', keyword: '', desc: '', type: '', theories: '', detail: '' },
+            ] },
+          },
+        },
+      }),
+    );
+    expect(res.status).toBe(422);
+    expect((await readJson(res)).reason).toBe('body_structure_invalid');
+  });
+
+  test('F5.5 PATCH 仅改 zh format（不带 ja）→ 通过 (refine 在 payload 内一致即可)', async () => {
+    await seedKp(db, 'kf505');
+    const res = await kpPATCH(
+      makeCtx(db, {
+        method: 'PATCH',
+        path: '/api/kps/kf505',
+        params: { id: 'kf505' },
+        body: {
+          body: { zh: { format: 'flat-list', lead: '', items: [{ name: 'a', desc: 'b' }] } },
+        },
+      }),
+    );
+    expect(res.status).toBe(200);
   });
 });

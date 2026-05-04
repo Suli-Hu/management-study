@@ -19,6 +19,7 @@ import type {
   AccordionBody,
   CompareBody,
   QuadBody,
+  QuadAxis,
 } from '~/schemas/kp-body-structured';
 
 const FALLBACK_ACCENT = '#8a7a6a';
@@ -205,6 +206,13 @@ export function renderCompareCardsStructured(body: CompareBody, accentHex: strin
   `;
 }
 
+/** QuadAxis → 渲染 label string：label 空时 "low-high"，label 非空时 "low-label-high"。 */
+function renderAxisLabel(axis: QuadAxis): string {
+  return axis.label
+    ? `${axis.low}-${axis.label}-${axis.high}`
+    : `${axis.low}-${axis.high}`;
+}
+
 export function renderQuadStructured(body: QuadBody, accentHex: string): string {
   const cellsHtml = body.cells
     .map(
@@ -219,13 +227,16 @@ export function renderQuadStructured(body: QuadBody, accentHex: string): string 
     )
     .join('');
 
+  const yLabel = renderAxisLabel(body.yAxis);
+  const xLabel = renderAxisLabel(body.xAxis);
+
   return `
     <div>
       ${body.lead ? `<div class="body-lead">${body.lead}</div>` : ''}
       <div class="quad-wrap" style="--accent:${accentHex}">
-        ${body.yAxis ? `<div class="quad-axis-y">${esc(body.yAxis)}</div>` : ''}
+        ${yLabel ? `<div class="quad-axis-y">${esc(yLabel)}</div>` : ''}
         <div class="quad-grid">${cellsHtml}</div>
-        ${body.xAxis ? `<div class="quad-axis-x">${esc(body.xAxis)}</div>` : ''}
+        ${xLabel ? `<div class="quad-axis-x">${esc(xLabel)}</div>` : ''}
       </div>
     </div>
   `;

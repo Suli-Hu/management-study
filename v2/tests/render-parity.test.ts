@@ -102,13 +102,9 @@ describe('Stage 2 parity — accordion', () => {
 });
 
 describe('Stage 2 parity — quad', () => {
-  test('BCG 矩阵风格', () => {
-    const body = '导语<quad>市场增长率,相对市场份额||明星|⭐|高+高|领先位置||问题|❓|高+低|抉择||瘦狗|🐕|低+低|剥离||现金牛|💰|低+高|挤奶</quad>';
-    // 旧 renderer quad axes 顺序：parts[0].split(',') → xAxis = first, yAxis = second
-    // 新 renderer quad: 按 schema yAxis 在前 xAxis 在后
-    // 所以这里 parsedToStructured 给 yAxis="市场增长率" xAxis="相对市场份额" 但旧是相反
-    // 这不算 parity 问题 — 是旧 renderer 的 xAxis/yAxis 顺序 historic bug
-    // 跳过严格 parity，改验证 cells 内容一致即可
+  test('BCG 矩阵风格（v0.8.4：用三段 yAxis "低-增长率-高" / xAxis "低-份额-高"）', () => {
+    // 旧 DSL string 仍是单字符串 axes — body-parser 不变。新 schema 通过 splitQuadAxisString 拆。
+    const body = '导语<quad>低-增长率-高,低-份额-高||明星|⭐|高+高|领先位置||问题|❓|高+低|抉择||瘦狗|🐕|低+低|剥离||现金牛|💰|低+高|挤奶</quad>';
     const { oldHtml, newHtml } = pairFor(body, 'quad');
     // 软 parity：双方都含 4 个 quad-cell
     expect((oldHtml.match(/quad-cell/g) ?? []).length).toBe(4);
@@ -118,6 +114,9 @@ describe('Stage 2 parity — quad', () => {
       expect(oldHtml).toContain(name);
       expect(newHtml).toContain(name);
     }
+    // 新 renderer 重组的 axis label
+    expect(newHtml).toContain('低-增长率-高');
+    expect(newHtml).toContain('低-份额-高');
   });
 });
 

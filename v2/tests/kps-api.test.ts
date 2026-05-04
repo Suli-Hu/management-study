@@ -104,9 +104,9 @@ describe('POST /api/kps', () => {
       },
     }));
     expect(res.status).toBe(422);
-    // v0.8.0：strict zod 拒未知 key → reason = body_structure_invalid（zod issue 含 unrecognized_keys）
+    // v0.8.2 F4：strict zod 拒未知顶层 key → path=[] 不触及 body → schema_invalid（之前误归 body_structure_invalid）
     const data = await res.json() as { reason: string; detail: Array<{ code: string }> };
-    expect(data.reason).toBe('body_structure_invalid');
+    expect(data.reason).toBe('schema_invalid');
     expect(data.detail.some((issue) => issue.code === 'unrecognized_keys')).toBe(true);
   });
 

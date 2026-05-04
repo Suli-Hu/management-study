@@ -241,3 +241,56 @@ describe('B5 — batch 参数 clamp', () => {
     expect(out.processed).toBe(3);
   });
 });
+
+// ========================================
+// B6 — splitQuadAxisString edge cases (v0.8.4)
+// ========================================
+
+import { splitQuadAxisString } from '~/lib/kp-body-helpers';
+
+describe('B6 — splitQuadAxisString smart split 边界', () => {
+  test('3 段 hyphen happy', () => {
+    expect(splitQuadAxisString('低-增长率-高')).toEqual({
+      low: '低',
+      label: '增长率',
+      high: '高',
+    });
+  });
+
+  test('2 段 hyphen happy', () => {
+    expect(splitQuadAxisString('优势-劣势')).toEqual({
+      low: '优势',
+      label: '',
+      high: '劣势',
+    });
+  });
+
+  test('2 段 slash fallback (k071 SWOT 现实数据)', () => {
+    expect(splitQuadAxisString('优势/劣势')).toEqual({
+      low: '优势',
+      label: '',
+      high: '劣势',
+    });
+  });
+
+  test('单段无分隔 → null（"市场增长率" 无法 split，进 dirty list）', () => {
+    expect(splitQuadAxisString('市场增长率')).toBeNull();
+  });
+
+  test('空 string → null', () => {
+    expect(splitQuadAxisString('')).toBeNull();
+  });
+
+  test('4 段 hyphen → 该 sep 失败，落到 / 也无 → null', () => {
+    expect(splitQuadAxisString('a-b-c-d')).toBeNull();
+  });
+
+  test('hyphen 优先于 slash — 含 - 时不会用 / split', () => {
+    // "高-敬业/勤奋-低" 含 -，按 - split → 3 段 ["高", "敬业/勤奋", "低"]
+    expect(splitQuadAxisString('高-敬业/勤奋-低')).toEqual({
+      low: '高',
+      label: '敬业/勤奋',
+      high: '低',
+    });
+  });
+});

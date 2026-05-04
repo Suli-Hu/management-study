@@ -108,7 +108,8 @@ describe('C1 — 正常双写后 0 drift', () => {
     await createCleanKp(
       db,
       'mqd',
-      '导语<quad>y,x||A|⭐|s|d||B|❓|s|d||C|🐕|s|d||D|💰|s|d</quad>',
+      // v0.8.4：axes 必须可被 splitQuadAxisString 拆（- 或 / 分隔，2 / 3 段）
+      '导语<quad>低-y-高,低-x-高||A|⭐|s|d||B|❓|s|d||C|🐕|s|d||D|💰|s|d</quad>',
       'quad',
     );
 
