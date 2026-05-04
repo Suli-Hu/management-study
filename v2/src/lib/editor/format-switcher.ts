@@ -128,11 +128,15 @@ function bodyHasContent(body: import('~/schemas/kp-body-structured').KpBody): bo
     );
   if (body.format === 'quad')
     return (
-      body.yAxis.trim().length > 0 ||
-      body.xAxis.trim().length > 0 ||
+      axisHasContent(body.yAxis) ||
+      axisHasContent(body.xAxis) ||
       body.cells.some((c) => c.name.trim() || c.detail.trim() || c.sub.trim() || c.emoji.trim())
     );
   return false;
+}
+
+function axisHasContent(axis: import('~/schemas/kp-body-structured').QuadAxis): boolean {
+  return axis.low.trim().length > 0 || axis.label.trim().length > 0 || axis.high.trim().length > 0;
 }
 
 // Re-export for tests

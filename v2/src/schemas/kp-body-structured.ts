@@ -93,12 +93,30 @@ export const CompareBody = z
   })
   .strict();
 
+/**
+ * 四象限轴 — 拆三字段（v0.8.4 breaking change）。
+ *
+ * 两种写法：
+ *   - 两段（label 空）：low="优势" / high="劣势" → 渲染 "优势-劣势"（SWOT 风）
+ *   - 三段（label 非空）：low="低" / label="增长率" / high="高" → 渲染 "低-增长率-高"（BCG 风）
+ *
+ * 旧 v0.8.3 写法 yAxis: "市场增长率"（单字符串维度名）已废弃；
+ * 数据需经 admin migrate-quad-axes endpoint smart split。
+ */
+export const QuadAxis = z
+  .object({
+    low: z.string().min(1, '低值不能为空'),
+    label: z.string().default(''),
+    high: z.string().min(1, '高值不能为空'),
+  })
+  .strict();
+
 export const QuadBody = z
   .object({
     format: z.literal('quad'),
     lead: z.string().default('').describe('导语'),
-    yAxis: z.string().min(1, 'yAxis 不能为空').describe('纵轴维度名（如 "市场增长率"）'),
-    xAxis: z.string().min(1, 'xAxis 不能为空').describe('横轴维度名（如 "相对市场份额"）'),
+    yAxis: QuadAxis.describe('纵轴：低 / (中间维度) / 高'),
+    xAxis: QuadAxis.describe('横轴：低 / (中间维度) / 高'),
     cells: z
       .array(
         z
@@ -132,6 +150,7 @@ export type FlatListBody = z.infer<typeof FlatListBody>;
 export type AccordionBody = z.infer<typeof AccordionBody>;
 export type CompareBody = z.infer<typeof CompareBody>;
 export type QuadBody = z.infer<typeof QuadBody>;
+export type QuadAxis = z.infer<typeof QuadAxis>;
 
 // ============================================================
 // Evaluations — 6 字段独立顶层

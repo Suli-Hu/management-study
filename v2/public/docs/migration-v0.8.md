@@ -253,15 +253,16 @@
 }
 ```
 
-**v0.8.x（新）**：
+**v0.8.x（新，含 v0.8.4 QuadAxis breaking change）**：
 ```jsonc
 {
   "body": {
     "zh": {
       "format": "quad",
       "lead": "BCG 矩阵：",
-      "yAxis": "市场增长率",
-      "xAxis": "相对市场份额",
+      // v0.8.4: yAxis / xAxis 拆字段（low / label / high），不接受字符串
+      "yAxis": { "low": "低", "label": "增长率", "high": "高" },     // 三段写法（label 非空）
+      "xAxis": { "low": "低", "label": "份额", "high": "高" },
       "cells": [
         { "name": "问题", "emoji": "❓", "sub": "高增长 + 低份额", "detail": "需要决策投资还是放弃。" },
         { "name": "明星", "emoji": "⭐", "sub": "高增长 + 高份额", "detail": "继续投入维持竞争优势。" },
@@ -273,10 +274,23 @@
 }
 ```
 
-**diff 要点**：
+**两段写法（label 留空 / 省略，渲染为 "low-high"，SWOT 风格）**：
+```jsonc
+{
+  "yAxis": { "low": "优势", "label": "", "high": "劣势" },
+  "xAxis": { "low": "威胁", "label": "", "high": "机会" }
+}
+```
+
+**diff 要点（v0.8.4 起）**：
+- **`yAxis` / `xAxis` 必须是对象 `{low, label?, high}`**，不再是字符串 — 字符串会被 422 拒（`body_structure_invalid`）
+- `low` / `high` 必填非空；`label` 可空（默认 `""`）
+- 渲染逻辑：
+  - `label` 非空 → `${low}-${label}-${high}`（三段，如 "低-增长率-高"）
+  - `label` 空 → `${low}-${high}`（两段，如 "优势-劣势"）
 - **`cells.length` 必须严格 == 4**，不是 3 / 不是 5 — 否则 422
 - 顺序固定：`[左上(高y, 低x), 右上(高y, 高x), 左下(低y, 低x), 右下(低y, 高x)]`，详见 [kp-field-guide.md §2.5](kp-field-guide.md#25-quad-的-axes-和-cells)
-- `yAxis` / `xAxis` 是**维度名**（如 "市场增长率"），不是 "高 / 低" 本身
+- 旧 v0.8.3 单字符串写法（如 `"yAxis": "市场增长率"`）已废弃；prod 数据由 super-admin 单次跑 `POST /api/admin/migrate-quad-axes` smart split
 
 ---
 

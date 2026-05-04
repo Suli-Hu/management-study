@@ -123,8 +123,8 @@ const VALID_BODIES: Record<string, KpBody> = {
   quad: {
     format: 'quad',
     lead: 'BCG：',
-    yAxis: '增长率',
-    xAxis: '份额',
+    yAxis: { low: '低', label: '增长率', high: '高' },
+    xAxis: { low: '低', label: '份额', high: '高' },
     cells: [
       { name: '问题', emoji: '❓', sub: '高增低份', detail: '决策投放' },
       { name: '明星', emoji: '⭐', sub: '高增高份', detail: '继续投' },
@@ -357,8 +357,8 @@ describe('v0.8.0 Stage 3: legacy contract 6 reason 拒绝路径', () => {
             zh: {
               format: 'quad',
               lead: '',
-              yAxis: 'y',
-              xAxis: 'x',
+              yAxis: { low: '低', label: '', high: '高' },
+              xAxis: { low: '低', label: '', high: '高' },
               cells: [
                 { name: 'A', emoji: '', sub: '', detail: '' },
                 { name: 'B', emoji: '', sub: '', detail: '' },

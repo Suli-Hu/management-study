@@ -220,6 +220,43 @@ describe('EditorStore', () => {
     expect(store.get().body.ja).toBe(before); // 同 reference（不重建）
   });
 
+  test('updateAxisField — quad active lang yAxis.low / xAxis.label / xAxis.high', () => {
+    const init = makeNewState('keiei');
+    init.body.zh = emptyKpBodyByFormat('quad');
+    const store = new EditorStore(init);
+
+    store.updateAxisField('yAxis', 'low', '低');
+    store.updateAxisField('yAxis', 'high', '高');
+    store.updateAxisField('xAxis', 'label', '增长率');
+
+    const body = store.get().body.zh;
+    if (body.format !== 'quad') throw new Error('narrow');
+    expect(body.yAxis).toEqual({ low: '低', label: '', high: '高' });
+    expect(body.xAxis).toEqual({ low: '', label: '增长率', high: '' });
+  });
+
+  test('updateAxisField — 非 quad format → no-op', () => {
+    const store = new EditorStore(makeNewState('keiei'));
+    store.updateAxisField('yAxis', 'low', '低');
+    // body.zh 仍是 narrative 默认，没崩
+    expect(store.get().body.zh.format).toBe('narrative');
+  });
+
+  test('updateAxisField — active lang = ja，仅改 ja，不动 zh', () => {
+    const init = makeNewState('keiei');
+    init.body.zh = emptyKpBodyByFormat('quad');
+    init.body.ja = emptyKpBodyByFormat('quad');
+    init.activeLang = 'ja';
+    const store = new EditorStore(init);
+
+    store.updateAxisField('yAxis', 'high', 'Y_JA_HIGH');
+    const zh = store.get().body.zh;
+    const ja = store.get().body.ja!;
+    if (zh.format !== 'quad' || ja.format !== 'quad') throw new Error('narrow');
+    expect(ja.yAxis.high).toBe('Y_JA_HIGH');
+    expect(zh.yAxis.high).toBe('');
+  });
+
   test('setEvaluations zh / ja 独立', () => {
     const store = new EditorStore(makeNewState('keiei'));
     const e = emptyEvaluationsLang();

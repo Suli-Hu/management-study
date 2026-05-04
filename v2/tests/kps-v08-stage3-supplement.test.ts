@@ -589,6 +589,7 @@ describe('类5 特殊字符 / 边界值', () => {
       { name: 'Q3', emoji: '🌊', sub: 'sub', detail: 'd' },
       { name: 'Q4', emoji: '❄️', sub: 'sub', detail: 'd' },
     ];
+    const okAxis = { low: '低', label: '', high: '高' };
     const res = await kpsPOST(
       makeCtx(db, {
         method: 'POST',
@@ -597,7 +598,7 @@ describe('类5 特殊字符 / 边界值', () => {
           id: 'k506',
           title: { zh: 't' },
           body: {
-            zh: { format: 'quad', lead: '', yAxis: 'Y', xAxis: 'X', cells },
+            zh: { format: 'quad', lead: '', yAxis: okAxis, xAxis: okAxis, cells },
           },
           schools: ['motivation'],
         },
@@ -617,8 +618,8 @@ describe('类5 特殊字符 / 边界值', () => {
             zh: {
               format: 'quad',
               lead: '',
-              yAxis: 'Y',
-              xAxis: 'X',
+              yAxis: okAxis,
+              xAxis: okAxis,
               cells: [
                 { name: '', emoji: '', sub: '', detail: '' },
                 { name: 'b', emoji: '', sub: '', detail: '' },

@@ -2,15 +2,19 @@
  * KP 编辑器 v0.8 — quad form module
  *
  * 字段：lead / yAxis / xAxis / cells (固定 4，位置不可调)。
+ * yAxis / xAxis 各拆 3 input：低值（必填）/ 中间维度（可空）/ 高值（必填）。
  * 每 cell 标注"[N] 左上/右上/左下/右下"避免顺序错乱 (Q6/G)。
  * 见 KP-EDITOR-V0.8-PRD.md §6.4.5。
  */
 
-import type { QuadBody } from '~/schemas/kp-body-structured';
+import type { QuadBody, QuadAxis } from '~/schemas/kp-body-structured';
 import { el, input, textarea, field } from '../dom-helpers';
 import type { FormModule } from './narrative';
 
 const POS_LABELS = ['左上 · 高 y · 低 x', '右上 · 高 y · 高 x', '左下 · 低 y · 低 x', '右下 · 低 y · 高 x'];
+
+type AxisKey = 'yAxis' | 'xAxis';
+type AxisField = keyof QuadAxis;
 
 export function mountQuadForm(
   host: HTMLElement,
@@ -30,9 +34,14 @@ export function mountQuadForm(
   let current: QuadBody = {
     format: 'quad',
     lead: body.lead ?? '',
-    yAxis: body.yAxis ?? '',
-    xAxis: body.xAxis ?? '',
+    yAxis: normalizeAxis(body.yAxis),
+    xAxis: normalizeAxis(body.xAxis),
     cells,
+  };
+
+  const updateAxis = (axis: AxisKey, fld: AxisField, value: string): void => {
+    current = { ...current, [axis]: { ...current[axis], [fld]: value } };
+    onChange(current);
   };
 
   host.innerHTML = '';
@@ -55,42 +64,10 @@ export function mountQuadForm(
     }),
   );
 
-  // axes
+  // axes — yAxis / xAxis 各 3 input（低 / 中间 / 高）
   const axes = el('div', 'kpe-quad-axes');
-  axes.appendChild(
-    field({
-      label: 'Y 轴维度',
-      required: true,
-      control: input({
-        value: current.yAxis,
-        placeholder: '低-敬业程度-高 / 优势-劣势',
-        cls: 'kpe-input',
-        ariaLabel: 'Y 轴维度名',
-        required: true,
-        onInput: (v) => {
-          current = { ...current, yAxis: v };
-          onChange(current);
-        },
-      }),
-    }),
-  );
-  axes.appendChild(
-    field({
-      label: 'X 轴维度',
-      required: true,
-      control: input({
-        value: current.xAxis,
-        placeholder: '新市场-旧市场 / 高-相对份额-低',
-        cls: 'kpe-input',
-        ariaLabel: 'X 轴维度名',
-        required: true,
-        onInput: (v) => {
-          current = { ...current, xAxis: v };
-          onChange(current);
-        },
-      }),
-    }),
-  );
+  axes.appendChild(buildAxisField('yAxis', 'Y 轴维度', current.yAxis, updateAxis));
+  axes.appendChild(buildAxisField('xAxis', 'X 轴维度', current.xAxis, updateAxis));
   wrap.appendChild(axes);
 
   // 4 cells — fixed position
@@ -170,4 +147,53 @@ export function mountQuadForm(
   host.appendChild(wrap);
 
   return { destroy: () => (host.innerHTML = '') };
+}
+
+/** 旧 v0.8.3 数据偶尔传 string yAxis 进来 — 防御性 normalize（其实 server 已 422，仅兜底）。 */
+function normalizeAxis(raw: QuadBody['yAxis'] | string | undefined | null): QuadAxis {
+  if (raw && typeof raw === 'object' && 'low' in raw) {
+    return { low: raw.low ?? '', label: raw.label ?? '', high: raw.high ?? '' };
+  }
+  return { low: '', label: '', high: '' };
+}
+
+/** 一个轴 = label + 3 inputs（低 / 中间维度可空 / 高）。 */
+function buildAxisField(
+  axisKey: AxisKey,
+  axisLabel: string,
+  axis: QuadAxis,
+  onUpdate: (axis: AxisKey, fld: AxisField, value: string) => void,
+): HTMLElement {
+  const axisName = axisKey === 'yAxis' ? 'Y 轴' : 'X 轴';
+  const row = el('div', 'kpe-quad-axis-row');
+  row.appendChild(
+    input({
+      value: axis.low,
+      placeholder: '低值 *',
+      cls: 'kpe-input kpe-quad-axis-input',
+      ariaLabel: `${axisName}低值`,
+      required: true,
+      onInput: (v) => onUpdate(axisKey, 'low', v),
+    }),
+  );
+  row.appendChild(
+    input({
+      value: axis.label,
+      placeholder: '中间维度（可空）',
+      cls: 'kpe-input kpe-quad-axis-input',
+      ariaLabel: `${axisName}中间维度`,
+      onInput: (v) => onUpdate(axisKey, 'label', v),
+    }),
+  );
+  row.appendChild(
+    input({
+      value: axis.high,
+      placeholder: '高值 *',
+      cls: 'kpe-input kpe-quad-axis-input',
+      ariaLabel: `${axisName}高值`,
+      required: true,
+      onInput: (v) => onUpdate(axisKey, 'high', v),
+    }),
+  );
+  return field({ label: axisLabel, required: true, control: row });
 }

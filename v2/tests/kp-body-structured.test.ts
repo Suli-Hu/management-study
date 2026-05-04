@@ -21,12 +21,14 @@ import {
   AccordionBody,
   CompareBody,
   QuadBody,
+  QuadAxis,
 } from '~/schemas/kp-body-structured';
 import {
   emptyKpBody,
   parsedToStructured,
   extractEvaluationsFromParsed,
   structuredToSearchText,
+  splitQuadAxisString,
 } from '~/lib/kp-body-helpers';
 import { parseBody } from '~/lib/body-parser';
 
@@ -97,12 +99,12 @@ describe('KpBody schema — 5 种 format 各自', () => {
     expect(r.success).toBe(false);
   });
 
-  test('QuadBody happy', () => {
+  test('QuadBody happy（三段：低-增长率-高 + 两段：优势-劣势）', () => {
     const r = QuadBody.safeParse({
       format: 'quad',
       lead: '矩阵导语',
-      yAxis: '市场增长率',
-      xAxis: '相对市场份额',
+      yAxis: { low: '低', label: '增长率', high: '高' },
+      xAxis: { low: '优势', label: '', high: '劣势' },
       cells: [
         { name: '问题', emoji: '❓', sub: '高增长 + 低份额', detail: '...' },
         { name: '明星', emoji: '⭐', sub: '高增长 + 高份额', detail: '...' },
@@ -117,8 +119,8 @@ describe('KpBody schema — 5 种 format 各自', () => {
     const r = QuadBody.safeParse({
       format: 'quad',
       lead: '',
-      yAxis: 'y',
-      xAxis: 'x',
+      yAxis: { low: '低', label: '', high: '高' },
+      xAxis: { low: '低', label: '', high: '高' },
       cells: [
         { name: 'a', emoji: '', sub: '', detail: '' },
         { name: 'b', emoji: '', sub: '', detail: '' },
@@ -132,21 +134,55 @@ describe('KpBody schema — 5 种 format 各自', () => {
     const r = QuadBody.safeParse({
       format: 'quad',
       lead: '',
-      yAxis: 'y',
-      xAxis: 'x',
+      yAxis: { low: '低', label: '', high: '高' },
+      xAxis: { low: '低', label: '', high: '高' },
       cells: Array.from({ length: 5 }, (_, i) => ({
         name: `c${i}`, emoji: '', sub: '', detail: '',
       })),
     });
     expect(r.success).toBe(false);
   });
+});
 
-  test('QuadBody 拒绝 yAxis/xAxis 为空', () => {
+describe('QuadAxis schema (v0.8.4 breaking)', () => {
+  test('QuadAxis happy 三段', () => {
+    const r = QuadAxis.safeParse({ low: '低', label: '增长率', high: '高' });
+    expect(r.success).toBe(true);
+  });
+
+  test('QuadAxis happy 两段（label 默认空）', () => {
+    const r = QuadAxis.safeParse({ low: '优势', high: '劣势' });
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.label).toBe('');
+  });
+
+  test('QuadAxis 拒绝 low 空', () => {
+    const r = QuadAxis.safeParse({ low: '', label: '', high: '高' });
+    expect(r.success).toBe(false);
+  });
+
+  test('QuadAxis 拒绝 high 空', () => {
+    const r = QuadAxis.safeParse({ low: '低', label: '', high: '' });
+    expect(r.success).toBe(false);
+  });
+
+  test('QuadBody.yAxis 必须是 QuadAxis 对象，不再接受 string', () => {
     const r = QuadBody.safeParse({
       format: 'quad',
       lead: '',
-      yAxis: '',
-      xAxis: 'x',
+      yAxis: '市场增长率',
+      xAxis: { low: '低', label: '', high: '高' },
+      cells: Array.from({ length: 4 }, () => ({ name: 'a', emoji: '', sub: '', detail: '' })),
+    });
+    expect(r.success).toBe(false);
+  });
+
+  test('QuadBody 拒绝 yAxis QuadAxis low/high 任一为空', () => {
+    const r = QuadBody.safeParse({
+      format: 'quad',
+      lead: '',
+      yAxis: { low: '', label: '', high: '高' },
+      xAxis: { low: '低', label: '', high: '高' },
       cells: Array.from({ length: 4 }, () => ({ name: 'a', emoji: '', sub: '', detail: '' })),
     });
     expect(r.success).toBe(false);
@@ -276,18 +312,32 @@ describe('parsedToStructured — 旧 ParsedBody → 新 KpBody', () => {
     expect(KpBody.safeParse(structured).success).toBe(true);
   });
 
-  test('quad 转换', () => {
+  test('quad 转换 — 三段 yAxis "低-增长率-高" + 两段 xAxis "优势/劣势"', () => {
+    const body = '导语<quad>低-增长率-高,优势/劣势||明星|⭐|高+高|领先||问题|❓|高+低|抉择||瘦狗|🐕|低+低|剥离||现金牛|💰|低+高|挤奶</quad>';
+    const parsed = parseBody(body, 'quad');
+    const structured = parsedToStructured(parsed);
+    expect(structured.format).toBe('quad');
+    if (structured.format === 'quad') {
+      expect(structured.yAxis).toEqual({ low: '低', label: '增长率', high: '高' });
+      expect(structured.xAxis).toEqual({ low: '优势', label: '', high: '劣势' });
+      expect(structured.cells).toHaveLength(4);
+      expect(structured.cells[0].name).toBe('明星');
+    }
+    expect(KpBody.safeParse(structured).success).toBe(true);
+  });
+
+  test('quad 转换 — 旧 BCG "市场增长率" 单字符串 → 落回 stub（zod 拒，待 audit / migrate）', () => {
     const body = '导语<quad>市场增长率,相对市场份额||明星|⭐|高+高|领先||问题|❓|高+低|抉择||瘦狗|🐕|低+低|剥离||现金牛|💰|低+高|挤奶</quad>';
     const parsed = parseBody(body, 'quad');
     const structured = parsedToStructured(parsed);
     expect(structured.format).toBe('quad');
     if (structured.format === 'quad') {
-      expect(structured.yAxis).toBe('市场增长率');
-      expect(structured.xAxis).toBe('相对市场份额');
-      expect(structured.cells).toHaveLength(4);
-      expect(structured.cells[0].name).toBe('明星');
+      // 无 - / 都不含分隔 → split null → fallback {low: raw, label:'', high:''}
+      expect(structured.yAxis).toEqual({ low: '市场增长率', label: '', high: '' });
+      expect(structured.xAxis).toEqual({ low: '相对市场份额', label: '', high: '' });
     }
-    expect(KpBody.safeParse(structured).success).toBe(true);
+    // 应被 KpBody 拒（high 空）— 留给 audit / migrate 处理
+    expect(KpBody.safeParse(structured).success).toBe(false);
   });
 
   test('提取 evaluations from ParsedBody', () => {
@@ -328,8 +378,8 @@ describe('structuredToSearchText — kp_fts 用纯文本', () => {
     const txt = structuredToSearchText({
       format: 'quad',
       lead: 'BCG 矩阵',
-      yAxis: '市场增长率',
-      xAxis: '相对市场份额',
+      yAxis: { low: '低', label: '增长率', high: '高' },
+      xAxis: { low: '低', label: '份额', high: '高' },
       cells: [
         { name: '问题', emoji: '❓', sub: '高+低', detail: '抉择' },
         { name: '明星', emoji: '⭐', sub: '高+高', detail: '领先' },
@@ -337,9 +387,75 @@ describe('structuredToSearchText — kp_fts 用纯文本', () => {
         { name: '现金牛', emoji: '💰', sub: '低+高', detail: '挤奶' },
       ],
     });
-    expect(txt).toContain('市场增长率');
+    expect(txt).toContain('增长率');
+    expect(txt).toContain('份额');
     expect(txt).toContain('明星');
     expect(txt).toContain('挤奶');
     // emoji 不进搜索文本（结构里没拼）— 不验
+  });
+});
+
+describe('splitQuadAxisString — v0.8.4 smart split', () => {
+  test('3 段 hyphen — "低-敬业程度-高"', () => {
+    expect(splitQuadAxisString('低-敬业程度-高')).toEqual({
+      low: '低',
+      label: '敬业程度',
+      high: '高',
+    });
+  });
+
+  test('2 段 hyphen — "优势-劣势"', () => {
+    expect(splitQuadAxisString('优势-劣势')).toEqual({
+      low: '优势',
+      label: '',
+      high: '劣势',
+    });
+  });
+
+  test('2 段 slash — "优势/劣势"（k071 SWOT 风）', () => {
+    expect(splitQuadAxisString('优势/劣势')).toEqual({
+      low: '优势',
+      label: '',
+      high: '劣势',
+    });
+  });
+
+  test('3 段 slash — "低/增长率/高"', () => {
+    expect(splitQuadAxisString('低/增长率/高')).toEqual({
+      low: '低',
+      label: '增长率',
+      high: '高',
+    });
+  });
+
+  test('单段 — "市场增长率" 无分隔 → null', () => {
+    expect(splitQuadAxisString('市场增长率')).toBeNull();
+  });
+
+  test('空 string → null', () => {
+    expect(splitQuadAxisString('')).toBeNull();
+    expect(splitQuadAxisString('   ')).toBeNull();
+  });
+
+  test('hyphen 优先于 slash — "高-敬业/勤奋-低"', () => {
+    // `-` 含 → split by `-` → 3 段 ["高", "敬业/勤奋", "低"]
+    expect(splitQuadAxisString('高-敬业/勤奋-低')).toEqual({
+      low: '高',
+      label: '敬业/勤奋',
+      high: '低',
+    });
+  });
+
+  test('4 段 hyphen → 该 sep 失败，落到 / fallback；都失败 null', () => {
+    // 4 段无法 fit 2/3 段 schema
+    expect(splitQuadAxisString('a-b-c-d')).toBeNull();
+  });
+
+  test('trim 头尾空格', () => {
+    expect(splitQuadAxisString('  低 - 增长率 - 高  ')).toEqual({
+      low: '低',
+      label: '增长率',
+      high: '高',
+    });
   });
 });

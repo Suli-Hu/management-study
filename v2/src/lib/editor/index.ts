@@ -293,8 +293,8 @@ function emptyBodyForFormat(format: Format): KpBody {
       return {
         format: 'quad',
         lead: '',
-        yAxis: '',
-        xAxis: '',
+        yAxis: { low: '', label: '', high: '' },
+        xAxis: { low: '', label: '', high: '' },
         cells: [
           { name: '', emoji: '', sub: '', detail: '' },
           { name: '', emoji: '', sub: '', detail: '' },

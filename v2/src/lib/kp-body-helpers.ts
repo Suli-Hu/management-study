@@ -23,6 +23,7 @@ import type {
   AccordionBody,
   CompareBody,
   QuadBody,
+  QuadAxis,
   KpEvaluationsLang,
 } from '~/schemas/kp-body-structured';
 import type { ParsedBody, Format, Evaluations } from './body-parser';
@@ -63,12 +64,16 @@ export function emptyCompareBody(): CompareBody {
   };
 }
 
+export function emptyQuadAxis(): QuadAxis {
+  return { low: '', label: '', high: '' };
+}
+
 export function emptyQuadBody(): QuadBody {
   return {
     format: 'quad',
     lead: '',
-    yAxis: '',
-    xAxis: '',
+    yAxis: emptyQuadAxis(),
+    xAxis: emptyQuadAxis(),
     cells: [
       { name: '', emoji: '', sub: '', detail: '' },
       { name: '', emoji: '', sub: '', detail: '' },
@@ -76,6 +81,34 @@ export function emptyQuadBody(): QuadBody {
       { name: '', emoji: '', sub: '', detail: '' },
     ],
   };
+}
+
+/**
+ * Smart split — 把旧 string yAxis/xAxis（v0.8.3 及以前）拆成 v0.8.4 QuadAxis。
+ *
+ * 优先级：
+ *   1. 含 `-`：split → 3 段返 {low, label, high} / 2 段返 {low, '', high}
+ *   2. 不含 `-` 但含 `/`：split → 同 1（k071 SWOT 用 `/` 分隔）
+ *   3. 0/1 段（既无 `-` 也无 `/`，或单段）→ null（无法 split，caller 处理）
+ *
+ * 返回 QuadAxis 时所有字段已 trim。
+ */
+export function splitQuadAxisString(s: string): QuadAxis | null {
+  const trimmed = (s ?? '').trim();
+  if (!trimmed) return null;
+
+  for (const sep of ['-', '/'] as const) {
+    if (!trimmed.includes(sep)) continue;
+    const parts = trimmed.split(sep).map((p) => p.trim());
+    if (parts.length === 3 && parts[0] && parts[2]) {
+      return { low: parts[0]!, label: parts[1] ?? '', high: parts[2]! };
+    }
+    if (parts.length === 2 && parts[0] && parts[1]) {
+      return { low: parts[0]!, label: '', high: parts[1]! };
+    }
+    // 4+ 段或首/尾空 — 试下一个分隔符
+  }
+  return null;
 }
 
 /** 给 format 拿空白 KpBody — 编辑器初始化 / 切 format 时调 */
@@ -144,12 +177,14 @@ export function parsedToStructured(parsed: ParsedBody): KpBody {
       })),
     };
   }
-  // quad
+  // quad — yAxis/xAxis 旧 ParsedBody 是 string，v0.8.4 改 QuadAxis 对象。
+  // 用 splitQuadAxisString 智能拆；失败时落回 {low: raw, label: '', high: ''}（zod 会拒，
+  // 但保留原值给 audit / migrate-quad-axes 端点 dirty list）。
   return {
     format: 'quad',
     lead: parsed.lead,
-    yAxis: parsed.yAxis,
-    xAxis: parsed.xAxis,
+    yAxis: splitQuadAxisString(parsed.yAxis) ?? { low: parsed.yAxis, label: '', high: '' },
+    xAxis: splitQuadAxisString(parsed.xAxis) ?? { low: parsed.xAxis, label: '', high: '' },
     cells: parsed.cells.map((c) => ({
       name: c.name,
       emoji: c.emoji,
@@ -237,7 +272,8 @@ export function structuredToSearchText(body: KpBody): string {
       parts.push(c.title, c.keyword, c.desc, c.type, c.theories, c.detail);
     }
   } else if (body.format === 'quad') {
-    parts.push(body.yAxis, body.xAxis);
+    parts.push(body.yAxis.low, body.yAxis.label, body.yAxis.high);
+    parts.push(body.xAxis.low, body.xAxis.label, body.xAxis.high);
     for (const c of body.cells) {
       parts.push(c.name, c.sub, c.detail);
     }
@@ -312,13 +348,20 @@ export function structuredToLegacyDsl(body: KpBody): string {
       .join('||');
     return `${s}<compare>${colsStr}</compare>`;
   }
-  // quad
+  // quad — v0.8.4: yAxis/xAxis 是 QuadAxis 对象，反推时合并成 legacy string `low-label-high`。
   let s = body.lead;
-  if (s && (body.cells.length > 0 || body.yAxis || body.xAxis)) s += '：';
+  const yAxisStr = quadAxisToLegacyString(body.yAxis);
+  const xAxisStr = quadAxisToLegacyString(body.xAxis);
+  if (s && (body.cells.length > 0 || yAxisStr || xAxisStr)) s += '：';
   const cellsStr = body.cells
     .map((c) => trimTrailing([c.name, c.emoji, c.sub, c.detail]).join('|'))
     .join('||');
-  return `${s}<quad>${body.yAxis},${body.xAxis}||${cellsStr}</quad>`;
+  return `${s}<quad>${yAxisStr},${xAxisStr}||${cellsStr}</quad>`;
+}
+
+/** QuadAxis → legacy 单字符串：label 空时 `low-high`，label 非空时 `low-label-high`。 */
+function quadAxisToLegacyString(axis: QuadAxis): string {
+  return axis.label ? `${axis.low}-${axis.label}-${axis.high}` : `${axis.low}-${axis.high}`;
 }
 
 /** 删除数组尾部连续的空字符串（保留至少 1 个元素 — 因为 title/name 是必填）。 */

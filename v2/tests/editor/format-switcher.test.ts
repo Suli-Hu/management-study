@@ -85,10 +85,22 @@ describe('bodyHasContent — compare', () => {
 });
 
 describe('bodyHasContent — quad', () => {
-  test('yAxis 非空 → true', () => {
+  test('yAxis.low 非空 → true', () => {
     const body = emptyKpBodyByFormat('quad');
     if (body.format !== 'quad') throw new Error('narrow');
-    body.yAxis = 'Y';
+    body.yAxis = { low: 'Y 低', label: '', high: '' };
+    expect(bodyHasContent(body)).toBe(true);
+  });
+  test('yAxis.label 非空 → true', () => {
+    const body = emptyKpBodyByFormat('quad');
+    if (body.format !== 'quad') throw new Error('narrow');
+    body.yAxis = { low: '', label: '中间', high: '' };
+    expect(bodyHasContent(body)).toBe(true);
+  });
+  test('xAxis.high 非空 → true', () => {
+    const body = emptyKpBodyByFormat('quad');
+    if (body.format !== 'quad') throw new Error('narrow');
+    body.xAxis = { low: '', label: '', high: 'X 高' };
     expect(bodyHasContent(body)).toBe(true);
   });
   test('cell.name 非空 → true', () => {

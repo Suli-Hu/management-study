@@ -269,7 +269,7 @@ describe('compare form', () => {
 });
 
 describe('quad form', () => {
-  test('改 yAxis → onChange，cells 仍 4 个', () => {
+  test('改 yAxis 低值/中间/高值 → onChange QuadAxis 对象，cells 仍 4 个', () => {
     const h = host();
     let last: unknown;
     mountQuadForm(
@@ -277,8 +277,8 @@ describe('quad form', () => {
       {
         format: 'quad',
         lead: '',
-        yAxis: '',
-        xAxis: '',
+        yAxis: { low: '', label: '', high: '' },
+        xAxis: { low: '', label: '', high: '' },
         cells: [
           { name: 'a', emoji: '', sub: '', detail: '' },
           { name: 'b', emoji: '', sub: '', detail: '' },
@@ -291,24 +291,67 @@ describe('quad form', () => {
       },
     );
     const inputs = h.querySelectorAll<HTMLInputElement>('input');
-    // 找 yAxis input — aria-label = 'Y 轴维度名'
-    const yInput = Array.from(inputs).find((i) => i.getAttribute('aria-label') === 'Y 轴维度名');
-    expect(yInput).toBeTruthy();
-    yInput!.value = 'Y';
-    yInput!.dispatchEvent(new Event('input'));
-    expect((last as { yAxis: string; cells: unknown[] }).yAxis).toBe('Y');
-    expect((last as { cells: unknown[] }).cells).toHaveLength(4);
+    const yLow = Array.from(inputs).find((i) => i.getAttribute('aria-label') === 'Y 轴低值');
+    const yLabel = Array.from(inputs).find((i) => i.getAttribute('aria-label') === 'Y 轴中间维度');
+    const yHigh = Array.from(inputs).find((i) => i.getAttribute('aria-label') === 'Y 轴高值');
+    expect(yLow).toBeTruthy();
+    expect(yLabel).toBeTruthy();
+    expect(yHigh).toBeTruthy();
+
+    yLow!.value = '低';
+    yLow!.dispatchEvent(new Event('input'));
+    yLabel!.value = '增长率';
+    yLabel!.dispatchEvent(new Event('input'));
+    yHigh!.value = '高';
+    yHigh!.dispatchEvent(new Event('input'));
+
+    const lastBody = last as { yAxis: { low: string; label: string; high: string }; cells: unknown[] };
+    expect(lastBody.yAxis).toEqual({ low: '低', label: '增长率', high: '高' });
+    expect(lastBody.cells).toHaveLength(4);
   });
 
-  test('mount 渲染 4 个 cell + 4 个 [N] 位置标签', () => {
+  test('两段写法：仅填 X 轴低值 + 高值（label 留空）→ onChange 对象 label=""', () => {
+    const h = host();
+    let last: unknown;
+    mountQuadForm(
+      h,
+      {
+        format: 'quad',
+        lead: '',
+        yAxis: { low: '', label: '', high: '' },
+        xAxis: { low: '', label: '', high: '' },
+        cells: [
+          { name: 'a', emoji: '', sub: '', detail: '' },
+          { name: 'b', emoji: '', sub: '', detail: '' },
+          { name: 'c', emoji: '', sub: '', detail: '' },
+          { name: 'd', emoji: '', sub: '', detail: '' },
+        ],
+      },
+      (b) => {
+        last = b;
+      },
+    );
+    const inputs = h.querySelectorAll<HTMLInputElement>('input');
+    const xLow = Array.from(inputs).find((i) => i.getAttribute('aria-label') === 'X 轴低值');
+    const xHigh = Array.from(inputs).find((i) => i.getAttribute('aria-label') === 'X 轴高值');
+    xLow!.value = '优势';
+    xLow!.dispatchEvent(new Event('input'));
+    xHigh!.value = '劣势';
+    xHigh!.dispatchEvent(new Event('input'));
+
+    const lastBody = last as { xAxis: { low: string; label: string; high: string } };
+    expect(lastBody.xAxis).toEqual({ low: '优势', label: '', high: '劣势' });
+  });
+
+  test('mount 渲染 4 个 cell + 4 个 [N] 位置标签 + 6 个 axis input', () => {
     const h = host();
     mountQuadForm(
       h,
       {
         format: 'quad',
         lead: '',
-        yAxis: '',
-        xAxis: '',
+        yAxis: { low: '', label: '', high: '' },
+        xAxis: { low: '', label: '', high: '' },
         cells: [
           { name: 'a', emoji: '', sub: '', detail: '' },
           { name: 'b', emoji: '', sub: '', detail: '' },
@@ -324,6 +367,9 @@ describe('quad form', () => {
     expect(positions.length).toBe(4);
     expect(positions[0]!.textContent).toMatch(/\[0\]/);
     expect(positions[3]!.textContent).toMatch(/\[3\]/);
+    // 6 个 axis input：Y 低/中/高 + X 低/中/高
+    const axisInputs = h.querySelectorAll('.kpe-quad-axis-input');
+    expect(axisInputs.length).toBe(6);
   });
 
   test('cells <4 时 pad 到 4', () => {
@@ -334,8 +380,8 @@ describe('quad form', () => {
       {
         format: 'quad',
         lead: '',
-        yAxis: 'y',
-        xAxis: 'x',
+        yAxis: { low: '低', label: '', high: '高' },
+        xAxis: { low: '低', label: '', high: '高' },
         cells: [
           { name: 'a', emoji: '', sub: '', detail: '' },
           { name: 'b', emoji: '', sub: '', detail: '' },

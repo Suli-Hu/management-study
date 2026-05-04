@@ -734,6 +734,21 @@
   .kp-editor-v08 .kpe-quad-axes { grid-template-columns: 1fr; }
 }
 
+/* v0.8.4: 一个 axis 拆 3 input — 横排 desktop / 竖排 mobile */
+.kp-editor-v08 .kpe-quad-axis-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--sp-2);
+}
+
+@media (max-width: 480px) {
+  .kp-editor-v08 .kpe-quad-axis-row { grid-template-columns: 1fr; }
+}
+
+.kp-editor-v08 .kpe-quad-axis-input {
+  width: 100%;
+}
+
 .kp-editor-v08 .kpe-quad-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

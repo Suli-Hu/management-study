@@ -84,8 +84,8 @@ export function emptyKpBodyByFormat(format: Format): KpBody {
       return {
         format: 'quad',
         lead: '',
-        yAxis: '',
-        xAxis: '',
+        yAxis: { low: '', label: '', high: '' },
+        xAxis: { low: '', label: '', high: '' },
         cells: [
           { name: '', emoji: '', sub: '', detail: '' },
           { name: '', emoji: '', sub: '', detail: '' },
@@ -221,6 +221,23 @@ export class EditorStore {
   setEvaluations(lang: Lang, evals: KpEvaluationsLang | null): void {
     const nextEvals = { ...this.state.evaluations, [lang]: evals };
     this.update({ evaluations: nextEvals });
+  }
+
+  /**
+   * 更新当前 active lang 的 quad body 一个 axis 字段。
+   * 仅当 active body.format === 'quad' 时才生效；否则 no-op（防御性 — UI 不该这么调）。
+   */
+  updateAxisField(
+    axis: 'yAxis' | 'xAxis',
+    fld: 'low' | 'label' | 'high',
+    value: string,
+  ): void {
+    const lang = this.state.activeLang;
+    const body = this.state.body[lang];
+    if (!body || body.format !== 'quad') return;
+    const nextAxis = { ...body[axis], [fld]: value };
+    const nextBody: KpBody = { ...body, [axis]: nextAxis };
+    this.setBody(lang, nextBody);
   }
 
   setSaveStatus(status: SaveStatus, error: ErrorDetail | null = null): void {
