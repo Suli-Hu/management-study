@@ -8,6 +8,7 @@ import { editHref } from '~/lib/nav';
 import { tagColor } from '~/lib/tag-color';
 import { shortYear } from '~/lib/format-year';
 import { lastName } from '~/lib/format-name';
+import { hashToTagToken } from '~/lib/editor/dom-helpers';
 import type { Tag } from '~/schemas/discipline';
 
 const { discipline, id } = Astro.params;
@@ -88,32 +89,32 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
 
 <Layout title={kp.title_zh} currentDiscipline={discipline} currentSection="kps">
   {/* v0.5.91: data-kp-id 让 just-edited highlight client 能定位到这页（保存后跳回有 ?just-edited） */}
-  <main class="max-w-reading mx-auto px-4 py-6" data-kp-id={kp.id}>
-    <header class="mb-6 pb-4 border-b">
-      <div class="flex items-start gap-3">
-        <h1 class="page-hero-title flex-1 mb-2">{title}</h1>
+  <main class="kp-detail" data-kp-id={kp.id}>
+    <header class="kp-head">
+      <div class="kp-head-row">
+        <h1 class="kp-title">{title}</h1>
         {Astro.locals.canEdit(discipline) && (
           <a
             href={editHref(`/${discipline}/kp/${kp.id}/edit`, Astro.url.pathname)}
             data-edit-kp-link={kp.id}
-            class="hero-icon-btn shrink-0"
+            class="kp-edit-btn"
             aria-label="编辑此 KP"
             title="编辑"
           >✎</a>
         )}
       </div>
-      <div class="flex flex-wrap items-baseline gap-2 text-xs text-tertiary">
+      <div class="kp-meta">
         {scholars.map((s) => (
-          <a href={`/${discipline}/scholars/${s.key}`} class="font-semibold hover:underline">
+          <a href={`/${discipline}/scholars/${s.key}`} class="kp-scholar-link">
             {lastName(s.name_en ?? s.name_zh)}
           </a>
         ))}
-        {kp.year && <span class="text-quaternary">{shortYear(kp.year)}</span>}
+        {kp.year && <span class="kp-year">{shortYear(kp.year)}</span>}
       </div>
-      {kp.title_en && <div class="text-xs text-quaternary italic mt-1">{kp.title_en}</div>}
-      {kp.title_ja && lang === 'zh' && <div class="text-xs text-tertiary mt-1">{kp.title_ja}</div>}
+      {kp.title_en && <div class="kp-title-en">{kp.title_en}</div>}
+      {kp.title_ja && lang === 'zh' && <div class="kp-title-ja">{kp.title_ja}</div>}
 
-      <div class="flex gap-2 mt-3 items-center">
+      <div class="kp-chip-row">
         {bodyJa && (
           <a
             href={langToggleHref}
@@ -127,12 +128,16 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
           </a>
         )}
         {schools.map((s) => (
-          <a href={`/${discipline}/${s.key}`} class="chip border-quaternary">{s.title_zh}</a>
+          <a
+            href={`/${discipline}/${s.key}`}
+            class="kp-school-chip"
+            data-tag={hashToTagToken(s.key)}
+          >{s.title_zh}</a>
         ))}
       </div>
     </header>
 
-    <article class="kp-body text-secondary" set:html={renderStructuredBody({
+    <article class="kp-body" set:html={renderStructuredBody({
       body: renderedBody,
       accentHex,
     })} />
@@ -169,3 +174,132 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
     });
   })();
 </script>
+
+<style>
+  /* v0.8.13 Stage 6 chip 2: KP 详情页 v1.0 design swap (sumi token)
+     页面 chrome 全 token 化；body 内部 5 format / eval 复用 components.css 改造后 */
+  .kp-detail {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 24px 96px;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  }
+  @media (max-width: 720px) {
+    .kp-detail { padding: 22px 16px 72px; }
+  }
+
+  /* ---- header ---- */
+  .kp-head {
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .kp-head-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .kp-title {
+    flex: 1;
+    margin: 0 0 8px;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.005em;
+    color: var(--text);
+    word-break: break-word;
+  }
+  .kp-edit-btn {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    border-radius: 9999px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 16px; line-height: 1;
+    color: var(--text-3);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .14s, color .14s;
+  }
+  .kp-edit-btn:hover {
+    background: var(--bg-soft);
+    color: var(--text);
+    opacity: 1;  /* 抵消 global a:hover { opacity: 0.8 } */
+  }
+
+  .kp-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-2);
+  }
+  .kp-scholar-link {
+    font-weight: 600;
+    color: var(--text-2);
+    text-decoration: none;
+  }
+  .kp-scholar-link:hover {
+    color: var(--text);
+    text-decoration: underline;
+    opacity: 1;
+  }
+  .kp-year {
+    color: var(--text-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .kp-title-en {
+    font-size: 12px;
+    color: var(--text-3);
+    font-style: italic;
+    margin-top: 4px;
+  }
+  .kp-title-ja {
+    font-size: 12px;
+    color: var(--text-2);
+    margin-top: 4px;
+  }
+
+  /* ---- chip row ---- */
+  .kp-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+    align-items: center;
+  }
+  .kp-school-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    background: var(--bg-elev);
+    color: var(--text-2);
+    transition: border-color .14s, color .14s, background .14s;
+  }
+  .kp-school-chip:hover {
+    border-color: var(--text-3);
+    color: var(--text);
+    opacity: 1;
+  }
+  /* 学派 tag 着色（D6=A），按 schools[i].key hash → 8 token (复用 chip 1 SchoolCard pattern) */
+  .kp-school-chip[data-tag="tag-mgmt"]   { background: oklch(from var(--tag-mgmt)   l c h / 0.15); color: oklch(from var(--tag-mgmt)   calc(l - 0.40) c h); border-color: oklch(from var(--tag-mgmt)   l c h / 0.30); }
+  .kp-school-chip[data-tag="tag-mkt"]    { background: oklch(from var(--tag-mkt)    l c h / 0.15); color: oklch(from var(--tag-mkt)    calc(l - 0.40) c h); border-color: oklch(from var(--tag-mkt)    l c h / 0.30); }
+  .kp-school-chip[data-tag="tag-soc"]    { background: oklch(from var(--tag-soc)    l c h / 0.15); color: oklch(from var(--tag-soc)    calc(l - 0.40) c h); border-color: oklch(from var(--tag-soc)    l c h / 0.30); }
+  .kp-school-chip[data-tag="tag-purple"] { background: oklch(from var(--tag-purple) l c h / 0.15); color: oklch(from var(--tag-purple) calc(l - 0.40) c h); border-color: oklch(from var(--tag-purple) l c h / 0.30); }
+  .kp-school-chip[data-tag="tag-pink"]   { background: oklch(from var(--tag-pink)   l c h / 0.15); color: oklch(from var(--tag-pink)   calc(l - 0.40) c h); border-color: oklch(from var(--tag-pink)   l c h / 0.30); }
+  .kp-school-chip[data-tag="tag-cyan"]   { background: oklch(from var(--tag-cyan)   l c h / 0.15); color: oklch(from var(--tag-cyan)   calc(l - 0.40) c h); border-color: oklch(from var(--tag-cyan)   l c h / 0.30); }
+  .kp-school-chip[data-tag="tag-blue"]   { background: oklch(from var(--tag-blue)   l c h / 0.15); color: oklch(from var(--tag-blue)   calc(l - 0.40) c h); border-color: oklch(from var(--tag-blue)   l c h / 0.30); }
+  .kp-school-chip[data-tag="tag-orange"] { background: oklch(from var(--tag-orange) l c h / 0.15); color: oklch(from var(--tag-orange) calc(l - 0.40) c h); border-color: oklch(from var(--tag-orange) l c h / 0.30); }
+
+  /* ---- body wrapper ---- */
+  .kp-body {
+    color: var(--text-2);
+  }
+</style>

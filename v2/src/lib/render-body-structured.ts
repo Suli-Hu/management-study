@@ -36,15 +36,6 @@ function esc(s: string | undefined | null): string {
   );
 }
 
-function hexRgb(hex: string): string {
-  const h = hex.replace('#', '');
-  if (h.length !== 6) return '138,122,106';
-  const r = parseInt(h.slice(0, 2), 16);
-  const g = parseInt(h.slice(2, 4), 16);
-  const b = parseInt(h.slice(4, 6), 16);
-  return `${r},${g},${b}`;
-}
-
 /** prose 文本按 <br> 分段 → <p class="narrative-p"> */
 function renderParas(text: string, wrapperStyle = ''): string {
   const paras = text.split(/<br\s*\/?>/i).map((p) => p.trim()).filter(Boolean);
@@ -67,17 +58,15 @@ function splitSectionName(raw: string): { name: string; sub: string } {
 // ============================================================
 
 export function renderNarrativeStructured(body: NarrativeBody): string {
-  return renderParas(body.prose);
+  return `<div class="body-fmt body-fmt-narr">${renderParas(body.prose)}</div>`;
 }
 
 export function renderFlatListStructured(body: FlatListBody, accentHex: string): string {
-  const rgb = hexRgb(accentHex);
-  const numStyle = `background:rgba(${rgb},.1);color:${accentHex}`;
   const cards = body.items
     .map(
       (it, i) => `
     <div class="body-card">
-      <div class="body-num" style="${numStyle}">${i + 1}</div>
+      <div class="body-num">${i + 1}</div>
       <div class="body-card-content">
         ${it.name ? `<div class="body-item-name">${it.name}</div>` : ''}
         <div class="body-item-desc">${it.desc}</div>
@@ -86,12 +75,10 @@ export function renderFlatListStructured(body: FlatListBody, accentHex: string):
   `,
     )
     .join('');
-  return `<div>${body.lead ? `<div class="body-lead">${body.lead}</div>` : ''}<div class="body-items">${cards}</div></div>`;
+  return `<div class="body-fmt body-fmt-flat" style="--accent:${accentHex}">${body.lead ? `<div class="body-lead">${body.lead}</div>` : ''}<div class="body-items">${cards}</div></div>`;
 }
 
 export function renderAccordionStructured(body: AccordionBody, accentHex: string): string {
-  const circleStyle = `border-color:${accentHex};color:${accentHex}`;
-
   const sectionsHtml = body.groups
     .map((g) => {
       const { name, sub } = splitSectionName(g.title);
@@ -102,7 +89,7 @@ export function renderAccordionStructured(body: AccordionBody, accentHex: string
               .map(
                 (it, i) => `
           <li class="acc-li">
-            <span class="acc-li-n" style="${circleStyle}">${i + 1}</span>
+            <span class="acc-li-n">${i + 1}</span>
             <div class="acc-li-body">
               ${it.name ? `<span class="acc-li-name">${it.name}</span>` : ''}
               ${it.desc ? `<div class="acc-li-desc">${it.desc}</div>` : ''}
@@ -124,7 +111,7 @@ export function renderAccordionStructured(body: AccordionBody, accentHex: string
     .join('');
 
   return `
-    <div>
+    <div class="body-fmt body-fmt-acc" style="--accent:${accentHex}">
       ${body.lead ? renderParas(body.lead, 'margin-bottom:8px') : ''}
       <div class="acc">${sectionsHtml}</div>
     </div>
@@ -140,8 +127,6 @@ export function renderAccordionStructured(body: AccordionBody, accentHex: string
  *   - detail 单独 prose 段
  */
 export function renderCompareStructured(body: CompareBody, accentHex: string): string {
-  const rgb = hexRgb(accentHex);
-
   const rowsHtml = body.cols
     .map((c) => {
       // 把 5 个细字段按"chip vs prose"分类（保旧 renderer 视觉）
@@ -152,7 +137,6 @@ export function renderCompareStructured(body: CompareBody, accentHex: string): s
         if (v.length <= 60 && !/<\w/.test(v)) chips.push(v);
         else prose.push(v);
       }
-      const pillStyle = `background:rgba(${rgb},.08);color:${accentHex};border-color:rgba(${rgb},.25)`;
       const chipsHtml =
         chips.length > 0
           ? `<div class="cmp-chips">${chips.map((s) => `<span class="cmp-cell-tight">${s}</span>`).join('')}</div>`
@@ -160,7 +144,7 @@ export function renderCompareStructured(body: CompareBody, accentHex: string): s
       const proseHtml = prose.map((p) => `<div class="cmp-cell-prose">${p}</div>`).join('');
       return `
       <div class="cmp-row">
-        <div class="cmp-pill" style="${pillStyle}">${c.title}</div>
+        <div class="cmp-pill">${c.title}</div>
         <div class="cmp-cells">${chipsHtml}${proseHtml}</div>
       </div>
     `;
@@ -168,9 +152,9 @@ export function renderCompareStructured(body: CompareBody, accentHex: string): s
     .join('');
 
   return `
-    <div>
+    <div class="body-fmt body-fmt-cmp" style="--accent:${accentHex}">
       ${body.lead ? renderParas(body.lead, 'margin-bottom:14px') : ''}
-      <div class="cmp-table" style="--accent:${accentHex}">${rowsHtml}</div>
+      <div class="cmp-table">${rowsHtml}</div>
     </div>
   `;
 }
@@ -179,7 +163,6 @@ export function renderCompareStructured(body: CompareBody, accentHex: string): s
 export function renderCompareCardsStructured(body: CompareBody, accentHex: string): string {
   const cardsHtml = body.cols
     .map((c, ri) => {
-      const headlineStyle = `color:${accentHex}`;
       // headline = keyword (短标签提炼)；sub = desc (一句话定义)；secondary 列表 = type/theories/detail
       const secondary = [c.type, c.theories, c.detail].filter(Boolean);
       const metaHtml =
@@ -190,7 +173,7 @@ export function renderCompareCardsStructured(body: CompareBody, accentHex: strin
       <div class="cmpc-card">
         <span class="cmpc-num">${String(ri + 1).padStart(1, '0')}</span>
         <div class="cmpc-name">${c.title}</div>
-        ${c.keyword ? `<div class="cmpc-headline" style="${headlineStyle}">${c.keyword}</div>` : ''}
+        ${c.keyword ? `<div class="cmpc-headline">${c.keyword}</div>` : ''}
         ${c.desc ? `<div class="cmpc-sub">${c.desc}</div>` : ''}
         ${metaHtml}
       </div>
@@ -198,9 +181,9 @@ export function renderCompareCardsStructured(body: CompareBody, accentHex: strin
     })
     .join('');
 
-  const gridStyle = `--accent:${accentHex};grid-template-columns:repeat(${body.cols.length}, minmax(0, 1fr))`;
+  const gridStyle = `grid-template-columns:repeat(${body.cols.length}, minmax(0, 1fr))`;
   return `
-    <div>
+    <div class="body-fmt body-fmt-cmpc" style="--accent:${accentHex}">
       ${body.lead ? renderParas(body.lead, 'margin-bottom:18px') : ''}
       <div class="cmpc-grid" style="${gridStyle}">${cardsHtml}</div>
     </div>
@@ -221,7 +204,7 @@ export function renderQuadStructured(body: QuadBody, accentHex: string): string 
     <div class="quad-cell">
       <div class="quad-emoji">${esc(q.emoji)}</div>
       <div class="quad-name">${esc(q.name)}</div>
-      <div class="quad-tag" style="color:${accentHex}">${esc(q.sub)}</div>
+      <div class="quad-tag">${esc(q.sub)}</div>
       <div class="quad-desc">${q.detail}</div>
     </div>
   `,
@@ -232,9 +215,9 @@ export function renderQuadStructured(body: QuadBody, accentHex: string): string 
   const xLabel = renderAxisLabel(body.xAxis);
 
   return `
-    <div>
+    <div class="body-fmt body-fmt-quad" style="--accent:${accentHex}">
       ${body.lead ? `<div class="body-lead">${body.lead}</div>` : ''}
-      <div class="quad-wrap" style="--accent:${accentHex}">
+      <div class="quad-wrap">
         ${yLabel ? `<div class="quad-axis-y">${esc(yLabel)}</div>` : ''}
         <div class="quad-grid">${cellsHtml}</div>
         ${xLabel ? `<div class="quad-axis-x">${esc(xLabel)}</div>` : ''}
@@ -275,31 +258,32 @@ export function renderStructuredBody(opts: {
 // ============================================================
 
 /**
- * 6 字段定义：英文 key（v0.8 contract）+ 中文 pill label + 语义 tone 色。
+ * 6 字段定义：v0.8 英文 key + 单字 glyph + 中文小字标签 + 英文 small。
  *
- * tone 色继承自 v0.5.46 设计（Z 三组色）：
- *   - 积极组（meaning/response/application）= 绿 #10B981
- *   - 警告组（limit）= 红 #EF4444
- *   - 中性组（example/analogy）= 灰 #6B7280
+ * v0.8.13 Stage 6 chip 2：drop tone hex（积极/警告/中性 三组色），改 editor v0.8 layout —
+ *   LHS 84px：圆 glyph (义/限/例/应/用/喻) + 中文小标签 + 英文 mini，is-filled 用 --primary-soft。
+ *   见 kp-edit.css .kpe-eval-row 模式。
  */
 type EvalKey = keyof KpEvaluationsLang;
 interface EvalDef {
   key: EvalKey;
-  label: string;
-  tone: string;
+  glyph: string;  // 单字 (义/限/例/应/用/喻)
+  label: string;  // 中文双字 (意义/局限/例子/应对/应用/比喻)
+  en: string;     // 英文小字 key
 }
 const EVAL_DEFS: readonly EvalDef[] = [
-  { key: 'meaning', label: '意义', tone: '#10B981' },
-  { key: 'limit', label: '局限', tone: '#EF4444' },
-  { key: 'example', label: '例子', tone: '#6B7280' },
-  { key: 'response', label: '应对', tone: '#10B981' },
-  { key: 'application', label: '应用', tone: '#10B981' },
-  { key: 'analogy', label: '比喻', tone: '#6B7280' },
+  { key: 'meaning',     glyph: '义', label: '意义', en: 'meaning' },
+  { key: 'limit',       glyph: '限', label: '局限', en: 'limit' },
+  { key: 'example',     glyph: '例', label: '例子', en: 'example' },
+  { key: 'response',    glyph: '应', label: '应对', en: 'response' },
+  { key: 'application', glyph: '用', label: '应用', en: 'application' },
+  { key: 'analogy',     glyph: '喻', label: '比喻', en: 'analogy' },
 ] as const;
 
 /**
  * 把 KpEvaluationsLang 渲染成 evaluation section（自动跳过空字段）。
  * v0.8.10 Stage 5：取代旧 renderEvalModule(EvalContent) — 直接吃 v0.8 英文 key shape。
+ * v0.8.13 Stage 6 chip 2：editor-glyph layout (LHS circle + zh label + en small)。
  */
 export function renderEvalModule(content: KpEvaluationsLang | null | undefined): string {
   if (!content) return '';
@@ -309,8 +293,12 @@ export function renderEvalModule(content: KpEvaluationsLang | null | undefined):
   if (rows.length === 0) return '';
 
   const rowsHtml = rows.map(({ def, text }) => `
-    <div class="eval-row" style="--tone:${def.tone}">
-      <span class="eval-pill">${def.label}</span>
+    <div class="eval-row is-filled">
+      <div class="eval-lhs">
+        <span class="eval-glyph">${def.glyph}</span>
+        <span class="eval-tag-name">${def.label}</span>
+        <span class="eval-tag-en">${def.en}</span>
+      </div>
       <div class="eval-text">${text}</div>
     </div>
   `).join('');
@@ -322,7 +310,7 @@ export function renderEvalModule(content: KpEvaluationsLang | null | undefined):
         <span class="eval-count">${rows.length}</span>
         <span class="eval-chev">▾</span>
       </summary>
-      <div class="eval-list">${rowsHtml}</div>
+      <div class="eval-rows">${rowsHtml}</div>
     </details>
   `;
 }
