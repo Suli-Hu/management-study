@@ -147,7 +147,9 @@ EMAIL_TRUST / password 模式）收敛为 SaaS 标准的"邮箱+密码"主路径
 | v0.7.41 | Stage 1+2 | 测试补洞 + audit/drift helper（52 invariants） | #38 |
 | v0.7.42 | Stage 1+2 | evals 4 路径写入 null fallback 语义统一 | #39 |
 | **v0.8.0** | **Stage 3** | **API contract hard cut** — POST/PATCH/batch 接 `KpBody`；6 个 `legacy_*` 422 + `migration_guide` URL；`evalContent` → `evaluations` 改名 + 6 子 key 英化；`GET /api/kps/empty-body`；`v2/public/docs/migration-v0.8.md` 真源 | #40 |
-| v0.8.x | Stage 4 | 编辑器重写 5 个 per-format form（5d） | □ |
+| v0.8.1 | Stage 3 docs | retrospective + fallback monitoring cheatsheet + ROADMAP W8 | #41 |
+| **v0.8.2-0.8.4** | **Stage 4** | **编辑器整页重写 + F4/F5 backend** — 12 个 editor module (vanilla TS DOM) + design system v1.0 token swap + `kp-editor-v0.8` scope；F4 classifyZodFailure 默认 schema_invalid；F5 zh/ja format 强制一致；删全编辑器 ⓘ；compare cols UI max 4；**QuadAxis schema breaking** (yAxis/xAxis 拆 `{low, label?, high}` 对象)；migrate-quad-axes admin endpoint smart split | #42 |
+| v0.8.5 | Stage 4 docs | PRD + Test plan + Test report + ROADMAP/memory update | 本 PR |
 | v0.8.x | Stage 5 | drop 旧列 + git JSON 全量迁移（1d） | □ |
 
 **设计决策**（PRD §13 6/6 confirmed，不再 review）：

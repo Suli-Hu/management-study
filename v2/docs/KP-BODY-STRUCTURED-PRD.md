@@ -125,11 +125,18 @@ const CompareBody = z.object({
   })).min(2),                                           // compare 至少 2 列
 }).strict();
 
+// v0.8.3 patch (Stage 4 用户 v4 反馈)：QuadAxis 拆 3 字段
+const QuadAxis = z.object({
+  low: z.string().min(1, '低值不能为空'),                  // 低端值（必填）
+  label: z.string().default(''),                         // 中间维度名（可空 = 两段用法）
+  high: z.string().min(1, '高值不能为空'),                 // 高端值（必填）
+}).strict();
+
 const QuadBody = z.object({
   format: z.literal('quad'),
   lead: z.string().default(''),
-  yAxis: z.string().min(1),                             // y 轴标签
-  xAxis: z.string().min(1),                             // x 轴标签
+  yAxis: QuadAxis,                                       // 三段 BCG 风：{low:'低', label:'敬业程度', high:'高'} / 两段 SWOT 风：{low:'优势', label:'', high:'劣势'}
+  xAxis: QuadAxis,
   cells: z.array(z.object({
     name: z.string().min(1),
     emoji: z.string().default(''),
