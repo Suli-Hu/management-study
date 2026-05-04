@@ -26,6 +26,7 @@ import { editHref } from '~/lib/nav';
 import { tagColor } from '~/lib/tag-color';
 import { shortYear } from '~/lib/format-year';
 import { lastName } from '~/lib/format-name';
+import { hashToTagToken } from '~/lib/editor/dom-helpers';
 import type { Tag } from '~/schemas/discipline';
 
 const { discipline, key } = Astro.params;
@@ -41,11 +42,14 @@ const disc = await db
 if (!disc) return Astro.redirect('/404');
 const tagLibrary: Tag[] = disc.tags_json ? JSON.parse(disc.tags_json) : [];
 
+// v0.8.15 Stage 6 chip 4: drop scholar.lifespan SELECT — migration 0021 已 DROP 该列
+// (v0.8.9 Stage 4.6 Q1=B)。本地 dev 直接 D1_ERROR 无法渲染；prod 推测同样断（无人触达）。
+// fallback 由 born/died 即可，lifespan 显示已废弃 — minimalism 第 6 次贯彻。
 const scholar = await db
   .prepare(`
     SELECT key, discipline, name_zh, name_en, name_ja,
       contribution_zh, contribution_ja,
-      lifespan, institution,
+      institution,
       born, died, nationality, flag, origin, field, tags_json,
       nobel_year, nobel_detail
     FROM scholar
@@ -55,7 +59,7 @@ const scholar = await db
   .first<{
     key: string; discipline: string; name_zh: string; name_en: string | null; name_ja: string | null;
     contribution_zh: string; contribution_ja: string | null;
-    lifespan: string; institution: string;
+    institution: string;
     born: string | null; died: string | null; nationality: string | null; flag: string | null;
     origin: string | null; field: string | null; tags_json: string;
     nobel_year: string | null; nobel_detail: string | null;
@@ -65,7 +69,9 @@ if (!scholar) return Astro.redirect('/404');
 const scholarTags = JSON.parse(scholar.tags_json) as string[];
 const accentHex = tagColor({ tags: scholarTags }, tagLibrary);
 
-let schools: Array<{ key: string; title_zh: string; title_en: string | null; theme_key: string }> = [];
+// v0.8.15 Stage 6 chip 4 (D6=A): 学派 chip 用 --tag-* token 着色 — 取 school.tags[0] 经
+// hashToTagToken 映射到 8 个 v1.0 tag token；与 chip 1 discipline 首页 SchoolCard 一致。
+let schools: Array<{ key: string; title_zh: string; title_en: string | null; theme_key: string; tagToken: string | null }> = [];
 type KpListItem = {
   id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string;
   // v0.8.10 Stage 5: 旧列已 drop
@@ -78,15 +84,25 @@ let kps: KpListItem[] = [];
 if (!isPartial) {
   const schoolsResult = await db
     .prepare(`
-      SELECT s.key, s.title_zh, s.title_en, s.theme_key
+      SELECT s.key, s.title_zh, s.title_en, s.theme_key, s.tags_json
       FROM school s
       INNER JOIN scholar_school ss ON ss.school_key = s.key
       WHERE ss.scholar_key = ?
       ORDER BY ss.position, s.key
     `)
     .bind(key)
-    .all<{ key: string; title_zh: string; title_en: string | null; theme_key: string }>();
-  schools = schoolsResult.results ?? [];
+    .all<{ key: string; title_zh: string; title_en: string | null; theme_key: string; tags_json: string | null }>();
+  schools = (schoolsResult.results ?? []).map((s) => {
+    const tagKeys = JSON.parse(s.tags_json || '[]') as string[];
+    const primaryKey = tagKeys[0] ?? null;
+    return {
+      key: s.key,
+      title_zh: s.title_zh,
+      title_en: s.title_en,
+      theme_key: s.theme_key,
+      tagToken: primaryKey ? hashToTagToken(primaryKey) : null,
+    };
+  });
 
   // v0.5.33: ORDER BY ks.position 让 scholar.kpsOrder（拖动后保存）生效
   // v0.8.10: pull v0.8 列做 inline 展开
@@ -168,7 +184,7 @@ const contributionLangHref = langToggleHref;
 
 const lifespanDisplay = (scholar.born && scholar.died)
   ? `${scholar.born} — ${scholar.died}`
-  : (scholar.born || scholar.died || scholar.lifespan || '');
+  : (scholar.born || scholar.died || '');
 
 const heroSubLine = [scholar.name_zh, scholar.name_ja].filter(Boolean).join(' · ');
 const hasProfileInfo = !!(scholar.nationality || scholar.flag || scholar.field || scholar.institution || scholar.origin || scholar.nobel_year || scholar.nobel_detail);
@@ -354,7 +370,7 @@ const canEdit = Astro.locals.canEdit(discipline);
                 {scholar.nobel_year && (
                   <tr>
                     <td class="label">获奖</td>
-                    <td class="val" style="color:#b07d20;font-weight:600">🏅 {scholar.nobel_year}</td>
+                    <td class="val is-nobel">🏅 {scholar.nobel_year}</td>
                   </tr>
                 )}
               </tbody>
@@ -369,25 +385,26 @@ const canEdit = Astro.locals.canEdit(discipline);
         </section>
       )}
 
-      {/* Tab Panel: 所属学派 */}
+      {/* Tab Panel: 所属学派
+          v0.8.15 Stage 6 chip 4 (D6=A): 学派渲染为 chip — 圆角 pill + --tag-* 着色（按 school.tags[0] hash）
+          chip 内容：title_zh + 可选 title_en（zh 主行 / en 次行小字）；hover 浅化。 */}
       <section class="optA-tab-panel" data-tab-panel="schools" hidden={hasProfileInfo}>
-        <ul class="optA-scholars">
-          {schools.length === 0 ? (
-            <li class="text-xs text-quaternary px-2 py-3">暂无关联学派。</li>
-          ) : schools.map((s, i) => (
-            <li>
+        {schools.length === 0 ? (
+          <p class="text-xs text-quaternary px-4 py-3">暂无关联学派。</p>
+        ) : (
+          <div class="scholar-schools-chips">
+            {schools.map((s) => (
               <a
                 href={`/${discipline}/${s.key}`}
-                class:list={['optA-scholar-row', i === schools.length - 1 && 'is-last']}
+                class="scholar-school-chip"
+                {...(s.tagToken ? { 'data-tag': s.tagToken } : {})}
               >
-                <div class="optA-scholar-line1">
-                  <span class="optA-scholar-last">{s.title_zh}</span>
-                  {s.title_en && <span class="optA-scholar-zh">{s.title_en}</span>}
-                </div>
+                <span class="scholar-school-chip-zh">{s.title_zh}</span>
+                {s.title_en && <span class="scholar-school-chip-en">{s.title_en}</span>}
               </a>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Tab Panel: 学术成就（rich text + lang 切换）*/}
@@ -652,5 +669,76 @@ const canEdit = Astro.locals.canEdit(discipline);
     });
   })();
 </script>
+
+<style>
+  /*
+   * v0.8.15 Stage 6 chip 4: 学者详情页"所属学派" chip 容器 + 8 个 --tag-* 着色
+   * 复用 chip 1 SchoolCard.astro 配方 — soft 底 (l c h / 0.18) + deep 字 (calc(l - 0.40))
+   * dark mode :global([data-mode="dark"]) 调亮 — soft 透明度 0.22 + 字色 calc(l + 0.15)
+   */
+  .scholar-schools-chips {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    padding: 12px 18px 18px;
+  }
+  .scholar-school-chip {
+    display: inline-flex; align-items: baseline; gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--bg-soft);
+    color: var(--text-2);
+    border: 1px solid var(--border);
+    font-size: 13px;
+    text-decoration: none;
+    line-height: 1.3;
+    transition: opacity .14s, transform .14s;
+  }
+  .scholar-school-chip:hover {
+    opacity: 1;             /* 抵消 global a:hover { opacity: 0.8 } */
+    transform: translateY(-1px);
+  }
+  .scholar-school-chip-zh {
+    font-weight: 600;
+    color: var(--text);
+  }
+  .scholar-school-chip-en {
+    font-size: 11.5px;
+    color: var(--text-3);
+    font-weight: 400;
+  }
+  /* 8 v1.0 --tag-* 着色（soft 底 + deep 字 + 透明边） */
+  .scholar-school-chip[data-tag="tag-mgmt"]   { background: oklch(from var(--tag-mgmt)   l c h / 0.18); border-color: oklch(from var(--tag-mgmt)   l c h / 0.30); }
+  .scholar-school-chip[data-tag="tag-mkt"]    { background: oklch(from var(--tag-mkt)    l c h / 0.18); border-color: oklch(from var(--tag-mkt)    l c h / 0.30); }
+  .scholar-school-chip[data-tag="tag-soc"]    { background: oklch(from var(--tag-soc)    l c h / 0.18); border-color: oklch(from var(--tag-soc)    l c h / 0.30); }
+  .scholar-school-chip[data-tag="tag-purple"] { background: oklch(from var(--tag-purple) l c h / 0.18); border-color: oklch(from var(--tag-purple) l c h / 0.30); }
+  .scholar-school-chip[data-tag="tag-pink"]   { background: oklch(from var(--tag-pink)   l c h / 0.18); border-color: oklch(from var(--tag-pink)   l c h / 0.30); }
+  .scholar-school-chip[data-tag="tag-cyan"]   { background: oklch(from var(--tag-cyan)   l c h / 0.18); border-color: oklch(from var(--tag-cyan)   l c h / 0.30); }
+  .scholar-school-chip[data-tag="tag-blue"]   { background: oklch(from var(--tag-blue)   l c h / 0.18); border-color: oklch(from var(--tag-blue)   l c h / 0.30); }
+  .scholar-school-chip[data-tag="tag-orange"] { background: oklch(from var(--tag-orange) l c h / 0.18); border-color: oklch(from var(--tag-orange) l c h / 0.30); }
+  .scholar-school-chip[data-tag="tag-mgmt"]   .scholar-school-chip-zh { color: oklch(from var(--tag-mgmt)   calc(l - 0.40) c h); }
+  .scholar-school-chip[data-tag="tag-mkt"]    .scholar-school-chip-zh { color: oklch(from var(--tag-mkt)    calc(l - 0.40) c h); }
+  .scholar-school-chip[data-tag="tag-soc"]    .scholar-school-chip-zh { color: oklch(from var(--tag-soc)    calc(l - 0.40) c h); }
+  .scholar-school-chip[data-tag="tag-purple"] .scholar-school-chip-zh { color: oklch(from var(--tag-purple) calc(l - 0.40) c h); }
+  .scholar-school-chip[data-tag="tag-pink"]   .scholar-school-chip-zh { color: oklch(from var(--tag-pink)   calc(l - 0.40) c h); }
+  .scholar-school-chip[data-tag="tag-cyan"]   .scholar-school-chip-zh { color: oklch(from var(--tag-cyan)   calc(l - 0.40) c h); }
+  .scholar-school-chip[data-tag="tag-blue"]   .scholar-school-chip-zh { color: oklch(from var(--tag-blue)   calc(l - 0.40) c h); }
+  .scholar-school-chip[data-tag="tag-orange"] .scholar-school-chip-zh { color: oklch(from var(--tag-orange) calc(l - 0.40) c h); }
+  /* dark mode：tag bg 加深透明度 + 字色用 calc(l + 0.15) 提亮（参考 chip 1 SchoolCard.astro 模式） */
+  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-mgmt"]   { background: oklch(from var(--tag-mgmt)   l c h / 0.22); }
+  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-mkt"]    { background: oklch(from var(--tag-mkt)    l c h / 0.22); }
+  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-soc"]    { background: oklch(from var(--tag-soc)    l c h / 0.22); }
+  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-purple"] { background: oklch(from var(--tag-purple) l c h / 0.22); }
+  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-pink"]   { background: oklch(from var(--tag-pink)   l c h / 0.22); }
+  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-cyan"]   { background: oklch(from var(--tag-cyan)   l c h / 0.22); }
+  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-blue"]   { background: oklch(from var(--tag-blue)   l c h / 0.22); }
+  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-orange"] { background: oklch(from var(--tag-orange) l c h / 0.22); }
+  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-mgmt"]   .scholar-school-chip-zh { color: oklch(from var(--tag-mgmt)   calc(l + 0.15) c h); }
+  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-mkt"]    .scholar-school-chip-zh { color: oklch(from var(--tag-mkt)    calc(l + 0.15) c h); }
+  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-soc"]    .scholar-school-chip-zh { color: oklch(from var(--tag-soc)    calc(l + 0.15) c h); }
+  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-purple"] .scholar-school-chip-zh { color: oklch(from var(--tag-purple) calc(l + 0.15) c h); }
+  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-pink"]   .scholar-school-chip-zh { color: oklch(from var(--tag-pink)   calc(l + 0.15) c h); }
+  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-cyan"]   .scholar-school-chip-zh { color: oklch(from var(--tag-cyan)   calc(l + 0.15) c h); }
+  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-blue"]   .scholar-school-chip-zh { color: oklch(from var(--tag-blue)   calc(l + 0.15) c h); }
+  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-orange"] .scholar-school-chip-zh { color: oklch(from var(--tag-orange) calc(l + 0.15) c h); }
+</style>
 </Fragment>
 )}
