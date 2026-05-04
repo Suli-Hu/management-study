@@ -5,7 +5,6 @@ import { getDb } from '~/lib/db';
 import { renderStructuredBody, renderEvalModule } from '~/lib/render-body-structured';
 import type { KpBody, KpEvaluationsLang } from '~/schemas/kp-body-structured';
 import { editHref } from '~/lib/nav';
-import { accentVarFor } from '~/lib/tag-color';
 import { shortYear } from '~/lib/format-year';
 import { lastName } from '~/lib/format-name';
 import { hashToTagToken } from '~/lib/editor/dom-helpers';
@@ -31,12 +30,10 @@ if (!kp) return Astro.redirect('/404');
 const bodyZh = JSON.parse(kp.body_zh_json) as KpBody;
 const bodyJa = kp.body_ja_json ? JSON.parse(kp.body_ja_json) as KpBody : null;
 
-// v0.8.18 跨 component 一致性：单一 token 来源 (accentVarFor → 8 v1.0 --tag-* by hash)。
-// 旧 accentHex (tagColor → tagLibrary user hex) 已退役 — body items numbering / lang-toggle
-// / LangFab 全走 accentVar，跟 school chip / scholar 详情页 学派 chip 用同一 token 体系，
-// 避免"同 KP 同学派但 chip 用 oklch、body 用 user hex"分裂感。
-const kpTags = JSON.parse(kp.tags_json) as string[];
-const accentVar = accentVarFor({ tags: kpTags });
+// v0.8.19 minimalism (用户 v10 反馈): KP detail 页 URL `/keiei/kp/k364` page chrome
+// 已表达 KP 身份。5 format render 是 KP 自身结构（不是"学派归属"维度）→ items numbering
+// / cells / cols / lang-toggle / LangFab accent 全中性 (var(--text-3))。
+// 顶部 schools chip 仍保留 tag 色（跨多学派区分有意义）。见 PRD §6.2.3。
 
 // 关联学派 + 学者
 const schoolsResult = await db
@@ -117,7 +114,6 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
             href={langToggleHref}
             class:list={['lang-toggle', lang === 'ja' && 'is-active']}
             data-lang-toggle
-            style={`--accent:${accentVar}`}
             title="切换日语 / 中文 (Cmd/Ctrl + J)"
             aria-pressed={lang === 'ja'}
           >
@@ -136,13 +132,14 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
 
     <article class="kp-body" set:html={renderStructuredBody({
       body: renderedBody,
-      accentHex: accentVar,
+      accentHex: 'var(--text-3)',
     })} />
     {evalContent && <div set:html={renderEvalModule(evalContent)} />}
   </main>
 
-  {/* v0.5.78：mobile 日语切换悬浮球（仅 KP 有 body_ja 时挂） */}
-  {bodyJa && <LangFab lang={lang} accentHex={accentVar} />}
+  {/* v0.5.78：mobile 日语切换悬浮球（仅 KP 有 body_ja 时挂）
+       v0.8.19: page chrome 已表达 KP 身份，FAB accent 中性 */}
+  {bodyJa && <LangFab lang={lang} accentHex="var(--text-3)" />}
 </Layout>
 
 <script is:inline>

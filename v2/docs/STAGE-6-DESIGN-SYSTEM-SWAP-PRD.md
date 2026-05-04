@@ -145,20 +145,52 @@
 
 E2E test (`v2/tests/e2e/visual-regression.spec.ts` `跨 component tag 色一致性` describe) 抽 computed `--accent` 比对断言，不依赖像素 diff，跨平台稳。
 
+### 6.2.3 ⚠️ "若无必要勿增实体" — page chrome 上下文原则 (v0.8.19 user feedback 后补)
+
+> **触发记录**：v0.8.18 (chip 17 hotfix) ship 后用户 v10 反馈"split-pane 左侧 KP list dot 是冗余 affordance"。引用奥卡姆剃刀。**第 6 次** minimalism 贯彻 (memory `feedback_minimalism_default.md`)。
+
+v1.0 IMPLEMENTATION.md §决策树是 general guideline ("它在表达'属于哪个学派'吗？→ L3 var(--tag-*)")，但 **同一 page 内 page chrome / URL 已经表达过的"信息维度"，内部元素不应重复标识**。§6.2.1 跨 component 一致性约束在此约束之内适用。
+
+**例**：
+
+| 场景 | URL | page chrome | 内部元素 | 决策 |
+|---|---|---|---|---|
+| 学派 detail 页 | `/keiei/personality` | breadcrumb + h1 已表 personality | 内部所有 KP 都属此学派 | 用 tag 色 dot/strip/items numbering 标"学派归属" = redundant → **全部中性 (`var(--text-3)`)** |
+| KP detail 页 | `/keiei/kp/k364` | breadcrumb + title 已表 KP | 5 format render 是 KP 自身结构，**不是**"学派归属"维度 | items numbering / lang-toggle / FAB → **中性** |
+| 学者 detail 页 | `/keiei/scholars/hackman` | breadcrumb + name 已表学者 | 关联 KP 列表全属此学者 | dot / 顶 strip / body / star toggle → **中性** |
+
+**保留 tag 色的场景**（page chrome 没有表达，确实需要 chip 区分）：
+
+| 场景 | 为何不 redundant |
+|---|---|
+| Discipline 首页 SchoolCard chip | 多学派并列展示，用 tag 色才能扫一眼区分 |
+| KP detail 页**顶部 schools chip** | 跨多学派 KP，chip 着色显示"它属于哪几个学派" |
+| 学者 detail 页**所属学派 chip 列表** | 跨多学派学者，chip 着色显示"他在哪些学派活动" |
+
+**判断公式**：
+
+> 此元素的 tag 色提供了 page chrome 没提供的信息吗？
+> - 是 → 用 tag 色 (按 §6.2.1 单一 token 来源)
+> - 否 → 中性 (`var(--text-3)`)
+
+**与 §6.2.1 跨 component 一致性的关系**：§6.2.1 约束"如果用 tag 色，多 component 必须同 token"；§6.2.3 是上一层 — "**先判断该不该用 tag 色**"。先过 §6.2.3，需要用色再过 §6.2.1。
+
 ### 6.2.2 IMPLEMENTATION.md §Step 6 校对清单 (chip 7 + 后续 chip 必跑)
 
 > 落地任意涉及 `--tag-*` / `--tier-*` / `--i-*` 的页面 / 组件后**必跑此清单**，对照 `Desktop/exports 3/theme-package/IMPLEMENTATION.md` §Step 6 + §决策树。
+> **mock 校对前先按 §6.2.3 page chrome 上下文原则筛选**：page chrome / URL 已表达过的"信息维度"，内部元素不应重复用 tag 色标识。先判断该不该用色，再判断用什么色。
 
 每页面对照检查：
 
+- [ ] **page chrome 测试 (§6.2.3)**：每个 colored 元素能回答"此色提供了 page chrome 没提供的信息吗？"否则中性
 - [ ] 学派 tag 仍是 v1.0 8 色（`--tag-mgmt/mkt/soc/purple/pink/cyan/blue/orange`），未被吞或换源
 - [ ] 热力图 6 档（`--i-0` 到 `--i-5`）颜色递进自然
 - [ ] 段位徽章只有 4 色（`--tier-c/b/a/s`），文字承担亚档（`-` / `+`）
 - [ ] 顶部 nav active tab 用 `--primary` 描边
 - [ ] 主按钮（"+ 新建记录" / "+ 添加..."）用 `--primary` 填充
 - [ ] 切到 dark 模式 (`[data-mode="dark"]`) 后所有文字可读、tag 仍鲜艳
-- [ ] **跨 component**：split-pane / 列表卡 / 详情页同一信息维度的所有 accent 元素 computed `--accent` 同源（视觉无分裂）
-- [ ] 任何新加 colored 元素先过决策树（焦点 / 语义维度 / 分类），不直接拍 hex / 不新建变量
+- [ ] **跨 component (§6.2.1)**：如果元素需要用 tag 色，split-pane / 列表卡 / 详情页同一信息维度的所有 accent 元素 computed `--accent` 同源
+- [ ] 任何新加 colored 元素先过决策树（焦点 / 语义维度 / 分类）+ §6.2.3 page chrome test，不直接拍 hex / 不新建变量
 - [ ] stylelint `color-no-hex` 全站 0 violation
 - [ ] 编辑器 `.kp-editor-v08` scope 仍生效，本 chip 改动不破编辑器
 

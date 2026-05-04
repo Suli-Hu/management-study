@@ -17,6 +17,7 @@ import { test, expect, type Page } from '@playwright/test';
  *   - chip 4 (v0.8.15): 学者详情页 (hackman — ob 学派单 chip 形态)
  *   - chip 3 (v0.8.16): 学派详情页 (/keiei/carnegie)
  *   - v0.8.18 hotfix: 跨 component tag 色一致性 — split-pane 左 dot vs 右 body
+ *   - v0.8.19 hotfix: redundant tag 着色全删 — page chrome 已表达，detail 页内部全中性
  *
  * 后续 chip 5 会扩到 列表 页面。
  *
@@ -88,79 +89,61 @@ test.describe('Stage 6 visual regression', () => {
 });
 
 /**
- * v0.8.18 跨 component tag 色一致性 — 防"同 KP 左灰右绿"分裂感回归。
+ * v0.8.19 redundant tag 着色全删 — page chrome 上下文原则 (PRD §6.2.3) 落地防回归。
  *
- * 用户 v9 反馈触发的根因：split-pane 左 KP list 用 accentVar (var(--tag-*))，
- * 右栏 body items numbering 用 accentHex (用户自定义 hex from tagLibrary)。
- * 两套 token 视觉上接近但不同。
+ * 用户 v10 反馈触发的根因：v0.8.18 加的 KP list dot 是冗余 affordance。同学派下所有
+ * dot 同色，page chrome (URL + breadcrumb) 已表达学派身份，dot 重复表达 = 违反"若无
+ * 必要勿增实体"。
  *
- * 这块 test 抽 computed style 比对 — assertion 是"同一信息维度跨 component 必须
- * 同一计算色"，不依赖 screenshot 像素 diff，跨平台稳定。
+ * 第 6 次 minimalism 贯彻。本块 test 双向断言：
+ *   1. 学派/KP/学者 detail 页内部 accent 全中性 (var(--text-3))，不再有 dot/strip
+ *   2. Discipline 首页 SchoolCard chip 仍按 --tag-* 着色 (跨学派区分有意义，**不**应被误删)
+ *
+ * 不依赖 screenshot 像素 diff — 抽 computed property，跨平台稳。
  */
-test.describe('v0.8.18 跨 component tag 色一致性', () => {
+test.describe('v0.8.19 redundant tag 着色全删 + page chrome 上下文原则', () => {
   test.skip(!!process.env.CI, 'depends on local D1 + dev server, runs alongside other e2e on darwin');
 
-  test('学派详情页 split-pane 同 KP 左 dot vs 右 body items numbering 同色', async ({ page }) => {
+  test('学派详情页 split-pane 左侧 KP list dot 已删 + 右栏 body 中性', async ({ page }) => {
     await login(page);
-    // personality 学派 tags=['t_ejbdv3'] 非空 — accentVar 走真实 --tag-* token
-    // k364 是 personality 学派下其中一个 KP（concepts[4]）
+    // personality 学派 tags=['t_ejbdv3'] 非空 — v0.8.18 时 accentVar 走真实 --tag-* token，
+    // 现在 v0.8.19 全切中性。k364 是 personality 学派下 concepts[4]
     await page.goto('/keiei/personality?kp=k364');
     await page.waitForLoadState('networkidle');
 
-    // 抽左侧 active KP row 的 dot indicator background-color
-    const leftDot = await page.evaluate(() => {
-      const dot = document.querySelector('.optA-kp.is-active .kp-list-dot');
-      return dot ? getComputedStyle(dot).backgroundColor : null;
-    });
-    expect(leftDot, 'left active KP list dot rendered').not.toBeNull();
+    // v0.8.18 加的 .kp-list-dot 已 v0.8.19 删除（dot indicator redundant — page chrome 已表达学派身份）
+    const dotCount = await page.locator('.kp-list-dot').count();
+    expect(dotCount, 'v0.8.18 加的 .kp-list-dot 在 v0.8.19 全删（redundant affordance）').toBe(0);
 
-    // 抽右栏 body items numbering 的实际计算色 — 通过读 .body-fmt 的 --accent
-    // computed value（5 个 format 的 number / cell / quad / acc-numbered 都用同一个）
-    const rightAccent = await page.evaluate(() => {
-      const bodyFmt = document.querySelector('.kp-detail-pane .body-fmt');
-      if (!bodyFmt) return null;
-      // 直接读 --accent CSS prop，跨 5 format 统一来源
-      return getComputedStyle(bodyFmt).getPropertyValue('--accent').trim();
-    });
-    expect(rightAccent, 'right body --accent populated').not.toBeNull();
-    expect(rightAccent, 'right body --accent non-empty').not.toBe('');
+    // 右栏顶 3px strip 也应不存在（同 redundant 原则）
+    const stripCount = await page.locator('.kp-detail-pane > div[style*="height:3px"]').count();
+    expect(stripCount, '右栏顶 3px strip 已删').toBe(0);
 
-    // 左 dot 的 background 由父级 --accent inherit（CSS：var(--accent, fallback)）
-    // 抽左 dot 的 --accent 跟右 body 的 --accent 比；两侧应同源 (.split 的 --accent)
-    const leftAccent = await page.evaluate(() => {
-      const dot = document.querySelector('.optA-kp.is-active .kp-list-dot');
-      if (!dot) return null;
-      return getComputedStyle(dot).getPropertyValue('--accent').trim();
-    });
-    expect(leftAccent, 'left dot inherits --accent').toBe(rightAccent);
-  });
-
-  test('学者详情页 split-pane 同 KP 左 dot vs 右 body items numbering 同色', async ({ page }) => {
-    await login(page);
-    await page.goto('/keiei/scholars/hackman');
-    await page.waitForLoadState('networkidle');
-
-    // 切到"关联知识" tab — 左关联 KP list 才出现
-    await page.click('[data-tab-btn="kps"]');
-    await page.waitForTimeout(150);  // tab 切换 transition
-
-    const leftDot = await page.evaluate(() => {
-      const dot = document.querySelector('.optA-kp .kp-list-dot');  // 任一 row 都行（hackman 关联 KP 不一定 active）
-      return dot ? getComputedStyle(dot).getPropertyValue('--accent').trim() : null;
-    });
-
+    // 右栏 body items numbering 的 --accent 应中性 (var(--text-3))
     const rightAccent = await page.evaluate(() => {
       const bodyFmt = document.querySelector('.kp-detail-pane .body-fmt');
       return bodyFmt ? getComputedStyle(bodyFmt).getPropertyValue('--accent').trim() : null;
     });
-
-    if (leftDot && rightAccent) {
-      expect(leftDot).toBe(rightAccent);
-    }
-    // hackman 可能没关联 KP — 这种空态走 EmptyRight 路径，dot 不渲染；test 软通过
+    expect(rightAccent, '右栏 body --accent 中性 (var(--text-3))').toBe('var(--text-3)');
   });
 
-  test('KP 详情页 lang-toggle accent 跟 body items numbering 同色', async ({ page }) => {
+  test('学者详情页 split-pane 左侧 KP list dot 已删 + 右栏 body 中性', async ({ page }) => {
+    await login(page);
+    await page.goto('/keiei/scholars/hackman');
+    await page.waitForLoadState('networkidle');
+
+    // 切到"关联知识" tab
+    await page.click('[data-tab-btn="kps"]');
+    await page.waitForTimeout(150);
+
+    const dotCount = await page.locator('.kp-list-dot').count();
+    expect(dotCount, '学者详情页 dot 也删（page chrome 已表达学者身份）').toBe(0);
+
+    const stripCount = await page.locator('.kp-detail-pane > div[style*="height:3px"]').count();
+    expect(stripCount, '学者详情页右栏顶 strip 已删').toBe(0);
+  });
+
+  test('KP 详情页 body items numbering --accent 中性', async ({ page }) => {
     await login(page);
     // k140 是 carnegie 学派下的 flat-list KP，有 schools/scholars
     await page.goto('/keiei/kp/k140');
@@ -170,17 +153,27 @@ test.describe('v0.8.18 跨 component tag 色一致性', () => {
       const bodyFmt = document.querySelector('.kp-body .body-fmt');
       return bodyFmt ? getComputedStyle(bodyFmt).getPropertyValue('--accent').trim() : null;
     });
-    expect(bodyAccent).not.toBeNull();
-    expect(bodyAccent).not.toBe('');
+    expect(bodyAccent, 'KP body --accent 中性').toBe('var(--text-3)');
+  });
 
-    // KP k140 不一定有 ja body — lang-toggle 可能不渲染，那就只测 body
-    const langToggleAccent = await page.evaluate(() => {
-      const toggle = document.querySelector('[data-lang-toggle]');
-      return toggle ? getComputedStyle(toggle).getPropertyValue('--accent').trim() : null;
-    });
+  test('KP 详情页顶部 schools chip 仍着色 (跨多学派 chip 区分有意义)', async ({ page }) => {
+    await login(page);
+    await page.goto('/keiei/kp/k140');
+    await page.waitForLoadState('networkidle');
 
-    if (langToggleAccent) {
-      expect(langToggleAccent).toBe(bodyAccent);
-    }
+    // KP 顶部 .kp-school-chip 应有 [data-tag="tag-*"]，CSS 据此着色
+    const taggedSchoolChips = await page.locator('.kp-school-chip[data-tag^="tag-"]').count();
+    expect(taggedSchoolChips, 'KP 顶部 schools chip 仍有 data-tag (跨学派区分保留)').toBeGreaterThan(0);
+  });
+
+  test('Discipline 首页 SchoolCard chip 仍按 tag 色 (多学派并列展示，不应被误删)', async ({ page }) => {
+    await login(page);
+    await page.goto('/keiei');
+    await page.waitForLoadState('networkidle');
+
+    // SchoolCard 用 [data-tag="tag-*"] 着色（chip 1 v0.8.12 落地）
+    // 此 test 防止"全删 redundant"误伤跨学派区分场景
+    const taggedSchoolCards = await page.locator('[data-tag^="tag-"]').count();
+    expect(taggedSchoolCards, 'Discipline 首页 SchoolCard chip 仍按 tag 色着色').toBeGreaterThan(0);
   });
 });
