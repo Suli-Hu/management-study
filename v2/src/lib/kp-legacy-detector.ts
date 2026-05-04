@@ -29,7 +29,10 @@ export type LegacyContractReason =
   | 'legacy_evalcontent_field'
   | 'legacy_eval_in_body';
 
-export type StructureFailureReason = 'body_format_invalid' | 'body_structure_invalid';
+export type StructureFailureReason =
+  | 'body_format_invalid'
+  | 'body_structure_invalid'
+  | 'schema_invalid';
 
 export interface LegacyDetection {
   reason: LegacyContractReason;
@@ -120,32 +123,45 @@ function containsLegacyEvalMarker(value: unknown): boolean {
 }
 
 /**
- * zod parse 失败后分类成 body_format_invalid / body_structure_invalid。
+ * zod parse 失败后分类成 body_format_invalid / body_structure_invalid / schema_invalid (F4)。
  *
- * `body_format_invalid` 指 discriminator 值不对（format 不在 5 枚举之一），其它
- * 任意 zod issue 归为 `body_structure_invalid`（如 quad cells != 4、flat-list
- * items 空、字段类型错、缺必填等）。
+ * 分类规则（v0.8.2 F4 修复）：
+ *   - body_format_invalid: issue.code='invalid_union_discriminator' + path 触及 body
+ *     （format 不在 5 枚举之一）
+ *   - body_structure_invalid: 任一 issue path 触及 body（quad cells != 4 / flat-list
+ *     items 空 / body 内字段类型错等）
+ *   - schema_invalid: 所有 issue 都不触及 body（如 KpId 非法 / title 缺 / schools 非法 /
+ *     未知顶层 key 等 — 这些是 schema 层错，跟 body 结构无关）
  *
- * 检测 issue.code 'invalid_union_discriminator' + path 含 'body' + 'format'。
+ * v0.8.0 (Stage 3) 起 default 是 body_structure_invalid，但 T6.3 类的"非 body path
+ * zod fail"（如 KpId 非法）也被归到 body_structure_invalid，语义不准。F4 修复成默认
+ * schema_invalid，仅 path 触及 body 的归 body_*。
  */
 export function classifyZodFailure(error: z.ZodError): {
   reason: StructureFailureReason;
   detail: unknown;
 } {
+  let touchesBody = false;
   for (const issue of error.issues) {
-    if (issue.code === 'invalid_union_discriminator' && pathTouchesBodyFormat(issue.path)) {
-      return { reason: 'body_format_invalid', detail: error.issues };
+    if (pathTouchesBody(issue.path)) {
+      touchesBody = true;
+      if (issue.code === 'invalid_union_discriminator') {
+        return { reason: 'body_format_invalid', detail: error.issues };
+      }
     }
   }
-  return { reason: 'body_structure_invalid', detail: error.issues };
+  if (touchesBody) {
+    return { reason: 'body_structure_invalid', detail: error.issues };
+  }
+  return { reason: 'schema_invalid', detail: error.issues };
 }
 
-function pathTouchesBodyFormat(path: (string | number)[]): boolean {
+function pathTouchesBody(path: (string | number)[]): boolean {
   if (path.length < 1) return false;
-  // path 形如 ['body', 'zh'] 或 ['body', 'ja'] — discriminated union 的 issue path 终止在 union 入口
+  // path 形如 ['body', 'zh', ...] — single endpoint 的 issue
   const head = String(path[0] ?? '');
   if (head === 'body') return true;
-  // batch 路径 ['updates', i, 'patch', 'body', 'zh']
+  // batch 路径 ['updates', i, 'patch', 'body', ...]
   if (head === 'updates') return path.includes('body');
   return false;
 }
@@ -168,7 +184,9 @@ export function structureFailureResponseBody(
   const message =
     reason === 'body_format_invalid'
       ? 'body.{zh,ja}.format 必须是 narrative | flat-list | accordion | compare | quad 之一。'
-      : 'body 形状对应了 format 但内部字段不合法（如 quad cells 必须正好 4 个、flat-list items 至少 1 个）。详见 detail 中的 zod issue path/message。';
+      : reason === 'body_structure_invalid'
+        ? 'body 形状对应了 format 但内部字段不合法（如 quad cells 必须正好 4 个、flat-list items 至少 1 个）。详见 detail 中的 zod issue path/message。'
+        : 'payload 不符合 KP schema（非 body 字段错 — 如 id 格式 / title 缺 / schools 非法等）。详见 detail 中的 zod issue path/message。';
   return {
     ok: false as const,
     reason,

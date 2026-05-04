@@ -34,7 +34,14 @@ const KpBodyBilingual = z
     zh: KpBody,
     ja: KpBody.optional(),
   })
-  .strict();
+  .strict()
+  .refine(
+    (b) => b.ja === undefined || b.zh.format === b.ja.format,
+    {
+      message: 'body.zh.format 与 body.ja.format 必须一致（v0.8.2 F5 强制）',
+      path: ['ja', 'format'],
+    },
+  );
 
 const KpEvaluationsBilingual = z
   .object({
@@ -60,7 +67,14 @@ const KpBodyBilingualPartial = z
     ja: KpBody.optional(),
   })
   .strict()
-  .refine((v) => Object.keys(v).length > 0, 'body 至少传 1 个语种');
+  .refine((v) => Object.keys(v).length > 0, 'body 至少传 1 个语种')
+  .refine(
+    (v) => v.zh === undefined || v.ja === undefined || v.zh.format === v.ja.format,
+    {
+      message: 'body.zh.format 与 body.ja.format 必须一致（v0.8.2 F5 强制）',
+      path: ['ja', 'format'],
+    },
+  );
 
 const KpEvaluationsBilingualPartial = z
   .object({
