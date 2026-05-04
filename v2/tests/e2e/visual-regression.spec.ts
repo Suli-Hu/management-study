@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 /**
- * Stage 6 visual regression baseline (v0.8.12 chip 1, v0.8.13 chip 2, v0.8.14 chip 6, v0.8.15 chip 4)
+ * Stage 6 visual regression baseline (v0.8.12 chip 1, v0.8.13 chip 2, v0.8.14 chip 6, v0.8.15 chip 4, v0.8.16 chip 3)
  *
  * Captures full-page screenshots at 1280 (desktop) + 322 (iPad Mini) for in-scope pages,
  * and diffs them against committed snapshots on subsequent runs. PM uses this to confirm
@@ -11,12 +11,13 @@ import { test, expect, type Page } from '@playwright/test';
  * 后续跑: `pnpm test:e2e -- visual-regression`（diff > maxDiffPixels = fail）
  *
  * 已涵盖：
- *   - chip 1: Layout shell + discipline 首页（/keiei）
- *   - chip 2: KP 详情页 narrative / flat-list / quad 三种 format
- *   - chip 6: 学习日志（/keiei/study-log）
- *   - chip 4: 学者详情页（hackman — ob 学派单 chip 形态）
+ *   - chip 1 (v0.8.12): Layout shell + discipline 首页 (/keiei)
+ *   - chip 2 (v0.8.13): KP 详情页 narrative / flat-list / quad 三种 format
+ *   - chip 6 (v0.8.14): 学习日志 (/keiei/study-log)
+ *   - chip 4 (v0.8.15): 学者详情页 (hackman — ob 学派单 chip 形态)
+ *   - chip 3 (v0.8.16): 学派详情页 (/keiei/carnegie)
  *
- * 后续 chip 3/5 会扩到 学派详情/列表 页面。
+ * 后续 chip 5 会扩到 列表 页面。
  *
  * 前提（与现有 e2e 一致）:
  *   - 本地 D1 已 apply migrations + sync 一次
@@ -40,6 +41,8 @@ const PAGES = [
   { name: 'study-log',           path: '/keiei/study-log' },
   // v0.8.15 Stage 6 chip 4: 学者详情页 (hackman 是 ob 学派下唯一关联学者，hex → token + school chip)
   { name: 'scholar-detail',      path: '/keiei/scholars/hackman' },
+  // v0.8.16 Stage 6 chip 3: 学派详情页 v1.0 design swap (hex → --tag-* token)
+  { name: 'school-detail',       path: '/keiei/carnegie' },
 ];
 
 const VIEWPORTS = [
