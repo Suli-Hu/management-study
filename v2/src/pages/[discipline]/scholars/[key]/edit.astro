@@ -1,296 +1,102 @@
 ---
+/**
+ * 学者编辑页 v0.8 Stage 4.5 — 整页重写（4 section）
+ *
+ * 见 v2/docs/SCHOOL-SCHOLAR-THEME-EDITOR-V0.8-PRD.md §5.2 + §6.3
+ */
 import Layout from '~/layouts/Layout.astro';
 import { getDb } from '~/lib/db';
 import { parseFrom, fromLabel } from '~/lib/nav';
+import { getScholarRecord } from '~/lib/scholar-api-store';
+import type { ExistingScholarInit, ScholarEditorMetadata } from '~/lib/editor/scholar-state';
 
 const { discipline, key } = Astro.params;
-
+if (!discipline || !key) return Astro.redirect('/404');
 if (!Astro.locals.canEdit(discipline)) return Astro.redirect(`/${discipline}/scholars/${key}`);
 
 const fromPath = parseFrom(Astro.url.searchParams.get('from'), `/${discipline}/scholars/${key}`);
 const fromLbl = fromLabel(fromPath);
 
 const db = getDb(Astro.locals.runtime.env);
-const exists = await db
-  .prepare('SELECT key, name_zh FROM scholar WHERE key = ? AND discipline = ?')
-  .bind(key, discipline)
-  .first<{ key: string; name_zh: string }>();
-if (!exists) return Astro.redirect('/404');
+const tenantRow = await db
+  .prepare('SELECT id FROM tenant WHERE discipline_key = ? OR id = ?')
+  .bind(discipline, discipline)
+  .first<{ id: string }>();
+if (!tenantRow) return Astro.redirect('/404');
+
+const record = await getScholarRecord(db, key, { tenantId: tenantRow.id, discipline });
+if (!record) return Astro.redirect('/404');
+
+const discRow = await db
+  .prepare('SELECT title_zh, tags_json FROM discipline WHERE key = ?')
+  .bind(discipline)
+  .first<{ title_zh: string; tags_json: string }>();
+const tagLibrary: Array<{ key: string; label?: { zh?: string }; color?: string }> = discRow?.tags_json
+  ? JSON.parse(discRow.tags_json)
+  : [];
 
 const schoolsResult = await db
-  .prepare('SELECT key, title_zh FROM school WHERE discipline = ? ORDER BY title_zh')
+  .prepare('SELECT key, title_zh FROM school WHERE discipline = ? ORDER BY title_zh ASC, key ASC')
   .bind(discipline)
   .all<{ key: string; title_zh: string }>();
-const allSchools = schoolsResult.results ?? [];
+const allSchools = (schoolsResult.results ?? []).map((s) => ({ key: s.key, label: s.title_zh }));
+
+const initialState: ExistingScholarInit = {
+  key: record.key,
+  discipline,
+  name: record.name,
+  schools: record.schools,
+  contribution: record.contribution,
+  lifespan: record.lifespan,
+  institution: record.institution,
+  born: record.born,
+  died: record.died,
+  nationality: record.nationality,
+  flag: record.flag,
+  origin: record.origin,
+  field: record.field,
+  tags: record.tags,
+  nobel: record.nobel,
+};
+
+const editorMetadata: ScholarEditorMetadata = {
+  schools: allSchools,
+  tags: tagLibrary.map((t) => ({
+    key: t.key,
+    label: t.label?.zh ?? t.key,
+    color: t.color ?? null,
+  })),
+  disciplineLabel: discRow?.title_zh ?? discipline,
+  disciplineKey: discipline,
+  fromPath,
+  fromLabel: fromLbl,
+};
 ---
 
-<Layout title={`编辑 · ${exists.name_zh}`} currentDiscipline={discipline} currentSection="scholars">
-  <main class="max-w-reading mx-auto px-4 py-6">
-    <header class="mb-4">
-      <a href={fromPath} class="text-xs text-tertiary hover:underline">← 返回{fromLbl}</a>
-      <h1 class="text-2xl mt-2">编辑学者</h1>
-    </header>
+<Layout title={`编辑 · ${record.name.zh}`} currentDiscipline={discipline} currentSection="scholars">
+  <div class="kp-editor-v08" id="scholar-editor-root" data-mode="edit"></div>
 
-    <div id="status" class="hidden mb-4 p-3 rounded-md text-xs"></div>
-
-    <form id="scholar-edit-form" class="space-y-5 hidden" autocomplete="off" data-scholar-key={key} data-discipline={discipline}>
-      <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">中文名</label>
-        <input name="name_zh" type="text" required class="w-full px-3 py-2 rounded-md border text-sm" />
-      </section>
-      <section class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">English</label>
-          <input name="name_en" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">日本語</label>
-          <input name="name_ja" type="text" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-      </section>
-
-      <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">所属学派</label>
-        <div
-          id="schools-multi"
-          data-options={JSON.stringify(allSchools.map((s) => ({ key: s.key, label: s.title_zh })))}
-        ></div>
-      </section>
-
-      <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">标签</label>
-        <div id="tag-picker"></div>
-      </section>
-
-      <section class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">出生年 <span class="text-accent-warning">*</span></label>
-          <input name="born" type="text" required placeholder="1890年9月9日" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">卒年</label>
-          <input name="died" type="text" placeholder="（在世为空）" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-      </section>
-
-      <section class="grid grid-cols-3 gap-3">
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">国籍</label>
-          <input name="nationality" type="text" placeholder="德国/美国" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">国旗</label>
-          <input name="flag" type="text" placeholder="🇩🇪 🇺🇸" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-tertiary mb-1">研究领域</label>
-          <input name="field" type="text" placeholder="社会心理学 · 组织变革" class="w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-      </section>
-
-      <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">代表机构</label>
-        <input name="institution" type="text" placeholder="Harvard Business School" class="w-full px-3 py-2 rounded-md border text-sm" />
-      </section>
-
-      <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">学术贡献</label>
-        <textarea name="contribution_zh" required rows="10" class="w-full px-3 py-2 rounded-md border text-sm leading-relaxed"></textarea>
-      </section>
-
-      <section>
-        <label class="block text-xs font-semibold text-tertiary mb-1">诺贝尔奖（可选）</label>
-        <div class="grid grid-cols-3 gap-3">
-          <input name="nobel_year" type="text" placeholder="年份（留空 = 无）" class="w-full px-3 py-2 rounded-md border text-sm" />
-          <input name="nobel_detail" type="text" placeholder="授奖词" class="col-span-2 w-full px-3 py-2 rounded-md border text-sm" />
-        </div>
-      </section>
-
-      <footer class="sticky bottom-0 bg-bg-primary py-3 border-t flex items-center gap-3">
-        <button type="submit" id="save-btn" class="btn-ghost-strategy">
-          保存
-        </button>
-        <button
-          type="button"
-          id="delete-btn"
-          disabled
-          class="px-4 py-2 rounded-md bg-bg-primary border border-accent-warning text-accent-warning text-sm font-semibold ml-auto disabled:opacity-40 disabled:cursor-not-allowed"
-          title="加载中..."
-        >
-          删除
-        </button>
-        <span id="save-status" class="text-xs text-tertiary"></span>
-      </footer>
-    </form>
-  </main>
+  <script type="application/json" is:inline id="scholar-editor-init" set:html={JSON.stringify({ initialState, metadata: editorMetadata })}></script>
 </Layout>
 
 <script>
-  // @ts-nocheck — DOM form 类型推断弱，runtime 已验证
-  // v0.4.11: multi-select typeahead for schools
-  import { mountMultiSelect } from '~/lib/multi-select-client';
-  import { mountTagSinglePicker } from '~/lib/tag-single-picker-client';
-  import { formatZodIssues } from '~/lib/zod-errors-zh';
-  import { watchDeploy } from '~/lib/deploy-progress-client';
-  let _deployWatcher = null;
-  const $ = (s) => document.querySelector(s);
-  const status = $('#status');
-  const form = $('#scholar-edit-form');
-  const saveBtn = $('#save-btn');
-  const deleteBtn = $('#delete-btn');
-  const saveStatus = $('#save-status');
-  const scholarKey = form.dataset.scholarKey;
-  const discipline = form.dataset.discipline;
+  import { makeEditingScholarState, type ExistingScholarInit, type ScholarEditorMetadata } from '~/lib/editor/scholar-state';
+  import { initScholarEditor } from '~/lib/editor/scholar-form';
 
-  const schoolsMount = $('#schools-multi');
-  const schoolsMS = mountMultiSelect(schoolsMount, {
-    inputName: 'school',
-    options: JSON.parse(schoolsMount.dataset.options ?? '[]'),
-    placeholder: '搜索学派',
-  });
-  let baseSha = null;
-  let originalCreatedAt = null;
-  // v0.4.19: lifespan/origin 字段从 UI 移除但 schema 保留 — 用 originalXxx 持久化旧值避免数据流失
-  let originalLifespan = '';
-  let originalOrigin = '';
-  let tagPicker = null;
-
-  function applyDeleteGate(kpCount) {
-    if (kpCount === 0) {
-      deleteBtn.disabled = false;
-      deleteBtn.title = '删此学者（进 git history 可 revert，~90s 后线上消失）';
-    } else {
-      deleteBtn.disabled = true;
-      deleteBtn.title = `还有 ${kpCount} 个知识点关联此学者。先把它们移到别的学者或删掉，才能删此学者。`;
-    }
-  }
-
-  function setStatus(msg, kind = 'info') {
-    status.textContent = msg;
-    status.className = `mb-4 p-3 rounded-md text-xs ${
-      kind === 'error' ? 'bg-badge-limit text-accent-warning' :
-      kind === 'success' ? 'bg-badge-meaning' : 'bg-bg-secondary text-tertiary'
-    }`;
-    status.classList.remove('hidden');
-  }
-
-  async function load() {
-    setStatus('加载中...');
-    const res = await fetch(`/api/edit/scholar/${discipline}/${scholarKey}`);
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      setStatus(`加载失败：${res.status} ${err.reason ?? ''}`, 'error');
-      return;
-    }
-    const { json: s, base_sha, tag_library, kp_count } = await res.json();
-    baseSha = base_sha;
-    originalCreatedAt = s.createdAt;
-    originalLifespan = s.lifespan ?? '';
-    originalOrigin = s.origin ?? '';
-    const initialTag = Array.isArray(s.tags) && s.tags.length > 0 ? s.tags[0] : null;
-    tagPicker = mountTagSinglePicker(document.getElementById('tag-picker'), {
-      options: (tag_library ?? []).map((t) => ({ key: t.key, label: t.label?.zh ?? t.key, color: t.color })),
-      initial: initialTag,
-    });
-    form.name_zh.value = s.name?.zh ?? '';
-    form.name_en.value = s.name?.en ?? '';
-    form.name_ja.value = s.name?.ja ?? '';
-    form.born.value = s.born ?? '';
-    form.died.value = s.died ?? '';
-    form.nationality.value = s.nationality ?? '';
-    form.flag.value = s.flag ?? '';
-    form.field.value = s.field ?? '';
-    form.institution.value = s.institution ?? '';
-    form.contribution_zh.value = s.contribution?.zh ?? '';
-    form.nobel_year.value = s.nobel?.year ?? '';
-    form.nobel_detail.value = s.nobel?.detail ?? '';
-    schoolsMS.setSelected(s.schools ?? []);
-    applyDeleteGate(kp_count ?? 0);
-    form.classList.remove('hidden');
-    status.classList.add('hidden');
-  }
-
-  function buildI18n(zh, en, ja) {
-    const o = { zh: zh.trim() };
-    if (en?.trim()) o.en = en.trim();
-    if (ja?.trim()) o.ja = ja.trim();
-    return o;
-  }
-  function collect() {
-    const schools = schoolsMS.getSelected();
-    const tagKey = tagPicker?.getValue();
-    const nobelYear = form.nobel_year.value.trim();
-    const nobel = nobelYear ? { year: nobelYear, detail: form.nobel_detail.value.trim() } : null;
-    return {
-      key: scholarKey,
-      discipline,
-      name: buildI18n(form.name_zh.value, form.name_en.value, form.name_ja.value),
-      schools,
-      contribution: { zh: form.contribution_zh.value },
-      // lifespan/origin 从 UI 移除 — schema 字段保留，保旧值不动
-      lifespan: originalLifespan,
-      origin: originalOrigin,
-      tags: tagKey ? [tagKey] : [],
-      institution: form.institution.value.trim(),
-      born: form.born.value.trim(),
-      died: form.died.value.trim(),
-      nationality: form.nationality.value.trim(),
-      flag: form.flag.value.trim(),
-      field: form.field.value.trim(),
-      nobel,
-      createdAt: originalCreatedAt,
-      updatedAt: new Date().toISOString(),
+  const root = document.getElementById('scholar-editor-root');
+  const initJson = document.getElementById('scholar-editor-init')?.textContent;
+  if (!root || !initJson) {
+    console.error('[scholar-editor] init payload missing');
+  } else {
+    const { initialState, metadata } = JSON.parse(initJson) as {
+      initialState: ExistingScholarInit;
+      metadata: ScholarEditorMetadata;
     };
-  }
-
-  async function save(e) {
-    e.preventDefault();
-    saveBtn.disabled = true;
-    saveStatus.textContent = '保存中...';
-    const res = await fetch(`/api/edit/scholar/${discipline}/${scholarKey}`, {
-      method: 'PUT',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ json: collect(), base_sha: baseSha }),
+    initScholarEditor({
+      root: root as HTMLElement,
+      initialState: makeEditingScholarState(initialState),
+      metadata,
+      mode: 'edit',
     });
-    const data = await res.json().catch(() => ({}));
-    if (res.ok) {
-      if (_deployWatcher) _deployWatcher.stop();
-      _deployWatcher = watchDeploy({ statusEl: saveStatus, commitSha: data.commit_sha, savedAtIso: new Date().toISOString() });
-      baseSha = data.new_blob_sha;
-    } else if (res.status === 409) {
-      saveStatus.innerHTML = `<span style="color:var(--s-danger)">冲突：current=${data.current_sha?.slice(0, 7)}，请刷新</span>`;
-    } else if (res.status === 422) {
-      const lines = formatZodIssues(data.detail);
-      saveStatus.innerHTML = `<span style="color:var(--s-danger)">字段校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;
-    } else {
-      saveStatus.innerHTML = `<span style="color:var(--s-danger)">${res.status} ${data.reason ?? 'error'}: ${String(data.detail).slice(0, 80)}</span>`;
-    }
-    saveBtn.disabled = false;
   }
-
-  async function del() {
-    if (deleteBtn.disabled) return;
-    if (!confirm(`确认删除学者「${scholarKey}」？\n\n• 进 git history 可 revert\n• ~90s 后线上消失`)) return;
-    deleteBtn.disabled = true;
-    const res = await fetch(`/api/edit/scholar/${discipline}/${scholarKey}`, {
-      method: 'DELETE',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ base_sha: baseSha }),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (res.ok) {
-      alert(`✓ 已删除 scholar/${scholarKey}\ncommit ${data.commit_sha?.slice(0, 7)}`);
-      location.href = `/${discipline}/scholars`;
-    } else if (res.status === 409 && data.reason === 'has_dependents') {
-      alert(`无法删除：${data.detail}`);
-      deleteBtn.disabled = false;
-    } else {
-      alert(`删除失败：${res.status} ${data.reason}`);
-      deleteBtn.disabled = false;
-    }
-  }
-
-  form.addEventListener('submit', save);
-  deleteBtn.addEventListener('click', del);
-  load();
 </script>
