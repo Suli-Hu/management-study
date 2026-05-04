@@ -298,6 +298,16 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
   .kp-school-chip[data-tag="tag-blue"]   { background: oklch(from var(--tag-blue)   l c h / 0.15); color: oklch(from var(--tag-blue)   calc(l - 0.40) c h); border-color: oklch(from var(--tag-blue)   l c h / 0.30); }
   .kp-school-chip[data-tag="tag-orange"] { background: oklch(from var(--tag-orange) l c h / 0.15); color: oklch(from var(--tag-orange) calc(l - 0.40) c h); border-color: oklch(from var(--tag-orange) l c h / 0.30); }
 
+  /* Dark mode 提亮（base l ≈ 0.75，calc(l + 0.15) ≈ 0.90 在 dark bg 上对比足）— 跟 SchoolCard / scholar 详情页 pattern 一致 */
+  :global([data-mode="dark"]) .kp-school-chip[data-tag="tag-mgmt"]   { background: oklch(from var(--tag-mgmt)   l c h / 0.22); color: oklch(from var(--tag-mgmt)   calc(l + 0.15) c h); border-color: oklch(from var(--tag-mgmt)   l c h / 0.40); }
+  :global([data-mode="dark"]) .kp-school-chip[data-tag="tag-mkt"]    { background: oklch(from var(--tag-mkt)    l c h / 0.22); color: oklch(from var(--tag-mkt)    calc(l + 0.15) c h); border-color: oklch(from var(--tag-mkt)    l c h / 0.40); }
+  :global([data-mode="dark"]) .kp-school-chip[data-tag="tag-soc"]    { background: oklch(from var(--tag-soc)    l c h / 0.22); color: oklch(from var(--tag-soc)    calc(l + 0.15) c h); border-color: oklch(from var(--tag-soc)    l c h / 0.40); }
+  :global([data-mode="dark"]) .kp-school-chip[data-tag="tag-purple"] { background: oklch(from var(--tag-purple) l c h / 0.22); color: oklch(from var(--tag-purple) calc(l + 0.15) c h); border-color: oklch(from var(--tag-purple) l c h / 0.40); }
+  :global([data-mode="dark"]) .kp-school-chip[data-tag="tag-pink"]   { background: oklch(from var(--tag-pink)   l c h / 0.22); color: oklch(from var(--tag-pink)   calc(l + 0.15) c h); border-color: oklch(from var(--tag-pink)   l c h / 0.40); }
+  :global([data-mode="dark"]) .kp-school-chip[data-tag="tag-cyan"]   { background: oklch(from var(--tag-cyan)   l c h / 0.22); color: oklch(from var(--tag-cyan)   calc(l + 0.15) c h); border-color: oklch(from var(--tag-cyan)   l c h / 0.40); }
+  :global([data-mode="dark"]) .kp-school-chip[data-tag="tag-blue"]   { background: oklch(from var(--tag-blue)   l c h / 0.22); color: oklch(from var(--tag-blue)   calc(l + 0.15) c h); border-color: oklch(from var(--tag-blue)   l c h / 0.40); }
+  :global([data-mode="dark"]) .kp-school-chip[data-tag="tag-orange"] { background: oklch(from var(--tag-orange) l c h / 0.22); color: oklch(from var(--tag-orange) calc(l + 0.15) c h); border-color: oklch(from var(--tag-orange) l c h / 0.40); }
+
   /* ---- body wrapper ---- */
   .kp-body {
     color: var(--text-2);
