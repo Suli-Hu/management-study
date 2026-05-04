@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 /**
- * Stage 6 visual regression baseline (v0.8.12 chip 1, v0.8.13 chip 2, v0.8.14 chip 6)
+ * Stage 6 visual regression baseline (v0.8.12 chip 1, v0.8.13 chip 2, v0.8.14 chip 6, v0.8.15 chip 4)
  *
  * Captures full-page screenshots at 1280 (desktop) + 322 (iPad Mini) for in-scope pages,
  * and diffs them against committed snapshots on subsequent runs. PM uses this to confirm
@@ -14,8 +14,9 @@ import { test, expect, type Page } from '@playwright/test';
  *   - chip 1: Layout shell + discipline 首页（/keiei）
  *   - chip 2: KP 详情页 narrative / flat-list / quad 三种 format
  *   - chip 6: 学习日志（/keiei/study-log）
+ *   - chip 4: 学者详情页（hackman — ob 学派单 chip 形态）
  *
- * 后续 chip 3-5 会扩到 学派/学者/列表 页面。
+ * 后续 chip 3/5 会扩到 学派详情/列表 页面。
  *
  * 前提（与现有 e2e 一致）:
  *   - 本地 D1 已 apply migrations + sync 一次
@@ -37,6 +38,8 @@ const PAGES = [
   { name: 'kp-detail-quad',      path: '/keiei/kp/k071' },
   // v0.8.14 Stage 6 chip 6：学习日志（含日历热力图 + 段位 + sparkline）
   { name: 'study-log',           path: '/keiei/study-log' },
+  // v0.8.15 Stage 6 chip 4: 学者详情页 (hackman 是 ob 学派下唯一关联学者，hex → token + school chip)
+  { name: 'scholar-detail',      path: '/keiei/scholars/hackman' },
 ];
 
 const VIEWPORTS = [
@@ -57,7 +60,7 @@ async function login(page: Page): Promise<void> {
  * baseline），那时再在 CI 接管 visual regression。
  */
 test.describe('Stage 6 visual regression', () => {
-  test.skip(!!process.env.CI, 'visual regression baseline is darwin-only for chip 1; chip 7 integrates CI');
+  test.skip(!!process.env.CI, 'visual regression baseline is darwin-only for chip 1-6; chip 7 integrates CI');
 
   for (const pageDef of PAGES) {
     for (const vp of VIEWPORTS) {
