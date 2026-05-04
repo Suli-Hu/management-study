@@ -251,49 +251,55 @@ mark {
 
 
 /* ============================================================
- * KP body renderers
+ * KP body renderers — v0.8.13 Stage 6 chip 2: v1.0 token swap
+ *
+ * 渲染器 (render-body-structured.ts) 用 .body-fmt 包外层并在 outer wrapper
+ * 注入 --accent；inner classes 用 var(--accent) + color-mix 派生 soft / border。
+ * Dark mode 由 tokens.css [data-mode="dark"] 自动反相 — 无需 :global() override。
  * ============================================================ */
 
 /* ---- flat-list / 通用 body 卡片 ---- */
 .body-lead {
-  font-size: 14px; color: var(--color-text-secondary); line-height: 1.85;
+  font-size: 14px; color: var(--text-2); line-height: 1.85;
   margin-bottom: 12px; padding-bottom: 8px;
-  border-bottom: 1px dashed #e0dcd4;
+  border-bottom: 1px dashed var(--border);
 }
 .body-items { display: flex; flex-direction: column; }
 .body-card {
   padding: 14px 0; display: flex; gap: 14px; align-items: flex-start;
-  border-bottom: 1px solid #e8e8ed;
+  border-bottom: 1px solid var(--border);
 }
 .body-card:last-child { border-bottom: 0; }
 .body-num {
   min-width: 24px; height: 24px; border-radius: 12px; padding: 0 5px;
   display: flex; align-items: center; justify-content: center;
   font-size: 12px; font-weight: 600; flex-shrink: 0; box-sizing: border-box;
+  background: color-mix(in oklab, var(--accent, var(--text-3)) 12%, transparent);
+  color: var(--accent, var(--text-2));
 }
 .body-card-content { flex: 1; min-width: 0; }
 .body-item-name {
-  font-size: 14px; font-weight: 600; color: var(--color-text-primary);
+  font-size: 14px; font-weight: 600; color: var(--text);
   line-height: 1.5; margin-bottom: 4px;
 }
 .body-item-desc {
-  font-size: 12px; color: var(--color-text-tertiary); line-height: 1.9;
+  font-size: 12px; color: var(--text-2); line-height: 1.9;
 }
 
 /* ---- narrative ---- */
 .body-narrative .narrative-p {
-  font-size: 13px; color: var(--color-text-secondary); line-height: 2;
+  font-size: 13px; color: var(--text-2); line-height: 2;
   margin: 0 0 14px 0;
 }
 .body-narrative .narrative-p:last-child { margin-bottom: 0; }
-.body-narrative strong { color: var(--color-text-primary); font-weight: 600; }
-.body-narrative em { color: var(--color-text-tertiary); font-style: italic; }
+.body-narrative strong { color: var(--text); font-weight: 600; }
+.body-narrative em { color: var(--text-3); font-style: italic; }
 
-/* ---- accordion (v0.5.46 重写) ----
+/* ---- accordion (v0.5.46 重写 / v0.8.13 token swap) ----
  * 设计：去 left strip 装饰；section 之间靠 28px margin + summary 行底 1px hr 区分；
  *       折叠态自动 hide hr 避免跟下一段顶 hr 重影；
- *       numbered item 改两段式（name 加粗一行 + desc 缩进新行，去 inline `——`）。
- * 圆圈编号用 inline style 注入 accent 色，其他 chrome 中性灰。 */
+ *       numbered item 两段式（name 加粗一行 + desc 缩进新行）。
+ * 圆圈编号用 var(--accent) (outer wrapper 注入)，default 退 var(--text-3)。 */
 .acc { margin-top: 6px; }
 details.acc-block {
   scroll-margin-top: 64px;
@@ -306,24 +312,23 @@ details.acc-block {
   list-style: none;
   padding: 6px 0;
   user-select: none;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--border);
 }
-.acc-head:hover { background: var(--color-bg-secondary); margin: 0 -8px 8px; padding: 6px 8px; }
+.acc-head:hover { background: var(--bg-soft); margin: 0 -8px 8px; padding: 6px 8px; }
 .acc-head::-webkit-details-marker { display: none; }
-.acc-title { flex: 1; font-size: 13.5px; font-weight: 600; color: var(--color-text-primary); margin: 0; letter-spacing: -0.005em; }
+.acc-title { flex: 1; font-size: 13.5px; font-weight: 600; color: var(--text); margin: 0; letter-spacing: -0.005em; }
 .acc-sub {
-  /* v0.5.51 section name 后括号副标题（"变革对象维度"等）—— 浅灰小字 inline */
-  font-size: 12px; color: var(--color-text-quaternary);
+  font-size: 12px; color: var(--text-3);
   font-weight: 400; margin-left: 8px; letter-spacing: 0;
 }
 .acc-count {
-  font-size: 10.5px; color: var(--color-text-quaternary);
+  font-size: 10.5px; color: var(--text-3);
   font-variant-numeric: tabular-nums;
-  background: var(--color-bg-tertiary);
+  background: var(--bg-soft);
   padding: 1px 6px; border-radius: 999px;
 }
 .acc-chev {
-  font-size: 11px; color: var(--color-text-quaternary);
+  font-size: 11px; color: var(--text-3);
   transition: transform .15s;
 }
 details.acc-block[open] > .acc-head .acc-chev,
@@ -342,56 +347,59 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 }
 .acc-li-n {
   font-size: 11px; font-weight: 600;
-  color: var(--accent, var(--color-text-quaternary));
-  border: 1.5px solid var(--accent, var(--color-text-quaternary));
+  color: var(--accent, var(--text-3));
+  border: 1.5px solid var(--accent, var(--text-3));
   font-variant-numeric: tabular-nums;
   width: 22px; height: 22px;
   border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
-  background: var(--color-bg-primary);
+  background: var(--bg-elev);
   margin-top: 1px;
 }
 .acc-li-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .acc-li-name {
-  color: var(--color-text-primary); font-weight: 600;
+  color: var(--text); font-weight: 600;
   font-size: 13.5px; line-height: 1.6;
 }
-.acc-li-name strong, .acc-li-name b { font-weight: 600; }  /* name 内嵌 strong 不重复加粗 */
+.acc-li-name strong, .acc-li-name b { font-weight: 600; }
 .acc-li-desc {
-  color: var(--color-text-tertiary);
+  color: var(--text-2);
   font-size: 13px; line-height: 1.85;
 }
-.acc-li-desc strong, .acc-li-desc b { color: var(--color-text-primary); font-weight: 600; }
+.acc-li-desc strong, .acc-li-desc b { color: var(--text); font-weight: 600; }
 
-.acc-prose { font-size: 13px; color: var(--color-text-tertiary); line-height: 1.85; }
+.acc-prose { font-size: 13px; color: var(--text-2); line-height: 1.85; }
 
 /* ---- compare table（默认渲染，非学派详情用）---- */
 .cmp-table {
   display: flex; flex-direction: column; gap: 8px;
-  border-radius: 12px; padding: 12px; background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
+  border-radius: 12px; padding: 12px; background: var(--bg-soft);
+  border: 1px solid var(--border);
 }
 .cmp-row {
   display: grid; grid-template-columns: 120px 1fr; gap: 14px;
   padding: 10px 12px; border-radius: 8px;
-  background: var(--color-bg-primary); border: 1px solid var(--color-border);
+  background: var(--bg-elev); border: 1px solid var(--border);
 }
 .cmp-pill {
   display: inline-flex; align-items: center; justify-content: center;
-  padding: 6px 8px; border-radius: 8px; border: 1px solid;
+  padding: 6px 8px; border-radius: 8px;
+  border: 1px solid color-mix(in oklab, var(--accent, var(--text-3)) 30%, transparent);
+  background: color-mix(in oklab, var(--accent, var(--text-3)) 10%, transparent);
+  color: var(--accent, var(--text));
   font-size: 12px; font-weight: 600; text-align: center;
   height: fit-content; align-self: center;
 }
 .cmp-cells { display: flex; flex-direction: column; gap: 4px; }
-.cmp-cell { font-size: 12px; line-height: 1.7; color: var(--color-text-tertiary); }
+.cmp-cell { font-size: 12px; line-height: 1.7; color: var(--text-2); }
 .cmp-cell-tight {
   display: inline-block; padding: 2px 8px; border-radius: 4px;
-  background: var(--color-bg-tertiary); color: var(--color-text-secondary);
+  background: var(--bg-soft); color: var(--text-2);
   font-size: 12px; margin-right: 4px;
 }
-.cmp-cell-prose { color: var(--color-text-secondary); }
-.cmp-cell strong { color: var(--color-text-primary); font-weight: 600; }
-.cmp-cell em { color: var(--color-text-tertiary); font-style: italic; }
+.cmp-cell-prose { color: var(--text-2); }
+.cmp-cell strong { color: var(--text); font-weight: 600; }
+.cmp-cell em { color: var(--text-3); font-style: italic; }
 
 /* ---- compare cards（OptionA 学派详情用）---- */
 .cmpc-grid {
@@ -400,37 +408,37 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 .cmpc-card {
   position: relative;
   padding: 22px 20px 20px;
-  border: 1px solid var(--color-border);
-  border-radius: 12px; background: var(--color-bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 12px; background: var(--bg-elev);
   display: flex; flex-direction: column; gap: 6px;
 }
 .cmpc-num {
   position: absolute; top: 14px; right: 18px;
   font-size: 28px; font-weight: 700; line-height: 1;
-  color: var(--color-text-quaternary); opacity: 0.35;
+  color: var(--text-3); opacity: 0.35;
   font-variant-numeric: tabular-nums;
 }
 .cmpc-name {
-  font-size: 14px; font-weight: 600; color: var(--color-text-primary);
+  font-size: 14px; font-weight: 600; color: var(--text);
   margin-bottom: 4px;
 }
 .cmpc-headline {
   font-size: 22px; font-weight: 600; line-height: 1.3;
   letter-spacing: 0.02em; margin-bottom: 6px;
   word-break: keep-all;
-  color: var(--accent, var(--color-text-primary));
+  color: var(--accent, var(--text));
 }
 .cmpc-sub {
-  font-size: 12px; color: var(--color-text-tertiary);
+  font-size: 12px; color: var(--text-2);
   line-height: 1.6; margin-bottom: 10px;
-  padding-bottom: 12px; border-bottom: 1px dashed var(--color-border);
+  padding-bottom: 12px; border-bottom: 1px dashed var(--border);
 }
 .cmpc-meta {
   list-style: none; padding: 0; margin: 0;
   display: flex; flex-direction: column; gap: 3px;
 }
 .cmpc-meta li {
-  font-size: 12px; color: var(--color-text-tertiary); line-height: 1.55;
+  font-size: 12px; color: var(--text-2); line-height: 1.55;
   font-variant-numeric: tabular-nums;
 }
 
@@ -443,13 +451,13 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 .quad-axis-y {
   grid-row: 1; grid-column: 1;
   writing-mode: vertical-rl; transform: rotate(180deg);
-  font-size: 11px; color: var(--color-text-quaternary);
+  font-size: 11px; color: var(--text-3);
   display: flex; align-items: center; justify-content: center;
   letter-spacing: 0.05em;
 }
 .quad-axis-x {
   grid-row: 2; grid-column: 2;
-  font-size: 11px; color: var(--color-text-quaternary);
+  font-size: 11px; color: var(--text-3);
   display: flex; align-items: center; justify-content: center;
   letter-spacing: 0.05em;
 }
@@ -460,25 +468,23 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 }
 .quad-cell {
   padding: 16px 14px; border-radius: 10px;
-  background: var(--color-bg-primary); border: 1px solid var(--color-border);
+  background: var(--bg-elev); border: 1px solid var(--border);
   display: flex; flex-direction: column; gap: 4px;
   min-height: 110px;
 }
 .quad-emoji { font-size: 22px; line-height: 1; }
-.quad-name { font-size: 13px; font-weight: 600; color: var(--color-text-primary); margin-top: 2px; }
-.quad-tag { font-size: 11px; font-weight: 600; color: var(--accent, var(--color-text-tertiary)); }
-.quad-desc { font-size: 12px; color: var(--color-text-tertiary); line-height: 1.65; margin-top: 2px; }
+.quad-name { font-size: 13px; font-weight: 600; color: var(--text); margin-top: 2px; }
+.quad-tag { font-size: 11px; font-weight: 600; color: var(--accent, var(--text-2)); }
+.quad-desc { font-size: 12px; color: var(--text-2); line-height: 1.65; margin-top: 2px; }
 
 
 /* ============================================================
- * Evaluation tags module（义/限/例/应/用/喻）— v0.5.46 重写
+ * Evaluation 6 字段 panel — v0.8.13 Stage 6 chip 2
  *
- * 设计：
- *   - <details open> 默认展开 + 可折叠
- *   - 去 row card（border-left strip + bg tint），改 hanging indent 布局
- *   - "意义/局限/例子/应对/应用/比喻" 双字 pill label（去单字 glyph 圆圈重复）
- *   - tone 色（Z 三组：积极绿/警告红/中性灰）只挂在 pill 上（10% bg + 100% text）
- *   - 整体灰白干净，行间 1px 弱 hr 分隔
+ * 设计参考 kp-edit.css `.kpe-eval-row` (editor v0.8 layout)：
+ *   - LHS 84px 列：圆 glyph (义/限/例/应/用/喻) + 中文双字 (意义/局限/...) + 英文 mini
+ *   - is-filled 默认（详情页只渲染填了的字段）→ bg = --primary-soft + border = --primary
+ *   - 整 row 一张卡，行间 6px gap（vs editor），干净对齐
  * ============================================================ */
 details.eval {
   margin-top: 32px;
@@ -486,55 +492,94 @@ details.eval {
 }
 .eval-h {
   display: flex; align-items: baseline; gap: 8px;
-  font-size: 13px; font-weight: 600; color: var(--color-text-primary);
+  font-size: 13px; font-weight: 600; color: var(--text);
   cursor: pointer;
   list-style: none;
   padding: 6px 0;
   user-select: none;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--border);
   padding-top: 20px;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
-.eval-h:hover { background: var(--color-bg-secondary); margin: 0 -8px 6px; padding: 20px 8px 6px; }
+.eval-h:hover { background: var(--bg-soft); margin: 0 -8px 10px; padding: 20px 8px 6px; }
 .eval-h::-webkit-details-marker { display: none; }
 .eval-count {
-  font-size: 11px; color: var(--color-text-quaternary);
+  font-size: 11px; color: var(--text-3);
   font-variant-numeric: tabular-nums;
-  background: var(--color-bg-tertiary);
+  background: var(--bg-soft);
   padding: 1px 6px; border-radius: 999px;
 }
 .eval-chev {
-  font-size: 11px; color: var(--color-text-quaternary);
+  font-size: 11px; color: var(--text-3);
   margin-left: auto;
   transition: transform .15s;
 }
 
-.eval-list { display: flex; flex-direction: column; }
+.eval-rows {
+  display: flex; flex-direction: column;
+  gap: 6px;
+}
 .eval-row {
   display: grid;
-  grid-template-columns: 56px 1fr;  /* pill 列固定宽，多行 text 自动 hang */
-  gap: 14px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--color-border);
-  align-items: baseline;
+  grid-template-columns: 84px 1fr;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-elev);
+  transition: background .15s, border-color .15s;
 }
-.eval-row:last-child { border-bottom: 0; }
-.eval-pill {
-  font-size: 11px; font-weight: 600;
-  color: var(--tone, var(--color-text-tertiary));
-  background: color-mix(in oklab, var(--tone, currentColor) 10%, transparent);
-  padding: 3px 0;
-  border-radius: 4px;
-  letter-spacing: 0.05em;
-  text-align: center;
-  line-height: 1.4;
+.eval-row.is-filled {
+  background: var(--primary-soft);
+  border-color: color-mix(in oklab, var(--primary) 25%, var(--border));
+}
+.eval-lhs {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 4px;
+  padding: 12px 6px;
+  background: var(--bg-soft);
+  border-right: 1px solid var(--border);
+  transition: background .15s, border-color .15s;
+}
+.eval-row.is-filled .eval-lhs {
+  background: color-mix(in oklab, var(--primary) 8%, var(--primary-soft));
+  border-right-color: color-mix(in oklab, var(--primary) 25%, var(--border));
+}
+.eval-glyph {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  font-size: 14px; font-weight: 700;
+  color: var(--text);
+}
+.eval-row.is-filled .eval-glyph {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.eval-tag-name {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+  color: var(--text-2);
+}
+.eval-row.is-filled .eval-tag-name { color: var(--primary); }
+.eval-tag-en {
+  font-size: 9.5px; font-weight: 500; letter-spacing: 0.05em;
+  color: var(--text-3);
+  text-transform: lowercase;
+}
+.eval-row.is-filled .eval-tag-en {
+  color: color-mix(in oklab, var(--primary) 65%, var(--text-3));
 }
 .eval-text {
-  font-size: 12.5px; line-height: 1.9;
-  color: var(--color-text-tertiary);
+  padding: 12px 14px;
+  font-size: 13px; line-height: 1.85;
+  color: var(--text-2);
   text-wrap: pretty;
+  align-self: center;
 }
-.eval-text strong, .eval-text b { color: var(--color-text-primary); font-weight: 600; }
+.eval-text strong, .eval-text b { color: var(--text); font-weight: 600; }
+.eval-row.is-filled .eval-text { color: var(--text); }
 
 
 /* ============================================================
