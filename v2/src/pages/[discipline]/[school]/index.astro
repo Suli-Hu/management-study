@@ -21,6 +21,7 @@ import type { KpBody, KpEvaluationsLang } from '~/schemas/kp-body-structured';
 import { renderInlineHtml } from '~/lib/render-inline';
 import { editHref } from '~/lib/nav';
 import { tagColor } from '~/lib/tag-color';
+import { hashToTagToken } from '~/lib/editor/dom-helpers';
 import { shortYear } from '~/lib/format-year';
 import { lastName, splitName } from '~/lib/format-name';
 import type { Tag } from '~/schemas/discipline';
@@ -32,7 +33,7 @@ const db = getDb(Astro.locals.runtime.env);
 // 只 query selectedKp 完整 row，返回 raw <article> fragment（无 Layout/Nav/Footer）
 const isPartial = Astro.url.searchParams.get('partial') === '1';
 
-// 标签库 + 学派（公共，partial 也需要 — accentHex 给右栏顶 strip 染色）
+// 标签库 + 学派（公共，partial 也需要 — tag/accent 给右栏顶 strip + KP body 染色）
 const discRow = await db
   .prepare('SELECT tags_json FROM discipline WHERE key = ?')
   .bind(discipline)
@@ -54,7 +55,13 @@ const allSchoolsRes = await db
 const schoolNameByKey = new Map((allSchoolsRes.results ?? []).map((s) => [s.key, s.title_zh]));
 
 const schoolTags = JSON.parse(sch.tags_json) as string[];
+// hex 仍保留 — KP body renderer (renderStructuredBody) 内部用 hexRgb() 派生 rgba 填色，
+// chip 2 (KP 详情页 swap) 时再迁 token。本页 layout 用下面 accentVar 走 v1.0 --tag-* token。
 const accentHex = tagColor({ tags: schoolTags }, tagLibrary);
+// v0.8.X Stage 6 chip 3 (D6=A): primary tag.key → 8 v1.0 --tag-* token via hash, deterministic.
+// 学派详情页 layout (.split / 右栏 strip / lang-toggle / KP 列表 active) 全走该 token。
+const tagToken = schoolTags[0] ? hashToTagToken(schoolTags[0]) : null;
+const accentVar = tagToken ? `var(--${tagToken})` : 'var(--text-3)';
 
 type KpListItem = {
   id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string;
@@ -191,7 +198,7 @@ const canEdit = Astro.locals.canEdit(discipline);
 {/* v0.5.57 partial=1：只输出 <article> 右栏片段（无 Layout/Nav/Footer/scripts），split-pane.js 用 */}
 {isPartial && (
   <article class="right kp-detail-pane" id="kp-detail-pane" style="padding:0">
-    <div style={`height:3px;background:${accentHex}`}></div>
+    <div style={`height:3px;background:${accentVar}`}></div>
     <div class="kp-pane-content">
       {selectedKp ? (
         <>
@@ -204,7 +211,7 @@ const canEdit = Astro.locals.canEdit(discipline);
                     href={langToggleHref}
                     class:list={['lang-toggle shrink-0', selectedLang === 'ja' && 'is-active']}
                     data-lang-toggle
-                    style={`--accent:${accentHex}`}
+                    style={`--accent:${accentVar}`}
                     title="切换日语 / 中文 (Cmd/Ctrl + J)"
                     aria-pressed={selectedLang === 'ja'}
                   >
@@ -256,7 +263,7 @@ const canEdit = Astro.locals.canEdit(discipline);
   currentLeafTitle={sch.title_zh}
   fullHeight
 >
-  <div class="split" style={`--accent:${accentHex};--tone-hex:${accentHex}`}>
+  <div class="split" style={`--accent:${accentVar};--tone-hex:${accentVar}`}>
 
     {/* ========== 左栏 ========== */}
     <aside class="left optA-stack">
@@ -431,7 +438,7 @@ const canEdit = Astro.locals.canEdit(discipline);
 
     {/* ========== 右栏 ========== */}
     <article class="right kp-detail-pane" id="kp-detail-pane" style="padding:0">
-      <div style={`height:3px;background:${accentHex}`}></div>
+      <div style={`height:3px;background:${accentVar}`}></div>
       <div class="kp-pane-content">
         {kps.length === 0 ? (
           <EmptyRight
@@ -451,7 +458,7 @@ const canEdit = Astro.locals.canEdit(discipline);
                       href={langToggleHref}
                       class:list={['lang-toggle shrink-0', selectedLang === 'ja' && 'is-active']}
                       data-lang-toggle
-                      style={`--accent:${accentHex}`}
+                      style={`--accent:${accentVar}`}
                       title="切换日语 / 中文 (Cmd/Ctrl + J)"
                       aria-pressed={selectedLang === 'ja'}
                     >
