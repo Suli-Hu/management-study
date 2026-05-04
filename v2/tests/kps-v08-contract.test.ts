@@ -174,24 +174,14 @@ describe('v0.8.0 Stage 3: 5 format × POST /api/kps happy path', () => {
       expect(data.ok).toBe(true);
       expect(data.kp).toBeDefined();
 
+      // v0.8.10 Stage 5: 旧 body_zh / format 列已 DROP，仅查 5 个新列。
       const cols = await db
-        .prepare(
-          `SELECT body_zh_json, body_format, body_zh, format FROM kp WHERE id = ?`,
-        )
+        .prepare(`SELECT body_zh_json, body_format FROM kp WHERE id = ?`)
         .bind(id)
-        .first<{
-          body_zh_json: string | null;
-          body_format: string | null;
-          body_zh: string;
-          format: string;
-        }>();
+        .first<{ body_zh_json: string | null; body_format: string | null }>();
       expect(cols, 'KP 应被插入').toBeTruthy();
-      // 新列：JSON 即结构化 KpBody
       expect(JSON.parse(cols!.body_zh_json!).format).toBe(format);
       expect(cols!.body_format).toBe(format);
-      // 旧列：format + 反推 DSL
-      expect(cols!.format).toBe(format);
-      expect(cols!.body_zh.length, 'legacy DSL 不应空').toBeGreaterThan(0);
     });
   }
 
