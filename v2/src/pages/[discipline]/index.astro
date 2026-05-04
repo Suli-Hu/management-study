@@ -122,6 +122,22 @@ const chipViews = allViews.map((v) => ({
   isDefault: v.is_default === 1,
   position: v.position,
 }));
+
+// v0.8.9 Fix 3c: schools/new 创建后跳到这里 + 提示拖到正确分组
+const justCreatedSchool = Astro.url.searchParams.get('just_created_school') ?? '';
+const justCreatedTheme = Astro.url.searchParams.get('theme') ?? '';
+const justCreatedSchoolTitle = justCreatedSchool
+  ? schools.find((s) => s.key === justCreatedSchool)?.cn ?? justCreatedSchool
+  : '';
+let justCreatedThemeTitle = '';
+if (justCreatedTheme) {
+  const themes = JSON.parse(
+    (await db.prepare('SELECT themes_json FROM discipline WHERE key = ?').bind(discipline).first<{ themes_json: string | null }>())
+      ?.themes_json ?? '[]',
+  ) as Array<{ key: string; title?: { zh?: string } }>;
+  justCreatedThemeTitle = themes.find((t) => t.key === justCreatedTheme)?.title?.zh ?? justCreatedTheme;
+}
+const showJustCreatedFlash = Boolean(justCreatedSchool && justCreatedThemeTitle);
 ---
 
 <Layout title={disc.title_zh} currentDiscipline={discipline} currentSection="schools">
@@ -200,6 +216,16 @@ const chipViews = allViews.map((v) => ({
     )}
   </main>
 
+  {showJustCreatedFlash && (
+    <div
+      class="just-created-flash"
+      data-just-created-school={justCreatedSchool}
+      data-just-created-theme-title={justCreatedThemeTitle}
+      data-just-created-school-title={justCreatedSchoolTitle}
+    >
+    </div>
+  )}
+
   {/* === 编辑器们：仅 canEdit 时挂载，避免访客也加载 === */}
   {canEdit && (
     <Fragment>
@@ -215,6 +241,26 @@ const chipViews = allViews.map((v) => ({
     </Fragment>
   )}
   <ViewToast />
+
+  {/* v0.8.9 Fix 3c: just_created_school flash + URL 清理 — 复用 ViewToast 通道 */}
+  {showJustCreatedFlash && (
+    <script is:inline>
+      (() => {
+        const el = document.querySelector('.just-created-flash');
+        if (!el) return;
+        const themeTitle = el.getAttribute('data-just-created-theme-title') || '';
+        const schoolTitle = el.getAttribute('data-just-created-school-title') || '';
+        document.dispatchEvent(new CustomEvent('view:toast', {
+          detail: `已创建 ${schoolTitle}（暂在「${themeTitle}」），可拖动到正确分组`,
+        }));
+        // 清 URL query 防刷新重弹
+        const url = new URL(window.location.href);
+        url.searchParams.delete('just_created_school');
+        url.searchParams.delete('theme');
+        window.history.replaceState(null, '', url.toString());
+      })();
+    </script>
+  )}
 </Layout>
 
 <style>

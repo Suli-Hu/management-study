@@ -338,10 +338,9 @@ for (const key of Object.keys(SCHOLARS)) {
     }
   }
 
-  // born + died 合成 lifespan 兜底（UI 优先用 born/died 精确字段）
+  // v0.8.9: lifespan 字段已删 — born/died 是 source of truth
   const bornClean = clean(s.born ?? '');
   const diedClean = clean(s.died ?? '');
-  const lifespanFallback = bornClean && diedClean ? `${bornClean} — ${diedClean}` : bornClean || diedClean;
 
   const scholar: Scholar = {
     key,
@@ -356,7 +355,6 @@ for (const key of Object.keys(SCHOLARS)) {
       zh: clean(s.contribution),
       ja: undefined,
     },
-    lifespan: clean(s.lifespan ?? s.years ?? lifespanFallback ?? ''),
     institution: clean(s.institution ?? s.affiliation ?? ''),
     // v0.3.12 对齐 v1 SCHOLARS 全字段
     born: bornClean,

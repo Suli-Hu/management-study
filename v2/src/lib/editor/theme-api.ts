@@ -34,7 +34,8 @@ export type ThemeSaveResult = ThemeSaveOk | ThemeSaveErr;
 export interface ThemeCreatePayload {
   discipline: string;
   json: {
-    key: string;
+    /** v0.8.9: key 可选 — 不传则 server 端从 title slugify 生成 */
+    key?: string;
     title: { zh: string; ja?: string; en?: string };
     desc?: { zh?: string; ja?: string };
     tags: string[];

@@ -29,11 +29,10 @@ function mockJson(status: number, body: unknown): Response {
 
 const PAYLOAD = {
   discipline: 'keiei',
-  key: 'lewin',
-  name: { zh: '勒温' },
+  // v0.8.9: key 不前端传，server 端 slugify 生成
+  name: { zh: '勒温', en: 'Lewin' },
   schools: ['lewin_school'],
   contribution: { zh: '场论...' },
-  lifespan: '1890–1947',
   institution: 'MIT',
   born: '1890',
   died: '1947',

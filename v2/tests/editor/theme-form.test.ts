@@ -33,7 +33,8 @@ describe('createTheme', () => {
     fetchMock.mockResolvedValue(mockJson(201, { ok: true, commit_sha: 'abc' }));
     const r = await createTheme({
       discipline: 'keiei',
-      json: { key: 'org_change', title: { zh: '组织变革' }, tags: [] },
+      // v0.8.9: key 不前端传，server 端 slugify 生成
+      json: { title: { zh: '组织变革', en: 'Org Change' }, tags: [] },
     });
     expect(r.ok).toBe(true);
     expect(fetchMock.mock.calls[0][0]).toBe('/api/new/theme');
@@ -43,7 +44,7 @@ describe('createTheme', () => {
     fetchMock.mockResolvedValue(mockJson(409, { ok: false, reason: 'key_exists' }));
     const r = await createTheme({
       discipline: 'keiei',
-      json: { key: 'org_change', title: { zh: '组织变革' }, tags: [] },
+      json: { title: { zh: '组织变革' }, tags: [] },
     });
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.category).toBe('key_exists');
@@ -59,7 +60,7 @@ describe('createTheme', () => {
     );
     const r = await createTheme({
       discipline: 'keiei',
-      json: { key: 'x', title: { zh: '' }, tags: [] },
+      json: { title: { zh: '' }, tags: [] },
     });
     expect(r.ok).toBe(false);
     if (!r.ok) {

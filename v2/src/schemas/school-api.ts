@@ -3,7 +3,11 @@ import { BilingualBody, I18nString } from './i18n';
 import { KpId, SchoolKey } from './kp';
 
 export const SchoolCreateInput = z.object({
-  key: SchoolKey,
+  /**
+   * v0.8.9: key 改可选 — POST 时 server 端自动从 title.en slugify 生成
+   * (PATCH 不需要 key，URL path 已带)。
+   */
+  key: SchoolKey.optional(),
   title: I18nString,
   era: z.string().trim().default(''),
   summary: BilingualBody,

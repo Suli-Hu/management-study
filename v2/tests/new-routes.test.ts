@@ -75,7 +75,7 @@ const NEW_SCHOLAR = {
   name: { zh: '新学者' },
   schools: [],
   contribution: { zh: 'contr' },
-  lifespan: '', institution: '', born: '', died: '',
+  institution: '', born: '', died: '',
   nationality: '', flag: '', origin: '', field: '', tags: [],
   nobel: null,
   createdAt: '2026-04-25T00:00:00.000Z',

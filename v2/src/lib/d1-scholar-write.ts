@@ -44,7 +44,6 @@ export async function upsertScholarInD1(
       name_ja: scholar.name.ja ?? null,
       contribution_zh: scholar.contribution.zh,
       contribution_ja: scholar.contribution.ja ?? null,
-      lifespan: scholar.lifespan ?? '',
       institution: scholar.institution ?? '',
       born: scholar.born ?? '',
       died: scholar.died ?? '',

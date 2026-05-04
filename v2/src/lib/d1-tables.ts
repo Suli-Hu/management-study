@@ -84,7 +84,6 @@ export const SCHOLAR_TABLE = {
     'name_ja',
     'contribution_zh',
     'contribution_ja',
-    'lifespan',
     'institution',
     'born',
     'died',

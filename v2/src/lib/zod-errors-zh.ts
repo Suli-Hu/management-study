@@ -43,7 +43,6 @@ const PATH_LABELS: Record<string, string> = {
   origin: '出生地',
   field: '研究领域',
   institution: '代表机构',
-  lifespan: '生卒年',
   'nobel.year': '诺贝尔奖年份',
   'nobel.detail': '诺贝尔奖详情',
 

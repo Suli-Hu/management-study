@@ -30,8 +30,8 @@ function mockJson(status: number, body: unknown): Response {
 
 const PAYLOAD = {
   discipline: 'keiei',
-  key: 'lewin_school',
-  title: { zh: 'X' },
+  // v0.8.9: key 不前端传，server 端 slugify 生成
+  title: { zh: 'X', en: 'Lewin School' },
   era: '',
   summary: { zh: '概述' },
   themeKey: 'org_change',
