@@ -46,7 +46,6 @@ export function mountCompareForm(
     wrap.appendChild(
       field({
         label: '导语 (lead)',
-        helpAnchor: 'lead',
         hint: '对对比关系的引言，可空',
         control: textarea({
           value: current.lead,
@@ -132,21 +131,25 @@ export function mountCompareForm(
     wrap.appendChild(
       field({
         label: `对比列（${current.cols.length}）`,
-        helpAnchor: 'compare-cols',
         control: colsWrap,
       }),
     );
 
-    wrap.appendChild(
-      addBtn('+ 添加对比列', () => {
-        current = {
-          ...current,
-          cols: [...current.cols, { title: '', keyword: '', desc: '', type: '', theories: '', detail: '' }],
-        };
-        onChange(current);
-        render();
-      }),
-    );
+    const addColBtn = addBtn('+ 添加对比列', () => {
+      if (current.cols.length >= 4) return;
+      current = {
+        ...current,
+        cols: [...current.cols, { title: '', keyword: '', desc: '', type: '', theories: '', detail: '' }],
+      };
+      onChange(current);
+      render();
+    });
+    if (current.cols.length >= 4) {
+      addColBtn.disabled = true;
+      addColBtn.title = '最多 4 列';
+      addColBtn.textContent = '+ 添加对比列（最多 4 列）';
+    }
+    wrap.appendChild(addColBtn);
 
     host.appendChild(wrap);
   };

@@ -68,9 +68,9 @@ export function initEditor(opts: InitEditorOptions): void {
   const schoolsHost = el('div');
   const scholarsHost = el('div');
   const tagsHost = el('div');
-  relWrap.appendChild(buildLabeledField('所属学派 *', schoolsHost, 'schools'));
-  relWrap.appendChild(buildLabeledField('关联学者', scholarsHost, 'scholars'));
-  relWrap.appendChild(buildLabeledField('标签', tagsHost, 'tags'));
+  relWrap.appendChild(buildLabeledField('所属学派 *', schoolsHost));
+  relWrap.appendChild(buildLabeledField('关联学者', scholarsHost));
+  relWrap.appendChild(buildLabeledField('标签', tagsHost));
   mountSchoolsField(schoolsHost, { store, metadata: opts.metadata });
   mountScholarsField(scholarsHost, { store, metadata: opts.metadata });
   mountTagsField(tagsHost, { store, metadata: opts.metadata });
@@ -245,19 +245,12 @@ function buildTopBar(store: EditorStore, opts: InitEditorOptions): HTMLElement {
   return bar;
 }
 
-function buildLabeledField(label: string, host: HTMLElement, helpAnchor: string): HTMLElement {
+function buildLabeledField(label: string, host: HTMLElement): HTMLElement {
   const wrap = el('div', 'kpe-field');
   const head = el('div', 'kpe-field-row');
   const labelEl = el('label', 'kpe-label');
   labelEl.textContent = label;
   head.appendChild(labelEl);
-  const help = el('a', 'kpe-help-link');
-  help.href = `/docs/kp-field-guide.md#${helpAnchor}`;
-  help.target = '_blank';
-  help.rel = 'noopener';
-  help.textContent = 'ⓘ';
-  help.setAttribute('aria-label', '查看字段说明');
-  head.appendChild(help);
   wrap.appendChild(head);
   wrap.appendChild(host);
   return wrap;

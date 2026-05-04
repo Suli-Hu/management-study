@@ -42,7 +42,6 @@ export function mountTitleAndYearFields(host: HTMLElement, opts: RelationsPanelO
     field({
       label: '中文标题',
       required: true,
-      helpAnchor: 'title-zh',
       control: input({
         value: opts.store.get().title.zh,
         placeholder: '中文标题',
@@ -60,7 +59,6 @@ export function mountTitleAndYearFields(host: HTMLElement, opts: RelationsPanelO
   wrap.appendChild(
     field({
       label: '日本語タイトル',
-      helpAnchor: 'title-ja',
       control: input({
         value: opts.store.get().title.ja,
         placeholder: '日本語タイトル（可空）',
@@ -77,7 +75,6 @@ export function mountTitleAndYearFields(host: HTMLElement, opts: RelationsPanelO
   wrap.appendChild(
     field({
       label: 'English title',
-      helpAnchor: 'title-en',
       control: input({
         value: opts.store.get().title.en,
         placeholder: 'English title (optional)',
@@ -94,7 +91,6 @@ export function mountTitleAndYearFields(host: HTMLElement, opts: RelationsPanelO
   wrap.appendChild(
     field({
       label: '年份',
-      helpAnchor: 'year',
       control: input({
         value: opts.store.get().year,
         placeholder: '1979 / 1980s / 19c-late',

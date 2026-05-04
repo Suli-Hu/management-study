@@ -28,7 +28,6 @@ export function mountFlatListForm(
     wrap.appendChild(
       field({
         label: '导语 (lead)',
-        helpAnchor: 'lead',
         hint: '一句话总起，可空',
         control: textarea({
           value: current.lead,
@@ -109,7 +108,6 @@ export function mountFlatListForm(
     wrap.appendChild(
       field({
         label: `条目（${current.items.length}）`,
-        helpAnchor: 'flat-list-items',
         control: itemsWrap,
       }),
     );

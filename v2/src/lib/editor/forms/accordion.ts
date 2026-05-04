@@ -27,7 +27,6 @@ export function mountAccordionForm(
     wrap.appendChild(
       field({
         label: '导语 (lead)',
-        helpAnchor: 'lead',
         hint: '总论 / 串场，可空',
         control: textarea({
           value: current.lead,
@@ -142,7 +141,6 @@ export function mountAccordionForm(
     wrap.appendChild(
       field({
         label: `分组（${current.groups.length}）`,
-        helpAnchor: 'accordion-groups',
         control: groupsWrap,
       }),
     );

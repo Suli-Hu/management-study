@@ -211,6 +211,61 @@ describe('compare form', () => {
     const dels = h.querySelectorAll<HTMLButtonElement>('.kpe-item-del');
     dels.forEach((d) => expect(d.disabled).toBe(true));
   });
+
+  test('cols=4 时 + 添加对比列 按钮 disabled（UI 上限 4）', () => {
+    const h = host();
+    mountCompareForm(
+      h,
+      {
+        format: 'compare',
+        lead: '',
+        cols: [
+          { title: 'A', keyword: '', desc: '', type: '', theories: '', detail: '' },
+          { title: 'B', keyword: '', desc: '', type: '', theories: '', detail: '' },
+          { title: 'C', keyword: '', desc: '', type: '', theories: '', detail: '' },
+          { title: 'D', keyword: '', desc: '', type: '', theories: '', detail: '' },
+        ],
+      },
+      () => {},
+    );
+    const addBtn = Array.from(h.querySelectorAll<HTMLButtonElement>('.kpe-add-btn')).find((b) =>
+      b.textContent?.includes('添加对比列'),
+    );
+    expect(addBtn).toBeTruthy();
+    expect(addBtn!.disabled).toBe(true);
+    expect(addBtn!.title).toContain('最多 4 列');
+  });
+
+  test('cols=3 时 + 添加对比列 按钮可点 → cols=4', () => {
+    const h = host();
+    let last: unknown;
+    mountCompareForm(
+      h,
+      {
+        format: 'compare',
+        lead: '',
+        cols: [
+          { title: 'A', keyword: '', desc: '', type: '', theories: '', detail: '' },
+          { title: 'B', keyword: '', desc: '', type: '', theories: '', detail: '' },
+          { title: 'C', keyword: '', desc: '', type: '', theories: '', detail: '' },
+        ],
+      },
+      (b) => {
+        last = b;
+      },
+    );
+    const addBtn = Array.from(h.querySelectorAll<HTMLButtonElement>('.kpe-add-btn')).find((b) =>
+      b.textContent?.includes('添加对比列'),
+    );
+    expect(addBtn!.disabled).toBe(false);
+    addBtn!.click();
+    expect((last as { cols: unknown[] }).cols).toHaveLength(4);
+    // 此时按钮应已 disabled
+    const addBtnAfter = Array.from(h.querySelectorAll<HTMLButtonElement>('.kpe-add-btn')).find((b) =>
+      b.textContent?.includes('添加对比列'),
+    );
+    expect(addBtnAfter!.disabled).toBe(true);
+  });
 });
 
 describe('quad form', () => {
@@ -236,8 +291,8 @@ describe('quad form', () => {
       },
     );
     const inputs = h.querySelectorAll<HTMLInputElement>('input');
-    // 找 yAxis input — placeholder 含 "市场增长率"
-    const yInput = Array.from(inputs).find((i) => i.placeholder.includes('市场增长率'));
+    // 找 yAxis input — aria-label = 'Y 轴维度名'
+    const yInput = Array.from(inputs).find((i) => i.getAttribute('aria-label') === 'Y 轴维度名');
     expect(yInput).toBeTruthy();
     yInput!.value = 'Y';
     yInput!.dispatchEvent(new Event('input'));

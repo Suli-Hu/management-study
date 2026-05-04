@@ -143,7 +143,6 @@ export function addBtn(text: string, onClick: () => void): HTMLButtonElement {
 interface FieldOptions {
   label: string;
   required?: boolean;
-  helpAnchor?: string; // kp-field-guide.md anchor
   hint?: string; // 末尾小提示
   control: HTMLElement;
 }
@@ -159,7 +158,6 @@ export function field(opts: FieldOptions): HTMLElement {
     labelEl.appendChild(req);
   }
   head.appendChild(labelEl);
-  if (opts.helpAnchor) head.appendChild(helpLink(opts.helpAnchor));
   wrap.appendChild(head);
   wrap.appendChild(opts.control);
   if (opts.hint) {
@@ -168,17 +166,6 @@ export function field(opts: FieldOptions): HTMLElement {
     wrap.appendChild(hint);
   }
   return wrap;
-}
-
-/** 字段 ⓘ 链接 — 跳到 kp-field-guide.md 对应 anchor (mobile) / 弹 popover (desktop)。 */
-export function helpLink(anchor: string): HTMLAnchorElement {
-  const a = el('a', 'kpe-help-link');
-  a.href = `/docs/kp-field-guide.md#${anchor}`;
-  a.target = '_blank';
-  a.rel = 'noopener';
-  a.textContent = 'ⓘ';
-  a.setAttribute('aria-label', '查看字段说明');
-  return a;
 }
 
 // ============================================================

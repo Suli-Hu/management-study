@@ -41,7 +41,6 @@ export function mountQuadForm(
   wrap.appendChild(
     field({
       label: '导语 (lead)',
-      helpAnchor: 'lead',
       hint: '对四象限的引言，可空',
       control: textarea({
         value: current.lead,
@@ -62,11 +61,9 @@ export function mountQuadForm(
     field({
       label: 'Y 轴维度',
       required: true,
-      helpAnchor: 'quad-yaxis',
-      hint: '如「市场增长率」',
       control: input({
         value: current.yAxis,
-        placeholder: '如：市场增长率',
+        placeholder: '低-敬业程度-高 / 优势-劣势',
         cls: 'kpe-input',
         ariaLabel: 'Y 轴维度名',
         required: true,
@@ -81,11 +78,9 @@ export function mountQuadForm(
     field({
       label: 'X 轴维度',
       required: true,
-      helpAnchor: 'quad-xaxis',
-      hint: '如「相对市场份额」',
       control: input({
         value: current.xAxis,
-        placeholder: '如：相对市场份额',
+        placeholder: '新市场-旧市场 / 高-相对份额-低',
         cls: 'kpe-input',
         ariaLabel: 'X 轴维度名',
         required: true,
@@ -168,7 +163,6 @@ export function mountQuadForm(
   wrap.appendChild(
     field({
       label: '四象限 cell（位置固定，按矩阵 [0]-[3] 顺序填）',
-      helpAnchor: 'quad-cells',
       control: grid,
     }),
   );
