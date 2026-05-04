@@ -21,7 +21,6 @@ export const Scholar = z.object({
    */
   schoolsExplicit: z.boolean().default(false).describe('schools[] 由 admin 显式设定 → sync 跳过 KP 派生'),
   contribution: BilingualBody,
-  lifespan: z.string().trim().default('').describe('合并展示兜底；优先用 born/died'),
   institution: z.string().trim().default('').describe('代表性机构，如 "Harvard Business School"'),
 
   // v0.3.12: 100% 对齐 v1 SCHOLARS 字段

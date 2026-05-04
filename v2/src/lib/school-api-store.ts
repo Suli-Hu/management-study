@@ -1,5 +1,6 @@
 import type { SchoolCreateInput, SchoolPatchInput } from '~/schemas/school-api';
 import { deepStripStrong } from './sanitize-strong';
+import { generateUniqueKey } from './slugify';
 
 export interface SchoolApiRecord {
   key: string;
@@ -186,7 +187,7 @@ async function assertThemeExists(
   return themes.length === 0 || themes.some((t) => t.key === themeKey);
 }
 
-function schoolValues(input: SchoolCreateInput | (SchoolApiRecord & SchoolPatchInput), key: string, tenant: { discipline: string }, now: string, createdAt: string) {
+function schoolValues(input: { title: { zh: string; en?: string; ja?: string }; era?: string; summary: { zh: string; ja?: string }; themeKey: string; tags?: string[] }, key: string, tenant: { discipline: string }, now: string, createdAt: string) {
   return [
     key,
     tenant.discipline,
@@ -212,8 +213,22 @@ export async function createSchoolRecord(
   // v0.8.7 sanitize: 静默 strip 所有 <strong>/</strong>。见 migration-v0.8.md §11.
   input = deepStripStrong(input);
 
-  const existing = await db.prepare('SELECT key FROM school WHERE key = ?').bind(input.key).first<{ key: string }>();
-  if (existing) return { ok: false, status: 409, reason: 'school_key_exists' };
+  // v0.8.9 Q2=A: key 可选 — 不传则 server 端 slugify 生成
+  let key: string;
+  if (input.key) {
+    const existing = await db.prepare('SELECT key FROM school WHERE key = ?').bind(input.key).first<{ key: string }>();
+    if (existing) return { ok: false, status: 409, reason: 'school_key_exists' };
+    key = input.key;
+  } else {
+    key = await generateUniqueKey(
+      input.title.en ?? input.title.zh,
+      'sch',
+      async (k) => {
+        const row = await db.prepare('SELECT key FROM school WHERE key = ?').bind(k).first<{ key: string }>();
+        return row !== null;
+      },
+    );
+  }
 
   if (!await assertThemeExists(db, tenant.discipline, input.themeKey)) {
     return { ok: false, status: 422, reason: 'theme_not_in_tenant', detail: input.themeKey };
@@ -228,14 +243,14 @@ export async function createSchoolRecord(
                            era, summary_zh, summary_ja, theme_key, accent,
                            tags_json, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    ).bind(...schoolValues(input, input.key, tenant, now, now)),
+    ).bind(...schoolValues(input, key, tenant, now, now)),
   ];
   input.concepts.forEach((kpId, position) => {
-    stmts.push(db.prepare('INSERT OR IGNORE INTO kp_school (kp_id, school_key, position) VALUES (?, ?, ?)').bind(kpId, input.key, position));
+    stmts.push(db.prepare('INSERT OR IGNORE INTO kp_school (kp_id, school_key, position) VALUES (?, ?, ?)').bind(kpId, key, position));
   });
   await db.batch(stmts);
 
-  const record = await getSchoolRecord(db, input.key, tenant);
+  const record = await getSchoolRecord(db, key, tenant);
   return record ? { ok: true, record } : { ok: false, status: 500, reason: 'create_failed' };
 }
 

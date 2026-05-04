@@ -2,14 +2,13 @@
  * Scholar editor v0.8 — initScholarEditor 入口
  *
  * 4 sections:
- *   - 基本信息: key (new only) + name.zh/ja/en
+ *   - 基本信息: name.zh/ja/en（key 不渲染 — new mode server 自动生成；edit mode URL 带）
  *   - 学术身份: schools (chip autocomplete) + contribution.zh/ja + field + institution
- *   - 生平: lifespan + born + died + nationality + flag (emoji maxlen=8) + origin
+ *   - 生平: born + died + nationality + flag (emoji maxlen=8) + origin
  *   - 关联: tags (chip) + nobel (折叠区: year + detail)
  *
  * D6=B 不暴露 kpsOrder（自动派生 + 字典序）
- *
- * 见 v2/docs/SCHOOL-SCHOLAR-THEME-EDITOR-V0.8-PRD.md §5.2 + §6.3
+ * v0.8.9: lifespan 字段删 + key input 删（Q1=B / Q2=A 第 5 次 minimalism）
  */
 
 import {
@@ -62,7 +61,7 @@ export function initScholarEditor(opts: InitScholarEditorOptions): void {
   body.appendChild(
     section({
       title: '基本信息',
-      hint: opts.mode === 'new' ? 'key 不可改 / 中文名必填' : '中文名必填',
+      hint: '中文名必填',
       body: basicHost,
     }),
   );
@@ -152,10 +151,9 @@ function buildTopBar(store: ScholarEditorStore, opts: InitScholarEditorOptions):
 
   store.subscribe((s) => {
     const nameOk = s.name.zh.trim().length > 0;
-    const keyOk = opts.mode === 'edit' || (s.key !== null && /^[a-z][a-z0-9_]*$/.test(s.key));
     const contribOk = s.contribution.zh.trim().length > 0;
     const isSaving = s.saveStatus === 'saving';
-    saveBtn.disabled = !nameOk || !keyOk || !contribOk || isSaving;
+    saveBtn.disabled = !nameOk || !contribOk || isSaving;
     if (isSaving) {
       saveBtn.classList.add('is-loading');
       saveBtn.textContent = opts.mode === 'new' ? '创建中...' : '保存中...';
@@ -175,38 +173,12 @@ function buildTopBar(store: ScholarEditorStore, opts: InitScholarEditorOptions):
 function buildBasicSection(
   host: HTMLElement,
   store: ScholarEditorStore,
-  opts: InitScholarEditorOptions,
+  _opts: InitScholarEditorOptions,
 ): void {
   host.innerHTML = '';
   const wrap = el('div', 'kpe-section-body');
 
-  if (opts.mode === 'new') {
-    wrap.appendChild(
-      field({
-        label: 'key',
-        required: true,
-        control: input({
-          value: store.get().key ?? '',
-          placeholder: 'lewin',
-          cls: 'kpe-input kpe-input-mono',
-          ariaLabel: 'scholar key',
-          required: true,
-          onInput: (v) => store.update({ key: v.trim() }),
-        }),
-      }),
-    );
-  } else {
-    wrap.appendChild(
-      field({
-        label: 'key',
-        control: (() => {
-          const ro = el('div', 'kpe-readonly');
-          ro.textContent = store.get().key ?? '';
-          return ro;
-        })(),
-      }),
-    );
-  }
+  // v0.8.9: key 不渲染 — new mode server 端从 name.en slugify 自动生成；edit URL 带 key
 
   wrap.appendChild(
     field({
@@ -366,19 +338,6 @@ function buildAcademicSection(
 function buildLifeSection(host: HTMLElement, store: ScholarEditorStore): void {
   host.innerHTML = '';
   const wrap = el('div', 'kpe-section-body');
-
-  wrap.appendChild(
-    field({
-      label: '生卒概要',
-      control: input({
-        value: store.get().lifespan,
-        placeholder: '1908–1970',
-        cls: 'kpe-input kpe-input-narrow',
-        ariaLabel: '生卒概要',
-        onInput: (v) => store.update({ lifespan: v }),
-      }),
-    }),
-  );
 
   wrap.appendChild(
     field({
@@ -543,18 +502,12 @@ async function save(store: ScholarEditorStore, opts: InitScholarEditorOptions): 
 
   let result: ScholarSaveResult;
   if (opts.mode === 'new') {
-    if (!state.key || !/^[a-z][a-z0-9_]*$/.test(state.key)) {
-      toastError('key 必须小写蛇形（首字母字母）');
-      store.setSaveStatus('error', { reason: 'invalid_key', message: 'key 必须小写蛇形' });
-      return;
-    }
+    // v0.8.9: key 不再前端校验 — server 端从 name 自动 slugify 生成
     const payload: ScholarCreatePayload = {
       discipline: state.discipline,
-      key: state.key,
       name: buildI18nName(state.name),
       schools: [...state.schools],
       contribution: buildContribution(state.contribution),
-      lifespan: state.lifespan.trim(),
       institution: state.institution.trim(),
       born: state.born.trim(),
       died: state.died.trim(),
@@ -577,7 +530,6 @@ async function save(store: ScholarEditorStore, opts: InitScholarEditorOptions): 
       name: buildI18nName(state.name),
       schools: [...state.schools],
       contribution: buildContribution(state.contribution),
-      lifespan: state.lifespan.trim(),
       institution: state.institution.trim(),
       born: state.born.trim(),
       died: state.died.trim(),

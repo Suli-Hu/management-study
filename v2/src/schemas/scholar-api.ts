@@ -3,11 +3,14 @@ import { BilingualBody, I18nString } from './i18n';
 import { KpId, ScholarKey, SchoolKey } from './kp';
 
 export const ScholarCreateInput = z.object({
-  key: ScholarKey,
+  /**
+   * v0.8.9: key 改可选 — POST 时 server 端自动从 title.en slugify 生成
+   * (PATCH 不需要 key，URL path 已带)。
+   */
+  key: ScholarKey.optional(),
   name: I18nString,
   schools: z.array(SchoolKey).default([]),
   contribution: BilingualBody,
-  lifespan: z.string().trim().default(''),
   institution: z.string().trim().default(''),
   born: z.string().trim().default(''),
   died: z.string().trim().default(''),

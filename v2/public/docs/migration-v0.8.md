@@ -607,4 +607,56 @@ v0.8.7 ship 当天跑了一次性清理：
 
 ---
 
+## 12. v0.8.9：scholar.lifespan 删除 + key 自动生成 + school.themeKey default
+
+> Stage 4.6 落地用户 v7 反馈三处（minimalism 第 5 次贯彻）。
+
+### 12.1 scholar.lifespan 字段删除（schema breaking）
+
+**Why**：`lifespan` 与 `born`/`died` 双源真相，调用方写起来困惑（哪个字段用哪个？）。用户决定不留兼容字段，breaking 删 + 一次性 migration 把现有数据拆进 born/died。
+
+**调用方影响**：
+- POST/PATCH `/api/scholars` 传 `lifespan` 字段 → `422 schema_invalid`（zod strict 拒）
+- GET `/api/scholars` response 不再含 `lifespan`
+- `born` / `died` 是生卒年的唯一表达
+
+**迁移**：
+1. v0.8.9 deploy 前，super-admin 跑 `POST /api/admin/migrate-scholar-lifespan?dry_run=1` 预览
+2. 检查 `dirty[]` 列表（单段 / 解析失败的需手动改）
+3. 去掉 `dry_run` 实跑，把可解析的 lifespan 拆 born/died
+4. dirty 项手动 `PATCH /api/scholars/:key` 修
+5. 然后 deploy v0.8.9 — migration 0021 会 ALTER TABLE DROP COLUMN lifespan
+
+**生卒年表达样例**：
+- ✅ `{ "born": "1908", "died": "1970" }`
+- ✅ `{ "born": "1890年9月9日", "died": "1947" }`
+- ✅ 在世：`{ "born": "1948", "died": "" }`
+- ❌ 旧：`{ "lifespan": "1908–1970" }`
+
+### 12.2 school / scholar / theme key 自动生成
+
+POST 时 `key` 字段改可选。不传则 server 端从 title.en / name.en slugify 生成，冲突加 `_2/_3`，仍冲突用 6 位 random fallback：
+
+| Entity | slugify 来源 | fallback prefix |
+|---|---|---|
+| school | `title.en` (回退 `title.zh`) | `sch_xxxxxx` |
+| scholar | `name.en` (回退 `name.zh`) | `s_xxxxxx` |
+| theme (`/api/new/theme`) | `title.en` (回退 `title.zh`) | `th_xxxxxx` |
+
+调用方仍可显式传 `key` — 行为同前（冲突返 409）。
+
+### 12.3 school.themeKey 不再前端选
+
+`schools/new` 编辑器删了 `themeKey` 下拉。new.astro server-side 注入 default：
+
+1. URL `?theme=key` 优先（从 discipline overview 主题 header ⊕ 入口）
+2. 否则 `discipline.themes[0].key`
+3. 全 discipline 0 主题 → 重定向到 `/${discipline}/themes/new?after=schools`
+
+学派建好后跳 `/${discipline}?just_created_school=key&theme=key`，overview 弹 toast 提示「暂在「{theme}」，可拖动到正确分组」。
+
+PATCH `/api/schools/:key` 仍接受 `themeKey` 字段（编辑器表单暂留 store 但不渲染；如需移动学派到别的主题，目前需手动调 API 或在 view editor 拖卡）。
+
+---
+
 > **疑问 / 改动建议**：本指南由 PM 维护，发现错误或想加 FAQ 项 → 直接在仓库提 issue（标 `migration-v0.8`）或 IM PM。

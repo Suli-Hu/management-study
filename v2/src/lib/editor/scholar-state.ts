@@ -26,8 +26,7 @@ export interface ScholarEditorState {
   field: string;
   institution: string;
 
-  // 生平
-  lifespan: string;
+  // 生平 — 用 born/died，不要 lifespan（v0.8.9 schema 删字段）
   born: string;
   died: string;
   nationality: string;
@@ -68,7 +67,6 @@ export function makeNewScholarState(
     contribution: { zh: '', ja: '' },
     field: '',
     institution: '',
-    lifespan: '',
     born: '',
     died: '',
     nationality: '',
@@ -88,7 +86,6 @@ export interface ExistingScholarInit {
   name: { zh: string; ja?: string; en?: string };
   schools: string[];
   contribution: { zh: string; ja?: string };
-  lifespan: string;
   institution: string;
   born: string;
   died: string;
@@ -116,7 +113,6 @@ export function makeEditingScholarState(init: ExistingScholarInit): ScholarEdito
     },
     field: init.field ?? '',
     institution: init.institution ?? '',
-    lifespan: init.lifespan ?? '',
     born: init.born ?? '',
     died: init.died ?? '',
     nationality: init.nationality ?? '',

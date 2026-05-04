@@ -198,9 +198,9 @@ api-reference 是**字段表参照**，本文件主要回答"叫什么、什么�
 
 | 字段 | 必填 | 类型 | 说明 |
 |---|---|---|---|
-| `key` | ✓ | string | 学派 key |
+| `key` | — | string | v0.8.9 起可选 — 不传则 server 端从 `title.en` slugify 自动生成 |
 | `title.zh` | ✓ | string | 学派中文名 |
-| `title.en` / `title.ja` | — | string | |
+| `title.en` / `title.ja` | — | string | `title.en` 是 key 自动生成的来源 — 建议填 |
 | `era` | — | string | 默认 ""，如 `"1947– 变革管理理论传统"` |
 | `summary.zh` | ✓ | string | 学派概述 |
 | `summary.ja` | — | string | |
@@ -212,18 +212,27 @@ api-reference 是**字段表参照**，本文件主要回答"叫什么、什么�
 
 | 字段 | 必填 | 类型 | 说明 |
 |---|---|---|---|
-| `key` | ✓ | string | 学者 key |
+| `key` | — | string | v0.8.9 起可选 — 不传则 server 端从 `name.en` slugify 自动生成（冲突加 `_2/_3` 后缀，仍冲突走 6 位 random fallback） |
 | `name.zh` | ✓ | string | 中文名 |
-| `name.en` / `name.ja` | — | string | |
+| `name.en` / `name.ja` | — | string | `name.en` 是 key 自动生成的来源 — 建议填 |
 | `schools` | — | string[] | 主属学派（默认 []） |
 | `schoolsExplicit` | — | boolean | 默认 false。**API 写入时设 true** = schools[] 是真源，sync 跳过 KP 反向派生 |
 | `contribution.zh` | ✓ | string | |
 | `contribution.ja` | — | string | |
-| `lifespan` | — | string | "1908–1970" |
-| `institution` / `born` / `died` / `nationality` / `flag` / `origin` / `field` | — | string | v1 兼容字段 |
+| `born` | — | string | 出生年（如 `"1908"` / `"1890年9月9日"`） |
+| `died` | — | string | 卒年（在世为空） |
+| `institution` / `nationality` / `flag` / `origin` / `field` | — | string | v1 兼容字段 |
 | `tags` | — | string[] | |
 | `nobel` | — | object \| null | `{year, detail}` |
 | `kpsOrder` | — | string[] | 该学者下 KP 渲染顺序 |
+
+**生卒年表达**（v0.8.9 起 `lifespan` 字段已删除，schema breaking）：
+- ✅ `{ "born": "1908", "died": "1970" }`
+- ✅ `{ "born": "1890年9月9日", "died": "1947" }`
+- ✅ 在世学者：`{ "born": "1948", "died": "" }`
+- ❌ `{ "lifespan": "1908–1970" }` — v0.8.9 起 422 `schema_invalid`（zod strict 拒 unrecognized key）
+
+老数据迁移：super-admin 跑 `POST /api/admin/migrate-scholar-lifespan?dry_run=1` 预览 → 去掉 `dry_run` 实跑，会按范围分隔符（`–` / `-` / `—` / `~` / `〜`）拆分写回 `born`/`died`，单段或解析失败的返 dirty list 由 PM 手动修。
 
 ### 3.4 View 字段
 
@@ -557,7 +566,8 @@ Response:
       "name": { "zh": "马斯洛", "en": "Abraham Maslow" },
       "schools": ["motivation"],
       "contribution": { "zh": "提出需求层次理论。" },
-      "lifespan": "1908-1970",
+      "born": "1908",
+      "died": "1970",
       "institution": "Brandeis University",
       "tags": ["classic"],
       "nobel": null,
@@ -576,17 +586,19 @@ Response:
 
 ```json
 {
-  "key": "maslow",
   "name": { "zh": "马斯洛", "ja": "マズロー", "en": "Abraham Maslow" },
   "schools": ["motivation"],
   "contribution": { "zh": "提出需求层次理论。", "ja": "欲求階層説を提唱。" },
-  "lifespan": "1908-1970",
+  "born": "1908",
+  "died": "1970",
   "institution": "Brandeis University",
   "tags": ["classic"],
   "nobel": null,
   "kpsOrder": ["k101"]
 }
 ```
+
+`key` 不传 → server 从 `name.en` slugify 生成 `"abraham_maslow"`（已存在 → 加后缀 `_2`...，仍冲突 → 6 位 random `s_xxxxxx`）。
 
 ### 6.3 `GET /api/scholars/:key?discipline=<key>` — 读
 

@@ -87,7 +87,6 @@ export interface ScholarRow {
   name_ja: string | null;
   contribution_zh: string;
   contribution_ja: string | null;
-  lifespan: string;
   institution: string;
   tags_json: string;
   nobel_year: string | null;

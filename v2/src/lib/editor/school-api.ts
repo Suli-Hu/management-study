@@ -33,7 +33,8 @@ export type SchoolSaveResult = SchoolSaveOk | SchoolSaveErr;
 
 export interface SchoolCreatePayload {
   discipline: string;
-  key: string;
+  /** v0.8.9: key 可选 — server 端从 title.en/title.zh slugify 自动生成 */
+  key?: string;
   title: { zh: string; ja?: string; en?: string };
   era: string;
   summary: { zh: string; ja?: string };

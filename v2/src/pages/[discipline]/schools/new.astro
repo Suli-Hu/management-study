@@ -26,8 +26,16 @@ const tagLibrary: Array<{ key: string; label?: { zh?: string }; color?: string }
   ? JSON.parse(discRow.tags_json)
   : [];
 
-// preselect from query (?theme=xxx 从首页主题 header ⊕ 入口)
-const preselectTheme = Astro.url.searchParams.get('theme') ?? '';
+// v0.8.9 Fix 3b: themeKey 不再前端选 — server 端注入 default。
+// 优先级：URL ?theme=key（从主题 header ⊕ 入口） > themes[0].key > 引导建主题。
+const requestedTheme = Astro.url.searchParams.get('theme') ?? '';
+const requestedThemeValid = themes.some((t) => t.key === requestedTheme);
+let defaultThemeKey = requestedThemeValid ? requestedTheme : (themes[0]?.key ?? '');
+
+if (!defaultThemeKey) {
+  // 整个 discipline 一个主题都没 → 引导先建主题
+  return Astro.redirect(`/${discipline}/themes/new?after=schools`);
+}
 
 const editorMetadata: SchoolEditorMetadata = {
   themes: themes.map((t) => ({ key: t.key, label: t.title?.zh ?? t.key })),
@@ -50,7 +58,7 @@ const editorMetadata: SchoolEditorMetadata = {
     type="application/json"
     is:inline
     id="school-editor-init"
-    set:html={JSON.stringify({ metadata: editorMetadata, preselectTheme })}
+    set:html={JSON.stringify({ metadata: editorMetadata, defaultThemeKey })}
   ></script>
 </Layout>
 
@@ -63,11 +71,11 @@ const editorMetadata: SchoolEditorMetadata = {
   if (!root || !initJson) {
     console.error('[school-editor] init payload missing');
   } else {
-    const { metadata, preselectTheme } = JSON.parse(initJson) as {
+    const { metadata, defaultThemeKey } = JSON.parse(initJson) as {
       metadata: SchoolEditorMetadata;
-      preselectTheme: string;
+      defaultThemeKey: string;
     };
-    const initialState = makeNewSchoolState(metadata.disciplineKey, preselectTheme);
+    const initialState = makeNewSchoolState(metadata.disciplineKey, defaultThemeKey);
     initSchoolEditor({
       root: root as HTMLElement,
       initialState,

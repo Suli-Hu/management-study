@@ -86,7 +86,6 @@ const VALID_SCHOLAR = {
   name: { zh: '勒温', en: 'Lewin', ja: 'レヴィン' },
   schools: ['change'],
   contribution: { zh: '...', ja: '...' },
-  lifespan: '1890–1947',
   institution: 'MIT',
   born: '', died: '', nationality: '', flag: '', origin: '', field: '', tags: [],
   nobel: null,

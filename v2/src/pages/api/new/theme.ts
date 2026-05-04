@@ -10,6 +10,7 @@ import { jsonRes, type EditError } from '~/lib/edit-helpers';
 import { Discipline, ThemeGroup } from '~/schemas/discipline';
 import { upsertDisciplineInD1 } from '~/lib/d1-discipline-write';
 import { withRetry } from '~/lib/d1-kp-write';
+import { generateUniqueKey } from '~/lib/slugify';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   if (!locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
@@ -22,24 +23,38 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!discipline || !body.json) return jsonRes<EditError>(400, { ok: false, reason: 'bad_request', detail: 'discipline + json required' });
   if (!locals.canEdit(discipline)) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
-  // 校验新主题 schema（schools[] 留空，新建后用户再拖学派进来）
-  const merged = { ...(body.json as object), schools: [] };
-  const validated = ThemeGroup.safeParse(merged);
-  if (!validated.success) return jsonRes<EditError>(422, { ok: false, reason: 'schema_invalid', detail: validated.error.issues });
-
+  // v0.8.9 Q2=A: key 可选 — 不传则 server 端从 title.en/title.zh slugify。
+  // 注：theme 的 key 唯一性 scope 是 discipline.themes[]，需要先读 discipline 再判重。
   const path = `v2/data/${discipline}/discipline.json`;
   const fetched = await getFile({ pat: env.GITHUB_PAT, repo: env.GITHUB_REPO }, path);
   if (!fetched.ok) return jsonRes<EditError>(502, { ok: false, reason: 'github_error', detail: fetched.detail });
-
-  let parsed: unknown;
-  try { parsed = JSON.parse(fetched.data.content); } catch (e) {
+  let parsedDisc: unknown;
+  try { parsedDisc = JSON.parse(fetched.data.content); } catch (e) {
     return jsonRes<EditError>(502, { ok: false, reason: 'github_error', detail: `invalid json: ${(e as Error).message}` });
   }
-  const checked = Discipline.safeParse(parsed);
-  if (!checked.success) return jsonRes<EditError>(422, { ok: false, reason: 'schema_invalid', detail: checked.error.issues });
-  const disc = checked.data;
+  const checkedDisc = Discipline.safeParse(parsedDisc);
+  if (!checkedDisc.success) return jsonRes<EditError>(422, { ok: false, reason: 'schema_invalid', detail: checkedDisc.error.issues });
+  const disc = checkedDisc.data;
 
-  if (disc.themes.some((t) => t.key === validated.data.key)) {
+  const rawJson = body.json as Record<string, unknown>;
+  let providedKey = typeof rawJson.key === 'string' ? rawJson.key.trim() : '';
+  if (!providedKey) {
+    const titleEn = (rawJson.title as { en?: string } | undefined)?.en
+      ?? (rawJson.title as { zh?: string } | undefined)?.zh;
+    providedKey = await generateUniqueKey(
+      titleEn,
+      'th',
+      async (k) => disc.themes.some((t) => t.key === k),
+    );
+  }
+
+  // 校验新主题 schema（schools[] 留空，新建后用户再拖学派进来）
+  const merged = { ...rawJson, key: providedKey, schools: [] };
+  const validated = ThemeGroup.safeParse(merged);
+  if (!validated.success) return jsonRes<EditError>(422, { ok: false, reason: 'schema_invalid', detail: validated.error.issues });
+
+  // 用户显式传 key 时检查重复（generateUniqueKey 路径已保证 unique）
+  if (rawJson.key && disc.themes.some((t) => t.key === validated.data.key)) {
     return jsonRes(409, { ok: false, reason: 'key_exists' as const, detail: `theme key "${validated.data.key}" 已存在` });
   }
 
@@ -63,5 +78,5 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
   }
 
-  return jsonRes(201, { ok: true, commit_sha: res.data.commit_sha, deploy_eta_seconds: 90 });
+  return jsonRes(201, { ok: true, commit_sha: res.data.commit_sha, deploy_eta_seconds: 90, key: validated.data.key });
 };

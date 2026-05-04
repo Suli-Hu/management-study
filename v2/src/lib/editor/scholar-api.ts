@@ -34,11 +34,11 @@ export type ScholarSaveResult = ScholarSaveOk | ScholarSaveErr;
 
 export interface ScholarCreatePayload {
   discipline: string;
-  key: string;
+  /** v0.8.9: key 可选 — server 端从 name.en/name.zh slugify 自动生成 */
+  key?: string;
   name: { zh: string; ja?: string; en?: string };
   schools: string[];
   contribution: { zh: string; ja?: string };
-  lifespan: string;
   institution: string;
   born: string;
   died: string;
@@ -55,7 +55,6 @@ export interface ScholarPatchPayload {
   name?: { zh: string; ja?: string; en?: string };
   schools?: string[];
   contribution?: { zh: string; ja?: string };
-  lifespan?: string;
   institution?: string;
   born?: string;
   died?: string;

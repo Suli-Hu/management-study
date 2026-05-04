@@ -1,9 +1,10 @@
 /**
  * Theme (ThemeGroup) editor v0.8 — initThemeEditor 入口
  *
- * Flat layout: key (new only) / title.zh/ja/en / desc.zh/ja / tags
+ * Flat layout: title.zh/ja/en / desc.zh/ja / tags
+ * v0.8.9: key input 删 — new mode server 端从 title.en/title.zh slugify 自动生成
  * 不渲染 schools — backend PUT 不接受 schools 字段；schools 由 schools/new 时
- * 选 themeKey + reorder API 维护。详 PRD §5.3 注。
+ * 选 themeKey + reorder API 维护。
  */
 
 import {
@@ -55,7 +56,7 @@ export function initThemeEditor(opts: InitThemeEditorOptions): void {
   body.appendChild(
     section({
       title: opts.mode === 'new' ? '新增学派组' : '编辑学派组',
-      hint: opts.mode === 'new' ? 'key 不可改 / 中文标题必填' : '中文标题必填',
+      hint: '中文标题必填',
       body: formHost,
     }),
   );
@@ -115,9 +116,9 @@ function buildTopBar(store: ThemeEditorStore, opts: InitThemeEditorOptions): HTM
 
   store.subscribe((s) => {
     const titleOk = s.title.zh.trim().length > 0;
-    const keyOk = opts.mode === 'edit' || (s.key !== null && /^[a-z][a-z0-9_]*$/.test(s.key));
+    // v0.8.9: key 不再前端校验 — server 端 slugify 自动生成
     const isSaving = s.saveStatus === 'saving';
-    saveBtn.disabled = !titleOk || !keyOk || isSaving;
+    saveBtn.disabled = !titleOk || isSaving;
     if (isSaving) {
       saveBtn.classList.add('is-loading');
       saveBtn.textContent = opts.mode === 'new' ? '创建中...' : '保存中...';
@@ -142,33 +143,7 @@ function buildFormSection(
   host.innerHTML = '';
   const wrap = el('div', 'kpe-section-body');
 
-  if (opts.mode === 'new') {
-    wrap.appendChild(
-      field({
-        label: 'key',
-        required: true,
-        control: input({
-          value: store.get().key ?? '',
-          placeholder: 'org_emergent',
-          cls: 'kpe-input kpe-input-mono',
-          ariaLabel: 'theme key',
-          required: true,
-          onInput: (v) => store.update({ key: v.trim() }),
-        }),
-      }),
-    );
-  } else {
-    wrap.appendChild(
-      field({
-        label: 'key',
-        control: (() => {
-          const ro = el('div', 'kpe-readonly');
-          ro.textContent = store.get().key ?? '';
-          return ro;
-        })(),
-      }),
-    );
-  }
+  // v0.8.9: key 不渲染 — new mode server 端 slugify；edit URL 带 key
 
   // title.zh (必填)
   wrap.appendChild(
@@ -296,15 +271,10 @@ async function save(store: ThemeEditorStore, opts: InitThemeEditorOptions): Prom
 
   let result: ThemeSaveResult;
   if (opts.mode === 'new') {
-    if (!state.key || !/^[a-z][a-z0-9_]*$/.test(state.key)) {
-      toastError('key 必须小写蛇形（首字母字母）');
-      store.setSaveStatus('error', { reason: 'invalid_key', message: 'key 必须小写蛇形' });
-      return;
-    }
+    // v0.8.9: key 不再前端传 — server 端从 title slugify 生成
     const payload: ThemeCreatePayload = {
       discipline: state.discipline,
       json: {
-        key: state.key,
         title: buildI18nTitle(state.title),
         ...(buildDesc(state.desc) ? { desc: buildDesc(state.desc) } : {}),
         tags: [...state.tags],

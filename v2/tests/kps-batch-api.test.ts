@@ -58,8 +58,8 @@ async function seedBaseline(db: D1LikeDatabase) {
   for (const key of ['maslow', 'lewin']) {
     await db
       .prepare(
-        `INSERT INTO scholar (key, discipline, name_zh, name_en, name_ja, contribution_zh, lifespan, institution, accent, tags_json, created_at, updated_at)
-         VALUES (?, 'keiei', ?, null, null, '', '', '', '', '[]', '2026-01-01', '2026-01-01')`,
+        `INSERT INTO scholar (key, discipline, name_zh, name_en, name_ja, contribution_zh, institution, accent, tags_json, created_at, updated_at)
+         VALUES (?, 'keiei', ?, null, null, '', '', '', '[]', '2026-01-01', '2026-01-01')`,
       )
       .bind(key, `${key}-中文`)
       .run();

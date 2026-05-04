@@ -1,5 +1,6 @@
 import type { ScholarCreateInput, ScholarPatchInput } from '~/schemas/scholar-api';
 import { deepStripStrong } from './sanitize-strong';
+import { generateUniqueKey } from './slugify';
 
 export interface ScholarApiRecord {
   key: string;
@@ -8,7 +9,6 @@ export interface ScholarApiRecord {
   name: { zh: string; en?: string; ja?: string };
   schools: string[];
   contribution: { zh: string; ja?: string };
-  lifespan: string;
   institution: string;
   born: string;
   died: string;
@@ -40,7 +40,6 @@ interface ScholarRow {
   name_ja: string | null;
   contribution_zh: string;
   contribution_ja: string | null;
-  lifespan: string;
   institution: string;
   born: string | null;
   died: string | null;
@@ -102,7 +101,6 @@ async function toRecord(db: D1Database, row: ScholarRow, tenantId: string): Prom
     name: compactI18n(row.name_zh, row.name_en, row.name_ja),
     schools,
     contribution: { zh: row.contribution_zh, ...(row.contribution_ja ? { ja: row.contribution_ja } : {}) },
-    lifespan: row.lifespan,
     institution: row.institution,
     born: row.born ?? '',
     died: row.died ?? '',
@@ -205,7 +203,7 @@ async function assertKpsBelongToTenant(
   return missing.length > 0 ? { ok: false, reason: 'kp_not_in_tenant', detail: missing } : { ok: true };
 }
 
-function scholarValues(input: ScholarCreateInput | (ScholarApiRecord & ScholarPatchInput), key: string, tenant: { discipline: string }, now: string, createdAt: string) {
+function scholarValues(input: { name: { zh: string; en?: string; ja?: string }; contribution: { zh: string; ja?: string }; institution?: string; born?: string; died?: string; nationality?: string; flag?: string; origin?: string; field?: string; tags?: string[]; nobel?: { year: string; detail: string } | null }, key: string, tenant: { discipline: string }, now: string, createdAt: string) {
   return [
     key,
     tenant.discipline,
@@ -214,7 +212,6 @@ function scholarValues(input: ScholarCreateInput | (ScholarApiRecord & ScholarPa
     input.name.ja ?? null,
     input.contribution.zh,
     input.contribution.ja ?? null,
-    input.lifespan ?? '',
     input.institution ?? '',
     input.born ?? '',
     input.died ?? '',
@@ -239,8 +236,22 @@ export async function createScholarRecord(
   // v0.8.7 sanitize: 静默 strip 所有 <strong>/</strong>。见 migration-v0.8.md §11.
   input = deepStripStrong(input);
 
-  const existing = await db.prepare('SELECT key FROM scholar WHERE discipline = ? AND key = ?').bind(tenant.discipline, input.key).first<{ key: string }>();
-  if (existing) return { ok: false, status: 409, reason: 'scholar_key_exists' };
+  // v0.8.9 Q2=A: key 可选 — 不传则从 name.en/name.zh slugify 生成
+  let key: string;
+  if (input.key) {
+    const existing = await db.prepare('SELECT key FROM scholar WHERE discipline = ? AND key = ?').bind(tenant.discipline, input.key).first<{ key: string }>();
+    if (existing) return { ok: false, status: 409, reason: 'scholar_key_exists' };
+    key = input.key;
+  } else {
+    key = await generateUniqueKey(
+      input.name.en ?? input.name.zh,
+      's',
+      async (k) => {
+        const row = await db.prepare('SELECT key FROM scholar WHERE discipline = ? AND key = ?').bind(tenant.discipline, k).first<{ key: string }>();
+        return row !== null;
+      },
+    );
+  }
 
   const schoolRefs = await assertSchoolsBelongToTenant(db, tenant.discipline, input.schools ?? []);
   if (!schoolRefs.ok) return { ok: false, status: 422, reason: schoolRefs.reason, detail: schoolRefs.detail };
@@ -252,21 +263,21 @@ export async function createScholarRecord(
     db.prepare(
       `INSERT INTO scholar (
         key, discipline, name_zh, name_en, name_ja,
-        contribution_zh, contribution_ja, lifespan, institution,
+        contribution_zh, contribution_ja, institution,
         born, died, nationality, flag, origin, field, accent, tags_json,
         nobel_year, nobel_detail, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    ).bind(...scholarValues(input, input.key, tenant, now, now)),
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ).bind(...scholarValues(input, key, tenant, now, now)),
   ];
   input.schools.forEach((schoolKey, position) => {
-    stmts.push(db.prepare('INSERT OR IGNORE INTO scholar_school (scholar_discipline, scholar_key, school_key, position) VALUES (?, ?, ?, ?)').bind(tenant.discipline, input.key, schoolKey, position));
+    stmts.push(db.prepare('INSERT OR IGNORE INTO scholar_school (scholar_discipline, scholar_key, school_key, position) VALUES (?, ?, ?, ?)').bind(tenant.discipline, key, schoolKey, position));
   });
   input.kpsOrder.forEach((kpId, position) => {
-    stmts.push(db.prepare('INSERT OR IGNORE INTO kp_scholar (kp_id, scholar_discipline, scholar_key, position) VALUES (?, ?, ?, ?)').bind(kpId, tenant.discipline, input.key, position));
+    stmts.push(db.prepare('INSERT OR IGNORE INTO kp_scholar (kp_id, scholar_discipline, scholar_key, position) VALUES (?, ?, ?, ?)').bind(kpId, tenant.discipline, key, position));
   });
   await db.batch(stmts);
 
-  const record = await getScholarRecord(db, input.key, tenant);
+  const record = await getScholarRecord(db, key, tenant);
   return record ? { ok: true, record } : { ok: false, status: 500, reason: 'create_failed' };
 }
 
@@ -302,7 +313,7 @@ export async function patchScholarRecord(
     db.prepare(
       `UPDATE scholar SET
          name_zh = ?, name_en = ?, name_ja = ?,
-         contribution_zh = ?, contribution_ja = ?, lifespan = ?, institution = ?,
+         contribution_zh = ?, contribution_ja = ?, institution = ?,
          born = ?, died = ?, nationality = ?, flag = ?, origin = ?, field = ?,
          accent = ?, tags_json = ?, nobel_year = ?, nobel_detail = ?, updated_at = ?
        WHERE key = ? AND discipline = ?`,
@@ -312,7 +323,6 @@ export async function patchScholarRecord(
       next.name.ja ?? null,
       next.contribution.zh,
       next.contribution.ja ?? null,
-      next.lifespan ?? '',
       next.institution ?? '',
       next.born ?? '',
       next.died ?? '',

@@ -4,7 +4,8 @@
  * 3 sections: 基本信息 / 内容 / 关联
  * D6=B 不暴露 concepts 字段（自动从 KP.schools[] 反向派生）
  *
- * 见 v2/docs/SCHOOL-SCHOLAR-THEME-EDITOR-V0.8-PRD.md §5.1 + §6.2
+ * v0.8.9: key input 删（server 端从 title.en slugify 生成）+ themeKey select 删
+ *         （new.astro 默认 themes[0]，建好后跳 discipline overview 提示拖卡片）
  */
 
 import {
@@ -57,7 +58,7 @@ export function initSchoolEditor(opts: InitSchoolEditorOptions): void {
   body.appendChild(
     section({
       title: '基本信息',
-      hint: opts.mode === 'new' ? 'key 不可改 / 中文标题必填' : '中文标题必填',
+      hint: '中文标题必填',
       body: basicHost,
     }),
   );
@@ -137,11 +138,12 @@ function buildTopBar(store: SchoolEditorStore, opts: InitSchoolEditorOptions): H
 
   store.subscribe((s) => {
     const titleOk = s.title.zh.trim().length > 0;
-    const keyOk = opts.mode === 'edit' || (s.key !== null && /^[a-z][a-z0-9_]*$/.test(s.key));
-    const themeOk = s.themeKey.trim().length > 0;
+    // v0.8.9: key + themeKey 不再前端校验
+    //   - key: server 端从 title.en/title.zh slugify 自动生成
+    //   - themeKey: new.astro 已 server-side 注入 themes[0]，永远非空
     const summaryOk = s.summary.zh.trim().length > 0;
     const isSaving = s.saveStatus === 'saving';
-    saveBtn.disabled = !titleOk || !keyOk || !themeOk || !summaryOk || isSaving;
+    saveBtn.disabled = !titleOk || !summaryOk || isSaving;
     if (isSaving) {
       saveBtn.classList.add('is-loading');
       saveBtn.textContent = opts.mode === 'new' ? '创建中...' : '保存中...';
@@ -161,39 +163,12 @@ function buildTopBar(store: SchoolEditorStore, opts: InitSchoolEditorOptions): H
 function buildBasicSection(
   host: HTMLElement,
   store: SchoolEditorStore,
-  opts: InitSchoolEditorOptions,
+  _opts: InitSchoolEditorOptions,
 ): void {
   host.innerHTML = '';
   const wrap = el('div', 'kpe-section-body');
 
-  if (opts.mode === 'new') {
-    wrap.appendChild(
-      field({
-        label: 'key',
-        required: true,
-        control: input({
-          value: store.get().key ?? '',
-          placeholder: 'strategy_emergent',
-          cls: 'kpe-input kpe-input-mono',
-          ariaLabel: 'school key',
-          required: true,
-          onInput: (v) => store.update({ key: v.trim() }),
-        }),
-      }),
-    );
-  } else {
-    // edit 模式 — key 只读展示
-    wrap.appendChild(
-      field({
-        label: 'key',
-        control: (() => {
-          const ro = el('div', 'kpe-readonly');
-          ro.textContent = store.get().key ?? '';
-          return ro;
-        })(),
-      }),
-    );
-  }
+  // v0.8.9: key 不渲染 — new mode server 自动 slugify；edit URL 带 key
 
   // title.zh (必填)
   wrap.appendChild(
@@ -313,7 +288,11 @@ function buildContentSection(host: HTMLElement, store: SchoolEditorStore): void 
 }
 
 // ============================================================
-// Relations section: themeKey (必填 select) + tags (chip)
+// Relations section: tags (chip)
+//
+// v0.8.9: themeKey select 删 — new mode 由 new.astro server-side 注入 themes[0]，
+// edit mode 由 store.themeKey 内部保留（PATCH 时仍传，server 端 noop merge）。
+// 学派建好后跳 discipline overview，用户拖卡片到正确分组。
 // ============================================================
 
 function buildRelationsSection(
@@ -323,32 +302,6 @@ function buildRelationsSection(
 ): void {
   host.innerHTML = '';
   const wrap = el('div', 'kpe-section-body');
-
-  // themeKey — select dropdown
-  const themeWrap = el('div', 'kpe-field');
-  const themeLabel = el('label', 'kpe-label');
-  themeLabel.textContent = '学派组';
-  const req = el('span', 'kpe-req');
-  req.textContent = ' *';
-  themeLabel.appendChild(req);
-  themeWrap.appendChild(themeLabel);
-  const sel = el('select', 'kpe-select');
-  sel.setAttribute('aria-label', '学派组');
-  sel.required = true;
-  const blank = el('option');
-  blank.value = '';
-  blank.textContent = '— 请选择 —';
-  sel.appendChild(blank);
-  metadata.themes.forEach((t) => {
-    const opt = el('option');
-    opt.value = t.key;
-    opt.textContent = t.label;
-    if (t.key === store.get().themeKey) opt.selected = true;
-    sel.appendChild(opt);
-  });
-  sel.addEventListener('change', () => store.update({ themeKey: sel.value }));
-  themeWrap.appendChild(sel);
-  wrap.appendChild(themeWrap);
 
   // tags — chip multi-select
   const tagsWrap = el('div', 'kpe-field');
@@ -382,10 +335,6 @@ async function save(store: SchoolEditorStore, opts: InitSchoolEditorOptions): Pr
     toastError('中文标题必填');
     return;
   }
-  if (!state.themeKey.trim()) {
-    toastError('学派组必填');
-    return;
-  }
   if (!state.summary.zh.trim()) {
     toastError('概述（中文）必填');
     return;
@@ -395,14 +344,9 @@ async function save(store: SchoolEditorStore, opts: InitSchoolEditorOptions): Pr
 
   let result: SchoolSaveResult;
   if (opts.mode === 'new') {
-    if (!state.key || !/^[a-z][a-z0-9_]*$/.test(state.key)) {
-      toastError('key 必须小写蛇形（首字母字母）');
-      store.setSaveStatus('error', { reason: 'invalid_key', message: 'key 必须小写蛇形' });
-      return;
-    }
+    // v0.8.9: key 不再前端传 — server 端 slugify 生成
     const payload: SchoolCreatePayload = {
       discipline: state.discipline,
-      key: state.key,
       title: buildI18nTitle(state.title),
       era: state.era.trim(),
       summary: buildSummary(state.summary),
@@ -431,7 +375,12 @@ async function save(store: SchoolEditorStore, opts: InitSchoolEditorOptions): Pr
     store.markSaved();
     toastSuccess(opts.mode === 'new' ? '已创建' : '已保存');
     if (opts.mode === 'new') {
-      window.location.href = `/${opts.metadata.disciplineKey}/${encodeURIComponent(result.school.key)}`;
+      // v0.8.9 Fix 3c: 跳 discipline overview + flash 提示拖到正确分组
+      const params = new URLSearchParams({
+        just_created_school: result.school.key,
+        theme: state.themeKey,
+      });
+      window.location.href = `/${opts.metadata.disciplineKey}?${params.toString()}`;
     }
     return;
   }
