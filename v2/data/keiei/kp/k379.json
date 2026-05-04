@@ -12,13 +12,54 @@
     "ja": "チームの四類型"
   },
   "body": {
-    "zh": "◆ 问题解决团队（Problem-Solving Teams）——讨论改善建议◆ 自我管理团队（Self-Managed Teams）——自主安排工作◆ 跨职能团队（Cross-Functional Teams）——跨部门协作◆ 虚拟团队（Virtual Teams）——远程协作。各类型适用不同的组织情境",
-    "ja": "——◆ 問題解決チーム（Problem-Solving Teams）——改善提案を議論する◆ 自己管理チーム（Self-Managed Teams）——作業を自律的に編成する◆ 機能横断チーム（Cross-Functional Teams）——部門を横断して協働する◆ バーチャル・チーム（Virtual Teams）——遠隔地からの協働。各類型は異なる組織状況に適合する"
+    "zh": {
+      "format": "flat-list",
+      "lead": "",
+      "items": [
+        {
+          "name": "问题解决团队（Problem-Solving Teams）",
+          "desc": "讨论改善建议"
+        },
+        {
+          "name": "自我管理团队（Self-Managed Teams）",
+          "desc": "自主安排工作"
+        },
+        {
+          "name": "跨职能团队（Cross-Functional Teams）",
+          "desc": "跨部门协作"
+        },
+        {
+          "name": "虚拟团队（Virtual Teams）",
+          "desc": "远程协作。各类型适用不同的组织情境"
+        }
+      ]
+    },
+    "ja": {
+      "format": "flat-list",
+      "lead": "——",
+      "items": [
+        {
+          "name": "問題解決チーム（Problem-Solving Teams）",
+          "desc": "改善提案を議論する"
+        },
+        {
+          "name": "自己管理チーム（Self-Managed Teams）",
+          "desc": "作業を自律的に編成する"
+        },
+        {
+          "name": "機能横断チーム（Cross-Functional Teams）",
+          "desc": "部門を横断して協働する"
+        },
+        {
+          "name": "バーチャル・チーム（Virtual Teams）",
+          "desc": "遠隔地からの協働。各類型は異なる組織状況に適合する"
+        }
+      ]
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

@@ -16,25 +16,36 @@
     "en": "Defensive Strategy · 6 Tactics"
   },
   "body": {
-    "zh": "Defensive Strategy（防御战略）是 market leader 保护既有 share 的战略·Kotler 16 版第 17 章核心。<br><br>6 大防御战术（来自军事战略类比）：<br>① Position Defense（阵地防御）——加固现有 brand·product<br>例：Coca-Cola 不停 marketing·维持 share<br>② Flank Defense（侧翼防御）——保护薄弱侧面<br>例：Toyota 在 Lexus 防御 BMW·Mercedes<br>③ Preemptive Defense（先发制人）——主动攻击 challenger<br>例：Microsoft 击败 Netscape（Internet Explorer 免费 bundle）<br>④ Counter-Offensive（反攻）——challenger 攻击后反击<br>例：Pepsi 攻 Coca-Cola·Coca-Cola 用「New Coke」（虽失败）反攻<br>⑤ Mobile Defense（机动防御）——扩张到新领域寻求 growth<br>例：Coca-Cola 从 cola 到 water·sports drink·coffee<br>⑥ Contraction Defense（收缩防御）——剥离弱业务·集中强项<br>例：GE 剥离金融·回归工业<br><br>战略选择逻辑：<br>- 强 brand·稳定市场 → position defense<br>- 多线作战 → flank<br>- 资源充足 + aggressive → preemptive<br>- 受攻击 → counter-offensive<br>- 成熟市场 → mobile<br>- 战线过长 → contraction<br><br>典型案例：① Apple iPhone position defense（不断 incremental innovation）② Microsoft Windows preemptive（Office bundle）③ Coca-Cola mobile defense（多元饮料）④ IBM contraction（PC 卖给联想·focus enterprise）<br><br>跨学派关系：与 競争地位别戦略（m087·leader 战略）·Porter 5 forces·STP 一体。",
-    "ja": "Defensive Strategy（防御戦略）は market leader が既有 share を保護する戦略·Kotler 16 版第 17 章核心。<br><br>6 大防御戦術（軍事戦略類比）：① Position Defense（陣地防御·Coca-Cola）② Flank Defense（側翼·Toyota Lexus 防 BMW·Mercedes）③ Preemptive Defense（先制·Microsoft 撃破 Netscape）④ Counter-Offensive（反攻·Coca-Cola「New Coke」）⑤ Mobile Defense（機動·Coca-Cola から water·sports drink·coffee）⑥ Contraction Defense（収縮·GE 金融剥離）<br><br>戦略選択論理：強 brand → position·多線 → flank·攻击型 → preemptive·受攻 → counter·成熟 → mobile·戦線過長 → contraction<br><br>典型事例：① Apple iPhone position（incremental innovation）② Microsoft Office bundle preemptive ③ Coca-Cola mobile（多元飲料）④ IBM contraction（PC を Lenovo に·enterprise focus）<br><br>他派との関係：競争地位別戦略（m087·leader 戦略）·Porter 5 forces·STP と一体。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Defensive Strategy（防御战略）是 market leader 保护既有 share 的战略·Kotler 16 版第 17 章核心。<br><br>6 大防御战术（来自军事战略类比）：<br>① Position Defense（阵地防御）——加固现有 brand·product<br>例：Coca-Cola 不停 marketing·维持 share<br>② Flank Defense（侧翼防御）——保护薄弱侧面<br>例：Toyota 在 Lexus 防御 BMW·Mercedes<br>③ Preemptive Defense（先发制人）——主动攻击 challenger<br>例：Microsoft 击败 Netscape（Internet Explorer 免费 bundle）<br>④ Counter-Offensive（反攻）——challenger 攻击后反击<br>例：Pepsi 攻 Coca-Cola·Coca-Cola 用「New Coke」（虽失败）反攻<br>⑤ Mobile Defense（机动防御）——扩张到新领域寻求 growth<br>例：Coca-Cola 从 cola 到 water·sports drink·coffee<br>⑥ Contraction Defense（收缩防御）——剥离弱业务·集中强项<br>例：GE 剥离金融·回归工业<br><br>战略选择逻辑：<br>- 强 brand·稳定市场 → position defense<br>- 多线作战 → flank<br>- 资源充足 + aggressive → preemptive<br>- 受攻击 → counter-offensive<br>- 成熟市场 → mobile<br>- 战线过长 → contraction<br><br>典型案例：① Apple iPhone position defense（不断 incremental innovation）② Microsoft Windows preemptive（Office bundle）③ Coca-Cola mobile defense（多元饮料）④ IBM contraction（PC 卖给联想·focus enterprise）<br><br>跨学派关系：与 競争地位别戦略（m087·leader 战略）·Porter 5 forces·STP 一体。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Defensive Strategy（防御戦略）は market leader が既有 share を保護する戦略·Kotler 16 版第 17 章核心。<br><br>6 大防御戦術（軍事戦略類比）：① Position Defense（陣地防御·Coca-Cola）② Flank Defense（側翼·Toyota Lexus 防 BMW·Mercedes）③ Preemptive Defense（先制·Microsoft 撃破 Netscape）④ Counter-Offensive（反攻·Coca-Cola「New Coke」）⑤ Mobile Defense（機動·Coca-Cola から water·sports drink·coffee）⑥ Contraction Defense（収縮·GE 金融剥離）<br><br>戦略選択論理：強 brand → position·多線 → flank·攻击型 → preemptive·受攻 → counter·成熟 → mobile·戦線過長 → contraction<br><br>典型事例：① Apple iPhone position（incremental innovation）② Microsoft Office bundle preemptive ③ Coca-Cola mobile（多元飲料）④ IBM contraction（PC を Lenovo に·enterprise focus）<br><br>他派との関係：競争地位別戦略（m087·leader 戦略）·Porter 5 forces·STP と一体。"
+    }
   },
   "tags": [
     "defense strategy",
     "leader",
     "6 tactics"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "leader 企业的战略选项·保护既有 share",
-      "限": "6 类边界模糊·实务混合",
-      "例": "Apple·Microsoft·Coca-Cola·IBM 各代表",
-      "应": "Kotler 17 章·strategic 题"
+      "meaning": "leader 企业的战略选项·保护既有 share",
+      "limit": "6 类边界模糊·实务混合",
+      "example": "Apple·Microsoft·Coca-Cola·IBM 各代表",
+      "response": "Kotler 17 章·strategic 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "6 類境界曖昧·実務混合",
-      "例": "Apple·Microsoft·Coca-Cola·IBM 各代表"
+      "meaning": "",
+      "limit": "6 類境界曖昧·実務混合",
+      "example": "Apple·Microsoft·Coca-Cola·IBM 各代表",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:36:02.074Z",

@@ -14,25 +14,36 @@
     "en": "Marketing Audit"
   },
   "body": {
-    "zh": "Marketing Audit（营销审计）是企业 marketing 的系统化诊断·Kotler 1959 年首次系统化·marketing 实务的关键工具。<br><br>定义：「<em>A comprehensive, systematic, independent, and periodic examination of a company's marketing environment, objectives, strategies, and activities, with a view to determining problem areas and opportunities and recommending a plan of action to improve the company's marketing performance.</em>」<br><br>4 大特征：① comprehensive·② systematic·③ independent（外部 / 内部独立）·④ periodic<br><br>6 大审计领域（Kotler 16 章）：<br>① Marketing Environment Audit——macro / micro 环境·5C·SWOT·PESTEL<br>② Marketing Strategy Audit——mission·objectives·strategy 一致性<br>③ Marketing Organization Audit——组织结构·能力·process<br>④ Marketing Systems Audit——MIS·planning·control·new product systems<br>⑤ Marketing Productivity Audit——profitability·cost effectiveness<br>⑥ Marketing Function Audit——4P / 7T·brand·sales·customer<br><br>典型 audit 频率：① 战略 audit·1-3 年 1 次 ② 操作 audit·季度 / 半年 ③ 自查·dashboard 实时<br><br>marketing audit 的 marketing 价值：<br>① 发现 blind spots<br>② 健康检查（健康企业也要做·非危机才做）<br>③ 跨部门 alignment<br>④ external benchmark<br>⑤ 投资决策依据<br><br>典型例：① P&G 每年 brand audit ② consulting firms（McKinsey·BCG）的客户 marketing audit ③ Kotler 自己开发 marketing audit checklist<br><br>跨学派关系：是 managerial 学派的实务核心·与 G-STIC（Control 阶段）·marketing dashboard 一体。",
-    "ja": "Marketing Audit（マーケティング監査）は企業マーケティングの体系的診断·Kotler 1959 年初体系化·マーケティング実務の主要ツール。<br><br>定義：「<em>A comprehensive, systematic, independent, and periodic examination...</em>」<br><br>4 大特徴：① comprehensive ② systematic ③ independent（外部 / 内部独立）④ periodic<br><br>6 大監査領域（Kotler 16 章）：① Marketing Environment Audit（5C·SWOT·PESTEL）② Marketing Strategy Audit（mission·目標·戦略一貫性）③ Marketing Organization Audit ④ Marketing Systems Audit（MIS·計画·コントロール·新製品 systems）⑤ Marketing Productivity Audit ⑥ Marketing Function Audit（4P / 7T·brand·sales·customer）<br><br>典型監査頻度：① 戦略監査·1-3 年 1 回 ② 操作監査·四半期 / 半年 ③ 自己診断·dashboard 実時間<br><br>マーケティング監査の価値：① blind spots 発見 ② 健康診断 ③ 跨部門 alignment ④ external benchmark ⑤ 投資意思決定依拠<br><br>典型例：① P&G 年次 brand audit ② コンサル（McKinsey·BCG）の顧客 marketing audit ③ Kotler 自身が marketing audit checklist 開発<br><br>他派との関係：managerial 学派の実務核心·G-STIC（Control 段階）·marketing dashboard と一体。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Marketing Audit（营销审计）是企业 marketing 的系统化诊断·Kotler 1959 年首次系统化·marketing 实务的关键工具。<br><br>定义：「<em>A comprehensive, systematic, independent, and periodic examination of a company's marketing environment, objectives, strategies, and activities, with a view to determining problem areas and opportunities and recommending a plan of action to improve the company's marketing performance.</em>」<br><br>4 大特征：① comprehensive·② systematic·③ independent（外部 / 内部独立）·④ periodic<br><br>6 大审计领域（Kotler 16 章）：<br>① Marketing Environment Audit——macro / micro 环境·5C·SWOT·PESTEL<br>② Marketing Strategy Audit——mission·objectives·strategy 一致性<br>③ Marketing Organization Audit——组织结构·能力·process<br>④ Marketing Systems Audit——MIS·planning·control·new product systems<br>⑤ Marketing Productivity Audit——profitability·cost effectiveness<br>⑥ Marketing Function Audit——4P / 7T·brand·sales·customer<br><br>典型 audit 频率：① 战略 audit·1-3 年 1 次 ② 操作 audit·季度 / 半年 ③ 自查·dashboard 实时<br><br>marketing audit 的 marketing 价值：<br>① 发现 blind spots<br>② 健康检查（健康企业也要做·非危机才做）<br>③ 跨部门 alignment<br>④ external benchmark<br>⑤ 投资决策依据<br><br>典型例：① P&G 每年 brand audit ② consulting firms（McKinsey·BCG）的客户 marketing audit ③ Kotler 自己开发 marketing audit checklist<br><br>跨学派关系：是 managerial 学派的实务核心·与 G-STIC（Control 阶段）·marketing dashboard 一体。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Marketing Audit（マーケティング監査）は企業マーケティングの体系的診断·Kotler 1959 年初体系化·マーケティング実務の主要ツール。<br><br>定義：「<em>A comprehensive, systematic, independent, and periodic examination...</em>」<br><br>4 大特徴：① comprehensive ② systematic ③ independent（外部 / 内部独立）④ periodic<br><br>6 大監査領域（Kotler 16 章）：① Marketing Environment Audit（5C·SWOT·PESTEL）② Marketing Strategy Audit（mission·目標·戦略一貫性）③ Marketing Organization Audit ④ Marketing Systems Audit（MIS·計画·コントロール·新製品 systems）⑤ Marketing Productivity Audit ⑥ Marketing Function Audit（4P / 7T·brand·sales·customer）<br><br>典型監査頻度：① 戦略監査·1-3 年 1 回 ② 操作監査·四半期 / 半年 ③ 自己診断·dashboard 実時間<br><br>マーケティング監査の価値：① blind spots 発見 ② 健康診断 ③ 跨部門 alignment ④ external benchmark ⑤ 投資意思決定依拠<br><br>典型例：① P&G 年次 brand audit ② コンサル（McKinsey·BCG）の顧客 marketing audit ③ Kotler 自身が marketing audit checklist 開発<br><br>他派との関係：managerial 学派の実務核心·G-STIC（Control 段階）·marketing dashboard と一体。"
+    }
   },
   "tags": [
     "marketing audit",
     "Kotler",
     "6 areas"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "企业 marketing 健康检查工具·CMO 必学",
-      "限": "主观·成本高·组织阻力大",
-      "例": "P&G·McKinsey 都用 marketing audit",
-      "应": "Kotler 1·2 章·marketing audit 题"
+      "meaning": "企业 marketing 健康检查工具·CMO 必学",
+      "limit": "主观·成本高·组织阻力大",
+      "example": "P&G·McKinsey 都用 marketing audit",
+      "response": "Kotler 1·2 章·marketing audit 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "主観·コスト高·組織抵抗大",
-      "例": "P&G·McKinsey は marketing audit 使用"
+      "meaning": "",
+      "limit": "主観·コスト高·組織抵抗大",
+      "example": "P&G·McKinsey は marketing audit 使用",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:41:21.358Z",

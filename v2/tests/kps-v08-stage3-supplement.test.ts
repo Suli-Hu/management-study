@@ -168,12 +168,12 @@ describe('类2 多语种边界', () => {
   });
 
   test('T2.1 POST 只 zh（无 ja） → ja 列 null', async () => {
+    // v0.8.10 Stage 5: 旧 body_ja 列已 drop，仅查 body_ja_json 新列
     await seedKp(db, 'k200');
     const cols = await db
-      .prepare('SELECT body_ja, body_ja_json FROM kp WHERE id = ?')
+      .prepare('SELECT body_ja_json FROM kp WHERE id = ?')
       .bind('k200')
-      .first<{ body_ja: string | null; body_ja_json: string | null }>();
-    expect(cols!.body_ja).toBeNull();
+      .first<{ body_ja_json: string | null }>();
     expect(cols!.body_ja_json).toBeNull();
   });
 
@@ -959,19 +959,24 @@ describe('类9 GET response shape 兼容', () => {
     await seedBaseline(db);
   });
 
-  test('T9.1 POST 后 GET → response 保留 format 顶层 + body.zh string + evalContent (migration §1)', async () => {
+  test('T9.1 POST 后 D1 row 是 v0.8 shape — 仅写 5 个新列', async () => {
+    // v0.8.10 Stage 5: 旧 body_zh / format / eval_content_*_json 列已 DROP，
+    // 写入只走新列 body_zh_json / body_format / evaluations_zh_json / evaluations_ja_json。
     await seedKp(db, 'k900', {
       evaluations: { zh: { meaning: 'M', limit: 'L', example: '', response: '', application: '', analogy: '' } },
     });
-    // direct DB query — KpApiRecord shape
-    const row = await db.prepare('SELECT * FROM kp WHERE id = ?').bind('k900').first<any>();
-    expect(row.format, 'response 应保留旧 format 顶层列').toBe('narrative');
-    expect(typeof row.body_zh, 'response 应保留旧 body string 列').toBe('string');
-    expect(row.body_zh).toContain('baseline prose');
-    expect(JSON.parse(row.eval_content_zh_json)).toMatchObject({ 义: 'M', 限: 'L' });
+    const row = await db
+      .prepare('SELECT body_zh_json, body_format, evaluations_zh_json FROM kp WHERE id = ?')
+      .bind('k900')
+      .first<{ body_zh_json: string; body_format: string; evaluations_zh_json: string | null }>();
+    expect(row!.body_format).toBe('narrative');
+    const bodyZh = JSON.parse(row!.body_zh_json) as { format: string; prose: string };
+    expect(bodyZh.format).toBe('narrative');
+    expect(bodyZh.prose).toContain('baseline prose');
+    expect(JSON.parse(row!.evaluations_zh_json!)).toMatchObject({ meaning: 'M', limit: 'L' });
   });
 
-  test('T9.2 PATCH narrative→flat-list → 旧列 format/body_zh 同步更新', async () => {
+  test('T9.2 PATCH narrative→flat-list → body_zh_json + body_format 同步更新', async () => {
     await seedKp(db, 'k901');
     await kpPATCH(
       makeCtx(db, {
@@ -985,10 +990,15 @@ describe('类9 GET response shape 兼容', () => {
         },
       }),
     );
-    const row = await db.prepare('SELECT * FROM kp WHERE id = ?').bind('k901').first<any>();
-    expect(row.format).toBe('flat-list');
-    expect(row.body_format).toBe('flat-list');
-    expect(row.body_zh).toContain('◆');
+    const row = await db
+      .prepare('SELECT body_zh_json, body_format FROM kp WHERE id = ?')
+      .bind('k901')
+      .first<{ body_zh_json: string; body_format: string }>();
+    expect(row!.body_format).toBe('flat-list');
+    const bodyZh = JSON.parse(row!.body_zh_json) as { format: string; lead: string; items: Array<{ name: string; desc: string }> };
+    expect(bodyZh.format).toBe('flat-list');
+    expect(bodyZh.lead).toBe('导');
+    expect(bodyZh.items[0]).toEqual({ name: 'A', desc: 'a' });
   });
 });
 

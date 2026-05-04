@@ -15,25 +15,36 @@
     "en": "Effectuation Principles"
   },
   "body": {
-    "zh": "Effectuation 5 原则由 Saras Sarasvathy 在 2001 年 <em>Academy of Management Review</em>「Causation and Effectuation: Toward a Theoretical Shift」与 2008 年专著系统化·是 effectuation 学派的核心方法论。<br><br>5 原则：<br><br>① Bird-in-Hand（手里的鸟）——从已有手段创造目标<br>3 个 means：① Who I am（identity）② What I know（knowledge）③ Whom I know（network）<br>不是问「我想达到什么」·而是「我现在能做什么」。<br><br>② Affordable Loss（可承受损失）——不算预期收益·算可承受损失<br>传统：投资 = 期望收益 - 风险<br>effectuation：投资 = 我能承受失去什么·而不是「我能赚多少」<br>这降低风险·允许快速试错。<br><br>③ Crazy Quilt（疯狂拼布）——与利益相关者共建<br>不是「先定计划再找伙伴」·而是「与谁愿意 commit 就一起做」。每个 partner 带来 means + commitment·拼出最终战略。<br><br>④ Lemonade（柠檬水）——拥抱意外<br>「When life gives you lemons, make lemonade」——把意外当机会·turn-bad-into-good。<br>例：Tesla 早期遇到资金危机·用 Roadster 高端定位倒推 model 设计。<br><br>⑤ Pilot-in-the-Plane（飞行员在飞机上）——人控制未来<br>不是预测未来·是塑造未来。Sarasvathy 名言：「The best way to predict the future is to make it」。<br><br>vs Causation（因果逻辑）：<br>- Causation：先定目标·再找手段（traditional MBA）<br>- Effectuation：从手段出发·涌现目标（entrepreneurial）<br><br>marketing 启示：① 新市场创造（不预测·而是塑造）② startup marketing 战略 ③ 产品迭代（lemonade 思维）④ partnership（crazy quilt）。<br><br>跨学派关系：与 strategic_marketing 形成对照——前者重 capability·effectuation 重 entrepreneurial action·栗木契把这个引入日本研究。",
-    "ja": "Effectuation 5 原則は Saras Sarasvathy 2001 年 <em>Academy of Management Review</em>「Causation and Effectuation: Toward a Theoretical Shift」と 2008 年専著で体系化·effectuation 学派の核心方法論。<br><br>5 原則：<br><br>① Bird-in-Hand·既有手段から目標創造<br>3 つの means：Who I am·What I know·Whom I know<br>「何を達成したいか」ではなく「今何ができるか」。<br><br>② Affordable Loss·予期収益ではなく可承受損失で計算<br>従来：投資 = 期待収益 - リスク·effectuation：投資 = 失っても良い金額。<br><br>③ Crazy Quilt·利害関係者と共構築<br>「先計画後パートナー」ではなく「commit してくれる人と一緒に進む」<br><br>④ Lemonade·予期外を抱擁<br>「When life gives you lemons, make lemonade」·turn-bad-into-good。例：Tesla 早期資金危機を Roadster 高端定位に転換。<br><br>⑤ Pilot-in-the-Plane·人が未来制御<br>Sarasvathy 名言：「The best way to predict the future is to make it」<br><br>vs Causation：Causation は目標→手段（伝統 MBA）·Effectuation は手段→涌現目標（entrepreneurial）<br><br>マーケティング示唆：① 新市場創造 ② スタートアップ戦略 ③ 製品反復（lemonade）④ partnership（crazy quilt）<br><br>他派との関係：strategic_marketing と対照——前者は capability·effectuation は entrepreneurial action·栗木契が日本に導入。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Effectuation 5 原则由 Saras Sarasvathy 在 2001 年 <em>Academy of Management Review</em>「Causation and Effectuation: Toward a Theoretical Shift」与 2008 年专著系统化·是 effectuation 学派的核心方法论。<br><br>5 原则：<br><br>① Bird-in-Hand（手里的鸟）——从已有手段创造目标<br>3 个 means：① Who I am（identity）② What I know（knowledge）③ Whom I know（network）<br>不是问「我想达到什么」·而是「我现在能做什么」。<br><br>② Affordable Loss（可承受损失）——不算预期收益·算可承受损失<br>传统：投资 = 期望收益 - 风险<br>effectuation：投资 = 我能承受失去什么·而不是「我能赚多少」<br>这降低风险·允许快速试错。<br><br>③ Crazy Quilt（疯狂拼布）——与利益相关者共建<br>不是「先定计划再找伙伴」·而是「与谁愿意 commit 就一起做」。每个 partner 带来 means + commitment·拼出最终战略。<br><br>④ Lemonade（柠檬水）——拥抱意外<br>「When life gives you lemons, make lemonade」——把意外当机会·turn-bad-into-good。<br>例：Tesla 早期遇到资金危机·用 Roadster 高端定位倒推 model 设计。<br><br>⑤ Pilot-in-the-Plane（飞行员在飞机上）——人控制未来<br>不是预测未来·是塑造未来。Sarasvathy 名言：「The best way to predict the future is to make it」。<br><br>vs Causation（因果逻辑）：<br>- Causation：先定目标·再找手段（traditional MBA）<br>- Effectuation：从手段出发·涌现目标（entrepreneurial）<br><br>marketing 启示：① 新市场创造（不预测·而是塑造）② startup marketing 战略 ③ 产品迭代（lemonade 思维）④ partnership（crazy quilt）。<br><br>跨学派关系：与 strategic_marketing 形成对照——前者重 capability·effectuation 重 entrepreneurial action·栗木契把这个引入日本研究。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Effectuation 5 原則は Saras Sarasvathy 2001 年 <em>Academy of Management Review</em>「Causation and Effectuation: Toward a Theoretical Shift」と 2008 年専著で体系化·effectuation 学派の核心方法論。<br><br>5 原則：<br><br>① Bird-in-Hand·既有手段から目標創造<br>3 つの means：Who I am·What I know·Whom I know<br>「何を達成したいか」ではなく「今何ができるか」。<br><br>② Affordable Loss·予期収益ではなく可承受損失で計算<br>従来：投資 = 期待収益 - リスク·effectuation：投資 = 失っても良い金額。<br><br>③ Crazy Quilt·利害関係者と共構築<br>「先計画後パートナー」ではなく「commit してくれる人と一緒に進む」<br><br>④ Lemonade·予期外を抱擁<br>「When life gives you lemons, make lemonade」·turn-bad-into-good。例：Tesla 早期資金危機を Roadster 高端定位に転換。<br><br>⑤ Pilot-in-the-Plane·人が未来制御<br>Sarasvathy 名言：「The best way to predict the future is to make it」<br><br>vs Causation：Causation は目標→手段（伝統 MBA）·Effectuation は手段→涌現目標（entrepreneurial）<br><br>マーケティング示唆：① 新市場創造 ② スタートアップ戦略 ③ 製品反復（lemonade）④ partnership（crazy quilt）<br><br>他派との関係：strategic_marketing と対照——前者は capability·effectuation は entrepreneurial action·栗木契が日本に導入。"
+    }
   },
   "tags": [
     "effectuation",
     "Sarasvathy",
     "5 principles"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "effectuation 学派的核心方法论·entrepreneurial marketing 工具",
-      "限": "非所有 context 适用·大企业难用",
-      "例": "Tesla·Airbnb·SpaceX 早期都是 effectuation",
-      "应": "effectuation 题·神戸命题"
+      "meaning": "effectuation 学派的核心方法论·entrepreneurial marketing 工具",
+      "limit": "非所有 context 适用·大企业难用",
+      "example": "Tesla·Airbnb·SpaceX 早期都是 effectuation",
+      "response": "effectuation 题·神戸命题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "全 context 適用ではない·大企業難用",
-      "例": "Tesla·Airbnb·SpaceX 初期は effectuation"
+      "meaning": "",
+      "limit": "全 context 適用ではない·大企業難用",
+      "example": "Tesla·Airbnb·SpaceX 初期は effectuation",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:14:04.105Z",

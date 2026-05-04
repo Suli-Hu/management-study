@@ -14,25 +14,36 @@
     "en": "Porter's Five Forces"
   },
   "body": {
-    "zh": "Porter 5 Forces（5 つの競争要因）由 Michael Porter 1980 年『Competitive Strategy』提出·marketing 战略学派核心借入概念·分析产业内的竞争结构。Pro Plus 第 6 章核心。<br><br>5 个 forces：<br><br>① 同业内现有竞争（Rivalry among Existing Competitors）<br>因素：行业增长·固定成本·产品差异化·exit barriers·竞争者数量<br>例：日本汽车行业·激烈<br><br>② 新进入者威胁（Threat of New Entrants）<br>因素：进入壁垒·规模经济·brand 忠诚·资本要求·法律规制·技术壁垒<br>例：医药·航空业进入壁垒高<br><br>③ 替代品威胁（Threat of Substitute Products）<br>因素：替代品价格 / 性能·切换成本·消费者倾向<br>例：digital camera vs film camera·streaming vs cable<br><br>④ 供应商议价权（Bargaining Power of Suppliers）<br>因素：供应商数量·切换成本·供应商前向整合可能<br>例：Intel 对 PC 制造商的强议价权<br><br>⑤ 买家议价权（Bargaining Power of Buyers）<br>因素：买家集中度·切换成本·后向整合可能·价格敏感度<br>例：Walmart 对供应商的强议价权<br><br>5 forces 的 3 大用途：<br>① 产业魅力度评估——5 forces 整体强 = 产业利润低 = 不太魅力<br>② 战略选择——根据 5 forces 选 cost leadership / differentiation / focus（Porter 3 战略）<br>③ STP Targeting 评估——评估 segment 的 attractiveness（Kotler 16 版「魅力」即包含 5 forces）<br><br>5 forces 在 marketing 中的位置：<br>- 是 strategic_marketing 学派从战略管理学派借入的核心工具<br>- 与 STP·SWOT·5C 一起构成 marketing 战略分析框架<br><br>批判与扩展：<br>① 静态分析——不擅长应对快速变化<br>② 不含 complementors·后来 Brandenburger-Nalebuff（1996）加 6th force「补充者」（如游戏机 + 游戏开发商）<br>③ 不含政府·宏观环境·需要配合 PEST 分析<br>④ 数字时代局限——平台经济·multi-sided market·5 forces 解释力有限<br><br>跨学派关系：① 与 STP 的 Targeting 直接对接（Kotler 16 版「segment 魅力」即 5 forces）② 与 SWOT 的 OT（机会·威胁）一致 ③ 与 5C 的 Competitor·Context 重叠。",
-    "ja": "Porter 5 Forces（5 つの競争要因）は Michael Porter 1980 年『Competitive Strategy』提唱·マーケティング戦略学派核心借入概念·業界内競争構造を分析。Pro Plus 第 6 章核心。<br><br>5 つの forces：① 同業内現存競合 ② 新規参入脅威 ③ 代替品脅威 ④ 供給者交渉力 ⑤ 買い手交渉力<br><br>3 大用途：① 業界魅力度評価 ② 戦略選択（cost leadership / differentiation / focus）③ STP Targeting 評価（Kotler 16 版「魅力」が 5 forces 含む）<br><br>マーケティング内の位置：strategic_marketing 学派が戦略経営学派から借入する核心ツール·STP·SWOT·5C と並ぶマーケティング戦略分析フレーム。<br><br>批判と拡張：① 静的分析 ② complementors 不含·Brandenburger-Nalebuff 1996 で 6th force 追加 ③ 政府·マクロ環境不含·PEST 必要 ④ デジタル時代限界·プラットフォーム経済·multi-sided market 説明力限定<br><br>他派との関係：① STP Targeting と直接接続 ② SWOT の OT と一致 ③ 5C の Competitor·Context と重複。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Porter 5 Forces（5 つの競争要因）由 Michael Porter 1980 年『Competitive Strategy』提出·marketing 战略学派核心借入概念·分析产业内的竞争结构。Pro Plus 第 6 章核心。<br><br>5 个 forces：<br><br>① 同业内现有竞争（Rivalry among Existing Competitors）<br>因素：行业增长·固定成本·产品差异化·exit barriers·竞争者数量<br>例：日本汽车行业·激烈<br><br>② 新进入者威胁（Threat of New Entrants）<br>因素：进入壁垒·规模经济·brand 忠诚·资本要求·法律规制·技术壁垒<br>例：医药·航空业进入壁垒高<br><br>③ 替代品威胁（Threat of Substitute Products）<br>因素：替代品价格 / 性能·切换成本·消费者倾向<br>例：digital camera vs film camera·streaming vs cable<br><br>④ 供应商议价权（Bargaining Power of Suppliers）<br>因素：供应商数量·切换成本·供应商前向整合可能<br>例：Intel 对 PC 制造商的强议价权<br><br>⑤ 买家议价权（Bargaining Power of Buyers）<br>因素：买家集中度·切换成本·后向整合可能·价格敏感度<br>例：Walmart 对供应商的强议价权<br><br>5 forces 的 3 大用途：<br>① 产业魅力度评估——5 forces 整体强 = 产业利润低 = 不太魅力<br>② 战略选择——根据 5 forces 选 cost leadership / differentiation / focus（Porter 3 战略）<br>③ STP Targeting 评估——评估 segment 的 attractiveness（Kotler 16 版「魅力」即包含 5 forces）<br><br>5 forces 在 marketing 中的位置：<br>- 是 strategic_marketing 学派从战略管理学派借入的核心工具<br>- 与 STP·SWOT·5C 一起构成 marketing 战略分析框架<br><br>批判与扩展：<br>① 静态分析——不擅长应对快速变化<br>② 不含 complementors·后来 Brandenburger-Nalebuff（1996）加 6th force「补充者」（如游戏机 + 游戏开发商）<br>③ 不含政府·宏观环境·需要配合 PEST 分析<br>④ 数字时代局限——平台经济·multi-sided market·5 forces 解释力有限<br><br>跨学派关系：① 与 STP 的 Targeting 直接对接（Kotler 16 版「segment 魅力」即 5 forces）② 与 SWOT 的 OT（机会·威胁）一致 ③ 与 5C 的 Competitor·Context 重叠。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Porter 5 Forces（5 つの競争要因）は Michael Porter 1980 年『Competitive Strategy』提唱·マーケティング戦略学派核心借入概念·業界内競争構造を分析。Pro Plus 第 6 章核心。<br><br>5 つの forces：① 同業内現存競合 ② 新規参入脅威 ③ 代替品脅威 ④ 供給者交渉力 ⑤ 買い手交渉力<br><br>3 大用途：① 業界魅力度評価 ② 戦略選択（cost leadership / differentiation / focus）③ STP Targeting 評価（Kotler 16 版「魅力」が 5 forces 含む）<br><br>マーケティング内の位置：strategic_marketing 学派が戦略経営学派から借入する核心ツール·STP·SWOT·5C と並ぶマーケティング戦略分析フレーム。<br><br>批判と拡張：① 静的分析 ② complementors 不含·Brandenburger-Nalebuff 1996 で 6th force 追加 ③ 政府·マクロ環境不含·PEST 必要 ④ デジタル時代限界·プラットフォーム経済·multi-sided market 説明力限定<br><br>他派との関係：① STP Targeting と直接接続 ② SWOT の OT と一致 ③ 5C の Competitor·Context と重複。"
+    }
   },
   "tags": [
     "Porter",
     "5 forces",
     "competitive analysis"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "marketing 战略学派核心借入·STP Targeting 的支撑工具",
-      "限": "静态·缺 complementors·数字时代局限",
-      "例": "日本汽车产业·医药行业 5 forces 分析",
-      "应": "Pro Plus 6 章·strategic 题·全 11 校"
+      "meaning": "marketing 战略学派核心借入·STP Targeting 的支撑工具",
+      "limit": "静态·缺 complementors·数字时代局限",
+      "example": "日本汽车产业·医药行业 5 forces 分析",
+      "response": "Pro Plus 6 章·strategic 题·全 11 校",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "静的·complementors 欠如·デジタル時代限界",
-      "例": "日本自動車産業·医薬産業 5 forces 分析"
+      "meaning": "",
+      "limit": "静的·complementors 欠如·デジタル時代限界",
+      "example": "日本自動車産業·医薬産業 5 forces 分析",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:14:22.841Z",

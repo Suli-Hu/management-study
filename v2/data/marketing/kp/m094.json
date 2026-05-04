@@ -14,21 +14,32 @@
     "en": "Holistic Marketing"
   },
   "body": {
-    "zh": "ホリスティック・マーケティング（Holistic Marketing）是 Kotler 系统化的 marketing 整合概念·主张 marketing 必须从4 个维度整合·不能孤立做。<br><br>4 大维度：<br>① Internal Marketing（内部营销）——把 marketing 哲学渗透全公司·所有员工是 marketer<br>例：星巴克培训 barista·Apple Genius<br>② Integrated Marketing（统合营销）——4P / 4C / 7P 等 marketing mix 一致<br>例：Apple 的产品·定价·渠道·promotion 高度一致<br>③ Relationship Marketing（关系营销）——顾客·伙伴·channel 长期关系<br>例：日本系列化·convenience store 製販同盟<br>④ Performance Marketing（业绩营销）——financial + brand + ethical 三层 KPI<br>例：CSR + 利润 + brand value 综合衡量<br><br>核心思想：marketing 不是部门职能·是跨部门·跨主体·跨时间的整合活动。<br><br>跨学派关系：① 与 IMC 学派的整合思想一致 ② 与 relationship 学派的关系建设一致 ③ 与 social_marketing 的 ethical performance 一致 ④ 与 marketing_concept 的「marketing 是企业哲学」一致。",
-    "ja": "ホリスティック・マーケティングは Kotler が体系化したマーケティング統合概念·マーケティングが4 次元統合すべきと主張·孤立してはいけない。<br><br>4 大次元：① 内部マーケティング（全従業員が marketer·スタバ·Apple Genius）② 統合マーケティング（4P / 4C / 7P 一致·Apple）③ 関係性マーケティング（長期·日本系列化·CVS 製販同盟）④ パフォーマンス・マーケティング（financial + brand + ethical 3 層 KPI）<br><br>核心思想：マーケティングは部門職能ではなく·跨部門·跨主体·跨時間の統合活動。<br><br>他派との関係：① IMC 学派の統合思想一致 ② relationship 学派の関係構築一致 ③ social_marketing の ethical performance 一致 ④ marketing_concept の「マーケティングは企業哲学」一致。"
-  },
-  "tags": [],
-  "format": "narrative",
-  "evalContent": {
     "zh": {
-      "义": "Kotler 整合 marketing 思想的总框架·跨学派整合",
-      "限": "概念抽象·实务难全面操作",
-      "例": "Apple·Starbucks·Toyota 是教科书",
-      "应": "Kotler 第 1 章·marketing 哲学题"
+      "format": "narrative",
+      "prose": "ホリスティック・マーケティング（Holistic Marketing）是 Kotler 系统化的 marketing 整合概念·主张 marketing 必须从4 个维度整合·不能孤立做。<br><br>4 大维度：<br>① Internal Marketing（内部营销）——把 marketing 哲学渗透全公司·所有员工是 marketer<br>例：星巴克培训 barista·Apple Genius<br>② Integrated Marketing（统合营销）——4P / 4C / 7P 等 marketing mix 一致<br>例：Apple 的产品·定价·渠道·promotion 高度一致<br>③ Relationship Marketing（关系营销）——顾客·伙伴·channel 长期关系<br>例：日本系列化·convenience store 製販同盟<br>④ Performance Marketing（业绩营销）——financial + brand + ethical 三层 KPI<br>例：CSR + 利润 + brand value 综合衡量<br><br>核心思想：marketing 不是部门职能·是跨部门·跨主体·跨时间的整合活动。<br><br>跨学派关系：① 与 IMC 学派的整合思想一致 ② 与 relationship 学派的关系建设一致 ③ 与 social_marketing 的 ethical performance 一致 ④ 与 marketing_concept 的「marketing 是企业哲学」一致。"
     },
     "ja": {
-      "限": "概念抽象·実務全面操作困難",
-      "例": "Apple·Starbucks·Toyota は教科書"
+      "format": "narrative",
+      "prose": "ホリスティック・マーケティングは Kotler が体系化したマーケティング統合概念·マーケティングが4 次元統合すべきと主張·孤立してはいけない。<br><br>4 大次元：① 内部マーケティング（全従業員が marketer·スタバ·Apple Genius）② 統合マーケティング（4P / 4C / 7P 一致·Apple）③ 関係性マーケティング（長期·日本系列化·CVS 製販同盟）④ パフォーマンス・マーケティング（financial + brand + ethical 3 層 KPI）<br><br>核心思想：マーケティングは部門職能ではなく·跨部門·跨主体·跨時間の統合活動。<br><br>他派との関係：① IMC 学派の統合思想一致 ② relationship 学派の関係構築一致 ③ social_marketing の ethical performance 一致 ④ marketing_concept の「マーケティングは企業哲学」一致。"
+    }
+  },
+  "tags": [],
+  "evaluations": {
+    "zh": {
+      "meaning": "Kotler 整合 marketing 思想的总框架·跨学派整合",
+      "limit": "概念抽象·实务难全面操作",
+      "example": "Apple·Starbucks·Toyota 是教科书",
+      "response": "Kotler 第 1 章·marketing 哲学题",
+      "application": "",
+      "analogy": ""
+    },
+    "ja": {
+      "meaning": "",
+      "limit": "概念抽象·実務全面操作困難",
+      "example": "Apple·Starbucks·Toyota は教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:24:42.593Z",

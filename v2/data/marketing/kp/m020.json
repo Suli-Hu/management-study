@@ -15,25 +15,36 @@
     "en": "Marketing 5.0"
   },
   "body": {
-    "zh": "Marketing 5.0（人间×技术 marketing）是 Kotler·Kartajaya·Setiawan 2021 年同名书提出·marketing 演化论的最新阶段·主张 AI·data·tech 应服务人间价值。<br><br>核心特征：<br>① 视角：marketing 要用 next tech（AI·NLP·sensors·robotics·AR/VR·IoT·blockchain）创造 human-like customer experience<br>② 核心：tech 服务于 humanity·非取代 humanity<br>③ 战略：data-driven marketing·predictive marketing·contextual marketing·augmented marketing·agile marketing<br>④ 背景：AI 大爆发·疫情·Z 世代·数字鸿沟<br><br>5 大支柱（5 个 -ing）：<br>① Data-Driven——用 data 决策<br>② Predictive——预测顾客行为<br>③ Contextual——根据情境个性化<br>④ Augmented——AR·VR 增强体验<br>⑤ Agile——敏捷迭代<br><br>典型例：① Spotify Wrapped 个性化 data-driven storytelling ② Tesla Autopilot 的 AR 仪表盘 ③ ChatGPT-driven customer service。<br><br>批判：① 数据隐私·算法偏见·伦理问题 ② tech 普及不均·digital divide ③ 「人性化技术」是不是悖论。",
-    "ja": "マーケティング 5.0（人間×技術マーケティング）は Kotler·Kartajaya·Setiawan 2021 年同名書で提唱·マーケティング進化論の最新段階·AI·data·tech が人間価値に奉仕すべきと主張。<br><br>核心特徴：<br>① 視点：マーケティングは next tech（AI·NLP·sensors·robotics·AR/VR·IoT·blockchain）で human-like customer experience を創造<br>② 核心：tech は humanity に奉仕·humanity を代替しない<br>③ 戦略：data-driven·predictive·contextual·augmented·agile<br>④ 背景：AI 大爆発·コロナ·Z 世代·デジタル格差<br><br>5 大支柱（5 つの -ing）：<br>① Data-Driven ② Predictive ③ Contextual ④ Augmented ⑤ Agile<br><br>典型例：① Spotify Wrapped 個性化 data-driven storytelling ② Tesla Autopilot の AR ダッシュボード ③ ChatGPT-driven customer service。<br><br>批判：① データ・プライバシー·アルゴリズム・バイアス·倫理問題 ② tech 普及不均·digital divide ③ 「人間化技術」は逆説か。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Marketing 5.0（人间×技术 marketing）是 Kotler·Kartajaya·Setiawan 2021 年同名书提出·marketing 演化论的最新阶段·主张 AI·data·tech 应服务人间价值。<br><br>核心特征：<br>① 视角：marketing 要用 next tech（AI·NLP·sensors·robotics·AR/VR·IoT·blockchain）创造 human-like customer experience<br>② 核心：tech 服务于 humanity·非取代 humanity<br>③ 战略：data-driven marketing·predictive marketing·contextual marketing·augmented marketing·agile marketing<br>④ 背景：AI 大爆发·疫情·Z 世代·数字鸿沟<br><br>5 大支柱（5 个 -ing）：<br>① Data-Driven——用 data 决策<br>② Predictive——预测顾客行为<br>③ Contextual——根据情境个性化<br>④ Augmented——AR·VR 增强体验<br>⑤ Agile——敏捷迭代<br><br>典型例：① Spotify Wrapped 个性化 data-driven storytelling ② Tesla Autopilot 的 AR 仪表盘 ③ ChatGPT-driven customer service。<br><br>批判：① 数据隐私·算法偏见·伦理问题 ② tech 普及不均·digital divide ③ 「人性化技术」是不是悖论。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "マーケティング 5.0（人間×技術マーケティング）は Kotler·Kartajaya·Setiawan 2021 年同名書で提唱·マーケティング進化論の最新段階·AI·data·tech が人間価値に奉仕すべきと主張。<br><br>核心特徴：<br>① 視点：マーケティングは next tech（AI·NLP·sensors·robotics·AR/VR·IoT·blockchain）で human-like customer experience を創造<br>② 核心：tech は humanity に奉仕·humanity を代替しない<br>③ 戦略：data-driven·predictive·contextual·augmented·agile<br>④ 背景：AI 大爆発·コロナ·Z 世代·デジタル格差<br><br>5 大支柱（5 つの -ing）：<br>① Data-Driven ② Predictive ③ Contextual ④ Augmented ⑤ Agile<br><br>典型例：① Spotify Wrapped 個性化 data-driven storytelling ② Tesla Autopilot の AR ダッシュボード ③ ChatGPT-driven customer service。<br><br>批判：① データ・プライバシー·アルゴリズム・バイアス·倫理問題 ② tech 普及不均·digital divide ③ 「人間化技術」は逆説か。"
+    }
   },
   "tags": [
     "Marketing 5.0",
     "AI",
     "tech humanity"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "marketing 演化论最新阶段·AI 时代 marketing 框架",
-      "限": "AI 伦理·隐私·digital divide 是争议焦点",
-      "例": "Spotify Wrapped·Tesla Autopilot·ChatGPT",
-      "应": "Pro Plus 第 16 章·AI marketing 题"
+      "meaning": "marketing 演化论最新阶段·AI 时代 marketing 框架",
+      "limit": "AI 伦理·隐私·digital divide 是争议焦点",
+      "example": "Spotify Wrapped·Tesla Autopilot·ChatGPT",
+      "response": "Pro Plus 第 16 章·AI marketing 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "AI 倫理·プライバシー·デジタル格差が争点",
-      "例": "Spotify Wrapped·Tesla Autopilot·ChatGPT"
+      "meaning": "",
+      "limit": "AI 倫理·プライバシー·デジタル格差が争点",
+      "example": "Spotify Wrapped·Tesla Autopilot·ChatGPT",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:51:30.606Z",

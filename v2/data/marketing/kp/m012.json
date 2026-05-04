@@ -15,25 +15,36 @@
     "en": "G-STIC Action Plan"
   },
   "body": {
-    "zh": "G-STIC是 Kotler/Chernev 16 版（2022）系统化的 marketing 行动计划框架·5 个步骤构成 marketing plan 的标准结构。<br><br>5 个 G-STIC 步骤：<br><br>① G - Goal（目标）——明确「想达到什么」。包括 financial goals（销售额·利润·ROI）和 strategic goals（market share·brand awareness）。SMART 原则。<br><br>② S - Strategy（战略）——明确「在哪个市场怎么赢」。包括 target market（STP 选定）+ value proposition（价值提案）。这是战略层。<br><br>③ T - Tactics（战术）——明确「具体怎么执行」。包括 7T（Product·Service·Brand·Price·Incentives·Communication·Distribution）·或传统 4P。这是战术层。<br><br>④ I - Implementation（执行）——明确「怎么落地」。包括 development（开发）·deployment（部署）·组织和资源配置。<br><br>⑤ C - Control（控制）——明确「怎么衡量」。包括 performance metrics·milestones·feedback loops。<br><br>结构特征：G-STIC 是从抽象到具体的递进——目标→战略→战术→执行→控制·形成 marketing plan 的金字塔。<br><br>使用场景：marketing plan 写作·marketing audit·marketing 战略评估·学生论述题大题分析框架。<br><br>跨学派关系：与 strategic_marketing 的 capability 视角互补——G-STIC 是程序框架·capability 是战略源泉。",
-    "ja": "G-STICは Kotler/Chernev 16 版（2022）が体系化したマーケティング行動計画フレーム·5 ステップでマーケティング計画の標準構造。<br><br>5 つの G-STIC ステップ：<br><br>① G - Goal（目標）·「何を達成したいか」を明確化。financial goals（売上·利益·ROI）+ strategic goals（市場シェア·ブランド認知度）。SMART 原則。<br><br>② S - Strategy（戦略）·「どの市場でどう勝つか」を明確化。target market（STP 選定）+ value proposition（価値提案）。戦略層。<br><br>③ T - Tactics（戦術）·「具体的にどう実行するか」。7T（Product·Service·Brand·Price·Incentives·Communication·Distribution）または伝統的 4P。戦術層。<br><br>④ I - Implementation（実装）·「どう落とし込むか」。development（開発）·deployment（展開）·組織·資源配置。<br><br>⑤ C - Control（コントロール）·「どう測定するか」。performance metrics·milestones·フィードバックループ。<br><br>構造特徴：G-STIC は抽象から具体への漸進——目標→戦略→戦術→実装→コントロール·マーケティング計画ピラミッド。<br><br>使用場面：マーケティング計画執筆·マーケティング監査·マーケティング戦略評価·学生論述題大問分析フレーム。<br><br>他派との関係：strategic_marketing の capability 視点と相補——G-STIC は手続フレーム·capability は戦略源泉。"
+    "zh": {
+      "format": "narrative",
+      "prose": "G-STIC是 Kotler/Chernev 16 版（2022）系统化的 marketing 行动计划框架·5 个步骤构成 marketing plan 的标准结构。<br><br>5 个 G-STIC 步骤：<br><br>① G - Goal（目标）——明确「想达到什么」。包括 financial goals（销售额·利润·ROI）和 strategic goals（market share·brand awareness）。SMART 原则。<br><br>② S - Strategy（战略）——明确「在哪个市场怎么赢」。包括 target market（STP 选定）+ value proposition（价值提案）。这是战略层。<br><br>③ T - Tactics（战术）——明确「具体怎么执行」。包括 7T（Product·Service·Brand·Price·Incentives·Communication·Distribution）·或传统 4P。这是战术层。<br><br>④ I - Implementation（执行）——明确「怎么落地」。包括 development（开发）·deployment（部署）·组织和资源配置。<br><br>⑤ C - Control（控制）——明确「怎么衡量」。包括 performance metrics·milestones·feedback loops。<br><br>结构特征：G-STIC 是从抽象到具体的递进——目标→战略→战术→执行→控制·形成 marketing plan 的金字塔。<br><br>使用场景：marketing plan 写作·marketing audit·marketing 战略评估·学生论述题大题分析框架。<br><br>跨学派关系：与 strategic_marketing 的 capability 视角互补——G-STIC 是程序框架·capability 是战略源泉。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "G-STICは Kotler/Chernev 16 版（2022）が体系化したマーケティング行動計画フレーム·5 ステップでマーケティング計画の標準構造。<br><br>5 つの G-STIC ステップ：<br><br>① G - Goal（目標）·「何を達成したいか」を明確化。financial goals（売上·利益·ROI）+ strategic goals（市場シェア·ブランド認知度）。SMART 原則。<br><br>② S - Strategy（戦略）·「どの市場でどう勝つか」を明確化。target market（STP 選定）+ value proposition（価値提案）。戦略層。<br><br>③ T - Tactics（戦術）·「具体的にどう実行するか」。7T（Product·Service·Brand·Price·Incentives·Communication·Distribution）または伝統的 4P。戦術層。<br><br>④ I - Implementation（実装）·「どう落とし込むか」。development（開発）·deployment（展開）·組織·資源配置。<br><br>⑤ C - Control（コントロール）·「どう測定するか」。performance metrics·milestones·フィードバックループ。<br><br>構造特徴：G-STIC は抽象から具体への漸進——目標→戦略→戦術→実装→コントロール·マーケティング計画ピラミッド。<br><br>使用場面：マーケティング計画執筆·マーケティング監査·マーケティング戦略評価·学生論述題大問分析フレーム。<br><br>他派との関係：strategic_marketing の capability 視点と相補——G-STIC は手続フレーム·capability は戦略源泉。"
+    }
   },
   "tags": [
     "G-STIC",
     "Marketing Plan",
     "Kotler 16 版"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "Kotler 16 版 marketing plan 标准框架·从目标到控制 5 步",
-      "限": "线性流程·难捕捉迭代·effectuation 视角下 G 不一定先定",
-      "例": "学生写 marketing 案例分析必用 G-STIC 框架结构",
-      "应": "Kotler 第 2 章·全 11 校论述题分析框架"
+      "meaning": "Kotler 16 版 marketing plan 标准框架·从目标到控制 5 步",
+      "limit": "线性流程·难捕捉迭代·effectuation 视角下 G 不一定先定",
+      "example": "学生写 marketing 案例分析必用 G-STIC 框架结构",
+      "response": "Kotler 第 2 章·全 11 校论述题分析框架",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "線形プロセス·反復捕捉困難·effectuation 視点では G 必ずしも先決ない",
-      "例": "学生のマーケティング・ケース分析は G-STIC で構造化"
+      "meaning": "",
+      "limit": "線形プロセス·反復捕捉困難·effectuation 視点では G 必ずしも先決ない",
+      "example": "学生のマーケティング・ケース分析は G-STIC で構造化",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:40:30.306Z",

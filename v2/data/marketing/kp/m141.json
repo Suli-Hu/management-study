@@ -15,8 +15,14 @@
     "en": "Market Entry Modes"
   },
   "body": {
-    "zh": "参入方式 5 类（Market Entry Modes）按 commitment·risk·control 程度递增分为 5 类·Kotler 16 版第 20 章核心。<br><br>5 大参入方式：<br><br>① Indirect Export（间接出口）<br>方法：通过 export agent / trading company<br>commitment：低·risk：低·control：低<br>例：日本中小企业通过商社出口<br><br>② Direct Export（直接出口）<br>方法：自营 export department / overseas branch<br>commitment：中·risk：中·control：中<br>例：UNIQLO 早期出口<br><br>③ Licensing（授权）<br>方法：licensee 拥有生产 / 销售权·付 royalty<br>commitment：低·risk：低·control：低<br>例：Disney character licensing·Calvin Klein licensing<br><br>④ Joint Venture（合资）<br>方法：与本地伙伴成立合资公司<br>commitment：高·risk：中·control：中<br>例：Toyota-GM NUMMI（1984·美国合资）·星巴克日本最初是合资<br><br>⑤ Direct Investment（直接投资）<br>方法：自建工厂 / 子公司·完全控制<br>commitment：最高·risk：最高·control：最高<br>例：UNIQLO 美国直营店·Tesla 上海超工厂<br><br>选择逻辑：<br>- 资源少 + 经验少 → indirect export<br>- 资源多 + 经验丰富 → direct investment<br>- 中间状态 → licensing / JV<br>- 战略性市场 → direct investment<br>- 试探性市场 → export<br><br>典型 evolution path：indirect export → direct export → licensing / JV → direct investment（Uppsala model）<br><br>跨学派关系：strategic_marketing·内部经济学·制度学派一体。",
-    "ja": "参入方式 5 類（Market Entry Modes）は commitment·risk·control 程度漸増 5 類·Kotler 16 版第 20 章核心。<br><br>5 大参入方式：<br>① Indirect Export（間接出口）·商社経由·日本中小企業<br>② Direct Export（直接出口）·自営 export department·UNIQLO 初期<br>③ Licensing（授権）·royalty·Disney character·Calvin Klein<br>④ Joint Venture（合弁）·Toyota-GM NUMMI 1984·星巴克日本初期<br>⑤ Direct Investment（直接投資）·UNIQLO 米国直営·Tesla 上海超工場<br><br>選択論理：資源少 + 経験少 → indirect export·資源多 + 経験豊 → direct investment·中間 → licensing / JV·戦略市場 → direct·試探市場 → export<br><br>典型 evolution path：indirect export → direct export → licensing / JV → direct investment（Uppsala model）<br><br>他派との関係：strategic_marketing·内部経済学·制度学派と一体。"
+    "zh": {
+      "format": "narrative",
+      "prose": "参入方式 5 类（Market Entry Modes）按 commitment·risk·control 程度递增分为 5 类·Kotler 16 版第 20 章核心。<br><br>5 大参入方式：<br><br>① Indirect Export（间接出口）<br>方法：通过 export agent / trading company<br>commitment：低·risk：低·control：低<br>例：日本中小企业通过商社出口<br><br>② Direct Export（直接出口）<br>方法：自营 export department / overseas branch<br>commitment：中·risk：中·control：中<br>例：UNIQLO 早期出口<br><br>③ Licensing（授权）<br>方法：licensee 拥有生产 / 销售权·付 royalty<br>commitment：低·risk：低·control：低<br>例：Disney character licensing·Calvin Klein licensing<br><br>④ Joint Venture（合资）<br>方法：与本地伙伴成立合资公司<br>commitment：高·risk：中·control：中<br>例：Toyota-GM NUMMI（1984·美国合资）·星巴克日本最初是合资<br><br>⑤ Direct Investment（直接投资）<br>方法：自建工厂 / 子公司·完全控制<br>commitment：最高·risk：最高·control：最高<br>例：UNIQLO 美国直营店·Tesla 上海超工厂<br><br>选择逻辑：<br>- 资源少 + 经验少 → indirect export<br>- 资源多 + 经验丰富 → direct investment<br>- 中间状态 → licensing / JV<br>- 战略性市场 → direct investment<br>- 试探性市场 → export<br><br>典型 evolution path：indirect export → direct export → licensing / JV → direct investment（Uppsala model）<br><br>跨学派关系：strategic_marketing·内部经济学·制度学派一体。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "参入方式 5 類（Market Entry Modes）は commitment·risk·control 程度漸増 5 類·Kotler 16 版第 20 章核心。<br><br>5 大参入方式：<br>① Indirect Export（間接出口）·商社経由·日本中小企業<br>② Direct Export（直接出口）·自営 export department·UNIQLO 初期<br>③ Licensing（授権）·royalty·Disney character·Calvin Klein<br>④ Joint Venture（合弁）·Toyota-GM NUMMI 1984·星巴克日本初期<br>⑤ Direct Investment（直接投資）·UNIQLO 米国直営·Tesla 上海超工場<br><br>選択論理：資源少 + 経験少 → indirect export·資源多 + 経験豊 → direct investment·中間 → licensing / JV·戦略市場 → direct·試探市場 → export<br><br>典型 evolution path：indirect export → direct export → licensing / JV → direct investment（Uppsala model）<br><br>他派との関係：strategic_marketing·内部経済学·制度学派と一体。"
+    }
   },
   "tags": [
     "market entry",
@@ -24,17 +30,22 @@
     "JV",
     "FDI"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "全球化的具体战略选择·marketing 实务",
-      "限": "权衡复杂·跨产业差异",
-      "例": "UNIQLO·Toyota·Tesla·Disney licensing 是教科书",
-      "应": "Kotler 20 章·全球化题"
+      "meaning": "全球化的具体战略选择·marketing 实务",
+      "limit": "权衡复杂·跨产业差异",
+      "example": "UNIQLO·Toyota·Tesla·Disney licensing 是教科书",
+      "response": "Kotler 20 章·全球化题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "トレードオフ複雑·跨産業差",
-      "例": "UNIQLO·Toyota·Tesla·Disney licensing 教科書"
+      "meaning": "",
+      "limit": "トレードオフ複雑·跨産業差",
+      "example": "UNIQLO·Toyota·Tesla·Disney licensing 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:36:16.422Z",

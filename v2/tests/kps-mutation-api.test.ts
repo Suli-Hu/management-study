@@ -8,6 +8,8 @@ import type { APIContext } from 'astro';
 import { PATCH as kpPATCH, DELETE as kpDELETE } from '../src/pages/api/kps/[id]';
 import { GET as versionsGET } from '../src/pages/api/kps/[id]/versions';
 
+// v0.8.10 Stage 5: 旧 body_zh / body_ja / format / eval_content_*_json 列已 DROP，
+// mock row 仅含 5 个新列 + 必备元数据。
 const KP_ROW = {
   id: 'k001',
   tenant_id: 'keiei',
@@ -16,13 +18,7 @@ const KP_ROW = {
   title_zh: '旧标题',
   title_en: 'Old title',
   title_ja: null,
-  body_zh: '旧正文',
-  body_ja: null,
   tags_json: '[]',
-  format: 'narrative',
-  eval_content_zh_json: '{}',
-  eval_content_ja_json: '{}',
-  // v0.8.0：新列必须有值（patchKpRecord 会读 body_zh_json 做结构化 merge）
   body_zh_json: JSON.stringify({ format: 'narrative', prose: '旧正文' }),
   body_ja_json: null,
   evaluations_zh_json: null,

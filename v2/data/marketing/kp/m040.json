@@ -14,25 +14,36 @@
     "en": "Co-Branding Strategy"
   },
   "body": {
-    "zh": "Co-Branding（コ・ブランディング·联合品牌）是 2 个或以上 brand 联合提供产品的战略·brand_equity 学派的特定研究领域。<br><br>4 种 co-branding 类型：<br><br>① Ingredient Co-Branding（成分品牌）——一个 brand 的成分嵌入另一 brand 的产品<br>例：「Intel Inside」嵌入 PC·「Gore-Tex」嵌入服装·「NutraSweet」嵌入饮料<br><br>② Same-Company Co-Branding（同公司 co-branding）——同一企业的 2 个 brand 联合<br>例：Microsoft Office 365（Word + Excel + PowerPoint）<br><br>③ Joint-Venture Co-Branding（合资 co-branding）——2 家公司合作创立联合产品<br>例：Sony Ericsson 手机·Beats by Dr. Dre × Apple<br><br>④ Multiple-Sponsor Co-Branding（多 sponsor co-branding）——3 个或更多 brand 联合<br>例：Star Alliance 航空联盟（25+ 家航空公司）<br><br>co-branding 优势：<br>① 借力——双方 brand equity 互补·扩大消费者吸引<br>② 降低风险——分担投资成本·分散失败风险<br>③ 进入新 segment——通过另一 brand 触达新客户群<br>④ 提升 perceived quality——多 brand endorsement 增强信任<br><br>co-branding 风险：<br>① brand 不匹配 dilution<br>② 一方 brand 危机连累另一方（如 Tiger Woods 丑闻影响 Nike·Gillette）<br>③ 控制权争议·决策慢<br>④ 联合 brand 失败时 finger-pointing<br><br>成功案例：<br>- BMW × Louis Vuitton（设计旅行箱）<br>- Apple × Hermès（Apple Watch Hermès）<br>- Doritos × Taco Bell（Doritos Locos Tacos·销售 1 亿+）<br><br>失败案例：<br>- Cadillac × American Airlines（高端不匹配）<br>- 不知名 brand × 知名 brand（弱方借力·强方掉价）",
-    "ja": "Co-Branding（コ・ブランディング·联合ブランド）は 2 つ以上のブランドが連合して製品を提供する戦略·ブランド・エクイティ学派の特定研究領域。<br><br>4 種の co-branding：<br>① Ingredient Co-Branding（成分ブランド）·1 ブランドの成分が他ブランド製品に嵌入<br>例：「Intel Inside」PC 嵌入·「Gore-Tex」衣料嵌入·「NutraSweet」飲料嵌入<br><br>② Same-Company Co-Branding（同社 co-branding）·同企業の 2 ブランド連合<br>例：Microsoft Office 365（Word + Excel + PowerPoint）<br><br>③ Joint-Venture Co-Branding（合弁）·2 社協力で連合製品創立<br>例：Sony Ericsson スマホ·Beats by Dr. Dre × Apple<br><br>④ Multiple-Sponsor Co-Branding·3 つ以上連合<br>例：Star Alliance 航空連盟（25 社以上）<br><br>優位：① 借力·双方ブランド・エクイティ補完 ② リスク低減 ③ 新セグメント参入 ④ knapsack quality 向上<br><br>リスク：① ブランド不適合 dilution ② 一方の危機が他方を巻き込む（Tiger Woods スキャンダルが Nike·Gillette に影響）③ 制御権争議·意思決定遅 ④ 失敗時の責任なすりつけ<br><br>成功事例：BMW × Louis Vuitton（旅行ケース）·Apple × Hermès（Apple Watch）·Doritos × Taco Bell（1 億超売上）<br><br>失敗事例：Cadillac × American Airlines（高端不適合）·無名 × 有名（弱い側借力·強い側格下げ）"
+    "zh": {
+      "format": "narrative",
+      "prose": "Co-Branding（コ・ブランディング·联合品牌）是 2 个或以上 brand 联合提供产品的战略·brand_equity 学派的特定研究领域。<br><br>4 种 co-branding 类型：<br><br>① Ingredient Co-Branding（成分品牌）——一个 brand 的成分嵌入另一 brand 的产品<br>例：「Intel Inside」嵌入 PC·「Gore-Tex」嵌入服装·「NutraSweet」嵌入饮料<br><br>② Same-Company Co-Branding（同公司 co-branding）——同一企业的 2 个 brand 联合<br>例：Microsoft Office 365（Word + Excel + PowerPoint）<br><br>③ Joint-Venture Co-Branding（合资 co-branding）——2 家公司合作创立联合产品<br>例：Sony Ericsson 手机·Beats by Dr. Dre × Apple<br><br>④ Multiple-Sponsor Co-Branding（多 sponsor co-branding）——3 个或更多 brand 联合<br>例：Star Alliance 航空联盟（25+ 家航空公司）<br><br>co-branding 优势：<br>① 借力——双方 brand equity 互补·扩大消费者吸引<br>② 降低风险——分担投资成本·分散失败风险<br>③ 进入新 segment——通过另一 brand 触达新客户群<br>④ 提升 perceived quality——多 brand endorsement 增强信任<br><br>co-branding 风险：<br>① brand 不匹配 dilution<br>② 一方 brand 危机连累另一方（如 Tiger Woods 丑闻影响 Nike·Gillette）<br>③ 控制权争议·决策慢<br>④ 联合 brand 失败时 finger-pointing<br><br>成功案例：<br>- BMW × Louis Vuitton（设计旅行箱）<br>- Apple × Hermès（Apple Watch Hermès）<br>- Doritos × Taco Bell（Doritos Locos Tacos·销售 1 亿+）<br><br>失败案例：<br>- Cadillac × American Airlines（高端不匹配）<br>- 不知名 brand × 知名 brand（弱方借力·强方掉价）"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Co-Branding（コ・ブランディング·联合ブランド）は 2 つ以上のブランドが連合して製品を提供する戦略·ブランド・エクイティ学派の特定研究領域。<br><br>4 種の co-branding：<br>① Ingredient Co-Branding（成分ブランド）·1 ブランドの成分が他ブランド製品に嵌入<br>例：「Intel Inside」PC 嵌入·「Gore-Tex」衣料嵌入·「NutraSweet」飲料嵌入<br><br>② Same-Company Co-Branding（同社 co-branding）·同企業の 2 ブランド連合<br>例：Microsoft Office 365（Word + Excel + PowerPoint）<br><br>③ Joint-Venture Co-Branding（合弁）·2 社協力で連合製品創立<br>例：Sony Ericsson スマホ·Beats by Dr. Dre × Apple<br><br>④ Multiple-Sponsor Co-Branding·3 つ以上連合<br>例：Star Alliance 航空連盟（25 社以上）<br><br>優位：① 借力·双方ブランド・エクイティ補完 ② リスク低減 ③ 新セグメント参入 ④ knapsack quality 向上<br><br>リスク：① ブランド不適合 dilution ② 一方の危機が他方を巻き込む（Tiger Woods スキャンダルが Nike·Gillette に影響）③ 制御権争議·意思決定遅 ④ 失敗時の責任なすりつけ<br><br>成功事例：BMW × Louis Vuitton（旅行ケース）·Apple × Hermès（Apple Watch）·Doritos × Taco Bell（1 億超売上）<br><br>失敗事例：Cadillac × American Airlines（高端不適合）·無名 × 有名（弱い側借力·強い側格下げ）"
+    }
   },
   "tags": [
     "co-branding",
     "Intel Inside",
     "ingredient brand"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "brand 战略的合作模式·brand 借力的战略选项",
-      "限": "成功率约 50%·依赖 fit 评估",
-      "例": "Intel Inside 是教科书 ingredient co-branding·BMW × LV 是高端联合",
-      "应": "brand 战略题·brand portfolio 题"
+      "meaning": "brand 战略的合作模式·brand 借力的战略选项",
+      "limit": "成功率约 50%·依赖 fit 评估",
+      "example": "Intel Inside 是教科书 ingredient co-branding·BMW × LV 是高端联合",
+      "response": "brand 战略题·brand portfolio 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "成功率約 50%·fit 評価依存",
-      "例": "Intel Inside は教科書 ingredient co-branding·BMW × LV は高端連合"
+      "meaning": "",
+      "limit": "成功率約 50%·fit 評価依存",
+      "example": "Intel Inside は教科書 ingredient co-branding·BMW × LV は高端連合",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:52:05.840Z",

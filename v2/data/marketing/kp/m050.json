@@ -16,8 +16,14 @@
     "en": "Private Brand vs National Brand"
   },
   "body": {
-    "zh": "プライベート・ブランド（PB·Private Brand） vs ナショナル・ブランド（NB·National Brand）是 channel 学派的核心概念·反映流通业 brand 战略的革命。<br><br>NB（ナショナル・ブランド）——厂家自己的 brand<br>例：花王 Attack·味の素·コカ・コーラ·P&G Tide<br>特征：① 厂家投资 marketing ② 全国流通 ③ 高 brand awareness ④ 价格高<br><br>PB（プライベート・ブランド）——流通业（小売店）的 brand<br>例：① セブンプレミアム（Seven Premium·Seven-Eleven）② トップバリュ（Top Valu·AEON）③ 無印良品（西友 → 独立）④ Costco Kirkland Signature·Walmart Great Value<br><br>PB 兴起的 4 大原因（1990 年代后日本）：<br>① 大手小売的 buying power——AEON·Seven 等达到全国规模·能与 NB 厂家议价<br>② 消费者价格敏感——经济低迷期 PB「低价高品质」吸引<br>③ SPA 模式启发——UNIQLO·MUJI 证明小売可以做 brand<br>④ POS 数据掌握——大手小売掌握销售数据·能精准开发 PB<br><br>PB 的 3 类：<br>① Generic PB（一般 PB）——价格 < NB 的 50-70%·基础品质<br>② Premium PB（高级 PB）——价格接近 NB·品质等同或高·如 Seven Premium Gold<br>③ Niche PB——细分市场（有机·无添加·过敏免）<br><br>对厂家的影响（Pro Plus 第 7 章「パワー关系の崩壊」）：<br>① 厂家议价权下降<br>② NB 利润压缩<br>③ 厂家被迫为 PB 做 OEM（贴牌生产）·进退两难<br>④ 厂家必须强化 NB 差异化或转 D2C<br><br>跨学派关系：与 brand_equity 学派交叉——PB 挑战「brand 必须是 producer 的」假设·零售商也能建 brand。",
-    "ja": "プライベート・ブランド（PB） vs ナショナル・ブランド（NB）はチャネル学派核心概念·流通業ブランド戦略の革命を反映。<br><br>NB·メーカー自身のブランド·例：花王 Attack·味の素·コカ・コーラ·P&G Tide<br>特徴：① メーカーがマーケティング投資 ② 全国流通 ③ 高ブランド認知 ④ 高価<br><br>PB·流通業（小売店）のブランド·例：① セブンプレミアム ② トップバリュ ③ 無印良品 ④ Costco Kirkland·Walmart Great Value<br><br>PB 台頭 4 大原因（1990 年代以降日本）：① 大手小売の buying power ② 消費者の価格敏感 ③ SPA モデルの啓発 ④ POS データ掌握<br><br>PB 3 類：① Generic PB ② Premium PB（Seven Premium Gold）③ Niche PB（オーガニック·無添加）<br><br>メーカーへの影響（Pro Plus 第 7 章「パワー関係の崩壊」）：① 交渉権低下 ② NB 利益圧縮 ③ PB OEM 強要·進退両難 ④ NB 差別化または D2C 転換必要<br><br>他派との関係：ブランド・エクイティ学派と交差——PB が「ブランドは producer のもの」前提を覆す·小売もブランド構築可能。"
+    "zh": {
+      "format": "narrative",
+      "prose": "プライベート・ブランド（PB·Private Brand） vs ナショナル・ブランド（NB·National Brand）是 channel 学派的核心概念·反映流通业 brand 战略的革命。<br><br>NB（ナショナル・ブランド）——厂家自己的 brand<br>例：花王 Attack·味の素·コカ・コーラ·P&G Tide<br>特征：① 厂家投资 marketing ② 全国流通 ③ 高 brand awareness ④ 价格高<br><br>PB（プライベート・ブランド）——流通业（小売店）的 brand<br>例：① セブンプレミアム（Seven Premium·Seven-Eleven）② トップバリュ（Top Valu·AEON）③ 無印良品（西友 → 独立）④ Costco Kirkland Signature·Walmart Great Value<br><br>PB 兴起的 4 大原因（1990 年代后日本）：<br>① 大手小売的 buying power——AEON·Seven 等达到全国规模·能与 NB 厂家议价<br>② 消费者价格敏感——经济低迷期 PB「低价高品质」吸引<br>③ SPA 模式启发——UNIQLO·MUJI 证明小売可以做 brand<br>④ POS 数据掌握——大手小売掌握销售数据·能精准开发 PB<br><br>PB 的 3 类：<br>① Generic PB（一般 PB）——价格 < NB 的 50-70%·基础品质<br>② Premium PB（高级 PB）——价格接近 NB·品质等同或高·如 Seven Premium Gold<br>③ Niche PB——细分市场（有机·无添加·过敏免）<br><br>对厂家的影响（Pro Plus 第 7 章「パワー关系の崩壊」）：<br>① 厂家议价权下降<br>② NB 利润压缩<br>③ 厂家被迫为 PB 做 OEM（贴牌生产）·进退两难<br>④ 厂家必须强化 NB 差异化或转 D2C<br><br>跨学派关系：与 brand_equity 学派交叉——PB 挑战「brand 必须是 producer 的」假设·零售商也能建 brand。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "プライベート・ブランド（PB） vs ナショナル・ブランド（NB）はチャネル学派核心概念·流通業ブランド戦略の革命を反映。<br><br>NB·メーカー自身のブランド·例：花王 Attack·味の素·コカ・コーラ·P&G Tide<br>特徴：① メーカーがマーケティング投資 ② 全国流通 ③ 高ブランド認知 ④ 高価<br><br>PB·流通業（小売店）のブランド·例：① セブンプレミアム ② トップバリュ ③ 無印良品 ④ Costco Kirkland·Walmart Great Value<br><br>PB 台頭 4 大原因（1990 年代以降日本）：① 大手小売の buying power ② 消費者の価格敏感 ③ SPA モデルの啓発 ④ POS データ掌握<br><br>PB 3 類：① Generic PB ② Premium PB（Seven Premium Gold）③ Niche PB（オーガニック·無添加）<br><br>メーカーへの影響（Pro Plus 第 7 章「パワー関係の崩壊」）：① 交渉権低下 ② NB 利益圧縮 ③ PB OEM 強要·進退両難 ④ NB 差別化または D2C 転換必要<br><br>他派との関係：ブランド・エクイティ学派と交差——PB が「ブランドは producer のもの」前提を覆す·小売もブランド構築可能。"
+    }
   },
   "tags": [
     "PB",
@@ -25,17 +31,22 @@
     "Seven Premium",
     "Top Valu"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "流通业 brand 战略革命·channel power 转移的标志",
-      "限": "PB 品质参差·brand equity 仍弱于 NB·跨文化适用",
-      "例": "Seven Premium·トップバリュ·Costco Kirkland 是教科书",
-      "应": "Pro Plus 7 章·channel 题·brand 题"
+      "meaning": "流通业 brand 战略革命·channel power 转移的标志",
+      "limit": "PB 品质参差·brand equity 仍弱于 NB·跨文化适用",
+      "example": "Seven Premium·トップバリュ·Costco Kirkland 是教科书",
+      "response": "Pro Plus 7 章·channel 题·brand 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "PB 品質参差·brand equity が NB 弱·異文化適用",
-      "例": "セブンプレミアム·トップバリュ·Kirkland は教科書"
+      "meaning": "",
+      "limit": "PB 品質参差·brand equity が NB 弱·異文化適用",
+      "example": "セブンプレミアム·トップバリュ·Kirkland は教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:03:48.177Z",

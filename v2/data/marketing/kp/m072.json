@@ -16,25 +16,36 @@
     "en": "Co-Creation & DART Framework"
   },
   "body": {
-    "zh": "Co-Creation（价值共创）是 SDL 学派的核心概念·主张价值由企业和顾客共同创造·而非企业单方提供。Prahalad & Ramaswamy 2004 年『The Future of Competition』也独立推动这一概念。<br><br>核心命题：<br>- 传统：企业 → 设计 → 生产 → 销售 → 顾客（价值由企业决定）<br>- Co-Creation：企业 + 顾客 → 共同设计 → 共同生产 → 共同体验（价值由双方创造）<br><br>4 个 co-creation 模式（Prahalad-Ramaswamy DART 框架）：<br>① Dialogue（对话）——企业与顾客的双向沟通<br>② Access（access）——顾客 access 企业资源·参与价值创造<br>③ Risk（风险共担）——双方共担风险<br>④ Transparency（透明）——企业向顾客透明信息·让顾客做 informed choice<br><br>典型案例：<br>① LEGO Ideas——粉丝设计·LEGO 生产·获 1% 销售分成<br>② Wikipedia——用户共同编辑<br>③ Airbnb——host 共同提供住宿服务<br>④ Tesla 软件 OTA 升级——根据用户反馈持续 evolve<br>⑤ 无印良品「生活良品研究所」——顾客提建议·MUJI 开发<br><br>co-creation 的 4 大优势：<br>① 顾客真正想要的产品（reduce 失败率）<br>② 顾客成为 advocate（增 NPS）<br>③ 创新加速（多元 input）<br>④ 顾客忠诚度（参与感）<br><br>4 大挑战：<br>① IP 归属<br>② 决策慢（需多方共识）<br>③ 顾客参与质量参差<br>④ 不是所有产品适用（如药品·食品安全相关）<br><br>跨学派关系：与 SDL FP6（value-in-use）和 FP10（institutional arrangements）紧密·与 CCT 学派的「消费者意味共创」一致·与 relationship 学派的 MAC（和田）共鸣。",
-    "ja": "Co-Creation（価値共創）は SDL 学派の核心概念·価値は企業と顧客が共同創造·企業単独提供ではない。Prahalad & Ramaswamy 2004 年『The Future of Competition』も独立に推進。<br><br>核心命題：従来は企業→設計→生産→販売→顧客·co-creation は企業+顧客→共同設計→共同生産→共同体験<br><br>4 つの co-creation 様式（Prahalad-Ramaswamy DART フレーム）：① Dialogue ② Access ③ Risk ④ Transparency<br><br>典型事例：① LEGO Ideas ② Wikipedia ③ Airbnb ④ Tesla 软件 OTA ⑤ 無印良品「生活良品研究所」<br><br>4 大優位：① 顧客が本当に欲しい製品 ② Advocate 化 ③ イノベーション加速 ④ ロイヤルティ向上<br><br>4 大挑戦：① IP 帰属 ② 意思決定遅 ③ 顧客参加品質参差 ④ 全製品適用不可<br><br>他派との関係：SDL FP6·FP10 と密接·CCT「消費者意味共創」一致·relationship 学派 MAC（和田）と共鳴。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Co-Creation（价值共创）是 SDL 学派的核心概念·主张价值由企业和顾客共同创造·而非企业单方提供。Prahalad & Ramaswamy 2004 年『The Future of Competition』也独立推动这一概念。<br><br>核心命题：<br>- 传统：企业 → 设计 → 生产 → 销售 → 顾客（价值由企业决定）<br>- Co-Creation：企业 + 顾客 → 共同设计 → 共同生产 → 共同体验（价值由双方创造）<br><br>4 个 co-creation 模式（Prahalad-Ramaswamy DART 框架）：<br>① Dialogue（对话）——企业与顾客的双向沟通<br>② Access（access）——顾客 access 企业资源·参与价值创造<br>③ Risk（风险共担）——双方共担风险<br>④ Transparency（透明）——企业向顾客透明信息·让顾客做 informed choice<br><br>典型案例：<br>① LEGO Ideas——粉丝设计·LEGO 生产·获 1% 销售分成<br>② Wikipedia——用户共同编辑<br>③ Airbnb——host 共同提供住宿服务<br>④ Tesla 软件 OTA 升级——根据用户反馈持续 evolve<br>⑤ 无印良品「生活良品研究所」——顾客提建议·MUJI 开发<br><br>co-creation 的 4 大优势：<br>① 顾客真正想要的产品（reduce 失败率）<br>② 顾客成为 advocate（增 NPS）<br>③ 创新加速（多元 input）<br>④ 顾客忠诚度（参与感）<br><br>4 大挑战：<br>① IP 归属<br>② 决策慢（需多方共识）<br>③ 顾客参与质量参差<br>④ 不是所有产品适用（如药品·食品安全相关）<br><br>跨学派关系：与 SDL FP6（value-in-use）和 FP10（institutional arrangements）紧密·与 CCT 学派的「消费者意味共创」一致·与 relationship 学派的 MAC（和田）共鸣。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Co-Creation（価値共創）は SDL 学派の核心概念·価値は企業と顧客が共同創造·企業単独提供ではない。Prahalad & Ramaswamy 2004 年『The Future of Competition』も独立に推進。<br><br>核心命題：従来は企業→設計→生産→販売→顧客·co-creation は企業+顧客→共同設計→共同生産→共同体験<br><br>4 つの co-creation 様式（Prahalad-Ramaswamy DART フレーム）：① Dialogue ② Access ③ Risk ④ Transparency<br><br>典型事例：① LEGO Ideas ② Wikipedia ③ Airbnb ④ Tesla 软件 OTA ⑤ 無印良品「生活良品研究所」<br><br>4 大優位：① 顧客が本当に欲しい製品 ② Advocate 化 ③ イノベーション加速 ④ ロイヤルティ向上<br><br>4 大挑戦：① IP 帰属 ② 意思決定遅 ③ 顧客参加品質参差 ④ 全製品適用不可<br><br>他派との関係：SDL FP6·FP10 と密接·CCT「消費者意味共創」一致·relationship 学派 MAC（和田）と共鳴。"
+    }
   },
   "tags": [
     "co-creation",
     "DART",
     "LEGO Ideas"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "SDL 学派最实务可操作的概念·co-creation 是新 marketing",
-      "限": "IP·决策·适用范围有限",
-      "例": "LEGO Ideas·MUJI 生活良品研究所是教科书",
-      "应": "SDL·relationship 题"
+      "meaning": "SDL 学派最实务可操作的概念·co-creation 是新 marketing",
+      "limit": "IP·决策·适用范围有限",
+      "example": "LEGO Ideas·MUJI 生活良品研究所是教科书",
+      "response": "SDL·relationship 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "IP·意思決定·適用範囲限定",
-      "例": "LEGO Ideas·MUJI 生活良品研究所は教科書"
+      "meaning": "",
+      "limit": "IP·意思決定·適用範囲限定",
+      "example": "LEGO Ideas·MUJI 生活良品研究所は教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:13:58.668Z",

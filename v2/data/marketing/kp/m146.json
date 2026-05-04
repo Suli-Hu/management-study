@@ -15,25 +15,36 @@
     "en": "Conjoint Analysis"
   },
   "body": {
-    "zh": "Conjoint Analysis（联合分析）是 marketing research 的定量经典方法·Green & Rao 1971 提出·测量消费者对多个产品属性的相对重要性。<br><br>核心命题：消费者不是单独评价属性·而是整体评价 product bundle。Conjoint 倒推每个属性的「权重 / utility」。<br><br>5 步骤：① 选择属性·② 选择 levels·③ 设计 product profiles·④ 收集消费者偏好（rate / rank / choose）·⑤ 估算 utility<br><br>典型例：iPhone 选择属性 = 价格（$799 / $999 / $1199）+ 屏幕大小（6.1 / 6.7 inch）+ 颜色（黑·白·蓝）+ 容量（128 / 256 / 512 GB）。让消费者排序 8-16 个 profiles·算出每个属性 importance + 每个 level 的 utility。<br><br>marketing 应用：<br>① 定价决策——多少 incremental price 顾客愿付<br>② 产品设计——哪些 features 优先开发<br>③ 市场细分——不同 segment 的属性偏好<br>④ 新品 launch——预测市场份额<br>⑤ brand 选择模型——消费者在多 brand 间的选择概率<br><br>类型：① Traditional Conjoint ② Choice-Based Conjoint（CBC）③ Adaptive Conjoint Analysis（ACA）④ Hierarchical Bayes Conjoint<br><br>典型应用案例：① 汽车价格 + feature 优化 ② 旅游 package 设计 ③ SaaS pricing tiers ④ 食品 / 化妆品 product line<br><br>跨学派关系：与 consumer_behavior（Bettman 信息处理）·阿部誠 数理 marketing 一致·东大数理派必学。",
-    "ja": "Conjoint Analysis（コンジョイント分析）はマーケティング・リサーチの量的古典手法·Green & Rao 1971 提唱·消費者の多属性相対重要度を測定。<br><br>核心命題：消費者は単属性評価でなく·製品 bundle 全体評価·conjoint で各属性「重み / utility」を逆算。<br><br>5 段階：① 属性選択 ② levels 選択 ③ product profiles 設計 ④ 消費者選好収集（rate / rank / choose）⑤ utility 推定<br><br>典型例：iPhone 属性 = 価格（$799 / $999 / $1199）+ 画面（6.1 / 6.7 inch）+ 色（黒·白·青）+ 容量（128 / 256 / 512 GB）·8-16 profiles 順位·属性 importance + level utility 算出。<br><br>マーケティング応用：① 価格意思決定 ② 製品設計 ③ 市場細分化 ④ 新品 launch ⑤ ブランド選択モデル<br><br>類型：① Traditional ② Choice-Based（CBC）③ Adaptive（ACA）④ Hierarchical Bayes<br><br>典型応用：① 自動車価格 + feature 最適化 ② 旅行 package 設計 ③ SaaS pricing tiers ④ 食品 / 化粧品 product line<br><br>他派との関係：consumer_behavior（Bettman 情報処理）·阿部誠 数理マーケティング一致·東大数理派必学。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Conjoint Analysis（联合分析）是 marketing research 的定量经典方法·Green & Rao 1971 提出·测量消费者对多个产品属性的相对重要性。<br><br>核心命题：消费者不是单独评价属性·而是整体评价 product bundle。Conjoint 倒推每个属性的「权重 / utility」。<br><br>5 步骤：① 选择属性·② 选择 levels·③ 设计 product profiles·④ 收集消费者偏好（rate / rank / choose）·⑤ 估算 utility<br><br>典型例：iPhone 选择属性 = 价格（$799 / $999 / $1199）+ 屏幕大小（6.1 / 6.7 inch）+ 颜色（黑·白·蓝）+ 容量（128 / 256 / 512 GB）。让消费者排序 8-16 个 profiles·算出每个属性 importance + 每个 level 的 utility。<br><br>marketing 应用：<br>① 定价决策——多少 incremental price 顾客愿付<br>② 产品设计——哪些 features 优先开发<br>③ 市场细分——不同 segment 的属性偏好<br>④ 新品 launch——预测市场份额<br>⑤ brand 选择模型——消费者在多 brand 间的选择概率<br><br>类型：① Traditional Conjoint ② Choice-Based Conjoint（CBC）③ Adaptive Conjoint Analysis（ACA）④ Hierarchical Bayes Conjoint<br><br>典型应用案例：① 汽车价格 + feature 优化 ② 旅游 package 设计 ③ SaaS pricing tiers ④ 食品 / 化妆品 product line<br><br>跨学派关系：与 consumer_behavior（Bettman 信息处理）·阿部誠 数理 marketing 一致·东大数理派必学。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Conjoint Analysis（コンジョイント分析）はマーケティング・リサーチの量的古典手法·Green & Rao 1971 提唱·消費者の多属性相対重要度を測定。<br><br>核心命題：消費者は単属性評価でなく·製品 bundle 全体評価·conjoint で各属性「重み / utility」を逆算。<br><br>5 段階：① 属性選択 ② levels 選択 ③ product profiles 設計 ④ 消費者選好収集（rate / rank / choose）⑤ utility 推定<br><br>典型例：iPhone 属性 = 価格（$799 / $999 / $1199）+ 画面（6.1 / 6.7 inch）+ 色（黒·白·青）+ 容量（128 / 256 / 512 GB）·8-16 profiles 順位·属性 importance + level utility 算出。<br><br>マーケティング応用：① 価格意思決定 ② 製品設計 ③ 市場細分化 ④ 新品 launch ⑤ ブランド選択モデル<br><br>類型：① Traditional ② Choice-Based（CBC）③ Adaptive（ACA）④ Hierarchical Bayes<br><br>典型応用：① 自動車価格 + feature 最適化 ② 旅行 package 設計 ③ SaaS pricing tiers ④ 食品 / 化粧品 product line<br><br>他派との関係：consumer_behavior（Bettman 情報処理）·阿部誠 数理マーケティング一致·東大数理派必学。"
+    }
   },
   "tags": [
     "conjoint",
     "Green-Rao",
     "CBC"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "marketing research 的核心数量方法·定价 / 产品设计依据",
-      "限": "假设 utility 加和·实际复杂·样本量大",
-      "例": "汽车·SaaS·旅游 package 是教科书",
-      "应": "东大数理派必学·Kotler 5 章"
+      "meaning": "marketing research 的核心数量方法·定价 / 产品设计依据",
+      "limit": "假设 utility 加和·实际复杂·样本量大",
+      "example": "汽车·SaaS·旅游 package 是教科书",
+      "response": "东大数理派必学·Kotler 5 章",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "utility 加和仮定·実際複雑·サンプル量大",
-      "例": "自動車·SaaS·旅行 package 教科書"
+      "meaning": "",
+      "limit": "utility 加和仮定·実際複雑·サンプル量大",
+      "example": "自動車·SaaS·旅行 package 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:41:06.756Z",

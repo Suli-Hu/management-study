@@ -18,25 +18,36 @@
     "en": "Brand Community"
   },
   "body": {
-    "zh": "Brand Community（品牌共同体）是 Muniz & O'Guinn 在 2001 年 <em>Journal of Consumer Research</em>「Brand Community」提出·CCT 学派的核心概念。<br><br>定义：「<em>A specialized, non-geographically bound community based on a structured set of social relationships among admirers of a brand.</em>」<br><br>3 大特征：① Consciousness of Kind（共同体意识）——「我们」感<br>② Shared Rituals & Traditions（共有仪式）——年度活动·特殊语言·gear<br>③ Sense of Moral Responsibility（道义责任）——共同体内部互助<br><br>典型 brand community：<br>① Harley-Davidson Owners Group（HOG）——百万级·骑车 rally·brand 活动<br>② Apple users——devotion·apple stores·user groups<br>③ Tesla owners——自录 testimonial·road-trip groups·OTA 升级共享<br>④ 無印良品「MUJI passport」——会员 + 价值观共有<br>⑤ Star Wars / Marvel fans——comic con·cosplay·fan fiction<br><br>marketing 战略：<br>① foster community——主办活动·platform·content<br>② empower super-fans——给特别 access·inside info<br>③ UGC 鼓励——粉丝创造内容·brand 放大<br>④ collaboration——共同设计 product·co-creation<br><br>community-driven brand 价值：<br>① brand evangelism（free marketing）<br>② high CLV·retention<br>③ 抗 brand crisis（社区会保卫）<br>④ 创新 input·product feedback<br><br>跨学派关系：CCT 4 大研究领域之一·与 brand_equity 的 brand resonance（CBBE 顶层）·relationship 的 advocacy 一致·与 social media·digital marketing 一致。",
-    "ja": "Brand Community（ブランド・コミュニティ）は Muniz & O'Guinn 2001 年 <em>Journal of Consumer Research</em>「Brand Community」提唱·CCT 学派の核心概念。<br><br>定義：「<em>A specialized, non-geographically bound community based on a structured set of social relationships among admirers of a brand.</em>」<br><br>3 大特徴：① Consciousness of Kind ② Shared Rituals & Traditions ③ Sense of Moral Responsibility<br><br>典型 brand community：① Harley-Davidson Owners Group（HOG）② Apple users ③ Tesla owners ④ 無印良品「MUJI passport」⑤ Star Wars / Marvel fans<br><br>マーケティング戦略：① foster community ② empower super-fans ③ UGC 奨励 ④ collaboration（共同設計·co-creation）<br><br>community-driven brand 価値：① brand evangelism（free marketing）② 高 CLV·retention ③ 抗 brand crisis ④ イノベーション input<br><br>他派との関係：CCT 4 大研究領域の一つ·brand_equity の brand resonance（CBBE 頂層）·relationship の advocacy と一致·SNS·digital marketing と一致。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Brand Community（品牌共同体）是 Muniz & O'Guinn 在 2001 年 <em>Journal of Consumer Research</em>「Brand Community」提出·CCT 学派的核心概念。<br><br>定义：「<em>A specialized, non-geographically bound community based on a structured set of social relationships among admirers of a brand.</em>」<br><br>3 大特征：① Consciousness of Kind（共同体意识）——「我们」感<br>② Shared Rituals & Traditions（共有仪式）——年度活动·特殊语言·gear<br>③ Sense of Moral Responsibility（道义责任）——共同体内部互助<br><br>典型 brand community：<br>① Harley-Davidson Owners Group（HOG）——百万级·骑车 rally·brand 活动<br>② Apple users——devotion·apple stores·user groups<br>③ Tesla owners——自录 testimonial·road-trip groups·OTA 升级共享<br>④ 無印良品「MUJI passport」——会员 + 价值观共有<br>⑤ Star Wars / Marvel fans——comic con·cosplay·fan fiction<br><br>marketing 战略：<br>① foster community——主办活动·platform·content<br>② empower super-fans——给特别 access·inside info<br>③ UGC 鼓励——粉丝创造内容·brand 放大<br>④ collaboration——共同设计 product·co-creation<br><br>community-driven brand 价值：<br>① brand evangelism（free marketing）<br>② high CLV·retention<br>③ 抗 brand crisis（社区会保卫）<br>④ 创新 input·product feedback<br><br>跨学派关系：CCT 4 大研究领域之一·与 brand_equity 的 brand resonance（CBBE 顶层）·relationship 的 advocacy 一致·与 social media·digital marketing 一致。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Brand Community（ブランド・コミュニティ）は Muniz & O'Guinn 2001 年 <em>Journal of Consumer Research</em>「Brand Community」提唱·CCT 学派の核心概念。<br><br>定義：「<em>A specialized, non-geographically bound community based on a structured set of social relationships among admirers of a brand.</em>」<br><br>3 大特徴：① Consciousness of Kind ② Shared Rituals & Traditions ③ Sense of Moral Responsibility<br><br>典型 brand community：① Harley-Davidson Owners Group（HOG）② Apple users ③ Tesla owners ④ 無印良品「MUJI passport」⑤ Star Wars / Marvel fans<br><br>マーケティング戦略：① foster community ② empower super-fans ③ UGC 奨励 ④ collaboration（共同設計·co-creation）<br><br>community-driven brand 価値：① brand evangelism（free marketing）② 高 CLV·retention ③ 抗 brand crisis ④ イノベーション input<br><br>他派との関係：CCT 4 大研究領域の一つ·brand_equity の brand resonance（CBBE 頂層）·relationship の advocacy と一致·SNS·digital marketing と一致。"
+    }
   },
   "tags": [
     "brand community",
     "Muniz-OGuinn",
     "HOG"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "CCT 学派核心概念·消费者主体性的具体表现",
-      "限": "难规模化·难量化·依赖品牌特性",
-      "例": "Harley·Apple·Tesla·MUJI 是教科书",
-      "应": "CCT 题·brand 题·一橋·神戸命题"
+      "meaning": "CCT 学派核心概念·消费者主体性的具体表现",
+      "limit": "难规模化·难量化·依赖品牌特性",
+      "example": "Harley·Apple·Tesla·MUJI 是教科书",
+      "response": "CCT 题·brand 题·一橋·神戸命题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "規模化困難·数量化困難·ブランド特性依存",
-      "例": "Harley·Apple·Tesla·MUJI 教科書"
+      "meaning": "",
+      "limit": "規模化困難·数量化困難·ブランド特性依存",
+      "example": "Harley·Apple·Tesla·MUJI 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:41:12.093Z",

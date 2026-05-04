@@ -27,23 +27,17 @@ export const KP_TABLE = {
   name: 'kp',
   pk: ['id'],
   cols: [
-    // ===== 旧列（v0.8.0 Stage 5 才 drop）=====
     'id',
     'discipline',
     'year',
     'title_zh',
     'title_en',
     'title_ja',
-    'body_zh',
-    'body_ja',
     'tags_json',
-    'eval_content_zh_json',
-    'eval_content_ja_json',
-    'format',
     'created_at',
     'updated_at',
-    // ===== 新列（v0.8.0 Stage 1 加，双写过渡）=====
-    // 加入 cols 数组 → buildUpsertStmt 自动要求 row 含这些字段 → 强制双写
+    // v0.8.10 Stage 5：拆双轨后唯一真源（旧 body_zh / body_ja / format / eval_content_*_json
+    // 已由 migration 0022 物理 drop）
     'body_zh_json',           // structured KpBody JSON
     'body_ja_json',
     'evaluations_zh_json',    // structured KpEvaluations.zh JSON

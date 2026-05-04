@@ -15,25 +15,36 @@
     "en": "Market Segmentation Concept"
   },
   "body": {
-    "zh": "市场细分（Market Segmentation）是 marketing 战略的基础概念之一·由 Wendell Smith（1956）在 <em>Journal of Marketing</em> 发表的论文「Product Differentiation and Market Segmentation as Alternative Marketing Strategies」（Vol. 21(1), pp. 3-8）中首次系统化提出。<br><br>定义：把异质（heterogeneous）市场切成相对同质（homogeneous）的若干 segment 的过程。<br><br>核心假设：① 市场异质性——消费者的需求·偏好·行为不同 ② 资源有限性——企业不可能服务所有人 ③ 通过 segment 内同质化·企业能更精准满足需求·建立竞争优势。<br><br>Smith 1956 的贡献：把「市场细分」与「产品差别化」（product differentiation）作为两种替代战略对比——前者切分市场·后者强化产品独特性。这是后来 STP 框架的起点。<br><br>Kotler 系统化：1972 年起 Kotler 把 segmentation 整合进 STP 三步骤（细分→选定→定位）·成为 managerial 学派最核心的战略工具。",
-    "ja": "市場細分化（Market Segmentation）はマーケティング戦略の基礎概念の一つ·Wendell Smith（1956）が <em>Journal of Marketing</em>「Product Differentiation and Market Segmentation as Alternative Marketing Strategies」（Vol. 21(1), pp. 3-8）で初めて体系化した。<br><br>定義：異質的（heterogeneous）市場を相対的に同質的（homogeneous）な複数の segment に切り分けるプロセス。<br><br>核心前提：① 市場の異質性·消費者のニーズ·選好·行動が異なる ② 資源の有限性·企業はすべての人に対応できない ③ segment 内の同質化を通じ·企業はニーズをより精確に満たし·競争優位を築ける。<br><br>Smith 1956 の貢献：「市場細分化」と「製品差別化」（product differentiation）を2 つの代替戦略として対比——前者は市場を切り分け·後者は製品の独自性を強化。後の STP フレームの起点。<br><br>Kotler の体系化：1972 年以降 Kotler が segmentation を STP 三段階（細分化→選定→ポジショニング）に統合·マネジリアル学派の最核心戦略ツールとなる。"
+    "zh": {
+      "format": "narrative",
+      "prose": "市场细分（Market Segmentation）是 marketing 战略的基础概念之一·由 Wendell Smith（1956）在 <em>Journal of Marketing</em> 发表的论文「Product Differentiation and Market Segmentation as Alternative Marketing Strategies」（Vol. 21(1), pp. 3-8）中首次系统化提出。<br><br>定义：把异质（heterogeneous）市场切成相对同质（homogeneous）的若干 segment 的过程。<br><br>核心假设：① 市场异质性——消费者的需求·偏好·行为不同 ② 资源有限性——企业不可能服务所有人 ③ 通过 segment 内同质化·企业能更精准满足需求·建立竞争优势。<br><br>Smith 1956 的贡献：把「市场细分」与「产品差别化」（product differentiation）作为两种替代战略对比——前者切分市场·后者强化产品独特性。这是后来 STP 框架的起点。<br><br>Kotler 系统化：1972 年起 Kotler 把 segmentation 整合进 STP 三步骤（细分→选定→定位）·成为 managerial 学派最核心的战略工具。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "市場細分化（Market Segmentation）はマーケティング戦略の基礎概念の一つ·Wendell Smith（1956）が <em>Journal of Marketing</em>「Product Differentiation and Market Segmentation as Alternative Marketing Strategies」（Vol. 21(1), pp. 3-8）で初めて体系化した。<br><br>定義：異質的（heterogeneous）市場を相対的に同質的（homogeneous）な複数の segment に切り分けるプロセス。<br><br>核心前提：① 市場の異質性·消費者のニーズ·選好·行動が異なる ② 資源の有限性·企業はすべての人に対応できない ③ segment 内の同質化を通じ·企業はニーズをより精確に満たし·競争優位を築ける。<br><br>Smith 1956 の貢献：「市場細分化」と「製品差別化」（product differentiation）を2 つの代替戦略として対比——前者は市場を切り分け·後者は製品の独自性を強化。後の STP フレームの起点。<br><br>Kotler の体系化：1972 年以降 Kotler が segmentation を STP 三段階（細分化→選定→ポジショニング）に統合·マネジリアル学派の最核心戦略ツールとなる。"
+    }
   },
   "tags": [
     "STP",
     "Segmentation",
     "Smith"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "marketing 战略的起点·识别异质需求·实现集中竞争",
-      "限": "切分过细导致规模不经济·变量选择主观",
-      "例": "UNIQLO 用「需求基础细分」抓「基本款重视派」",
-      "应": "STP 第一步·所有 marketing 战略的起点"
+      "meaning": "marketing 战略的起点·识别异质需求·实现集中竞争",
+      "limit": "切分过细导致规模不经济·变量选择主观",
+      "example": "UNIQLO 用「需求基础细分」抓「基本款重视派」",
+      "response": "STP 第一步·所有 marketing 战略的起点",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "細分化過剰は規模の不経済·変数選択は主観的",
-      "例": "UNIQLO の「ニーズ基底細分化」で「ベーシックウェア需要層」を捕捉"
+      "meaning": "",
+      "limit": "細分化過剰は規模の不経済·変数選択は主観的",
+      "example": "UNIQLO の「ニーズ基底細分化」で「ベーシックウェア需要層」を捕捉",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:40:10.982Z",

@@ -16,25 +16,36 @@
     "en": "Point-of-Purchase Promotion"
   },
   "body": {
-    "zh": "POP（Point of Purchase·POP·店内促销）是消费者最后决定瞬间的 marketing 接触点·零售 marketing 的最后一公里。Kotler 16 章·IMC 实务。<br><br>核心命题：<br>研究表明70-80% 的购买决定在店内做出。POP 是 marketing 投资的最高 ROI 之一·因为最接近 conversion。<br><br>POP 7 大形式：<br>① Shelf Display（陈列）——位置·容量·visibility（eye level = buy level）<br>② End Cap（端架）——通道末端的高曝光位置<br>③ POP Display——独立 display·special pallet<br>④ Signage（标识）——价格·promotion·new<br>⑤ Sampling（试用）——食品·化妆品<br>⑥ In-Store Demo——电器·tech demo<br>⑦ Digital POP——digital signage·QR code·beacon<br><br>retail communication 5 大目的：<br>① Awareness——新品 / promotion<br>② Recall——提醒既知 brand<br>③ Persuasion——价格 / 价值说服<br>④ Trial——sampling·demo<br>⑤ Cross-Sell / Up-Sell——「You may also like」<br><br>marketing 实务：<br>① Trade Marketing——给 retailer 的 marketing 部门·谈判 shelf space·promotion·POP<br>② Category Management——按 category 整体优化（P&G「Shelf Help」project）<br>③ Visual Merchandising——专业 in-store 视觉设计<br><br>典型例：<br>- 超市 end cap：FMCG brand 竞争激烈·付费购买<br>- Costco：堆头大量陈列·dramatic visibility<br>- Apple Store：no POP signage·minimalist<br>- Sephora：sampling stations·tester<br>- 711：限定 POP·季节·旅行<br><br>跨学派关系：与 IMC mix·channel_retail·sales promotion（m060）一体。",
-    "ja": "POP（Point of Purchase·店内販促）は消費者最後決定瞬間のマーケティング接触点·小売マーケティングの最後一公里。Kotler 16 章·IMC 実務。<br><br>核心命題：研究で70-80% の購買決定が店内で行われる。POP は ROI 最高のマーケティング投資·conversion に最近接。<br><br>POP 7 大形式：① Shelf Display（eye level = buy level）② End Cap ③ POP Display ④ Signage ⑤ Sampling ⑥ In-Store Demo ⑦ Digital POP（QR·beacon）<br><br>retail communication 5 大目的：① Awareness ② Recall ③ Persuasion ④ Trial ⑤ Cross-Sell / Up-Sell<br><br>マーケティング実務：① Trade Marketing（retailer の marketing 部門に·shelf space·promotion·POP 交渉）② Category Management（category 全体最適化·P&G「Shelf Help」project）③ Visual Merchandising<br><br>典型例：① スーパー end cap（FMCG 競争激烈·有料購入）② Costco（堆頭大量陳列·dramatic visibility）③ Apple Store（no POP signage·minimalist）④ Sephora（sampling stations·tester）⑤ 711（限定 POP·季節·旅行）<br><br>他派との関係：IMC mix·channel_retail·sales promotion（m060）と一体。"
+    "zh": {
+      "format": "narrative",
+      "prose": "POP（Point of Purchase·POP·店内促销）是消费者最后决定瞬间的 marketing 接触点·零售 marketing 的最后一公里。Kotler 16 章·IMC 实务。<br><br>核心命题：<br>研究表明70-80% 的购买决定在店内做出。POP 是 marketing 投资的最高 ROI 之一·因为最接近 conversion。<br><br>POP 7 大形式：<br>① Shelf Display（陈列）——位置·容量·visibility（eye level = buy level）<br>② End Cap（端架）——通道末端的高曝光位置<br>③ POP Display——独立 display·special pallet<br>④ Signage（标识）——价格·promotion·new<br>⑤ Sampling（试用）——食品·化妆品<br>⑥ In-Store Demo——电器·tech demo<br>⑦ Digital POP——digital signage·QR code·beacon<br><br>retail communication 5 大目的：<br>① Awareness——新品 / promotion<br>② Recall——提醒既知 brand<br>③ Persuasion——价格 / 价值说服<br>④ Trial——sampling·demo<br>⑤ Cross-Sell / Up-Sell——「You may also like」<br><br>marketing 实务：<br>① Trade Marketing——给 retailer 的 marketing 部门·谈判 shelf space·promotion·POP<br>② Category Management——按 category 整体优化（P&G「Shelf Help」project）<br>③ Visual Merchandising——专业 in-store 视觉设计<br><br>典型例：<br>- 超市 end cap：FMCG brand 竞争激烈·付费购买<br>- Costco：堆头大量陈列·dramatic visibility<br>- Apple Store：no POP signage·minimalist<br>- Sephora：sampling stations·tester<br>- 711：限定 POP·季节·旅行<br><br>跨学派关系：与 IMC mix·channel_retail·sales promotion（m060）一体。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "POP（Point of Purchase·店内販促）は消費者最後決定瞬間のマーケティング接触点·小売マーケティングの最後一公里。Kotler 16 章·IMC 実務。<br><br>核心命題：研究で70-80% の購買決定が店内で行われる。POP は ROI 最高のマーケティング投資·conversion に最近接。<br><br>POP 7 大形式：① Shelf Display（eye level = buy level）② End Cap ③ POP Display ④ Signage ⑤ Sampling ⑥ In-Store Demo ⑦ Digital POP（QR·beacon）<br><br>retail communication 5 大目的：① Awareness ② Recall ③ Persuasion ④ Trial ⑤ Cross-Sell / Up-Sell<br><br>マーケティング実務：① Trade Marketing（retailer の marketing 部門に·shelf space·promotion·POP 交渉）② Category Management（category 全体最適化·P&G「Shelf Help」project）③ Visual Merchandising<br><br>典型例：① スーパー end cap（FMCG 競争激烈·有料購入）② Costco（堆頭大量陳列·dramatic visibility）③ Apple Store（no POP signage·minimalist）④ Sephora（sampling stations·tester）⑤ 711（限定 POP·季節·旅行）<br><br>他派との関係：IMC mix·channel_retail·sales promotion（m060）と一体。"
+    }
   },
   "tags": [
     "POP",
     "trade marketing",
     "category management"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "零售 marketing 的最后一公里·conversion 最高 ROI",
-      "限": "测量难·依赖 retailer 配合",
-      "例": "Costco·Sephora·711 是教科书",
-      "应": "Kotler 16 章·retail 题·IMC 题"
+      "meaning": "零售 marketing 的最后一公里·conversion 最高 ROI",
+      "limit": "测量难·依赖 retailer 配合",
+      "example": "Costco·Sephora·711 是教科书",
+      "response": "Kotler 16 章·retail 题·IMC 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "測定困難·retailer 協力依存",
-      "例": "Costco·Sephora·711 教科書"
+      "meaning": "",
+      "limit": "測定困難·retailer 協力依存",
+      "example": "Costco·Sephora·711 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T09:26:42.758Z",

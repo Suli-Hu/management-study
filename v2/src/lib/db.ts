@@ -56,10 +56,13 @@ export interface KpRow {
   title_zh: string;
   title_en: string | null;
   title_ja: string | null;
-  body_zh: string;
-  body_ja: string | null;
   tags_json: string;
-  format: string;
+  // v0.8.10 Stage 5: 旧 body_zh / body_ja / format / eval_content_*_json 已 drop。
+  body_zh_json: string;
+  body_ja_json: string | null;
+  evaluations_zh_json: string | null;
+  evaluations_ja_json: string | null;
+  body_format: string;
   created_at: string;
   updated_at: string;
 }

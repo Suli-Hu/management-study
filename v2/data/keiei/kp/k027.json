@@ -14,13 +14,18 @@
     "ja": "欲求リスト"
   },
   "body": {
-    "zh": "默里在《人格的探索》中列举了28种心因性需要（Psychogenic Needs），包括达成欲求（nAchievement）、亲和欲求（nAffiliation）、支配欲求（nDominance）、攻击欲求（nAggression）、自律欲求（nAutonomy）、养育欲求（nNurturance）、屈辱回避（nAbasement）、显示欲求（nExhibition）等。麦克莱兰后来在Murray基础上将其简化为成就-亲和-权力三大习得性动机，形成成就动机理论",
-    "ja": "——マレーは著書『パーソナリティの探究』において28種類の心因性欲求（Psychogenic Needs）を列挙した。達成欲求（nAchievement）・親和欲求（nAffiliation）・支配欲求（nDominance）・攻撃欲求（nAggression）・自律欲求（nAutonomy）・養育欲求（nNurturance）・屈辱回避（nAbasement）・顕示欲求（nExhibition）等を含む。マクレランドは後にマレーの体系を基盤として達成・親和・権力の三大習得性動機に簡素化し、達成動機理論を形成した"
+    "zh": {
+      "format": "narrative",
+      "prose": "默里在《人格的探索》中列举了28种心因性需要（Psychogenic Needs），包括达成欲求（nAchievement）、亲和欲求（nAffiliation）、支配欲求（nDominance）、攻击欲求（nAggression）、自律欲求（nAutonomy）、养育欲求（nNurturance）、屈辱回避（nAbasement）、显示欲求（nExhibition）等。麦克莱兰后来在Murray基础上将其简化为成就-亲和-权力三大习得性动机，形成成就动机理论"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "——マレーは著書『パーソナリティの探究』において28種類の心因性欲求（Psychogenic Needs）を列挙した。達成欲求（nAchievement）・親和欲求（nAffiliation）・支配欲求（nDominance）・攻撃欲求（nAggression）・自律欲求（nAutonomy）・養育欲求（nNurturance）・屈辱回避（nAbasement）・顕示欲求（nExhibition）等を含む。マクレランドは後にマレーの体系を基盤として達成・親和・権力の三大習得性動機に簡素化し、達成動機理論を形成した"
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "narrative",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

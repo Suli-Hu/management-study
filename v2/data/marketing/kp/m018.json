@@ -15,25 +15,36 @@
     "en": "Marketing 3.0"
   },
   "body": {
-    "zh": "Marketing 3.0（人间中心）是 Kotler·Kartajaya·Setiawan 2010 年同名书提出·把 marketing 推向哲学·价值观的层面。<br><br>核心特征：<br>① 视角：企业把消费者当「有 mind·heart·spirit 的整全人」<br>② 核心：价值观·使命感·社会贡献<br>③ 战略：value-driven marketing·CSR 整合·brand purpose<br>④ 背景：金融危机·全球化反思·气候变化·消费者觉醒<br><br>3i 模型：Brand Identity（品牌身份）+ Brand Integrity（品牌诚信）+ Brand Image（品牌形象）= 让消费者从「mind 信任 → heart 喜爱 → spirit 共鸣」。<br><br>典型例：① Patagonia「Don't buy this jacket」反消费主义广告 ② Body Shop 反对动物试验 ③ TOMS Shoes「One for One」（每卖一双捐一双）。<br><br>跨学派关系：与 social_marketing 学派的 CSR·BOP·sustainable marketing 哲学一致。与 CCT 学派对消费者主体性的承认有共通处。<br><br>批判：① 「漂绿」（greenwashing）问题·企业可能假装价值观 ② 短期利润 vs 长期价值观难平衡 ③ 在新兴市场可能是奢侈品。",
-    "ja": "マーケティング 3.0（人間中心）は Kotler·Kartajaya·Setiawan 2010 年同名書で提唱·マーケティングを哲学·価値観層へ推進。<br><br>核心特徴：<br>① 視点：企業は消費者を「mind·heart·spirit を持つ全人」と捉える<br>② 核心：価値観·使命感·社会貢献<br>③ 戦略：value-driven marketing·CSR 統合·brand purpose<br>④ 背景：金融危機·グローバリゼーション反省·気候変動·消費者覚醒<br><br>3i モデル：Brand Identity + Brand Integrity + Brand Image = 消費者を「mind 信頼 → heart 好感 → spirit 共鳴」へ。<br><br>典型例：① Patagonia「Don't buy this jacket」反消費主義広告 ② Body Shop 動物実験反対 ③ TOMS Shoes「One for One」。<br><br>他派との関係：social_marketing 学派の CSR·BOP·sustainable と一致。CCT 学派の消費者主体性承認と通底。<br><br>批判：① グリーンウォッシング問題·企業が価値観を装う ② 短期利益 vs 長期価値観の均衡難 ③ 新興市場では贅沢品の可能性。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Marketing 3.0（人间中心）是 Kotler·Kartajaya·Setiawan 2010 年同名书提出·把 marketing 推向哲学·价值观的层面。<br><br>核心特征：<br>① 视角：企业把消费者当「有 mind·heart·spirit 的整全人」<br>② 核心：价值观·使命感·社会贡献<br>③ 战略：value-driven marketing·CSR 整合·brand purpose<br>④ 背景：金融危机·全球化反思·气候变化·消费者觉醒<br><br>3i 模型：Brand Identity（品牌身份）+ Brand Integrity（品牌诚信）+ Brand Image（品牌形象）= 让消费者从「mind 信任 → heart 喜爱 → spirit 共鸣」。<br><br>典型例：① Patagonia「Don't buy this jacket」反消费主义广告 ② Body Shop 反对动物试验 ③ TOMS Shoes「One for One」（每卖一双捐一双）。<br><br>跨学派关系：与 social_marketing 学派的 CSR·BOP·sustainable marketing 哲学一致。与 CCT 学派对消费者主体性的承认有共通处。<br><br>批判：① 「漂绿」（greenwashing）问题·企业可能假装价值观 ② 短期利润 vs 长期价值观难平衡 ③ 在新兴市场可能是奢侈品。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "マーケティング 3.0（人間中心）は Kotler·Kartajaya·Setiawan 2010 年同名書で提唱·マーケティングを哲学·価値観層へ推進。<br><br>核心特徴：<br>① 視点：企業は消費者を「mind·heart·spirit を持つ全人」と捉える<br>② 核心：価値観·使命感·社会貢献<br>③ 戦略：value-driven marketing·CSR 統合·brand purpose<br>④ 背景：金融危機·グローバリゼーション反省·気候変動·消費者覚醒<br><br>3i モデル：Brand Identity + Brand Integrity + Brand Image = 消費者を「mind 信頼 → heart 好感 → spirit 共鳴」へ。<br><br>典型例：① Patagonia「Don't buy this jacket」反消費主義広告 ② Body Shop 動物実験反対 ③ TOMS Shoes「One for One」。<br><br>他派との関係：social_marketing 学派の CSR·BOP·sustainable と一致。CCT 学派の消費者主体性承認と通底。<br><br>批判：① グリーンウォッシング問題·企業が価値観を装う ② 短期利益 vs 長期価値観の均衡難 ③ 新興市場では贅沢品の可能性。"
+    }
   },
   "tags": [
     "Marketing 3.0",
     "human-centric",
     "CSR"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "marketing 进入价值观·哲学·社会层·与 CSR 整合",
-      "限": "漂绿风险·难平衡商业与价值观",
-      "例": "Patagonia·Body Shop·TOMS Shoes 是经典",
-      "应": "Pro Plus·social marketing 章"
+      "meaning": "marketing 进入价值观·哲学·社会层·与 CSR 整合",
+      "limit": "漂绿风险·难平衡商业与价值观",
+      "example": "Patagonia·Body Shop·TOMS Shoes 是经典",
+      "response": "Pro Plus·social marketing 章",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "グリーンウォッシング·商業と価値観均衡難",
-      "例": "Patagonia·Body Shop·TOMS Shoes が古典"
+      "meaning": "",
+      "limit": "グリーンウォッシング·商業と価値観均衡難",
+      "example": "Patagonia·Body Shop·TOMS Shoes が古典",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:51:26.884Z",

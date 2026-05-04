@@ -16,22 +16,98 @@
     "ja": "変革型リーダーシップ"
   },
   "body": {
-    "zh": "James MacGregor Burns（1978《Leadership》政治学语境首次区分）+ Bernard M. Bass（1985《Leadership and Performance Beyond Expectations》把概念扩展到商业领导并精致化）。变革型领导通过 4I 激发追随者超越自利追求集体更高目标。<br>【Bass 4I（核心维度）】<br>①理想化影响（Idealized Influence・Charisma）——以身作则成为道德榜样<br>②鼓舞人心的激励（Inspirational Motivation）——传达令人振奋的愿景<br>③智能激发（Intellectual Stimulation）——鼓励创新思维与质疑假设<br>④个别化关怀（Individualized Consideration）——关注每位成员的发展需求<br>【增强效应（Augmentation Effect · Bass 关键洞察）】<br>变革型与交易型不是二元对立，是互补光谱——交易型是基础（清晰的奖惩与绩效标准），变革型是加乘（超越自利的感召）。实务指南：先建交易型基础，再加变革型加乘。<br>【与组织变革的连接】<br>Kotter 8 步第 2-4 步（建推进团队·制定愿景·周知愿景）全靠 4I 中的 Idealized Influence + Inspirational Motivation；慶應 2021 直接出题「変革型 vs 取引型リーダーシップの有効性」组合题<br>【追随者状态】变革型产生 Commitment（承诺）——发自内心投入甚至超越个人利益；交易型产生 Compliance（服从）——按规则做事不超出契约",
-    "ja": "——バーンズ（1978『Leadership』政治学の文脈で初めて区分）+ バーナード・バス（1985『Leadership and Performance Beyond Expectations』ビジネス・リーダーシップに拡張し精緻化）。変革型リーダーシップは 4I を通じてフォロワーに自己利益を超越した集団的高次目標の追求を促す。<br>【バスの4I（中核次元）】<br>①理想化された影響力（Idealized Influence・カリスマ性）——自ら範を示し道徳的模範となる<br>②鼓舞的動機づけ（Inspirational Motivation）——人心を奮い立たせるビジョンを伝達する<br>③知的刺激（Intellectual Stimulation）——革新的思考と前提への疑問を奨励する<br>④個別的配慮（Individualized Consideration）——各メンバーの発達ニーズに注目する<br>【増強効果（Augmentation Effect・バスの重要な洞察）】<br>変革型と取引型は二元対立ではなく補完スペクトル——取引型は基礎（明確な報酬と業績基準）、変革型は加乗（自己利益を超越した感化）。実務指針：まず取引型の基礎を築き、その上に変革型を重ねる。<br>【組織変革との結合】<br>コッター8段階の第2〜4段階（推進チーム結成・ビジョン策定・ビジョン周知）は全て4I のうち Idealized Influence + Inspirational Motivation に依拠する；慶應大 2021 が「変革型 vs 取引型リーダーシップの有効性」を組合せで直接出題<br>【フォロワーの状態】変革型は コミットメント（Commitment）を生む——内発的な投入で個人利益を超越；取引型は 従順（Compliance）——契約の範囲内でルールに従う<br>◆意義——変革期のリーダーシップに実務的モデルを提供；コッター8段階と深く結合；MLQ 測定尺度により可測量的概念となった"
+    "zh": {
+      "format": "accordion",
+      "lead": "James MacGregor Burns（1978《Leadership》政治学语境首次区分）+ Bernard M. Bass（1985《Leadership and Performance Beyond Expectations》把概念扩展到商业领导并精致化）。变革型领导通过 4I 激发追随者超越自利追求集体更高目标。",
+      "groups": [
+        {
+          "title": "Bass 4I（核心维度）",
+          "items": [
+            {
+              "name": "理想化影响（Idealized Influence・Charisma）",
+              "desc": "以身作则成为道德榜样"
+            },
+            {
+              "name": "鼓舞人心的激励（Inspirational Motivation）",
+              "desc": "传达令人振奋的愿景"
+            },
+            {
+              "name": "智能激发（Intellectual Stimulation）",
+              "desc": "鼓励创新思维与质疑假设"
+            },
+            {
+              "name": "个别化关怀（Individualized Consideration）",
+              "desc": "关注每位成员的发展需求"
+            }
+          ]
+        },
+        {
+          "title": "增强效应（Augmentation Effect · Bass 关键洞察）",
+          "items": []
+        },
+        {
+          "title": "与组织变革的连接",
+          "items": []
+        }
+      ]
+    },
+    "ja": {
+      "format": "accordion",
+      "lead": "——バーンズ（1978『Leadership』政治学の文脈で初めて区分）+ バーナード・バス（1985『Leadership and Performance Beyond Expectations』ビジネス・リーダーシップに拡張し精緻化）。変革型リーダーシップは 4I を通じてフォロワーに自己利益を超越した集団的高次目標の追求を促す。",
+      "groups": [
+        {
+          "title": "バスの4I（中核次元）",
+          "items": [
+            {
+              "name": "理想化された影響力（Idealized Influence・カリスマ性）",
+              "desc": "自ら範を示し道徳的模範となる"
+            },
+            {
+              "name": "鼓舞的動機づけ（Inspirational Motivation）",
+              "desc": "人心を奮い立たせるビジョンを伝達する"
+            },
+            {
+              "name": "知的刺激（Intellectual Stimulation）",
+              "desc": "革新的思考と前提への疑問を奨励する"
+            },
+            {
+              "name": "個別的配慮（Individualized Consideration）",
+              "desc": "各メンバーの発達ニーズに注目する"
+            }
+          ]
+        },
+        {
+          "title": "増強効果（Augmentation Effect・バスの重要な洞察）",
+          "items": []
+        },
+        {
+          "title": "組織変革との結合",
+          "items": []
+        }
+      ]
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "accordion",
-  "createdAt": "2026-04-24T02:21:59.847Z",
-  "updatedAt": "2026-04-26T04:03:26.933Z",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "限": "魅力型领导的黑暗面（Howell & Avolio 1992）：希特勒和 Jobs 都是 Transformational 但效果天壤之别，需区分社会化魅力（为集体）vs 个人化魅力（为自己）；过度浪漫化领导作用（Meindl 1985「Romance of Leadership」）；文化普适性存疑（集体主义 vs 个人主义文化效果不同）",
-      "义": "为变革期领导提供可操作模型；与 Kotter 8 步深度结合；MLQ 量表使其成为可测量概念"
+      "meaning": "为变革期领导提供可操作模型；与 Kotter 8 步深度结合；MLQ 量表使其成为可测量概念",
+      "limit": "魅力型领导的黑暗面（Howell & Avolio 1992）：希特勒和 Jobs 都是 Transformational 但效果天壤之别，需区分社会化魅力（为集体）vs 个人化魅力（为自己）；过度浪漫化领导作用（Meindl 1985「Romance of Leadership」）；文化普适性存疑（集体主义 vs 个人主义文化效果不同）",
+      "example": "",
+      "response": "",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "カリスマ的リーダーシップの暗黒面（Howell & Avolio 1992）：ヒトラーもジョブズも Transformational だが結果は天地の差——社会化されたカリスマ（集団のため）と個人化されたカリスマ（自己のため）を区別すべき；リーダーシップの過度なロマン化（Meindl 1985「Romance of Leadership」）；文化的普遍性に疑問（集団主義 vs 個人主義文化で効果が異なる可能性）"
+      "meaning": "",
+      "limit": "カリスマ的リーダーシップの暗黒面（Howell & Avolio 1992）：ヒトラーもジョブズも Transformational だが結果は天地の差——社会化されたカリスマ（集団のため）と個人化されたカリスマ（自己のため）を区別すべき；リーダーシップの過度なロマン化（Meindl 1985「Romance of Leadership」）；文化的普遍性に疑問（集団主義 vs 個人主義文化で効果が異なる可能性）",
+      "example": "",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
-  }
+  },
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-26T04:03:26.933Z"
 }

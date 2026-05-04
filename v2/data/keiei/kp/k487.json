@@ -14,13 +14,18 @@
     "ja": "企業レピュテーション資本理論"
   },
   "body": {
-    "zh": "晚期研究企业声誉作为战略资产的价值，创立Reputation Institute，开创了企业声誉量化研究领域",
-    "ja": "——晩年の研究において企業レピュテーションの戦略的資産としての価値を探求し、Reputation Instituteを設立。企業レピュテーションの計量的研究領域を開拓した"
+    "zh": {
+      "format": "narrative",
+      "prose": "晚期研究企业声誉作为战略资产的价值，创立Reputation Institute，开创了企业声誉量化研究领域"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "——晩年の研究において企業レピュテーションの戦略的資産としての価値を探求し、Reputation Instituteを設立。企業レピュテーションの計量的研究領域を開拓した"
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "narrative",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

@@ -28,6 +28,7 @@ import { fileURLToPath } from 'node:url';
 
 import { Kp, School, Scholar, Discipline, type Kp as KpT, type School as SchoolT, type Scholar as ScholarT, type Discipline as DisciplineT } from '../src/schemas/index.js';
 import { View, type View as ViewT } from '../src/schemas/view.js';
+import { hasEvaluationsContent, structuredToSearchText } from '../src/lib/kp-body-helpers.js';
 
 // ============================================================
 // 路径
@@ -394,14 +395,19 @@ sqlLines.push('');
 setSection('02_kp');
 header('KP upsert + KP orphan cleanup');
 sqlLines.push('-- KPs');
-// v0.5.1: 新增 eval_content_zh_json / eval_content_ja_json（评价结构化字段，迁移后所有 KP 都有）
-const kpCols = ['id','discipline','year','title_zh','title_en','title_ja','body_zh','body_ja','tags_json','eval_content_zh_json','eval_content_ja_json','format','created_at','updated_at'];
+// v0.8.10 Stage 5: 旧列（body_zh / body_ja / format / eval_content_*_json）已 drop。
+// 写入只走 5 个新列：body_zh_json / body_ja_json / body_format / evaluations_*_json。
+const kpCols = ['id','discipline','year','title_zh','title_en','title_ja','tags_json','body_zh_json','body_ja_json','body_format','evaluations_zh_json','evaluations_ja_json','created_at','updated_at'];
 for (const k of kps) {
+  const evalsZh = hasEvaluationsContent(k.evaluations?.zh) ? k.evaluations!.zh! : null;
+  const evalsJa = hasEvaluationsContent(k.evaluations?.ja) ? k.evaluations!.ja! : null;
   sqlLines.push(
     `INSERT INTO kp (${kpCols.join(', ')}) VALUES (` +
     `${q(k.id)}, ${q(k.discipline)}, ${q(k.year)}, ${q(k.title.zh)}, ${q(k.title.en)}, ${q(k.title.ja)}, ` +
-    `${q(k.body.zh)}, ${q(k.body.ja)}, ${jq(k.tags)}, ${jq(k.evalContent?.zh ?? {})}, ${jq(k.evalContent?.ja ?? {})}, ` +
-    `${q(k.format)}, ${q(k.createdAt)}, ${q(k.updatedAt)}) ` +
+    `${jq(k.tags)}, ` +
+    `${jq(k.body.zh)}, ${k.body.ja ? jq(k.body.ja) : 'NULL'}, ${q(k.body.zh.format)}, ` +
+    `${evalsZh ? jq(evalsZh) : 'NULL'}, ${evalsJa ? jq(evalsJa) : 'NULL'}, ` +
+    `${q(k.createdAt)}, ${q(k.updatedAt)}) ` +
     `ON CONFLICT(id) DO UPDATE SET ${updateSet(kpCols, 'id')};`
   );
 }
@@ -490,12 +496,22 @@ for (const kp of kps) {
 }
 sqlLines.push('');
 
-// === FTS5 索引（rebuild from kp 表） ===
+// === FTS5 索引（rebuild from KP JSON 数据 — 旧 body_zh 列已 drop） ===
+//
+// v0.8.10 Stage 5：kp 表 body_zh/body_ja 列已 drop，FTS body 文本由
+// structuredToSearchText(body) 派生（去 marker、保留内容拼接）。
 setSection('04_fts');
 header('FTS5 rebuild');
 sqlLines.push('-- FTS5');
-sqlLines.push(`INSERT INTO kp_fts (id, title_zh, title_en, title_ja, body_zh, body_ja) `
-  + `SELECT id, title_zh, COALESCE(title_en, ''), COALESCE(title_ja, ''), body_zh, COALESCE(body_ja, '') FROM kp;`);
+for (const k of kps) {
+  const ftsTextZh = structuredToSearchText(k.body.zh);
+  const ftsTextJa = k.body.ja ? structuredToSearchText(k.body.ja) : '';
+  sqlLines.push(
+    `INSERT INTO kp_fts (id, title_zh, title_en, title_ja, body_zh, body_ja) VALUES (` +
+    `${q(k.id)}, ${q(k.title.zh)}, ${q(k.title.en ?? '')}, ${q(k.title.ja ?? '')}, ` +
+    `${q(ftsTextZh)}, ${q(ftsTextJa)});`,
+  );
+}
 sqlLines.push('');
 
 // === sync_log ===

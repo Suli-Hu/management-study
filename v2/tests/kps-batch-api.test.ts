@@ -116,12 +116,14 @@ async function seedKp(
   const evalsZhLang = toEvalsLang(evalZh);
   const evalsJaLang = toEvalsLang(evalJa);
 
+  // v0.8.10 Stage 5: 旧 body_zh / body_ja / format / eval_content_*_json 列已 DROP；
+  // seed 仅写入 5 个新列 + 必备元数据列。
   await db
     .prepare(
-      `INSERT INTO kp (id, tenant_id, discipline, year, title_zh, title_en, title_ja, body_zh, body_ja, tags_json,
-                       eval_content_zh_json, eval_content_ja_json, format, created_by, updated_by, created_at, updated_at,
+      `INSERT INTO kp (id, tenant_id, discipline, year, title_zh, title_en, title_ja, tags_json,
+                       created_by, updated_by, created_at, updated_at,
                        body_zh_json, body_ja_json, evaluations_zh_json, evaluations_ja_json, body_format)
-       VALUES (?, 'keiei', 'keiei', '', ?, ?, ?, ?, ?, ?, ?, ?, 'narrative', 'u_seed', 'u_seed', '2026-01-01', '2026-01-01',
+       VALUES (?, 'keiei', 'keiei', '', ?, ?, ?, ?, 'u_seed', 'u_seed', '2026-01-01', '2026-01-01',
                ?, ?, ?, ?, 'narrative')`,
     )
     .bind(
@@ -129,11 +131,7 @@ async function seedKp(
       t.zh,
       t.en ?? null,
       t.ja ?? null,
-      b.zh,
-      b.ja ?? null,
       JSON.stringify(tags),
-      JSON.stringify(evalZh),
-      JSON.stringify(evalJa),
       bodyZhJson,
       bodyJaJson,
       evalsZhLang ? JSON.stringify(evalsZhLang) : null,
@@ -164,10 +162,22 @@ async function seedKp(
     .run();
 }
 
-async function getKpRow(db: D1LikeDatabase, id: string): Promise<{ title_zh: string; title_ja: string | null; title_en: string | null; body_zh: string; body_ja: string | null; tags_json: string; eval_content_zh_json: string; eval_content_ja_json: string } | null> {
+async function getKpRow(
+  db: D1LikeDatabase,
+  id: string,
+): Promise<{
+  title_zh: string;
+  title_ja: string | null;
+  title_en: string | null;
+  body_zh_json: string;
+  body_ja_json: string | null;
+  tags_json: string;
+  evaluations_zh_json: string | null;
+  evaluations_ja_json: string | null;
+} | null> {
   return db
     .prepare(
-      'SELECT title_zh, title_ja, title_en, body_zh, body_ja, tags_json, eval_content_zh_json, eval_content_ja_json FROM kp WHERE id = ?',
+      'SELECT title_zh, title_ja, title_en, body_zh_json, body_ja_json, tags_json, evaluations_zh_json, evaluations_ja_json FROM kp WHERE id = ?',
     )
     .bind(id)
     .first();
@@ -317,8 +327,8 @@ describe('patchKpsBatch — 真 SQLite 集成测试', () => {
       { dryRun: false, tenant: TENANT, userId: USER_ID },
     );
     const row = await getKpRow(db, 'k060');
-    expect(row!.body_zh).toBe('新正文');
-    expect(row!.body_ja).toBe('旧本文'); // 保留
+    expect(JSON.parse(row!.body_zh_json)).toEqual({ format: 'narrative', prose: '新正文' });
+    expect(JSON.parse(row!.body_ja_json!)).toEqual({ format: 'narrative', prose: '旧本文' }); // 保留
   });
 
   test('shallow merge evaluations: 只传 zh，ja 保留；zh 内部 Record 整体替换', async () => {
@@ -499,9 +509,12 @@ describe('patchKpsBatch — 真 SQLite 集成测试', () => {
   });
 
   test('mergeBatchPatch unit: 数组 [] = 真清空，不传 = 保持', () => {
+    // v0.8.10 Stage 5: KpApiRecord 已是 v0.8 shape — body 是 KpBody object，无顶层 format / evalContent。
     const current: KpApiRecord = {
-      id: 'x', tenant_id: 'k', discipline: 'k', year: '', title: { zh: 'T' }, body: { zh: 'B' },
-      tags: ['old'], format: 'narrative', schools: ['s1'], scholars: ['sc1'],
+      id: 'x', tenant_id: 'k', discipline: 'k', year: '',
+      title: { zh: 'T' },
+      body: { zh: { format: 'narrative', prose: 'B' } },
+      tags: ['old'], schools: ['s1'], scholars: ['sc1'],
       created_by: null, updated_by: null, created_at: '', updated_at: '',
     };
     const currentS = {
@@ -510,16 +523,18 @@ describe('patchKpsBatch — 真 SQLite 集成测试', () => {
     };
 
     const cleared = mergeBatchPatch(current, currentS, { tags: [] });
-    expect(cleared.legacy.tags).toEqual([]); // 空数组真清空
+    expect(cleared.record.tags).toEqual([]); // 空数组真清空
 
     const kept = mergeBatchPatch(current, currentS, { year: '2020' });
-    expect(kept.legacy.tags).toEqual(['old']); // 不传 = 保持
+    expect(kept.record.tags).toEqual(['old']); // 不传 = 保持
   });
 
   test('computeDiff unit: title.zh 改了，title.ja 没改 → diff 只列 title.zh', () => {
     const current: KpApiRecord = {
-      id: 'x', tenant_id: 'k', discipline: 'k', year: '', title: { zh: '旧', ja: '保持' }, body: { zh: 'B' },
-      tags: [], format: 'narrative', schools: [], scholars: [],
+      id: 'x', tenant_id: 'k', discipline: 'k', year: '',
+      title: { zh: '旧', ja: '保持' },
+      body: { zh: { format: 'narrative', prose: 'B' } },
+      tags: [], schools: [], scholars: [],
       created_by: null, updated_by: null, created_at: '', updated_at: '',
     };
     const merged: KpApiRecord = { ...current, title: { zh: '新', ja: '保持' } };

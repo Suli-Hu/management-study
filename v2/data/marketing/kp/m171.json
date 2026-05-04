@@ -15,8 +15,14 @@
     "en": "Market Logistics"
   },
   "body": {
-    "zh": "Marketing Logistics（マーケット・ロジスティクス·营销物流）是把对的产品·对的时间·对的地点·对的成本·送到对的顾客的活动。Kotler 15 章·digital 时代核心。<br><br>5 大 logistics 决策：<br>① Order Processing——订单接收·处理·跟踪<br>② Warehousing——储存·拣货·包装<br>③ Inventory Management——库存水平·安全库存·EOQ<br>④ Transportation——海运·空运·陆运·铁路·管道<br>⑤ Logistics Information System——TMS·WMS·SCM software<br><br>4 大 trade-offs（成本 vs 服务）：<br>① Service Level vs Inventory Cost——高 fill rate 需高库存<br>② Speed vs Cost——快 = 贵<br>③ Flexibility vs Efficiency——多种 SKU vs 标准化<br>④ Centralization vs Decentralization——一仓 vs 多仓<br><br>现代 trends：<br>① Just-in-Time（JIT）——Toyota production system·零库存<br>② 3PL（Third-Party Logistics）——外包给 logistics provider（FedEx·DHL·Yamato）<br>③ Last-Mile Delivery——电商时代核心·dark stores·Q-commerce（quick commerce）<br>④ Reverse Logistics——退货·回收·repair·sustainability<br>⑤ Same-Day Delivery——Amazon Prime·Walmart<br><br>典型例：<br>- Amazon——FBA（Fulfillment By Amazon）·无人仓·drone delivery 试验<br>- Toyota Production System——JIT 鼻祖·influence 全球制造业<br>- UNIQLO——自有 SCM + global standardization<br>- Zara——2 周 fast fashion logistics<br><br>跨学派关系：与 channel_retail（VMS）·digital_marketing（omnichannel）·strategic_marketing（cost leadership）一体。",
-    "ja": "Marketing Logistics（マーケット・ロジスティクス）は正しい製品·正しい時間·正しい場所·正しいコスト·正しい顧客に届ける活動。Kotler 15 章·デジタル時代核心。<br><br>5 大 logistics 決定：① Order Processing ② Warehousing ③ Inventory Management（EOQ·安全在庫）④ Transportation（海·空·陸·鉄道·パイプライン）⑤ Logistics Information System（TMS·WMS·SCM）<br><br>4 大トレードオフ：① Service Level vs Inventory Cost ② Speed vs Cost ③ Flexibility vs Efficiency ④ Centralization vs Decentralization<br><br>現代トレンド：① Just-in-Time（JIT·Toyota）② 3PL（外包·FedEx·DHL·ヤマト）③ Last-Mile Delivery（dark stores·Q-commerce）④ Reverse Logistics（返品·回収·sustainability）⑤ Same-Day Delivery（Amazon Prime·Walmart）<br><br>典型例：① Amazon（FBA·無人倉·drone）② Toyota Production System（JIT 始祖）③ UNIQLO（自有 SCM）④ Zara（2 週 fast fashion）<br><br>他派との関係：channel_retail（VMS）·digital_marketing（omnichannel）·strategic_marketing（cost leadership）と一体。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Marketing Logistics（マーケット・ロジスティクス·营销物流）是把对的产品·对的时间·对的地点·对的成本·送到对的顾客的活动。Kotler 15 章·digital 时代核心。<br><br>5 大 logistics 决策：<br>① Order Processing——订单接收·处理·跟踪<br>② Warehousing——储存·拣货·包装<br>③ Inventory Management——库存水平·安全库存·EOQ<br>④ Transportation——海运·空运·陆运·铁路·管道<br>⑤ Logistics Information System——TMS·WMS·SCM software<br><br>4 大 trade-offs（成本 vs 服务）：<br>① Service Level vs Inventory Cost——高 fill rate 需高库存<br>② Speed vs Cost——快 = 贵<br>③ Flexibility vs Efficiency——多种 SKU vs 标准化<br>④ Centralization vs Decentralization——一仓 vs 多仓<br><br>现代 trends：<br>① Just-in-Time（JIT）——Toyota production system·零库存<br>② 3PL（Third-Party Logistics）——外包给 logistics provider（FedEx·DHL·Yamato）<br>③ Last-Mile Delivery——电商时代核心·dark stores·Q-commerce（quick commerce）<br>④ Reverse Logistics——退货·回收·repair·sustainability<br>⑤ Same-Day Delivery——Amazon Prime·Walmart<br><br>典型例：<br>- Amazon——FBA（Fulfillment By Amazon）·无人仓·drone delivery 试验<br>- Toyota Production System——JIT 鼻祖·influence 全球制造业<br>- UNIQLO——自有 SCM + global standardization<br>- Zara——2 周 fast fashion logistics<br><br>跨学派关系：与 channel_retail（VMS）·digital_marketing（omnichannel）·strategic_marketing（cost leadership）一体。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Marketing Logistics（マーケット・ロジスティクス）は正しい製品·正しい時間·正しい場所·正しいコスト·正しい顧客に届ける活動。Kotler 15 章·デジタル時代核心。<br><br>5 大 logistics 決定：① Order Processing ② Warehousing ③ Inventory Management（EOQ·安全在庫）④ Transportation（海·空·陸·鉄道·パイプライン）⑤ Logistics Information System（TMS·WMS·SCM）<br><br>4 大トレードオフ：① Service Level vs Inventory Cost ② Speed vs Cost ③ Flexibility vs Efficiency ④ Centralization vs Decentralization<br><br>現代トレンド：① Just-in-Time（JIT·Toyota）② 3PL（外包·FedEx·DHL·ヤマト）③ Last-Mile Delivery（dark stores·Q-commerce）④ Reverse Logistics（返品·回収·sustainability）⑤ Same-Day Delivery（Amazon Prime·Walmart）<br><br>典型例：① Amazon（FBA·無人倉·drone）② Toyota Production System（JIT 始祖）③ UNIQLO（自有 SCM）④ Zara（2 週 fast fashion）<br><br>他派との関係：channel_retail（VMS）·digital_marketing（omnichannel）·strategic_marketing（cost leadership）と一体。"
+    }
   },
   "tags": [
     "logistics",
@@ -24,17 +30,22 @@
     "Amazon",
     "Toyota"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "channel 学派的物理层·digital 时代的核心战场",
-      "限": "全球供应链复杂·风险高",
-      "例": "Amazon·Toyota·UNIQLO·Zara 是教科书",
-      "应": "Kotler 15 章·logistics 题"
+      "meaning": "channel 学派的物理层·digital 时代的核心战场",
+      "limit": "全球供应链复杂·风险高",
+      "example": "Amazon·Toyota·UNIQLO·Zara 是教科书",
+      "response": "Kotler 15 章·logistics 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "グローバルサプライチェーン複雑·リスク高",
-      "例": "Amazon·Toyota·UNIQLO·Zara 教科書"
+      "meaning": "",
+      "limit": "グローバルサプライチェーン複雑·リスク高",
+      "example": "Amazon·Toyota·UNIQLO·Zara 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T09:26:33.751Z",

@@ -14,22 +14,134 @@
     "ja": "コッターの8段階変革モデル"
   },
   "body": {
-    "zh": "John P. Kotter（1995 HBR / 1996 Leading Change）基于 100+ 企业变革案例的失败分析，将 Lewin 三阶段精细化为 8 步顺序框架——Step 1-4 = 解凍，Step 5-7 = 変革，Step 8 = 再凍結。Kotter 主张跳过任何一步必败。<br>【解凍阶段（Step 1-4）】<br>①建立危機感（Establish Urgency）——让组织理解「不变就完」。变革失败的第一大原因就是危机感不足<br>②组建推进团队（Form a Guiding Coalition）——跨职能高层联盟。CEO 单枪匹马必败<br>③制定愿景与战略（Develop a Vision）——能用 5 分钟讲清的清晰愿景，模糊等于没有<br>④周知愿景（Communicate the Vision）——沟通量远远多于你以为的；高层言行一致比口头宣传重要<br>【変革阶段（Step 5-7）】<br>⑤授权行动（Empower Broad-Based Action）——移除障碍·挑战旧制度·鼓励冒险<br>⑥创造短期成果（Generate Short-Term Wins）——6-12 个月内必须有可见成果；不只激励，更是维持变革合法性的政治资本<br>⑦巩固并扩大变革（Consolidate Gains）——警惕「Don't declare victory too soon」，过早宣胜是典型失败<br>【再凍結（Step 8）】<br>⑧锚定在文化中（Anchor in Culture）——写进制度·KPI·招聘晋升·英雄故事。最容易被忽视，失败案例里真正完成的不到一半",
-    "ja": "——ジョン・コッター（1995 HBR / 1996 Leading Change）が 100社以上の企業変革事例の失敗分析から帰納した8段階フレームワーク。レヴィンの三段階を精緻化し、Step 1-4 = 解凍、Step 5-7 = 変革、Step 8 = 再凍結に対応する。コッターはいずれかのステップを飛ばせば必ず失敗すると主張。<br>【解凍フェーズ（Step 1-4）】<br>①危機感の醸成（Establish Urgency）——「変わらなければ生き残れない」という認識を組織に浸透させる。変革失敗の最大原因は危機感の不足である<br>②変革推進チームの結成（Form a Guiding Coalition）——部門横断的な上位管理者連合。CEO一人の推進では必ず失敗する<br>③ビジョンと戦略の策定（Develop a Vision）——5分で説明できる明確なビジョン。曖昧なビジョンは存在しないに等しい<br>④ビジョンの周知徹底（Communicate the Vision）——想像以上のコミュニケーション量が必要；上層部の言行一致は口頭宣伝の百倍重要である<br>【変革フェーズ（Step 5-7）】<br>⑤自発的行動の促進（Empower Broad-Based Action）——障壁の除去・旧制度への挑戦・リスクテイクの奨励<br>⑥短期的成果の実現（Generate Short-Term Wins）——6〜12ヶ月以内の可視成果が必要。単なる激励ではなく、変革の正統性を維持する政治資本である<br>⑦成果の定着と更なる変革の推進（Consolidate Gains）——「Don't declare victory too soon」（早すぎる勝利宣言を警戒せよ）。短期成果後の弛緩は典型的失敗パターン<br>【再凍結（Step 8）】<br>⑧新しい方法を文化に定着させる（Anchor in Culture）——制度・KPI・採用基準・昇進規則・英雄譚に書き込む。最も見落とされやすい段階であり、変革成功を宣言した企業のうち真に Step 8 を完了した企業は半数未満<br>◆意義——実務界で最も広く用いられる変革ツール。100社以上の失敗事例の実証的帰納；レヴィンの抽象的三段階を診断可能・教授可能な8段階に落とし込んだ"
+    "zh": {
+      "format": "accordion",
+      "lead": "John P. Kotter（1995 HBR / 1996 Leading Change）基于 100+ 企业变革案例的失败分析，将 Lewin 三阶段精细化为 8 步顺序框架——Step 1-4 = 解凍，Step 5-7 = 変革，Step 8 = 再凍結。Kotter 主张跳过任何一步必败。",
+      "groups": [
+        {
+          "title": "解凍阶段（Step 1-4）",
+          "items": [
+            {
+              "name": "建立危機感（Establish Urgency）",
+              "desc": "让组织理解「不变就完」。变革失败的第一大原因就是危机感不足"
+            },
+            {
+              "name": "组建推进团队（Form a Guiding Coalition）",
+              "desc": "跨职能高层联盟。CEO 单枪匹马必败"
+            },
+            {
+              "name": "制定愿景与战略（Develop a Vision）",
+              "desc": "能用 5 分钟讲清的清晰愿景，模糊等于没有"
+            },
+            {
+              "name": "周知愿景（Communicate the Vision）",
+              "desc": "沟通量远远多于你以为的；高层言行一致比口头宣传重要"
+            }
+          ]
+        },
+        {
+          "title": "変革阶段（Step 5-7）",
+          "items": [
+            {
+              "name": "授权行动（Empower Broad-Based Action）",
+              "desc": "移除障碍·挑战旧制度·鼓励冒险"
+            },
+            {
+              "name": "创造短期成果（Generate Short-Term Wins）",
+              "desc": "6-12 个月内必须有可见成果；不只激励，更是维持变革合法性的政治资本"
+            },
+            {
+              "name": "巩固并扩大变革（Consolidate Gains）",
+              "desc": "警惕「Don't declare victory too soon」，过早宣胜是典型失败"
+            }
+          ]
+        },
+        {
+          "title": "再凍結（Step 8）",
+          "items": [
+            {
+              "name": "锚定在文化中（Anchor in Culture）",
+              "desc": "写进制度·KPI·招聘晋升·英雄故事。最容易被忽视，失败案例里真正完成的不到一半"
+            }
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "format": "accordion",
+      "lead": "——ジョン・コッター（1995 HBR / 1996 Leading Change）が 100社以上の企業変革事例の失敗分析から帰納した8段階フレームワーク。レヴィンの三段階を精緻化し、Step 1-4 = 解凍、Step 5-7 = 変革、Step 8 = 再凍結に対応する。コッターはいずれかのステップを飛ばせば必ず失敗すると主張。",
+      "groups": [
+        {
+          "title": "解凍フェーズ（Step 1-4）",
+          "items": [
+            {
+              "name": "危機感の醸成（Establish Urgency）",
+              "desc": "「変わらなければ生き残れない」という認識を組織に浸透させる。変革失敗の最大原因は危機感の不足である"
+            },
+            {
+              "name": "変革推進チームの結成（Form a Guiding Coalition）",
+              "desc": "部門横断的な上位管理者連合。CEO一人の推進では必ず失敗する"
+            },
+            {
+              "name": "ビジョンと戦略の策定（Develop a Vision）",
+              "desc": "5分で説明できる明確なビジョン。曖昧なビジョンは存在しないに等しい"
+            },
+            {
+              "name": "ビジョンの周知徹底（Communicate the Vision）",
+              "desc": "想像以上のコミュニケーション量が必要；上層部の言行一致は口頭宣伝の百倍重要である"
+            }
+          ]
+        },
+        {
+          "title": "変革フェーズ（Step 5-7）",
+          "items": [
+            {
+              "name": "自発的行動の促進（Empower Broad-Based Action）",
+              "desc": "障壁の除去・旧制度への挑戦・リスクテイクの奨励"
+            },
+            {
+              "name": "短期的成果の実現（Generate Short-Term Wins）",
+              "desc": "6〜12ヶ月以内の可視成果が必要。単なる激励ではなく、変革の正統性を維持する政治資本である"
+            },
+            {
+              "name": "成果の定着と更なる変革の推進（Consolidate Gains）",
+              "desc": "「Don't declare victory too soon」（早すぎる勝利宣言を警戒せよ）。短期成果後の弛緩は典型的失敗パターン"
+            }
+          ]
+        },
+        {
+          "title": "再凍結（Step 8）",
+          "items": [
+            {
+              "name": "新しい方法を文化に定着させる（Anchor in Culture）",
+              "desc": "制度・KPI・採用基準・昇進規則・英雄譚に書き込む。最も見落とされやすい段階であり、変革成功を宣言した企業のうち真に Step 8 を完了した企業は半数未満"
+            }
+          ]
+        }
+      ]
+    }
   },
   "tags": [
     "t_93nqjd"
   ],
-  "format": "accordion",
-  "createdAt": "2026-04-24T02:21:59.847Z",
-  "updatedAt": "2026-04-26T04:03:26.924Z",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "限": "线性假设 + Step 3 愿景锁死问题在 VUCA 时代尖锐：Weick & Quinn（1999）以持续变革模型批判线性假设；Mintzberg（1994）涌现战略质疑预先设计愿景；Kotter 本人以 Accelerate（2014）双操作系统回应——层级系统按 8 步顺序执行已稳定变革，网络系统让 8 步持续并行生成新愿景",
-      "义": "全球咨询界最广泛使用的变革工具；来自 100+ 企业失败案例实证归纳；把 Lewin 抽象 3 阶段落地为可诊断·可教授的 8 步"
+      "meaning": "全球咨询界最广泛使用的变革工具；来自 100+ 企业失败案例实证归纳；把 Lewin 抽象 3 阶段落地为可诊断·可教授的 8 步",
+      "limit": "线性假设 + Step 3 愿景锁死问题在 VUCA 时代尖锐：Weick & Quinn（1999）以持续变革模型批判线性假设；Mintzberg（1994）涌现战略质疑预先设计愿景；Kotter 本人以 Accelerate（2014）双操作系统回应——层级系统按 8 步顺序执行已稳定变革，网络系统让 8 步持续并行生成新愿景",
+      "example": "",
+      "response": "",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "線形仮定 + Step 3 のビジョン固定化が VUCA 時代に問題となる：Weick & Quinn（1999）は継続的変革モデルで線形仮定を批判；Mintzberg（1994）の創発戦略論は事前のビジョン設計を疑問視；コッター自身は Accelerate（2014）の二重オペレーティングシステムで応答——階層システムは8段階を順次実行し確立済み変革を推進、ネットワークシステムは8段階を並行継続運用して新ビジョンを生成する"
+      "meaning": "",
+      "limit": "線形仮定 + Step 3 のビジョン固定化が VUCA 時代に問題となる：Weick & Quinn（1999）は継続的変革モデルで線形仮定を批判；Mintzberg（1994）の創発戦略論は事前のビジョン設計を疑問視；コッター自身は Accelerate（2014）の二重オペレーティングシステムで応答——階層システムは8段階を順次実行し確立済み変革を推進、ネットワークシステムは8段階を並行継続運用して新ビジョンを生成する",
+      "example": "",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
-  }
+  },
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-26T04:03:26.924Z"
 }

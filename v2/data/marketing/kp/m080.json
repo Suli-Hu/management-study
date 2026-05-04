@@ -14,25 +14,36 @@
     "en": "Corporate Social Responsibility"
   },
   "body": {
-    "zh": "CSR（Corporate Social Responsibility·企业社会责任）是 social marketing 学派的核心概念·主张企业不应只追利润·还要承担对社会·环境·伦理的责任。Pro Plus 第 14 章核心。<br><br>CSR 演化 4 阶段：<br><br>① 1950s-70s · Defensive CSR——回应外部压力·避免争议<br>例：1950 年 Howard Bowen『Social Responsibilities of the Businessman』奠基<br><br>② 1980s-90s · Reactive CSR——制定政策·回应 stakeholder<br>例：Body Shop（1976 起）反动物试验·设立行业标准<br><br>③ 2000s · Strategic CSR——把 CSR 整合到企业战略·变成竞争优势<br>例：Patagonia 环保 brand·CSR = brand identity 核心<br><br>④ 2010s+ · Transformative CSR——超越企业·改变产业·社会<br>例：Tesla 加速可持续能源转型·Beyond Meat 改变蛋白质产业<br><br>CSR 的 4 个领域（Carroll 金字塔 1991）：<br>1. Economic Responsibilities（经济·基础）——盈利·提供产品<br>2. Legal Responsibilities（法律）——遵守法律<br>3. Ethical Responsibilities（伦理）——超越法律的道德标准<br>4. Philanthropic Responsibilities（慈善·顶层）——回馈社会<br><br>CSR 的 5 大批判：<br>① Greenwashing（漂绿）——marketing 装好·实际无变化<br>② 性价比争议——CSR 是否与利润最大化冲突<br>③ Friedman 反对——「企业的责任是让 stockholders 赚钱」（1970）<br>④ 测量困难——CSR 的 ROI 难量化<br>⑤ 跨文化偏差——发达 vs 发展中国家不同标准<br><br>vs CSV（Creating Shared Value）：<br>- CSR：企业利润 - CSR 投资 = 净利润（CSR 是成本）<br>- CSV（Porter-Kramer 2011）：CSR 创造经济 + 社会双赢（CSR = 利润源泉）<br>- CSV 是 CSR 的进化版·更被现代企业采纳<br><br>跨学派关系：与 marketing_concept 5 志向最后一阶段「社会志向」一致·与 brand_equity 的 brand purpose 概念紧密。",
-    "ja": "CSR（Corporate Social Responsibility·企業の社会責任）は social marketing 学派の核心概念·企業が利益追求だけでなく社会·環境·倫理に責任を負うべきと主張。Pro Plus 第 14 章核心。<br><br>CSR 進化 4 段階：① 1950s-70s · Defensive CSR ② 1980s-90s · Reactive CSR ③ 2000s · Strategic CSR ④ 2010s+ · Transformative CSR<br><br>CSR 4 領域（Carroll ピラミッド 1991）：① 経済 ② 法律 ③ 倫理 ④ 慈善（philanthropic）<br><br>5 大批判：① グリーンウォッシング ② 性価比論争 ③ Friedman 反対（1970 年）④ 測定困難 ⑤ 異文化バイアス<br><br>vs CSV（Creating Shared Value）：CSR は利益 - 投資 = 純利益（コスト）·CSV（Porter-Kramer 2011）は経済 + 社会双贏（利益源泉）·CSV は CSR の進化版·現代企業に採用。<br><br>他派との関係：marketing_concept 5 志向最後の「社会志向」一致·brand_equity の brand purpose と密接。"
+    "zh": {
+      "format": "narrative",
+      "prose": "CSR（Corporate Social Responsibility·企业社会责任）是 social marketing 学派的核心概念·主张企业不应只追利润·还要承担对社会·环境·伦理的责任。Pro Plus 第 14 章核心。<br><br>CSR 演化 4 阶段：<br><br>① 1950s-70s · Defensive CSR——回应外部压力·避免争议<br>例：1950 年 Howard Bowen『Social Responsibilities of the Businessman』奠基<br><br>② 1980s-90s · Reactive CSR——制定政策·回应 stakeholder<br>例：Body Shop（1976 起）反动物试验·设立行业标准<br><br>③ 2000s · Strategic CSR——把 CSR 整合到企业战略·变成竞争优势<br>例：Patagonia 环保 brand·CSR = brand identity 核心<br><br>④ 2010s+ · Transformative CSR——超越企业·改变产业·社会<br>例：Tesla 加速可持续能源转型·Beyond Meat 改变蛋白质产业<br><br>CSR 的 4 个领域（Carroll 金字塔 1991）：<br>1. Economic Responsibilities（经济·基础）——盈利·提供产品<br>2. Legal Responsibilities（法律）——遵守法律<br>3. Ethical Responsibilities（伦理）——超越法律的道德标准<br>4. Philanthropic Responsibilities（慈善·顶层）——回馈社会<br><br>CSR 的 5 大批判：<br>① Greenwashing（漂绿）——marketing 装好·实际无变化<br>② 性价比争议——CSR 是否与利润最大化冲突<br>③ Friedman 反对——「企业的责任是让 stockholders 赚钱」（1970）<br>④ 测量困难——CSR 的 ROI 难量化<br>⑤ 跨文化偏差——发达 vs 发展中国家不同标准<br><br>vs CSV（Creating Shared Value）：<br>- CSR：企业利润 - CSR 投资 = 净利润（CSR 是成本）<br>- CSV（Porter-Kramer 2011）：CSR 创造经济 + 社会双赢（CSR = 利润源泉）<br>- CSV 是 CSR 的进化版·更被现代企业采纳<br><br>跨学派关系：与 marketing_concept 5 志向最后一阶段「社会志向」一致·与 brand_equity 的 brand purpose 概念紧密。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "CSR（Corporate Social Responsibility·企業の社会責任）は social marketing 学派の核心概念·企業が利益追求だけでなく社会·環境·倫理に責任を負うべきと主張。Pro Plus 第 14 章核心。<br><br>CSR 進化 4 段階：① 1950s-70s · Defensive CSR ② 1980s-90s · Reactive CSR ③ 2000s · Strategic CSR ④ 2010s+ · Transformative CSR<br><br>CSR 4 領域（Carroll ピラミッド 1991）：① 経済 ② 法律 ③ 倫理 ④ 慈善（philanthropic）<br><br>5 大批判：① グリーンウォッシング ② 性価比論争 ③ Friedman 反対（1970 年）④ 測定困難 ⑤ 異文化バイアス<br><br>vs CSV（Creating Shared Value）：CSR は利益 - 投資 = 純利益（コスト）·CSV（Porter-Kramer 2011）は経済 + 社会双贏（利益源泉）·CSV は CSR の進化版·現代企業に採用。<br><br>他派との関係：marketing_concept 5 志向最後の「社会志向」一致·brand_equity の brand purpose と密接。"
+    }
   },
   "tags": [
     "CSR",
     "Carroll",
     "greenwashing"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "social marketing 学派的核心实务·marketing 与社会的接口",
-      "限": "漂绿·测量·跨文化挑战",
-      "例": "Patagonia·Body Shop·Tesla 是教科书",
-      "应": "Pro Plus 14 章·一橋 命题"
+      "meaning": "social marketing 学派的核心实务·marketing 与社会的接口",
+      "limit": "漂绿·测量·跨文化挑战",
+      "example": "Patagonia·Body Shop·Tesla 是教科书",
+      "response": "Pro Plus 14 章·一橋 命题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "グリーンウォッシング·測定·異文化挑戦",
-      "例": "Patagonia·Body Shop·Tesla 教科書"
+      "meaning": "",
+      "limit": "グリーンウォッシング·測定·異文化挑戦",
+      "example": "Patagonia·Body Shop·Tesla 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:14:13.099Z",

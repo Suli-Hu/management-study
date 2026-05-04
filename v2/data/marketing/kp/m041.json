@@ -14,25 +14,36 @@
     "en": "Luxury Branding Strategy"
   },
   "body": {
-    "zh": "Luxury Branding（高级 / 奢侈品 brand）是 brand_equity 学派的特殊领域·与大众消费品 marketing 形成强烈对照·遵循「反 marketing」逻辑。<br><br>核心特征（Kotler 16 版第 10 章总结）：<br>① 稀缺性——故意限量·制造稀缺感（Hermès Birkin 包 8 年候补）<br>② 高价——价格本身是 brand identity 的一部分（Tiffany 蓝盒 vs 路边摊不可同价）<br>③ 历史与传承——百年品牌史·家族传承·工艺传统（Louis Vuitton 1854·Hermès 1837）<br>④ 手工艺——人手制作的真实性（Bottega Veneta 手编皮革）<br>⑤ 社会身份信号——拥有 = 社会地位的可见标识<br>⑥ 独特氛围——专卖店设计·销售员训练·包装·体验（Chanel 试衣间）<br>⑦ 讲故事能力——brand heritage·设计师故事·名人佩戴<br><br>奢侈品 brand 反 marketing 逻辑：<br>大众 brand：曝光多 → 销量多<br>奢侈品：曝光多 → 大众化 → 损害稀缺感 → 失去价值<br>所以奢侈品限制广告·限制 distribution·限制销量。<br><br>4 大威胁：<br>① 大众化（Massification）——拡張到中端损害高端 image（如 Coach 在中国）<br>② 仿冒——假货损害稀缺感<br>③ 数字化——电商 vs 体验型奢侈品的张力<br>④ Z 世代——他们关心 sustainability·diversity 的奢侈品需要重新定义<br><br>日本奢侈品市场特点（Pro Plus·Kotler 16 章 Spotlight 路易威登）：日本人均奢侈品消费曾居全球之首·LV·Hermès·Chanel 在日本贡献全球 30%+ 销售（疫情前）·年轻女性·OL 市场是核心。<br><br>跨学派关系：与 CCT 学派的「身份消费」「social signaling」概念高度交叉。",
-    "ja": "Luxury Branding（高級 / ラグジュアリー・ブランド）はブランド・エクイティ学派の特殊領域·マス消費品マーケティングと対照·「反マーケティング」論理に従う。<br><br>核心特徴（Kotler 16 版第 10 章総括）：① 稀少性（Hermès Birkin 8 年候補）② 高価格 ③ 歴史·伝統（LV 1854·Hermès 1837）④ 手工芸 ⑤ 社会的地位シグナル ⑥ 独特な雰囲気 ⑦ ストーリー力<br><br>奢侈品ブランド反マーケティング論理：<br>マスブランド：露出多 → 売上多<br>ラグジュアリー：露出多 → 大衆化 → 稀少感損失 → 価値喪失<br>従ってラグジュアリーは広告·distribution·売上を制限。<br><br>4 大脅威：① 大衆化（Coach in China）② 偽造 ③ デジタル化 ④ Z 世代<br><br>日本ラグジュアリー市場特徴（Pro Plus·Kotler 16 章 Spotlight ルイ・ヴィトン）：日本人当たりラグジュアリー消費がかつて世界最大·LV·Hermès·Chanel の日本売上が世界 30%+（コロナ前）·若年女性·OL 市場が核心。<br><br>他派との関係：CCT 学派の「身分消費」「social signaling」概念と高度交差。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Luxury Branding（高级 / 奢侈品 brand）是 brand_equity 学派的特殊领域·与大众消费品 marketing 形成强烈对照·遵循「反 marketing」逻辑。<br><br>核心特征（Kotler 16 版第 10 章总结）：<br>① 稀缺性——故意限量·制造稀缺感（Hermès Birkin 包 8 年候补）<br>② 高价——价格本身是 brand identity 的一部分（Tiffany 蓝盒 vs 路边摊不可同价）<br>③ 历史与传承——百年品牌史·家族传承·工艺传统（Louis Vuitton 1854·Hermès 1837）<br>④ 手工艺——人手制作的真实性（Bottega Veneta 手编皮革）<br>⑤ 社会身份信号——拥有 = 社会地位的可见标识<br>⑥ 独特氛围——专卖店设计·销售员训练·包装·体验（Chanel 试衣间）<br>⑦ 讲故事能力——brand heritage·设计师故事·名人佩戴<br><br>奢侈品 brand 反 marketing 逻辑：<br>大众 brand：曝光多 → 销量多<br>奢侈品：曝光多 → 大众化 → 损害稀缺感 → 失去价值<br>所以奢侈品限制广告·限制 distribution·限制销量。<br><br>4 大威胁：<br>① 大众化（Massification）——拡張到中端损害高端 image（如 Coach 在中国）<br>② 仿冒——假货损害稀缺感<br>③ 数字化——电商 vs 体验型奢侈品的张力<br>④ Z 世代——他们关心 sustainability·diversity 的奢侈品需要重新定义<br><br>日本奢侈品市场特点（Pro Plus·Kotler 16 章 Spotlight 路易威登）：日本人均奢侈品消费曾居全球之首·LV·Hermès·Chanel 在日本贡献全球 30%+ 销售（疫情前）·年轻女性·OL 市场是核心。<br><br>跨学派关系：与 CCT 学派的「身份消费」「social signaling」概念高度交叉。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Luxury Branding（高級 / ラグジュアリー・ブランド）はブランド・エクイティ学派の特殊領域·マス消費品マーケティングと対照·「反マーケティング」論理に従う。<br><br>核心特徴（Kotler 16 版第 10 章総括）：① 稀少性（Hermès Birkin 8 年候補）② 高価格 ③ 歴史·伝統（LV 1854·Hermès 1837）④ 手工芸 ⑤ 社会的地位シグナル ⑥ 独特な雰囲気 ⑦ ストーリー力<br><br>奢侈品ブランド反マーケティング論理：<br>マスブランド：露出多 → 売上多<br>ラグジュアリー：露出多 → 大衆化 → 稀少感損失 → 価値喪失<br>従ってラグジュアリーは広告·distribution·売上を制限。<br><br>4 大脅威：① 大衆化（Coach in China）② 偽造 ③ デジタル化 ④ Z 世代<br><br>日本ラグジュアリー市場特徴（Pro Plus·Kotler 16 章 Spotlight ルイ・ヴィトン）：日本人当たりラグジュアリー消費がかつて世界最大·LV·Hermès·Chanel の日本売上が世界 30%+（コロナ前）·若年女性·OL 市場が核心。<br><br>他派との関係：CCT 学派の「身分消費」「social signaling」概念と高度交差。"
+    }
   },
   "tags": [
     "luxury",
     "Hermès",
     "Louis Vuitton"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "brand 战略的特殊领域·大众 marketing 逻辑相反",
-      "限": "市场窄·研究方法特殊·跨文化变异大",
-      "例": "Hermès Birkin 限量·Louis Vuitton 经典·Chanel 体验",
-      "应": "Pro Plus 第 8 章·Kotler 第 10 章·brand 题"
+      "meaning": "brand 战略的特殊领域·大众 marketing 逻辑相反",
+      "limit": "市场窄·研究方法特殊·跨文化变异大",
+      "example": "Hermès Birkin 限量·Louis Vuitton 经典·Chanel 体验",
+      "response": "Pro Plus 第 8 章·Kotler 第 10 章·brand 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "市場狭·研究方法特殊·異文化変異大",
-      "例": "Hermès Birkin 限量·Louis Vuitton 古典·Chanel 体験"
+      "meaning": "",
+      "limit": "市場狭·研究方法特殊·異文化変異大",
+      "example": "Hermès Birkin 限量·Louis Vuitton 古典·Chanel 体験",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:52:07.897Z",

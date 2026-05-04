@@ -13,6 +13,7 @@ import {
   Kp, School, Scholar, Discipline,
   type Kp as KpT, type School as SchoolT, type Scholar as ScholarT, type Discipline as DisciplineT,
 } from '../../src/schemas/index.js';
+import { structuredToSearchText } from '../../src/lib/kp-body-helpers.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -122,38 +123,31 @@ export function checkAllIssues(data: LoadedData): LoadIssue[] {
   }
 
   // --- CN-JA parity ---
+  // v0.8.10 Stage 5：body 已结构化，<strong> 散落在 lead/items.desc/cells.detail 等多处，
+  // 但 v0.8.7 起 sanitize-strong 全栈剥除 — 散落次数应都为 0。保留 advisory 给老数据。
+  // ◆ 评价段已抽到独立 evaluations 字段，body 内不再含 ◆ tags — 跳过旧的 ◆-tag 比较。
   for (const kp of data.kps) {
     if (!kp.body.ja) continue;  // 没翻译跳过
-    const zhStrong = countMatches(kp.body.zh, /<strong>/g);
-    const jaStrong = countMatches(kp.body.ja, /<strong>/g);
-    // 允许 ±30% 差异
+    const zhText = structuredToSearchText(kp.body.zh);
+    const jaText = structuredToSearchText(kp.body.ja);
+    const zhStrong = countMatches(zhText, /<strong>/g);
+    const jaStrong = countMatches(jaText, /<strong>/g);
     if (zhStrong > 0 && Math.abs(zhStrong - jaStrong) / zhStrong > 0.3) {
       issues.push({ level: 'warning', category: 'parity',
         message: `KP ${kp.id}: cn has ${zhStrong} <strong>, ja has ${jaStrong} (>30% diff)` });
-    }
-    // 评价标签数应一致
-    const zhTags = countMatches(kp.body.zh, /◆\s*(意义|局限|例子|应对|应用|比喻|企业例|例)\s*——/g);
-    const jaTags = countMatches(kp.body.ja, /◆\s*(意義|限界|例子|対応|応用|比喩|企业例|例)\s*——/g);
-    if (zhTags !== jaTags) {
-      issues.push({ level: 'warning', category: 'parity',
-        message: `KP ${kp.id}: cn has ${zhTags} ◆tags, ja has ${jaTags} (should match)` });
     }
   }
 
   // --- Format checks ---
   for (const kp of data.kps) {
-    if (kp.body.zh.length < 30) {
+    const zhText = structuredToSearchText(kp.body.zh);
+    if (zhText.length < 30) {
       issues.push({ level: 'warning', category: 'format',
-        message: `KP ${kp.id}: body.zh is suspiciously short (${kp.body.zh.length} chars)` });
+        message: `KP ${kp.id}: body.zh is suspiciously short (${zhText.length} chars)` });
     }
     if (kp.title.zh.length > 50) {
       issues.push({ level: 'warning', category: 'format',
         message: `KP ${kp.id}: title.zh too long (${kp.title.zh.length} chars), should be ≤ 50` });
-    }
-    // ◆评价标签必须用破折号 —— 而不是冒号（v1 已知 bug）
-    if (/◆\s*(意义|局限|例子|应对|应用|比喻)\s*[：:]/.test(kp.body.zh)) {
-      issues.push({ level: 'error', category: 'format',
-        message: `KP ${kp.id}: ◆tag uses ":" instead of "——" — must be "◆意义——"` });
     }
   }
 

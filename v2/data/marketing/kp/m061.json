@@ -15,25 +15,36 @@
     "en": "Integrated Marketing Communications"
   },
   "body": {
-    "zh": "Integrated Marketing Communications（IMC·统合营销传播）是 Don Schultz·Tannenbaum·Lauterborn 1993 年同名书提出·主张所有 communication 触点必须整合·成为 IMC 学派的奠基命题。<br><br>Schultz 4 大主张：<br>① 消费者不区分广告·PR·销售·digital——只接收 brand 整体信号<br>② 所有触点都是 communication——产品包装·店员态度·官网设计·SNS 帖子都在「说话」<br>③ 不一致 = 损害 brand——广告说「premium」但店员粗鲁·消费者会信店员<br>④ 「outside-in」视角——从消费者视角设计 communication·而非企业视角<br><br>IMC 之前的「孤立」状态：<br>- 广告部 / PR 部 / 销售部 / digital 部各自独立·分别策略<br>- 不同 message·不同 visual·不同 tone<br>- 消费者收到混乱信号<br><br>IMC 整合 5 维度：<br>① Strategic Integration（战略整合）——所有 communication 服务同一战略目标<br>② Message Integration（信息整合）——核心 message 跨 channel 一致<br>③ Visual Integration（视觉整合）——logo·color·typography 一致<br>④ Channel Integration（渠道整合）——多 channel 协调使用·omnichannel<br>⑤ Stakeholder Integration（利益相关者整合）——consumer + employee + investor + community 信息一致<br><br>IMC 实务挑战：① 组织 silo 难打破——不同部门·不同 vendor·不同预算 ② 测量 ROI 难——integrated effort 的 ROI 难分摊到各 channel ③ 跨文化挑战——日本·中国·美国市场 IMC 不同<br><br>典型成功案例：<br>① Apple——产品设计·包装·零售店·广告·官网·社媒所有触点的极度一致 IMC<br>② UNIQLO——LifeWear 概念跨所有 communication 一致渗透<br>③ Coca-Cola——「Open Happiness」「Taste the Feeling」全球 IMC<br><br>跨学派关系：与 brand_equity 直接对接——IMC 是 brand-building 的执行框架。",
-    "ja": "Integrated Marketing Communications（IMC·統合マーケティング・コミュニケーション）は Don Schultz·Tannenbaum·Lauterborn 1993 年同名書提唱·全コミュニケーション接点が統合すべきと主張·IMC 学派の基礎命題。<br><br>Schultz 4 大主張：① 消費者は広告·PR·販売·digital を区別しない·ブランドの全体シグナルを受信 ② 全接点が communication（製品包装·店員態度·HP·SNS 投稿）③ 不一致 = ブランド毀損 ④ 「outside-in」視点·消費者視点で設計<br><br>IMC 以前の「孤立」状態：広告部·PR 部·販売部·digital 部が各自独立·別戦略·別 message·消費者は混乱シグナル受信。<br><br>IMC 統合 5 次元：① 戦略統合 ② メッセージ統合 ③ ビジュアル統合 ④ チャネル統合（omnichannel）⑤ ステークホルダー統合<br><br>IMC 実務挑戦：① 組織サイロ打破困難 ② ROI 測定困難 ③ 異文化挑戦<br><br>典型成功事例：① Apple·全接点極度一致 IMC ② UNIQLO·LifeWear 概念跨 channel 浸透 ③ Coca-Cola「Open Happiness」「Taste the Feeling」グローバル IMC<br><br>他派との関係：brand_equity と直接接続——IMC は brand-building の執行フレーム。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Integrated Marketing Communications（IMC·统合营销传播）是 Don Schultz·Tannenbaum·Lauterborn 1993 年同名书提出·主张所有 communication 触点必须整合·成为 IMC 学派的奠基命题。<br><br>Schultz 4 大主张：<br>① 消费者不区分广告·PR·销售·digital——只接收 brand 整体信号<br>② 所有触点都是 communication——产品包装·店员态度·官网设计·SNS 帖子都在「说话」<br>③ 不一致 = 损害 brand——广告说「premium」但店员粗鲁·消费者会信店员<br>④ 「outside-in」视角——从消费者视角设计 communication·而非企业视角<br><br>IMC 之前的「孤立」状态：<br>- 广告部 / PR 部 / 销售部 / digital 部各自独立·分别策略<br>- 不同 message·不同 visual·不同 tone<br>- 消费者收到混乱信号<br><br>IMC 整合 5 维度：<br>① Strategic Integration（战略整合）——所有 communication 服务同一战略目标<br>② Message Integration（信息整合）——核心 message 跨 channel 一致<br>③ Visual Integration（视觉整合）——logo·color·typography 一致<br>④ Channel Integration（渠道整合）——多 channel 协调使用·omnichannel<br>⑤ Stakeholder Integration（利益相关者整合）——consumer + employee + investor + community 信息一致<br><br>IMC 实务挑战：① 组织 silo 难打破——不同部门·不同 vendor·不同预算 ② 测量 ROI 难——integrated effort 的 ROI 难分摊到各 channel ③ 跨文化挑战——日本·中国·美国市场 IMC 不同<br><br>典型成功案例：<br>① Apple——产品设计·包装·零售店·广告·官网·社媒所有触点的极度一致 IMC<br>② UNIQLO——LifeWear 概念跨所有 communication 一致渗透<br>③ Coca-Cola——「Open Happiness」「Taste the Feeling」全球 IMC<br><br>跨学派关系：与 brand_equity 直接对接——IMC 是 brand-building 的执行框架。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Integrated Marketing Communications（IMC·統合マーケティング・コミュニケーション）は Don Schultz·Tannenbaum·Lauterborn 1993 年同名書提唱·全コミュニケーション接点が統合すべきと主張·IMC 学派の基礎命題。<br><br>Schultz 4 大主張：① 消費者は広告·PR·販売·digital を区別しない·ブランドの全体シグナルを受信 ② 全接点が communication（製品包装·店員態度·HP·SNS 投稿）③ 不一致 = ブランド毀損 ④ 「outside-in」視点·消費者視点で設計<br><br>IMC 以前の「孤立」状態：広告部·PR 部·販売部·digital 部が各自独立·別戦略·別 message·消費者は混乱シグナル受信。<br><br>IMC 統合 5 次元：① 戦略統合 ② メッセージ統合 ③ ビジュアル統合 ④ チャネル統合（omnichannel）⑤ ステークホルダー統合<br><br>IMC 実務挑戦：① 組織サイロ打破困難 ② ROI 測定困難 ③ 異文化挑戦<br><br>典型成功事例：① Apple·全接点極度一致 IMC ② UNIQLO·LifeWear 概念跨 channel 浸透 ③ Coca-Cola「Open Happiness」「Taste the Feeling」グローバル IMC<br><br>他派との関係：brand_equity と直接接続——IMC は brand-building の執行フレーム。"
+    }
   },
   "tags": [
     "IMC",
     "Schultz",
     "integration"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "IMC 学派的奠基命题·所有 communication 整合的必要性",
-      "限": "组织 silo 实务难打破·测量难",
-      "例": "Apple·UNIQLO·Coca-Cola 是教科书 IMC",
-      "应": "IMC 题·brand 题·一橋·早大命题"
+      "meaning": "IMC 学派的奠基命题·所有 communication 整合的必要性",
+      "limit": "组织 silo 实务难打破·测量难",
+      "example": "Apple·UNIQLO·Coca-Cola 是教科书 IMC",
+      "response": "IMC 题·brand 题·一橋·早大命题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "組織サイロ実務打破困難·測定困難",
-      "例": "Apple·UNIQLO·Coca-Cola は教科書 IMC"
+      "meaning": "",
+      "limit": "組織サイロ実務打破困難·測定困難",
+      "example": "Apple·UNIQLO·Coca-Cola は教科書 IMC",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:04:07.495Z",

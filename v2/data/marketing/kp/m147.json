@@ -16,25 +16,36 @@
     "en": "Marketing Mix Modeling"
   },
   "body": {
-    "zh": "Marketing Mix Modeling（MMM）是用统计模型分析 marketing 各要素（4P / 7T / channel·media·promotion）对销售影响的方法·Kotler 16 章·Pro Plus 5 章核心。<br><br>核心命题：把销售看作 marketing inputs 的函数·用回归 / time-series 分析得 marginal contribution。<br><br>典型 model：<br>**Sales = β0 + β1·TV + β2·Digital + β3·Print + β4·Promo + β5·Price + β6·Distribution + β7·Seasonality + ε**<br><br>每个 β 表示每元 marketing input 对销售的贡献。<br><br>3 大用途：<br>① 媒体 ROI 分析——哪个 channel 最 effective<br>② 预算优化——重新分配 marketing budget<br>③ scenario planning——「如果 promotion 增 20%·销售会怎样？」<br><br>4 大挑战：<br>① collinearity——marketing inputs 相关<br>② endogeneity——投入和销售互相影响<br>③ data quality——多年 historical data 必要<br>④ digital attribution——multi-touch journey 难归因<br><br>vs Multi-Touch Attribution（MTA）：<br>- MMM：top-down·aggregate·long history<br>- MTA：bottom-up·individual·real-time<br>- 现代 marketing 综合两者<br><br>典型例：① P&G·Unilever·Coca-Cola 大 brand 都用 MMM 多年 ② Google·Meta 提供 lift studies 帮 brand 测 digital ROI ③ Nielsen / Kantar 是 MMM 主要 vendor<br><br>跨学派关系：与 consumer_behavior 数理派·digital_marketing·strategic_marketing 一致·东大数理派核心方法。",
-    "ja": "Marketing Mix Modeling（MMM）は統計モデルでマーケティング各要素（4P / 7T / channel·media·promotion）の販売影響を分析·Kotler 16 章·Pro Plus 5 章核心。<br><br>核心命題：販売を marketing inputs の関数とし·回帰 / time-series 分析で marginal contribution。<br><br>典型モデル：**Sales = β0 + β1·TV + β2·Digital + β3·Print + β4·Promo + β5·Price + β6·Distribution + β7·Seasonality + ε**<br><br>3 大用途：① メディア ROI 分析 ② 予算最適化 ③ scenario planning<br><br>4 大挑戦：① collinearity ② endogeneity ③ data quality ④ digital attribution<br><br>vs Multi-Touch Attribution（MTA）：MMM は top-down·aggregate·long history·MTA は bottom-up·individual·real-time·現代マーケティングは両者総合。<br><br>典型例：① P&G·Unilever·Coca-Cola 大ブランドは MMM 多年使用 ② Google·Meta は lift studies で digital ROI 測定支援 ③ Nielsen / Kantar は MMM 主要 vendor<br><br>他派との関係：consumer_behavior 数理派·digital_marketing·strategic_marketing と一致·東大数理派核心手法。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Marketing Mix Modeling（MMM）是用统计模型分析 marketing 各要素（4P / 7T / channel·media·promotion）对销售影响的方法·Kotler 16 章·Pro Plus 5 章核心。<br><br>核心命题：把销售看作 marketing inputs 的函数·用回归 / time-series 分析得 marginal contribution。<br><br>典型 model：<br>**Sales = β0 + β1·TV + β2·Digital + β3·Print + β4·Promo + β5·Price + β6·Distribution + β7·Seasonality + ε**<br><br>每个 β 表示每元 marketing input 对销售的贡献。<br><br>3 大用途：<br>① 媒体 ROI 分析——哪个 channel 最 effective<br>② 预算优化——重新分配 marketing budget<br>③ scenario planning——「如果 promotion 增 20%·销售会怎样？」<br><br>4 大挑战：<br>① collinearity——marketing inputs 相关<br>② endogeneity——投入和销售互相影响<br>③ data quality——多年 historical data 必要<br>④ digital attribution——multi-touch journey 难归因<br><br>vs Multi-Touch Attribution（MTA）：<br>- MMM：top-down·aggregate·long history<br>- MTA：bottom-up·individual·real-time<br>- 现代 marketing 综合两者<br><br>典型例：① P&G·Unilever·Coca-Cola 大 brand 都用 MMM 多年 ② Google·Meta 提供 lift studies 帮 brand 测 digital ROI ③ Nielsen / Kantar 是 MMM 主要 vendor<br><br>跨学派关系：与 consumer_behavior 数理派·digital_marketing·strategic_marketing 一致·东大数理派核心方法。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Marketing Mix Modeling（MMM）は統計モデルでマーケティング各要素（4P / 7T / channel·media·promotion）の販売影響を分析·Kotler 16 章·Pro Plus 5 章核心。<br><br>核心命題：販売を marketing inputs の関数とし·回帰 / time-series 分析で marginal contribution。<br><br>典型モデル：**Sales = β0 + β1·TV + β2·Digital + β3·Print + β4·Promo + β5·Price + β6·Distribution + β7·Seasonality + ε**<br><br>3 大用途：① メディア ROI 分析 ② 予算最適化 ③ scenario planning<br><br>4 大挑戦：① collinearity ② endogeneity ③ data quality ④ digital attribution<br><br>vs Multi-Touch Attribution（MTA）：MMM は top-down·aggregate·long history·MTA は bottom-up·individual·real-time·現代マーケティングは両者総合。<br><br>典型例：① P&G·Unilever·Coca-Cola 大ブランドは MMM 多年使用 ② Google·Meta は lift studies で digital ROI 測定支援 ③ Nielsen / Kantar は MMM 主要 vendor<br><br>他派との関係：consumer_behavior 数理派·digital_marketing·strategic_marketing と一致·東大数理派核心手法。"
+    }
   },
   "tags": [
     "MMM",
     "ROI",
     "attribution"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "marketing ROI 测量的标准方法·实务必学",
-      "限": "data 要求高·digital 时代演化",
-      "例": "P&G·Unilever·Coca-Cola 是教科书",
-      "应": "东大数理派·Kotler 5 章·marketing ROI 题"
+      "meaning": "marketing ROI 测量的标准方法·实务必学",
+      "limit": "data 要求高·digital 时代演化",
+      "example": "P&G·Unilever·Coca-Cola 是教科书",
+      "response": "东大数理派·Kotler 5 章·marketing ROI 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "データ要求高·デジタル時代進化",
-      "例": "P&G·Unilever·Coca-Cola 教科書"
+      "meaning": "",
+      "limit": "データ要求高·デジタル時代進化",
+      "example": "P&G·Unilever·Coca-Cola 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:41:08.499Z",

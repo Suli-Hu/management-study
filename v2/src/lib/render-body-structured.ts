@@ -20,6 +20,7 @@ import type {
   CompareBody,
   QuadBody,
   QuadAxis,
+  KpEvaluationsLang,
 } from '~/schemas/kp-body-structured';
 
 const FALLBACK_ACCENT = '#8a7a6a';
@@ -267,4 +268,61 @@ export function renderStructuredBody(opts: {
     case 'quad':
       return renderQuadStructured(body, accentHex);
   }
+}
+
+// ============================================================
+// 评价模块（独立于 body）— 6 字段 (meaning/limit/example/response/application/analogy)
+// ============================================================
+
+/**
+ * 6 字段定义：英文 key（v0.8 contract）+ 中文 pill label + 语义 tone 色。
+ *
+ * tone 色继承自 v0.5.46 设计（Z 三组色）：
+ *   - 积极组（meaning/response/application）= 绿 #10B981
+ *   - 警告组（limit）= 红 #EF4444
+ *   - 中性组（example/analogy）= 灰 #6B7280
+ */
+type EvalKey = keyof KpEvaluationsLang;
+interface EvalDef {
+  key: EvalKey;
+  label: string;
+  tone: string;
+}
+const EVAL_DEFS: readonly EvalDef[] = [
+  { key: 'meaning', label: '意义', tone: '#10B981' },
+  { key: 'limit', label: '局限', tone: '#EF4444' },
+  { key: 'example', label: '例子', tone: '#6B7280' },
+  { key: 'response', label: '应对', tone: '#10B981' },
+  { key: 'application', label: '应用', tone: '#10B981' },
+  { key: 'analogy', label: '比喻', tone: '#6B7280' },
+] as const;
+
+/**
+ * 把 KpEvaluationsLang 渲染成 evaluation section（自动跳过空字段）。
+ * v0.8.10 Stage 5：取代旧 renderEvalModule(EvalContent) — 直接吃 v0.8 英文 key shape。
+ */
+export function renderEvalModule(content: KpEvaluationsLang | null | undefined): string {
+  if (!content) return '';
+  const rows = EVAL_DEFS
+    .map((d) => ({ def: d, text: content[d.key]?.trim() }))
+    .filter((x): x is { def: EvalDef; text: string } => Boolean(x.text));
+  if (rows.length === 0) return '';
+
+  const rowsHtml = rows.map(({ def, text }) => `
+    <div class="eval-row" style="--tone:${def.tone}">
+      <span class="eval-pill">${def.label}</span>
+      <div class="eval-text">${text}</div>
+    </div>
+  `).join('');
+
+  return `
+    <details class="eval" open>
+      <summary class="eval-h">
+        <span>评价</span>
+        <span class="eval-count">${rows.length}</span>
+        <span class="eval-chev">▾</span>
+      </summary>
+      <div class="eval-list">${rowsHtml}</div>
+    </details>
+  `;
 }

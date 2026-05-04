@@ -1,31 +1,26 @@
 /**
- * KP API store — v0.8.0 Stage 3 hard cut.
+ * KP API store — v0.8.10 Stage 5: 拆双轨后只读写新列。
  *
- * 写入接受 new structured contract（KpCreateInput / KpPatchInput），写时同时填：
- *   - 旧列：body_zh / body_ja / format / eval_content_*_json （response 暂兼容用）
- *   - 新列：body_zh_json / body_ja_json / body_format / evaluations_*_json （render 主读）
+ * 写入接受 KpCreateInput / KpPatchInput 新 contract（KpBody discriminated union）：
+ *   - body_zh_json / body_ja_json     （structured KpBody JSON）
+ *   - body_format                     （冗余 cache = body.zh.format）
+ *   - evaluations_zh_json / evaluations_ja_json （6 字段英文 key dict 或 NULL）
  *
- * GET response 仍是旧 shape（migration-v0.8.md §1 "response 暂保留旧字段兼容，
- * Stage 5 才 drop"）。Stage 4/5 才迁 GET 形状。
+ * 旧列（body_zh / body_ja / format / eval_content_*_json）migration 0022 已 DROP，
+ * 任何残留代码读取会 SQL 错；不再 backfill / fallback。
+ *
+ * GET response 切 v0.8 shape（migration-v0.8.md §13）：
+ *   - body: { zh: KpBody, ja?: KpBody }
+ *   - evaluations: { zh?: KpEvaluationsLang, ja?: KpEvaluationsLang }
+ *   - 顶层 format 字段彻底不返
  */
 
 import type { KpCreateInput, KpPatchInput } from '~/schemas/kp-api';
 import type { KpBody, KpEvaluationsLang } from '~/schemas/kp-body-structured';
-import {
-  structuredToLegacyDsl,
-  evaluationsLangToLegacyEvalContent,
-  hasEvaluationsContent,
-} from './kp-body-helpers';
+import { hasEvaluationsContent, structuredToSearchText } from './kp-body-helpers';
 import { deepStripStrong } from './sanitize-strong';
 
-interface DualWriteCols {
-  // 旧列（response shape 兼容）
-  legacy_body_zh: string;
-  legacy_body_ja: string | null;
-  legacy_format: string;
-  legacy_eval_content_zh_json: string;
-  legacy_eval_content_ja_json: string;
-  // 新列（render 主读）
+interface DerivedCols {
   body_zh_json: string;
   body_ja_json: string | null;
   evaluations_zh_json: string | null;
@@ -34,32 +29,19 @@ interface DualWriteCols {
 }
 
 /**
- * 从结构化 body + evaluations 派生双写列。
- * 新列直接 JSON.stringify；旧列反推 DSL string + glyph-keyed evalContent。
- *
+ * 从结构化 body + evaluations 派生 D1 写入列。
  * v0.7.42 PM 决策：evaluations 任一字段空时整体写 null（4 路径一致）。
  */
-function deriveDualWriteCols(input: {
+function deriveCols(input: {
   body: { zh: KpBody; ja?: KpBody };
   evaluations?: { zh?: KpEvaluationsLang; ja?: KpEvaluationsLang };
-}): DualWriteCols {
+}): DerivedCols {
   const evalZh = input.evaluations?.zh;
   const evalJa = input.evaluations?.ja;
   const hasZh = hasEvaluationsContent(evalZh);
   const hasJa = hasEvaluationsContent(evalJa);
 
   return {
-    // 旧列
-    legacy_body_zh: structuredToLegacyDsl(input.body.zh),
-    legacy_body_ja: input.body.ja ? structuredToLegacyDsl(input.body.ja) : null,
-    legacy_format: input.body.zh.format,
-    legacy_eval_content_zh_json: hasZh && evalZh
-      ? JSON.stringify(evaluationsLangToLegacyEvalContent(evalZh))
-      : '{}',
-    legacy_eval_content_ja_json: hasJa && evalJa
-      ? JSON.stringify(evaluationsLangToLegacyEvalContent(evalJa))
-      : '{}',
-    // 新列
     body_zh_json: JSON.stringify(input.body.zh),
     body_ja_json: input.body.ja ? JSON.stringify(input.body.ja) : null,
     evaluations_zh_json: hasZh && evalZh ? JSON.stringify(evalZh) : null,
@@ -74,14 +56,13 @@ export interface KpApiRecord {
   discipline: string;
   year: string;
   title: { zh: string; en?: string; ja?: string };
-  body: { zh: string; ja?: string };
+  body: { zh: KpBody; ja?: KpBody };
   tags: string[];
-  format: string;
   schools: string[];
   scholars: string[];
-  evalContent?: {
-    zh?: Record<string, string>;
-    ja?: Record<string, string>;
+  evaluations?: {
+    zh?: KpEvaluationsLang;
+    ja?: KpEvaluationsLang;
   };
   created_by: string | null;
   updated_by: string | null;
@@ -117,17 +98,12 @@ interface KpRow {
   title_zh: string;
   title_en: string | null;
   title_ja: string | null;
-  body_zh: string;
-  body_ja: string | null;
   tags_json: string;
-  format: string;
-  eval_content_zh_json?: string | null;
-  eval_content_ja_json?: string | null;
-  body_zh_json?: string | null;
-  body_ja_json?: string | null;
-  evaluations_zh_json?: string | null;
-  evaluations_ja_json?: string | null;
-  body_format?: string | null;
+  body_zh_json: string;
+  body_ja_json: string | null;
+  evaluations_zh_json: string | null;
+  evaluations_ja_json: string | null;
+  body_format: string;
   created_by?: string | null;
   updated_by?: string | null;
   created_at: string;
@@ -164,11 +140,25 @@ async function refsForKp(db: D1Database, kpId: string): Promise<{ schools: strin
 
 async function toRecord(db: D1Database, row: KpRow): Promise<KpApiRecord> {
   const refs = await refsForKp(db, row.id);
-  const evalZh = parseJson<Record<string, string>>(row.eval_content_zh_json, {});
-  const evalJa = parseJson<Record<string, string>>(row.eval_content_ja_json, {});
-  const evalContent =
-    Object.keys(evalZh).length || Object.keys(evalJa).length
-      ? { ...(Object.keys(evalZh).length ? { zh: evalZh } : {}), ...(Object.keys(evalJa).length ? { ja: evalJa } : {}) }
+
+  const bodyZh = parseJson<KpBody | null>(row.body_zh_json, null);
+  if (!bodyZh) {
+    throw new Error(`kp ${row.id} body_zh_json missing or unparseable; data inconsistent post-Stage 5`);
+  }
+  const bodyJa = row.body_ja_json ? parseJson<KpBody | null>(row.body_ja_json, null) : null;
+
+  const evalZh = row.evaluations_zh_json
+    ? parseJson<KpEvaluationsLang | null>(row.evaluations_zh_json, null)
+    : null;
+  const evalJa = row.evaluations_ja_json
+    ? parseJson<KpEvaluationsLang | null>(row.evaluations_ja_json, null)
+    : null;
+  const evaluations =
+    evalZh || evalJa
+      ? {
+          ...(evalZh ? { zh: evalZh } : {}),
+          ...(evalJa ? { ja: evalJa } : {}),
+        }
       : undefined;
 
   return {
@@ -177,12 +167,11 @@ async function toRecord(db: D1Database, row: KpRow): Promise<KpApiRecord> {
     discipline: row.discipline,
     year: row.year,
     title: compactI18n(row.title_zh, row.title_en, row.title_ja),
-    body: { zh: row.body_zh, ...(row.body_ja ? { ja: row.body_ja } : {}) },
+    body: { zh: bodyZh, ...(bodyJa ? { ja: bodyJa } : {}) },
     tags: parseJson<string[]>(row.tags_json, []),
-    format: row.format,
     schools: refs.schools,
     scholars: refs.scholars,
-    evalContent,
+    evaluations,
     created_by: row.created_by ?? null,
     updated_by: row.updated_by ?? null,
     created_at: row.created_at,
@@ -248,7 +237,9 @@ export async function listKpsForTenant(
   const q = options.q?.trim();
   if (q) {
     const like = `%${q}%`;
-    where.push('(k.title_zh LIKE ? OR k.title_en LIKE ? OR k.title_ja LIKE ? OR k.body_zh LIKE ? OR k.body_ja LIKE ?)');
+    // v0.8.10 Stage 5: body 旧 string 列已 drop，body LIKE 改读结构化 JSON 文本（粗粒度，
+    // 真正 fts 在 kp_fts 索引；此处仍是 fallback list 搜索）。
+    where.push('(k.title_zh LIKE ? OR k.title_en LIKE ? OR k.title_ja LIKE ? OR k.body_zh_json LIKE ? OR k.body_ja_json LIKE ?)');
     binds.push(like, like, like, like, like);
   }
   if (options.school) {
@@ -357,19 +348,20 @@ export async function createKpRecord(
   if (!refs.ok) return { ok: false, status: 422, reason: refs.reason, detail: refs.detail };
 
   const now = new Date().toISOString();
-  const cols = deriveDualWriteCols({
+  const cols = deriveCols({
     body: input.body,
     evaluations: input.evaluations,
   });
+  const ftsTextZh = structuredToSearchText(input.body.zh);
+  const ftsTextJa = input.body.ja ? structuredToSearchText(input.body.ja) : '';
 
   const stmts: D1PreparedStatement[] = [
     db.prepare(
       `INSERT INTO kp (
         id, tenant_id, discipline, year, title_zh, title_en, title_ja,
-        body_zh, body_ja, tags_json, eval_content_zh_json, eval_content_ja_json,
-        format, created_by, updated_by, created_at, updated_at,
+        tags_json, created_by, updated_by, created_at, updated_at,
         body_zh_json, body_ja_json, evaluations_zh_json, evaluations_ja_json, body_format
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     ).bind(
       id,
       tenant.tenantId,
@@ -378,12 +370,7 @@ export async function createKpRecord(
       input.title.zh,
       input.title.en ?? null,
       input.title.ja ?? null,
-      cols.legacy_body_zh,
-      cols.legacy_body_ja,
       JSON.stringify(input.tags ?? []),
-      cols.legacy_eval_content_zh_json,
-      cols.legacy_eval_content_ja_json,
-      cols.legacy_format,
       userId,
       userId,
       now,
@@ -397,7 +384,7 @@ export async function createKpRecord(
     db.prepare('DELETE FROM kp_fts WHERE id = ?').bind(id),
     db.prepare(
       'INSERT INTO kp_fts (id, title_zh, title_en, title_ja, body_zh, body_ja) VALUES (?, ?, ?, ?, ?, ?)',
-    ).bind(id, input.title.zh, input.title.en ?? '', input.title.ja ?? '', cols.legacy_body_zh, cols.legacy_body_ja ?? ''),
+    ).bind(id, input.title.zh, input.title.en ?? '', input.title.ja ?? '', ftsTextZh, ftsTextJa),
   ];
 
   input.schools.forEach((schoolKey, i) => {
@@ -477,15 +464,15 @@ export async function patchKpRecord(
   if (!refs.ok) return { ok: false, status: 422, reason: refs.reason, detail: refs.detail };
 
   const now = new Date().toISOString();
-  const cols = deriveDualWriteCols({ body: mergedBody, evaluations: mergedEvaluations });
+  const cols = deriveCols({ body: mergedBody, evaluations: mergedEvaluations });
+  const ftsTextZh = structuredToSearchText(mergedBody.zh);
+  const ftsTextJa = mergedBody.ja ? structuredToSearchText(mergedBody.ja) : '';
 
   const stmts: D1PreparedStatement[] = [
     db.prepare(
       `UPDATE kp SET
         year = ?, title_zh = ?, title_en = ?, title_ja = ?,
-        body_zh = ?, body_ja = ?, tags_json = ?,
-        eval_content_zh_json = ?, eval_content_ja_json = ?,
-        format = ?, updated_by = ?, updated_at = ?,
+        tags_json = ?, updated_by = ?, updated_at = ?,
         body_zh_json = ?, body_ja_json = ?, evaluations_zh_json = ?, evaluations_ja_json = ?, body_format = ?
        WHERE id = ? AND COALESCE(tenant_id, discipline) = ? AND discipline = ?`,
     ).bind(
@@ -493,12 +480,7 @@ export async function patchKpRecord(
       mergedTitle.zh,
       mergedTitle.en ?? null,
       mergedTitle.ja ?? null,
-      cols.legacy_body_zh,
-      cols.legacy_body_ja,
       JSON.stringify(nextTags),
-      cols.legacy_eval_content_zh_json,
-      cols.legacy_eval_content_ja_json,
-      cols.legacy_format,
       userId,
       now,
       cols.body_zh_json,
@@ -515,7 +497,7 @@ export async function patchKpRecord(
     db.prepare('DELETE FROM kp_fts WHERE id = ?').bind(kpId),
     db.prepare(
       'INSERT INTO kp_fts (id, title_zh, title_en, title_ja, body_zh, body_ja) VALUES (?, ?, ?, ?, ?, ?)',
-    ).bind(kpId, mergedTitle.zh, mergedTitle.en ?? '', mergedTitle.ja ?? '', cols.legacy_body_zh, cols.legacy_body_ja ?? ''),
+    ).bind(kpId, mergedTitle.zh, mergedTitle.en ?? '', mergedTitle.ja ?? '', ftsTextZh, ftsTextJa),
   ];
 
   nextSchools.forEach((schoolKey, i) => {

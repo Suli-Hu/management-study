@@ -16,22 +16,90 @@
     "ja": "取引型リーダーシップ"
   },
   "body": {
-    "zh": "James MacGregor Burns（1978《Leadership》）首创，Bass（1985）精致化。以「贡献-报酬交换」为基础的领导方式——追随者状态是 Compliance（服从），按契约做事但不投入超额努力。<br>【3 个下位维度】<br>①条件性奖励（Contingent Reward）——明确绩效标准和对应奖励<br>②积极例外管理（Active Management by Exception）——主动监测偏差并纠正<br>③消极例外管理（Passive Management by Exception）——仅在问题出现后才介入（最弱的交易型）<br>【完整领导光谱（Bass & Avolio MLQ）】<br>放任型（Laissez-Faire）→ 消极例外 → 积极例外 → 条件奖励 → 变革型 4I<br>左到右从最弱到最强——放任型实际上是「缺席领导」，不做决策、回避责任<br>【与变革型的增强关系】<br>交易型不是变革型的对立面，而是它的基础——没有清晰的奖惩和绩效标准，光喊愿景的变革型也会落空（Bass 增强效应 Augmentation Effect）",
-    "ja": "——バーンズ（1978『Leadership』）が提唱しバス（1985）が精緻化した。「貢献と報酬の交換」を基礎とするリーダーシップ方式——フォロワーの状態は 従順（Compliance）、契約範囲内の行動で、超過的努力はしない。<br>【3つの下位次元】<br>①条件的報酬（Contingent Reward）——業績基準と対応する報酬を明確に提示する<br>②能動的例外管理（Active Management by Exception）——主体的に逸脱を監視し是正する<br>③受動的例外管理（Passive Management by Exception）——問題が発生した後にはじめて介入する（取引型の中で最も弱い）<br>【完全なリーダーシップ・スペクトル（Bass & Avolio の MLQ）】<br>放任型（Laissez-Faire）→ 受動的例外管理 → 能動的例外管理 → 条件的報酬 → 変革型 4I<br>左から右へ最弱から最強——放任型は実質的に「不在のリーダー」、意思決定を回避し責任を避ける<br>【変革型との増強関係】<br>取引型は変革型の対立物ではなく、その基礎である——明確な報酬と業績基準なしでは、変革型のビジョン喚起も空回りする（バスの増強効果 Augmentation Effect）<br>◆意義——リーダーシップを曖昧な個人スタイルから測定可能・訓練可能な3次元に変換；MLQ 測定尺度の基礎を提供；実務上多くの管理者のデフォルト・スタイル"
+    "zh": {
+      "format": "accordion",
+      "lead": "James MacGregor Burns（1978《Leadership》）首创，Bass（1985）精致化。以「贡献-报酬交换」为基础的领导方式——追随者状态是 Compliance（服从），按契约做事但不投入超额努力。",
+      "groups": [
+        {
+          "title": "3 个下位维度",
+          "items": [
+            {
+              "name": "条件性奖励（Contingent Reward）",
+              "desc": "明确绩效标准和对应奖励"
+            },
+            {
+              "name": "积极例外管理（Active Management by Exception）",
+              "desc": "主动监测偏差并纠正"
+            },
+            {
+              "name": "消极例外管理（Passive Management by Exception）",
+              "desc": "仅在问题出现后才介入（最弱的交易型）"
+            }
+          ]
+        },
+        {
+          "title": "完整领导光谱（Bass & Avolio MLQ）",
+          "items": []
+        },
+        {
+          "title": "与变革型的增强关系",
+          "items": []
+        }
+      ]
+    },
+    "ja": {
+      "format": "accordion",
+      "lead": "——バーンズ（1978『Leadership』）が提唱しバス（1985）が精緻化した。「貢献と報酬の交換」を基礎とするリーダーシップ方式——フォロワーの状態は 従順（Compliance）、契約範囲内の行動で、超過的努力はしない。",
+      "groups": [
+        {
+          "title": "3つの下位次元",
+          "items": [
+            {
+              "name": "条件的報酬（Contingent Reward）",
+              "desc": "業績基準と対応する報酬を明確に提示する"
+            },
+            {
+              "name": "能動的例外管理（Active Management by Exception）",
+              "desc": "主体的に逸脱を監視し是正する"
+            },
+            {
+              "name": "受動的例外管理（Passive Management by Exception）",
+              "desc": "問題が発生した後にはじめて介入する（取引型の中で最も弱い）"
+            }
+          ]
+        },
+        {
+          "title": "完全なリーダーシップ・スペクトル（Bass & Avolio の MLQ）",
+          "items": []
+        },
+        {
+          "title": "変革型との増強関係",
+          "items": []
+        }
+      ]
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "accordion",
-  "createdAt": "2026-04-24T02:21:59.847Z",
-  "updatedAt": "2026-04-26T04:03:26.933Z",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "限": "仅维持现状，不引发变革；在稳定环境·短期任务·明确目标下有效，但在 VUCA 环境·长期发展·创造性任务中显得不足；需与变革型结合才发挥最大效用",
-      "义": "把领导行为从模糊的个人风格变成可测量·可训练的 3 维度；为 MLQ 量表提供基础；实务中是多数管理者的默认风格"
+      "meaning": "把领导行为从模糊的个人风格变成可测量·可训练的 3 维度；为 MLQ 量表提供基础；实务中是多数管理者的默认风格",
+      "limit": "仅维持现状，不引发变革；在稳定环境·短期任务·明确目标下有效，但在 VUCA 环境·长期发展·创造性任务中显得不足；需与变革型结合才发挥最大效用",
+      "example": "",
+      "response": "",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "現状維持のみで変革を引き起こさない；安定環境・短期タスク・明確な目標下では有効だが、VUCA 環境・長期成長・創造的タスクでは不十分；変革型と組合せることで最大の効果を発揮する"
+      "meaning": "",
+      "limit": "現状維持のみで変革を引き起こさない；安定環境・短期タスク・明確な目標下では有効だが、VUCA 環境・長期成長・創造的タスクでは不十分；変革型と組合せることで最大の効果を発揮する",
+      "example": "",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
-  }
+  },
+  "createdAt": "2026-04-24T02:21:59.847Z",
+  "updatedAt": "2026-04-26T04:03:26.933Z"
 }

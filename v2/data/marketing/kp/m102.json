@@ -15,24 +15,36 @@
     "en": "Maslow's Hierarchy of Needs"
   },
   "body": {
-    "zh": "Maslow 欲求 5 层次（Maslow's Hierarchy of Needs）由 Abraham Maslow 1943 年在「A Theory of Human Motivation」提出·心理学奠基理论·marketing 借入解释消费者动机。<br><br>5 层次（金字塔·从下到上）：<br><br>① 生理（Physiological）——食物·水·睡眠·生存基础<br>marketing 例：食品·药品·基础日用品<br><br>② 安全（Safety）——身体安全·经济安全·健康<br>marketing 例：保险·医疗·安全装置·汽车安全 feature<br><br>③ 社会归属（Belongingness）——爱·友谊·归属感·亲密关系<br>marketing 例：SNS·dating app·社区活动·family product<br><br>④ 尊重（Esteem）——成就·声望·status·认可<br>marketing 例：奢侈品·高级 brand·荣誉勋章·LinkedIn<br><br>⑤ 自我实现（Self-Actualization）——成为最好的自己·peak experience<br>marketing 例：教育·健身·艺术·创作工具·Patagonia「冒险伴侣」<br><br>核心命题：低层次需要满足后·高层次需要才会主导。<br><br>marketing 实务应用：<br>① 产品定位——明确产品满足哪一层<br>② brand purpose——高层 brand（如 Patagonia·Tesla）打 self-actualization<br>③ 跨文化适应——发达国家偏高层·发展中国家偏低层<br>④ 价格层级——价格越高·要满足越高层（奢侈品 = esteem + self-actualization）<br><br>批判：<br>① 线性顺序质疑——人可能同时追多层<br>② 跨文化偏差——东方社会更看重归属·西方更看重自我实现<br>③ 5 层不全——后续 ERG·Alderfer 等修订<br><br>跨学派关系：与 marketing_concept 5 志向（顾客志向·社会志向）一脉相承·与 brand purpose·brand archetypes 直接对接。",
-    "ja": "マズロー欲求 5 段階（Maslow's Hierarchy of Needs）は Abraham Maslow 1943 年「A Theory of Human Motivation」提唱·心理学基礎理論·マーケティングが借入し消費者動機を説明。<br><br>5 段階（ピラミッド·下から上へ）：<br>① 生理（食·水·睡眠·生存基礎）·食品·薬品·日用品<br>② 安全（身体·経済·健康）·保険·医療·安全装置·自動車安全 feature<br>③ 社会的所属（愛·友情·所属感）·SNS·dating app·コミュニティ活動·family product<br>④ 尊重（成就·名声·status·認可）·ラグジュアリー·高級ブランド·LinkedIn<br>⑤ 自己実現（最善の自分·peak experience）·教育·フィットネス·芸術·Patagonia<br><br>核心命題：低層次充足後·高層次が主導。<br><br>マーケティング実務応用：① 製品ポジショニング（どの層充足か）② brand purpose（高層 brand·Patagonia·Tesla は self-actualization）③ 異文化適応 ④ 価格層次<br><br>批判：① 線形順序質疑·同時複数層追求可 ② 異文化バイアス·東洋は所属·西洋は自己実現重視 ③ 5 層不全·ERG·Alderfer 修訂<br><br>他派との関係：marketing_concept 5 志向と一脉相承·brand purpose·brand archetypes と直接接続。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Maslow 欲求 5 层次（Maslow's Hierarchy of Needs）由 Abraham Maslow 1943 年在「A Theory of Human Motivation」提出·心理学奠基理论·marketing 借入解释消费者动机。<br><br>5 层次（金字塔·从下到上）：<br><br>① 生理（Physiological）——食物·水·睡眠·生存基础<br>marketing 例：食品·药品·基础日用品<br><br>② 安全（Safety）——身体安全·经济安全·健康<br>marketing 例：保险·医疗·安全装置·汽车安全 feature<br><br>③ 社会归属（Belongingness）——爱·友谊·归属感·亲密关系<br>marketing 例：SNS·dating app·社区活动·family product<br><br>④ 尊重（Esteem）——成就·声望·status·认可<br>marketing 例：奢侈品·高级 brand·荣誉勋章·LinkedIn<br><br>⑤ 自我实现（Self-Actualization）——成为最好的自己·peak experience<br>marketing 例：教育·健身·艺术·创作工具·Patagonia「冒险伴侣」<br><br>核心命题：低层次需要满足后·高层次需要才会主导。<br><br>marketing 实务应用：<br>① 产品定位——明确产品满足哪一层<br>② brand purpose——高层 brand（如 Patagonia·Tesla）打 self-actualization<br>③ 跨文化适应——发达国家偏高层·发展中国家偏低层<br>④ 价格层级——价格越高·要满足越高层（奢侈品 = esteem + self-actualization）<br><br>批判：<br>① 线性顺序质疑——人可能同时追多层<br>② 跨文化偏差——东方社会更看重归属·西方更看重自我实现<br>③ 5 层不全——后续 ERG·Alderfer 等修订<br><br>跨学派关系：与 marketing_concept 5 志向（顾客志向·社会志向）一脉相承·与 brand purpose·brand archetypes 直接对接。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "マズロー欲求 5 段階（Maslow's Hierarchy of Needs）は Abraham Maslow 1943 年「A Theory of Human Motivation」提唱·心理学基礎理論·マーケティングが借入し消費者動機を説明。<br><br>5 段階（ピラミッド·下から上へ）：<br>① 生理（食·水·睡眠·生存基礎）·食品·薬品·日用品<br>② 安全（身体·経済·健康）·保険·医療·安全装置·自動車安全 feature<br>③ 社会的所属（愛·友情·所属感）·SNS·dating app·コミュニティ活動·family product<br>④ 尊重（成就·名声·status·認可）·ラグジュアリー·高級ブランド·LinkedIn<br>⑤ 自己実現（最善の自分·peak experience）·教育·フィットネス·芸術·Patagonia<br><br>核心命題：低層次充足後·高層次が主導。<br><br>マーケティング実務応用：① 製品ポジショニング（どの層充足か）② brand purpose（高層 brand·Patagonia·Tesla は self-actualization）③ 異文化適応 ④ 価格層次<br><br>批判：① 線形順序質疑·同時複数層追求可 ② 異文化バイアス·東洋は所属·西洋は自己実現重視 ③ 5 層不全·ERG·Alderfer 修訂<br><br>他派との関係：marketing_concept 5 志向と一脉相承·brand purpose·brand archetypes と直接接続。"
+    }
   },
   "tags": [
     "Maslow",
     "needs",
     "motivation"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "消费者动机分析的最经典框架·brand 定位依据",
-      "例": "Patagonia·Tesla = self-actualization·快餐 = 生理",
-      "应": "Kotler 第 3 章·brand 题"
+      "meaning": "消费者动机分析的最经典框架·brand 定位依据",
+      "limit": "",
+      "example": "Patagonia·Tesla = self-actualization·快餐 = 生理",
+      "response": "Kotler 第 3 章·brand 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "線形·異文化バイアス·心理学基礎理論",
-      "例": "Patagonia·Tesla = 自己実現·ファストフード = 生理"
+      "meaning": "",
+      "limit": "線形·異文化バイアス·心理学基礎理論",
+      "example": "Patagonia·Tesla = 自己実現·ファストフード = 生理",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:24:06.049Z",

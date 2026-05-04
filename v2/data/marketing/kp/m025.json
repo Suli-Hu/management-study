@@ -14,25 +14,36 @@
     "en": "EBM Model"
   },
   "body": {
-    "zh": "EBM モデル（Engel-Kollat-Blackwell Model）是消费者行为学派的另一个奠基性模型·与 Howard-Sheth 模型并列·1968 年 James Engel·David Kollat·Roger Blackwell 提出·后改名为 EKB 或 CDM（Consumer Decision Model）。<br><br>核心结构：以「问题识别 → 信息搜索 → 替代品评价 → 购买 → 后购评价」5 步决策过程为骨架·把内部认知变量·外部环境变量·个人差异变量都整合进同一框架。<br><br>4 大变量类：<br>① 外部环境影响——文化·社会层·家庭·个人影响·情境<br>② 个人差异——consumer resources·motivation·knowledge·attitudes·personality·values·lifestyle<br>③ 心理过程——information processing·learning·attitude change<br>④ 意思决定过程——5 步主线<br><br>vs Howard-Sheth 的区别：<br>- HS 重点在「学习过程」（buyer learning to make decisions）<br>- EBM 重点在「决策过程」（5 步线性流程）<br>- 实务上 EBM 更易理解·HS 更全面·两者并行使用<br><br>历史地位：EBM 的5 步决策流程成为后来 Kotler 教材的标准·所有现代 marketing 教材的消费者决策章节基本结构都源于 EBM。",
-    "ja": "EBM モデル（Engel-Kollat-Blackwell Model）は消費者行動学派のもう一つの基礎モデル·Howard-Sheth と並列·1968 年 James Engel·David Kollat·Roger Blackwell が提唱·後に EKB または CDM（Consumer Decision Model）に改称。<br><br>核心構造：「問題認識 → 情報探索 → 代替品評価 → 購買 → 購買後評価」5 段階意思決定プロセスを骨格·内部認知変数·外部環境変数·個人差異変数を同一フレームに統合。<br><br>4 大変数類：<br>① 外部環境影響·② 個人差異·③ 心理プロセス·④ 意思決定プロセス<br><br>vs Howard-Sheth の違い：<br>- HS は「学習プロセス」重視<br>- EBM は「意思決定プロセス」重視<br>- 実務 EBM 理解しやすい·HS より総合·並行使用<br><br>歴史的位置：EBM の5 段階意思決定フローは後の Kotler 教材標準·全現代マーケティング教材の消費者意思決定章節の基本構造の源。"
+    "zh": {
+      "format": "narrative",
+      "prose": "EBM モデル（Engel-Kollat-Blackwell Model）是消费者行为学派的另一个奠基性模型·与 Howard-Sheth 模型并列·1968 年 James Engel·David Kollat·Roger Blackwell 提出·后改名为 EKB 或 CDM（Consumer Decision Model）。<br><br>核心结构：以「问题识别 → 信息搜索 → 替代品评价 → 购买 → 后购评价」5 步决策过程为骨架·把内部认知变量·外部环境变量·个人差异变量都整合进同一框架。<br><br>4 大变量类：<br>① 外部环境影响——文化·社会层·家庭·个人影响·情境<br>② 个人差异——consumer resources·motivation·knowledge·attitudes·personality·values·lifestyle<br>③ 心理过程——information processing·learning·attitude change<br>④ 意思决定过程——5 步主线<br><br>vs Howard-Sheth 的区别：<br>- HS 重点在「学习过程」（buyer learning to make decisions）<br>- EBM 重点在「决策过程」（5 步线性流程）<br>- 实务上 EBM 更易理解·HS 更全面·两者并行使用<br><br>历史地位：EBM 的5 步决策流程成为后来 Kotler 教材的标准·所有现代 marketing 教材的消费者决策章节基本结构都源于 EBM。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "EBM モデル（Engel-Kollat-Blackwell Model）は消費者行動学派のもう一つの基礎モデル·Howard-Sheth と並列·1968 年 James Engel·David Kollat·Roger Blackwell が提唱·後に EKB または CDM（Consumer Decision Model）に改称。<br><br>核心構造：「問題認識 → 情報探索 → 代替品評価 → 購買 → 購買後評価」5 段階意思決定プロセスを骨格·内部認知変数·外部環境変数·個人差異変数を同一フレームに統合。<br><br>4 大変数類：<br>① 外部環境影響·② 個人差異·③ 心理プロセス·④ 意思決定プロセス<br><br>vs Howard-Sheth の違い：<br>- HS は「学習プロセス」重視<br>- EBM は「意思決定プロセス」重視<br>- 実務 EBM 理解しやすい·HS より総合·並行使用<br><br>歴史的位置：EBM の5 段階意思決定フローは後の Kotler 教材標準·全現代マーケティング教材の消費者意思決定章節の基本構造の源。"
+    }
   },
   "tags": [
     "EBM",
     "EKB",
     "Engel-Kollat-Blackwell"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "消费者决策 5 步的真正起源·Kotler 教材标准的元模型",
-      "限": "模型简化为 5 步·失去复杂性·非线性决策不适用",
-      "例": "买衣服的 5 步实操：缺衣→搜款式→比较 brand→购买→晒朋友圈",
-      "应": "消费者行为基础题"
+      "meaning": "消费者决策 5 步的真正起源·Kotler 教材标准的元模型",
+      "limit": "模型简化为 5 步·失去复杂性·非线性决策不适用",
+      "example": "买衣服的 5 步实操：缺衣→搜款式→比较 brand→购买→晒朋友圈",
+      "response": "消费者行为基础题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "5 段階に簡略化·複雑性喪失·非線形意思決定に不適用",
-      "例": "服購入 5 段階：欠衣→款式探索→ブランド比較→購買→SNS 投稿"
+      "meaning": "",
+      "limit": "5 段階に簡略化·複雑性喪失·非線形意思決定に不適用",
+      "example": "服購入 5 段階：欠衣→款式探索→ブランド比較→購買→SNS 投稿",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:51:39.156Z",

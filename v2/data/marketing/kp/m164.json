@@ -14,25 +14,36 @@
     "en": "Cost Estimation"
   },
   "body": {
-    "zh": "Cost Estimation（成本估算）是 cost-based pricing 的核心·决定价格底线。Kotler 11 章·Pro Plus 9 章。<br><br>3 类 cost：<br>① Fixed Costs（固定成本）——不随产量变化（rent·salaries·depreciation）<br>② Variable Costs（变动成本）——随产量变化（材料·包装·销售 commission）<br>③ Total Costs（总成本）= Fixed + Variable × Volume<br><br>关键公式：<br>Average Cost = Total Cost / Volume<br>Average Cost 公式：随 volume 增加而下降·因 fixed cost 摊薄。<br><br>4 大 cost 概念：<br>① Experience Curve（经验曲线）——累计产量翻倍·单位成本下降 10-30%（Boston Consulting Group）<br>② Activity-Based Costing（ABC）——更精细的成本分摊<br>③ Target Costing——「价格 - 利润 = 目标成本」逆推（日本 Toyota·Sony 主流）<br>④ Total Cost of Ownership（TCO）——B2B 客户视角·包含使用·维护·处置成本<br><br>marketing 启示：<br>① 价格底线——价格 < average cost = 长期不可持续<br>② 规模 vs 价格——大量生产可降价·形成 cost leadership<br>③ experience curve——先发企业经验积累·后来者难追<br>④ target costing——日本企业逆向思维·marketing 决定 target price·R&D + 生产逆推 cost<br><br>典型例：<br>- Toyota Corolla：target costing（消费者愿付 → 留 profit → 推算 target cost）<br>- Boeing 飞机：experience curve·每 doubling of cumulative production·cost drop ~15%<br>- iPhone：BOM cost vs retail price 公开·marketing 教学常用<br><br>跨学派关系：与 strategic_marketing 的 cost leadership·new product development·价格 3 base 一致。",
-    "ja": "Cost Estimation（コスト見積り）は cost-based pricing の核心·価格底線を決定。Kotler 11 章·Pro Plus 9 章。<br><br>3 類 cost：① Fixed Costs（rent·給与·減価償却）② Variable Costs（材料·包装·販売手数料）③ Total Costs = Fixed + Variable × Volume<br><br>関键公式：Average Cost = Total Cost / Volume·volume 増で fixed cost 摊薄·下降。<br><br>4 大 cost 概念：① Experience Curve（累計産量倍·単位 cost 10-30% 低下·BCG）② Activity-Based Costing（ABC）③ Target Costing（価格 - 利益 = 目標 cost·日本 Toyota·Sony 主流）④ Total Cost of Ownership（TCO·B2B 顧客視点）<br><br>マーケティング示唆：① 価格底線·価格 < average cost = 長期持続不可 ② 規模 vs 価格（cost leadership）③ experience curve（先発優位）④ target costing（日本企業逆向思考·マーケティングが target price 決定·R&D + 生産逆推）<br><br>典型例：① Toyota Corolla（target costing）② Boeing（experience curve·~15% drop per doubling）③ iPhone（BOM cost vs retail price 公開·教育常用）<br><br>他派との関係：strategic_marketing の cost leadership·new product development·価格 3 base と一致。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Cost Estimation（成本估算）是 cost-based pricing 的核心·决定价格底线。Kotler 11 章·Pro Plus 9 章。<br><br>3 类 cost：<br>① Fixed Costs（固定成本）——不随产量变化（rent·salaries·depreciation）<br>② Variable Costs（变动成本）——随产量变化（材料·包装·销售 commission）<br>③ Total Costs（总成本）= Fixed + Variable × Volume<br><br>关键公式：<br>Average Cost = Total Cost / Volume<br>Average Cost 公式：随 volume 增加而下降·因 fixed cost 摊薄。<br><br>4 大 cost 概念：<br>① Experience Curve（经验曲线）——累计产量翻倍·单位成本下降 10-30%（Boston Consulting Group）<br>② Activity-Based Costing（ABC）——更精细的成本分摊<br>③ Target Costing——「价格 - 利润 = 目标成本」逆推（日本 Toyota·Sony 主流）<br>④ Total Cost of Ownership（TCO）——B2B 客户视角·包含使用·维护·处置成本<br><br>marketing 启示：<br>① 价格底线——价格 < average cost = 长期不可持续<br>② 规模 vs 价格——大量生产可降价·形成 cost leadership<br>③ experience curve——先发企业经验积累·后来者难追<br>④ target costing——日本企业逆向思维·marketing 决定 target price·R&D + 生产逆推 cost<br><br>典型例：<br>- Toyota Corolla：target costing（消费者愿付 → 留 profit → 推算 target cost）<br>- Boeing 飞机：experience curve·每 doubling of cumulative production·cost drop ~15%<br>- iPhone：BOM cost vs retail price 公开·marketing 教学常用<br><br>跨学派关系：与 strategic_marketing 的 cost leadership·new product development·价格 3 base 一致。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Cost Estimation（コスト見積り）は cost-based pricing の核心·価格底線を決定。Kotler 11 章·Pro Plus 9 章。<br><br>3 類 cost：① Fixed Costs（rent·給与·減価償却）② Variable Costs（材料·包装·販売手数料）③ Total Costs = Fixed + Variable × Volume<br><br>関键公式：Average Cost = Total Cost / Volume·volume 増で fixed cost 摊薄·下降。<br><br>4 大 cost 概念：① Experience Curve（累計産量倍·単位 cost 10-30% 低下·BCG）② Activity-Based Costing（ABC）③ Target Costing（価格 - 利益 = 目標 cost·日本 Toyota·Sony 主流）④ Total Cost of Ownership（TCO·B2B 顧客視点）<br><br>マーケティング示唆：① 価格底線·価格 < average cost = 長期持続不可 ② 規模 vs 価格（cost leadership）③ experience curve（先発優位）④ target costing（日本企業逆向思考·マーケティングが target price 決定·R&D + 生産逆推）<br><br>典型例：① Toyota Corolla（target costing）② Boeing（experience curve·~15% drop per doubling）③ iPhone（BOM cost vs retail price 公開·教育常用）<br><br>他派との関係：strategic_marketing の cost leadership·new product development·価格 3 base と一致。"
+    }
   },
   "tags": [
     "cost estimation",
     "experience curve",
     "target costing"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "定价决策的科学化基础·实务必学",
-      "限": "成本分摊方法多·跨产业差异",
-      "例": "Toyota·Boeing·iPhone 是教科书",
-      "应": "Kotler 11 章·价格题"
+      "meaning": "定价决策的科学化基础·实务必学",
+      "limit": "成本分摊方法多·跨产业差异",
+      "example": "Toyota·Boeing·iPhone 是教科书",
+      "response": "Kotler 11 章·价格题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "コスト分摊方法多·跨産業差",
-      "例": "Toyota·Boeing·iPhone 教科書"
+      "meaning": "",
+      "limit": "コスト分摊方法多·跨産業差",
+      "example": "Toyota·Boeing·iPhone 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T09:26:20.337Z",

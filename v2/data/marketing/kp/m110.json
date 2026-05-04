@@ -15,25 +15,36 @@
     "en": "Positioning Statement"
   },
   "body": {
-    "zh": "ポジショニング・ステートメント（Positioning Statement）是 marketing 战略的核心 1-句话表达·Kotler 第 7 章·brand 战略实务必修。<br><br>标准 4 要素：<br><br>① Target Customer（目标顾客）——「For 谁」<br>明确 segment·人格·需要<br><br>② Frame of Reference（参照枠）——「In what category」<br>定义类目或竞争对手<br><br>③ Point of Difference（POD·差別化点）——「Brand offers what unique benefit」<br>独特价值<br><br>④ Reason to Believe（RTB·相信理由）——「Because of why」<br>支持 POD 的依据<br><br>标准模板：<br>「**For [target customer]**, [brand] is the [frame of reference] that [point of difference] because [reason to believe].」<br><br>典型例：<br><br>**Volvo**：For upscale American families, Volvo is the family automobile that offers the ultimate in safety because of its reinforced steel frame and crash-test performance.<br><br>**UNIQLO LifeWear**：For globally-conscious individuals seeking quality basics, UNIQLO is the apparel brand that offers thoughtfully designed everyday clothes at accessible prices because of its SPA model and material innovations like HEATTECH.<br><br>**Tesla Model 3**：For environmentally-conscious car buyers, Tesla Model 3 is the electric sedan that offers premium performance with zero emissions because of Tesla's battery technology and software ecosystem.<br><br>5 大写作原则：<br>① Specific——避免空话（「best」「leading」）<br>② Differentiating——POD 必须独特<br>③ Believable——RTB 必须可信<br>④ Sustainable——长期可保持<br>⑤ Communicable——能简洁传达<br><br>使用场景：<br>① brand brief——所有 marketing 活动的内部统一指南<br>② communication brief——给广告 agency 的 input<br>③ sales pitch——销售员对外的核心 message<br>④ employee onboarding——新员工理解 brand<br><br>跨学派关系：与 STP Targeting + Positioning + IMC 一起构成 marketing 战略的执行框架。",
-    "ja": "ポジショニング・ステートメントはマーケティング戦略の核心 1 文表現·Kotler 第 7 章·ブランド戦略実務必修。<br><br>標準 4 要素：① Target Customer（誰に）② Frame of Reference（何のカテゴリー）③ Point of Difference（独自価値）④ Reason to Believe（信じる理由）<br><br>標準テンプレート：「For [target customer], [brand] is the [frame of reference] that [point of difference] because [reason to believe].」<br><br>典型例：<br>**Volvo**·**UNIQLO LifeWear**·**Tesla Model 3**<br><br>5 大ライティング原則：① Specific ② Differentiating ③ Believable ④ Sustainable ⑤ Communicable<br><br>使用場面：① brand brief ② communication brief ③ sales pitch ④ employee onboarding<br><br>他派との関係：STP Targeting + Positioning + IMC と並ぶマーケティング戦略の実行フレーム。"
+    "zh": {
+      "format": "narrative",
+      "prose": "ポジショニング・ステートメント（Positioning Statement）是 marketing 战略的核心 1-句话表达·Kotler 第 7 章·brand 战略实务必修。<br><br>标准 4 要素：<br><br>① Target Customer（目标顾客）——「For 谁」<br>明确 segment·人格·需要<br><br>② Frame of Reference（参照枠）——「In what category」<br>定义类目或竞争对手<br><br>③ Point of Difference（POD·差別化点）——「Brand offers what unique benefit」<br>独特价值<br><br>④ Reason to Believe（RTB·相信理由）——「Because of why」<br>支持 POD 的依据<br><br>标准模板：<br>「**For [target customer]**, [brand] is the [frame of reference] that [point of difference] because [reason to believe].」<br><br>典型例：<br><br>**Volvo**：For upscale American families, Volvo is the family automobile that offers the ultimate in safety because of its reinforced steel frame and crash-test performance.<br><br>**UNIQLO LifeWear**：For globally-conscious individuals seeking quality basics, UNIQLO is the apparel brand that offers thoughtfully designed everyday clothes at accessible prices because of its SPA model and material innovations like HEATTECH.<br><br>**Tesla Model 3**：For environmentally-conscious car buyers, Tesla Model 3 is the electric sedan that offers premium performance with zero emissions because of Tesla's battery technology and software ecosystem.<br><br>5 大写作原则：<br>① Specific——避免空话（「best」「leading」）<br>② Differentiating——POD 必须独特<br>③ Believable——RTB 必须可信<br>④ Sustainable——长期可保持<br>⑤ Communicable——能简洁传达<br><br>使用场景：<br>① brand brief——所有 marketing 活动的内部统一指南<br>② communication brief——给广告 agency 的 input<br>③ sales pitch——销售员对外的核心 message<br>④ employee onboarding——新员工理解 brand<br><br>跨学派关系：与 STP Targeting + Positioning + IMC 一起构成 marketing 战略的执行框架。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "ポジショニング・ステートメントはマーケティング戦略の核心 1 文表現·Kotler 第 7 章·ブランド戦略実務必修。<br><br>標準 4 要素：① Target Customer（誰に）② Frame of Reference（何のカテゴリー）③ Point of Difference（独自価値）④ Reason to Believe（信じる理由）<br><br>標準テンプレート：「For [target customer], [brand] is the [frame of reference] that [point of difference] because [reason to believe].」<br><br>典型例：<br>**Volvo**·**UNIQLO LifeWear**·**Tesla Model 3**<br><br>5 大ライティング原則：① Specific ② Differentiating ③ Believable ④ Sustainable ⑤ Communicable<br><br>使用場面：① brand brief ② communication brief ③ sales pitch ④ employee onboarding<br><br>他派との関係：STP Targeting + Positioning + IMC と並ぶマーケティング戦略の実行フレーム。"
+    }
   },
   "tags": [
     "positioning statement",
     "Kotler",
     "brand brief"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "brand 战略的核心 1 句话·实务必修",
-      "限": "易写空话·实际差距大",
-      "例": "Volvo·UNIQLO·Tesla 都是教科书 statement",
-      "应": "Kotler 第 7 章·brand 题·一橋·早大命题"
+      "meaning": "brand 战略的核心 1 句话·实务必修",
+      "limit": "易写空话·实际差距大",
+      "example": "Volvo·UNIQLO·Tesla 都是教科书 statement",
+      "response": "Kotler 第 7 章·brand 题·一橋·早大命题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "空文化容易·実際差大",
-      "例": "Volvo·UNIQLO·Tesla すべて教科書 statement"
+      "meaning": "",
+      "limit": "空文化容易·実際差大",
+      "example": "Volvo·UNIQLO·Tesla すべて教科書 statement",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:24:21.912Z",

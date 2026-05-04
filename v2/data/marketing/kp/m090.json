@@ -15,25 +15,36 @@
     "en": "Platform Economics"
   },
   "body": {
-    "zh": "Platform Economics（平台经济学）是 digital_marketing 学派的核心理论·研究多边市场（multi-sided market）的特殊经济逻辑·MIT Sloan 学派代表（Parker·Van Alstyne·Choudary 2016『Platform Revolution』）。<br><br>vs 传统 pipeline business：<br>- Pipeline：上下游线性·企业控制 value chain（Toyota·Walmart）<br>- Platform：双边或多边·企业 orchestrate 多 actors（Apple·Uber·Airbnb）<br><br>4 大特征：<br>① Two-Sided Market（双边市场）——同时服务 2 类用户<br>例：Uber（司机 + 乘客）·Airbnb（房东 + 房客）·Apple App Store（开发者 + 用户）<br>② Network Effects（网络效应）——用户越多·价值越大<br>- direct（同侧）：More users → more value（Twitter）<br>- indirect（跨侧）：More drivers → more passengers → more drivers（Uber）<br>③ Tipping Point——一旦达到临界质量·用户激增·后来者难追<br>④ Winner-Takes-All / Most——network effects 导致 1-2 家平台主导（Google search·Facebook·Amazon）<br><br>4 大平台战略：<br>① Subsidization（补贴）——补贴一边·让另一边付费（Microsoft Office 给企业·学生免费）<br>② Cohort Strategy——选小社群启动·扩大（Facebook 从 Harvard 开始）<br>③ Curate Quality——管控双边质量（Uber driver rating·Airbnb verification）<br>④ Open vs Closed——决定哪些 actors 能加入（Apple iOS closed·Android open）<br><br>典型案例分析：<br>① Apple iOS——iPhone（用户）+ App Store（开发者）+ iCloud（service）+ Apple Music + 第三方 hardware<br>② Uber——driver + passenger·indirect network effects<br>③ Amazon——consumer + seller·logistics 是 Amazon 的护城河<br>④ WeChat——messaging + payment + mini-program·super-app 模式<br><br>marketing 实务启示：<br>① 从 product marketing → platform marketing<br>② 双边 marketing——同时获取 2 类用户<br>③ community building——让 user 之间互动·而非企业 - 用户<br>④ data 是新资产——平台拥有 trans·trans 数据<br><br>跨学派关系：① 与 SDL service ecosystem（FP11）紧密 ② 与 long tail 学派一致——长尾依赖平台 ③ 与 strategic_marketing 的 dynamic capability 接轨。",
-    "ja": "Platform Economics（プラットフォーム経済学）は digital_marketing 学派の核心理論·多辺市場（multi-sided market）の特殊経済論理を研究·MIT Sloan 学派代表（Parker·Van Alstyne·Choudary 2016『Platform Revolution』）。<br><br>vs 伝統 pipeline business：Pipeline は上下游線形·企業が value chain 制御（Toyota·Walmart）·Platform は双辺·多辺·企業が多 actors を orchestrate（Apple·Uber·Airbnb）<br><br>4 大特徴：① Two-Sided Market ② Network Effects（direct + indirect）③ Tipping Point ④ Winner-Takes-All / Most<br><br>4 大プラットフォーム戦略：① Subsidization（一方無料·他方支払）② Cohort Strategy（小コミュニティ起動）③ Curate Quality ④ Open vs Closed<br><br>典型事例：① Apple iOS ② Uber ③ Amazon ④ WeChat<br><br>マーケティング実務示唆：① product → platform marketing ② 双辺 marketing ③ community building ④ data は新資産<br><br>他派との関係：① SDL service ecosystem（FP11）と密接 ② long tail と一致 ③ strategic_marketing の dynamic capability と接続。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Platform Economics（平台经济学）是 digital_marketing 学派的核心理论·研究多边市场（multi-sided market）的特殊经济逻辑·MIT Sloan 学派代表（Parker·Van Alstyne·Choudary 2016『Platform Revolution』）。<br><br>vs 传统 pipeline business：<br>- Pipeline：上下游线性·企业控制 value chain（Toyota·Walmart）<br>- Platform：双边或多边·企业 orchestrate 多 actors（Apple·Uber·Airbnb）<br><br>4 大特征：<br>① Two-Sided Market（双边市场）——同时服务 2 类用户<br>例：Uber（司机 + 乘客）·Airbnb（房东 + 房客）·Apple App Store（开发者 + 用户）<br>② Network Effects（网络效应）——用户越多·价值越大<br>- direct（同侧）：More users → more value（Twitter）<br>- indirect（跨侧）：More drivers → more passengers → more drivers（Uber）<br>③ Tipping Point——一旦达到临界质量·用户激增·后来者难追<br>④ Winner-Takes-All / Most——network effects 导致 1-2 家平台主导（Google search·Facebook·Amazon）<br><br>4 大平台战略：<br>① Subsidization（补贴）——补贴一边·让另一边付费（Microsoft Office 给企业·学生免费）<br>② Cohort Strategy——选小社群启动·扩大（Facebook 从 Harvard 开始）<br>③ Curate Quality——管控双边质量（Uber driver rating·Airbnb verification）<br>④ Open vs Closed——决定哪些 actors 能加入（Apple iOS closed·Android open）<br><br>典型案例分析：<br>① Apple iOS——iPhone（用户）+ App Store（开发者）+ iCloud（service）+ Apple Music + 第三方 hardware<br>② Uber——driver + passenger·indirect network effects<br>③ Amazon——consumer + seller·logistics 是 Amazon 的护城河<br>④ WeChat——messaging + payment + mini-program·super-app 模式<br><br>marketing 实务启示：<br>① 从 product marketing → platform marketing<br>② 双边 marketing——同时获取 2 类用户<br>③ community building——让 user 之间互动·而非企业 - 用户<br>④ data 是新资产——平台拥有 trans·trans 数据<br><br>跨学派关系：① 与 SDL service ecosystem（FP11）紧密 ② 与 long tail 学派一致——长尾依赖平台 ③ 与 strategic_marketing 的 dynamic capability 接轨。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Platform Economics（プラットフォーム経済学）は digital_marketing 学派の核心理論·多辺市場（multi-sided market）の特殊経済論理を研究·MIT Sloan 学派代表（Parker·Van Alstyne·Choudary 2016『Platform Revolution』）。<br><br>vs 伝統 pipeline business：Pipeline は上下游線形·企業が value chain 制御（Toyota·Walmart）·Platform は双辺·多辺·企業が多 actors を orchestrate（Apple·Uber·Airbnb）<br><br>4 大特徴：① Two-Sided Market ② Network Effects（direct + indirect）③ Tipping Point ④ Winner-Takes-All / Most<br><br>4 大プラットフォーム戦略：① Subsidization（一方無料·他方支払）② Cohort Strategy（小コミュニティ起動）③ Curate Quality ④ Open vs Closed<br><br>典型事例：① Apple iOS ② Uber ③ Amazon ④ WeChat<br><br>マーケティング実務示唆：① product → platform marketing ② 双辺 marketing ③ community building ④ data は新資産<br><br>他派との関係：① SDL service ecosystem（FP11）と密接 ② long tail と一致 ③ strategic_marketing の dynamic capability と接続。"
+    }
   },
   "tags": [
     "platform economics",
     "Parker",
     "network effects"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "digital_marketing 学派核心·新经济基础理论",
-      "限": "特定商业模式·非所有产品适用",
-      "例": "Apple·Uber·Amazon·WeChat 是教科书",
-      "应": "digital marketing·strategic 题"
+      "meaning": "digital_marketing 学派核心·新经济基础理论",
+      "limit": "特定商业模式·非所有产品适用",
+      "example": "Apple·Uber·Amazon·WeChat 是教科书",
+      "response": "digital marketing·strategic 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "特定ビジネスモデル·全製品適用ではない",
-      "例": "Apple·Uber·Amazon·WeChat 教科書"
+      "meaning": "",
+      "limit": "特定ビジネスモデル·全製品適用ではない",
+      "example": "Apple·Uber·Amazon·WeChat 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:14:31.549Z",

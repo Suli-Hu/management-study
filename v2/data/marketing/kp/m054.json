@@ -16,8 +16,14 @@
     "en": "AISAS Model"
   },
   "body": {
-    "zh": "AISAS（Attention-Interest-Search-Action-Share）是電通（Dentsu）2005 年提出的态度形成模型·替代 AIDMA·成为日本互联网时代 marketing communication 的标准模型。<br><br>5 阶段：<br>① A - Attention（注意）——消费者看到广告 / 内容<br>② I - Interest（兴趣）——产生兴趣<br>③ S - Search（搜索）⭐——主动用 Google·Amazon 搜索·查 review<br>④ A - Action（行动）——做出购买<br>⑤ S - Share（共享）⭐——分享购买体验·SNS·blog·review<br><br>2 大革命性创新（与 AIDMA 比）：<br>① Search（搜索）——消费者从被动 Memory 转为主动 Search<br>② Share（共享）——消费者从单方接收转为双向传播·成为 brand 的 marketer<br><br>背景：① Google 搜索普及（2000 年代）② mixi·Twitter（2008）·Facebook 进入日本（2008）等 SNS 兴起 ③ 消费者获得前所未有的信息和发声能力<br><br>marketing 实务影响：<br>① SEO·SEM——投资让消费者「Search 时找到我们」<br>② KOL·KOC——影响 review 内容<br>③ UGC（User Generated Content）——鼓励消费者 Share<br>④ brand 体验——值得 share 的体验设计<br><br>变体：<br>- AISCEAS（電通 2005）——AISAS 的扩展·把 Search 拆成「Search → Compare → Examine → Action」<br>- Dual AISAS——把 share 也分成 attention·interest 等<br><br>跨学派关系：① 与 Kotler 4.0 的 5A（Aware-Appeal-Ask-Act-Advocate）高度对应 ② 与 SIPS（電通 2011）·VISAS·DECAX（電通 2015）一起构成日本独有「态度形成 4 大类」谱系。",
-    "ja": "AISAS（Attention-Interest-Search-Action-Share）は電通 2005 年提唱の態度形成モデル·AIDMA に代わり日本インターネット時代マーケティング・コミュニケーション標準モデル。<br><br>5 段階：① Attention ② Interest ③ Search（検索）⭐ ④ Action ⑤ Share（共有）⭐<br><br>2 大革命的革新（AIDMA と比較）：① Search·受動 Memory から能動 Search へ ② Share·単方受信から双方伝播へ·消費者がブランドの marketer に<br><br>背景：① Google 検索普及（2000 年代）② mixi·Twitter（2008）·Facebook 日本進入（2008）等 SNS 興隆 ③ 消費者が前例ない情報·発声能力<br><br>マーケティング実務影響：① SEO·SEM ② KOL·KOC ③ UGC（User Generated Content）④ ブランド体験·share に値する体験設計<br><br>バリエーション：<br>- AISCEAS（電通 2005）·AISAS 拡張·Search を「Search → Compare → Examine → Action」に分解<br>- Dual AISAS·share も attention·interest 等に分解<br><br>他派との関係：① Kotler 4.0 の 5A と高度対応 ② SIPS（電通 2011）·VISAS·DECAX（電通 2015）と日本独自「態度形成 4 大類」系譜を構成。"
+    "zh": {
+      "format": "narrative",
+      "prose": "AISAS（Attention-Interest-Search-Action-Share）是電通（Dentsu）2005 年提出的态度形成模型·替代 AIDMA·成为日本互联网时代 marketing communication 的标准模型。<br><br>5 阶段：<br>① A - Attention（注意）——消费者看到广告 / 内容<br>② I - Interest（兴趣）——产生兴趣<br>③ S - Search（搜索）⭐——主动用 Google·Amazon 搜索·查 review<br>④ A - Action（行动）——做出购买<br>⑤ S - Share（共享）⭐——分享购买体验·SNS·blog·review<br><br>2 大革命性创新（与 AIDMA 比）：<br>① Search（搜索）——消费者从被动 Memory 转为主动 Search<br>② Share（共享）——消费者从单方接收转为双向传播·成为 brand 的 marketer<br><br>背景：① Google 搜索普及（2000 年代）② mixi·Twitter（2008）·Facebook 进入日本（2008）等 SNS 兴起 ③ 消费者获得前所未有的信息和发声能力<br><br>marketing 实务影响：<br>① SEO·SEM——投资让消费者「Search 时找到我们」<br>② KOL·KOC——影响 review 内容<br>③ UGC（User Generated Content）——鼓励消费者 Share<br>④ brand 体验——值得 share 的体验设计<br><br>变体：<br>- AISCEAS（電通 2005）——AISAS 的扩展·把 Search 拆成「Search → Compare → Examine → Action」<br>- Dual AISAS——把 share 也分成 attention·interest 等<br><br>跨学派关系：① 与 Kotler 4.0 的 5A（Aware-Appeal-Ask-Act-Advocate）高度对应 ② 与 SIPS（電通 2011）·VISAS·DECAX（電通 2015）一起构成日本独有「态度形成 4 大类」谱系。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "AISAS（Attention-Interest-Search-Action-Share）は電通 2005 年提唱の態度形成モデル·AIDMA に代わり日本インターネット時代マーケティング・コミュニケーション標準モデル。<br><br>5 段階：① Attention ② Interest ③ Search（検索）⭐ ④ Action ⑤ Share（共有）⭐<br><br>2 大革命的革新（AIDMA と比較）：① Search·受動 Memory から能動 Search へ ② Share·単方受信から双方伝播へ·消費者がブランドの marketer に<br><br>背景：① Google 検索普及（2000 年代）② mixi·Twitter（2008）·Facebook 日本進入（2008）等 SNS 興隆 ③ 消費者が前例ない情報·発声能力<br><br>マーケティング実務影響：① SEO·SEM ② KOL·KOC ③ UGC（User Generated Content）④ ブランド体験·share に値する体験設計<br><br>バリエーション：<br>- AISCEAS（電通 2005）·AISAS 拡張·Search を「Search → Compare → Examine → Action」に分解<br>- Dual AISAS·share も attention·interest 等に分解<br><br>他派との関係：① Kotler 4.0 の 5A と高度対応 ② SIPS（電通 2011）·VISAS·DECAX（電通 2015）と日本独自「態度形成 4 大類」系譜を構成。"
+    }
   },
   "tags": [
     "AISAS",
@@ -25,17 +31,22 @@
     "Search",
     "Share"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "日本互联网时代核心 communication 模型·AIDMA 的进化",
-      "限": "5 阶段仍偏线性·SNS 时代行为更复杂",
-      "例": "電通 2005 年模型的全球影响力",
-      "应": "日本院试 IMC 必考·一橋·早大·命题"
+      "meaning": "日本互联网时代核心 communication 模型·AIDMA 的进化",
+      "limit": "5 阶段仍偏线性·SNS 时代行为更复杂",
+      "example": "電通 2005 年模型的全球影响力",
+      "response": "日本院试 IMC 必考·一橋·早大·命题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "5 段階依然線形·SNS 時代行動より複雑",
-      "例": "電通 2005 年モデルの世界影響力"
+      "meaning": "",
+      "limit": "5 段階依然線形·SNS 時代行動より複雑",
+      "example": "電通 2005 年モデルの世界影響力",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:03:55.215Z",

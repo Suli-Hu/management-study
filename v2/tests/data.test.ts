@@ -90,49 +90,25 @@ describe('Cross-references', () => {
   });
 });
 
-describe('CN-JA parity (warnings, not strict failures)', () => {
-  // v0.6.12: 名副其实改成真 warning — 之前用 expect.toBeLessThan 卡 deploy 跟 describe
-  //   标题"warnings, not strict failures"矛盾。老师持续推新 KP 让阈值越调越宽没意义。
-  //   数据质量是"应当主动改进"不是"必须达标才能部署"。
-  //   CI log 仍然报告比例 + 失衡 KP 列表，团队 review 时收紧。
-  it('KPs with ja translation: report <strong> count divergence (advisory)', () => {
-    let mismatched = 0;
-    const offenders: string[] = [];
-    for (const kp of data.kps) {
-      if (!kp.body.ja) continue;
-      const zh = (kp.body.zh.match(/<strong>/g) ?? []).length;
-      const ja = (kp.body.ja.match(/<strong>/g) ?? []).length;
-      if (zh > 0 && Math.abs(zh - ja) / zh > 0.5) {
-        mismatched++;
-        offenders.push(`${kp.id}(zh=${zh},ja=${ja})`);
-      }
-    }
-    const total = data.kps.filter((k) => k.body.ja).length;
-    const ratio = mismatched / Math.max(total, 1);
-    if (ratio > 0.05) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[CN-JA parity advisory] ${mismatched}/${total} KPs (${(ratio * 100).toFixed(1)}%) ` +
-        `have >50% <strong> count diff. First 5: ${offenders.slice(0, 5).join(', ')}`,
-      );
-    }
-    // 不 fail — 数据质量 monitoring 走 advisory channel
-    expect(true).toBe(true);
-  });
-});
-
-describe('Format rules', () => {
-  it('no KP body uses ◆tag with colon (must be ——)', () => {
-    const offenders: string[] = [];
-    for (const kp of data.kps) {
-      if (/◆\s*(意义|局限|例子|应对|应用|比喻)\s*[：:]/.test(kp.body.zh)) {
-        offenders.push(kp.id);
-      }
-    }
-    expect(offenders).toEqual([]);
-  });
-  it('no KP has empty body.zh', () => {
-    const empty = data.kps.filter((k) => !k.body.zh.trim()).map((k) => k.id);
+describe('Format rules (v0.8 structured)', () => {
+  // v0.8.10 Stage 5: body 已结构化，旧的 ◆-tag 检查 + <strong> parity 已经移到
+  // load-data.ts 走 structuredToSearchText 拍平后比对（advisory，不卡 test）。
+  // 这里只保留"非空 body"硬约束 — body.zh 必须有可见内容。
+  it('no KP has empty body.zh content', () => {
+    const empty = data.kps
+      .filter((k) => {
+        const b = k.body.zh;
+        if (b.format === 'narrative') return !b.prose.trim();
+        // 结构化 format：lead 或 items/groups/cols/cells 任一非空就算有内容
+        const lead = b.lead?.trim() ?? '';
+        if (lead) return false;
+        if (b.format === 'flat-list') return b.items.length === 0;
+        if (b.format === 'accordion') return b.groups.length === 0;
+        if (b.format === 'compare') return b.cols.length === 0;
+        if (b.format === 'quad') return b.cells.length === 0;
+        return false;
+      })
+      .map((k) => k.id);
     expect(empty).toEqual([]);
   });
 });

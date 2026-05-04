@@ -14,25 +14,36 @@
     "en": "Lasswell Communication Model"
   },
   "body": {
-    "zh": "Lasswell モデル是 Harold Lasswell 1948 年提出的 communication 5 要素分析框架·marketing communication 学派的基础工具。<br><br>Lasswell 5W 公式：<br>**Who（谁）says What（说什么）through which Channel（通过什么渠道）to Whom（对谁）with what Effect（产生什么效果）**<br><br>5 个要素分析：<br><br>① Who（发信者）——sender·source<br>marketing 应用：发信源选择（CEO 演讲 vs 明星代言 vs KOL vs UGC）·credibility 设计<br><br>② What（信息）——message·content<br>marketing 应用：消息策略·诉求点（理性 vs 情感）·USP·tagline<br><br>③ Channel（渠道）——media·medium<br>marketing 应用：媒体计划·media mix（TV·digital·OOH·SNS·event）<br><br>④ Whom（受众）——receiver·audience<br>marketing 应用：target audience 分析·STP·personas<br><br>⑤ Effect（效果）——response·impact<br>marketing 应用：communication objectives·KPI·measurement<br><br>marketing 实务应用：<br>① communication plan 5 步骤——按 Lasswell 5 元素逐一设计<br>② 广告 brief 模板——Who（client）·What（key message）·Channel（media）·Whom（target）·Effect（KPI）<br>③ communication audit——检查 5 元素一致性<br><br>vs Schramm 模型：<br>- Lasswell：线性·单向·5W 公式<br>- Schramm（1954）：循环·双向·encoder-decoder + noise + feedback<br>- 现代 marketing 偏 Schramm 双向模型·但 Lasswell 仍是分析工具<br><br>跨学派关系：① 是所有态度形成模型（AIDA·AIDMA·AISAS）的元框架——所有这些模型都是 Lasswell 5W 的具体化 ② 影响 ELM·Bettman 等行为决策模型。",
-    "ja": "Lasswell モデルは Harold Lasswell 1948 年提唱のコミュニケーション 5 要素分析フレーム·マーケティング・コミュニケーション学派の基礎ツール。<br><br>Lasswell 5W 公式：**Who says What through which Channel to Whom with what Effect**<br><br>5 要素分析：<br>① Who（発信者）·sender·source·発信源選択（CEO·有名人·KOL·UGC）·信頼性設計<br>② What（メッセージ）·message·content·メッセージ戦略·訴求点（理性 vs 感情）·USP·tagline<br>③ Channel（媒体）·media·media plan·media mix（TV·digital·OOH·SNS·event）<br>④ Whom（受信者）·target audience·STP·personas<br>⑤ Effect（効果）·communication objectives·KPI·measurement<br><br>マーケティング実務応用：① コミュニケーション計画 5 ステップ ② 広告ブリーフ・テンプレート ③ コミュニケーション監査<br><br>vs Schramm モデル：Lasswell（線形·単方向·5W）·Schramm（1954·循環·双方向·encoder-decoder + noise + feedback）·現代マーケティングは Schramm 双方向偏重·Lasswell は分析ツール。<br><br>他派との関係：① 全態度形成モデル（AIDA·AIDMA·AISAS）のメタフレーム ② ELM·Bettman に影響。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Lasswell モデル是 Harold Lasswell 1948 年提出的 communication 5 要素分析框架·marketing communication 学派的基础工具。<br><br>Lasswell 5W 公式：<br>**Who（谁）says What（说什么）through which Channel（通过什么渠道）to Whom（对谁）with what Effect（产生什么效果）**<br><br>5 个要素分析：<br><br>① Who（发信者）——sender·source<br>marketing 应用：发信源选择（CEO 演讲 vs 明星代言 vs KOL vs UGC）·credibility 设计<br><br>② What（信息）——message·content<br>marketing 应用：消息策略·诉求点（理性 vs 情感）·USP·tagline<br><br>③ Channel（渠道）——media·medium<br>marketing 应用：媒体计划·media mix（TV·digital·OOH·SNS·event）<br><br>④ Whom（受众）——receiver·audience<br>marketing 应用：target audience 分析·STP·personas<br><br>⑤ Effect（效果）——response·impact<br>marketing 应用：communication objectives·KPI·measurement<br><br>marketing 实务应用：<br>① communication plan 5 步骤——按 Lasswell 5 元素逐一设计<br>② 广告 brief 模板——Who（client）·What（key message）·Channel（media）·Whom（target）·Effect（KPI）<br>③ communication audit——检查 5 元素一致性<br><br>vs Schramm 模型：<br>- Lasswell：线性·单向·5W 公式<br>- Schramm（1954）：循环·双向·encoder-decoder + noise + feedback<br>- 现代 marketing 偏 Schramm 双向模型·但 Lasswell 仍是分析工具<br><br>跨学派关系：① 是所有态度形成模型（AIDA·AIDMA·AISAS）的元框架——所有这些模型都是 Lasswell 5W 的具体化 ② 影响 ELM·Bettman 等行为决策模型。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Lasswell モデルは Harold Lasswell 1948 年提唱のコミュニケーション 5 要素分析フレーム·マーケティング・コミュニケーション学派の基礎ツール。<br><br>Lasswell 5W 公式：**Who says What through which Channel to Whom with what Effect**<br><br>5 要素分析：<br>① Who（発信者）·sender·source·発信源選択（CEO·有名人·KOL·UGC）·信頼性設計<br>② What（メッセージ）·message·content·メッセージ戦略·訴求点（理性 vs 感情）·USP·tagline<br>③ Channel（媒体）·media·media plan·media mix（TV·digital·OOH·SNS·event）<br>④ Whom（受信者）·target audience·STP·personas<br>⑤ Effect（効果）·communication objectives·KPI·measurement<br><br>マーケティング実務応用：① コミュニケーション計画 5 ステップ ② 広告ブリーフ・テンプレート ③ コミュニケーション監査<br><br>vs Schramm モデル：Lasswell（線形·単方向·5W）·Schramm（1954·循環·双方向·encoder-decoder + noise + feedback）·現代マーケティングは Schramm 双方向偏重·Lasswell は分析ツール。<br><br>他派との関係：① 全態度形成モデル（AIDA·AIDMA·AISAS）のメタフレーム ② ELM·Bettman に影響。"
+    }
   },
   "tags": [
     "Lasswell",
     "5W",
     "Schramm"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "communication 学派的基础元框架·所有 communication 模型的祖父",
-      "限": "线性·单向·静态·现代偏向 Schramm 双向模型",
-      "例": "任何 communication 计划都是 Lasswell 5W 的具体化",
-      "应": "IMC 基础题·media planning 题"
+      "meaning": "communication 学派的基础元框架·所有 communication 模型的祖父",
+      "limit": "线性·单向·静态·现代偏向 Schramm 双向模型",
+      "example": "任何 communication 计划都是 Lasswell 5W 的具体化",
+      "response": "IMC 基础题·media planning 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "線形·単方向·静的·現代 Schramm 双方向偏向",
-      "例": "あらゆるコミュニケーション計画は Lasswell 5W の具体化"
+      "meaning": "",
+      "limit": "線形·単方向·静的·現代 Schramm 双方向偏向",
+      "example": "あらゆるコミュニケーション計画は Lasswell 5W の具体化",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:04:00.770Z",

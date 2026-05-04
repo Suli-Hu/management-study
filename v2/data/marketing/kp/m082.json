@@ -15,25 +15,36 @@
     "en": "Creating Shared Value"
   },
   "body": {
-    "zh": "CSV（Creating Shared Value·共享价值创造）由 Michael Porter 与 Mark Kramer 在 2011 年 <em>Harvard Business Review</em>「Creating Shared Value」提出·主张企业利润和社会价值不冲突·而是整合·成为 CSR 的进化版。<br><br>核心命题：<br>「<em>Creating economic value in a way that also creates value for society by addressing its needs and challenges.</em>」<br><br>vs CSR 的根本区别：<br>| 维度 | CSR | CSV |<br>|---|---|---|<br>| 价值观 | 慈善义务 | 经济 + 社会一体 |<br>| 投资逻辑 | 利润 - CSR 投资 | CSR = 利润源泉 |<br>| 战略地位 | 边缘部门 | 核心战略 |<br>| 主体 | 企业被动 | 企业主动 |<br>| 测量 | 成本 | ROI |<br><br>CSV 3 大实现路径：<br>① Reconceiving Products and Markets——重塑产品和市场<br>例：Nestlé 「Healthy Kids」——更健康的食品 = 更好生意<br>② Redefining Productivity in the Value Chain——重定义价值链生产率<br>例：Walmart 减少包装·节约成本 + 减少环境影响<br>③ Building Supportive Industry Clusters——构建支持性产业集群<br>例：Yara Norway 在非洲投资农业基础设施·扩大化肥市场<br><br>典型案例：<br>① Nestlé Cocoa Plan——投资 cocoa 农户教育·提升 cocoa 质量·双赢<br>② Tesla——加速 EV·气候 + 商业双赢（Musk 战略明确 CSV）<br>③ Patagonia——回收旧衣服·减少环境 + brand 强化<br>④ Toyota Prius——hybrid 技术·环保 + 商业成功<br><br>CSV 的 3 大批判：<br>① Crane et al. 2014·「CSV 不是新概念·是包装」<br>② 不解决企业责任的 fundamental conflict——某些情况下利润和社会真冲突<br>③ 实务难度大——能找到 win-win 的不多<br><br>跨学派关系：① 是 CSR 的进化版·把 CSR 整合进 strategic_marketing ② 与 BOP（Prahalad）共享「商业 + 社会双赢」哲学 ③ Pro Plus 第 14 章 4 节「マネジリアル・マーケティングとの統合」表达类似思想。",
-    "ja": "CSV（Creating Shared Value·共有価値創造）は Michael Porter·Mark Kramer 2011 年 <em>HBR</em>「Creating Shared Value」提唱·企業利益と社会価値が衝突せず·統合·CSR の進化版。<br><br>核心命題：「<em>Creating economic value in a way that also creates value for society by addressing its needs and challenges.</em>」<br><br>vs CSR の根本区別：CSR は慈善義務·コスト視点·CSV は経済 + 社会一体·利益源泉視点·核心戦略。<br><br>CSV 3 大実現経路：① Reconceiving Products and Markets（Nestlé Healthy Kids）② Redefining Productivity in Value Chain（Walmart 包装削減）③ Building Supportive Industry Clusters（Yara Norway アフリカ）<br><br>典型事例：① Nestlé Cocoa Plan ② Tesla（EV）③ Patagonia ④ Toyota Prius<br><br>3 大批判：① Crane et al. 2014「新概念ではない」② 根本対立を解決せず ③ 実務 win-win 困難<br><br>他派との関係：① CSR の進化版·strategic_marketing に統合 ② BOP と「商業 + 社会双贏」哲学共有 ③ Pro Plus 第 14 章 4 節「マネジリアル・マーケティングとの統合」と類似。"
+    "zh": {
+      "format": "narrative",
+      "prose": "CSV（Creating Shared Value·共享价值创造）由 Michael Porter 与 Mark Kramer 在 2011 年 <em>Harvard Business Review</em>「Creating Shared Value」提出·主张企业利润和社会价值不冲突·而是整合·成为 CSR 的进化版。<br><br>核心命题：<br>「<em>Creating economic value in a way that also creates value for society by addressing its needs and challenges.</em>」<br><br>vs CSR 的根本区别：<br>| 维度 | CSR | CSV |<br>|---|---|---|<br>| 价值观 | 慈善义务 | 经济 + 社会一体 |<br>| 投资逻辑 | 利润 - CSR 投资 | CSR = 利润源泉 |<br>| 战略地位 | 边缘部门 | 核心战略 |<br>| 主体 | 企业被动 | 企业主动 |<br>| 测量 | 成本 | ROI |<br><br>CSV 3 大实现路径：<br>① Reconceiving Products and Markets——重塑产品和市场<br>例：Nestlé 「Healthy Kids」——更健康的食品 = 更好生意<br>② Redefining Productivity in the Value Chain——重定义价值链生产率<br>例：Walmart 减少包装·节约成本 + 减少环境影响<br>③ Building Supportive Industry Clusters——构建支持性产业集群<br>例：Yara Norway 在非洲投资农业基础设施·扩大化肥市场<br><br>典型案例：<br>① Nestlé Cocoa Plan——投资 cocoa 农户教育·提升 cocoa 质量·双赢<br>② Tesla——加速 EV·气候 + 商业双赢（Musk 战略明确 CSV）<br>③ Patagonia——回收旧衣服·减少环境 + brand 强化<br>④ Toyota Prius——hybrid 技术·环保 + 商业成功<br><br>CSV 的 3 大批判：<br>① Crane et al. 2014·「CSV 不是新概念·是包装」<br>② 不解决企业责任的 fundamental conflict——某些情况下利润和社会真冲突<br>③ 实务难度大——能找到 win-win 的不多<br><br>跨学派关系：① 是 CSR 的进化版·把 CSR 整合进 strategic_marketing ② 与 BOP（Prahalad）共享「商业 + 社会双赢」哲学 ③ Pro Plus 第 14 章 4 节「マネジリアル・マーケティングとの統合」表达类似思想。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "CSV（Creating Shared Value·共有価値創造）は Michael Porter·Mark Kramer 2011 年 <em>HBR</em>「Creating Shared Value」提唱·企業利益と社会価値が衝突せず·統合·CSR の進化版。<br><br>核心命題：「<em>Creating economic value in a way that also creates value for society by addressing its needs and challenges.</em>」<br><br>vs CSR の根本区別：CSR は慈善義務·コスト視点·CSV は経済 + 社会一体·利益源泉視点·核心戦略。<br><br>CSV 3 大実現経路：① Reconceiving Products and Markets（Nestlé Healthy Kids）② Redefining Productivity in Value Chain（Walmart 包装削減）③ Building Supportive Industry Clusters（Yara Norway アフリカ）<br><br>典型事例：① Nestlé Cocoa Plan ② Tesla（EV）③ Patagonia ④ Toyota Prius<br><br>3 大批判：① Crane et al. 2014「新概念ではない」② 根本対立を解決せず ③ 実務 win-win 困難<br><br>他派との関係：① CSR の進化版·strategic_marketing に統合 ② BOP と「商業 + 社会双贏」哲学共有 ③ Pro Plus 第 14 章 4 節「マネジリアル・マーケティングとの統合」と類似。"
+    }
   },
   "tags": [
     "CSV",
     "Porter-Kramer",
     "shared value"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "CSR 的进化版·strategic 整合 social",
-      "限": "理想化·实务 win-win 罕见·概念被批",
-      "例": "Tesla·Patagonia·Nestlé Cocoa Plan 是教科书",
-      "应": "social marketing·strategic 题"
+      "meaning": "CSR 的进化版·strategic 整合 social",
+      "limit": "理想化·实务 win-win 罕见·概念被批",
+      "example": "Tesla·Patagonia·Nestlé Cocoa Plan 是教科书",
+      "response": "social marketing·strategic 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "理想化·実務 win-win 稀·概念批判",
-      "例": "Tesla·Patagonia·Nestlé Cocoa Plan 教科書"
+      "meaning": "",
+      "limit": "理想化·実務 win-win 稀·概念批判",
+      "example": "Tesla·Patagonia·Nestlé Cocoa Plan 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:14:17.101Z",

@@ -24,6 +24,7 @@ import { getFile } from '~/lib/github';
 
 // fixture：每个 resource type 一份最小合法 JSON
 
+// v0.8.10 Stage 5: body 切结构化 KpBody object，无顶层 format / evalContent。
 const KP_FIXTURE = {
   id: 'k001',
   discipline: 'keiei',
@@ -31,8 +32,10 @@ const KP_FIXTURE = {
   scholars: ['maslow'],
   year: '1943',
   title: { zh: '需求层次理论', ja: '欲求階層説', en: 'Hierarchy of Needs' },
-  body: { zh: '正文内容', ja: '本文' },
-  format: 'narrative',
+  body: {
+    zh: { format: 'narrative', prose: '正文内容' },
+    ja: { format: 'narrative', prose: '本文' },
+  },
   tags: [],
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',

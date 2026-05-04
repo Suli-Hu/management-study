@@ -15,25 +15,36 @@
     "en": "Product Mix Pricing"
   },
   "body": {
-    "zh": "Product Mix Pricing（产品组合定价）是为产品组合 / 产品线设计价格的战略·考虑产品间相互影响。Kotler 11 章·Pro Plus 9 章核心。<br><br>5 大策略：<br>① Product Line Pricing（产品线定价）——同 line 不同 SKU 的价差·形成阶梯<br>例：Toyota Yaris·Corolla·Camry·Avalon 的递增价<br>② Optional Feature Pricing（可选功能定价）——base + add-on<br>例：汽车 base + GPS + leather + 高级音响<br>③ Captive Product Pricing（套牢产品定价）——主产品低价 + 配件 / 耗材高价<br>例：① Gillette razor cheap + blades expensive ② Nespresso 机器低价 + capsule 高价 ③ HP printer cheap + ink expensive<br>④ Two-Part Pricing（两段式定价）——固定费 + 使用费<br>例：① 电话 monthly fee + per-call ② Costco 会员费 + 商品价 ③ Disney park ticket + food<br>⑤ By-Product Pricing（副产品定价）——废料 / 副产品的定价<br>例：石油的副产品（沥青·石脑油）·农业副产品<br>⑥ Bundled Pricing（捆绑定价）——pure bundle 或 mixed bundle<br>例：Microsoft Office 365·Costco 套装<br><br>marketing 战略：<br>① 利润最大化要看 lifetime value·非单产品<br>② cross-subsidization（一部分亏·另一部分赚）<br>③ price discrimination（不同 segment 不同价）<br><br>典型案例：<br>① Costco（会员费 = 利润·商品几乎不赚）② Apple iPhone（device + service ecosystem）③ Disney Park（ticket + food + souvenir 体验经济）<br><br>跨学派关系：与 product line（m113）·portfolio（m116）·CLV（m063）一体使用。",
-    "ja": "Product Mix Pricing（製品ミックス価格設定）は製品組合·製品ラインの価格設計戦略·製品間相互影響を考慮。Kotler 11 章·Pro Plus 9 章核心。<br><br>5+ 大戦略：① Product Line Pricing（Toyota Yaris·Corolla·Camry·Avalon 階段）② Optional Feature Pricing（base + GPS + leather + 高級音響）③ Captive Product Pricing（Gillette razor 安·blades 高·Nespresso·HP printer + ink）④ Two-Part Pricing（電話·Costco·Disney）⑤ By-Product Pricing（石油副産物）⑥ Bundled Pricing（Microsoft Office 365）<br><br>マーケティング戦略：① lifetime value 最大化（単製品ではない）② cross-subsidization ③ price discrimination<br><br>典型事例：① Costco（会員費 = 利益·商品ほぼ無利益）② Apple iPhone（device + service ecosystem）③ Disney Park<br><br>他派との関係：product line（m113）·portfolio（m116）·CLV（m063）併用。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Product Mix Pricing（产品组合定价）是为产品组合 / 产品线设计价格的战略·考虑产品间相互影响。Kotler 11 章·Pro Plus 9 章核心。<br><br>5 大策略：<br>① Product Line Pricing（产品线定价）——同 line 不同 SKU 的价差·形成阶梯<br>例：Toyota Yaris·Corolla·Camry·Avalon 的递增价<br>② Optional Feature Pricing（可选功能定价）——base + add-on<br>例：汽车 base + GPS + leather + 高级音响<br>③ Captive Product Pricing（套牢产品定价）——主产品低价 + 配件 / 耗材高价<br>例：① Gillette razor cheap + blades expensive ② Nespresso 机器低价 + capsule 高价 ③ HP printer cheap + ink expensive<br>④ Two-Part Pricing（两段式定价）——固定费 + 使用费<br>例：① 电话 monthly fee + per-call ② Costco 会员费 + 商品价 ③ Disney park ticket + food<br>⑤ By-Product Pricing（副产品定价）——废料 / 副产品的定价<br>例：石油的副产品（沥青·石脑油）·农业副产品<br>⑥ Bundled Pricing（捆绑定价）——pure bundle 或 mixed bundle<br>例：Microsoft Office 365·Costco 套装<br><br>marketing 战略：<br>① 利润最大化要看 lifetime value·非单产品<br>② cross-subsidization（一部分亏·另一部分赚）<br>③ price discrimination（不同 segment 不同价）<br><br>典型案例：<br>① Costco（会员费 = 利润·商品几乎不赚）② Apple iPhone（device + service ecosystem）③ Disney Park（ticket + food + souvenir 体验经济）<br><br>跨学派关系：与 product line（m113）·portfolio（m116）·CLV（m063）一体使用。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Product Mix Pricing（製品ミックス価格設定）は製品組合·製品ラインの価格設計戦略·製品間相互影響を考慮。Kotler 11 章·Pro Plus 9 章核心。<br><br>5+ 大戦略：① Product Line Pricing（Toyota Yaris·Corolla·Camry·Avalon 階段）② Optional Feature Pricing（base + GPS + leather + 高級音響）③ Captive Product Pricing（Gillette razor 安·blades 高·Nespresso·HP printer + ink）④ Two-Part Pricing（電話·Costco·Disney）⑤ By-Product Pricing（石油副産物）⑥ Bundled Pricing（Microsoft Office 365）<br><br>マーケティング戦略：① lifetime value 最大化（単製品ではない）② cross-subsidization ③ price discrimination<br><br>典型事例：① Costco（会員費 = 利益·商品ほぼ無利益）② Apple iPhone（device + service ecosystem）③ Disney Park<br><br>他派との関係：product line（m113）·portfolio（m116）·CLV（m063）併用。"
+    }
   },
   "tags": [
     "product mix pricing",
     "captive",
     "bundling"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "产品组合的高级定价战略·CLV 优化工具",
-      "限": "复杂·跨产品依赖",
-      "例": "Costco·Apple·Disney 是教科书",
-      "应": "Kotler 11 章·价格题"
+      "meaning": "产品组合的高级定价战略·CLV 优化工具",
+      "limit": "复杂·跨产品依赖",
+      "example": "Costco·Apple·Disney 是教科书",
+      "response": "Kotler 11 章·价格题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "複雑·跨製品依存",
-      "例": "Costco·Apple·Disney 教科書"
+      "meaning": "",
+      "limit": "複雑·跨製品依存",
+      "example": "Costco·Apple·Disney 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:35:44.392Z",

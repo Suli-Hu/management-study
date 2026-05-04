@@ -305,13 +305,12 @@ function stripHtml(s: string): string {
 }
 
 // ============================================================
-// 反向桥：structured → legacy （v0.8.0 Stage 3 写入时填旧列用）
+// 反向桥：structured → legacy
 //
-// 新 contract 接受 structured KpBody，但 D1 旧列 (body_zh / format / eval_content_*_json)
-// 在 Stage 5 才 drop。Stage 3-4 期间写入路径需要从结构化反推旧列：
-//   - body_zh / body_ja      ← structuredToLegacyDsl(KpBody)
-//   - format                 ← body.zh.format
-//   - eval_content_*_json    ← evaluationsLangToLegacyEvalContent(KpEvaluationsLang)
+// v0.8.0 Stage 3-4 期间用于 D1 双写旧列（body_zh / eval_content_*_json）。
+// v0.8.10 Stage 5 后旧列已 drop，运行时不再调；保留为：
+//   - 一次性 git JSON 迁移脚本（migrate-data-to-v08-schema.ts）的反向 round-trip 验证
+//   - 未来若有 export legacy snapshot 的需求可以复用
 //
 // 这些 helper 不嵌入 evaluations 到 DSL（v0.8.0 起 evaluations 必须在独立列），
 // 也保持 lossless：序列化后再 parseBody 能回到等价 ParsedBody。

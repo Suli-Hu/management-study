@@ -2,9 +2,8 @@
 import Layout from '~/layouts/Layout.astro';
 import LangFab from '~/components/LangFab.astro';
 import { getDb } from '~/lib/db';
-import { renderEvalModule, type KpFormat } from '~/lib/render-body';
-import { renderBodyWithFallback } from '~/lib/render-body-with-fallback';
-import type { EvalContent } from '~/lib/eval-tag-defs';
+import { renderStructuredBody, renderEvalModule } from '~/lib/render-body-structured';
+import type { KpBody, KpEvaluationsLang } from '~/schemas/kp-body-structured';
 import { editHref } from '~/lib/nav';
 import { tagColor } from '~/lib/tag-color';
 import { shortYear } from '~/lib/format-year';
@@ -20,14 +19,17 @@ const kp = await db
   .first<{
     id: string; discipline: string; year: string;
     title_zh: string; title_en: string | null; title_ja: string | null;
-    body_zh: string; body_ja: string | null;
-    tags_json: string; format: KpFormat;
-    eval_content_zh_json: string; eval_content_ja_json: string;
-    // v0.8.0 Stage 1 新列（可能 NULL — backfill 未跑则走旧 renderer fallback）
-    body_zh_json: string | null; body_ja_json: string | null; body_format: string | null;
+    tags_json: string;
+    // v0.8.10 Stage 5: 旧 body_zh / body_ja / format / eval_content_*_json 列已 drop
+    body_zh_json: string; body_ja_json: string | null;
+    evaluations_zh_json: string | null; evaluations_ja_json: string | null;
+    body_format: string;
   }>();
 
 if (!kp) return Astro.redirect('/404');
+
+const bodyZh = JSON.parse(kp.body_zh_json) as KpBody;
+const bodyJa = kp.body_ja_json ? JSON.parse(kp.body_ja_json) as KpBody : null;
 
 // KP 颜色 = kp.tags[0] → discipline.tags 库 → color（v0.5.0 标签化）
 const discRow = await db
@@ -64,16 +66,15 @@ const scholarsResult = await db
 const scholars = scholarsResult.results ?? [];
 
 // 当前显示语言（W1 简化：默认中文，?lang=ja 切日文）
-const lang = (Astro.url.searchParams.get('lang') === 'ja' && kp.body_ja) ? 'ja' : 'zh';
-const body = lang === 'ja' ? kp.body_ja! : kp.body_zh;
+const lang = (Astro.url.searchParams.get('lang') === 'ja' && bodyJa) ? 'ja' : 'zh';
+const renderedBody = lang === 'ja' ? bodyJa! : bodyZh;
 const title = lang === 'ja' ? (kp.title_ja ?? kp.title_zh) : kp.title_zh;
 
-// v0.5.47 evaluation 内容（义/限/例/应/用/喻）— 之前 standalone /kp/[id] 漏渲染，
-// 手机/平板 < 1024px 右栏 hidden 时只能走 standalone 页，导致看不到评价。
-let evalContent: EvalContent | null = null;
-const evalRaw = lang === 'ja' ? kp.eval_content_ja_json : kp.eval_content_zh_json;
+// v0.5.47 evaluation 内容 — 选 zh/ja，整体读 v0.8 evaluations JSON
+let evalContent: KpEvaluationsLang | null = null;
+const evalRaw = lang === 'ja' ? kp.evaluations_ja_json : kp.evaluations_zh_json;
 if (evalRaw) {
-  try { evalContent = JSON.parse(evalRaw) as EvalContent; }
+  try { evalContent = JSON.parse(evalRaw) as KpEvaluationsLang; }
   catch { evalContent = null; }
 }
 
@@ -113,7 +114,7 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
       {kp.title_ja && lang === 'zh' && <div class="text-xs text-tertiary mt-1">{kp.title_ja}</div>}
 
       <div class="flex gap-2 mt-3 items-center">
-        {kp.body_ja && (
+        {bodyJa && (
           <a
             href={langToggleHref}
             class:list={['lang-toggle', lang === 'ja' && 'is-active']}
@@ -131,18 +132,15 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
       </div>
     </header>
 
-    <article class="kp-body text-secondary" set:html={renderBodyWithFallback({
-      body_json: lang === 'ja' ? kp.body_ja_json : kp.body_zh_json,
-      body_string: body,
-      format: kp.format,
+    <article class="kp-body text-secondary" set:html={renderStructuredBody({
+      body: renderedBody,
       accentHex,
-      kp_id: kp.id,
     })} />
     {evalContent && <div set:html={renderEvalModule(evalContent)} />}
   </main>
 
   {/* v0.5.78：mobile 日语切换悬浮球（仅 KP 有 body_ja 时挂） */}
-  {kp.body_ja && <LangFab lang={lang} accentHex={accentHex} />}
+  {bodyJa && <LangFab lang={lang} accentHex={accentHex} />}
 </Layout>
 
 <script is:inline>

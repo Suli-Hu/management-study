@@ -14,8 +14,14 @@
     "en": "Skimming vs Penetration Pricing"
   },
   "body": {
-    "zh": "新产品上市的两种定价战略——Skimming（上澄み吸収·撇脂定价）vs Penetration（市場浸透·渗透定价）·Kotler 教材经典对照。<br><br>① Skimming Pricing（上澄み吸収価格戦略）——初期高价·吸收价格不敏感的早期采用者（innovators / early adopters）·随时间逐步降价进入更广市场。<br>适用条件：① 产品有强烈差异化 ② 需求价格弹性低 ③ 竞争对手进入缓慢 ④ 高定价不立刻吸引大量竞争者。<br>例：iPhone（每代发布时高价·1-2 年后降价）·Tesla Model S（先高端·后中端）·新药（专利期高价）。<br><br>② Penetration Pricing（市場浸透価格戦略）——初期低价·快速占领市场·建立规模 + brand 忠诚·后续提高价格或维持规模优势。<br>适用条件：① 需求价格弹性高 ② 规模经济显著 ③ 低价能阻止竞争对手进入 ④ 长期 LTV 大于短期利润。<br>例：Netflix（初期低价铺市场）·Amazon Prime·Xiaomi 手机（性价比战略）。<br><br>选择逻辑：取决于产品差异化·价格弹性·竞争结构·企业战略目标（短期利润 vs 长期份额）。Kotler 16 版第 11 章·Pro Plus 第 9 章详细。<br><br>批判：仅适用「单次购买」型产品·订阅·SaaS 模型下 freemium·tiered 等定价更主流。",
-    "ja": "新製品上市の 2 つの価格戦略——Skimming（上澄み吸収）vs Penetration（市場浸透）·Kotler 教材古典対比。<br><br>① Skimming Pricing（上澄み吸収価格戦略）·初期高価格·価格非感応性の早期採用者（innovators / early adopters）を吸収·徐々に値下げしてより広い市場へ。<br>適用条件：① 製品が強い差別化 ② 需要価格弾力性低 ③ 競合参入緩慢 ④ 高価格が大量競合を即座に引きつけない。<br>例：iPhone（各世代発表時高価·1-2 年後値下げ）·Tesla Model S·新薬（特許期高価）。<br><br>② Penetration Pricing（市場浸透価格戦略）·初期低価格·急速に市場を占拠·規模 + ブランド・ロイヤルティを構築·後に値上げまたは規模優位維持。<br>適用条件：① 需要価格弾力性高 ② 規模の経済顕著 ③ 低価格が競合参入阻止 ④ 長期 LTV が短期利益を上回る。<br>例：Netflix（初期低価で市場拡大）·Amazon Prime·Xiaomi スマホ（コスパ戦略）。<br><br>選択論理：製品差別化·価格弾力性·競合構造·企業戦略目標（短期利益 vs 長期シェア）に依存。Kotler 16 版第 11 章·Pro Plus 第 9 章詳細。<br><br>批判：単発購入型製品にのみ適用·サブスク·SaaS では freemium·tiered 等が主流。"
+    "zh": {
+      "format": "narrative",
+      "prose": "新产品上市的两种定价战略——Skimming（上澄み吸収·撇脂定价）vs Penetration（市場浸透·渗透定价）·Kotler 教材经典对照。<br><br>① Skimming Pricing（上澄み吸収価格戦略）——初期高价·吸收价格不敏感的早期采用者（innovators / early adopters）·随时间逐步降价进入更广市场。<br>适用条件：① 产品有强烈差异化 ② 需求价格弹性低 ③ 竞争对手进入缓慢 ④ 高定价不立刻吸引大量竞争者。<br>例：iPhone（每代发布时高价·1-2 年后降价）·Tesla Model S（先高端·后中端）·新药（专利期高价）。<br><br>② Penetration Pricing（市場浸透価格戦略）——初期低价·快速占领市场·建立规模 + brand 忠诚·后续提高价格或维持规模优势。<br>适用条件：① 需求价格弹性高 ② 规模经济显著 ③ 低价能阻止竞争对手进入 ④ 长期 LTV 大于短期利润。<br>例：Netflix（初期低价铺市场）·Amazon Prime·Xiaomi 手机（性价比战略）。<br><br>选择逻辑：取决于产品差异化·价格弹性·竞争结构·企业战略目标（短期利润 vs 长期份额）。Kotler 16 版第 11 章·Pro Plus 第 9 章详细。<br><br>批判：仅适用「单次购买」型产品·订阅·SaaS 模型下 freemium·tiered 等定价更主流。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "新製品上市の 2 つの価格戦略——Skimming（上澄み吸収）vs Penetration（市場浸透）·Kotler 教材古典対比。<br><br>① Skimming Pricing（上澄み吸収価格戦略）·初期高価格·価格非感応性の早期採用者（innovators / early adopters）を吸収·徐々に値下げしてより広い市場へ。<br>適用条件：① 製品が強い差別化 ② 需要価格弾力性低 ③ 競合参入緩慢 ④ 高価格が大量競合を即座に引きつけない。<br>例：iPhone（各世代発表時高価·1-2 年後値下げ）·Tesla Model S·新薬（特許期高価）。<br><br>② Penetration Pricing（市場浸透価格戦略）·初期低価格·急速に市場を占拠·規模 + ブランド・ロイヤルティを構築·後に値上げまたは規模優位維持。<br>適用条件：① 需要価格弾力性高 ② 規模の経済顕著 ③ 低価格が競合参入阻止 ④ 長期 LTV が短期利益を上回る。<br>例：Netflix（初期低価で市場拡大）·Amazon Prime·Xiaomi スマホ（コスパ戦略）。<br><br>選択論理：製品差別化·価格弾力性·競合構造·企業戦略目標（短期利益 vs 長期シェア）に依存。Kotler 16 版第 11 章·Pro Plus 第 9 章詳細。<br><br>批判：単発購入型製品にのみ適用·サブスク·SaaS では freemium·tiered 等が主流。"
+    }
   },
   "tags": [
     "Pricing",
@@ -23,17 +29,22 @@
     "Penetration",
     "PLC"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "PLC 导入期 2 大定价战略·明确取舍",
-      "限": "仅 1 次购入型适用·订阅经济需新框架",
-      "例": "iPhone=skimming·Netflix=penetration·两个对照案例必背",
-      "应": "Kotler 11 章·Pro Plus 第 9 章·价格题命中"
+      "meaning": "PLC 导入期 2 大定价战略·明确取舍",
+      "limit": "仅 1 次购入型适用·订阅经济需新框架",
+      "example": "iPhone=skimming·Netflix=penetration·两个对照案例必背",
+      "response": "Kotler 11 章·Pro Plus 第 9 章·价格题命中",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "単発購入型のみ適用·サブスク経済は新フレーム必要",
-      "例": "iPhone=skimming·Netflix=penetration·2 対照ケース必暗記"
+      "meaning": "",
+      "limit": "単発購入型のみ適用·サブスク経済は新フレーム必要",
+      "example": "iPhone=skimming·Netflix=penetration·2 対照ケース必暗記",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:40:28.584Z",

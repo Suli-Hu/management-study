@@ -16,25 +16,36 @@
     "en": "Memory"
   },
   "body": {
-    "zh": "记忆（Memory）是消费者行为学派 + brand_equity 学派的桥梁概念·消费者关于 brand 的所有信息都储存在记忆中。Kotler 第 3 章·消费者心理。<br><br>记忆的 2 大系统：<br>① Short-Term Memory（STM·短期记忆）<br>容量：7±2 chunks（Miller 1956）<br>持续：几秒到几分钟<br>marketing 启示：广告信息要简短·重点突出<br><br>② Long-Term Memory（LTM·长期记忆）<br>容量：几乎无限<br>持续：终生<br>结构：node + link 网络（associative network model）<br>marketing 启示：建 brand 联想网络是 brand-building 的核心<br><br>Brand Associative Network（brand 联想网络）：<br>brand 在消费者大脑中是一个节点·与多个 attribute / benefit / feeling node 通过 link 连接。<br><br>例：「Coca-Cola」node 连接到：<br>- attributes：红色·瓶身·气泡·甜<br>- benefits：解渴·爽快<br>- feelings：快乐·分享·美式<br>- people：北极熊·圣诞老人·Share-a-Coke<br>- occasions：聚会·烧烤·暑假<br><br>brand-building 4 大原则（基于联想网络）：<br>① Strength of association——联想强度（重复 + 个人相关）<br>② Favorability——联想正面性（积极情感）<br>③ Uniqueness——独特性（与竞争对手区别）<br>④ Relevance——相关性（对消费者重要）<br><br>marketing 实务应用：<br>① brand 定位——选 1-2 个 association 强化<br>② brand extension——靠现有 association 借力新品<br>③ brand crisis 管理——negative association 是危险<br>④ storytelling——故事让 association 持久<br><br>跨学派关系：与 Keller CBBE Pyramid 第 2-3 层（meaning·response）紧密·与 Aaker brand awareness·brand association 直接对应·与 Bettman 信息处理范式一致。",
-    "ja": "記憶（Memory）は消費者行動学派 + brand_equity 学派の橋渡し概念·消費者のブランド情報全ては記憶に保存される。Kotler 第 3 章·消費者心理。<br><br>記憶 2 大システム：① STM（短期記憶）·容量 7±2 chunks·持続秒〜分 ② LTM（長期記憶）·容量無限·持続終生·構造 node + link ネットワーク<br><br>Brand Associative Network：ブランドは消費者脳内でノード·多 attribute / benefit / feeling ノードと link 接続。<br>例：「Coca-Cola」ノード→赤·瓶身·気泡·甘·解渴·楽しい·分享·北極熊·クリスマス·Share-a-Coke<br><br>brand-building 4 大原則（連想ネットワーク基底）：① 連想強度（重複 + 個人相関）② Favorability ③ Uniqueness ④ Relevance<br><br>マーケティング実務応用：① ブランド定位（1-2 個 association 強化）② ブランド拡張（既有 association で借力）③ ブランド危機管理 ④ ストーリーテリング<br><br>他派との関係：Keller CBBE Pyramid 第 2-3 層（meaning·response）と密接·Aaker brand awareness·brand association と直接対応·Bettman 情報処理パラダイム一致。"
+    "zh": {
+      "format": "narrative",
+      "prose": "记忆（Memory）是消费者行为学派 + brand_equity 学派的桥梁概念·消费者关于 brand 的所有信息都储存在记忆中。Kotler 第 3 章·消费者心理。<br><br>记忆的 2 大系统：<br>① Short-Term Memory（STM·短期记忆）<br>容量：7±2 chunks（Miller 1956）<br>持续：几秒到几分钟<br>marketing 启示：广告信息要简短·重点突出<br><br>② Long-Term Memory（LTM·长期记忆）<br>容量：几乎无限<br>持续：终生<br>结构：node + link 网络（associative network model）<br>marketing 启示：建 brand 联想网络是 brand-building 的核心<br><br>Brand Associative Network（brand 联想网络）：<br>brand 在消费者大脑中是一个节点·与多个 attribute / benefit / feeling node 通过 link 连接。<br><br>例：「Coca-Cola」node 连接到：<br>- attributes：红色·瓶身·气泡·甜<br>- benefits：解渴·爽快<br>- feelings：快乐·分享·美式<br>- people：北极熊·圣诞老人·Share-a-Coke<br>- occasions：聚会·烧烤·暑假<br><br>brand-building 4 大原则（基于联想网络）：<br>① Strength of association——联想强度（重复 + 个人相关）<br>② Favorability——联想正面性（积极情感）<br>③ Uniqueness——独特性（与竞争对手区别）<br>④ Relevance——相关性（对消费者重要）<br><br>marketing 实务应用：<br>① brand 定位——选 1-2 个 association 强化<br>② brand extension——靠现有 association 借力新品<br>③ brand crisis 管理——negative association 是危险<br>④ storytelling——故事让 association 持久<br><br>跨学派关系：与 Keller CBBE Pyramid 第 2-3 层（meaning·response）紧密·与 Aaker brand awareness·brand association 直接对应·与 Bettman 信息处理范式一致。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "記憶（Memory）は消費者行動学派 + brand_equity 学派の橋渡し概念·消費者のブランド情報全ては記憶に保存される。Kotler 第 3 章·消費者心理。<br><br>記憶 2 大システム：① STM（短期記憶）·容量 7±2 chunks·持続秒〜分 ② LTM（長期記憶）·容量無限·持続終生·構造 node + link ネットワーク<br><br>Brand Associative Network：ブランドは消費者脳内でノード·多 attribute / benefit / feeling ノードと link 接続。<br>例：「Coca-Cola」ノード→赤·瓶身·気泡·甘·解渴·楽しい·分享·北極熊·クリスマス·Share-a-Coke<br><br>brand-building 4 大原則（連想ネットワーク基底）：① 連想強度（重複 + 個人相関）② Favorability ③ Uniqueness ④ Relevance<br><br>マーケティング実務応用：① ブランド定位（1-2 個 association 強化）② ブランド拡張（既有 association で借力）③ ブランド危機管理 ④ ストーリーテリング<br><br>他派との関係：Keller CBBE Pyramid 第 2-3 層（meaning·response）と密接·Aaker brand awareness·brand association と直接対応·Bettman 情報処理パラダイム一致。"
+    }
   },
   "tags": [
     "memory",
     "associative network",
     "Keller"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "consumer_behavior 与 brand_equity 学派的桥梁概念",
-      "限": "实证测量难·跨文化适用",
-      "例": "Coca-Cola·Apple·任何强 brand 都有丰富联想网络",
-      "应": "Kotler 第 3 章·brand 战略题"
+      "meaning": "consumer_behavior 与 brand_equity 学派的桥梁概念",
+      "limit": "实证测量难·跨文化适用",
+      "example": "Coca-Cola·Apple·任何强 brand 都有丰富联想网络",
+      "response": "Kotler 第 3 章·brand 战略题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "実証測定困難·異文化適用",
-      "例": "Coca-Cola·Apple 等強ブランドは豊富な連想ネットワーク"
+      "meaning": "",
+      "limit": "実証測定困難·異文化適用",
+      "example": "Coca-Cola·Apple 等強ブランドは豊富な連想ネットワーク",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:24:09.826Z",

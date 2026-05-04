@@ -15,25 +15,36 @@
     "en": "Marketing 4.0"
   },
   "body": {
-    "zh": "Marketing 4.0（数字时代 marketing）是 Kotler·Kartajaya·Setiawan 2017 年同名书提出·把 marketing 推向线上 + 线下整合·digital + traditional。<br><br>核心特征：<br>① 视角：企业要在 connectivity 时代 navigate 消费者 journey<br>② 核心：digital + traditional integration·co-creation·content marketing<br>③ 战略：5A customer path·human-to-human marketing·digital storytelling<br>④ 背景：smartphone 普及·social media 主流·消费者获得 unprecedented power<br><br>5A 顾客旅程模型：从传统 4A（Aware·Attitude·Act·Act Again）演化为5A：<br>① Aware（认知）② Appeal（吸引）③ Ask（询问）④ Act（购买）⑤ Advocate（拥护）<br><br>关键变化：第 5 步「Advocate」反映 social media 时代消费者会主动推荐·成为 brand 的 marketer。<br><br>跨学派关系：与 IMC 的AISAS（電通 2005）·SIPS（電通 2011）日本谱系并行——都强调 search·share·spread。<br><br>典型例：① Airbnb「Belong Anywhere」整合 social + offline ② Netflix 推荐 + content marketing ③ Tesla 的 referral program·消费者主动 advocate。",
-    "ja": "マーケティング 4.0（デジタル時代マーケティング）は Kotler·Kartajaya·Setiawan 2017 年同名書で提唱·マーケティングをオンライン + オフライン統合へ。<br><br>核心特徴：<br>① 視点：connectivity 時代に消費者ジャーニーを navigate<br>② 核心：digital + traditional integration·共創·コンテンツ・マーケティング<br>③ 戦略：5A customer path·human-to-human·デジタル・ストーリーテリング<br>④ 背景：スマホ普及·SNS 主流·消費者が前例ない力を持つ<br><br>5A 顧客ジャーニー：従来 4A（Aware·Attitude·Act·Act Again）から5Aへ：<br>① Aware（認知）② Appeal（魅了）③ Ask（質問）④ Act（購買）⑤ Advocate（推奨）<br><br>主要変化：第 5 段「Advocate」は SNS 時代消費者が能動的に推奨·ブランドの marketer になる。<br><br>他派との関係：IMC の AISAS（電通 2005）·SIPS（電通 2011）日本系譜と並行——共に search·share·spread を強調。<br><br>典型例：① Airbnb「Belong Anywhere」social + offline 統合 ② Netflix レコメンド + コンテンツ ③ Tesla のリファラル·消費者能動 advocate。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Marketing 4.0（数字时代 marketing）是 Kotler·Kartajaya·Setiawan 2017 年同名书提出·把 marketing 推向线上 + 线下整合·digital + traditional。<br><br>核心特征：<br>① 视角：企业要在 connectivity 时代 navigate 消费者 journey<br>② 核心：digital + traditional integration·co-creation·content marketing<br>③ 战略：5A customer path·human-to-human marketing·digital storytelling<br>④ 背景：smartphone 普及·social media 主流·消费者获得 unprecedented power<br><br>5A 顾客旅程模型：从传统 4A（Aware·Attitude·Act·Act Again）演化为5A：<br>① Aware（认知）② Appeal（吸引）③ Ask（询问）④ Act（购买）⑤ Advocate（拥护）<br><br>关键变化：第 5 步「Advocate」反映 social media 时代消费者会主动推荐·成为 brand 的 marketer。<br><br>跨学派关系：与 IMC 的AISAS（電通 2005）·SIPS（電通 2011）日本谱系并行——都强调 search·share·spread。<br><br>典型例：① Airbnb「Belong Anywhere」整合 social + offline ② Netflix 推荐 + content marketing ③ Tesla 的 referral program·消费者主动 advocate。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "マーケティング 4.0（デジタル時代マーケティング）は Kotler·Kartajaya·Setiawan 2017 年同名書で提唱·マーケティングをオンライン + オフライン統合へ。<br><br>核心特徴：<br>① 視点：connectivity 時代に消費者ジャーニーを navigate<br>② 核心：digital + traditional integration·共創·コンテンツ・マーケティング<br>③ 戦略：5A customer path·human-to-human·デジタル・ストーリーテリング<br>④ 背景：スマホ普及·SNS 主流·消費者が前例ない力を持つ<br><br>5A 顧客ジャーニー：従来 4A（Aware·Attitude·Act·Act Again）から5Aへ：<br>① Aware（認知）② Appeal（魅了）③ Ask（質問）④ Act（購買）⑤ Advocate（推奨）<br><br>主要変化：第 5 段「Advocate」は SNS 時代消費者が能動的に推奨·ブランドの marketer になる。<br><br>他派との関係：IMC の AISAS（電通 2005）·SIPS（電通 2011）日本系譜と並行——共に search·share·spread を強調。<br><br>典型例：① Airbnb「Belong Anywhere」social + offline 統合 ② Netflix レコメンド + コンテンツ ③ Tesla のリファラル·消費者能動 advocate。"
+    }
   },
   "tags": [
     "Marketing 4.0",
     "5A",
     "digital"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "marketing 进入数字 + 线下整合·5A 取代 4A",
-      "限": "5A 模型仍偏线性·实务中消费者 path 非线性",
-      "例": "Airbnb·Netflix·Tesla",
-      "应": "Pro Plus 第 16 章·digital marketing 题"
+      "meaning": "marketing 进入数字 + 线下整合·5A 取代 4A",
+      "limit": "5A 模型仍偏线性·实务中消费者 path 非线性",
+      "example": "Airbnb·Netflix·Tesla",
+      "response": "Pro Plus 第 16 章·digital marketing 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "5A モデル線形偏重·実務消費者 path 非線形",
-      "例": "Airbnb·Netflix·Tesla"
+      "meaning": "",
+      "limit": "5A モデル線形偏重·実務消費者 path 非線形",
+      "example": "Airbnb·Netflix·Tesla",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T04:51:28.768Z",

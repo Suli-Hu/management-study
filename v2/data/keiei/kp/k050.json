@@ -12,13 +12,18 @@
     "ja": "組織コミュニケーション・ネットワークと障壁"
   },
   "body": {
-    "zh": "沟通方向分为下行、上行、横向、斜向四种。四种网络：轮式（Wheel，中心化、速度快但满意度低）、链式（Chain，逐级传递、易失真）、环式（Circle，平等参与）、全通道式（All-Channel，去中心化、士气高、适合复杂任务）<br>八大障碍：过滤（Filtering）、选择性知觉、情绪、信息超载、语言歧义、沉默、沟通恐惧、撒谎<br>克服方法：积极倾听（Active Listening）、调整信息流、利用反馈回路、简化用语、控制情绪",
-    "ja": "——コミュニケーションの方向：下方（Downward、命令・方針）・上方（Upward、提案・報告）・水平（Lateral、部門間調整）・斜方（Diagonal、階層横断・部門横断）。四つのコミュニケーション・ネットワーク：車輪型（Wheel、中心化、速度最速、監督者の統制強、単純課題に適するが部下の満足度が低い）；鎖型（Chain、逐次伝達、速度は比較的速いが情報の歪曲が生じやすい）；環型（Circle、成員が平等、民主的雰囲気、成員満足度が高い）；全チャネル型（All-Channel、自由な流通、士気最高、複雑課題に適するが効率が低い）。八大コミュニケーション障壁：フィルタリング（Filtering、意図的な情報操作）；選択的知覚（Selective Perception）；感情（Emotion）；情報過負荷（Information Overload）；言語の多義性（Language）；沈黙（Silence）；コミュニケーション不安（Communication Apprehension、約5〜20%の人に存在）；虚偽（Lying）。克服策：積極的傾聴（Active Listening）・情報流の調整（例外管理）・フィードバック回路の活用・用語の簡素化・感情の統制"
+    "zh": {
+      "format": "narrative",
+      "prose": "沟通方向分为下行、上行、横向、斜向四种。四种网络：轮式（Wheel，中心化、速度快但满意度低）、链式（Chain，逐级传递、易失真）、环式（Circle，平等参与）、全通道式（All-Channel，去中心化、士气高、适合复杂任务）<br>八大障碍：过滤（Filtering）、选择性知觉、情绪、信息超载、语言歧义、沉默、沟通恐惧、撒谎<br>克服方法：积极倾听（Active Listening）、调整信息流、利用反馈回路、简化用语、控制情绪"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "——コミュニケーションの方向：下方（Downward、命令・方針）・上方（Upward、提案・報告）・水平（Lateral、部門間調整）・斜方（Diagonal、階層横断・部門横断）。四つのコミュニケーション・ネットワーク：車輪型（Wheel、中心化、速度最速、監督者の統制強、単純課題に適するが部下の満足度が低い）；鎖型（Chain、逐次伝達、速度は比較的速いが情報の歪曲が生じやすい）；環型（Circle、成員が平等、民主的雰囲気、成員満足度が高い）；全チャネル型（All-Channel、自由な流通、士気最高、複雑課題に適するが効率が低い）。八大コミュニケーション障壁：フィルタリング（Filtering、意図的な情報操作）；選択的知覚（Selective Perception）；感情（Emotion）；情報過負荷（Information Overload）；言語の多義性（Language）；沈黙（Silence）；コミュニケーション不安（Communication Apprehension、約5〜20%の人に存在）；虚偽（Lying）。克服策：積極的傾聴（Active Listening）・情報流の調整（例外管理）・フィードバック回路の活用・用語の簡素化・感情の統制"
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "narrative",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

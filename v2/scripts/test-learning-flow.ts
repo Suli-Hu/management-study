@@ -40,12 +40,12 @@ const TEST_KP = {
     en: '[test] learning flow smoke',
     ja: '[test] 学習フロー smoke',
   },
+  // v0.8.10 Stage 5: body 切结构化（KpBody object）；顶层 format 字段已删
   body: {
-    zh: '<strong>[TEST]</strong> smoke test KP — 不应出现在生产',
-    ja: '<strong>[TEST]</strong> smoke test KP — 本番に出現すべきでない',
+    zh: { format: 'narrative', prose: '[TEST] smoke test KP — 不应出现在生产' },
+    ja: { format: 'narrative', prose: '[TEST] smoke test KP — 本番に出現すべきでない' },
   },
   tags: [],
-  format: 'narrative',
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
 };

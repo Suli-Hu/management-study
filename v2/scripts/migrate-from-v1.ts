@@ -420,6 +420,9 @@ for (const k of KNOWLEDGE) {
     .map((s: string) => s.trim())
     .filter(Boolean);
 
+  // v0.8.10 Stage 5: 这条一次性 v1 → v2 迁移脚本已跑过（v0.4 时期），不再实际使用；
+  // schema 切到 v0.8 后旧 string body 字段 type 不兼容。把 v1 raw string 直接当作
+  // narrative.prose 包成 v0.8 KpBody（v1 数据本就无结构化标记）。
   const kp: Kp = {
     id: k.id,
     discipline: 'keiei',
@@ -432,11 +435,10 @@ for (const k of KNOWLEDGE) {
       ja: jaTitle || undefined,
     },
     body: {
-      zh: clean(k.body),
-      ja: jaBody || undefined,
+      zh: { format: 'narrative', prose: clean(k.body) },
+      ...(jaBody ? { ja: { format: 'narrative', prose: jaBody } as const } : {}),
     },
     tags: parseTags(k.body, jaBody),
-    format: detectFormat(k.body),
     createdAt: NOW,
     updatedAt: NOW,
   };

@@ -42,6 +42,7 @@ function makeCtx(opts: { body?: unknown; env: Record<string, unknown>; isAdmin?:
 
 const baseEnv = { GITHUB_PAT: 'ghp_x', GITHUB_REPO: 'Suli-Hu/management-study' };
 
+// v0.8.10 Stage 5: KP fixture 改 v0.8 shape — body 是 KpBody object，无顶层 format / evalContent。
 const NEW_KP = {
   id: 'k999',
   discipline: 'keiei',
@@ -49,9 +50,8 @@ const NEW_KP = {
   scholars: [],
   year: '2026',
   title: { zh: '测试 KP' }, // en/ja optional，省略
-  body: { zh: 'test' },
+  body: { zh: { format: 'narrative', prose: 'test' } },
   tags: [],
-  format: 'narrative',
   createdAt: '2026-04-25T00:00:00.000Z', // 服务端会强制刷新
   updatedAt: '2026-04-25T00:00:00.000Z',
 };

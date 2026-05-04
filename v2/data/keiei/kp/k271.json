@@ -11,13 +11,18 @@
     "ja": "権力の五分類"
   },
   "body": {
-    "zh": "权力来源的经典分类：①报酬力（Reward Power）——提供奖赏的能力；②强制力（Coercive Power）——施加惩罚的能力；③正当权力（Legitimate Power）——基于组织地位的正式权威；④专门力（Expert Power）——基于专业知识和技能；⑤参照力/同一视力（Referent Power）——基于个人魅力和尊敬",
-    "ja": "——権力の源泉に関する古典的分類：①報酬力（Reward Power）——報酬を提供する能力。②強制力（Coercive Power）——罰則を課す能力。③正当権力（Legitimate Power）——組織上の地位に基づく公式的権威。④専門力（Expert Power）——専門的知識とスキルに基づく権力。⑤参照力・同一視力（Referent Power）——個人的魅力と尊敬に基づく権力"
+    "zh": {
+      "format": "narrative",
+      "prose": "权力来源的经典分类：①报酬力（Reward Power）——提供奖赏的能力；②强制力（Coercive Power）——施加惩罚的能力；③正当权力（Legitimate Power）——基于组织地位的正式权威；④专门力（Expert Power）——基于专业知识和技能；⑤参照力/同一视力（Referent Power）——基于个人魅力和尊敬"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "——権力の源泉に関する古典的分類：①報酬力（Reward Power）——報酬を提供する能力。②強制力（Coercive Power）——罰則を課す能力。③正当権力（Legitimate Power）——組織上の地位に基づく公式的権威。④専門力（Expert Power）——専門的知識とスキルに基づく権力。⑤参照力・同一視力（Referent Power）——個人的魅力と尊敬に基づく権力"
+    }
   },
   "tags": [
     "t_ejbdv3"
   ],
-  "format": "flat-list",
   "createdAt": "2026-04-24T02:21:59.847Z",
   "updatedAt": "2026-04-24T02:21:59.847Z"
 }

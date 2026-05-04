@@ -78,6 +78,7 @@ function makeCtx(opts: {
   } as unknown as APIContext;
 }
 
+// v0.8.10 Stage 5: KP fixture 改 v0.8 shape — body 是 KpBody object，无顶层 format / evalContent。
 const VALID_KP = {
   id: 'k001',
   discipline: 'keiei',
@@ -85,9 +86,11 @@ const VALID_KP = {
   scholars: ['taylor'],
   year: '1911',
   title: { zh: '科学管理法', en: 'Scientific Management', ja: '科学的管理法' },
-  body: { zh: '泰勒...', ja: 'テイラー...' },
+  body: {
+    zh: { format: 'narrative', prose: '泰勒...' },
+    ja: { format: 'narrative', prose: 'テイラー...' },
+  },
   tags: [],
-  format: 'flat-list',
   createdAt: '2026-04-24T02:21:59.847Z',
   updatedAt: '2026-04-24T02:21:59.847Z',
 };

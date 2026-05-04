@@ -14,25 +14,36 @@
     "en": "Perception"
   },
   "body": {
-    "zh": "知覚（Perception）是消费者把刺激（stimulus）转化为内在意义的认知过程·消费者行为学派的核心概念。Kotler 第 3 章·消费者心理 4 大要素之一（动机·知觉·学习·记忆）。<br><br>知覚 vs 感觉的区别：<br>- 感觉（Sensation）——五官接收 raw 数据（看·听·闻）<br>- 知觉（Perception）——大脑解释·组织·赋意义<br><br>3 大选择性过程：<br><br>① Selective Attention（选择性注意）<br>每天 5,000+ 广告中·消费者只注意 ~50 个<br>注意倾向：<br>- 与当前需要相关（饿时注意食品广告）<br>- 期待中的信息（购车前注意汽车广告）<br>- 偏离常规（new·surprising·creative）<br>marketing 启示：广告必须 break clutter（hook·color·movement）<br><br>② Selective Distortion（选择性扭曲）<br>消费者倾向于按现有信念解释信息·过滤掉与信念冲突的信息<br>例：Apple 用户倾向觉得 Apple 产品质量好·即使 review 说有问题<br>marketing 启示：① 强 brand 受益（buyers ignore 负面）② 弱 brand 受损（buyers 注意每个缺陷）<br><br>③ Selective Retention（选择性记忆）<br>消费者只记住与现有态度一致的信息·忘掉冲突的<br>例：Coca-Cola 爱好者记住 Coke 广告·忘掉 Pepsi 广告<br>marketing 启示：repetition + consistency 是 brand-building 的关键<br><br>4 大知觉影响：<br>① 感官 marketing——5 感设计（Apple 包装的开盒体验）<br>② 背景效应——同一产品在不同 context 感受不同<br>③ 对比效应——高价商品旁边的中价显得便宜<br>④ 主观判断——盲测 vs 标 brand 测试结果不同<br><br>跨学派关系：① 与 Bettman 信息处理范式（m027）一体 ② 与 ELM（m026）的中央 / 周边路径关联 ③ marketing 实务的视觉营销·感官营销基础。",
-    "ja": "知覚（Perception）は消費者が刺激（stimulus）を内在意味に変換する認知プロセス·消費者行動学派の核心概念。Kotler 第 3 章·消費者心理 4 大要素の一つ（動機·知覚·学習·記憶）。<br><br>知覚 vs 感覚の区別：感覚は raw データ受信·知覚は脳の解釈·組織·意味付け<br><br>3 大選択的プロセス：① Selective Attention（選択的注意）·5000+ 広告中 50 個のみ注意 ② Selective Distortion（選択的歪曲）·既有信念で情報解釈·信念衝突情報フィルター ③ Selective Retention（選択的記憶）·既有態度一致情報のみ記憶<br><br>マーケティング示唆：① 広告は break clutter ② 強ブランドは利益（買い手が負面 ignore）·弱ブランドは損失 ③ repetition + consistency が brand-building の鍵<br><br>4 大知覚影響：① 感覚マーケティング（5 感設計·Apple 開包体験）② 背景効果 ③ 対比効果（高価商品横の中価が安く見える）④ 主観判断（盲テスト vs ブランドテスト）<br><br>他派との関係：① Bettman 情報処理パラダイム（m027）と一体 ② ELM（m026）の中央 / 周辺ルート関連 ③ 視覚·感覚マーケティングの基礎。"
+    "zh": {
+      "format": "narrative",
+      "prose": "知覚（Perception）是消费者把刺激（stimulus）转化为内在意义的认知过程·消费者行为学派的核心概念。Kotler 第 3 章·消费者心理 4 大要素之一（动机·知觉·学习·记忆）。<br><br>知覚 vs 感觉的区别：<br>- 感觉（Sensation）——五官接收 raw 数据（看·听·闻）<br>- 知觉（Perception）——大脑解释·组织·赋意义<br><br>3 大选择性过程：<br><br>① Selective Attention（选择性注意）<br>每天 5,000+ 广告中·消费者只注意 ~50 个<br>注意倾向：<br>- 与当前需要相关（饿时注意食品广告）<br>- 期待中的信息（购车前注意汽车广告）<br>- 偏离常规（new·surprising·creative）<br>marketing 启示：广告必须 break clutter（hook·color·movement）<br><br>② Selective Distortion（选择性扭曲）<br>消费者倾向于按现有信念解释信息·过滤掉与信念冲突的信息<br>例：Apple 用户倾向觉得 Apple 产品质量好·即使 review 说有问题<br>marketing 启示：① 强 brand 受益（buyers ignore 负面）② 弱 brand 受损（buyers 注意每个缺陷）<br><br>③ Selective Retention（选择性记忆）<br>消费者只记住与现有态度一致的信息·忘掉冲突的<br>例：Coca-Cola 爱好者记住 Coke 广告·忘掉 Pepsi 广告<br>marketing 启示：repetition + consistency 是 brand-building 的关键<br><br>4 大知觉影响：<br>① 感官 marketing——5 感设计（Apple 包装的开盒体验）<br>② 背景效应——同一产品在不同 context 感受不同<br>③ 对比效应——高价商品旁边的中价显得便宜<br>④ 主观判断——盲测 vs 标 brand 测试结果不同<br><br>跨学派关系：① 与 Bettman 信息处理范式（m027）一体 ② 与 ELM（m026）的中央 / 周边路径关联 ③ marketing 实务的视觉营销·感官营销基础。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "知覚（Perception）は消費者が刺激（stimulus）を内在意味に変換する認知プロセス·消費者行動学派の核心概念。Kotler 第 3 章·消費者心理 4 大要素の一つ（動機·知覚·学習·記憶）。<br><br>知覚 vs 感覚の区別：感覚は raw データ受信·知覚は脳の解釈·組織·意味付け<br><br>3 大選択的プロセス：① Selective Attention（選択的注意）·5000+ 広告中 50 個のみ注意 ② Selective Distortion（選択的歪曲）·既有信念で情報解釈·信念衝突情報フィルター ③ Selective Retention（選択的記憶）·既有態度一致情報のみ記憶<br><br>マーケティング示唆：① 広告は break clutter ② 強ブランドは利益（買い手が負面 ignore）·弱ブランドは損失 ③ repetition + consistency が brand-building の鍵<br><br>4 大知覚影響：① 感覚マーケティング（5 感設計·Apple 開包体験）② 背景効果 ③ 対比効果（高価商品横の中価が安く見える）④ 主観判断（盲テスト vs ブランドテスト）<br><br>他派との関係：① Bettman 情報処理パラダイム（m027）と一体 ② ELM（m026）の中央 / 周辺ルート関連 ③ 視覚·感覚マーケティングの基礎。"
+    }
   },
   "tags": [
     "perception",
     "selective attention",
     "Bettman"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "消费者行为认知派核心·marketing 视觉营销基础",
-      "限": "个体差异大·跨文化适用",
-      "例": "Apple 包装·Coca-Cola 红色 = 知觉设计",
-      "应": "Kotler 第 3 章·brand 题"
+      "meaning": "消费者行为认知派核心·marketing 视觉营销基础",
+      "limit": "个体差异大·跨文化适用",
+      "example": "Apple 包装·Coca-Cola 红色 = 知觉设计",
+      "response": "Kotler 第 3 章·brand 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "個体差大·異文化適用",
-      "例": "Apple パッケージ·Coca-Cola 赤 = 知覚設計"
+      "meaning": "",
+      "limit": "個体差大·異文化適用",
+      "example": "Apple パッケージ·Coca-Cola 赤 = 知覚設計",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T07:24:07.875Z",

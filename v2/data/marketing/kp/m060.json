@@ -14,8 +14,14 @@
     "en": "Sales Promotion Strategy"
   },
   "body": {
-    "zh": "Sales Promotion（セールス・プロモーション·促销）是 marketing communication mix 的重要要素·与广告·人员销售·PR·event并列。Pro Plus 第 10 章 5 节·Kotler 第 11 章核心。<br><br>2 大类型：<br>① Consumer Promotion（消费者促销）——给消费者的<br>② Trade Promotion（渠道促销）——给 channel（批发·零售）的<br><br>Consumer Promotion 7 类工具：<br>① Coupons（优惠券）——纸 / 数字 / APP·短期价格刺激<br>② Samples（试用品）——免费送·让消费者尝试<br>③ Cash Refunds（现金返还）——购买后申请退还<br>④ Price Packs（捆绑包）——「买 2 送 1」「家庭装」<br>⑤ Premiums（赠品）——附送 free gift<br>⑥ Frequency Programs（点数·会员）——星巴克 stars·航空 mile<br>⑦ Contests / Sweepstakes（抽奖·比赛）——参与赢大奖<br><br>Trade Promotion 5 类工具：<br>① Allowances（折让·进货补贴）——日本：リベート·アロウワンス<br>② Discounts（数量·季节·现金折扣）<br>③ Push Money——给销售员的额外提成<br>④ Free Goods（赠送商品）——「买 100 送 10」<br>⑤ Display Allowances（陈列费）——给好位置摆 brand<br><br>Sales Promotion 的 4 大目标：<br>① 促进试用——让 new customers 第一次买<br>② 提高销量——短期销售刺激<br>③ 清库存——季末·过时品处理<br>④ 反击竞争——竞争对手低价·必须跟<br><br>Sales Promotion 的危险：<br>① brand value erosion——长期高频促销·消费者只在打折时买<br>② price expectation——消费者觉得「正常价」就是「打折价」<br>③ profit margin compression——利润空间被压缩<br>④ brand 形象损害——奢侈品 brand 几乎不做 sales promotion<br><br>实务原则：sales promotion 应该是 brand-building 的补充·不是替代。短期促销 + 长期 brand 投资 = 健康的 marketing mix。",
-    "ja": "Sales Promotion（セールス・プロモーション）はマーケティング・コミュニケーション・ミックスの重要要素·広告·人的販売·PR·イベントと並列。Pro Plus 第 10 章 5 節·Kotler 第 11 章核心。<br><br>2 大類型：① Consumer Promotion（消費者向け）② Trade Promotion（チャネル向け）<br><br>Consumer Promotion 7 類ツール：① Coupons ② Samples ③ Cash Refunds ④ Price Packs ⑤ Premiums ⑥ Frequency Programs（スタバ stars·マイル）⑦ Contests / Sweepstakes<br><br>Trade Promotion 5 類ツール：① Allowances（リベート·アロウワンス）② Discounts ③ Push Money ④ Free Goods ⑤ Display Allowances<br><br>4 大目標：① 試用促進 ② 売上向上 ③ 在庫処分 ④ 競合反撃<br><br>4 大危険：① brand value 侵食（長期高頻促銷で消費者は割引時のみ購買）② price expectation（消費者が「通常価」=「割引価」と思う）③ 利益率圧縮 ④ ブランド・イメージ毀損（ラグジュアリーはほぼ promotion せず）<br><br>実務原則：sales promotion は brand-building の補完·代替ではない。短期促銷 + 長期ブランド投資 = 健康なマーケティング・ミックス。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Sales Promotion（セールス・プロモーション·促销）是 marketing communication mix 的重要要素·与广告·人员销售·PR·event并列。Pro Plus 第 10 章 5 节·Kotler 第 11 章核心。<br><br>2 大类型：<br>① Consumer Promotion（消费者促销）——给消费者的<br>② Trade Promotion（渠道促销）——给 channel（批发·零售）的<br><br>Consumer Promotion 7 类工具：<br>① Coupons（优惠券）——纸 / 数字 / APP·短期价格刺激<br>② Samples（试用品）——免费送·让消费者尝试<br>③ Cash Refunds（现金返还）——购买后申请退还<br>④ Price Packs（捆绑包）——「买 2 送 1」「家庭装」<br>⑤ Premiums（赠品）——附送 free gift<br>⑥ Frequency Programs（点数·会员）——星巴克 stars·航空 mile<br>⑦ Contests / Sweepstakes（抽奖·比赛）——参与赢大奖<br><br>Trade Promotion 5 类工具：<br>① Allowances（折让·进货补贴）——日本：リベート·アロウワンス<br>② Discounts（数量·季节·现金折扣）<br>③ Push Money——给销售员的额外提成<br>④ Free Goods（赠送商品）——「买 100 送 10」<br>⑤ Display Allowances（陈列费）——给好位置摆 brand<br><br>Sales Promotion 的 4 大目标：<br>① 促进试用——让 new customers 第一次买<br>② 提高销量——短期销售刺激<br>③ 清库存——季末·过时品处理<br>④ 反击竞争——竞争对手低价·必须跟<br><br>Sales Promotion 的危险：<br>① brand value erosion——长期高频促销·消费者只在打折时买<br>② price expectation——消费者觉得「正常价」就是「打折价」<br>③ profit margin compression——利润空间被压缩<br>④ brand 形象损害——奢侈品 brand 几乎不做 sales promotion<br><br>实务原则：sales promotion 应该是 brand-building 的补充·不是替代。短期促销 + 长期 brand 投资 = 健康的 marketing mix。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Sales Promotion（セールス・プロモーション）はマーケティング・コミュニケーション・ミックスの重要要素·広告·人的販売·PR·イベントと並列。Pro Plus 第 10 章 5 節·Kotler 第 11 章核心。<br><br>2 大類型：① Consumer Promotion（消費者向け）② Trade Promotion（チャネル向け）<br><br>Consumer Promotion 7 類ツール：① Coupons ② Samples ③ Cash Refunds ④ Price Packs ⑤ Premiums ⑥ Frequency Programs（スタバ stars·マイル）⑦ Contests / Sweepstakes<br><br>Trade Promotion 5 類ツール：① Allowances（リベート·アロウワンス）② Discounts ③ Push Money ④ Free Goods ⑤ Display Allowances<br><br>4 大目標：① 試用促進 ② 売上向上 ③ 在庫処分 ④ 競合反撃<br><br>4 大危険：① brand value 侵食（長期高頻促銷で消費者は割引時のみ購買）② price expectation（消費者が「通常価」=「割引価」と思う）③ 利益率圧縮 ④ ブランド・イメージ毀損（ラグジュアリーはほぼ promotion せず）<br><br>実務原則：sales promotion は brand-building の補完·代替ではない。短期促銷 + 長期ブランド投資 = 健康なマーケティング・ミックス。"
+    }
   },
   "tags": [
     "sales promotion",
@@ -23,17 +29,22 @@
     "リベート",
     "アロウワンス"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "IMC mix 中最常用工具·实务必学",
-      "限": "长期使用损害 brand·难平衡短期 vs 长期",
-      "例": "スタバ stars·航空 mile·コンビニ コーポン",
-      "应": "Pro Plus 10 章·Kotler 11 章·IMC 题"
+      "meaning": "IMC mix 中最常用工具·实务必学",
+      "limit": "长期使用损害 brand·难平衡短期 vs 长期",
+      "example": "スタバ stars·航空 mile·コンビニ コーポン",
+      "response": "Pro Plus 10 章·Kotler 11 章·IMC 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "長期使用がブランド毀損·短期 vs 長期均衡困難",
-      "例": "スタバ stars·航空マイル·コンビニ・クーポン"
+      "meaning": "",
+      "limit": "長期使用がブランド毀損·短期 vs 長期均衡困難",
+      "example": "スタバ stars·航空マイル·コンビニ・クーポン",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T05:04:05.877Z",

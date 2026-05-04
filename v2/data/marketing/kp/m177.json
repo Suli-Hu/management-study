@@ -16,25 +16,36 @@
     "en": "Wholesaling"
   },
   "body": {
-    "zh": "Wholesaling（卸売·批发）是 channel 中厂家与零售之间的中间层·Kotler 16 章·Pro Plus 16 章。日本流通学派核心研究领域。<br><br>定义：把商品销售给 reseller 或 industrial users·而非最终消费者的活动。<br><br>3 大 wholesaler 类型：<br>① Merchant Wholesaler——独立·拥有 inventory·full service / limited service<br>② Broker / Agent——不拥有 inventory·只赚 commission（如 stock broker·real estate agent）<br>③ Manufacturer's / Retailer's Branch——厂家或零售商自己的批发部门<br><br>Merchant Wholesaler 6 大类：① Full-Service ② Limited-Service（如 cash & carry）③ Truck Wholesaler ④ Drop Shipper ⑤ Rack Jobber ⑥ Producer's Cooperative<br><br>wholesaler 5 大职能：<br>① Selling & Promoting——给 retailer 销售<br>② Buying & Assortment Building——批量买·整理 SKU<br>③ Bulk-Breaking——大批量拆小批量<br>④ Warehousing——储存·快递准备<br>⑤ Transportation——配送给 retailer<br>⑥ Financing——给 retailer 信贷<br>⑦ Risk Bearing——价格变化·过期等风险<br>⑧ Market Information——市场情报<br>⑨ Management Services——给 retailer 经营建议<br><br>日本卸売的特殊性（Pro Plus·若林靖永研究）：<br>① 多段化——日本传统流通卸売多层（一次卸·二次卸·etc）<br>② 専門化——按品类的专门卸売<br>③ 商社の役割——三菱·三井等综合商社的特殊地位<br>④ 系列化——卸売的厂家系列化（详见 m042）<br><br>现代 trends：<br>① Direct sourcing（disintermediation）——大手 retailer 与厂家直接<br>② Wholesale platforms（Alibaba 1688·Faire）——digitalize 卸売<br>③ Cash & Carry（Costco 业务模式）<br><br>跨学派关系：与 channel_retail·日本流通学派（m042 流通系列化）·VMS 一体。",
-    "ja": "Wholesaling（卸売·問屋）はチャネル中メーカーと小売の中間層·Kotler 16 章·Pro Plus 16 章。日本流通学派核心研究領域。<br><br>定義：商品を reseller·industrial users に販売·最終消費者ではない。<br><br>3 大 wholesaler タイプ：① Merchant Wholesaler（独立·在庫所有）② Broker / Agent（在庫非所有·commission）③ Manufacturer's / Retailer's Branch<br><br>Merchant Wholesaler 6 大類：① Full-Service ② Limited-Service（cash & carry）③ Truck Wholesaler ④ Drop Shipper ⑤ Rack Jobber ⑥ Producer's Cooperative<br><br>wholesaler 9 大職能：① Selling & Promoting ② Buying & Assortment Building ③ Bulk-Breaking ④ Warehousing ⑤ Transportation ⑥ Financing ⑦ Risk Bearing ⑧ Market Information ⑨ Management Services<br><br>日本卸売の特殊性（Pro Plus·若林靖永研究）：① 多段化（一次卸·二次卸 etc）② 専門化（品類別）③ 商社の役割（三菱·三井等綜合商社）④ 系列化（m042 流通系列化）<br><br>現代トレンド：① Direct sourcing（大手 retailer がメーカー直接）② Wholesale platforms（Alibaba 1688·Faire·デジタル化）③ Cash & Carry（Costco 業務モデル）<br><br>他派との関係：channel_retail·日本流通学派（m042）·VMS と一体。"
+    "zh": {
+      "format": "narrative",
+      "prose": "Wholesaling（卸売·批发）是 channel 中厂家与零售之间的中间层·Kotler 16 章·Pro Plus 16 章。日本流通学派核心研究领域。<br><br>定义：把商品销售给 reseller 或 industrial users·而非最终消费者的活动。<br><br>3 大 wholesaler 类型：<br>① Merchant Wholesaler——独立·拥有 inventory·full service / limited service<br>② Broker / Agent——不拥有 inventory·只赚 commission（如 stock broker·real estate agent）<br>③ Manufacturer's / Retailer's Branch——厂家或零售商自己的批发部门<br><br>Merchant Wholesaler 6 大类：① Full-Service ② Limited-Service（如 cash & carry）③ Truck Wholesaler ④ Drop Shipper ⑤ Rack Jobber ⑥ Producer's Cooperative<br><br>wholesaler 5 大职能：<br>① Selling & Promoting——给 retailer 销售<br>② Buying & Assortment Building——批量买·整理 SKU<br>③ Bulk-Breaking——大批量拆小批量<br>④ Warehousing——储存·快递准备<br>⑤ Transportation——配送给 retailer<br>⑥ Financing——给 retailer 信贷<br>⑦ Risk Bearing——价格变化·过期等风险<br>⑧ Market Information——市场情报<br>⑨ Management Services——给 retailer 经营建议<br><br>日本卸売的特殊性（Pro Plus·若林靖永研究）：<br>① 多段化——日本传统流通卸売多层（一次卸·二次卸·etc）<br>② 専門化——按品类的专门卸売<br>③ 商社の役割——三菱·三井等综合商社的特殊地位<br>④ 系列化——卸売的厂家系列化（详见 m042）<br><br>现代 trends：<br>① Direct sourcing（disintermediation）——大手 retailer 与厂家直接<br>② Wholesale platforms（Alibaba 1688·Faire）——digitalize 卸売<br>③ Cash & Carry（Costco 业务模式）<br><br>跨学派关系：与 channel_retail·日本流通学派（m042 流通系列化）·VMS 一体。"
+    },
+    "ja": {
+      "format": "narrative",
+      "prose": "Wholesaling（卸売·問屋）はチャネル中メーカーと小売の中間層·Kotler 16 章·Pro Plus 16 章。日本流通学派核心研究領域。<br><br>定義：商品を reseller·industrial users に販売·最終消費者ではない。<br><br>3 大 wholesaler タイプ：① Merchant Wholesaler（独立·在庫所有）② Broker / Agent（在庫非所有·commission）③ Manufacturer's / Retailer's Branch<br><br>Merchant Wholesaler 6 大類：① Full-Service ② Limited-Service（cash & carry）③ Truck Wholesaler ④ Drop Shipper ⑤ Rack Jobber ⑥ Producer's Cooperative<br><br>wholesaler 9 大職能：① Selling & Promoting ② Buying & Assortment Building ③ Bulk-Breaking ④ Warehousing ⑤ Transportation ⑥ Financing ⑦ Risk Bearing ⑧ Market Information ⑨ Management Services<br><br>日本卸売の特殊性（Pro Plus·若林靖永研究）：① 多段化（一次卸·二次卸 etc）② 専門化（品類別）③ 商社の役割（三菱·三井等綜合商社）④ 系列化（m042 流通系列化）<br><br>現代トレンド：① Direct sourcing（大手 retailer がメーカー直接）② Wholesale platforms（Alibaba 1688·Faire·デジタル化）③ Cash & Carry（Costco 業務モデル）<br><br>他派との関係：channel_retail·日本流通学派（m042）·VMS と一体。"
+    }
   },
   "tags": [
     "wholesaling",
     "商社",
     "Costco"
   ],
-  "format": "narrative",
-  "evalContent": {
+  "evaluations": {
     "zh": {
-      "义": "channel 中间层的实务·B2B 流通核心",
-      "限": "被 disintermediation 威胁·商社作用变",
-      "例": "日本商社·Alibaba 1688·Costco 是教科书",
-      "应": "Kotler 16 章·Pro Plus 16 章·channel 题"
+      "meaning": "channel 中间层的实务·B2B 流通核心",
+      "limit": "被 disintermediation 威胁·商社作用变",
+      "example": "日本商社·Alibaba 1688·Costco 是教科书",
+      "response": "Kotler 16 章·Pro Plus 16 章·channel 题",
+      "application": "",
+      "analogy": ""
     },
     "ja": {
-      "限": "disintermediation 脅威·商社役割変化",
-      "例": "日本商社·Alibaba 1688·Costco 教科書"
+      "meaning": "",
+      "limit": "disintermediation 脅威·商社役割変化",
+      "example": "日本商社·Alibaba 1688·Costco 教科書",
+      "response": "",
+      "application": "",
+      "analogy": ""
     }
   },
   "createdAt": "2026-04-30T09:26:44.743Z",
