@@ -23,11 +23,10 @@ import { renderStructuredBody, renderEvalModule } from '~/lib/render-body-struct
 import type { KpBody, KpEvaluationsLang } from '~/schemas/kp-body-structured';
 import { renderInlineHtml } from '~/lib/render-inline';
 import { editHref } from '~/lib/nav';
-import { tagColor } from '~/lib/tag-color';
+import { accentVarFor } from '~/lib/tag-color';
 import { shortYear } from '~/lib/format-year';
 import { lastName } from '~/lib/format-name';
 import { hashToTagToken } from '~/lib/editor/dom-helpers';
-import type { Tag } from '~/schemas/discipline';
 
 const { discipline, key } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
@@ -36,11 +35,10 @@ const db = getDb(Astro.locals.runtime.env);
 const isPartial = Astro.url.searchParams.get('partial') === '1';
 
 const disc = await db
-  .prepare('SELECT key, title_zh, tags_json FROM discipline WHERE key = ?')
+  .prepare('SELECT key, title_zh FROM discipline WHERE key = ?')
   .bind(discipline)
-  .first<{ key: string; title_zh: string; tags_json: string }>();
+  .first<{ key: string; title_zh: string }>();
 if (!disc) return Astro.redirect('/404');
-const tagLibrary: Tag[] = disc.tags_json ? JSON.parse(disc.tags_json) : [];
 
 // v0.8.15 Stage 6 chip 4: drop scholar.lifespan SELECT — migration 0021 已 DROP 该列
 // (v0.8.9 Stage 4.6 Q1=B)。本地 dev 直接 D1_ERROR 无法渲染；prod 推测同样断（无人触达）。
@@ -67,7 +65,10 @@ const scholar = await db
 if (!scholar) return Astro.redirect('/404');
 
 const scholarTags = JSON.parse(scholar.tags_json) as string[];
-const accentHex = tagColor({ tags: scholarTags }, tagLibrary);
+// v0.8.18 跨 component 一致性：accentVarFor → 8 v1.0 --tag-* token (by hash)
+// 顶 strip / lang-toggle / body items numbering / EmptyRight / LangFab / star color
+// 全用同一个 token，跟左栏所属学派 chips + KP list dot 视觉统一。
+const accentVar = accentVarFor({ tags: scholarTags });
 
 // v0.8.15 Stage 6 chip 4 (D6=A): 学派 chip 用 --tag-* token 着色 — 取 school.tags[0] 经
 // hashToTagToken 映射到 8 个 v1.0 tag token；与 chip 1 discipline 首页 SchoolCard 一致。
@@ -195,7 +196,7 @@ const canEdit = Astro.locals.canEdit(discipline);
 {/* v0.5.57 partial=1：只输出 <article> 右栏片段（无 Layout/Nav/Footer/scripts），split-pane.js 用 */}
 {isPartial && (
   <article class="right kp-detail-pane" id="kp-detail-pane" style="padding:0">
-    <div style={`height:3px;background:${accentHex}`}></div>
+    <div style={`height:3px;background:${accentVar}`}></div>
     <div class="kp-pane-content">
       {selectedKp ? (
         <>
@@ -208,7 +209,7 @@ const canEdit = Astro.locals.canEdit(discipline);
                     href={langToggleHref}
                     class:list={['lang-toggle shrink-0', selectedLang === 'ja' && 'is-active']}
                     data-lang-toggle
-                    style={`--accent:${accentHex}`}
+                    style={`--accent:${accentVar}`}
                     title="切换日语 / 中文 (Cmd/Ctrl + J)"
                     aria-pressed={selectedLang === 'ja'}
                   >
@@ -239,7 +240,7 @@ const canEdit = Astro.locals.canEdit(discipline);
           </header>
           <div class="mt-6" set:html={renderStructuredBody({
             body: selectedBody!,
-            accentHex,
+            accentHex: accentVar,
             variant: 'school',
           })} />
           <div set:html={renderEvalModule(selectedEvalContent)} />
@@ -260,7 +261,7 @@ const canEdit = Astro.locals.canEdit(discipline);
   currentLeafTitle={scholar.name_zh}
   fullHeight
 >
-  <div class="split" style={`--accent:${accentHex};--tone-hex:${accentHex}`}>
+  <div class="split" style={`--accent:${accentVar};--tone-hex:${accentVar}`}>
 
     {/* ========== 左栏 ========== */}
     <aside class="left optA-stack">
@@ -453,7 +454,7 @@ const canEdit = Astro.locals.canEdit(discipline);
                 : JSON.parse(k.body_zh_json) as KpBody;
               const inlineBodyHtml = renderStructuredBody({
                 body: inlineBody,
-                accentHex,
+                accentHex: accentVar,
                 variant: 'school',
               });
               const evalRaw = useJa ? k.evaluations_ja_json : k.evaluations_zh_json;
@@ -477,6 +478,10 @@ const canEdit = Astro.locals.canEdit(discipline);
                       >
                         <div class="optA-kp-body">
                           <div class="optA-kp-title">
+                            {/* v0.8.18 跨 component 一致性 dot indicator (跟学派详情页 chip 3 同款) —
+                                .split 已 set --accent，dot inherit 学者所属学派色，跟右栏内嵌 KP body
+                                items numbering 同一 token，避免左灰右色分裂感。 */}
+                            <span class="kp-list-dot" aria-hidden="true"></span>
                             {k.title_zh}
                             {schoolHint && <span class="optA-kp-scholar">{schoolHint}</span>}
                             {k.year && <span class="optA-kp-year">{shortYear(k.year)}</span>}
@@ -501,11 +506,11 @@ const canEdit = Astro.locals.canEdit(discipline);
 
     {/* ========== 右栏 ========== */}
     <article class="right kp-detail-pane" id="kp-detail-pane" style="padding:0">
-      <div style={`height:3px;background:${accentHex}`}></div>
+      <div style={`height:3px;background:${accentVar}`}></div>
       <div class="kp-pane-content">
         {kps.length === 0 ? (
           <EmptyRight
-            accentHex={accentHex}
+            accentHex={accentVar}
             kind="scholar"
             name={scholar.name_en ?? scholar.name_zh}
             addHref={canEdit ? editHref(`/${discipline}/kp/new?scholar=${scholar.key}`, Astro.url.pathname) : undefined}
@@ -521,7 +526,7 @@ const canEdit = Astro.locals.canEdit(discipline);
                       href={langToggleHref}
                       class:list={['lang-toggle shrink-0', selectedLang === 'ja' && 'is-active']}
                       data-lang-toggle
-                      style={`--accent:${accentHex}`}
+                      style={`--accent:${accentVar}`}
                       title="切换日语 / 中文 (Cmd/Ctrl + J)"
                       aria-pressed={selectedLang === 'ja'}
                     >
@@ -551,7 +556,7 @@ const canEdit = Astro.locals.canEdit(discipline);
             </header>
             <div class="mt-6" set:html={renderStructuredBody({
               body: selectedBody!,
-              accentHex,
+              accentHex: accentVar,
               variant: 'school',
             })} />
             <div set:html={renderEvalModule(selectedEvalContent)} />
@@ -567,7 +572,7 @@ const canEdit = Astro.locals.canEdit(discipline);
   </div>
 
   {/* v0.5.78：mobile 日语切换悬浮球 — 仅当当前选中 KP 有日文 body 时挂 */}
-  {selectedKp?.body_ja_json && <LangFab lang={selectedLang} accentHex={accentHex} />}
+  {selectedKp?.body_ja_json && <LangFab lang={selectedLang} accentHex={accentVar} />}
 </Layout>
 
 <script is:inline src="/split-pane.js"></script>
@@ -622,7 +627,7 @@ const canEdit = Astro.locals.canEdit(discipline);
   }
 </script>
 
-<script is:inline define:vars={{ scholarKey: scholar.key, accentHex: accentHex }}>
+<script is:inline define:vars={{ scholarKey: scholar.key, accentHex: accentVar }}>
   // ========== 学者收藏星标 ==========
   (function () {
     const btn = document.getElementById('scholar-star-toggle');

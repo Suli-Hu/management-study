@@ -117,6 +117,51 @@
 | 段位徽章 | 多色（C/B/A/S 9 色之类） | `var(--tier-c/b/a/s)` 4 色 + 文字 - + 承担亚档 |
 | 热力图 | hardcoded 6 档绿色 | `var(--i-0~5)` (蓝色阶 6 档) |
 
+### 6.2.1 跨 component 一致性约束 (v0.8.18 hotfix 后强约束)
+
+> **触发记录**：v0.8.16 (chip 3) ship 后用户 v9 反馈"学派详情页 split-pane 同 KP 内外色不一致"。根因：PM 起 Stage 6 PRD 时漏 reference IMPLEMENTATION.md §"分类色 / 学派 Tag" 永不动原则 — 没把"同一信息维度跨 component 必须同一 token" 明示在 §6.2 mapping 表里，于是各 chip 各自迁移时 `tagColor()`(用户 hex) 与 `hashToTagToken()`(v1.0 token) 两套色源在同一页面共存。
+
+#### 单一 token 来源
+
+凡承担"学派归属"信息维度的 accent，**统一**走 `accentVarFor(entity)` (return `var(--tag-*)` via hash)。**不**走 `tagColor()` 用户 hex 路径。
+
+| 角色 | API | 落地 |
+|---|---|---|
+| 解析 | `accentVarFor({ tags }, fallback?)` (`v2/src/lib/tag-color.ts`) | 输入实体 (school/scholar/kp/theme) `.tags[]`，输出 `var(--tag-mgmt)` 等 CSS var 字符串 |
+| 父容器 | `<div class="split" style={\`--accent:${accentVar}\`}>` | 子元素 inherit `var(--accent)` 即可 |
+| body renderer | `renderStructuredBody({ body, accentHex: accentVar })` | param 名 `accentHex` 为 legacy（接受 var() 字符串），重命名 deferred |
+| 共享组件 | `<EmptyRight accentHex={accentVar} />` / `<LangFab accentHex={accentVar} />` | 同上 |
+
+#### 同信息维度跨 component 必须同色
+
+任何下面"同一行"内的元素，在同一页面渲染时**必须** computed `--accent` 相等：
+
+| 信息维度 | 元素 |
+|---|---|
+| **学派归属（一个学派的视图）** | split-pane 左 KP list dot · 左 active row strip · 右栏顶 strip · 右栏 lang-toggle · 右栏 body items numbering / cells / quad · EmptyRight · LangFab |
+| **学者归属（一个学者的视图）** | 同上（学者层视图） |
+| **KP 归属（一个 KP 的视图）** | header lang-toggle · body items numbering · LangFab |
+| **段位 / 强度 / 进度（学习日志）** | 段位徽章 · 段位 chip · 进度条 (各自独立 token: `--tier-*` / `--i-*` / `--p-*`，**不**串到 `--tag-*`) |
+
+E2E test (`v2/tests/e2e/visual-regression.spec.ts` `跨 component tag 色一致性` describe) 抽 computed `--accent` 比对断言，不依赖像素 diff，跨平台稳。
+
+### 6.2.2 IMPLEMENTATION.md §Step 6 校对清单 (chip 7 + 后续 chip 必跑)
+
+> 落地任意涉及 `--tag-*` / `--tier-*` / `--i-*` 的页面 / 组件后**必跑此清单**，对照 `Desktop/exports 3/theme-package/IMPLEMENTATION.md` §Step 6 + §决策树。
+
+每页面对照检查：
+
+- [ ] 学派 tag 仍是 v1.0 8 色（`--tag-mgmt/mkt/soc/purple/pink/cyan/blue/orange`），未被吞或换源
+- [ ] 热力图 6 档（`--i-0` 到 `--i-5`）颜色递进自然
+- [ ] 段位徽章只有 4 色（`--tier-c/b/a/s`），文字承担亚档（`-` / `+`）
+- [ ] 顶部 nav active tab 用 `--primary` 描边
+- [ ] 主按钮（"+ 新建记录" / "+ 添加..."）用 `--primary` 填充
+- [ ] 切到 dark 模式 (`[data-mode="dark"]`) 后所有文字可读、tag 仍鲜艳
+- [ ] **跨 component**：split-pane / 列表卡 / 详情页同一信息维度的所有 accent 元素 computed `--accent` 同源（视觉无分裂）
+- [ ] 任何新加 colored 元素先过决策树（焦点 / 语义维度 / 分类），不直接拍 hex / 不新建变量
+- [ ] stylelint `color-no-hex` 全站 0 violation
+- [ ] 编辑器 `.kp-editor-v08` scope 仍生效，本 chip 改动不破编辑器
+
 ### 6.3 dark mode token 已就绪
 
 v1.0 tokens.css 含 `[data-mode="dark"]` 自动反相。Stage 6 实施时**保留 token 但不接 toggle UI**（D5=A）。下次想做 dark toggle 加个 `<button>` 切 `<html data-mode>` 即可。

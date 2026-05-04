@@ -912,6 +912,23 @@ details.eval {
 .optA-kp-title {
   font-size: 14px; font-weight: 600; color: var(--color-text-primary); line-height: 1.45;
 }
+/* v0.8.18 跨 component 一致性：KP 列表 row 学派色 dot indicator
+   父级 .split 已 set --accent (=学派 v1.0 --tag-* token)；dot 跟右栏顶 strip
+   + body items numbering 使用同一 token，避免左灰右绿分裂。
+   inactive row dot 半透明 (0.55 alpha)，active row 实色，保持视觉层次。 */
+.kp-list-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 999px;
+  background: var(--accent, var(--color-text-quaternary));
+  margin-right: 7px;
+  vertical-align: 1px;
+  opacity: 0.55;
+  flex-shrink: 0;
+  transition: opacity .14s;
+}
+.optA-kp.is-active .kp-list-dot { opacity: 1; }
+.optA-kp:hover .kp-list-dot { opacity: 0.85; }
 .optA-kp-scholar {
   font-size: 11px; font-weight: 500;
   color: var(--color-text-secondary);
