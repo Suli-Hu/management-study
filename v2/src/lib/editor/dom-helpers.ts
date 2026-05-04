@@ -318,3 +318,152 @@ export function toastSuccess(msg: string): void {
 export function toastError(msg: string): void {
   window.toast?.error(msg);
 }
+
+// ============================================================
+// Chip multi-select (typeahead) — 共享给 KP / school / scholar / theme editor
+// ============================================================
+
+export interface ChipPickerOption {
+  key: string;
+  label: string;
+  sub?: string;
+  color?: string | null;
+}
+
+export interface ChipPickerOptions {
+  /** 当前已选 keys（外部状态，本组件不内部持有） */
+  current: string[];
+  options: ChipPickerOption[];
+  placeholder: string;
+  ariaLabel: string;
+  /** schools → 自动 hash 上 --tag-* token；none / function 提供 token name */
+  colorize: 'schools' | 'none' | ((key: string) => string | null);
+  onChange: (next: string[]) => void;
+}
+
+const SCHOOL_TAG_TOKENS = [
+  'tag-mgmt',
+  'tag-mkt',
+  'tag-soc',
+  'tag-purple',
+  'tag-pink',
+  'tag-cyan',
+  'tag-blue',
+  'tag-orange',
+] as const;
+
+/** Map any key → tag token by hash, deterministic. */
+export function hashToTagToken(key: string): string {
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) | 0;
+  return SCHOOL_TAG_TOKENS[Math.abs(h) % SCHOOL_TAG_TOKENS.length]!;
+}
+
+/**
+ * Mount typeahead chip picker into host. Re-render on change. Use externally for school/scholar/theme/tags fields.
+ */
+export function mountChipPicker(host: HTMLElement, opts: ChipPickerOptions): void {
+  let current = [...opts.current];
+
+  const tokenFor = (key: string): string | null => {
+    if (opts.colorize === 'schools') return hashToTagToken(key);
+    if (opts.colorize === 'none') return null;
+    return opts.colorize(key);
+  };
+
+  const render = () => {
+    host.innerHTML = '';
+    const wrap = el('div', 'kpe-chips');
+
+    const box = el('div', 'kpe-chips-box');
+    box.setAttribute('role', 'group');
+    box.setAttribute('aria-label', opts.ariaLabel);
+
+    current.forEach((key) => {
+      const optDef = opts.options.find((o) => o.key === key);
+      const label = optDef?.label ?? key;
+      box.appendChild(
+        chip({
+          label,
+          removable: true,
+          tagToken: tokenFor(key),
+          onRemove: () => {
+            current = current.filter((k) => k !== key);
+            opts.onChange(current);
+            render();
+          },
+        }),
+      );
+    });
+
+    const inputEl = el('input', 'kpe-chip-input');
+    inputEl.type = 'text';
+    inputEl.placeholder = opts.placeholder;
+    inputEl.setAttribute('aria-label', `搜索并添加 ${opts.ariaLabel}`);
+    box.appendChild(inputEl);
+
+    const dd = el('div', 'kpe-chips-dd');
+    dd.style.display = 'none';
+
+    const refreshDd = () => {
+      dd.innerHTML = '';
+      const q = inputEl.value.trim().toLowerCase();
+      const matches = opts.options
+        .filter((o) => !current.includes(o.key))
+        .filter(
+          (o) =>
+            !q ||
+            o.key.toLowerCase().includes(q) ||
+            o.label.toLowerCase().includes(q) ||
+            (o.sub ?? '').toLowerCase().includes(q),
+        )
+        .slice(0, 20);
+      if (matches.length === 0) {
+        dd.style.display = 'none';
+        return;
+      }
+      matches.forEach((m) => {
+        const it = el('div', 'kpe-dd-item');
+        const name = el('span', 'kpe-dd-name');
+        name.textContent = m.label;
+        it.appendChild(name);
+        if (m.sub) {
+          const sub = el('span', 'kpe-dd-key');
+          sub.textContent = m.sub;
+          it.appendChild(sub);
+        }
+        it.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          if (current.includes(m.key)) return;
+          current = [...current, m.key];
+          opts.onChange(current);
+          inputEl.value = '';
+          render();
+          inputEl.focus();
+        });
+        dd.appendChild(it);
+      });
+      dd.style.display = '';
+    };
+
+    inputEl.addEventListener('focus', refreshDd);
+    inputEl.addEventListener('input', refreshDd);
+    inputEl.addEventListener('blur', () => {
+      setTimeout(() => {
+        dd.style.display = 'none';
+      }, 100);
+    });
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        dd.style.display = 'none';
+        inputEl.blur();
+      }
+    });
+
+    wrap.appendChild(box);
+    wrap.appendChild(dd);
+    host.appendChild(wrap);
+  };
+
+  render();
+}

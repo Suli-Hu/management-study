@@ -7,30 +7,12 @@
  * 见 KP-EDITOR-V0.8-PRD.md §6.3。
  */
 
-import { el, input, field, chip } from './dom-helpers';
+import { el, input, field, mountChipPicker } from './dom-helpers';
 import type { EditorStore, EditorMetadata } from './state';
 
 interface RelationsPanelOptions {
   store: EditorStore;
   metadata: EditorMetadata;
-}
-
-const TAG_TOKENS = [
-  'tag-mgmt',
-  'tag-mkt',
-  'tag-soc',
-  'tag-purple',
-  'tag-pink',
-  'tag-cyan',
-  'tag-blue',
-  'tag-orange',
-] as const;
-
-/** Map school key → tag token by hash, deterministic. */
-function schoolColor(key: string): string {
-  let h = 0;
-  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) | 0;
-  return TAG_TOKENS[Math.abs(h) % TAG_TOKENS.length]!;
 }
 
 export function mountTitleAndYearFields(host: HTMLElement, opts: RelationsPanelOptions): void {
@@ -102,122 +84,6 @@ export function mountTitleAndYearFields(host: HTMLElement, opts: RelationsPanelO
   );
 
   host.appendChild(wrap);
-}
-
-// ============================================================
-// Chip multi-select 区
-// ============================================================
-
-interface ChipPickerOptions {
-  current: string[];
-  options: Array<{ key: string; label: string; sub?: string; color?: string | null }>;
-  placeholder: string;
-  ariaLabel: string;
-  /** 学派 chip → 按 schoolColor 自动上 tag-* token；其它 chip = null neutral */
-  colorize: 'schools' | 'none';
-  onChange: (next: string[]) => void;
-}
-
-function mountChipPicker(host: HTMLElement, opts: ChipPickerOptions): void {
-  let current = [...opts.current];
-
-  const render = () => {
-    host.innerHTML = '';
-    const wrap = el('div', 'kpe-chips');
-
-    const box = el('div', 'kpe-chips-box');
-    box.setAttribute('role', 'group');
-    box.setAttribute('aria-label', opts.ariaLabel);
-
-    current.forEach((key) => {
-      const optDef = opts.options.find((o) => o.key === key);
-      const label = optDef?.label ?? key;
-      const tagToken = opts.colorize === 'schools' ? schoolColor(key) : null;
-      box.appendChild(
-        chip({
-          label,
-          removable: true,
-          tagToken,
-          onRemove: () => {
-            current = current.filter((k) => k !== key);
-            opts.onChange(current);
-            render();
-          },
-        }),
-      );
-    });
-
-    // search input
-    const inputEl = el('input', 'kpe-chip-input');
-    inputEl.type = 'text';
-    inputEl.placeholder = opts.placeholder;
-    inputEl.setAttribute('aria-label', `搜索并添加 ${opts.ariaLabel}`);
-    box.appendChild(inputEl);
-
-    // dropdown (filtered)
-    const dd = el('div', 'kpe-chips-dd');
-    dd.style.display = 'none';
-
-    const refreshDd = () => {
-      dd.innerHTML = '';
-      const q = inputEl.value.trim().toLowerCase();
-      const matches = opts.options
-        .filter((o) => !current.includes(o.key))
-        .filter(
-          (o) =>
-            !q || o.key.toLowerCase().includes(q) || o.label.toLowerCase().includes(q) || (o.sub ?? '').toLowerCase().includes(q),
-        )
-        .slice(0, 20);
-      if (matches.length === 0) {
-        dd.style.display = 'none';
-        return;
-      }
-      matches.forEach((m) => {
-        const it = el('div', 'kpe-dd-item');
-        const name = el('span', 'kpe-dd-name');
-        name.textContent = m.label;
-        it.appendChild(name);
-        if (m.sub) {
-          const sub = el('span', 'kpe-dd-key');
-          sub.textContent = m.sub;
-          it.appendChild(sub);
-        }
-        it.addEventListener('mousedown', (e) => {
-          // mousedown beats blur — keeps dropdown open
-          e.preventDefault();
-          if (current.includes(m.key)) return;
-          current = [...current, m.key];
-          opts.onChange(current);
-          inputEl.value = '';
-          render();
-          inputEl.focus();
-        });
-        dd.appendChild(it);
-      });
-      dd.style.display = '';
-    };
-
-    inputEl.addEventListener('focus', refreshDd);
-    inputEl.addEventListener('input', refreshDd);
-    inputEl.addEventListener('blur', () => {
-      // 延迟关闭让 mousedown 有机会触发
-      setTimeout(() => {
-        dd.style.display = 'none';
-      }, 100);
-    });
-    inputEl.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        dd.style.display = 'none';
-        inputEl.blur();
-      }
-    });
-
-    wrap.appendChild(box);
-    wrap.appendChild(dd);
-    host.appendChild(wrap);
-  };
-
-  render();
 }
 
 // ============================================================
