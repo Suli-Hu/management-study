@@ -28,8 +28,9 @@ const fullTitle = title === 'sususu' ? title : `${title} · sususu`;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1a1a1c" media="(prefers-color-scheme: dark)" />
+    {/* v0.8.12 Stage 6: 跟 v1.0 token --bg 视觉对齐（meta 用 hex / 不能 var） */}
+    <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#232221" media="(prefers-color-scheme: dark)" />
     <title>{fullTitle}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     {/* v0.5.98：sususu wordmark 用 Kalam 700 — 全站 preload 一次 */}
@@ -52,7 +53,8 @@ const fullTitle = title === 'sususu' ? title : `${title} · sususu`;
     </script>
   </head>
   <body class:list={[
-    'flex flex-col bg-bg-primary text-secondary',
+    /* v0.8.12 Stage 6: 移除 bg-bg-primary text-secondary — 让 global.css body @apply 走 var(--bg)/var(--text) v1.0 token */
+    'flex flex-col',
     fullHeight ? 'h-screen lg:overflow-hidden' : 'min-h-screen',
   ]}>
     <Nav currentDiscipline={currentDiscipline} currentSection={currentSection} currentLeafTitle={currentLeafTitle} />

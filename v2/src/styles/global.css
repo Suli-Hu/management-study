@@ -1,3 +1,8 @@
+/* v0.8.12 Stage 6: v1.0 design system tokens hoisted to global :root.
+ * tokens.css 含 L1 (--bg/--text/--border/--primary)、L2 (--i/--p/--s/--tier)、L3 (--tag-*)
+ * 自带 [data-mode="dark"] dark 切换；下面 --color-* legacy 仅给老组件用。 */
+@import './tokens.css';
+
 /* KP body 组件 + OptionA + 共用组件 — @import 必须在 @tailwind 之前 */
 @import './components.css';
 @import './kp-edit.css';
@@ -9,9 +14,10 @@
 @tailwind utilities;
 
 /* ==========================================================================
- * Design tokens（v0.3.9：光/暗模式均定义在这里）
- * Tailwind 的 bg-bg-primary / text-primary / 等都引用这些变量。
- * 切换方式：html.dark（见 Layout.astro 的 inline script 无闪烁切换）。
+ * Legacy --color-* tokens（v0.3.9）
+ * Tailwind 的 bg-bg-primary / text-primary / 等仍引用这些变量；
+ * Stage 6 chip 1+ 渐进迁移到 v1.0 (--bg/--text/...) 后会缩小本块。
+ * 切换方式：html.dark + [data-mode="dark"] 双写（见 Layout.astro inline script）
  * ========================================================================== */
 :root {
   color-scheme: light;
@@ -28,53 +34,6 @@
   --color-badge-limit: #ffe5e5;
   --color-badge-example: #e0f0ff;
   --color-badge-neutral: #f0f0f3;
-
-  /* ============================================================
-   * v0.7.20 sumi token 系统接入（与现有 --color-* 并存，渐进迁移）
-   * 选择器 [data-mode="dark"], .dark 双写 — Layout/Nav 同步两套
-   * 暂只新增 token，旧组件继续用 --color-*；新组件 / 学习日志 Round 2+ 用以下
-   * ============================================================ */
-  --primary:      oklch(0.20 0.005 80);
-  --primary-fg:   oklch(0.985 0 0);
-  --primary-soft: oklch(0.96 0.003 80);
-  --link:         oklch(0.30 0.005 80);
-  --focus:        oklch(0.55 0.005 80);
-
-  --i-0: oklch(0.965 0.003 80);
-  --i-1: oklch(0.92  0.030 245);
-  --i-2: oklch(0.83  0.060 245);
-  --i-3: oklch(0.72  0.090 245);
-  --i-4: oklch(0.60  0.120 245);
-  --i-5: oklch(0.45  0.150 245);
-
-  --p-track: oklch(0.93 0.003 80);
-  --p-fill:  oklch(0.30 0.005 80);
-
-  --s-success:      oklch(0.55 0.080 150);
-  --s-warning:      oklch(0.62 0.090  70);
-  --s-danger:       oklch(0.55 0.110  25);
-  --s-info:         oklch(0.55 0.080 245);
-  --s-locked:       oklch(0.55 0.005  80);
-  --s-success-soft: oklch(0.95 0.025 150);
-  --s-warning-soft: oklch(0.96 0.030  70);
-  --s-danger-soft:  oklch(0.95 0.030  25);
-  --s-info-soft:    oklch(0.96 0.025 245);
-  --s-locked-soft:  oklch(0.96 0.003  80);
-
-  /* 段位 — 现暂用 C/B/A 3 阶（亚档由文字 C-/C/C+ 承担），S 留 token 备用 */
-  --tier-c: oklch(0.62 0.005  80);
-  --tier-b: oklch(0.50 0.055  50);
-  --tier-a: oklch(0.62 0.090  80);
-  --tier-s: oklch(0.35 0.080 260);
-
-  --tag-mgmt:   oklch(0.75 0.12 145);
-  --tag-mkt:    oklch(0.78 0.12  85);
-  --tag-soc:    oklch(0.72 0.10  60);
-  --tag-purple: oklch(0.75 0.10 290);
-  --tag-pink:   oklch(0.75 0.12  20);
-  --tag-cyan:   oklch(0.75 0.08 200);
-  --tag-blue:   oklch(0.72 0.12 250);
-  --tag-orange: oklch(0.72 0.13  55);
 }
 html.dark,
 [data-mode="dark"] {
@@ -92,34 +51,6 @@ html.dark,
   --color-badge-limit: #3a1f1f;
   --color-badge-example: #152838;
   --color-badge-neutral: #28282c;
-
-  /* sumi dark overrides (v0.7.20) — tag 色不变（保持识别一致性） */
-  --primary:      oklch(0.94 0.003 80);
-  --primary-fg:   oklch(0.16 0.003 80);
-  --primary-soft: oklch(0.24 0.003 80);
-  --link:         oklch(0.85 0.003 80);
-  --focus:        oklch(0.65 0.003 80);
-
-  --i-0: oklch(0.20 0.003  80);
-  --i-1: oklch(0.30 0.040 245);
-  --i-2: oklch(0.40 0.070 245);
-  --i-3: oklch(0.55 0.100 245);
-  --i-4: oklch(0.68 0.120 245);
-  --i-5: oklch(0.80 0.140 245);
-
-  --p-track: oklch(0.26 0.003 80);
-  --p-fill:  oklch(0.85 0.003 80);
-
-  --s-success-soft: oklch(0.25 0.020 150);
-  --s-warning-soft: oklch(0.26 0.025  70);
-  --s-danger-soft:  oklch(0.26 0.025  25);
-  --s-info-soft:    oklch(0.25 0.020 245);
-  --s-locked-soft:  oklch(0.22 0.003  80);
-
-  --tier-c: oklch(0.55 0.005  80);
-  --tier-b: oklch(0.65 0.060  50);
-  --tier-a: oklch(0.75 0.080  80);
-  --tier-s: oklch(0.65 0.090 260);
 }
 
 /* === Base layer 微调（来自 v1 风格）=== */
@@ -131,7 +62,10 @@ html.dark,
   }
 
   body {
-    @apply bg-bg-primary text-secondary font-sans;
+    @apply font-sans;
+    /* v0.8.12 Stage 6: 全站 layout shell 切 v1.0 (--bg / --text) — 暖白纸 + 墨黑 */
+    background-color: var(--bg);
+    color: var(--text);
     font-feature-settings: 'kern', 'liga', 'palt';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

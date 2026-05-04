@@ -79,15 +79,16 @@ const ariaLabel = variant === 'lockup' ? 'sususu · AI 学习云笔记工具' : 
   .brand:hover { opacity: 0.85; }
 
   /* === wordmark === */
+  /* v0.8.12 Stage 6 chip 1: 切 v1.0 token —— --text 主文字、--text-3 副标、
+     mark 圆 = --primary + --primary-fg（dark mode 自动反相） */
   .brand-wordmark {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
     gap: 4px;
     line-height: 1;
-    color: #0a0a0a;
+    color: var(--text);
   }
-  :global(html.dark) .brand-wordmark { color: #fafaf9; }
 
   .brand-wordmark .word {
     font-family: "Kalam", "Trebuchet MS", system-ui, sans-serif;
@@ -115,12 +116,11 @@ const ariaLabel = variant === 'lockup' ? 'sususu · AI 学习云笔记工具' : 
   .brand-tagline {
     font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", system-ui, sans-serif;
     font-size: 13px;
-    color: #a3a3a3;
+    color: var(--text-3);
     letter-spacing: 0.06em;
     font-weight: 500;
     line-height: 1;
   }
-  :global(html.dark) .brand-tagline { color: #737373; }
 
   /* === SU mark (圆形) === */
   .su-mark {
@@ -128,17 +128,13 @@ const ariaLabel = variant === 'lockup' ? 'sususu · AI 学习云笔记工具' : 
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background: #0a0a0a;
-    color: #fafaf9;
+    background: var(--primary);
+    color: var(--primary-fg);
     flex-shrink: 0;
     font-family: "Kalam", "Trebuchet MS", system-ui, sans-serif;
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.04em;
-  }
-  :global(html.dark) .su-mark {
-    background: #fafaf9;
-    color: #0a0a0a;
   }
   .su-mark .su-text {
     transform: translateY(-2%);
