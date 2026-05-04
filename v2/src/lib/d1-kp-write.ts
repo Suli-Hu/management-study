@@ -22,6 +22,7 @@ import { KP_TABLE } from './d1-tables';
 import { buildUpsertStmt } from './d1-upsert';
 import { parseBody } from './body-parser';
 import { parsedToStructured, evalContentToEvaluations } from './kp-body-helpers';
+import { deepStripStrong } from './sanitize-strong';
 
 type ParsedKp = z.infer<typeof Kp>;
 
@@ -53,6 +54,9 @@ export async function upsertKpInD1(
   db: D1Database,
   kp: ParsedKp,
 ): Promise<void> {
+  // v0.8.7 sanitize: 静默 strip 所有 <strong>/</strong>。见 migration-v0.8.md §11.
+  kp = deepStripStrong(kp);
+
   const stmts: D1PreparedStatement[] = [];
 
   // 1. KP 主表 UPSERT — 双写 v0.8.0 Stage 1：旧列 + 新列同步

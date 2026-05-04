@@ -19,6 +19,7 @@ import type { z } from 'zod';
 import type { Discipline } from '~/schemas/discipline';
 import { DISCIPLINE_TABLE } from './d1-tables';
 import { buildUpsertStmt } from './d1-upsert';
+import { deepStripStrong } from './sanitize-strong';
 
 type ParsedDiscipline = z.infer<typeof Discipline>;
 
@@ -26,6 +27,9 @@ export async function upsertDisciplineInD1(
   db: D1Database,
   disc: ParsedDiscipline,
 ): Promise<void> {
+  // v0.8.7 sanitize: 静默 strip 所有 <strong>/</strong>。见 migration-v0.8.md §11.
+  disc = deepStripStrong(disc);
+
   await buildUpsertStmt(db, DISCIPLINE_TABLE, {
     key: disc.key,
     title_zh: disc.title.zh,

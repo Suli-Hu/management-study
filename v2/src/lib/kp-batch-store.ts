@@ -31,6 +31,7 @@ import {
   classifyZodFailure,
   MIGRATION_GUIDE_URL,
 } from './kp-legacy-detector';
+import { deepStripStrong } from './sanitize-strong';
 
 // 禁止字段（PRD §3.2.5）— 出现在 patch 里立即返 forbidden_field
 // 注意：因为 zod schema strict() 已经会拒绝未知 key，这里再显式 check 是双保险，
@@ -467,7 +468,8 @@ async function processOne(
       },
     };
   }
-  const patch = parsedPatch.data;
+  // v0.8.7 sanitize: 静默 strip 所有 <strong>/</strong>。见 migration-v0.8.md §11.
+  const patch = deepStripStrong(parsedPatch.data);
 
   // 4. fetch current
   const current = await getKpRecord(db, id);

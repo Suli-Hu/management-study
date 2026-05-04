@@ -17,6 +17,7 @@ import type { z } from 'zod';
 import type { School } from '~/schemas/school';
 import { SCHOOL_TABLE } from './d1-tables';
 import { buildUpsertStmt } from './d1-upsert';
+import { deepStripStrong } from './sanitize-strong';
 
 type ParsedSchool = z.infer<typeof School>;
 
@@ -24,6 +25,9 @@ export async function upsertSchoolInD1(
   db: D1Database,
   school: ParsedSchool,
 ): Promise<void> {
+  // v0.8.7 sanitize: 静默 strip 所有 <strong>/</strong>。见 migration-v0.8.md §11.
+  school = deepStripStrong(school);
+
   const stmts: D1PreparedStatement[] = [];
 
   // 1. school 主表 UPSERT（accent 列已废弃但仍要写空字符串，跟 sync 脚本一致）

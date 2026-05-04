@@ -467,7 +467,7 @@ describe('类5 特殊字符 / 边界值', () => {
     await seedBaseline(db);
   });
 
-  test('T5.1 prose 含 emoji + HTML + \\n + 5000+ 字 → 写入', async () => {
+  test('T5.1 prose 含 emoji + HTML + \\n + 5000+ 字 → 写入（v0.8.7 起 <strong> 静默 strip）', async () => {
     const long = '中文'.repeat(2500); // ~5000 chars
     const res = await kpsPOST(
       makeCtx(db, {
@@ -479,7 +479,7 @@ describe('类5 特殊字符 / 边界值', () => {
           body: {
             zh: {
               format: 'narrative',
-              prose: `Hello 👋 <strong>bold</strong>\n\nLine2\n${long}`,
+              prose: `Hello 👋 <strong>bold</strong> <em>italic</em>\n\nLine2\n${long}`,
             },
           },
           schools: ['motivation'],
@@ -490,7 +490,10 @@ describe('类5 特殊字符 / 边界值', () => {
     const cols = await db.prepare('SELECT body_zh_json FROM kp WHERE id = ?').bind('k501').first<{ body_zh_json: string }>();
     const parsed = JSON.parse(cols!.body_zh_json);
     expect(parsed.prose).toContain('👋');
-    expect(parsed.prose).toContain('<strong>');
+    // v0.8.7 sanitize: <strong> 被 server 静默 strip；<em> / 文字本体 / emoji 保留。
+    expect(parsed.prose).not.toMatch(/<\/?strong/i);
+    expect(parsed.prose).toContain('bold');
+    expect(parsed.prose).toContain('<em>italic</em>');
     expect(parsed.prose.length).toBeGreaterThan(5000);
   });
 

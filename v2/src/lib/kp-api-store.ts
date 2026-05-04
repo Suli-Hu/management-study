@@ -16,6 +16,7 @@ import {
   evaluationsLangToLegacyEvalContent,
   hasEvaluationsContent,
 } from './kp-body-helpers';
+import { deepStripStrong } from './sanitize-strong';
 
 interface DualWriteCols {
   // 旧列（response shape 兼容）
@@ -344,6 +345,10 @@ export async function createKpRecord(
   input: KpCreateInput,
   userId: string,
 ): Promise<{ ok: true; record: KpApiRecord } | { ok: false; status: number; reason: string; detail?: unknown }> {
+  // v0.8.7 sanitize: 静默 strip 所有 <strong>/</strong>，调用方不需要记规则。
+  // 见 migration-v0.8.md §11 + sanitize-strong.ts。
+  input = deepStripStrong(input);
+
   const id = input.id ?? generatedKpId(tenant.discipline);
   const existing = await db.prepare('SELECT id FROM kp WHERE id = ?').bind(id).first<{ id: string }>();
   if (existing) return { ok: false, status: 409, reason: 'kp_id_exists' };
@@ -420,6 +425,9 @@ export async function patchKpRecord(
   input: KpPatchInput,
   userId: string,
 ): Promise<{ ok: true; record: KpApiRecord } | { ok: false; status: number; reason: string; detail?: unknown }> {
+  // v0.8.7 sanitize: 静默 strip 所有 <strong>/</strong>。见 migration-v0.8.md §11.
+  input = deepStripStrong(input);
+
   const current = await getKpRecord(db, kpId);
   if (!current) return { ok: false, status: 404, reason: 'kp_not_found' };
   if (current.tenant_id !== tenant.tenantId || current.discipline !== tenant.discipline) {

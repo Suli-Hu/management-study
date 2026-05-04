@@ -1,4 +1,5 @@
 import type { SchoolCreateInput, SchoolPatchInput } from '~/schemas/school-api';
+import { deepStripStrong } from './sanitize-strong';
 
 export interface SchoolApiRecord {
   key: string;
@@ -208,6 +209,9 @@ export async function createSchoolRecord(
   tenant: { tenantId: string; discipline: string },
   input: SchoolCreateInput,
 ): Promise<{ ok: true; record: SchoolApiRecord } | { ok: false; status: number; reason: string; detail?: unknown }> {
+  // v0.8.7 sanitize: 静默 strip 所有 <strong>/</strong>。见 migration-v0.8.md §11.
+  input = deepStripStrong(input);
+
   const existing = await db.prepare('SELECT key FROM school WHERE key = ?').bind(input.key).first<{ key: string }>();
   if (existing) return { ok: false, status: 409, reason: 'school_key_exists' };
 
@@ -241,6 +245,9 @@ export async function patchSchoolRecord(
   tenant: { tenantId: string; discipline: string },
   input: SchoolPatchInput,
 ): Promise<{ ok: true; record: SchoolApiRecord } | { ok: false; status: number; reason: string; detail?: unknown }> {
+  // v0.8.7 sanitize: 静默 strip 所有 <strong>/</strong>。见 migration-v0.8.md §11.
+  input = deepStripStrong(input);
+
   const current = await getSchoolRecord(db, key, tenant);
   if (!current) return { ok: false, status: 404, reason: 'school_not_found' };
   const next = {

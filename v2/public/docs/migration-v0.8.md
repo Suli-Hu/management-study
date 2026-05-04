@@ -22,6 +22,7 @@
 8. [迁移检查清单](#8-迁移检查清单)
 9. [Schedule](#9-schedule)
 10. [FAQ](#10-faq)
+11. [禁止的 inline HTML：`<strong>`](#11-禁止的-inline-html-strong)
 
 ---
 
@@ -545,6 +546,64 @@ batch API 每条 `results[]` 的 `reason` 字段也会出现上述 `legacy_*` �
 ### Q7. 怎么验证我的 payload 是新 contract？
 
 发 staging（`management-study-v2.pages.dev`，对应 D1 用 staging KV）— 不会污染 prod。staging 在 5/8 ~ 5/14 期间打开 v0.8.0 preview 模式（cut 生效），任何老 payload 都会返 `legacy_*`。
+
+---
+
+## 11. 禁止的 inline HTML: `<strong>`
+
+**v0.8.7 起，所有 text 字段写入时 server 自动 strip `<strong>` / `</strong>`**（包括 `body` / `evaluations` / `title` / `summary` / `contribution` / `lead` / `desc` / 任何 string 字段，递归到任意嵌套层）。
+
+### 11.1 为什么
+
+- 用户体验偏 minimalism — 概念名带英文括号（如 `开放性 (Openness)`）已能被读者识别为术语，不需要额外加粗
+- 保持视觉一致性 — 避免"有的条目加粗有的没加"的杂乱感
+- AI agent（含老师 / 自己）默认会在概念名加 `<strong>`，造成数据里"加粗"和"未加粗"混杂
+
+### 11.2 仍允许（不被 strip）
+
+- `<em>...</em>` 斜体强调
+- `<br>` 段落内换行
+- `<code>...</code>` 内联代码（含跨学派引用 `<code>schoolKey</code>`）
+
+### 11.3 调用方该怎么做
+
+- **不要主动在文本里加 `<strong>`** — 加了也会被静默 strip（不返错、不告警）
+- 如果想强调某个词，用 `<em>foo</em>` 或不强调（首选不强调）
+- AI 生成 KP 描述时**尤其注意**：不要默认加粗概念名
+
+### 11.4 例
+
+❌ 旧（v0.8.7 前可写但视觉杂乱）：
+```jsonc
+{
+  "items": [
+    { "name": "开放性", "desc": "<strong>开放性（Openness）</strong>是大五人格的第一维度..." }
+  ]
+}
+```
+
+✅ 新：
+```jsonc
+{
+  "items": [
+    { "name": "开放性", "desc": "开放性（Openness）是大五人格的第一维度..." }
+  ]
+}
+```
+
+### 11.5 server 行为细节
+
+- strip 是**静默**的：不返错、不在 response detail 里报告
+- regex `/<\s*\/?\s*strong\s*>/gi` — 大小写不敏感、tag 内 / tag 间空格也接受 (e.g. `<STRONG>` / `< strong >` / `</ strong>` 都剥)
+- 实施位置：`v2/src/lib/sanitize-strong.ts`（`stripStrong` + `deepStripStrong`），接入 6 写入路径（kp-api / kp-batch / d1-kp / school-api / scholar-api / view-api / d1-school / d1-scholar / d1-discipline / d1-view）
+
+### 11.6 已有数据
+
+v0.8.7 ship 当天跑了一次性清理：
+- 仓库 git data：`pnpm tsx scripts/strip-strong-from-data.ts` 一次性扫 `v2/data/**/*.json`，剥除 12K+ tag
+- prod D1：super-admin 调 `POST /api/admin/strip-strong-from-d1` 同步清
+
+后续新写入由 sanitize 拦截 — 不会再有 `<strong>` 累积。
 
 ---
 

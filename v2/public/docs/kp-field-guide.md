@@ -217,6 +217,8 @@
 - 如果 KP title + 后续条目已经自解释，**lead 可以为空字符串**
 - 不要硬凑
 
+> ⚠️ **不要写 `<strong>foo</strong>`** — server 自动 strip（v0.8.7 起，[详见](migration-v0.8.md#11-禁止的-inline-html-strong)）。想强调用 `<em>` 或不强调（首选不强调）。
+
 ---
 
 ### 2.2 flat-list 的 `items[].name` vs `items[].desc`
@@ -235,6 +237,8 @@ desc: "各属性按重要度加权，总分最高者被选择。某一属性弱�
 - ❌ name 太长（"线性补偿型决策模型在消费者评价中的应用"）— 截短
 - ❌ desc 只有 5 个字（"加权选择"）— 补充足够信息
 - ❌ desc 占半页 — 拆成 accordion 里的 items
+
+> ⚠️ **不要在 name / desc 里加 `<strong>`** — server 自动 strip（v0.8.7 起）。
 
 ---
 
@@ -255,6 +259,8 @@ desc: "各属性按重要度加权，总分最高者被选择。某一属性弱�
 - ❌ groups 之间内容 overlap — 想清楚归属
 
 **groups[].items**：跟 flat-list 的 items 同语义。组内通常 2-5 条。
+
+> ⚠️ **不要在 title / items[].name / items[].desc 里加 `<strong>`** — server 自动 strip（v0.8.7 起）。
 
 ---
 
@@ -384,6 +390,8 @@ title (必填) → desc (强烈建议) → keyword (有则填) → type (有则�
 ```
 
 **6 个字段全填的列很重，反而模糊**。**按对象需要选 3-5 个填**就好。
+
+> ⚠️ **6 列字段任一里都不要加 `<strong>`** — server 自动 strip（v0.8.7 起）。
 
 ---
 
@@ -535,6 +543,8 @@ cells[].detail (主体内容)
 cells[].emoji (锦上添花)
 ```
 
+> ⚠️ **cells[].name / sub / detail 里不要加 `<strong>`** — server 自动 strip（v0.8.7 起）。
+
 ---
 
 ## 3. Evaluations 6 字段语义
@@ -542,6 +552,8 @@ cells[].emoji (锦上添花)
 > **重要**：实测中 AI agent 经常把这 6 个字段写成"如何用这个 KP 答题"，导致评价空洞。**写之前必读这一节**。
 
 每个 KP 的 `evalContent.zh` 是 dict，含 6 个 key。**所有字段都可选**（不写就不显示），但写就要符合语义。
+
+> ⚠️ **6 字段任一里都不要加 `<strong>`** — server 自动 strip（v0.8.7 起，[详见](migration-v0.8.md#11-禁止的-inline-html-strong)）。
 
 ### 3.1 `义` (meaning) — 意义
 
@@ -783,6 +795,7 @@ KP 没有 themeKey 字段；该字段属于 School。
 | schools / scholars 写中文名而非 key | 调 `/api/metadata` 拿 key |
 | year 写"1979 年" | 改 `"1979"` |
 | 强行填空 evaluations 字段凑数 | 留空 |
+| 在 desc / prose / lead 里加 `<strong>foo</strong>` | server 自动 strip（v0.8.7 起），写了也会被剥；想强调用 `<em>` 或不强调，详见 [migration-v0.8.md §11](migration-v0.8.md#11-禁止的-inline-html-strong) |
 
 ---
 
