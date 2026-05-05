@@ -258,32 +258,36 @@ export function renderStructuredBody(opts: {
 // ============================================================
 
 /**
- * 6 字段定义：v0.8 英文 key + 单字 glyph + 中文小字标签 + 英文 small。
+ * 6 字段定义：v0.8 英文 key + 中文 pill 标签 + tone 语义色。
  *
- * v0.8.13 Stage 6 chip 2：drop tone hex（积极/警告/中性 三组色），改 editor v0.8 layout —
- *   LHS 84px：圆 glyph (义/限/例/应/用/喻) + 中文小标签 + 英文 mini，is-filled 用 --primary-soft。
- *   见 kp-edit.css .kpe-eval-row 模式。
+ * v0.8.23 — 用户 fb：v0.8.13 的 84px LHS 圆 glyph + 双标签 layout 太复杂 ("现在的这块做的太复杂了，
+ * 原来的绿色'意义'红色'局限'就挺好的")。回滚到 v0.5.46 hanging indent + tone-pill 简洁版：
+ *   - 56px pill (只放中文双字 e.g. "意义") + 1fr text，左对齐
+ *   - 三组 tone 语义色（与学派 accent 无关，写死 hex）：
+ *     * 积极组（义/应/用）= 绿 #10B981 — 核心价值 / 行动策略
+ *     * 警告组（限）     = 红 #EF4444 — 边界 / 风险
+ *     * 中性组（例/喻）   = 灰 #6B7280 — 实例与隐喻
+ *   - pill: tone color 文字 + 10% tone bg；行间 1px 弱 hr
  */
 type EvalKey = keyof KpEvaluationsLang;
 interface EvalDef {
   key: EvalKey;
-  glyph: string;  // 单字 (义/限/例/应/用/喻)
   label: string;  // 中文双字 (意义/局限/例子/应对/应用/比喻)
-  en: string;     // 英文小字 key
+  tone: string;   // 语义色 hex
 }
 const EVAL_DEFS: readonly EvalDef[] = [
-  { key: 'meaning',     glyph: '义', label: '意义', en: 'meaning' },
-  { key: 'limit',       glyph: '限', label: '局限', en: 'limit' },
-  { key: 'example',     glyph: '例', label: '例子', en: 'example' },
-  { key: 'response',    glyph: '应', label: '应对', en: 'response' },
-  { key: 'application', glyph: '用', label: '应用', en: 'application' },
-  { key: 'analogy',     glyph: '喻', label: '比喻', en: 'analogy' },
+  { key: 'meaning',     label: '意义', tone: '#10B981' },
+  { key: 'limit',       label: '局限', tone: '#EF4444' },
+  { key: 'example',     label: '例子', tone: '#6B7280' },
+  { key: 'response',    label: '应对', tone: '#10B981' },
+  { key: 'application', label: '应用', tone: '#10B981' },
+  { key: 'analogy',     label: '比喻', tone: '#6B7280' },
 ] as const;
 
 /**
  * 把 KpEvaluationsLang 渲染成 evaluation section（自动跳过空字段）。
  * v0.8.10 Stage 5：取代旧 renderEvalModule(EvalContent) — 直接吃 v0.8 英文 key shape。
- * v0.8.13 Stage 6 chip 2：editor-glyph layout (LHS circle + zh label + en small)。
+ * v0.8.23：layout 回滚到 v0.5.46 简洁版（用户 fb 当前太复杂）。
  */
 export function renderEvalModule(content: KpEvaluationsLang | null | undefined): string {
   if (!content) return '';
@@ -293,12 +297,8 @@ export function renderEvalModule(content: KpEvaluationsLang | null | undefined):
   if (rows.length === 0) return '';
 
   const rowsHtml = rows.map(({ def, text }) => `
-    <div class="eval-row is-filled">
-      <div class="eval-lhs">
-        <span class="eval-glyph">${def.glyph}</span>
-        <span class="eval-tag-name">${def.label}</span>
-        <span class="eval-tag-en">${def.en}</span>
-      </div>
+    <div class="eval-row" style="--tone:${def.tone}">
+      <span class="eval-pill">${def.label}</span>
       <div class="eval-text">${text}</div>
     </div>
   `).join('');
@@ -310,7 +310,7 @@ export function renderEvalModule(content: KpEvaluationsLang | null | undefined):
         <span class="eval-count">${rows.length}</span>
         <span class="eval-chev">▾</span>
       </summary>
-      <div class="eval-rows">${rowsHtml}</div>
+      <div class="eval-list">${rowsHtml}</div>
     </details>
   `;
 }

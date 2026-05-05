@@ -21,6 +21,8 @@ const themes = JSON.parse(disc.themes_json) as Array<{
 }>;
 
 // Pull every KP with its primary school (lowest position in kp_school) + scholars.
+// v0.8.23 跨学科隔离：scholars_csv 补 scholar_discipline=k.discipline；s.discipline=? 防 kp_school
+//   跨学科 link 时邻学科 school 漏入 primary_school。
 const kpsResult = await db
   .prepare(`
     SELECT
@@ -28,13 +30,16 @@ const kpsResult = await db
       ks.school_key as primary_school,
       s.title_zh as school_title,
       s.theme_key,
-      (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id ORDER BY position) as scholars_csv,
+      (SELECT GROUP_CONCAT(scholar_key, ',')
+         FROM kp_scholar
+         WHERE kp_id = k.id AND scholar_discipline = k.discipline
+         ORDER BY position) as scholars_csv,
       (SELECT GROUP_CONCAT(school_key, ',') FROM kp_school WHERE kp_id = k.id ORDER BY position) as schools_csv
     FROM kp k
     LEFT JOIN kp_school ks
       ON ks.kp_id = k.id
      AND ks.position = (SELECT MIN(position) FROM kp_school WHERE kp_id = k.id)
-    LEFT JOIN school s ON s.key = ks.school_key
+    LEFT JOIN school s ON s.key = ks.school_key AND s.discipline = k.discipline
     WHERE k.discipline = ?
     ORDER BY s.theme_key, ks.school_key, ks.position, k.id
   `)
