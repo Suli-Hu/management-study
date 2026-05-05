@@ -25,7 +25,7 @@ import { renderInlineHtml } from '~/lib/render-inline';
 import { editHref } from '~/lib/nav';
 import { shortYear } from '~/lib/format-year';
 import { lastName } from '~/lib/format-name';
-import { hashToTagToken } from '~/lib/editor/dom-helpers';
+import { resolveAccentForSchool } from '~/lib/resolve-accent';
 
 const { discipline, key } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
@@ -63,15 +63,21 @@ const scholar = await db
   }>();
 if (!scholar) return Astro.redirect('/404');
 
-// v0.8.19 minimalism (用户 v10 反馈): 学者 detail 页 URL `/keiei/scholars/hackman` page
-// chrome 已表达学者身份。关联 KP 列表 dot 之前按学者主学派全同色 → redundant；右栏 body
-// items numbering / 顶 strip / lang-toggle / star toggle / EmptyRight / LangFab 同理。
-// 全部中性 (var(--text-3))。顶部 schools chip 仍按 tag 色（学者跨多学派区分有意义）。
-// 见 PRD §6.2.3。
+// v0.8.20 三层原则 (PRD §6.2.3 final):
+//   - 右栏顶 3px strip + 顶部 schools chip = page chrome accent → 学派色 hex (resolveAccentForSchool)
+//   - KP list dot / items numbering / cells = page interior decoration → 中性 (var(--text-3))
+//   - lang-toggle / LangFab / Star = focus action → L1 var(--primary)
+// 学者跨多学派 chip 着色仍有区分价值 (跨 entity)；scholar.schools[0] 决定右栏 strip page 身份色。
 
-// v0.8.15 Stage 6 chip 4 (D6=A): 学派 chip 用 --tag-* token 着色 — 取 school.tags[0] 经
-// hashToTagToken 映射到 8 个 v1.0 tag token；与 chip 1 discipline 首页 SchoolCard 一致。
-let schools: Array<{ key: string; title_zh: string; title_en: string | null; theme_key: string; tagToken: string | null }> = [];
+// v0.8.20: discipline.tags_json → resolveAccentForSchool lookup (always 需要 — partial 模式右栏 strip 也用)
+const discRow = await db
+  .prepare('SELECT tags_json FROM discipline WHERE key = ?')
+  .bind(discipline)
+  .first<{ tags_json: string | null }>();
+const tagDefs = JSON.parse(discRow?.tags_json ?? '[]') as Array<{ key: string; color: string }>;
+const disciplineLookup = { tags: tagDefs };
+
+let schools: Array<{ key: string; title_zh: string; title_en: string | null; theme_key: string; accentHex: string }> = [];
 type KpListItem = {
   id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string;
   // v0.8.10 Stage 5: 旧列已 drop
@@ -81,28 +87,33 @@ type KpListItem = {
 };
 let kps: KpListItem[] = [];
 
+// v0.8.20: schools query 移出 !isPartial — partial 模式右栏 page chrome strip 也需要 schools[0].accent
+const schoolsResult = await db
+  .prepare(`
+    SELECT s.key, s.title_zh, s.title_en, s.theme_key, s.tags_json
+    FROM school s
+    INNER JOIN scholar_school ss ON ss.school_key = s.key
+    WHERE ss.scholar_key = ?
+    ORDER BY ss.position, s.key
+  `)
+  .bind(key)
+  .all<{ key: string; title_zh: string; title_en: string | null; theme_key: string; tags_json: string | null }>();
+schools = (schoolsResult.results ?? []).map((s) => ({
+  key: s.key,
+  title_zh: s.title_zh,
+  title_en: s.title_en,
+  theme_key: s.theme_key,
+  /* v0.8.20 fix: chip + page chrome strip 用 user-defined hex (resolveAccentForSchool) */
+  accentHex: resolveAccentForSchool(
+    { tags: JSON.parse(s.tags_json || '[]') as string[] },
+    disciplineLookup,
+  ),
+}));
+
+// 学者 page chrome accent — 取首学派 (跨多学派学者按 position 排第一个)
+const scholarAccentHex = schools[0]?.accentHex ?? 'var(--text-3)';
+
 if (!isPartial) {
-  const schoolsResult = await db
-    .prepare(`
-      SELECT s.key, s.title_zh, s.title_en, s.theme_key, s.tags_json
-      FROM school s
-      INNER JOIN scholar_school ss ON ss.school_key = s.key
-      WHERE ss.scholar_key = ?
-      ORDER BY ss.position, s.key
-    `)
-    .bind(key)
-    .all<{ key: string; title_zh: string; title_en: string | null; theme_key: string; tags_json: string | null }>();
-  schools = (schoolsResult.results ?? []).map((s) => {
-    const tagKeys = JSON.parse(s.tags_json || '[]') as string[];
-    const primaryKey = tagKeys[0] ?? null;
-    return {
-      key: s.key,
-      title_zh: s.title_zh,
-      title_en: s.title_en,
-      theme_key: s.theme_key,
-      tagToken: primaryKey ? hashToTagToken(primaryKey) : null,
-    };
-  });
 
   // v0.5.33: ORDER BY ks.position 让 scholar.kpsOrder（拖动后保存）生效
   // v0.8.10: pull v0.8 列做 inline 展开
@@ -195,6 +206,8 @@ const canEdit = Astro.locals.canEdit(discipline);
 {/* v0.5.57 partial=1：只输出 <article> 右栏片段（无 Layout/Nav/Footer/scripts），split-pane.js 用 */}
 {isPartial && (
   <article class="right kp-detail-pane" id="kp-detail-pane" style="padding:0">
+    {/* v0.8.20: page chrome accent strip — 表达学者首学派身份 (resolveAccentForSchool 真实 hex) */}
+    <div class="kp-pane-accent-strip" style={`background:${scholarAccentHex}`} aria-hidden="true"></div>
     <div class="kp-pane-content">
       {selectedKp ? (
         <>
@@ -384,8 +397,8 @@ const canEdit = Astro.locals.canEdit(discipline);
       )}
 
       {/* Tab Panel: 所属学派
-          v0.8.15 Stage 6 chip 4 (D6=A): 学派渲染为 chip — 圆角 pill + --tag-* 着色（按 school.tags[0] hash）
-          chip 内容：title_zh + 可选 title_en（zh 主行 / en 次行小字）；hover 浅化。 */}
+          v0.8.20: chip 着色用 user-defined hex (resolveAccentForSchool) — 跨多学派学者
+          chip 区分有意义。inline style={`--accent: ${hex}`}, CSS 用 oklch(from var(--accent) ...) */}
       <section class="optA-tab-panel" data-tab-panel="schools" hidden={hasProfileInfo}>
         {schools.length === 0 ? (
           <p class="text-xs text-quaternary px-4 py-3">暂无关联学派。</p>
@@ -395,7 +408,8 @@ const canEdit = Astro.locals.canEdit(discipline);
               <a
                 href={`/${discipline}/${s.key}`}
                 class="scholar-school-chip"
-                {...(s.tagToken ? { 'data-tag': s.tagToken } : {})}
+                data-accent-neutral={s.accentHex.startsWith('var(') ? 'true' : undefined}
+                style={`--accent: ${s.accentHex}`}
               >
                 <span class="scholar-school-chip-zh">{s.title_zh}</span>
                 {s.title_en && <span class="scholar-school-chip-en">{s.title_en}</span>}
@@ -499,6 +513,8 @@ const canEdit = Astro.locals.canEdit(discipline);
 
     {/* ========== 右栏 ========== */}
     <article class="right kp-detail-pane" id="kp-detail-pane" style="padding:0">
+      {/* v0.8.20: page chrome accent strip — 表达学者首学派身份 */}
+      <div class="kp-pane-accent-strip" style={`background:${scholarAccentHex}`} aria-hidden="true"></div>
       <div class="kp-pane-content">
         {kps.length === 0 ? (
           <EmptyRight
@@ -563,8 +579,8 @@ const canEdit = Astro.locals.canEdit(discipline);
   </div>
 
   {/* v0.5.78：mobile 日语切换悬浮球 — 仅当当前选中 KP 有日文 body 时挂
-       v0.8.19: page chrome 已表达学者身份，FAB accent 中性 */}
-  {selectedKp?.body_ja_json && <LangFab lang={selectedLang} accentHex="var(--text-3)" />}
+       v0.8.20: lang 切换是 focus action → L1 var(--primary) (PRD §6.2.3 三层原则) */}
+  {selectedKp?.body_ja_json && <LangFab lang={selectedLang} accentHex="var(--primary)" />}
 </Layout>
 
 <script is:inline src="/split-pane.js"></script>
@@ -670,9 +686,9 @@ const canEdit = Astro.locals.canEdit(discipline);
 
 <style>
   /*
-   * v0.8.15 Stage 6 chip 4: 学者详情页"所属学派" chip 容器 + 8 个 --tag-* 着色
-   * 复用 chip 1 SchoolCard.astro 配方 — soft 底 (l c h / 0.18) + deep 字 (calc(l - 0.40))
-   * dark mode :global([data-mode="dark"]) 调亮 — soft 透明度 0.22 + 字色 calc(l + 0.15)
+   * v0.8.20: 学者详情页"所属学派" chip — 单条 oklch(from var(--accent) ...) 规则
+   * accent 由 inline style={`--accent: ${hex}`} 注入 (resolveAccentForSchool 真实 hex)。
+   * 替代 v0.8.15 的 8 个 hardcoded data-tag CSS 规则。
    */
   .scholar-schools-chips {
     display: flex; flex-wrap: wrap; gap: 8px;
@@ -682,13 +698,17 @@ const canEdit = Astro.locals.canEdit(discipline);
     display: inline-flex; align-items: baseline; gap: 6px;
     padding: 6px 12px;
     border-radius: 999px;
-    background: var(--bg-soft);
-    color: var(--text-2);
-    border: 1px solid var(--border);
+    background: oklch(from var(--accent) l c h / 0.18);
+    border: 1px solid oklch(from var(--accent) l c h / 0.30);
     font-size: 13px;
     text-decoration: none;
     line-height: 1.3;
     transition: opacity .14s, transform .14s;
+  }
+  /* fallback — 没填 tag 的学派 (accentHex='var(--text-3)' 不是 hex) */
+  .scholar-school-chip[data-accent-neutral] {
+    background: var(--bg-soft);
+    border-color: var(--border);
   }
   .scholar-school-chip:hover {
     opacity: 1;             /* 抵消 global a:hover { opacity: 0.8 } */
@@ -696,6 +716,9 @@ const canEdit = Astro.locals.canEdit(discipline);
   }
   .scholar-school-chip-zh {
     font-weight: 600;
+    color: oklch(from var(--accent) calc(l - 0.40) c h);
+  }
+  .scholar-school-chip[data-accent-neutral] .scholar-school-chip-zh {
     color: var(--text);
   }
   .scholar-school-chip-en {
@@ -703,40 +726,19 @@ const canEdit = Astro.locals.canEdit(discipline);
     color: var(--text-3);
     font-weight: 400;
   }
-  /* 8 v1.0 --tag-* 着色（soft 底 + deep 字 + 透明边） */
-  .scholar-school-chip[data-tag="tag-mgmt"]   { background: oklch(from var(--tag-mgmt)   l c h / 0.18); border-color: oklch(from var(--tag-mgmt)   l c h / 0.30); }
-  .scholar-school-chip[data-tag="tag-mkt"]    { background: oklch(from var(--tag-mkt)    l c h / 0.18); border-color: oklch(from var(--tag-mkt)    l c h / 0.30); }
-  .scholar-school-chip[data-tag="tag-soc"]    { background: oklch(from var(--tag-soc)    l c h / 0.18); border-color: oklch(from var(--tag-soc)    l c h / 0.30); }
-  .scholar-school-chip[data-tag="tag-purple"] { background: oklch(from var(--tag-purple) l c h / 0.18); border-color: oklch(from var(--tag-purple) l c h / 0.30); }
-  .scholar-school-chip[data-tag="tag-pink"]   { background: oklch(from var(--tag-pink)   l c h / 0.18); border-color: oklch(from var(--tag-pink)   l c h / 0.30); }
-  .scholar-school-chip[data-tag="tag-cyan"]   { background: oklch(from var(--tag-cyan)   l c h / 0.18); border-color: oklch(from var(--tag-cyan)   l c h / 0.30); }
-  .scholar-school-chip[data-tag="tag-blue"]   { background: oklch(from var(--tag-blue)   l c h / 0.18); border-color: oklch(from var(--tag-blue)   l c h / 0.30); }
-  .scholar-school-chip[data-tag="tag-orange"] { background: oklch(from var(--tag-orange) l c h / 0.18); border-color: oklch(from var(--tag-orange) l c h / 0.30); }
-  .scholar-school-chip[data-tag="tag-mgmt"]   .scholar-school-chip-zh { color: oklch(from var(--tag-mgmt)   calc(l - 0.40) c h); }
-  .scholar-school-chip[data-tag="tag-mkt"]    .scholar-school-chip-zh { color: oklch(from var(--tag-mkt)    calc(l - 0.40) c h); }
-  .scholar-school-chip[data-tag="tag-soc"]    .scholar-school-chip-zh { color: oklch(from var(--tag-soc)    calc(l - 0.40) c h); }
-  .scholar-school-chip[data-tag="tag-purple"] .scholar-school-chip-zh { color: oklch(from var(--tag-purple) calc(l - 0.40) c h); }
-  .scholar-school-chip[data-tag="tag-pink"]   .scholar-school-chip-zh { color: oklch(from var(--tag-pink)   calc(l - 0.40) c h); }
-  .scholar-school-chip[data-tag="tag-cyan"]   .scholar-school-chip-zh { color: oklch(from var(--tag-cyan)   calc(l - 0.40) c h); }
-  .scholar-school-chip[data-tag="tag-blue"]   .scholar-school-chip-zh { color: oklch(from var(--tag-blue)   calc(l - 0.40) c h); }
-  .scholar-school-chip[data-tag="tag-orange"] .scholar-school-chip-zh { color: oklch(from var(--tag-orange) calc(l - 0.40) c h); }
-  /* dark mode：tag bg 加深透明度 + 字色用 calc(l + 0.15) 提亮（参考 chip 1 SchoolCard.astro 模式） */
-  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-mgmt"]   { background: oklch(from var(--tag-mgmt)   l c h / 0.22); }
-  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-mkt"]    { background: oklch(from var(--tag-mkt)    l c h / 0.22); }
-  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-soc"]    { background: oklch(from var(--tag-soc)    l c h / 0.22); }
-  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-purple"] { background: oklch(from var(--tag-purple) l c h / 0.22); }
-  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-pink"]   { background: oklch(from var(--tag-pink)   l c h / 0.22); }
-  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-cyan"]   { background: oklch(from var(--tag-cyan)   l c h / 0.22); }
-  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-blue"]   { background: oklch(from var(--tag-blue)   l c h / 0.22); }
-  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-orange"] { background: oklch(from var(--tag-orange) l c h / 0.22); }
-  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-mgmt"]   .scholar-school-chip-zh { color: oklch(from var(--tag-mgmt)   calc(l + 0.15) c h); }
-  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-mkt"]    .scholar-school-chip-zh { color: oklch(from var(--tag-mkt)    calc(l + 0.15) c h); }
-  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-soc"]    .scholar-school-chip-zh { color: oklch(from var(--tag-soc)    calc(l + 0.15) c h); }
-  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-purple"] .scholar-school-chip-zh { color: oklch(from var(--tag-purple) calc(l + 0.15) c h); }
-  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-pink"]   .scholar-school-chip-zh { color: oklch(from var(--tag-pink)   calc(l + 0.15) c h); }
-  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-cyan"]   .scholar-school-chip-zh { color: oklch(from var(--tag-cyan)   calc(l + 0.15) c h); }
-  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-blue"]   .scholar-school-chip-zh { color: oklch(from var(--tag-blue)   calc(l + 0.15) c h); }
-  :global([data-mode="dark"]) .scholar-school-chip[data-tag="tag-orange"] .scholar-school-chip-zh { color: oklch(from var(--tag-orange) calc(l + 0.15) c h); }
+  /* dark mode：bg 加深透明度 + 字色 calc(l + 0.15) 提亮 */
+  :global([data-mode="dark"]) .scholar-school-chip {
+    background: oklch(from var(--accent) l c h / 0.22);
+  }
+  :global([data-mode="dark"]) .scholar-school-chip-zh {
+    color: oklch(from var(--accent) calc(l + 0.15) c h);
+  }
+  :global([data-mode="dark"]) .scholar-school-chip[data-accent-neutral] {
+    background: var(--bg-soft);
+  }
+  :global([data-mode="dark"]) .scholar-school-chip[data-accent-neutral] .scholar-school-chip-zh {
+    color: var(--text);
+  }
 </style>
 </Fragment>
 )}

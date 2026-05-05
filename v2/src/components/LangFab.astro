@@ -6,7 +6,7 @@
  *   <LangFab lang={selectedLang} accentHex={accentHex} />
  *
  *   - lang: 当前语言（'zh' | 'ja'）— 决定球面字（中 / 日）+ 配色
- *   - accentHex: 学派 / 学者 accent 色（可选，默认品牌橙 #FF9500）
+ *   - accentHex: 默认 'var(--primary)' (focus action L1) — v0.8.20 PRD §6.2.3 三层原则
  *
  * 仅在 mobile/平板（< 1024px）显示；桌面用 head-bar 内 chip。
  * 父页面应仅在 KP 有 body_ja 时挂 — 否则点击没行为。
@@ -18,7 +18,7 @@ interface Props {
   lang: 'zh' | 'ja';
   accentHex?: string;
 }
-const { lang, accentHex = '#FF9500' } = Astro.props;
+const { lang, accentHex = 'var(--primary)' } = Astro.props;
 ---
 
 <button
@@ -42,11 +42,11 @@ const { lang, accentHex = '#FF9500' } = Astro.props;
     z-index: 40;
     width: 52px; height: 52px;
     border-radius: 999px;
-    background: var(--fab-accent, #FF9500);
-    color: #ffffff;
+    background: var(--fab-accent, var(--primary));
+    color: var(--primary-fg);
     font-size: 22px;
     font-weight: 700;
-    border: 1.5px solid var(--fab-accent, #FF9500);
+    border: 1.5px solid var(--fab-accent, var(--primary));
     box-shadow: 0 6px 20px rgba(0,0,0,0.18), 0 2px 4px rgba(0,0,0,0.12);
     cursor: grab;
     user-select: none;
@@ -72,8 +72,8 @@ const { lang, accentHex = '#FF9500' } = Astro.props;
     .lang-fab { display: inline-flex; }
   }
   .lang-fab.is-ja {
-    background: #ffffff;
-    color: var(--fab-accent, #FF9500);
+    background: var(--primary-fg);
+    color: var(--fab-accent, var(--primary));
   }
   .lang-fab.is-dragging {
     cursor: grabbing;

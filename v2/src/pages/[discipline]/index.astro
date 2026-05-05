@@ -25,7 +25,7 @@ import ViewToast from '~/components/ViewToast.astro';
 import ViewMenu from '~/components/ViewMenu.astro';
 import NewViewDrawer from '~/components/NewViewDrawer.astro';
 import ViewEditor from '~/components/ViewEditor.astro';
-import { hashToTagToken } from '~/lib/editor/dom-helpers';
+import { resolveAccentForSchool } from '~/lib/resolve-accent';
 import type { ViewGroup } from '~/schemas/view';
 
 const { discipline } = Astro.params;
@@ -37,9 +37,9 @@ const disc = await db
   .first<{ key: string; title_zh: string; title_en: string | null; tagline_zh: string | null; tags_json: string }>();
 if (!disc) return Astro.redirect('/404');
 
-// 标签库（key → color）
+// 标签库 — v0.8.20: 给 resolveAccentForSchool() 当 lookup
 const tagDefs = JSON.parse(disc.tags_json || '[]') as Array<{ key: string; label: { zh?: string }; color: string }>;
-const tagByKey = new Map(tagDefs.map((t) => [t.key, t]));
+const disciplineLookup = { tags: tagDefs };
 
 // 全部视图（chip 行用）
 const viewsResult = await db
@@ -84,16 +84,16 @@ const schoolsResult = await db
 
 const schools = (schoolsResult.results ?? []).map((s) => {
   const tagKeys = JSON.parse(s.tags_json || '[]') as string[];
-  const primaryKey = tagKeys[0] ?? null;
   return {
     key: s.key,
     cn: s.title_zh,
     en: s.title_en,
     meta: s.era,
     count: s.kp_count,
-    /* v0.8.12 Stage 6 chip 1 (D6=A): tag.key → 8 v1.0 --tag-* tokens via hash, deterministic.
-       Discards admin's tag.color (v1.0 says color is a system concern, not admin-chosen). */
-    tagToken: primaryKey ? hashToTagToken(primaryKey) : null,
+    /* v0.8.20 fix: page chrome accent = discipline.tags[school.tags[0]].color 真实 hex
+       (chip 1 v0.8.12 hashToTagToken 路径错把 school.key hash 到 8 OKLCH token，
+       ignore user-defined hex)。无 tag 退 'var(--text-3)' 中性。 */
+    accentHex: resolveAccentForSchool({ tags: tagKeys }, disciplineLookup),
   };
 });
 const schoolByKey = new Map(schools.map((s) => [s.key, s]));
@@ -203,7 +203,7 @@ const showJustCreatedFlash = Boolean(justCreatedSchool && justCreatedThemeTitle)
                 en={s.en}
                 meta={s.meta}
                 count={s.count}
-                tagToken={s.tagToken}
+                accentHex={s.accentHex}
               />
             ))}
           </GroupCardCluster>

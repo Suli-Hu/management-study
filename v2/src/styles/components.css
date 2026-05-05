@@ -1168,6 +1168,14 @@ details.eval {
   padding: 28px 28px 40px;
 }
 
+/* v0.8.20 page chrome accent strip — 学派/学者 detail 页右栏顶 3px 学派色条
+   inline style={`background:${accentHex}`} 直接用 user-defined hex
+   (resolveAccentForSchool 真实色，不走 --accent CSS var 防止意外 cascade 到 lang-toggle 等子元素) */
+.kp-pane-accent-strip {
+  height: 3px;
+  width: 100%;
+}
+
 /* v0.5.57 KP swap loading：fetch 中右栏顶 2px 进度条扫光 + 内容微 dim
    触发：split-pane.js 给 .kp-detail-pane 加 aria-busy="true"，fetch 完成 remove */
 .kp-detail-pane {
@@ -1200,18 +1208,21 @@ details.eval {
 /* ============================================================
  * 日语 / 中文 切换按钮（V1 .pill-btn.pill-sm.ja-toggle 移植）
  * 用法：<a class="lang-toggle" data-lang-toggle ...>日本語|中文</a>
- *   - 默认：accent 描边胶囊，opacity 0.65
+ *   - 默认：primary 描边胶囊，opacity 0.65
  *   - hover：opacity 1
- *   - .is-active（lang === 'ja'）：accent 实底 + 白字
+ *   - .is-active（lang === 'ja'）：primary 实底 + primary-fg
  * 配套 Cmd/Ctrl+J 全局快捷键（详见各页 inline script）
+ *
+ * v0.8.20: 焦点 / 主操作 → L1 var(--primary) 墨黑 (PRD §6.2.3 三层原则)。
+ *   旧 var(--accent) cascade 受父级 page chrome strip --accent 干扰 → 改 hardcode primary。
  * ============================================================ */
 .lang-toggle {
   display: inline-flex; align-items: center;
   padding: 3px 12px;
   border-radius: 999px;
-  border: 1px solid var(--accent, var(--color-text-tertiary));
+  border: 1px solid var(--primary);
   background: transparent;
-  color: var(--accent, var(--color-text-tertiary));
+  color: var(--primary);
   font-size: 9.5px;
   font-weight: 600;
   letter-spacing: .03em;
@@ -1223,8 +1234,8 @@ details.eval {
 }
 .lang-toggle:hover { opacity: 1; }
 .lang-toggle.is-active {
-  background: var(--accent, var(--color-text-tertiary));
-  color: #fff;
+  background: var(--primary);
+  color: var(--primary-fg);
   opacity: 1;
 }
 .lang-toggle.is-pulse { transform: scale(1.2); transition: transform .08s ease-out; }

@@ -22,6 +22,7 @@ import { renderInlineHtml } from '~/lib/render-inline';
 import { editHref } from '~/lib/nav';
 import { shortYear } from '~/lib/format-year';
 import { lastName, splitName } from '~/lib/format-name';
+import { resolveAccentForSchool } from '~/lib/resolve-accent';
 
 const { discipline, school } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
@@ -30,11 +31,23 @@ const db = getDb(Astro.locals.runtime.env);
 // 只 query selectedKp 完整 row，返回 raw <article> fragment（无 Layout/Nav/Footer）
 const isPartial = Astro.url.searchParams.get('partial') === '1';
 
+// v0.8.20: 加 tags_json 给 resolveAccentForSchool() 用 (page chrome accent)
 const sch = await db
-  .prepare('SELECT key, title_zh, title_en, era, summary_zh FROM school WHERE key = ? AND discipline = ?')
+  .prepare('SELECT key, title_zh, title_en, era, summary_zh, tags_json FROM school WHERE key = ? AND discipline = ?')
   .bind(school, discipline)
-  .first<{ key: string; title_zh: string; title_en: string | null; era: string; summary_zh: string }>();
+  .first<{ key: string; title_zh: string; title_en: string | null; era: string; summary_zh: string; tags_json: string | null }>();
 if (!sch) return Astro.redirect('/404');
+
+// v0.8.20: discipline.tags_json → resolveAccentForSchool lookup
+const discRow = await db
+  .prepare('SELECT tags_json FROM discipline WHERE key = ?')
+  .bind(discipline)
+  .first<{ tags_json: string | null }>();
+const tagDefs = JSON.parse(discRow?.tags_json ?? '[]') as Array<{ key: string; color: string }>;
+const accentHex = resolveAccentForSchool(
+  { tags: JSON.parse(sch.tags_json ?? '[]') as string[] },
+  { tags: tagDefs },
+);
 
 // v0.6.14: 同 discipline 全部 schools 的 key→title_zh 映射，给 summary 里 <code>key</code>
 //   跨学派引用 resolve 用（render-inline.ts 的 resolveCode callback）
@@ -44,10 +57,11 @@ const allSchoolsRes = await db
   .all<{ key: string; title_zh: string }>();
 const schoolNameByKey = new Map((allSchoolsRes.results ?? []).map((s) => [s.key, s.title_zh]));
 
-// v0.8.19 minimalism (用户 v10 反馈 + "若无必要勿增实体"): 学派 detail 页 URL +
-// page chrome 已表达"这是 X 学派"。内部所有 KP 都属此学派 → 再用 tag 色 dot/strip/
-// items numbering 标"学派归属"是冗余 affordance。全部中性 (var(--text-3))。
-// 见 v2/docs/STAGE-6-DESIGN-SYSTEM-SWAP-PRD.md §6.2.3。
+// v0.8.20 三层原则 (PRD §6.2.3 final):
+//   - 右栏顶 3px strip = page chrome accent (表达"这是 X 学派" page 身份) → 学派色 hex
+//   - KP list dot / items numbering / cells = page interior decoration → 中性 (var(--text-3))
+//   - lang-toggle / LangFab / Star = focus action → L1 var(--primary)
+// v0.8.20 fix v0.8.19 砍过头 — 右栏顶 strip 是 page chrome 不是 redundant decoration。
 
 type KpListItem = {
   id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string;
@@ -184,6 +198,8 @@ const canEdit = Astro.locals.canEdit(discipline);
 {/* v0.5.57 partial=1：只输出 <article> 右栏片段（无 Layout/Nav/Footer/scripts），split-pane.js 用 */}
 {isPartial && (
   <article class="right kp-detail-pane" id="kp-detail-pane" style="padding:0">
+    {/* v0.8.20: page chrome accent strip — 表达学派 page 身份 (resolveAccentForSchool 真实 hex) */}
+    <div class="kp-pane-accent-strip" style={`background:${accentHex}`} aria-hidden="true"></div>
     <div class="kp-pane-content">
       {selectedKp ? (
         <>
@@ -422,6 +438,8 @@ const canEdit = Astro.locals.canEdit(discipline);
 
     {/* ========== 右栏 ========== */}
     <article class="right kp-detail-pane" id="kp-detail-pane" style="padding:0">
+      {/* v0.8.20: page chrome accent strip — 表达学派 page 身份 (resolveAccentForSchool 真实 hex) */}
+      <div class="kp-pane-accent-strip" style={`background:${accentHex}`} aria-hidden="true"></div>
       <div class="kp-pane-content">
         {kps.length === 0 ? (
           <EmptyRight
@@ -487,9 +505,8 @@ const canEdit = Astro.locals.canEdit(discipline);
   </div>
 
   {/* v0.5.78：mobile 日语切换悬浮球 — 仅当当前选中 KP 有日文 body 时挂
-       v0.8.19: 按 PRD §6.2.3 page chrome 上下文 — 学派 detail 页 URL 已表达学派身份，
-       FAB accent 不需重复学派色，改中性 */}
-  {selectedKp?.body_ja_json && <LangFab lang={selectedLang} accentHex="var(--text-3)" />}
+       v0.8.20: lang 切换是 focus action → L1 var(--primary) (PRD §6.2.3 三层原则) */}
+  {selectedKp?.body_ja_json && <LangFab lang={selectedLang} accentHex="var(--primary)" />}
 </Layout>
 
 <script is:inline src="/split-pane.js"></script>
