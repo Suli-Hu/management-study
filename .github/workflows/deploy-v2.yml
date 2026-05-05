@@ -1,7 +1,16 @@
 name: Deploy v2 to Cloudflare Pages
 
-# W1 完成后启用 push 自动触发（D1 已上线 + 数据已 sync）。
-# 仍保留 workflow_dispatch 以便手动重跑。
+# v0.8.27 (2026-05-05) 重大策略变更 — code/data 严格分离
+# ──────────────────────────────────────────────────────────────────
+# Before: 每次 push 跑 sync:d1，用 git 的 v2/data/ 文件 upsert/wipe-reload D1。
+# Problem: learning agents 通过 admin API 写入 D1 的数据 (新增 KP / school↔KP
+#   关联 / KP body 编辑) 没机会全部 writeback 回 git，所以下一次 engineering
+#   push 触发 sync 就把这些 D1 编辑覆盖回 git 的旧状态 — 静默数据丢失。
+# After: GitHub Actions 只负责 code (Astro 网页 + D1 schema migrations)。
+#   所有 content data (KP / scholar / school 内容 + 关联) 都通过 admin API
+#   走 D1，永不再用 git 数据覆盖 D1。
+# Recovery: 走 Cloudflare D1 Time Travel (默认 30 天 PITR)，不用手动 sync。
+# ──────────────────────────────────────────────────────────────────
 on:
   push:
     branches: [main]
@@ -10,8 +19,7 @@ on:
       - '.github/workflows/deploy-v2.yml'
   workflow_dispatch:
 
-# 防多次 push 触发并发 D1 sync 写 race（孤儿清理可能误删刚加的 KP）
-# v0.4.6: 后端审查 #1 修
+# 防多次 push 并发部署
 concurrency:
   group: deploy-v2-prod
   cancel-in-progress: false
@@ -60,13 +68,9 @@ jobs:
         env:
           PUBLIC_GIT_SHA: ${{ github.sha }}
 
-      # ========== Sync D1 ==========
-      # 生成 sync.sql 然后用 wrangler 执行
-      - name: Generate D1 sync SQL
-        run: pnpm sync:d1
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-
+      # ========== Apply D1 schema migrations (schema only, NO content) ==========
+      # v0.8.27: schema migration 仍归 engineering — 创建 / 修改表结构是 code 的一部分。
+      # content data (kp / scholar / school 行) 一律通过 admin API 走，不再用 git 覆盖。
       - name: Apply D1 migrations (idempotent)
         uses: cloudflare/wrangler-action@v3
         with:
@@ -75,11 +79,10 @@ jobs:
           workingDirectory: v2
           command: d1 migrations apply management-study-v2 --remote
 
-      - name: Apply D1 sync shards
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: pnpm sync:d1:apply:remote
+      # v0.8.27: REMOVED `Generate D1 sync SQL` + `Apply D1 sync shards` —
+      #   见顶部 header 注释。脚本 (scripts/sync-to-d1.ts) 保留作冷启动 / 灾难恢复
+      #   用，本地手动 `pnpm sync:d1` 仍可跑；但 CI workflow 不再自动调用。
+      #   恢复路径：Cloudflare D1 Time Travel (默认 30 天 PITR)。
 
       # ========== Deploy Pages ==========
       - name: Deploy Pages
