@@ -118,6 +118,7 @@ describe('parseBody — quad', () => {
     expect(p.yAxis).toBe('新/旧');
     expect(p.xAxis).toBe('东/西');
     expect(p.cells).toHaveLength(4);
+    /* parseBody 是 v1 era DSL parser，shape 没有 detailBack；v0.8 转换在 parsedToStructured */
     expect(p.cells[0]).toEqual({ name: 'A', emoji: '🔥', sub: 'sub A', detail: 'det A' });
   });
 });

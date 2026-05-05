@@ -123,7 +123,10 @@ export const QuadBody = z
             name: z.string().min(1, 'cell.name 不能为空'),
             emoji: z.string().default('').describe('1 个 emoji'),
             sub: z.string().default('').describe('维度组合副标题'),
-            detail: z.string().default('').describe('特征 + 战略建议'),
+            detail: z.string().default('').describe('正面文字 — 特征 + 战略建议（扫读用）'),
+            /* v0.8.33: 新增 detailBack — 卡片背面文字（深入读，同 compare 的 detail 语义）。
+               quad cell 永远可翻面，背面空时显示小号 name + 空白区域。 */
+            detailBack: z.string().default('').describe('背面文字 — 详细描述段落（深入阅读）'),
           })
           .strict(),
       )

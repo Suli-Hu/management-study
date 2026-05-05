@@ -535,13 +535,65 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   grid-row: 1; grid-column: 2;
   display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
   gap: 8px;
+  perspective: 1200px;             /* v0.8.33: 给 quad cell 翻面用 */
 }
+
+/* v0.8.33: quad cell 加翻面交互 — 跟 .cmpc-card 同构 (front/back faces + 3D rotateY)
+ * 但视觉规则独立 (.quad-* 命名空间)。永远 flippable，背面空时也可翻 (显示小号 name)。
+ * 行为由 cmpc-flip.js [data-flippable] 接管，跟 compare 卡共用。 */
 .quad-cell {
-  padding: 16px 14px; border-radius: 10px;
-  background: var(--bg-elev); border: 1px solid var(--border);
-  display: flex; flex-direction: column; gap: 4px;
-  min-height: 110px;
+  position: relative;
+  height: 100%;
+  min-height: 140px;               /* v0.8.33: 110→140 detail 移到背面后正面看着不寒酸 */
+  border-radius: 10px;
+  background: transparent;          /* 实底色挂在 .quad-face */
+  transition: box-shadow .2s, transform .2s;
 }
+.quad-cell.is-flippable { cursor: pointer; }
+.quad-cell.is-flippable:hover {
+  box-shadow: 0 4px 16px oklch(from var(--accent, var(--text-3)) l c h / 0.18),
+              0 1px 4px oklch(from var(--accent, var(--text-3)) l c h / 0.10);
+  transform: translateY(-2px);
+}
+.quad-cell.is-flippable:focus-visible {
+  outline: 2px solid var(--accent, var(--text-3));
+  outline-offset: 3px;
+}
+.quad-cell-inner {
+  position: relative;
+  width: 100%; height: 100%;
+  transform-style: preserve-3d;
+  transition: transform .55s cubic-bezier(.4, 0, .2, 1);
+}
+.quad-cell.is-flipped .quad-cell-inner { transform: rotateY(180deg); }
+.quad-face {
+  padding: 16px 14px;
+  border-radius: 10px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 4px;
+  height: 100%; box-sizing: border-box;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.quad-front { position: relative; }
+.quad-back {
+  position: absolute; inset: 0;
+  transform: rotateY(180deg);
+  overflow-y: auto;                /* detail 长时背面滚动 */
+}
+.quad-back-name {
+  font-size: 11px; font-weight: 600; color: var(--text-3);
+  letter-spacing: 0.04em;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 6px; margin-bottom: 8px;
+}
+.quad-detail {
+  font-size: 12.5px; color: var(--text-2); line-height: 1.75;
+  text-wrap: pretty;
+}
+.quad-detail strong, .quad-detail b { color: var(--text); font-weight: 600; }
+
 .quad-emoji { font-size: 22px; line-height: 1; }
 .quad-name { font-size: 13px; font-weight: 600; color: var(--text); margin-top: 2px; }
 .quad-tag { font-size: 11px; font-weight: 600; color: var(--accent, var(--text-2)); }
@@ -1374,7 +1426,36 @@ details.eval {
   .quad-grid {
     grid-template-columns: 1fr !important;
     grid-template-rows: auto !important;
+    perspective: none;             /* v0.8.33: 手机不做 3D flip */
   }
+  /* v0.8.33: 手机端 quad cell 同 compare cards 一样改 inline expand。
+     重置桌面 height:100% chain 防 max-height 冲突。 */
+  .quad-cell { height: auto; min-height: 0; padding: 0; }
+  .quad-cell-inner { transform-style: flat; transition: none; height: auto; }
+  .quad-cell.is-flipped .quad-cell-inner { transform: none; }
+  .quad-front { height: auto; padding: 16px; }
+  .quad-back {
+    position: static;
+    transform: none;
+    inset: auto;
+    height: auto;
+    overflow: hidden;
+    max-height: 0;
+    padding-top: 0; padding-bottom: 0; padding-left: 16px; padding-right: 16px;
+    border: 0;
+    border-radius: 0 0 10px 10px;
+    transition: max-height .35s cubic-bezier(.4, 0, .2, 1),
+                padding .25s,
+                border-color .25s;
+    background: var(--bg-soft);
+  }
+  .quad-cell.is-flipped .quad-back {
+    max-height: 1000px;
+    overflow-y: visible;
+    padding: 14px 16px;
+    border-top: 1px dashed var(--border);
+  }
+  .quad-cell.is-flippable { touch-action: manipulation; }
 }
 
 /* 触屏设备 hit area ≥ 44px (Apple HIG) — 视觉尺寸不变，仅扩点击区 */

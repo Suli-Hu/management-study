@@ -126,10 +126,10 @@ const VALID_BODIES: Record<string, KpBody> = {
     yAxis: { low: '低', label: '增长率', high: '高' },
     xAxis: { low: '低', label: '份额', high: '高' },
     cells: [
-      { name: '问题', emoji: '❓', sub: '高增低份', detail: '决策投放' },
-      { name: '明星', emoji: '⭐', sub: '高增高份', detail: '继续投' },
-      { name: '瘦狗', emoji: '🐕', sub: '低增低份', detail: '剥离' },
-      { name: '现金牛', emoji: '💰', sub: '低增高份', detail: '维持' },
+      { name: '问题', emoji: '❓', sub: '高增低份', detail: '决策投放', detailBack: '' },
+      { name: '明星', emoji: '⭐', sub: '高增高份', detail: '继续投', detailBack: '' },
+      { name: '瘦狗', emoji: '🐕', sub: '低增低份', detail: '剥离', detailBack: '' },
+      { name: '现金牛', emoji: '💰', sub: '低增高份', detail: '维持', detailBack: '' },
     ],
   },
 };
@@ -406,9 +406,9 @@ describe('v0.8.0 Stage 3: legacy contract 6 reason 拒绝路径', () => {
               yAxis: { low: '低', label: '', high: '高' },
               xAxis: { low: '低', label: '', high: '高' },
               cells: [
-                { name: 'A', emoji: '', sub: '', detail: '' },
-                { name: 'B', emoji: '', sub: '', detail: '' },
-                { name: 'C', emoji: '', sub: '', detail: '' },
+                { name: 'A', emoji: '', sub: '', detail: '', detailBack: '' },
+                { name: 'B', emoji: '', sub: '', detail: '', detailBack: '' },
+                { name: 'C', emoji: '', sub: '', detail: '', detailBack: '' },
               ], // 仅 3 个 — 应是 4
             },
           },

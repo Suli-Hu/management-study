@@ -163,7 +163,7 @@ export function renderCompareCardsStructured(body: CompareBody, accentHex: strin
         </div>`
         : '';
       return `
-      <div class="cmpc-card${hasDetail ? ' is-flippable' : ''}"${hasDetail ? ' role="button" tabindex="0" aria-expanded="false" aria-label="' + esc(c.title) + ' — 查看详情"' : ''}>
+      <div class="cmpc-card${hasDetail ? ' is-flippable' : ''}"${hasDetail ? ' role="button" tabindex="0" aria-expanded="false" data-flippable aria-label="' + esc(c.title) + ' — 查看详情"' : ''}>
         <div class="cmpc-card-inner">
           ${frontInner}
           ${backInner}
@@ -205,14 +205,24 @@ function renderQuadAxis(axis: QuadAxis, dir: 'x' | 'y'): string {
 }
 
 export function renderQuadStructured(body: QuadBody, accentHex: string): string {
+  // v0.8.33: cell 永远可翻面（背面空时显示小号 name + 空白区域，跟正面 4 象限位置对齐）。
+  // 跟 compare 卡复用 cmpc-flip.js 的 [data-flippable] 行为；CSS 用 .quad-* 并行规则。
   const cellsHtml = body.cells
     .map(
       (q) => `
-    <div class="quad-cell">
-      <div class="quad-emoji">${esc(q.emoji)}</div>
-      <div class="quad-name">${esc(q.name)}</div>
-      <div class="quad-tag">${esc(q.sub)}</div>
-      <div class="quad-desc">${q.detail}</div>
+    <div class="quad-cell is-flippable" role="button" tabindex="0" aria-expanded="false" aria-label="${esc(q.name)} — 查看详情" data-flippable>
+      <div class="quad-cell-inner">
+        <div class="quad-face quad-front">
+          <div class="quad-emoji">${esc(q.emoji)}</div>
+          <div class="quad-name">${esc(q.name)}</div>
+          <div class="quad-tag">${esc(q.sub)}</div>
+          <div class="quad-desc">${q.detail}</div>
+        </div>
+        <div class="quad-face quad-back">
+          <div class="quad-back-name">${esc(q.name)}</div>
+          <div class="quad-detail">${q.detailBack ?? ''}</div>
+        </div>
+      </div>
     </div>
   `,
     )

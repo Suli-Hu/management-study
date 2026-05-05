@@ -587,10 +587,10 @@ describe('类5 特殊字符 / 边界值', () => {
 
   test('T5.6 quad cells 字段含 emoji，name 不能为空', async () => {
     const cells = [
-      { name: 'Q1', emoji: '🔥', sub: 'sub', detail: 'd' },
-      { name: 'Q2', emoji: '⚡', sub: 'sub', detail: 'd' },
-      { name: 'Q3', emoji: '🌊', sub: 'sub', detail: 'd' },
-      { name: 'Q4', emoji: '❄️', sub: 'sub', detail: 'd' },
+      { name: 'Q1', emoji: '🔥', sub: 'sub', detail: 'd', detailBack: '' },
+      { name: 'Q2', emoji: '⚡', sub: 'sub', detail: 'd', detailBack: '' },
+      { name: 'Q3', emoji: '🌊', sub: 'sub', detail: 'd', detailBack: '' },
+      { name: 'Q4', emoji: '❄️', sub: 'sub', detail: 'd', detailBack: '' },
     ];
     const okAxis = { low: '低', label: '', high: '高' };
     const res = await kpsPOST(
@@ -624,10 +624,10 @@ describe('类5 特殊字符 / 边界值', () => {
               yAxis: okAxis,
               xAxis: okAxis,
               cells: [
-                { name: '', emoji: '', sub: '', detail: '' },
-                { name: 'b', emoji: '', sub: '', detail: '' },
-                { name: 'c', emoji: '', sub: '', detail: '' },
-                { name: 'd', emoji: '', sub: '', detail: '' },
+                { name: '', emoji: '', sub: '', detail: '', detailBack: '' },
+                { name: 'b', emoji: '', sub: '', detail: '', detailBack: '' },
+                { name: 'c', emoji: '', sub: '', detail: '', detailBack: '' },
+                { name: 'd', emoji: '', sub: '', detail: '', detailBack: '' },
               ],
             },
           },

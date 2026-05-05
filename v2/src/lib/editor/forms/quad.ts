@@ -22,8 +22,9 @@ export function mountQuadForm(
   onChange: (body: QuadBody) => void,
 ): FormModule {
   // pad cells to 4
+  // v0.8.33: detailBack 字段 default ''；老数据没有该 field 时 zod parse 自动补 ''
   const padded = [...body.cells];
-  while (padded.length < 4) padded.push({ name: '', emoji: '', sub: '', detail: '' });
+  while (padded.length < 4) padded.push({ name: '', emoji: '', sub: '', detail: '', detailBack: '' });
   const cells = padded.slice(0, 4) as [
     QuadBody['cells'][number],
     QuadBody['cells'][number],
@@ -125,11 +126,27 @@ export function mountQuadForm(
       textarea({
         value: current.cells[i]!.detail,
         rows: 3,
-        placeholder: '详情（特征 + 战略建议）',
+        placeholder: '正面文字（特征 + 战略建议，扫读用）',
         cls: 'kpe-textarea',
-        ariaLabel: `Cell ${i} detail`,
+        ariaLabel: `Cell ${i} detail (front)`,
         onInput: (v) => {
           current.cells[i] = { ...current.cells[i]!, detail: v };
+          onChange(current);
+        },
+      }),
+    );
+
+    // v0.8.33: 背面 detail — 跟 compare 卡的 detail 同语义（详细描述段落）。
+    // 空也可翻面，背面只显示小号 name；填了内容才有阅读价值。
+    cell.appendChild(
+      textarea({
+        value: current.cells[i]!.detailBack ?? '',
+        rows: 4,
+        placeholder: '背面文字（详细描述段落，深入阅读；可空）',
+        cls: 'kpe-textarea',
+        ariaLabel: `Cell ${i} detail (back)`,
+        onInput: (v) => {
+          current.cells[i] = { ...current.cells[i]!, detailBack: v };
           onChange(current);
         },
       }),
