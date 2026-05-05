@@ -57,11 +57,13 @@ const allSchoolsRes = await db
   .all<{ key: string; title_zh: string }>();
 const schoolNameByKey = new Map((allSchoolsRes.results ?? []).map((s) => [s.key, s.title_zh]));
 
-// v0.8.20 三层原则 (PRD §6.2.3 final):
-//   - 右栏顶 3px strip = page chrome accent (表达"这是 X 学派" page 身份) → 学派色 hex
-//   - KP list dot / items numbering / cells = page interior decoration → 中性 (var(--text-3))
-//   - lang-toggle / LangFab / Star = focus action → L1 var(--primary)
-// v0.8.20 fix v0.8.19 砍过头 — 右栏顶 strip 是 page chrome 不是 redundant decoration。
+// v0.8.21 三层原则 (PRD §6.2.3 修正):
+//   - 右栏顶 3px strip + 左栏 active KP 左侧色条 + 右栏 body items numbering / cells
+//     全部 = page chrome accent → 学派色 hex (用户确认 page interior 也要 tag 色)
+//   - lang-toggle / LangFab / Star = focus action → L1 var(--primary) (不变)
+// 修正动机：v0.8.20 把 page interior 强制中性 (var(--text-3))，但 split-pane layout 中
+// list 左侧 active 条 + body 圆数字 是同一 page 视觉延伸，全收成中性失去身份感。用户
+// fb：三个地方应一致 tag 色。
 
 type KpListItem = {
   id: string; title_zh: string; title_en: string | null; title_ja: string | null; year: string;
@@ -242,7 +244,7 @@ const canEdit = Astro.locals.canEdit(discipline);
           </header>
           <div class="mt-6" set:html={renderStructuredBody({
             body: selectedBody!,
-            accentHex: 'var(--text-3)',
+            accentHex,
             variant: 'school',
           })} />
           <div set:html={renderEvalModule(selectedEvalContent)} />
@@ -374,7 +376,12 @@ const canEdit = Astro.locals.canEdit(discipline);
             >+ 新增</a>
           </div>
         )}
-        <ul class="optA-kps drag-reorder" data-reorder-kind="school-concepts" data-school-key={sch.key}>
+        <ul
+          class="optA-kps drag-reorder"
+          data-reorder-kind="school-concepts"
+          data-school-key={sch.key}
+          style={`--accent: ${accentHex}`}
+        >
           {kps.map((k) => {
             const scholarKeys = (k.scholars_csv ?? '').split(',').filter(Boolean);
             const scholarLabel = scholarKeys
@@ -388,7 +395,7 @@ const canEdit = Astro.locals.canEdit(discipline);
               : JSON.parse(k.body_zh_json) as KpBody;
             const inlineBodyHtml = renderStructuredBody({
               body: inlineBody,
-              accentHex: 'var(--text-3)',
+              accentHex,
               variant: 'school',
             });
             const evalRaw = useJa ? k.evaluations_ja_json : k.evaluations_zh_json;
@@ -489,7 +496,7 @@ const canEdit = Astro.locals.canEdit(discipline);
             </header>
             <div class="mt-6" set:html={renderStructuredBody({
               body: selectedBody!,
-              accentHex: 'var(--text-3)',
+              accentHex,
               variant: 'school',
             })} />
             <div set:html={renderEvalModule(selectedEvalContent)} />

@@ -63,11 +63,12 @@ const scholar = await db
   }>();
 if (!scholar) return Astro.redirect('/404');
 
-// v0.8.20 三层原则 (PRD §6.2.3 final):
-//   - 右栏顶 3px strip + 顶部 schools chip = page chrome accent → 学派色 hex (resolveAccentForSchool)
-//   - KP list dot / items numbering / cells = page interior decoration → 中性 (var(--text-3))
-//   - lang-toggle / LangFab / Star = focus action → L1 var(--primary)
-// 学者跨多学派 chip 着色仍有区分价值 (跨 entity)；scholar.schools[0] 决定右栏 strip page 身份色。
+// v0.8.21 三层原则 (PRD §6.2.3 修正):
+//   - 右栏顶 3px strip + 左栏 active KP 左侧色条 + 右栏 body items numbering / cells
+//     全部 = page chrome accent → 学派色 hex (用户确认 page interior 也要 tag 色)
+//   - lang-toggle / LangFab / Star = focus action → L1 var(--primary) (不变)
+// 学者跨多学派：scholar.schools[0] 决定全 page 的 accent。学者顶部 schools chip 仍按
+// 各 chip 自己的学派 hex 着色 (跨 entity 区分)，与 page chrome accent 各司其职。
 
 // v0.8.20: discipline.tags_json → resolveAccentForSchool lookup (always 需要 — partial 模式右栏 strip 也用)
 const discRow = await db
@@ -250,7 +251,7 @@ const canEdit = Astro.locals.canEdit(discipline);
           </header>
           <div class="mt-6" set:html={renderStructuredBody({
             body: selectedBody!,
-            accentHex: 'var(--text-3)',
+            accentHex: scholarAccentHex,
             variant: 'school',
           })} />
           <div set:html={renderEvalModule(selectedEvalContent)} />
@@ -452,6 +453,7 @@ const canEdit = Astro.locals.canEdit(discipline);
             class:list={['optA-kps', canEdit && 'drag-reorder']}
             data-reorder-kind={canEdit ? 'scholar-kps' : undefined}
             data-scholar-key={canEdit ? scholar.key : undefined}
+            style={`--accent: ${scholarAccentHex}`}
           >
             {kps.map((k) => {
               const isActive = selectedKpId === k.id;
@@ -465,7 +467,7 @@ const canEdit = Astro.locals.canEdit(discipline);
                 : JSON.parse(k.body_zh_json) as KpBody;
               const inlineBodyHtml = renderStructuredBody({
                 body: inlineBody,
-                accentHex: 'var(--text-3)',
+                accentHex: scholarAccentHex,
                 variant: 'school',
               });
               const evalRaw = useJa ? k.evaluations_ja_json : k.evaluations_zh_json;
@@ -563,7 +565,7 @@ const canEdit = Astro.locals.canEdit(discipline);
             </header>
             <div class="mt-6" set:html={renderStructuredBody({
               body: selectedBody!,
-              accentHex: 'var(--text-3)',
+              accentHex: scholarAccentHex,
               variant: 'school',
             })} />
             <div set:html={renderEvalModule(selectedEvalContent)} />
@@ -726,15 +728,22 @@ const canEdit = Astro.locals.canEdit(discipline);
     color: var(--text-3);
     font-weight: 400;
   }
-  /* dark mode：bg 加深透明度 + 字色 calc(l + 0.15) 提亮 */
+  /* v0.8.21 dark mode 调整：原 +0.15 对低 L 学派色 (#10B981 OB L≈0.69) 合 0.84，
+     在 dark bg 上可读但偏暗；en 走 --text-3 (L=0.55) 在绿染底上洗成糊状。
+     调整：bg/border 加深、zh 偏移到 +0.22 (OB → L≈0.91)，en 切到 var(--text-2) 提到 L=0.70。 */
   :global([data-mode="dark"]) .scholar-school-chip {
-    background: oklch(from var(--accent) l c h / 0.22);
+    background: oklch(from var(--accent) l c h / 0.28);
+    border-color: oklch(from var(--accent) l c h / 0.45);
   }
   :global([data-mode="dark"]) .scholar-school-chip-zh {
-    color: oklch(from var(--accent) calc(l + 0.15) c h);
+    color: oklch(from var(--accent) calc(l + 0.22) c h);
+  }
+  :global([data-mode="dark"]) .scholar-school-chip-en {
+    color: var(--text-2);
   }
   :global([data-mode="dark"]) .scholar-school-chip[data-accent-neutral] {
     background: var(--bg-soft);
+    border-color: var(--border);
   }
   :global([data-mode="dark"]) .scholar-school-chip[data-accent-neutral] .scholar-school-chip-zh {
     color: var(--text);
