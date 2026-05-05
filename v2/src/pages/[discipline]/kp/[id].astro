@@ -160,6 +160,8 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
   {bodyJa && <LangFab lang={lang} accentHex="var(--primary)" />}
 </Layout>
 
+<script is:inline src="/cmpc-flip.js"></script>
+
 <script is:inline>
   // Cmd/Ctrl + J：切换日语 / 中文（V1 search.js:344 移植）
   (function () {
