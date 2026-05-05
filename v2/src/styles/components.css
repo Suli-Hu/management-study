@@ -1307,13 +1307,19 @@ details.eval {
   .cmpc-card { padding: 0; }       /* padding 让 .cmpc-face 自带 */
   .cmpc-face { padding: 16px; }
   .cmpc-headline { font-size: 18px; }
-  /* v0.8.28: 手机端 detail 改 inline expand 而不是 flip */
-  .cmpc-card-inner { transform-style: flat; transition: none; }
+  /* v0.8.28: 手机端 detail 改 inline expand 而不是 flip
+   * v0.8.32: 重置桌面 .cmpc-face/.cmpc-card-inner 的 height:100%；
+   *   单列 grid 不需要 stretch，cards 跟内容自适应高度。
+   *   原 height:100% 让 .cmpc-back 跟 max-height:600px 冲突，detail 不可见。 */
+  .cmpc-card { height: auto; }
+  .cmpc-card-inner { transform-style: flat; transition: none; height: auto; }
   .cmpc-card.is-flipped .cmpc-card-inner { transform: none; }
+  .cmpc-front { height: auto; }
   .cmpc-back {
     position: static;
     transform: none;
     inset: auto;
+    height: auto;                  /* v0.8.32: 重置桌面 height:100% */
     overflow: hidden;
     max-height: 0;
     padding-top: 0; padding-bottom: 0;
@@ -1325,11 +1331,13 @@ details.eval {
     background: var(--bg-soft);
   }
   .cmpc-card.is-flipped .cmpc-back {
-    max-height: 600px;             /* 大于绝大多数 detail；overflow auto 兜超长 */
-    overflow-y: auto;
+    max-height: 1000px;            /* v0.8.32: 600 → 1000，更长 detail (m036 248 字) 不被截 */
+    overflow-y: visible;           /* 单列 stack 时让 detail 自然撑高，不内部滚 */
     padding: 14px 16px;
     border-top: 1px dashed var(--border);
   }
+  /* 手机端点击响应优化：去 300ms 双击延迟 */
+  .cmpc-card.is-flippable { touch-action: manipulation; }
   /* v0.8.29: .cmpc-flip-toggle 已删 (renderer 不再 emit) — 手机端也清掉相关规则 */
 
   /* quad chart 强制 stack：去 axis 旋转 + 4 cells 一列 */
