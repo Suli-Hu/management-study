@@ -42,13 +42,14 @@ if (!disc) return Astro.redirect('/404');
 // v0.8.15 Stage 6 chip 4: drop scholar.lifespan SELECT — migration 0021 已 DROP 该列
 // (v0.8.9 Stage 4.6 Q1=B)。本地 dev 直接 D1_ERROR 无法渲染；prod 推测同样断（无人触达）。
 // fallback 由 born/died 即可，lifespan 显示已废弃 — minimalism 第 6 次贯彻。
+// v0.8.23: 加 tags_json — schema scholar.ts:35 注 "scholar.tags[0] 决定学者卡片色"。
 const scholar = await db
   .prepare(`
     SELECT key, discipline, name_zh, name_en, name_ja,
       contribution_zh, contribution_ja,
       institution,
       born, died, nationality, flag, origin, field,
-      nobel_year, nobel_detail
+      nobel_year, nobel_detail, tags_json
     FROM scholar
     WHERE key = ? AND discipline = ?
   `)
@@ -60,6 +61,7 @@ const scholar = await db
     born: string | null; died: string | null; nationality: string | null; flag: string | null;
     origin: string | null; field: string | null;
     nobel_year: string | null; nobel_detail: string | null;
+    tags_json: string | null;
   }>();
 if (!scholar) return Astro.redirect('/404');
 
@@ -67,8 +69,9 @@ if (!scholar) return Astro.redirect('/404');
 //   - 右栏顶 3px strip + 左栏 active KP 左侧色条 + 右栏 body items numbering / cells
 //     全部 = page chrome accent → 学派色 hex (用户确认 page interior 也要 tag 色)
 //   - lang-toggle / LangFab / Star = focus action → L1 var(--primary) (不变)
-// 学者跨多学派：scholar.schools[0] 决定全 page 的 accent。学者顶部 schools chip 仍按
-// 各 chip 自己的学派 hex 着色 (跨 entity 区分)，与 page chrome accent 各司其职。
+// v0.8.23: scholarAccentHex 解析顺序改 scholar.tags[0] 优先 → schools[0] → 中性。
+// 原 schools[0] 优先逻辑在 schools 都没 tag 时退中性 (Ansoff 例 schools 全无 tag 但
+// scholar.tags=['t_jg440q'] SM 蓝)，导致 page chrome 失色。
 
 // v0.8.20: discipline.tags_json → resolveAccentForSchool lookup (always 需要 — partial 模式右栏 strip 也用)
 const discRow = await db
@@ -77,6 +80,12 @@ const discRow = await db
   .first<{ tags_json: string | null }>();
 const tagDefs = JSON.parse(discRow?.tags_json ?? '[]') as Array<{ key: string; color: string }>;
 const disciplineLookup = { tags: tagDefs };
+
+// v0.8.23: scholar 自己的 tag 解析（优先于 schools[0]）
+const scholarOwnAccentHex = resolveAccentForSchool(
+  { tags: JSON.parse(scholar.tags_json || '[]') as string[] },
+  disciplineLookup,
+);
 
 let schools: Array<{ key: string; title_zh: string; title_en: string | null; theme_key: string; accentHex: string }> = [];
 type KpListItem = {
@@ -89,15 +98,20 @@ type KpListItem = {
 let kps: KpListItem[] = [];
 
 // v0.8.20: schools query 移出 !isPartial — partial 模式右栏 page chrome strip 也需要 schools[0].accent
+// v0.8.23 fix 跨学科泄露：scholar_school PK = (scholar_discipline, scholar_key, school_key)
+//   而 school PK 全局唯一 key — 老 query 仅 ss.scholar_key=? 漏 ss.scholar_discipline=?，
+//   keiei ansoff 误 join 到 marketing 的 "战略营销" 学派。加 discipline 双重过滤。
 const schoolsResult = await db
   .prepare(`
     SELECT s.key, s.title_zh, s.title_en, s.theme_key, s.tags_json
     FROM school s
     INNER JOIN scholar_school ss ON ss.school_key = s.key
     WHERE ss.scholar_key = ?
+      AND ss.scholar_discipline = ?
+      AND s.discipline = ?
     ORDER BY ss.position, s.key
   `)
-  .bind(key)
+  .bind(key, discipline, discipline)
   .all<{ key: string; title_zh: string; title_en: string | null; theme_key: string; tags_json: string | null }>();
 schools = (schoolsResult.results ?? []).map((s) => ({
   key: s.key,
@@ -111,13 +125,20 @@ schools = (schoolsResult.results ?? []).map((s) => ({
   ),
 }));
 
-// 学者 page chrome accent — 取首学派 (跨多学派学者按 position 排第一个)
-const scholarAccentHex = schools[0]?.accentHex ?? 'var(--text-3)';
+// v0.8.23 学者 page chrome accent 解析顺序：
+//   1. scholar.tags[0] (schema 第一定义 — Ansoff 例 schools 都没 tag 但 scholar 有 SM 蓝)
+//   2. schools[0] tag (跨学派学者：选首学派色)
+//   3. 中性灰 fallback
+const scholarAccentHex = !scholarOwnAccentHex.startsWith('var(')
+  ? scholarOwnAccentHex
+  : (schools[0]?.accentHex ?? 'var(--text-3)');
 
 if (!isPartial) {
 
   // v0.5.33: ORDER BY ks.position 让 scholar.kpsOrder（拖动后保存）生效
   // v0.8.10: pull v0.8 列做 inline 展开
+  // v0.8.23 跨学科隔离：kp_scholar PK = (kp_id, scholar_discipline, scholar_key)，
+  //   补 ks.scholar_discipline + k.discipline 双重 filter 防同名 scholar / KP 越界泄露。
   const kpsResult = await db
     .prepare(`
       SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year,
@@ -126,11 +147,13 @@ if (!isPartial) {
       FROM kp k
       INNER JOIN kp_scholar ks ON ks.kp_id = k.id
       WHERE ks.scholar_key = ?
+        AND ks.scholar_discipline = ?
+        AND k.discipline = ?
       ORDER BY ks.position,
         CASE WHEN k.year = '' OR k.year IS NULL THEN 1 ELSE 0 END,
         k.year, k.id
     `)
-    .bind(key)
+    .bind(key, discipline, discipline)
     .all<KpListItem>();
   kps = kpsResult.results ?? [];
 }
@@ -149,13 +172,17 @@ if (selectedKpId) {
   selectedKp = kpRow ?? null;
   if (selectedKp) {
     // selectedEvalContent 推迟到下面 selectedLang 计算之后，按 lang 选 zh/ja json
+    // v0.8.23 跨学科隔离：scholar PK (discipline, key) — 必 JOIN 双键防 ansoff (keiei) 误 join
+    //   ansoff (marketing)。
     const scRes = await db
       .prepare(`
         SELECT sc.key, sc.name_zh, sc.name_en
-        FROM scholar sc INNER JOIN kp_scholar ks ON ks.scholar_key = sc.key
-        WHERE ks.kp_id = ? ORDER BY ks.position
+        FROM scholar sc INNER JOIN kp_scholar ks
+          ON ks.scholar_key = sc.key AND ks.scholar_discipline = sc.discipline
+        WHERE ks.kp_id = ? AND sc.discipline = ?
+        ORDER BY ks.position
       `)
-      .bind(selectedKpId)
+      .bind(selectedKpId, discipline)
       .all<{ key: string; name_zh: string; name_en: string | null }>();
     selectedScholars = scRes.results ?? [];
   }
@@ -688,9 +715,10 @@ const canEdit = Astro.locals.canEdit(discipline);
 
 <style>
   /*
-   * v0.8.20: 学者详情页"所属学派" chip — 单条 oklch(from var(--accent) ...) 规则
-   * accent 由 inline style={`--accent: ${hex}`} 注入 (resolveAccentForSchool 真实 hex)。
-   * 替代 v0.8.15 的 8 个 hardcoded data-tag CSS 规则。
+   * v0.8.23: "所属学派" chip — Option B「solid filled tag」(用户 fb confirm)
+   * 用户 fb：tinted-bg 公式在 dark mode 始终偏暗。改实底填色 + 白字 — 辨识度最高、
+   * dark/light 一致、完全无对比问题。配套 KP 详情页 .kp-school-chip 同步改 (kp/[id].astro)。
+   * accent 由 inline style={`--accent: ${hex}`} 注入。
    */
   .scholar-schools-chips {
     display: flex; flex-wrap: wrap; gap: 8px;
@@ -700,53 +728,34 @@ const canEdit = Astro.locals.canEdit(discipline);
     display: inline-flex; align-items: baseline; gap: 6px;
     padding: 6px 12px;
     border-radius: 999px;
-    background: oklch(from var(--accent) l c h / 0.18);
-    border: 1px solid oklch(from var(--accent) l c h / 0.30);
+    background: var(--accent);
+    border: 1px solid var(--accent);
     font-size: 13px;
     text-decoration: none;
     line-height: 1.3;
-    transition: opacity .14s, transform .14s;
+    transition: opacity .14s, transform .14s, box-shadow .14s;
   }
-  /* fallback — 没填 tag 的学派 (accentHex='var(--text-3)' 不是 hex) */
+  /* fallback — accentHex='var(--text-3)' 时实底中性灰 + 白字仍可读 */
   .scholar-school-chip[data-accent-neutral] {
-    background: var(--bg-soft);
-    border-color: var(--border);
+    background: var(--text-3);
+    border-color: var(--text-3);
   }
   .scholar-school-chip:hover {
-    opacity: 1;             /* 抵消 global a:hover { opacity: 0.8 } */
+    opacity: 1;
     transform: translateY(-1px);
+    box-shadow: 0 2px 8px oklch(from var(--accent) l c h / 0.25);
   }
   .scholar-school-chip-zh {
     font-weight: 600;
-    color: oklch(from var(--accent) calc(l - 0.40) c h);
-  }
-  .scholar-school-chip[data-accent-neutral] .scholar-school-chip-zh {
-    color: var(--text);
+    color: #fff;
   }
   .scholar-school-chip-en {
     font-size: 11.5px;
-    color: var(--text-3);
+    color: oklch(1 0 0 / 0.78);
     font-weight: 400;
   }
-  /* v0.8.21 dark mode 调整：原 +0.15 对低 L 学派色 (#10B981 OB L≈0.69) 合 0.84，
-     在 dark bg 上可读但偏暗；en 走 --text-3 (L=0.55) 在绿染底上洗成糊状。
-     调整：bg/border 加深、zh 偏移到 +0.22 (OB → L≈0.91)，en 切到 var(--text-2) 提到 L=0.70。 */
-  :global([data-mode="dark"]) .scholar-school-chip {
-    background: oklch(from var(--accent) l c h / 0.28);
-    border-color: oklch(from var(--accent) l c h / 0.45);
-  }
-  :global([data-mode="dark"]) .scholar-school-chip-zh {
-    color: oklch(from var(--accent) calc(l + 0.22) c h);
-  }
-  :global([data-mode="dark"]) .scholar-school-chip-en {
-    color: var(--text-2);
-  }
-  :global([data-mode="dark"]) .scholar-school-chip[data-accent-neutral] {
-    background: var(--bg-soft);
-    border-color: var(--border);
-  }
-  :global([data-mode="dark"]) .scholar-school-chip[data-accent-neutral] .scholar-school-chip-zh {
-    color: var(--text);
+  :global([data-mode="dark"]) .scholar-school-chip:hover {
+    box-shadow: 0 2px 10px oklch(from var(--accent) l c h / 0.45);
   }
 </style>
 </Fragment>

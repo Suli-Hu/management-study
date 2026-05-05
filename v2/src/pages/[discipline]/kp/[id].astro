@@ -36,15 +36,16 @@ const bodyJa = kp.body_ja_json ? JSON.parse(kp.body_ja_json) as KpBody : null;
 //   - lang-toggle / LangFab = focus action → L1 var(--primary)
 
 // 关联学派 + 学者；v0.8.20: pull tags_json 给 resolveAccentForSchool() 当 input
+// v0.8.23 跨学科隔离：补 s.discipline=? 防 kp_school 跨学科 link 时泄露邻学科 school。
 const schoolsResult = await db
   .prepare(`
     SELECT s.key, s.title_zh, s.tags_json
     FROM school s
     INNER JOIN kp_school ks ON ks.school_key = s.key
-    WHERE ks.kp_id = ?
+    WHERE ks.kp_id = ? AND s.discipline = ?
     ORDER BY ks.position
   `)
-  .bind(id)
+  .bind(id, discipline)
   .all<{ key: string; title_zh: string; tags_json: string | null }>();
 // discipline.tags lookup
 const discRow = await db
@@ -62,15 +63,17 @@ const schools = (schoolsResult.results ?? []).map((s) => ({
   ),
 }));
 
+// v0.8.23 跨学科隔离：scholar PK (discipline, key) — 必 JOIN 双键 + filter 双 discipline。
 const scholarsResult = await db
   .prepare(`
     SELECT sc.key, sc.name_zh, sc.name_en
     FROM scholar sc
-    INNER JOIN kp_scholar ks ON ks.scholar_key = sc.key
-    WHERE ks.kp_id = ?
+    INNER JOIN kp_scholar ks
+      ON ks.scholar_key = sc.key AND ks.scholar_discipline = sc.discipline
+    WHERE ks.kp_id = ? AND sc.discipline = ?
     ORDER BY ks.position
   `)
-  .bind(id)
+  .bind(id, discipline)
   .all<{ key: string; name_zh: string; name_en: string | null }>();
 const scholars = scholarsResult.results ?? [];
 
@@ -279,6 +282,8 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
     margin-top: 14px;
     align-items: center;
   }
+  /* v0.8.23: Option B「solid filled tag」— 同 scholar-school-chip 风格联动
+     (跨页学派 chip 视觉统一)。bg = accent hex 实底 + 白字。 */
   .kp-school-chip {
     display: inline-flex;
     align-items: center;
@@ -287,28 +292,22 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
     font-size: 12px;
     font-weight: 600;
     text-decoration: none;
-    border: 1px solid var(--border);
-    background: var(--bg-elev);
-    color: var(--text-2);
-    transition: border-color .14s, color .14s, background .14s;
+    background: var(--accent, var(--text-3));
+    border: 1px solid var(--accent, var(--text-3));
+    color: #fff;
+    transition: opacity .14s, transform .14s, box-shadow .14s;
   }
   .kp-school-chip:hover {
-    border-color: var(--text-3);
-    color: var(--text);
     opacity: 1;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px oklch(from var(--accent, var(--text-3)) l c h / 0.25);
   }
-  /* v0.8.20: 学派 chip 着色 — 单条 oklch(from var(--accent) ...) 规则，accent 由 inline
-     style={`--accent: ${hex}`} 注入 (resolveAccentForSchool 真实 hex)。 */
-  .kp-school-chip[style*="--accent"]:not([data-accent-neutral]) {
-    background: oklch(from var(--accent) l c h / 0.15);
-    color: oklch(from var(--accent) calc(l - 0.40) c h);
-    border-color: oklch(from var(--accent) l c h / 0.30);
+  .kp-school-chip[data-accent-neutral] {
+    background: var(--text-3);
+    border-color: var(--text-3);
   }
-  /* Dark mode 提亮（base l ≈ 0.75，calc(l + 0.15) ≈ 0.90 在 dark bg 上对比足） */
-  :global([data-mode="dark"]) .kp-school-chip[style*="--accent"]:not([data-accent-neutral]) {
-    background: oklch(from var(--accent) l c h / 0.22);
-    color: oklch(from var(--accent) calc(l + 0.15) c h);
-    border-color: oklch(from var(--accent) l c h / 0.40);
+  :global([data-mode="dark"]) .kp-school-chip:hover {
+    box-shadow: 0 2px 10px oklch(from var(--accent, var(--text-3)) l c h / 0.45);
   }
 
   /* ---- body wrapper ---- */

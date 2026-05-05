@@ -80,18 +80,23 @@ let scholarByKey = new Map<string, { key: string; name_zh: string; name_en: stri
 let schoolScholars: Array<{ key: string; name_zh: string; name_en: string | null; name_ja: string | null; first: string; last: string }> = [];
 
 if (!isPartial) {
+  // v0.8.23 跨学科隔离：补 k.discipline=? 防 kp_school 跨学科 link 时邻学科 KP 漏入。
+  // scholars_csv 子查询补 scholar_discipline=k.discipline 过滤同名跨学科 scholar。
   const kpsResult = await db
     .prepare(`
       SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year,
         k.body_zh_json, k.body_ja_json, k.body_format,
         k.evaluations_zh_json, k.evaluations_ja_json,
-        (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id ORDER BY position) as scholars_csv
+        (SELECT GROUP_CONCAT(scholar_key, ',')
+           FROM kp_scholar
+           WHERE kp_id = k.id AND scholar_discipline = k.discipline
+           ORDER BY position) as scholars_csv
       FROM kp k
       INNER JOIN kp_school ks ON ks.kp_id = k.id
-      WHERE ks.school_key = ?
+      WHERE ks.school_key = ? AND k.discipline = ?
       ORDER BY ks.position, k.id
     `)
-    .bind(school)
+    .bind(school, discipline)
     .all<KpListItem>();
   kps = kpsResult.results ?? [];
 
@@ -101,15 +106,18 @@ if (!isPartial) {
     .all<{ key: string; name_zh: string; name_en: string | null }>();
   scholarByKey = new Map((scholarsLookupResult.results ?? []).map((s) => [s.key, s]));
 
+  // v0.8.23 跨学科隔离：scholar_school PK (scholar_discipline, scholar_key, school_key) —
+  //   补 ss.scholar_discipline=? + sc.discipline=? 双重过滤防同名 scholar 跨学科泄露。
   const schoolScholarsResult = await db
     .prepare(`
       SELECT sc.key, sc.name_zh, sc.name_en, sc.name_ja
       FROM scholar sc
-      INNER JOIN scholar_school ss ON ss.scholar_key = sc.key
-      WHERE ss.school_key = ?
+      INNER JOIN scholar_school ss
+        ON ss.scholar_key = sc.key AND ss.scholar_discipline = sc.discipline
+      WHERE ss.school_key = ? AND sc.discipline = ?
       ORDER BY ss.position, sc.key
     `)
-    .bind(school)
+    .bind(school, discipline)
     .all<{ key: string; name_zh: string; name_en: string | null; name_ja: string | null }>();
   schoolScholars = (schoolScholarsResult.results ?? [])
     .map((s) => ({ ...s, ...splitName(s.name_en ?? s.name_zh) }))
@@ -127,12 +135,16 @@ const langParam = Astro.url.searchParams.get('lang');
 let selectedKp: KpListItem | null = null;
 if (selectedKpId) {
   if (isPartial) {
+    // v0.8.23 跨学科隔离：scholars_csv 子查询补 scholar_discipline=k.discipline。
     selectedKp = await db
       .prepare(`
         SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year,
           k.body_zh_json, k.body_ja_json, k.body_format,
           k.evaluations_zh_json, k.evaluations_ja_json,
-          (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id ORDER BY position) as scholars_csv
+          (SELECT GROUP_CONCAT(scholar_key, ',')
+             FROM kp_scholar
+             WHERE kp_id = k.id AND scholar_discipline = k.discipline
+             ORDER BY position) as scholars_csv
         FROM kp k WHERE k.id = ? AND k.discipline = ?
       `)
       .bind(selectedKpId, discipline)

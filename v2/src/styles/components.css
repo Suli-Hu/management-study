@@ -479,12 +479,13 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 
 
 /* ============================================================
- * Evaluation 6 字段 panel — v0.8.13 Stage 6 chip 2
+ * Evaluation 6 字段 panel — v0.8.23 回滚到 v0.5.46 简洁版
  *
- * 设计参考 kp-edit.css `.kpe-eval-row` (editor v0.8 layout)：
- *   - LHS 84px 列：圆 glyph (义/限/例/应/用/喻) + 中文双字 (意义/局限/...) + 英文 mini
- *   - is-filled 默认（详情页只渲染填了的字段）→ bg = --primary-soft + border = --primary
- *   - 整 row 一张卡，行间 6px gap（vs editor），干净对齐
+ * 用户 fb：v0.8.13 的 84px LHS 圆 glyph + 双标签 layout 太复杂；原"绿色意义/红色局限"
+ * 就挺好。回滚到 hanging indent + tone-pill：
+ *   - 56px pill (中文双字) + 1fr text，左对齐
+ *   - tone 三组语义色（义/应/用 绿，限 红，例/喻 灰）— 写死 hex 与学派 accent 无关
+ *   - 行间 1px 弱 hr 分隔，去 row card 容器
  * ============================================================ */
 details.eval {
   margin-top: 32px;
@@ -515,71 +516,34 @@ details.eval {
   transition: transform .15s;
 }
 
-.eval-rows {
+.eval-list {
   display: flex; flex-direction: column;
-  gap: 6px;
 }
 .eval-row {
   display: grid;
-  grid-template-columns: 84px 1fr;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--bg-elev);
-  transition: background .15s, border-color .15s;
+  grid-template-columns: 56px 1fr;  /* pill 列固定宽，多行 text 自动 hang */
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: baseline;
 }
-.eval-row.is-filled {
-  background: var(--primary-soft);
-  border-color: color-mix(in oklab, var(--primary) 25%, var(--border));
-}
-.eval-lhs {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 4px;
-  padding: 12px 6px;
-  background: var(--bg-soft);
-  border-right: 1px solid var(--border);
-  transition: background .15s, border-color .15s;
-}
-.eval-row.is-filled .eval-lhs {
-  background: color-mix(in oklab, var(--primary) 8%, var(--primary-soft));
-  border-right-color: color-mix(in oklab, var(--primary) 25%, var(--border));
-}
-.eval-glyph {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 28px; height: 28px;
-  background: var(--bg-elev);
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  font-size: 14px; font-weight: 700;
-  color: var(--text);
-}
-.eval-row.is-filled .eval-glyph {
-  border-color: var(--primary);
-  color: var(--primary);
-}
-.eval-tag-name {
-  font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
-  color: var(--text-2);
-}
-.eval-row.is-filled .eval-tag-name { color: var(--primary); }
-.eval-tag-en {
-  font-size: 9.5px; font-weight: 500; letter-spacing: 0.05em;
-  color: var(--text-3);
-  text-transform: lowercase;
-}
-.eval-row.is-filled .eval-tag-en {
-  color: color-mix(in oklab, var(--primary) 65%, var(--text-3));
+.eval-row:last-child { border-bottom: 0; }
+.eval-pill {
+  font-size: 11px; font-weight: 600;
+  color: var(--tone, var(--text-3));
+  background: color-mix(in oklab, var(--tone, currentColor) 10%, transparent);
+  padding: 3px 0;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  text-align: center;
+  line-height: 1.4;
 }
 .eval-text {
-  padding: 12px 14px;
-  font-size: 13px; line-height: 1.85;
+  font-size: 12.5px; line-height: 1.9;
   color: var(--text-2);
   text-wrap: pretty;
-  align-self: center;
 }
 .eval-text strong, .eval-text b { color: var(--text); font-weight: 600; }
-.eval-row.is-filled .eval-text { color: var(--text); }
 
 
 /* ============================================================
