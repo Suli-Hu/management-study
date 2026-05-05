@@ -161,6 +161,10 @@ export function renderCompareStructured(body: CompareBody, accentHex: string): s
 
 /** compare 卡片版（学派详情页用）
  * v0.8.28: detail 字段从 meta 列表里移出来，做卡片"背面"。
+ * v0.8.29:
+ *   - 删卡片上"详情 ↻"/"↺ 返回"文字（用户 fb：affordance 走 hover 阴影 + 鼠标 cursor 即可）
+ *   - 卡片 height:100% chain 确保 stretched grid cell 不露透明 gap
+ *
  *   - PC (≥1024px): 正面 hover 出阴影提示可翻；click → CSS 3D rotateY(180deg) 翻到背面
  *   - 手机 (<1024px): 正面下方 inline 展开 detail (max-height 过渡)
  *   - 没填 detail 的列保留原扁平展示，无翻转 affordance
@@ -183,13 +187,11 @@ export function renderCompareCardsStructured(body: CompareBody, accentHex: strin
           ${c.keyword ? `<div class="cmpc-headline">${esc(c.keyword)}</div>` : ''}
           ${c.desc ? `<div class="cmpc-sub">${esc(c.desc)}</div>` : ''}
           ${metaHtml}
-          ${hasDetail ? `<button type="button" class="cmpc-flip-toggle cmpc-flip-toggle--front" tabindex="-1" aria-hidden="true">详情 ↻</button>` : ''}
         </div>`;
       const backInner = hasDetail
         ? `
         <div class="cmpc-face cmpc-back">
           <div class="cmpc-detail">${c.detail}</div>
-          <button type="button" class="cmpc-flip-toggle cmpc-flip-toggle--back" tabindex="-1" aria-hidden="true">↺ 返回</button>
         </div>`
         : '';
       return `

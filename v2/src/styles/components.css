@@ -413,6 +413,7 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 }
 .cmpc-card {
   position: relative;
+  height: 100%;                  /* v0.8.29: 填满 stretched grid cell，避免 transparent gap */
   border-radius: 12px;
   background: transparent;       /* 实底色挂在 .cmpc-face 上让 backface 也有底 */
   transition: box-shadow .2s, transform .2s;
@@ -432,6 +433,7 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 .cmpc-card-inner {
   position: relative;
   width: 100%;
+  height: 100%;                  /* v0.8.29: 同上，传递 stretched 高度 */
   transform-style: preserve-3d;
   transition: transform .55s cubic-bezier(.4, 0, .2, 1);
 }
@@ -446,6 +448,8 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   display: flex; flex-direction: column; gap: 6px;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  height: 100%;                  /* v0.8.29: 填满 .cmpc-card-inner，避免短卡 face 不到底 */
+  box-sizing: border-box;
 }
 .cmpc-front {
   position: relative;            /* num 绝对定位锚点 */
@@ -489,16 +493,7 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   text-wrap: pretty;
 }
 .cmpc-detail strong, .cmpc-detail b { color: var(--text); font-weight: 600; }
-.cmpc-flip-toggle {
-  align-self: flex-end;
-  margin-top: auto;              /* 推到卡底 */
-  font-size: 11px; font-weight: 500;
-  color: var(--text-3);
-  background: transparent; border: 0; padding: 4px 0;
-  letter-spacing: 0.04em;
-  pointer-events: none;          /* 点击事件由父 .cmpc-card 接管 */
-}
-.cmpc-flip-toggle--back { color: var(--accent, var(--text-3)); opacity: 0.7; }
+/* v0.8.29: .cmpc-flip-toggle 已删 (renderer 不再 emit 按钮)。affordance 走 hover 阴影 + cursor:pointer。 */
 
 /* ---- quad chart ----
  * v0.8.24:
@@ -1346,21 +1341,7 @@ details.eval {
     padding: 14px 16px;
     border-top: 1px dashed var(--border);
   }
-  .cmpc-card.is-flippable .cmpc-front::after {
-    /* 手机端用文字提示替代 hover 阴影 */
-    content: '';
-  }
-  .cmpc-flip-toggle--back {
-    /* 手机端"返回"按钮没意义（点卡片任何处都能合），隐藏 */
-    display: none;
-  }
-  .cmpc-flip-toggle--front {
-    /* 手机端"详情 ↻" 改成"展开 ▾"语义 — JS 切换时改 textContent 也行，但 CSS 简单些 */
-    font-size: 11.5px;
-  }
-  .cmpc-card.is-flipped .cmpc-flip-toggle--front {
-    color: var(--accent, var(--text-3));
-  }
+  /* v0.8.29: .cmpc-flip-toggle 已删 (renderer 不再 emit) — 手机端也清掉相关规则 */
 
   /* quad chart 强制 stack：去 axis 旋转 + 4 cells 一列 */
   .quad-wrap {
