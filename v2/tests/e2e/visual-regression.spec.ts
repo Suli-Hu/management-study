@@ -19,6 +19,8 @@ import { test, expect, type Page } from '@playwright/test';
  *   - v0.8.18 hotfix: 跨 component tag 色一致性 — split-pane 左 dot vs 右 body
  *   - v0.8.19 hotfix: redundant tag 着色全删 — page chrome 已表达，detail 页内部全中性
  *   - v0.8.20 hotfix: 三层原则 — page chrome 用 user-defined hex / interior 中性 / focus action L1
+ *   - v0.8.21 修正: split-pane 的 page interior (active KP 左色条 + body items numbering)
+ *     合入 page chrome 层，全 page tag 色一致 (用户 fb)
  *
  * 后续 chip 5 会扩到 列表 页面。
  *
@@ -90,24 +92,21 @@ test.describe('Stage 6 visual regression', () => {
 });
 
 /**
- * v0.8.20 三层原则落地防回归 (PRD §6.2.3 final)。
+ * v0.8.21 三层原则修正落地防回归 (PRD §6.2.3 修正)。
  *
- * 修两个根因 (PM brief 双重失误):
- *   1. chip 1 v0.8.12 起 hashToTagToken(school.key) 路径错 — 把 school.key
- *      hash 到 8 OKLCH token，完全 ignore school.tags[0] → discipline.tags[].color
- *      真实 hex (e.g. personality tags=['t_ejbdv3'] → '#10B981' 绿)。v0.8.20 切
- *      resolveAccentForSchool 走 user-defined hex。
- *   2. v0.8.19 砍过头 — 右栏顶 3px strip 是 page chrome 不是 redundant decoration，
- *      v0.8.20 恢复。
+ * v0.8.20 把 split-pane 内的 active KP 色条 + body items numbering 收成中性 var(--text-3)，
+ * 用户 fb 觉得跟 page chrome strip 视觉断裂。v0.8.21 把这两处合入 page chrome accent。
  *
- * 三层断言：
- *   - **page chrome accent** = 学派色 hex (resolveAccentForSchool — personality → #10B981 绿)
- *   - **page interior** = 中性 var(--text-3) (KP list dot / items numbering 仍删)
- *   - **focus action** = L1 var(--primary) (lang-toggle / LangFab)
+ * 修正后两层断言：
+ *   - **page chrome accent** = 学派色 hex (含右栏顶 strip / list active 色条 / body numbering)
+ *   - **focus action** = L1 var(--primary) (lang-toggle / LangFab) — 不变
+ *
+ * KP list dot v0.8.18 删，v0.8.19/20/21 都不加回 (URL 已表学派身份，dot 重复无价值)。
+ * KP 详情页 (/keiei/kp/...) body 仍中性 — 单 KP 页无 split-pane list 视觉延伸场景。
  *
  * 不依赖 screenshot 像素 diff — 抽 computed style，跨平台稳。
  */
-test.describe('v0.8.20 三层原则 (page chrome / interior / focus action)', () => {
+test.describe('v0.8.21 page chrome accent (strip / list active / body numbering)', () => {
   test.skip(!!process.env.CI, 'depends on local D1 + dev server, runs alongside other e2e on darwin');
 
   test('学派详情页右栏顶 strip 用 user-defined hex (#10B981 personality 绿)', async ({ page }) => {
@@ -124,21 +123,28 @@ test.describe('v0.8.20 三层原则 (page chrome / interior / focus action)', ()
     expect(stripBg, '右栏顶 page chrome strip 存在 + 用 personality 学派真实 hex (#10B981 绿)').toBe('#10B981');
   });
 
-  test('学派详情页 KP list dot / items numbering 仍中性 (page interior)', async ({ page }) => {
+  test('学派详情页 KP list dot 仍删 + body numbering 用学派 hex', async ({ page }) => {
     await login(page);
     await page.goto('/keiei/personality?kp=k364');
     await page.waitForLoadState('networkidle');
 
-    // KP list dot v0.8.19 删，v0.8.20 不加回 (page interior decoration，URL 已表学派)
+    // KP list dot v0.8.19 删，后续不加回 (URL 已表学派身份，dot 重复无价值)
     const dotCount = await page.locator('.kp-list-dot').count();
-    expect(dotCount, 'KP list dot 仍删 (page interior，不加回)').toBe(0);
+    expect(dotCount, 'KP list dot 仍删 (URL 表学派身份)').toBe(0);
 
-    // 右栏 body items numbering 的 --accent 仍中性 (var(--text-3))
+    // v0.8.21: 右栏 body items numbering 的 --accent 用 personality 学派 hex (#10B981)
     const rightAccent = await page.evaluate(() => {
       const bodyFmt = document.querySelector('.kp-detail-pane .body-fmt');
       return bodyFmt ? getComputedStyle(bodyFmt).getPropertyValue('--accent').trim() : null;
     });
-    expect(rightAccent, '右栏 body --accent 中性 var(--text-3) (page interior)').toBe('var(--text-3)');
+    expect(rightAccent, '右栏 body --accent 用 personality 学派真实 hex (#10B981)').toBe('#10B981');
+
+    // v0.8.21: 左栏 active KP <ul.optA-kps> 的 --accent 也是同 hex (active 左色条派生)
+    const ulAccent = await page.evaluate(() => {
+      const ul = document.querySelector<HTMLElement>('ul.optA-kps');
+      return ul ? ul.style.getPropertyValue('--accent').trim() : null;
+    });
+    expect(ulAccent, '左栏 KP list <ul> --accent 用学派真实 hex (active 左色条派生)').toBe('#10B981');
   });
 
   test('学者详情页右栏顶 strip 用首学派 hex', async ({ page }) => {
@@ -154,7 +160,7 @@ test.describe('v0.8.20 三层原则 (page chrome / interior / focus action)', ()
     expect(stripBg, '学者详情页右栏顶 strip 用首学派真实 hex').toMatch(/^#[0-9A-Fa-f]{6}$/);
   });
 
-  test('学者详情页 KP list dot 仍删 (page interior)', async ({ page }) => {
+  test('学者详情页 KP list dot 仍删 + body numbering 用首学派 hex', async ({ page }) => {
     await login(page);
     await page.goto('/keiei/scholars/hackman');
     await page.waitForLoadState('networkidle');
@@ -163,7 +169,21 @@ test.describe('v0.8.20 三层原则 (page chrome / interior / focus action)', ()
     await page.waitForTimeout(150);
 
     const dotCount = await page.locator('.kp-list-dot').count();
-    expect(dotCount, '学者详情页 KP list dot 仍删 (page interior)').toBe(0);
+    expect(dotCount, '学者详情页 KP list dot 仍删').toBe(0);
+
+    // v0.8.21: 右栏 body --accent 用 scholar.schools[0].accentHex (hackman → ob → #10B981)
+    const rightAccent = await page.evaluate(() => {
+      const bodyFmt = document.querySelector('.kp-detail-pane .body-fmt');
+      return bodyFmt ? getComputedStyle(bodyFmt).getPropertyValue('--accent').trim() : null;
+    });
+    expect(rightAccent, '学者详情页 body --accent 用首学派真实 hex').toMatch(/^#[0-9A-Fa-f]{6}$/);
+
+    // v0.8.21: 左栏 KP <ul.optA-kps> --accent 同步
+    const ulAccent = await page.evaluate(() => {
+      const ul = document.querySelector<HTMLElement>('ul.optA-kps');
+      return ul ? ul.style.getPropertyValue('--accent').trim() : null;
+    });
+    expect(ulAccent, '学者详情页 KP list <ul> --accent 用首学派真实 hex').toMatch(/^#[0-9A-Fa-f]{6}$/);
   });
 
   test('KP 详情页顶部 schools chip 用真实 hex inline --accent (跨多学派区分有意义)', async ({ page }) => {
