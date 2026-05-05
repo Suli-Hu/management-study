@@ -1,22 +1,34 @@
 /**
- * cmpc-flip.js — compare cards 翻转 / 展开交互 (v0.8.28)
+ * cmpc-flip.js — 卡片翻转 / 展开交互 (v0.8.28; v0.8.33 扩到 quad cell)
  *
- * - PC (≥1024px): click .cmpc-card.is-flippable → 切 .is-flipped → CSS 3D flip
+ * 目标元素：任何带 [data-flippable] 属性的卡（compare cards 的 .cmpc-card.is-flippable
+ * 或 quad 的 .quad-cell.is-flippable）。renderer 自己决定哪些 cell 加该属性。
+ *
+ * 行为：
+ * - PC (≥1024px): click → 切 .is-flipped → CSS 3D flip
  * - mobile (<1024px): 同样 click 切 .is-flipped → CSS max-height expand
- * - 键盘: Enter / Space 等价 click (.cmpc-card 自带 role=button + tabindex=0)
- * - 第二次点同卡 → 翻回 / 收起；点别的卡 → 老卡自动收起，新卡展开
+ * - Enter / Space 等价 click（卡片自带 role=button + tabindex=0）
+ * - 第二次点同卡 → 翻回 / 收起；点别的卡 → 老卡自动收
+ * - 互斥范围 = closest('.cmpc-grid, .quad-grid') (compare 同 grid 互斥；quad 同 grid 互斥)
  *
- * 同时存在 split-pane fetch swap (右栏 KP 切换重渲染) 时需重新绑事件 — 用
- * event delegation 挂 document 上，免重绑。
+ * 同时存在 split-pane fetch swap (右栏 KP 切换) 时需重新绑事件 — 用 event delegation
+ * 挂 document 上，免重绑。
+ *
+ * v0.8.33 重构：从 .cmpc-card.is-flippable 选择器改成 [data-flippable] 通用属性，
+ * compare 和 quad 共用此脚本。文件名保留 cmpc-flip.js 防 CDN cache 失效 404。
  */
 (function () {
+  function flippableTarget(e) {
+    return e && e.target && e.target.closest && e.target.closest('[data-flippable]');
+  }
+
   function toggleCard(card) {
-    if (!card || !card.classList.contains('is-flippable')) return;
+    if (!card) return;
     var willOpen = !card.classList.contains('is-flipped');
     // 同一 grid 里只允许一张卡翻开，避免视觉混乱
-    var grid = card.closest('.cmpc-grid');
+    var grid = card.closest('.cmpc-grid, .quad-grid');
     if (grid && willOpen) {
-      grid.querySelectorAll('.cmpc-card.is-flipped').forEach(function (other) {
+      grid.querySelectorAll('[data-flippable].is-flipped').forEach(function (other) {
         if (other !== card) {
           other.classList.remove('is-flipped');
           other.setAttribute('aria-expanded', 'false');
@@ -28,7 +40,7 @@
   }
 
   document.addEventListener('click', function (e) {
-    var card = e.target && e.target.closest && e.target.closest('.cmpc-card.is-flippable');
+    var card = flippableTarget(e);
     if (!card) return;
     e.preventDefault();
     toggleCard(card);
@@ -36,7 +48,7 @@
 
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Enter' && e.key !== ' ') return;
-    var card = e.target && e.target.closest && e.target.closest('.cmpc-card.is-flippable');
+    var card = flippableTarget(e);
     if (!card) return;
     e.preventDefault();
     toggleCard(card);

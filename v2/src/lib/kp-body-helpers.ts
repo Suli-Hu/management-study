@@ -75,10 +75,10 @@ export function emptyQuadBody(): QuadBody {
     yAxis: emptyQuadAxis(),
     xAxis: emptyQuadAxis(),
     cells: [
-      { name: '', emoji: '', sub: '', detail: '' },
-      { name: '', emoji: '', sub: '', detail: '' },
-      { name: '', emoji: '', sub: '', detail: '' },
-      { name: '', emoji: '', sub: '', detail: '' },
+      { name: '', emoji: '', sub: '', detail: '', detailBack: '' },
+      { name: '', emoji: '', sub: '', detail: '', detailBack: '' },
+      { name: '', emoji: '', sub: '', detail: '', detailBack: '' },
+      { name: '', emoji: '', sub: '', detail: '', detailBack: '' },
     ],
   };
 }
@@ -208,6 +208,7 @@ export function parsedToStructured(parsed: ParsedBody): KpBody {
       emoji: c.emoji,
       sub: c.sub,
       detail: c.detail,
+      detailBack: '',                /* v0.8.33: 老 v1/v0.7 数据没有 back，default '' */
     })),
   };
 }

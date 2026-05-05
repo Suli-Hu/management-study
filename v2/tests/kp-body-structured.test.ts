@@ -106,10 +106,10 @@ describe('KpBody schema — 5 种 format 各自', () => {
       yAxis: { low: '低', label: '增长率', high: '高' },
       xAxis: { low: '优势', label: '', high: '劣势' },
       cells: [
-        { name: '问题', emoji: '❓', sub: '高增长 + 低份额', detail: '...' },
-        { name: '明星', emoji: '⭐', sub: '高增长 + 高份额', detail: '...' },
-        { name: '瘦狗', emoji: '🐕', sub: '低增长 + 低份额', detail: '...' },
-        { name: '现金牛', emoji: '💰', sub: '低增长 + 高份额', detail: '...' },
+        { name: '问题', emoji: '❓', sub: '高增长 + 低份额', detail: '...', detailBack: '' },
+        { name: '明星', emoji: '⭐', sub: '高增长 + 高份额', detail: '...', detailBack: '' },
+        { name: '瘦狗', emoji: '🐕', sub: '低增长 + 低份额', detail: '...', detailBack: '' },
+        { name: '现金牛', emoji: '💰', sub: '低增长 + 高份额', detail: '...', detailBack: '' },
       ],
     });
     expect(r.success).toBe(true);
@@ -122,9 +122,9 @@ describe('KpBody schema — 5 种 format 各自', () => {
       yAxis: { low: '低', label: '', high: '高' },
       xAxis: { low: '低', label: '', high: '高' },
       cells: [
-        { name: 'a', emoji: '', sub: '', detail: '' },
-        { name: 'b', emoji: '', sub: '', detail: '' },
-        { name: 'c', emoji: '', sub: '', detail: '' },
+        { name: 'a', emoji: '', sub: '', detail: '', detailBack: '' },
+        { name: 'b', emoji: '', sub: '', detail: '', detailBack: '' },
+        { name: 'c', emoji: '', sub: '', detail: '', detailBack: '' },
       ],
     });
     expect(r.success).toBe(false);
@@ -137,7 +137,7 @@ describe('KpBody schema — 5 种 format 各自', () => {
       yAxis: { low: '低', label: '', high: '高' },
       xAxis: { low: '低', label: '', high: '高' },
       cells: Array.from({ length: 5 }, (_, i) => ({
-        name: `c${i}`, emoji: '', sub: '', detail: '',
+        name: `c${i}`, emoji: '', sub: '', detail: '', detailBack: '',
       })),
     });
     expect(r.success).toBe(false);
@@ -172,7 +172,7 @@ describe('QuadAxis schema (v0.8.4 breaking)', () => {
       lead: '',
       yAxis: '市场增长率',
       xAxis: { low: '低', label: '', high: '高' },
-      cells: Array.from({ length: 4 }, () => ({ name: 'a', emoji: '', sub: '', detail: '' })),
+      cells: Array.from({ length: 4 }, () => ({ name: 'a', emoji: '', sub: '', detail: '', detailBack: '' })),
     });
     expect(r.success).toBe(false);
   });
@@ -183,7 +183,7 @@ describe('QuadAxis schema (v0.8.4 breaking)', () => {
       lead: '',
       yAxis: { low: '', label: '', high: '高' },
       xAxis: { low: '低', label: '', high: '高' },
-      cells: Array.from({ length: 4 }, () => ({ name: 'a', emoji: '', sub: '', detail: '' })),
+      cells: Array.from({ length: 4 }, () => ({ name: 'a', emoji: '', sub: '', detail: '', detailBack: '' })),
     });
     expect(r.success).toBe(false);
   });
@@ -381,10 +381,10 @@ describe('structuredToSearchText — kp_fts 用纯文本', () => {
       yAxis: { low: '低', label: '增长率', high: '高' },
       xAxis: { low: '低', label: '份额', high: '高' },
       cells: [
-        { name: '问题', emoji: '❓', sub: '高+低', detail: '抉择' },
-        { name: '明星', emoji: '⭐', sub: '高+高', detail: '领先' },
-        { name: '瘦狗', emoji: '🐕', sub: '低+低', detail: '剥离' },
-        { name: '现金牛', emoji: '💰', sub: '低+高', detail: '挤奶' },
+        { name: '问题', emoji: '❓', sub: '高+低', detail: '抉择', detailBack: '' },
+        { name: '明星', emoji: '⭐', sub: '高+高', detail: '领先', detailBack: '' },
+        { name: '瘦狗', emoji: '🐕', sub: '低+低', detail: '剥离', detailBack: '' },
+        { name: '现金牛', emoji: '💰', sub: '低+高', detail: '挤奶', detailBack: '' },
       ],
     });
     expect(txt).toContain('增长率');

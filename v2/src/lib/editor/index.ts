@@ -296,10 +296,10 @@ function emptyBodyForFormat(format: Format): KpBody {
         yAxis: { low: '', label: '', high: '' },
         xAxis: { low: '', label: '', high: '' },
         cells: [
-          { name: '', emoji: '', sub: '', detail: '' },
-          { name: '', emoji: '', sub: '', detail: '' },
-          { name: '', emoji: '', sub: '', detail: '' },
-          { name: '', emoji: '', sub: '', detail: '' },
+          { name: '', emoji: '', sub: '', detail: '', detailBack: '' },
+          { name: '', emoji: '', sub: '', detail: '', detailBack: '' },
+          { name: '', emoji: '', sub: '', detail: '', detailBack: '' },
+          { name: '', emoji: '', sub: '', detail: '', detailBack: '' },
         ],
       };
   }
