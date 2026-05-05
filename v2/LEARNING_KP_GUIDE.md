@@ -44,7 +44,7 @@ grep -rn "双因素" v2/data/keiei/kp/
 grep -rn "Herzberg" v2/data/keiei/kp/
 ```
 
-如果命中 → 走"补充现有 KP"或"明确边界差异后新建"两条路径之一，详见 `Main/CONTRIBUTING.md` §8 原则 1。
+如果命中 → 走"补充现有 KP"或"明确边界差异后新建"两条路径之一（KP 生成 6 原则见 user memory `feedback_kp_generation`）。
 
 ### Step 2 — 选 format
 
@@ -257,7 +257,7 @@ KP 评价（义/限/例/应/用/喻）有**两种写法**，二选一：
 
 ### 5.1 中日同步是硬要求
 - `body.zh` 改了，必须同时改 `body.ja`
-- 日语版必须用**学术标准术语**而非直译（参考 `Main/CONTRIBUTING.md` §2 已知术语对照）
+- 日语版必须用**学术标准术语**而非直译（已知术语对照原在归档的 `Main/CONTRIBUTING.md` §2，今后需要时翻该文件历史参考）
 - 日语 evalContent key 用日语汉字（`義 / 限 / 例 / 応 / 用 / 喩`）
 
 ### 5.2 schools / scholars 必须存在
@@ -305,11 +305,11 @@ curl -X POST \
 
 | 文档 | 用途 |
 |---|---|
-| `Main/CONTRIBUTING.md` §3 §4 §8 | KP 三层架构、日文学术对照、KP 生成 6 原则（背景） |
-| `Main/CLAUDE.md` | 项目核心规则 + 部署规范 |
 | `v2/src/schemas/kp.ts` | KP zod schema 真源（字段定义） |
 | `v2/src/lib/body-parser.ts` | 5 种 format 的 body string 解析逻辑（debug 时看） |
 | `v2/data/keiei/kp/_template.*.json` | 5 种 format 各一个 example，copy 起手 |
+| user memory `~/.claude/.../MEMORY.md` | 项目核心规则 + 部署规范 + KP 生成 6 原则等（跨 session 持久） |
+| `Main/CONTRIBUTING.md` §3 §4 §8（archived） | 历史背景：KP 三层架构、日文学术对照、KP 生成 6 原则 |
 
 ---
 

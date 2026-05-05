@@ -1,4 +1,14 @@
-# 项目指令
+> ## ⚠️ Archived as of 2026-05
+>
+> **V1 已归档**。`Main/data.js` / `Main/data_ja.js` / `Main/worker/` 都不再读写。
+> CI 部署 workflow 已删除，prod 域名 `management-study.pages.dev` 冻结。
+>
+> 所有 KP 编辑 / 数据流 / 部署 → 看 [v2/CLAUDE.md](../v2/CLAUDE.md) 与 [v2/LEARNING_KP_GUIDE.md](../v2/LEARNING_KP_GUIDE.md)。
+> 本文档以下内容仅作 V1 历史参考。
+
+---
+
+# 项目指令（archived · V1）
 
 ## 设计哲学
 

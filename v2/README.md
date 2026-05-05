@@ -75,7 +75,7 @@ wrangler d1 execute management-study-v2 --remote --command \
 - `scholar.accent` ← schools[0] → school → theme.accent（fallback 链）
 - `kp.tags` ← `deriveTagsFromBody(body.zh)`（v0.4.9）
 
-详见 `src/schemas/*.ts` 和 [Main/FORMAT.md](../Main/FORMAT.md)（learning agent 看的 KP 创建指南）。
+详见 `src/schemas/*.ts` 和 [LEARNING_KP_GUIDE.md](LEARNING_KP_GUIDE.md)（learning agent 看的 KP 创建指南）。
 
 ## Stack
 
@@ -103,7 +103,7 @@ git add ... && git commit -m "..." && git push
 ### B. admin UI
 访问 `/keiei/kp/new` 或 `/keiei/kp/<id>/edit` → 表单 → POST/PUT → 后端 GitHub commit → 自动部署。
 
-详见 [Main/CONTRIBUTING.md §3 V2 数据流程](../Main/CONTRIBUTING.md)。
+详见 [LEARNING_KP_GUIDE.md](LEARNING_KP_GUIDE.md)（learning agent 完整 7 步流程含 sync API）。
 
 ## 开发
 
@@ -127,15 +127,15 @@ typecheck → test → build → sync D1 → deploy CF Pages
 
 ## 与 v1 关系
 
-- v1 (`Main/`) 仍在 `management-study.pages.dev`
-- v2 (`v2/`) 在 `management-study-v2.pages.dev`
-- W5 cutover：v2 替代 v1 域名（ROADMAP.md）
-- learning 已切 v2 数据流（V1 data.js 停用读写，详见 Main/CONTRIBUTING.md §3）
+- **v1 (`Main/`) 已归档**（2026-05）— 不再部署、不再读写、不再触碰
+- v1 prod 域名 `management-study.pages.dev` 冻结在最后一次部署的状态
+- v2 是当前唯一在跑的版本，prod 在 `study.sususu.org`
+- 详见 [Main/README.md](../Main/README.md) 顶部归档说明
 
 ## 文档导航
 
 - `ROADMAP.md` — 工作阶段路线图
 - `SETUP.md` — 初次部署
+- `LEARNING_KP_GUIDE.md` — learning agent 写 KP 完整流程（含 7 步 sync API）
 - `docs/` — 设计决策记录
-- `Main/CONTRIBUTING.md` — learning workflow + KP 生成 6 原则
-- `Main/FORMAT.md` — KP 创建指南（教学法 + 字段映射）
+- `public/docs/api-reference.md` — 对外 API 文档（线上镜像 https://study.sususu.org/docs/api-reference.md）

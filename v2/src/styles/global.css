@@ -125,12 +125,6 @@ html.dark,
     @apply border bg-bg-primary;
   }
 
-  /* 语义标签（义/限/例 等单字 badge） */
-  .badge {
-    @apply inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-semibold;
-  }
-  .badge-meaning { @apply bg-badge-meaning text-accent-classic; }
-  .badge-limit   { @apply bg-badge-limit text-accent-warning; }
 }
 
 /* ============================================================
