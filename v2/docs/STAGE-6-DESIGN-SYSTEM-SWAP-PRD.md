@@ -117,81 +117,101 @@
 | 段位徽章 | 多色（C/B/A/S 9 色之类） | `var(--tier-c/b/a/s)` 4 色 + 文字 - + 承担亚档 |
 | 热力图 | hardcoded 6 档绿色 | `var(--i-0~5)` (蓝色阶 6 档) |
 
-### 6.2.1 跨 component 一致性约束 (v0.8.18 hotfix 后强约束)
+### 6.2.1 跨 component 一致性约束 (v0.8.18 后强约束，v0.8.20 source 修)
 
-> **触发记录**：v0.8.16 (chip 3) ship 后用户 v9 反馈"学派详情页 split-pane 同 KP 内外色不一致"。根因：PM 起 Stage 6 PRD 时漏 reference IMPLEMENTATION.md §"分类色 / 学派 Tag" 永不动原则 — 没把"同一信息维度跨 component 必须同一 token" 明示在 §6.2 mapping 表里，于是各 chip 各自迁移时 `tagColor()`(用户 hex) 与 `hashToTagToken()`(v1.0 token) 两套色源在同一页面共存。
+> **触发记录**：v0.8.16 → v0.8.18 → v0.8.20 演化。v0.8.16 (chip 3) "split-pane 同 KP 内外色不一致" → v0.8.18 加 `accentVarFor` 统一来源 (但路径错把 `school.key` hash 到 8 OKLCH token，ignore 真实 hex)。v0.8.20 修 source 改用 `resolveAccentForSchool` (user-defined hex)。
 
-#### 单一 token 来源
+#### 单一来源
 
-凡承担"学派归属"信息维度的 accent，**统一**走 `accentVarFor(entity)` (return `var(--tag-*)` via hash)。**不**走 `tagColor()` 用户 hex 路径。
+凡承担"学派归属"信息维度的 accent，**统一**走 `resolveAccentForSchool(school, discipline)` (返回 user-defined hex like `#10B981`)。**不**走 `hashToTagToken()` (page-level；editor `mountChipPicker` 还在用，跟 page chrome 解耦)。
 
 | 角色 | API | 落地 |
 |---|---|---|
-| 解析 | `accentVarFor({ tags }, fallback?)` (`v2/src/lib/tag-color.ts`) | 输入实体 (school/scholar/kp/theme) `.tags[]`，输出 `var(--tag-mgmt)` 等 CSS var 字符串 |
-| 父容器 | `<div class="split" style={\`--accent:${accentVar}\`}>` | 子元素 inherit `var(--accent)` 即可 |
-| body renderer | `renderStructuredBody({ body, accentHex: accentVar })` | param 名 `accentHex` 为 legacy（接受 var() 字符串），重命名 deferred |
-| 共享组件 | `<EmptyRight accentHex={accentVar} />` / `<LangFab accentHex={accentVar} />` | 同上 |
+| 解析 | `resolveAccentForSchool(school, { tags })` (`v2/src/lib/resolve-accent.ts`) | school.tags[0] → discipline.tags[key].color → return hex (or 'var(--text-3)' fallback) |
+| 父容器 | `<a class="school-card" style={\`--accent: ${hex}\`}>` | 子元素用 `oklch(from var(--accent) l c h / 0.18)` 派生色阶 |
+| Page chrome strip | `<div class="kp-pane-accent-strip" style={\`background:${hex}\`}>` | 直接用 hex，不 cascade `--accent` 防干扰子元素 (lang-toggle 等 focus action) |
+| body renderer | `renderStructuredBody({ body, accentHex: 'var(--text-3)' })` | page interior decoration → 中性，**不传** entity hex |
 
 #### 同信息维度跨 component 必须同色
 
-任何下面"同一行"内的元素，在同一页面渲染时**必须** computed `--accent` 相等：
+任何下面"同一行"内的元素，在同一页面渲染时**必须** computed accent 相等：
 
-| 信息维度 | 元素 |
-|---|---|
-| **学派归属（一个学派的视图）** | split-pane 左 KP list dot · 左 active row strip · 右栏顶 strip · 右栏 lang-toggle · 右栏 body items numbering / cells / quad · EmptyRight · LangFab |
-| **学者归属（一个学者的视图）** | 同上（学者层视图） |
-| **KP 归属（一个 KP 的视图）** | header lang-toggle · body items numbering · LangFab |
-| **段位 / 强度 / 进度（学习日志）** | 段位徽章 · 段位 chip · 进度条 (各自独立 token: `--tier-*` / `--i-*` / `--p-*`，**不**串到 `--tag-*`) |
+| 信息维度 | 元素 | 用什么 |
+|---|---|---|
+| **学派 page chrome** | 学派 detail 页右栏顶 strip · SchoolCard chip · 顶部 schools chip | resolveAccentForSchool 出的 hex |
+| **学者 page chrome** | 学者 detail 页右栏顶 strip · 学者所属学派 chip 列表 | scholar.schools[0] → resolveAccentForSchool 出的 hex |
+| **段位 / 强度 / 进度（学习日志）** | 段位徽章 · 段位 chip · 进度条 | 各自独立 token (`--tier-*` / `--i-*` / `--p-*`) |
 
-E2E test (`v2/tests/e2e/visual-regression.spec.ts` `跨 component tag 色一致性` describe) 抽 computed `--accent` 比对断言，不依赖像素 diff，跨平台稳。
+E2E test (`v2/tests/e2e/visual-regression.spec.ts`) 抽 page chrome strip 的 computed background 比对学派 hex (e.g. personality `#10B981` → 绿)，断言 inline style 直接落地。
 
-### 6.2.3 ⚠️ "若无必要勿增实体" — page chrome 上下文原则 (v0.8.19 user feedback 后补)
+### 6.2.3 三层原则 (v0.8.20 user feedback 后定稿)
 
-> **触发记录**：v0.8.18 (chip 17 hotfix) ship 后用户 v10 反馈"split-pane 左侧 KP list dot 是冗余 affordance"。引用奥卡姆剃刀。**第 6 次** minimalism 贯彻 (memory `feedback_minimalism_default.md`)。
+> **触发记录**：
+> - v0.8.18 (chip 17 hotfix) → v0.8.19 全删 redundant 着色 → v0.8.20 (chip 19 hotfix) 复盘双错。
+> - v0.8.19 砍过头：右栏顶 3px strip 是 page chrome 不是 redundant decoration，应保留。
+> - chip 1 v0.8.12 起一直错：`hashToTagToken(school.key)` 把学派 hash 到 8 OKLCH token，**完全 ignore** `school.tags[0] → discipline.tags[].color` 真实 hex (e.g. personality `tags=['t_ejbdv3']` → `#10B981` 绿)。
+> - **第 6 次** minimalism 贯彻 (memory `feedback_minimalism_default.md`)。
 
-v1.0 IMPLEMENTATION.md §决策树是 general guideline ("它在表达'属于哪个学派'吗？→ L3 var(--tag-*)")，但 **同一 page 内 page chrome / URL 已经表达过的"信息维度"，内部元素不应重复标识**。§6.2.1 跨 component 一致性约束在此约束之内适用。
+#### 三层判断
 
-**例**：
+色彩选层判断公式：
 
-| 场景 | URL | page chrome | 内部元素 | 决策 |
-|---|---|---|---|---|
-| 学派 detail 页 | `/keiei/personality` | breadcrumb + h1 已表 personality | 内部所有 KP 都属此学派 | 用 tag 色 dot/strip/items numbering 标"学派归属" = redundant → **全部中性 (`var(--text-3)`)** |
-| KP detail 页 | `/keiei/kp/k364` | breadcrumb + title 已表 KP | 5 format render 是 KP 自身结构，**不是**"学派归属"维度 | items numbering / lang-toggle / FAB → **中性** |
-| 学者 detail 页 | `/keiei/scholars/hackman` | breadcrumb + name 已表学者 | 关联 KP 列表全属此学者 | dot / 顶 strip / body / star toggle → **中性** |
+> 此元素的色提供了 page chrome（URL / breadcrumb / h1）没提供的信息吗？
+> - **否** → 用中性 `var(--text-3)`（page interior decoration）
+> - **是** → 它表达什么？
+>   - 学派归属（page chrome / cross-学派 区分）→ **学派色 hex**（`school.tags[0] → discipline.tags[].color`，直接用 hex，IMPLEMENTATION.md L3 "永不动" 例外）
+>   - 用户主动操作 → **L1 `var(--primary)` 墨黑**
 
-**保留 tag 色的场景**（page chrome 没有表达，确实需要 chip 区分）：
+| 类型 | 例子 | 用 |
+|---|---|---|
+| **Page chrome accent** | 学派/学者 detail 页右栏顶 3px strip · SchoolCard chip · KP/scholar 详情页顶部 schools chip | **学派色 hex** (resolveAccentForSchool) |
+| **Page interior decoration** | KP list dot · items numbering · cells 着色 · cols 编号 | **中性** `var(--text-3)` |
+| **Focus / action UI** | lang-toggle · LangFab · Star toggle · Save button · 主 CTA | **L1** `var(--primary)` 墨黑 |
 
-| 场景 | 为何不 redundant |
-|---|---|
-| Discipline 首页 SchoolCard chip | 多学派并列展示，用 tag 色才能扫一眼区分 |
-| KP detail 页**顶部 schools chip** | 跨多学派 KP，chip 着色显示"它属于哪几个学派" |
-| 学者 detail 页**所属学派 chip 列表** | 跨多学派学者，chip 着色显示"他在哪些学派活动" |
+#### 关键：tag 色 source 是 user-defined hex，不强制 mapping 8 OKLCH token
 
-**判断公式**：
+`discipline.tags[].color` 是 admin 在 tags 编辑器里挑的 hex (e.g. `#10B981`)，**不**强制走 v1.0 8 OKLCH `--tag-*` token。直接用 hex 渲染合规 — IMPLEMENTATION.md §README "tag 色：永不动" L3 例外。
 
-> 此元素的 tag 色提供了 page chrome 没提供的信息吗？
-> - 是 → 用 tag 色 (按 §6.2.1 单一 token 来源)
-> - 否 → 中性 (`var(--text-3)`)
+**实施**：
+- 单一入口 `resolveAccentForSchool(school, discipline)` (`v2/src/lib/resolve-accent.ts`) — 解析 `school.tags[0] → discipline.tags[key].color` → return user-defined hex (or `'var(--text-3)'` fallback)
+- 父容器 inline `style={`--accent: ${hex}`}`，CSS 用 `oklch(from var(--accent) l c h / 0.18)` 派生 soft / deep 色阶
+- **不**走 `hashToTagToken()` (page-level；editor `mountChipPicker(colorize: 'schools')` 还在用，那是 admin 编辑期视觉，跟 page chrome 解耦)
 
-**与 §6.2.1 跨 component 一致性的关系**：§6.2.1 约束"如果用 tag 色，多 component 必须同 token"；§6.2.3 是上一层 — "**先判断该不该用 tag 色**"。先过 §6.2.3，需要用色再过 §6.2.1。
+#### 反例 (chip 1-18 历史 bug 复盘)
+
+| 元素 | 旧错 | v0.8.20 修 |
+|---|---|---|
+| SchoolCard chip | `data-tag={hashToTagToken(school.key)}` (8 OKLCH 之一，跟 admin hex 漂移) | `style={`--accent: ${hex}`}` (resolveAccentForSchool 真实 hex) |
+| 学者/KP detail 顶部 schools chip | 同上 | 同上 |
+| 学派 detail 页右栏顶 3px strip | v0.8.19 全删 (砍过头) | 恢复 (page chrome accent) — `<div style={`background:${hex}`}>` |
+| 学派 detail 页内部 KP list dot | v0.8.18 加 (redundant) | v0.8.19 删，v0.8.20 不加回 (page interior) |
+| lang-toggle / LangFab | `var(--accent, var(--text-3))` (受父级 cascade 影响) | `var(--primary)` (focus action L1，hardcode 不受 cascade) |
+
+#### 与 §6.2.1 跨 component 一致性的关系
+
+§6.2.1 约束"如果用 tag 色，多 component 必须同源"；§6.2.3 是上一层 — "**先判断该不该用 tag 色**"。先过 §6.2.3 三层，确认用 tag 色再过 §6.2.1 单一来源 (现在统一是 `resolveAccentForSchool` 出的 hex，不再走 `hashToTagToken`)。
 
 ### 6.2.2 IMPLEMENTATION.md §Step 6 校对清单 (chip 7 + 后续 chip 必跑)
 
-> 落地任意涉及 `--tag-*` / `--tier-*` / `--i-*` 的页面 / 组件后**必跑此清单**，对照 `Desktop/exports 3/theme-package/IMPLEMENTATION.md` §Step 6 + §决策树。
-> **mock 校对前先按 §6.2.3 page chrome 上下文原则筛选**：page chrome / URL 已表达过的"信息维度"，内部元素不应重复用 tag 色标识。先判断该不该用色，再判断用什么色。
+> 落地任意涉及色彩 (page chrome accent / `--tier-*` / `--i-*`) 的页面 / 组件后**必跑此清单**，对照 `Desktop/exports 3/theme-package/IMPLEMENTATION.md` §Step 6 + §决策树。
+> **按 §6.2.3 三层原则筛选每个色彩用法**：先判断该不该用色 (page chrome / interior / focus action)，再判断用什么 (学派色 hex / 中性 / `var(--primary)`)。
 
 每页面对照检查：
 
-- [ ] **page chrome 测试 (§6.2.3)**：每个 colored 元素能回答"此色提供了 page chrome 没提供的信息吗？"否则中性
-- [ ] 学派 tag 仍是 v1.0 8 色（`--tag-mgmt/mkt/soc/purple/pink/cyan/blue/orange`），未被吞或换源
+- [ ] **三层原则 (§6.2.3)**：每个 colored 元素能回答"它是 page chrome / page interior / focus action？"按层选色
+  - page chrome → 学派色 hex (resolveAccentForSchool)
+  - page interior → 中性 `var(--text-3)`
+  - focus action → L1 `var(--primary)`
+- [ ] 学派 chip / SchoolCard / 顶 strip 用 `resolveAccentForSchool` 出的 user-defined hex (不走 `hashToTagToken`)
 - [ ] 热力图 6 档（`--i-0` 到 `--i-5`）颜色递进自然
 - [ ] 段位徽章只有 4 色（`--tier-c/b/a/s`），文字承担亚档（`-` / `+`）
 - [ ] 顶部 nav active tab 用 `--primary` 描边
 - [ ] 主按钮（"+ 新建记录" / "+ 添加..."）用 `--primary` 填充
-- [ ] 切到 dark 模式 (`[data-mode="dark"]`) 后所有文字可读、tag 仍鲜艳
-- [ ] **跨 component (§6.2.1)**：如果元素需要用 tag 色，split-pane / 列表卡 / 详情页同一信息维度的所有 accent 元素 computed `--accent` 同源
-- [ ] 任何新加 colored 元素先过决策树（焦点 / 语义维度 / 分类）+ §6.2.3 page chrome test，不直接拍 hex / 不新建变量
-- [ ] stylelint `color-no-hex` 全站 0 violation
+- [ ] lang-toggle / LangFab 用 `var(--primary)` (focus action，**不**走 `var(--accent)` cascade — 防父级 page chrome strip `--accent` 干扰)
+- [ ] 切到 dark 模式 (`[data-mode="dark"]`) 后所有文字可读、tag 色 oklch from hex 计算后仍鲜艳
+- [ ] **跨 component (§6.2.1)**：如果元素需要用 tag 色，split-pane / 列表卡 / 详情页同一信息维度的所有 accent 元素 computed `--accent` 同源 (现在统一 `resolveAccentForSchool` 出 hex)
+- [ ] 任何新加 colored 元素先过 §6.2.3 三层 + 决策树，不直接拍 hex / 不新建变量
+- [ ] stylelint `color-no-hex` 全站 0 violation (例外：`resolveAccentForSchool` 返回 user-defined hex 是数据，不是 CSS 字面量)
 - [ ] 编辑器 `.kp-editor-v08` scope 仍生效，本 chip 改动不破编辑器
 
 ### 6.3 dark mode token 已就绪

@@ -2,11 +2,11 @@
 /**
  * SchoolCard — 视图系统学派卡（CardWhite 风格："Tinted Badge"）
  *
- * v0.8.12 Stage 6 chip 1: 切 v1.0 token + tag-* data-attr 着色
- *   - 卡身：--bg-elev / --border / --text / --text-2 / --text-3（dark 自动反相）
- *   - badge 着色：data-tag={tagToken} → CSS 选择器 [data-tag="tag-mgmt"] etc.
- *     使用 oklch(from --tag-* l c h / 0.15) soft 底 + calc(l - 0.35) deep 字（v1.0 IMPLEMENTATION）
- *   - tagToken=null 时退中性灰
+ * v0.8.20 fix: 学派色 source 切到 user-defined hex (resolveAccentForSchool)
+ *   - chip 1 (v0.8.12) 的 hashToTagToken 路径错 — 把 school.key hash 到 8 OKLCH token，
+ *     ignore discipline.tags[].color 真实 hex
+ *   - 现 accentHex 走 inline style={`--accent: ${hex}`}，CSS 用 oklch(from var(--accent) ...)
+ *   - accentHex='var(--text-3)' (无 tag 学派 fallback) 时 oklch from var(--text-3) 退中性
  */
 
 interface Props {
@@ -15,18 +15,23 @@ interface Props {
   en?: string | null;
   meta?: string;
   count: number;
-  /** v1.0 tag token name (without `--`), e.g. 'tag-mgmt'. null = neutral gray. */
-  tagToken?: string | null;
+  /**
+   * Page chrome accent hex (e.g. '#10B981') 或 'var(--text-3)' fallback。
+   * 由 resolveAccentForSchool(school, discipline) 解析。
+   */
+  accentHex: string;
 }
 
-const { href, cn, en, meta, count, tagToken } = Astro.props;
+const { href, cn, en, meta, count, accentHex } = Astro.props;
+const isNeutral = accentHex.startsWith('var(');
 ---
 
 <a
   href={href}
   class="school-card"
   data-school-card
-  {...(tagToken ? { 'data-tag': tagToken } : {})}
+  data-accent-neutral={isNeutral ? 'true' : undefined}
+  style={`--accent: ${accentHex}`}
 >
   <div class="sc-body">
     <div class="sc-cn">{cn}</div>
@@ -92,27 +97,24 @@ const { href, cn, en, meta, count, tagToken } = Astro.props;
     letter-spacing: 0.2px;
     font-variant-numeric: tabular-nums;
     flex-shrink: 0;
-    /* default neutral — 学派无 tag 时退中性灰 */
+    /* 学派 tag 着色（v0.8.20: discipline.tags[].color hex via inline --accent） */
+    background: oklch(from var(--accent) l c h / 0.18);
+    color: oklch(from var(--accent) calc(l - 0.40) c h);
+  }
+  /* 无 tag 学派 fallback — accentHex='var(--text-3)' 不是 hex，oklch(from var(--text-3) ...) 计算
+     L≈0.65 OKLCH 灰，calc(l - 0.40) 退到 ≈0.25 深灰；视觉跟原中性 fallback 一致。 */
+  .school-card[data-accent-neutral] .sc-badge {
     background: var(--bg-soft);
     color: var(--text-2);
   }
-  /* 学派 tag 着色（D6=A，按 discipline.tags[].key 映射 8 token） */
-  .school-card[data-tag="tag-mgmt"]   .sc-badge { background: oklch(from var(--tag-mgmt)   l c h / 0.18); color: oklch(from var(--tag-mgmt)   calc(l - 0.40) c h); }
-  .school-card[data-tag="tag-mkt"]    .sc-badge { background: oklch(from var(--tag-mkt)    l c h / 0.18); color: oklch(from var(--tag-mkt)    calc(l - 0.40) c h); }
-  .school-card[data-tag="tag-soc"]    .sc-badge { background: oklch(from var(--tag-soc)    l c h / 0.18); color: oklch(from var(--tag-soc)    calc(l - 0.40) c h); }
-  .school-card[data-tag="tag-purple"] .sc-badge { background: oklch(from var(--tag-purple) l c h / 0.18); color: oklch(from var(--tag-purple) calc(l - 0.40) c h); }
-  .school-card[data-tag="tag-pink"]   .sc-badge { background: oklch(from var(--tag-pink)   l c h / 0.18); color: oklch(from var(--tag-pink)   calc(l - 0.40) c h); }
-  .school-card[data-tag="tag-cyan"]   .sc-badge { background: oklch(from var(--tag-cyan)   l c h / 0.18); color: oklch(from var(--tag-cyan)   calc(l - 0.40) c h); }
-  .school-card[data-tag="tag-blue"]   .sc-badge { background: oklch(from var(--tag-blue)   l c h / 0.18); color: oklch(from var(--tag-blue)   calc(l - 0.40) c h); }
-  .school-card[data-tag="tag-orange"] .sc-badge { background: oklch(from var(--tag-orange) l c h / 0.18); color: oklch(from var(--tag-orange) calc(l - 0.40) c h); }
 
-  /* Dark mode badge 提亮（base l ≈ 0.75，calc(l + 0.15) ≈ 0.90）— 跟 KP/scholar 详情页 chip pattern 一致 */
-  :global([data-mode="dark"]) .school-card[data-tag="tag-mgmt"]   .sc-badge { background: oklch(from var(--tag-mgmt)   l c h / 0.22); color: oklch(from var(--tag-mgmt)   calc(l + 0.15) c h); }
-  :global([data-mode="dark"]) .school-card[data-tag="tag-mkt"]    .sc-badge { background: oklch(from var(--tag-mkt)    l c h / 0.22); color: oklch(from var(--tag-mkt)    calc(l + 0.15) c h); }
-  :global([data-mode="dark"]) .school-card[data-tag="tag-soc"]    .sc-badge { background: oklch(from var(--tag-soc)    l c h / 0.22); color: oklch(from var(--tag-soc)    calc(l + 0.15) c h); }
-  :global([data-mode="dark"]) .school-card[data-tag="tag-purple"] .sc-badge { background: oklch(from var(--tag-purple) l c h / 0.22); color: oklch(from var(--tag-purple) calc(l + 0.15) c h); }
-  :global([data-mode="dark"]) .school-card[data-tag="tag-pink"]   .sc-badge { background: oklch(from var(--tag-pink)   l c h / 0.22); color: oklch(from var(--tag-pink)   calc(l + 0.15) c h); }
-  :global([data-mode="dark"]) .school-card[data-tag="tag-cyan"]   .sc-badge { background: oklch(from var(--tag-cyan)   l c h / 0.22); color: oklch(from var(--tag-cyan)   calc(l + 0.15) c h); }
-  :global([data-mode="dark"]) .school-card[data-tag="tag-blue"]   .sc-badge { background: oklch(from var(--tag-blue)   l c h / 0.22); color: oklch(from var(--tag-blue)   calc(l + 0.15) c h); }
-  :global([data-mode="dark"]) .school-card[data-tag="tag-orange"] .sc-badge { background: oklch(from var(--tag-orange) l c h / 0.22); color: oklch(from var(--tag-orange) calc(l + 0.15) c h); }
+  /* Dark mode badge 提亮（base l ≈ 0.75，calc(l + 0.15) ≈ 0.90 在 dark bg 上对比足） */
+  :global([data-mode="dark"]) .school-card .sc-badge {
+    background: oklch(from var(--accent) l c h / 0.22);
+    color: oklch(from var(--accent) calc(l + 0.15) c h);
+  }
+  :global([data-mode="dark"]) .school-card[data-accent-neutral] .sc-badge {
+    background: var(--bg-soft);
+    color: var(--text-2);
+  }
 </style>
