@@ -36,9 +36,12 @@ function esc(s: string | undefined | null): string {
   );
 }
 
-/** prose 文本按 <br> 分段 → <p class="narrative-p"> */
+/** prose 文本按 <br> 或 \n 分段 → <p class="narrative-p">
+ * v0.8.30: 兼容用户在 admin textarea 里直接 Enter 换行存的字面 \n（v1 era 数据用 <br>，
+ * v2 admin UI 通常存 \n）。两种都识别为段落分隔。
+ */
 function renderParas(text: string, wrapperStyle = ''): string {
-  const paras = text.split(/<br\s*\/?>/i).map((p) => p.trim()).filter(Boolean);
+  const paras = text.split(/<br\s*\/?>|\n/i).map((p) => p.trim()).filter(Boolean);
   if (paras.length === 0) return '';
   const wrapAttr = wrapperStyle ? ` style="${wrapperStyle}"` : '';
   return `<div class="body-narrative"${wrapAttr}>${
@@ -118,57 +121,22 @@ export function renderAccordionStructured(body: AccordionBody, accentHex: string
   `;
 }
 
-/**
- * compare 表格版（详情页用）。
- * 旧 renderer 把每行第 0 个当 head pill，第 1+ 个分别按长度判定 chip vs prose。
- * 新 renderer 用结构化字段：
- *   - title 当 head pill
- *   - keyword + desc + type + theories 都 push 到 cells（按长度 ≤60 + 无 HTML tag 分 chip vs prose）
- *   - detail 单独 prose 段
- */
-export function renderCompareStructured(body: CompareBody, accentHex: string): string {
-  const rowsHtml = body.cols
-    .map((c) => {
-      // 把 5 个细字段按"chip vs prose"分类（保旧 renderer 视觉）
-      const tail = [c.keyword, c.desc, c.type, c.theories, c.detail].filter(Boolean);
-      const chips: string[] = [];
-      const prose: string[] = [];
-      for (const v of tail) {
-        if (v.length <= 60 && !/<\w/.test(v)) chips.push(v);
-        else prose.push(v);
-      }
-      const chipsHtml =
-        chips.length > 0
-          ? `<div class="cmp-chips">${chips.map((s) => `<span class="cmp-cell-tight">${s}</span>`).join('')}</div>`
-          : '';
-      const proseHtml = prose.map((p) => `<div class="cmp-cell-prose">${p}</div>`).join('');
-      return `
-      <div class="cmp-row">
-        <div class="cmp-pill">${c.title}</div>
-        <div class="cmp-cells">${chipsHtml}${proseHtml}</div>
-      </div>
-    `;
-    })
-    .join('');
-
-  return `
-    <div class="body-fmt body-fmt-cmp" style="--accent:${accentHex}">
-      ${body.lead ? renderParas(body.lead, 'margin-bottom:14px') : ''}
-      <div class="cmp-table">${rowsHtml}</div>
-    </div>
-  `;
-}
-
-/** compare 卡片版（学派详情页用）
- * v0.8.28: detail 字段从 meta 列表里移出来，做卡片"背面"。
- * v0.8.29:
- *   - 删卡片上"详情 ↻"/"↺ 返回"文字（用户 fb：affordance 走 hover 阴影 + 鼠标 cursor 即可）
- *   - 卡片 height:100% chain 确保 stretched grid cell 不露透明 gap
+/** compare 卡片版 — v0.8.30 起全站统一（KP / 学派 / 学者 详情页共用）
  *
- *   - PC (≥1024px): 正面 hover 出阴影提示可翻；click → CSS 3D rotateY(180deg) 翻到背面
- *   - 手机 (<1024px): 正面下方 inline 展开 detail (max-height 过渡)
- *   - 没填 detail 的列保留原扁平展示，无翻转 affordance
- *   - 行为由 /cmpc-flip.js 接管 (PC + mobile 共用 .is-flipped class)
+ * v0.8.30: 删了老 renderCompareStructured (table 版) — KP 详情页之前用 table 视觉跟
+ * 学派/学者 详情不一致，用户 fb 要求统一。dispatcher 也去掉 variant 分支。
+ *
+ * Grid 列数：v0.8.30 改 auto-fit minmax(180px, 1fr) 自适应，KP 详情窄栏 (max 720px)
+ * 时多列卡片自动换行/缩列；宽栏时按数据列数撑开。
+ *
+ * v0.8.28: detail 字段移到背面 reveal
+ * v0.8.29: 删 "详情/返回" 字样
+ *
+ * 交互：
+ *   - PC (≥1024px): hover 出阴影；click → CSS 3D rotateY(180deg) 翻面
+ *   - 手机 (<1024px): tap → max-height 过渡 inline 展开
+ *   - 没填 detail 的列退化扁平卡片，无 affordance
+ *   - 行为由 /cmpc-flip.js 接管
  */
 export function renderCompareCardsStructured(body: CompareBody, accentHex: string): string {
   const cardsHtml = body.cols
@@ -205,11 +173,11 @@ export function renderCompareCardsStructured(body: CompareBody, accentHex: strin
     })
     .join('');
 
-  const gridStyle = `grid-template-columns:repeat(${body.cols.length}, minmax(0, 1fr))`;
+  // v0.8.30: auto-fit 自适应。KP 详情窄栏多列时自动换行；宽栏按数据列数撑开
   return `
     <div class="body-fmt body-fmt-cmpc" style="--accent:${accentHex}">
       ${body.lead ? renderParas(body.lead, 'margin-bottom:18px') : ''}
-      <div class="cmpc-grid" style="${gridStyle}">${cardsHtml}</div>
+      <div class="cmpc-grid">${cardsHtml}</div>
     </div>
   `;
 }
@@ -269,13 +237,16 @@ export function renderQuadStructured(body: QuadBody, accentHex: string): string 
 // Dispatcher
 // ============================================================
 
+/** v0.8.30: variant 分支删了 — compare 全站统一卡片版（KP / 学派 / 学者 详情共用）。
+ * 调用方仍可传 variant 参数（向后兼容），但被忽略。
+ */
 export function renderStructuredBody(opts: {
   body: KpBody;
   accentHex?: string;
-  /** 'detail' (默认 — compare 走表格) | 'school' (compare 走卡片) */
+  /** @deprecated v0.8.30 起 compare 统一卡片版，variant 参数被忽略 */
   variant?: 'detail' | 'school';
 }): string {
-  const { body, accentHex = FALLBACK_ACCENT, variant = 'detail' } = opts;
+  const { body, accentHex = FALLBACK_ACCENT } = opts;
   switch (body.format) {
     case 'narrative':
       return renderNarrativeStructured(body);
@@ -284,9 +255,7 @@ export function renderStructuredBody(opts: {
     case 'accordion':
       return renderAccordionStructured(body, accentHex);
     case 'compare':
-      return variant === 'school'
-        ? renderCompareCardsStructured(body, accentHex)
-        : renderCompareStructured(body, accentHex);
+      return renderCompareCardsStructured(body, accentHex);
     case 'quad':
       return renderQuadStructured(body, accentHex);
   }

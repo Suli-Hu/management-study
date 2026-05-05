@@ -13,8 +13,7 @@
  * Class 命名空间（防冲突）：
  *   .body-* / .narrative-p   — 5 种 KP body renderer 共用
  *   .acc-*                   — accordion renderer
- *   .cmp-* .cmp-table        — compare table renderer
- *   .cmpc-*                  — compare cards renderer (OptionA 专用)
+ *   .cmpc-*                  — compare cards renderer (v0.8.30 起 KP / 学派 / 学者 详情共用)
  *   .quad-*                  — quad chart renderer
  *   .eval-*                  — 评价标签模块
  *   .optA-*                  — 学派详情页 OptionA 专用
@@ -258,6 +257,22 @@ mark {
  * Dark mode 由 tokens.css [data-mode="dark"] 自动反相 — 无需 :global() override。
  * ============================================================ */
 
+/* v0.8.30: 多行字段全局保留换行 — admin textarea 里敲的 \n 渲染成可见换行。
+ * 单行/限长字段 (title / name / headline / pill 等) 不在这名单内，自然不支持回车。
+ * pre-line: 保留 \n 换行 + 合并连续空格 + 自动 wrap，比 pre-wrap 更适合中文 prose。 */
+.narrative-p,
+.body-lead,
+.body-item-desc,
+.acc-li-desc,
+.acc-prose,
+.cmpc-sub,
+.cmpc-meta li,
+.cmpc-detail,
+.quad-desc,
+.eval-text {
+  white-space: pre-line;
+}
+
 /* ---- flat-list / 通用 body 卡片 ---- */
 .body-lead {
   font-size: 14px; color: var(--text-2); line-height: 1.85;
@@ -370,38 +385,10 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 
 .acc-prose { font-size: 13px; color: var(--text-2); line-height: 1.85; }
 
-/* ---- compare table（默认渲染，非学派详情用）---- */
-.cmp-table {
-  display: flex; flex-direction: column; gap: 8px;
-  border-radius: 12px; padding: 12px; background: var(--bg-soft);
-  border: 1px solid var(--border);
-}
-.cmp-row {
-  display: grid; grid-template-columns: 120px 1fr; gap: 14px;
-  padding: 10px 12px; border-radius: 8px;
-  background: var(--bg-elev); border: 1px solid var(--border);
-}
-.cmp-pill {
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 6px 8px; border-radius: 8px;
-  border: 1px solid color-mix(in oklab, var(--accent, var(--text-3)) 30%, transparent);
-  background: color-mix(in oklab, var(--accent, var(--text-3)) 10%, transparent);
-  color: var(--accent, var(--text));
-  font-size: 12px; font-weight: 600; text-align: center;
-  height: fit-content; align-self: center;
-}
-.cmp-cells { display: flex; flex-direction: column; gap: 4px; }
-.cmp-cell { font-size: 12px; line-height: 1.7; color: var(--text-2); }
-.cmp-cell-tight {
-  display: inline-block; padding: 2px 8px; border-radius: 4px;
-  background: var(--bg-soft); color: var(--text-2);
-  font-size: 12px; margin-right: 4px;
-}
-.cmp-cell-prose { color: var(--text-2); }
-.cmp-cell strong { color: var(--text); font-weight: 600; }
-.cmp-cell em { color: var(--text-3); font-style: italic; }
+/* v0.8.30: 删了老 .cmp-table / .cmp-row / .cmp-pill / .cmp-cells / .cmp-cell-* 表格版样式
+   — KP 详情页之前用 table 视觉跟学派/学者详情不一致，统一改卡片版 (.cmpc-*)。 */
 
-/* ---- compare cards（OptionA 学派详情用）
+/* ---- compare cards（v0.8.30 起 KP / 学派 / 学者 详情共用）
  * v0.8.28: detail 字段移到卡片"背面"。
  *   - PC (≥1024px): hover 出阴影提示可翻；click → CSS 3D rotateY(180deg) 翻面
  *   - mobile (<1024px): inline expand (max-height 过渡)，由 max-width:1023px media query 覆盖
@@ -409,6 +396,9 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
  */
 .cmpc-grid {
   display: grid; gap: 14px; margin: 6px 0 8px;
+  /* v0.8.30: auto-fit 自适应列数 — KP 详情窄栏 (max 720px) 多列时自动换行；宽栏按数据列撑开。
+     min 180px 是经验值：再窄文字挤；可再调。 */
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   perspective: 1200px;          /* PC 3D 透视 — mobile media query 会清掉 */
 }
 .cmpc-card {
@@ -1305,11 +1295,10 @@ details.eval {
     transition: background .2s ease;
   }
 
-  /* compare row stack：grid 120/1fr 拍扁成竖排 */
-  .cmp-row { grid-template-columns: 1fr; gap: 6px; padding: 10px; }
-  .cmp-pill { align-self: start; height: auto; padding: 4px 10px; }
+  /* v0.8.30: 删了 .cmp-row / .cmp-pill mobile override (table 版整段删) */
 
-  /* compare cards 强制 1 col（render-body inline 写了 grid-template-columns，需要 important）*/
+  /* compare cards 强制 1 col；v0.8.30 起 grid-template-columns 在 CSS 里定义 (auto-fit)，
+     mobile media query 这里强制单列 */
   .cmpc-grid {
     grid-template-columns: 1fr !important;
     gap: 10px !important;
