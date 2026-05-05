@@ -69,6 +69,19 @@ export const POST: APIRoute = async ({ request, locals }) => {
   school.concepts = kpIds;
   school.updatedAt = new Date().toISOString();
 
+  // v0.8.34: 直接更新 D1 kp_school.position（v0.8.27 后 deploy 不再 sync:d1，
+  // 单写 git 不会传到 D1，UI 永远看老顺序）。D1 写在前 — 立即生效；git 写在后做审计。
+  const updateStmts = kpIds.map((kpId, i) =>
+    env.DB
+      .prepare('UPDATE kp_school SET position = ? WHERE school_key = ? AND kp_id = ?')
+      .bind(i, schoolKey, kpId),
+  );
+  try {
+    await env.DB.batch(updateStmts);
+  } catch (e) {
+    return jsonRes<EditError>(500, { ok: false, reason: 'd1_write_failed' as never, detail: (e as Error).message });
+  }
+
   const adminEmail = locals.user.email ?? 'unknown@admin';
   const message = `v2: reorder school/${schoolKey} concepts by ${adminEmail}`;
   const content = JSON.stringify(school, null, 2) + '\n';
@@ -77,8 +90,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
     path,
     { content, message, sha: fetched.data.sha, branch: 'main' },
   );
+  // v0.8.34: git 写失败不阻断 — D1 已经更新，UI 已经持久化。git 仅作审计 trail。
   if (!res.ok) {
-    return jsonRes<EditError>(res.reason === 'conflict' ? 409 : 502, { ok: false, reason: res.reason === 'conflict' ? 'sha_conflict' : 'github_error', detail: res.detail });
+    console.warn('[reorder/school-concepts] git writeback failed (D1 已更新):', res.detail);
+    return jsonRes(200, { ok: true, d1_updated: true, git_committed: false, warning: 'git writeback failed but D1 saved' });
   }
-  return jsonRes(200, { ok: true, commit_sha: res.data.commit_sha, deploy_eta_seconds: 90 });
+  return jsonRes(200, { ok: true, d1_updated: true, git_committed: true, commit_sha: res.data.commit_sha });
 };
