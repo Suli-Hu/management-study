@@ -401,16 +401,59 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 .cmp-cell strong { color: var(--text); font-weight: 600; }
 .cmp-cell em { color: var(--text-3); font-style: italic; }
 
-/* ---- compare cards（OptionA 学派详情用）---- */
+/* ---- compare cards（OptionA 学派详情用）
+ * v0.8.28: detail 字段移到卡片"背面"。
+ *   - PC (≥1024px): hover 出阴影提示可翻；click → CSS 3D rotateY(180deg) 翻面
+ *   - mobile (<1024px): inline expand (max-height 过渡)，由 max-width:1023px media query 覆盖
+ *   - 没填 detail 的列退化为原扁平卡片，无 affordance
+ */
 .cmpc-grid {
   display: grid; gap: 14px; margin: 6px 0 8px;
+  perspective: 1200px;          /* PC 3D 透视 — mobile media query 会清掉 */
 }
 .cmpc-card {
   position: relative;
+  border-radius: 12px;
+  background: transparent;       /* 实底色挂在 .cmpc-face 上让 backface 也有底 */
+  transition: box-shadow .2s, transform .2s;
+}
+.cmpc-card.is-flippable {
+  cursor: pointer;
+}
+.cmpc-card.is-flippable:hover {
+  box-shadow: 0 4px 16px oklch(from var(--accent, var(--text-3)) l c h / 0.18),
+              0 1px 4px oklch(from var(--accent, var(--text-3)) l c h / 0.10);
+  transform: translateY(-2px);
+}
+.cmpc-card.is-flippable:focus-visible {
+  outline: 2px solid var(--accent, var(--text-3));
+  outline-offset: 3px;
+}
+.cmpc-card-inner {
+  position: relative;
+  width: 100%;
+  transform-style: preserve-3d;
+  transition: transform .55s cubic-bezier(.4, 0, .2, 1);
+}
+.cmpc-card.is-flipped .cmpc-card-inner {
+  transform: rotateY(180deg);
+}
+.cmpc-face {
   padding: 22px 20px 20px;
   border: 1px solid var(--border);
-  border-radius: 12px; background: var(--bg-elev);
+  border-radius: 12px;
+  background: var(--bg-elev);
   display: flex; flex-direction: column; gap: 6px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.cmpc-front {
+  position: relative;            /* num 绝对定位锚点 */
+}
+.cmpc-back {
+  position: absolute; inset: 0;
+  transform: rotateY(180deg);
+  overflow-y: auto;              /* detail 长时背面可滚 */
 }
 .cmpc-num {
   position: absolute; top: 14px; right: 18px;
@@ -441,6 +484,21 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   font-size: 12px; color: var(--text-2); line-height: 1.55;
   font-variant-numeric: tabular-nums;
 }
+.cmpc-detail {
+  font-size: 13px; line-height: 1.85; color: var(--text-2);
+  text-wrap: pretty;
+}
+.cmpc-detail strong, .cmpc-detail b { color: var(--text); font-weight: 600; }
+.cmpc-flip-toggle {
+  align-self: flex-end;
+  margin-top: auto;              /* 推到卡底 */
+  font-size: 11px; font-weight: 500;
+  color: var(--text-3);
+  background: transparent; border: 0; padding: 4px 0;
+  letter-spacing: 0.04em;
+  pointer-events: none;          /* 点击事件由父 .cmpc-card 接管 */
+}
+.cmpc-flip-toggle--back { color: var(--accent, var(--text-3)); opacity: 0.7; }
 
 /* ---- quad chart ----
  * v0.8.24:
@@ -1257,9 +1315,52 @@ details.eval {
   .cmp-pill { align-self: start; height: auto; padding: 4px 10px; }
 
   /* compare cards 强制 1 col（render-body inline 写了 grid-template-columns，需要 important）*/
-  .cmpc-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
-  .cmpc-card { padding: 16px; }
+  .cmpc-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    perspective: none;             /* 手机不做 3D flip */
+  }
+  .cmpc-card { padding: 0; }       /* padding 让 .cmpc-face 自带 */
+  .cmpc-face { padding: 16px; }
   .cmpc-headline { font-size: 18px; }
+  /* v0.8.28: 手机端 detail 改 inline expand 而不是 flip */
+  .cmpc-card-inner { transform-style: flat; transition: none; }
+  .cmpc-card.is-flipped .cmpc-card-inner { transform: none; }
+  .cmpc-back {
+    position: static;
+    transform: none;
+    inset: auto;
+    overflow: hidden;
+    max-height: 0;
+    padding-top: 0; padding-bottom: 0;
+    border: 0;
+    border-radius: 0 0 12px 12px;
+    transition: max-height .35s cubic-bezier(.4, 0, .2, 1),
+                padding .25s,
+                border-color .25s;
+    background: var(--bg-soft);
+  }
+  .cmpc-card.is-flipped .cmpc-back {
+    max-height: 600px;             /* 大于绝大多数 detail；overflow auto 兜超长 */
+    overflow-y: auto;
+    padding: 14px 16px;
+    border-top: 1px dashed var(--border);
+  }
+  .cmpc-card.is-flippable .cmpc-front::after {
+    /* 手机端用文字提示替代 hover 阴影 */
+    content: '';
+  }
+  .cmpc-flip-toggle--back {
+    /* 手机端"返回"按钮没意义（点卡片任何处都能合），隐藏 */
+    display: none;
+  }
+  .cmpc-flip-toggle--front {
+    /* 手机端"详情 ↻" 改成"展开 ▾"语义 — JS 切换时改 textContent 也行，但 CSS 简单些 */
+    font-size: 11.5px;
+  }
+  .cmpc-card.is-flipped .cmpc-flip-toggle--front {
+    color: var(--accent, var(--text-3));
+  }
 
   /* quad chart 强制 stack：去 axis 旋转 + 4 cells 一列 */
   .quad-wrap {
