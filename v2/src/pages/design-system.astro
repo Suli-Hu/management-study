@@ -1,0 +1,1095 @@
+---
+/**
+ * design-system.astro — sususu 设计规范单页
+ *
+ * 反向提取自 src/styles/{tokens.css, components.css, global.css} + tailwind.config.ts。
+ * 改这个页面 ≠ 改设计系统。要改设计 token 改源 CSS；这里只是 mirror。
+ *
+ * 路径：/design-system （middleware 仍 require login）
+ * 视觉：用站点自己的 tokens 渲染（页内 dark toggle 复用 Layout.astro 的 data-mode + html.dark 双写）
+ */
+import '~/styles/global.css';
+---
+
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#232221" media="(prefers-color-scheme: dark)" />
+    <title>设计规范 · sususu</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      (function () {
+        try {
+          const saved = localStorage.getItem('theme');
+          const prefersDark = matchMedia('(prefers-color-scheme: dark)').matches;
+          const isDark = saved ? saved === 'dark' : prefersDark;
+          const root = document.documentElement;
+          if (isDark) root.classList.add('dark');
+          root.dataset.mode = isDark ? 'dark' : 'light';
+        } catch {}
+      })();
+    </script>
+    <style>
+      /* === 设计规范页专属（不进 components.css，专属此页） === */
+      .ds-page {
+        --accent: var(--tag-mgmt);            /* sample accent，让 renderer atoms 有可见 accent */
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 32px 28px 96px;
+        font-feature-settings: 'kern', 'liga', 'palt', 'tnum';
+      }
+      .ds-toolbar {
+        position: sticky; top: 0; z-index: 10;
+        background: color-mix(in oklab, var(--bg) 92%, transparent);
+        backdrop-filter: saturate(140%) blur(8px);
+        -webkit-backdrop-filter: saturate(140%) blur(8px);
+        margin: -32px -28px 24px;
+        padding: 14px 28px;
+        border-bottom: 1px solid var(--border);
+        display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      }
+      .ds-toolbar-title {
+        font-size: 14px; font-weight: 600; color: var(--text);
+        letter-spacing: -0.005em;
+        display: flex; align-items: baseline; gap: 8px;
+      }
+      .ds-toolbar-title small {
+        font-size: 11px; color: var(--text-3); font-weight: 400;
+        letter-spacing: 0;
+      }
+      .ds-toolbar-actions { display: flex; align-items: center; gap: 8px; }
+      .ds-mode-btn {
+        all: unset; cursor: pointer;
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 6px 12px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        font-size: 11.5px; font-weight: 500;
+        color: var(--text-2);
+        background: var(--bg-elev);
+        transition: border-color .15s, color .15s;
+      }
+      .ds-mode-btn:hover { border-color: var(--text-3); color: var(--text); }
+
+      .ds-h1 {
+        font-size: 32px; font-weight: 700;
+        color: var(--text); letter-spacing: -0.02em;
+        line-height: 1.1; margin: 0 0 6px;
+      }
+      .ds-lede {
+        font-size: 14px; color: var(--text-2); line-height: 1.7;
+        margin: 0 0 36px; max-width: 640px;
+      }
+
+      .ds-toc {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 4px 16px;
+        padding: 14px 16px;
+        background: var(--bg-soft);
+        border-radius: 10px;
+        margin-bottom: 48px;
+        font-size: 12.5px;
+      }
+      .ds-toc a {
+        color: var(--text-2);
+        text-decoration: none;
+        padding: 4px 0;
+        display: block;
+      }
+      .ds-toc a:hover { color: var(--text); }
+      .ds-toc-num {
+        display: inline-block; width: 22px;
+        font-variant-numeric: tabular-nums;
+        color: var(--text-3);
+      }
+
+      .ds-section { margin-bottom: 56px; scroll-margin-top: 80px; }
+      .ds-section-head {
+        display: flex; align-items: baseline; gap: 12px;
+        margin-bottom: 18px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+      .ds-section-num {
+        font-size: 12px; color: var(--text-3);
+        font-variant-numeric: tabular-nums;
+        font-weight: 500;
+      }
+      .ds-section-title {
+        font-size: 20px; font-weight: 600;
+        color: var(--text); margin: 0;
+        letter-spacing: -0.01em;
+      }
+      .ds-section-sub {
+        font-size: 12px; color: var(--text-3);
+        margin-left: auto;
+      }
+      .ds-section-intro {
+        font-size: 13px; color: var(--text-2); line-height: 1.75;
+        margin: 0 0 20px; max-width: 680px;
+      }
+      .ds-subhead {
+        font-size: 11px; font-weight: 600;
+        color: var(--text-3);
+        text-transform: uppercase; letter-spacing: 0.1em;
+        margin: 24px 0 10px;
+      }
+
+      /* token 网格：左色块 + 右元数据 */
+      .ds-color-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 10px;
+      }
+      .ds-color {
+        display: flex; align-items: stretch;
+        border: 1px solid var(--border);
+        border-radius: 8px; overflow: hidden;
+        background: var(--bg-elev);
+      }
+      .ds-color-swatch {
+        width: 56px; flex-shrink: 0;
+        border-right: 1px solid var(--border);
+      }
+      .ds-color-meta {
+        padding: 8px 10px;
+        display: flex; flex-direction: column; gap: 2px;
+        min-width: 0; flex: 1;
+      }
+      .ds-color-name {
+        font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+        font-size: 11px; color: var(--text);
+        font-weight: 500;
+        word-break: break-all;
+      }
+      .ds-color-desc {
+        font-size: 11px; color: var(--text-3); line-height: 1.4;
+      }
+
+      /* 字体 scale */
+      .ds-type-row {
+        display: grid;
+        grid-template-columns: 56px 80px 60px 1fr;
+        gap: 16px; align-items: baseline;
+        padding: 12px 0;
+        border-bottom: 1px dashed var(--border);
+      }
+      .ds-type-row:last-child { border-bottom: 0; }
+      .ds-type-key {
+        font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+        font-size: 11px; color: var(--text-3);
+      }
+      .ds-type-px, .ds-type-lh {
+        font-size: 11px; color: var(--text-2);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* 间距 / 圆角 / 阴影 */
+      .ds-spec-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+      }
+      .ds-spec {
+        display: flex; flex-direction: column; gap: 8px;
+        padding: 14px;
+        border: 1px solid var(--border); border-radius: 8px;
+        background: var(--bg-elev);
+      }
+      .ds-spec-vis {
+        background: var(--bg-soft); border-radius: 4px;
+        height: 44px;
+        display: flex; align-items: center; justify-content: center;
+      }
+      .ds-spacing-bar { background: var(--accent); height: 12px; border-radius: 2px; }
+      .ds-radius-box { width: 36px; height: 36px; background: var(--accent); }
+      .ds-shadow-box {
+        width: 60px; height: 36px; background: var(--bg-elev);
+        border: 1px solid var(--border-soft); border-radius: 6px;
+      }
+      .ds-spec-name {
+        font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+        font-size: 11px; color: var(--text);
+      }
+      .ds-spec-val {
+        font-size: 10.5px; color: var(--text-3);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* 组件展示 */
+      .ds-comp {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+      .ds-comp-frame {
+        padding: 22px 20px;
+        background: var(--bg-elev);
+        border: 1px solid var(--border); border-radius: 10px;
+        display: flex; flex-wrap: wrap; gap: 12px;
+        align-items: center;
+      }
+      .ds-comp-meta {
+        display: flex; align-items: baseline; gap: 10px;
+        font-size: 11.5px; color: var(--text-3);
+        flex-wrap: wrap;
+      }
+      .ds-comp-name {
+        font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+        font-size: 12px; color: var(--text);
+        font-weight: 500;
+      }
+      .ds-comp-note {
+        font-size: 11.5px; color: var(--text-3);
+        line-height: 1.5;
+      }
+
+      /* 设计原则 list */
+      .ds-rules { list-style: none; padding: 0; margin: 0; }
+      .ds-rules li {
+        padding: 12px 0;
+        border-bottom: 1px dashed var(--border);
+        font-size: 13px; line-height: 1.7; color: var(--text-2);
+      }
+      .ds-rules li:last-child { border-bottom: 0; }
+      .ds-rules strong { color: var(--text); font-weight: 600; }
+      .ds-rules code {
+        font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+        font-size: 11.5px;
+        background: var(--bg-soft); color: var(--text);
+        padding: 1px 5px; border-radius: 3px;
+      }
+
+      /* iPad Mini 断点说明 */
+      .ds-bp-table {
+        width: 100%; border-collapse: collapse;
+        font-size: 12.5px;
+      }
+      .ds-bp-table th, .ds-bp-table td {
+        text-align: left; padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+      .ds-bp-table th {
+        font-weight: 600; color: var(--text);
+        background: var(--bg-soft);
+        font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+      }
+      .ds-bp-table td { color: var(--text-2); }
+      .ds-bp-table code {
+        font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+        font-size: 11.5px;
+        background: var(--bg-soft); padding: 1px 5px; border-radius: 3px;
+        color: var(--text);
+      }
+
+      /* 演示用迷你 split layout */
+      .ds-mini-split {
+        display: grid; grid-template-columns: 200px 1fr;
+        gap: 0;
+        height: 200px;
+        border: 1px solid var(--border); border-radius: 8px;
+        overflow: hidden;
+        background: var(--bg-elev);
+      }
+      .ds-mini-split > div:first-child {
+        border-right: 1px solid var(--border);
+        padding: 14px;
+        background: var(--bg-elev);
+      }
+      .ds-mini-split > div:last-child {
+        padding: 14px;
+        background: var(--bg);
+      }
+      @media (max-width: 1023px) {
+        .ds-mini-split { grid-template-columns: 1fr; }
+        .ds-mini-split > div:first-child { border-right: 0; }
+      }
+
+      /* 双 token 共存说明卡 */
+      .ds-callout {
+        padding: 14px 16px;
+        background: color-mix(in oklab, var(--s-warning) 8%, var(--bg));
+        border-left: 3px solid var(--s-warning);
+        border-radius: 6px;
+        font-size: 12.5px; line-height: 1.7;
+        color: var(--text-2);
+        margin-bottom: 20px;
+      }
+      .ds-callout strong { color: var(--text); font-weight: 600; }
+
+      /* footer */
+      .ds-footer {
+        margin-top: 80px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        font-size: 11.5px; color: var(--text-3);
+        line-height: 1.7;
+      }
+
+      @media (max-width: 768px) {
+        .ds-page { padding: 24px 18px 80px; }
+        .ds-toolbar { margin: -24px -18px 20px; padding: 12px 18px; }
+        .ds-h1 { font-size: 26px; }
+        .ds-type-row { grid-template-columns: 50px 60px 50px 1fr; gap: 10px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="ds-page">
+      <div class="ds-toolbar">
+        <div class="ds-toolbar-title">
+          设计规范 <small>· extracted from src/styles/*</small>
+        </div>
+        <div class="ds-toolbar-actions">
+          <button type="button" class="ds-mode-btn" data-toggle-mode>
+            <span data-mode-icon>◐</span>
+            <span data-mode-label>切换</span>
+          </button>
+        </div>
+      </div>
+
+      <h1 class="ds-h1">sususu 设计规范</h1>
+      <p class="ds-lede">
+        本页是 <code style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px;">src/styles/tokens.css</code> + <code style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px;">components.css</code> + <code style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px;">tailwind.config.ts</code> 的可视化镜像。
+        所有色值、间距、组件样式都是从源 CSS 实时引用 — 改源文件，本页跟着变。设计的目的不是把它做漂亮，而是把它做"必然"：能删的元素一定删掉。
+      </p>
+
+      <nav class="ds-toc" aria-label="目录">
+        <a href="#philosophy"><span class="ds-toc-num">01</span>设计哲学</a>
+        <a href="#color"><span class="ds-toc-num">02</span>颜色</a>
+        <a href="#typography"><span class="ds-toc-num">03</span>字体</a>
+        <a href="#spacing"><span class="ds-toc-num">04</span>间距</a>
+        <a href="#radius"><span class="ds-toc-num">05</span>圆角</a>
+        <a href="#shadow"><span class="ds-toc-num">06</span>阴影</a>
+        <a href="#components"><span class="ds-toc-num">07</span>组件</a>
+        <a href="#renderers"><span class="ds-toc-num">08</span>渲染原子</a>
+        <a href="#responsive"><span class="ds-toc-num">09</span>响应式</a>
+        <a href="#rules"><span class="ds-toc-num">10</span>守则</a>
+      </nav>
+
+      <!-- ============================================
+           §1 设计哲学
+           ============================================ -->
+      <section class="ds-section" id="philosophy">
+        <div class="ds-section-head">
+          <span class="ds-section-num">01</span>
+          <h2 class="ds-section-title">设计哲学</h2>
+          <span class="ds-section-sub">三层颜色 · 信息密度优先</span>
+        </div>
+        <p class="ds-section-intro">
+          sususu 是经营学备考工具。对学习者而言"内容是主角，设计是空气" — 任何抢戏的视觉装饰都是噪音。
+          设计语言遵循三个核心原则：色彩按职责分三层（不混用）、字号优先信息密度（基础 14 px）、affordance 不重复（学派色已表达身份就不再加 dot）。
+        </p>
+
+        <div class="ds-callout">
+          <strong>双 token 体系并存</strong>：v0.8.x 起站点同时跑 v1.0 token（<code>--bg / --text / --primary</code> 等，<code>tokens.css</code>）和 legacy token（<code>--color-text-primary / --color-bg-primary</code> 等，<code>global.css</code>）。
+          新组件默认走 v1.0；旧组件渐进迁移。两套都支持 dark mode 自动反相，同步切换。
+        </div>
+      </section>
+
+      <!-- ============================================
+           §2 颜色
+           ============================================ -->
+      <section class="ds-section" id="color">
+        <div class="ds-section-head">
+          <span class="ds-section-num">02</span>
+          <h2 class="ds-section-title">颜色</h2>
+          <span class="ds-section-sub">三层 · L1 主题 / L2 语义 / L3 分类</span>
+        </div>
+        <p class="ds-section-intro">
+          每个色值都问"它表达的是什么职责"再选层。L1 仅 focus / 主操作 / 文字；L2 仅按数据维度；L3 仅学派归属。
+          任何新组件需色彩时按此顺序自上而下选 — 选不出说明 token 缺失，先补 token 再用。
+        </p>
+
+        <div class="ds-subhead">L1 · 主题色（墨黑 / Sumi）</div>
+        <p class="ds-comp-note" style="margin-bottom: 12px;">
+          页面背景 / 文字 / 主按钮 / 链接 / focus 环。这是站点的"骨"。
+        </p>
+        <div class="ds-color-grid">
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--bg)"></div><div class="ds-color-meta"><div class="ds-color-name">--bg</div><div class="ds-color-desc">页面背景 · 暖白纸</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--bg-elev)"></div><div class="ds-color-meta"><div class="ds-color-name">--bg-elev</div><div class="ds-color-desc">卡片 / 浮层</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--bg-soft)"></div><div class="ds-color-meta"><div class="ds-color-name">--bg-soft</div><div class="ds-color-desc">区块底 / 弱填充</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--border)"></div><div class="ds-color-meta"><div class="ds-color-name">--border</div><div class="ds-color-desc">主描边</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--border-soft)"></div><div class="ds-color-meta"><div class="ds-color-name">--border-soft</div><div class="ds-color-desc">弱描边</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--text)"></div><div class="ds-color-meta"><div class="ds-color-name">--text</div><div class="ds-color-desc">主文字</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--text-2)"></div><div class="ds-color-meta"><div class="ds-color-name">--text-2</div><div class="ds-color-desc">次文字</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--text-3)"></div><div class="ds-color-meta"><div class="ds-color-name">--text-3</div><div class="ds-color-desc">弱文字 / placeholder</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--primary)"></div><div class="ds-color-meta"><div class="ds-color-name">--primary</div><div class="ds-color-desc">主色 = 墨黑本身</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--primary-soft)"></div><div class="ds-color-meta"><div class="ds-color-name">--primary-soft</div><div class="ds-color-desc">主色弱底（hover / 激活背景）</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--link)"></div><div class="ds-color-meta"><div class="ds-color-name">--link</div><div class="ds-color-desc">行内链接</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--focus)"></div><div class="ds-color-meta"><div class="ds-color-name">--focus</div><div class="ds-color-desc">focus 环（v0.5.90 后全局取消 outline）</div></div></div>
+        </div>
+
+        <div class="ds-subhead">L2 · 语义色 / 强度 (Intensity)</div>
+        <p class="ds-comp-note" style="margin-bottom: 12px;">
+          热力图 / 强度条 / 数据密度。蓝 (245)，明度 0.92 → 0.45 共 5 阶 + 0 阶无数据。
+        </p>
+        <div class="ds-color-grid">
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--i-0)"></div><div class="ds-color-meta"><div class="ds-color-name">--i-0</div><div class="ds-color-desc">无数据</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--i-1)"></div><div class="ds-color-meta"><div class="ds-color-name">--i-1</div><div class="ds-color-desc">&lt; 15 min</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--i-2)"></div><div class="ds-color-meta"><div class="ds-color-name">--i-2</div><div class="ds-color-desc">15–30 min</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--i-3)"></div><div class="ds-color-meta"><div class="ds-color-name">--i-3</div><div class="ds-color-desc">30–60 min</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--i-4)"></div><div class="ds-color-meta"><div class="ds-color-name">--i-4</div><div class="ds-color-desc">1–2 h</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--i-5)"></div><div class="ds-color-meta"><div class="ds-color-name">--i-5</div><div class="ds-color-desc">2 h+</div></div></div>
+        </div>
+
+        <div class="ds-subhead">L2 · 语义色 / 状态 (State)</div>
+        <p class="ds-comp-note" style="margin-bottom: 12px;">
+          toast / banner / 表单校验。明度 ≈ 0.55，饱和度低于 tag — 不抢戏。每个 state 配 soft 弱底。
+        </p>
+        <div class="ds-color-grid">
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--s-success)"></div><div class="ds-color-meta"><div class="ds-color-name">--s-success</div><div class="ds-color-desc">成功</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--s-warning)"></div><div class="ds-color-meta"><div class="ds-color-name">--s-warning</div><div class="ds-color-desc">警告</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--s-danger)"></div><div class="ds-color-meta"><div class="ds-color-name">--s-danger</div><div class="ds-color-desc">危险 / 错误</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--s-info)"></div><div class="ds-color-meta"><div class="ds-color-name">--s-info</div><div class="ds-color-desc">信息</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--s-locked)"></div><div class="ds-color-meta"><div class="ds-color-name">--s-locked</div><div class="ds-color-desc">锁定 / 禁用</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--s-success-soft)"></div><div class="ds-color-meta"><div class="ds-color-name">--s-success-soft</div><div class="ds-color-desc">成功弱底</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--s-warning-soft)"></div><div class="ds-color-meta"><div class="ds-color-name">--s-warning-soft</div><div class="ds-color-desc">警告弱底</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--s-danger-soft)"></div><div class="ds-color-meta"><div class="ds-color-name">--s-danger-soft</div><div class="ds-color-desc">危险弱底</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--s-info-soft)"></div><div class="ds-color-meta"><div class="ds-color-name">--s-info-soft</div><div class="ds-color-desc">信息弱底</div></div></div>
+        </div>
+
+        <div class="ds-subhead">L2 · 语义色 / 段位 Tier</div>
+        <p class="ds-comp-note" style="margin-bottom: 12px;">
+          C / B / A / S 段位徽章。色板从 9 → 4，亚档（- / +）由文字承担不增色。
+        </p>
+        <div class="ds-color-grid">
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--tier-c)"></div><div class="ds-color-meta"><div class="ds-color-name">--tier-c</div><div class="ds-color-desc">灰 — 未入门</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--tier-b)"></div><div class="ds-color-meta"><div class="ds-color-name">--tier-b</div><div class="ds-color-desc">实木棕 — 基础</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--tier-a)"></div><div class="ds-color-meta"><div class="ds-color-name">--tier-a</div><div class="ds-color-desc">古铜金 — 进阶（含 nobel）</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--tier-s)"></div><div class="ds-color-meta"><div class="ds-color-name">--tier-s</div><div class="ds-color-desc">深靛 — 大师</div></div></div>
+        </div>
+
+        <div class="ds-subhead">L2 · 语义色 / 进度 (Progress)</div>
+        <div class="ds-color-grid">
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--p-track)"></div><div class="ds-color-meta"><div class="ds-color-name">--p-track</div><div class="ds-color-desc">进度槽底</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--p-fill)"></div><div class="ds-color-meta"><div class="ds-color-name">--p-fill</div><div class="ds-color-desc">进度填充</div></div></div>
+        </div>
+
+        <div class="ds-subhead">L3 · 分类色 / 学派 Tag</div>
+        <p class="ds-comp-note" style="margin-bottom: 12px;">
+          知识点圆点 / 角标 / sparkline 配色。<strong>永不动</strong> — 新增学派只能从已有 8 色里选，dark mode 不变（保持识别一致性）。
+        </p>
+        <div class="ds-color-grid">
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--tag-mgmt)"></div><div class="ds-color-meta"><div class="ds-color-name">--tag-mgmt</div><div class="ds-color-desc">经营 (SM) 绿</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--tag-mkt)"></div><div class="ds-color-meta"><div class="ds-color-name">--tag-mkt</div><div class="ds-color-desc">营销 (OB) 黄</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--tag-soc)"></div><div class="ds-color-meta"><div class="ds-color-name">--tag-soc</div><div class="ds-color-desc">社会 (OT) 棕</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--tag-purple)"></div><div class="ds-color-meta"><div class="ds-color-name">--tag-purple</div><div class="ds-color-desc">紫</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--tag-pink)"></div><div class="ds-color-meta"><div class="ds-color-name">--tag-pink</div><div class="ds-color-desc">粉</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--tag-cyan)"></div><div class="ds-color-meta"><div class="ds-color-name">--tag-cyan</div><div class="ds-color-desc">青</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--tag-blue)"></div><div class="ds-color-meta"><div class="ds-color-name">--tag-blue</div><div class="ds-color-desc">蓝</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: var(--tag-orange)"></div><div class="ds-color-meta"><div class="ds-color-name">--tag-orange</div><div class="ds-color-desc">橙</div></div></div>
+        </div>
+
+        <div class="ds-subhead">Legacy · accent 固定 hex（Tailwind 配置）</div>
+        <p class="ds-comp-note" style="margin-bottom: 12px;">
+          Tailwind 颜色 <code style="font-family: ui-monospace, monospace; font-size: 11.5px; background: var(--bg-soft); padding: 1px 4px; border-radius: 3px;">accent.ob / classic / strategy / warning</code>，写死 hex 不随 dark mode 变。新组件优先用 L3 tag 色。
+        </p>
+        <div class="ds-color-grid">
+          <div class="ds-color"><div class="ds-color-swatch" style="background: #34C759"></div><div class="ds-color-meta"><div class="ds-color-name">accent-ob</div><div class="ds-color-desc">#34C759 · iOS 绿</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: #FF9500"></div><div class="ds-color-meta"><div class="ds-color-name">accent-classic</div><div class="ds-color-desc">#FF9500 · iOS 橙</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: #007AFF"></div><div class="ds-color-meta"><div class="ds-color-name">accent-strategy</div><div class="ds-color-desc">#007AFF · iOS 蓝（链接 / ghost btn）</div></div></div>
+          <div class="ds-color"><div class="ds-color-swatch" style="background: #FF3B30"></div><div class="ds-color-meta"><div class="ds-color-name">accent-warning</div><div class="ds-color-desc">#FF3B30 · iOS 红</div></div></div>
+        </div>
+      </section>
+
+      <!-- ============================================
+           §3 字体
+           ============================================ -->
+      <section class="ds-section" id="typography">
+        <div class="ds-section-head">
+          <span class="ds-section-num">03</span>
+          <h2 class="ds-section-title">字体</h2>
+          <span class="ds-section-sub">SF Pro · 4 px 行高节奏 · 信息密度优先</span>
+        </div>
+        <p class="ds-section-intro">
+          全栈系统字体 — 没有 webfont（除 Brand 用 Kalam 700）。SF Pro 优先 → PingFang SC / Hiragino Sans / Noto Sans CJK 兜底。
+          基础字号 14 px 比常规 web app 略小，原则是"阅读为先 · 信息密度优先"。
+        </p>
+
+        <div class="ds-subhead">字体栈</div>
+        <div class="ds-comp-frame" style="font-size: 13px; color: var(--text-2); line-height: 1.7;">
+          <code style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11.5px;">
+            -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "PingFang SC", "Hiragino Sans", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif
+          </code>
+        </div>
+
+        <div class="ds-subhead">字号 scale（Tailwind <code style="font-family: ui-monospace, monospace; font-size: 11.5px; background: var(--bg-soft); padding: 1px 4px; border-radius: 3px;">text-*</code>）</div>
+        <div>
+          <div class="ds-type-row"><span class="ds-type-key">xs</span><span class="ds-type-px">11 px</span><span class="ds-type-lh">/1.5</span><span style="font-size: 11px; line-height: 1.5;">eyebrow / count / meta — 11 px 是底线</span></div>
+          <div class="ds-type-row"><span class="ds-type-key">sm</span><span class="ds-type-px">12 px</span><span class="ds-type-lh">/1.5</span><span style="font-size: 12px; line-height: 1.5;">小描述 / 表单 label / chip 文字</span></div>
+          <div class="ds-type-row"><span class="ds-type-key">body</span><span class="ds-type-px">13.5 px</span><span class="ds-type-lh">/1.7</span><span style="font-size: 13.5px; line-height: 1.7;">默认正文 — 学派详情 summary / KP 长文</span></div>
+          <div class="ds-type-row"><span class="ds-type-key">base</span><span class="ds-type-px">14 px</span><span class="ds-type-lh">/1.7</span><span style="font-size: 14px; line-height: 1.7;">基础正文 / KP body 卡片名</span></div>
+          <div class="ds-type-row"><span class="ds-type-key">lg</span><span class="ds-type-px">16 px</span><span class="ds-type-lh">/1.6</span><span style="font-size: 16px; line-height: 1.6;">关键链接 / 强调正文</span></div>
+          <div class="ds-type-row"><span class="ds-type-key">xl</span><span class="ds-type-px">20 px</span><span class="ds-type-lh">/1.4</span><span style="font-size: 20px; line-height: 1.4; font-weight: 600;">section 标题</span></div>
+          <div class="ds-type-row"><span class="ds-type-key">2xl</span><span class="ds-type-px">24 px</span><span class="ds-type-lh">/1.3</span><span style="font-size: 24px; line-height: 1.3; font-weight: 600;">page hero 标题</span></div>
+          <div class="ds-type-row"><span class="ds-type-key">3xl</span><span class="ds-type-px">28 px</span><span class="ds-type-lh">/1.25</span><span style="font-size: 28px; line-height: 1.25; font-weight: 600;">大标题（极少用）</span></div>
+        </div>
+
+        <div class="ds-subhead">字重</div>
+        <div class="ds-comp-frame">
+          <span style="font-weight: 400; font-size: 14px;">Regular 400 · 正文</span>
+          <span style="font-weight: 600; font-size: 14px;">Semibold 600 · 标题 / 加粗</span>
+          <span style="font-size: 11.5px; color: var(--text-3);">light 300 已弃用</span>
+        </div>
+
+        <div class="ds-subhead">特殊文字组件</div>
+        <div class="ds-comp">
+          <div class="ds-comp-frame">
+            <p class="section-eyebrow">SECTION EYEBROW · 11 PX UPPERCASE</p>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.section-eyebrow</span><span>11 px / 600 / letter-spacing 0.1em / uppercase / text-3</span></div>
+        </div>
+        <div class="ds-comp">
+          <div class="ds-comp-frame">
+            <div class="page-hero">
+              <div class="page-hero-eyebrow">PAGE HERO EYEBROW</div>
+              <h1 class="page-hero-title">页面标题</h1>
+              <p class="page-hero-sub">副标题：13 px 次文字色，行高 1.55，承载页面副信息</p>
+            </div>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.page-hero / .page-hero-eyebrow / .page-hero-title / .page-hero-sub</span></div>
+        </div>
+      </section>
+
+      <!-- ============================================
+           §4 间距
+           ============================================ -->
+      <section class="ds-section" id="spacing">
+        <div class="ds-section-head">
+          <span class="ds-section-num">04</span>
+          <h2 class="ds-section-title">间距</h2>
+          <span class="ds-section-sub">4 px 网格</span>
+        </div>
+        <p class="ds-section-intro">
+          全部间距走 4 px 网格（基础 4 → 8 → 12 → 16…）。
+          打破 4 px 时只允许 2 px (0.5)。垂直节奏靠倍数对齐 — 不允许 padding 13 px / margin 17 px 这类破坏感。
+        </p>
+        <div class="ds-spec-grid">
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-spacing-bar" style="width: 2px;"></div></div><div class="ds-spec-name">spacing.0.5</div><div class="ds-spec-val">2 px · 微缝</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-spacing-bar" style="width: 4px;"></div></div><div class="ds-spec-name">spacing.1</div><div class="ds-spec-val">4 px · 基础单位</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-spacing-bar" style="width: 6px;"></div></div><div class="ds-spec-name">spacing.1.5</div><div class="ds-spec-val">6 px</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-spacing-bar" style="width: 8px;"></div></div><div class="ds-spec-name">spacing.2</div><div class="ds-spec-val">8 px · chip 内距</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-spacing-bar" style="width: 12px;"></div></div><div class="ds-spec-name">spacing.3</div><div class="ds-spec-val">12 px · 卡内距</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-spacing-bar" style="width: 16px;"></div></div><div class="ds-spec-name">spacing.4</div><div class="ds-spec-val">16 px · 卡间距</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-spacing-bar" style="width: 20px;"></div></div><div class="ds-spec-name">spacing.5</div><div class="ds-spec-val">20 px</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-spacing-bar" style="width: 24px;"></div></div><div class="ds-spec-name">spacing.6</div><div class="ds-spec-val">24 px · section 间距</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-spacing-bar" style="width: 32px;"></div></div><div class="ds-spec-name">spacing.8</div><div class="ds-spec-val">32 px</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-spacing-bar" style="width: 40px;"></div></div><div class="ds-spec-name">spacing.10</div><div class="ds-spec-val">40 px</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-spacing-bar" style="width: 48px;"></div></div><div class="ds-spec-name">spacing.12</div><div class="ds-spec-val">48 px · nav 高</div></div>
+        </div>
+
+        <div class="ds-subhead">阅读宽度</div>
+        <div class="ds-spec-grid">
+          <div class="ds-spec"><div class="ds-spec-vis" style="height: 24px; background: var(--bg-soft); border: 1px dashed var(--border);"><div style="width: 100%; max-width: 100%; height: 8px; background: var(--accent); border-radius: 2px;"></div></div><div class="ds-spec-name">max-w-reading</div><div class="ds-spec-val">720 px · 正文</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis" style="height: 24px; background: var(--bg-soft); border: 1px dashed var(--border);"><div style="width: 100%; max-width: 100%; height: 8px; background: var(--accent); border-radius: 2px;"></div></div><div class="ds-spec-name">max-w-panel</div><div class="ds-spec-val">900 px · KP pane</div></div>
+        </div>
+      </section>
+
+      <!-- ============================================
+           §5 圆角
+           ============================================ -->
+      <section class="ds-section" id="radius">
+        <div class="ds-section-head">
+          <span class="ds-section-num">05</span>
+          <h2 class="ds-section-title">圆角</h2>
+          <span class="ds-section-sub">4 / 6 / 8 / 10 / 12 / 16</span>
+        </div>
+        <p class="ds-section-intro">
+          原则：愈紧凑愈小、愈大块愈大。chip / pill 用 999 px (full)，卡片用 8–12 px，hero card 用 12 px。
+          不用 4 px 之外的奇数（5 / 7 / 9 px 都禁止）。
+        </p>
+        <div class="ds-spec-grid">
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-radius-box" style="border-radius: 4px;"></div></div><div class="ds-spec-name">rounded-sm</div><div class="ds-spec-val">4 px · 标签 / mark</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-radius-box" style="border-radius: 6px;"></div></div><div class="ds-spec-name">rounded</div><div class="ds-spec-val">6 px · 默认 / 输入框</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-radius-box" style="border-radius: 8px;"></div></div><div class="ds-spec-name">rounded-md</div><div class="ds-spec-val">8 px · 菜单 / chip</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-radius-box" style="border-radius: 10px;"></div></div><div class="ds-spec-name">rounded-lg</div><div class="ds-spec-val">10 px · 大卡</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-radius-box" style="border-radius: 12px;"></div></div><div class="ds-spec-name">rounded-xl</div><div class="ds-spec-val">12 px · hero card / theme group</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-radius-box" style="border-radius: 16px;"></div></div><div class="ds-spec-name">rounded-2xl</div><div class="ds-spec-val">16 px · 极大块</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-radius-box" style="border-radius: 9999px;"></div></div><div class="ds-spec-name">rounded-full</div><div class="ds-spec-val">999 px · pill / chip / dot</div></div>
+        </div>
+      </section>
+
+      <!-- ============================================
+           §6 阴影
+           ============================================ -->
+      <section class="ds-section" id="shadow">
+        <div class="ds-section-head">
+          <span class="ds-section-num">06</span>
+          <h2 class="ds-section-title">阴影</h2>
+          <span class="ds-section-sub">极克制 · 仅卡片 / 浮层用</span>
+        </div>
+        <p class="ds-section-intro">
+          站点视觉是"纸 + 墨"。阴影只在卡片提升层级（card）与浮层（menu / modal）出现，正文区域不准用。
+          dark mode 下阴影自动失去意义（背景与卡片对比已弱），主要靠 border 区分。
+        </p>
+        <div class="ds-spec-grid">
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-shadow-box" style="box-shadow: 0 1px 4px rgba(0,0,0,0.06);"></div></div><div class="ds-spec-name">shadow-card</div><div class="ds-spec-val">hero card · 静态</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-shadow-box" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);"></div></div><div class="ds-spec-name">shadow-card-hover</div><div class="ds-spec-val">hover 抬升</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-shadow-box" style="box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.04);"></div></div><div class="ds-spec-name">shadow-kp</div><div class="ds-spec-val">KP card · 极弱</div></div>
+          <div class="ds-spec"><div class="ds-spec-vis"><div class="ds-shadow-box" style="box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);"></div></div><div class="ds-spec-name">menu (inline)</div><div class="ds-spec-val">overflow 菜单 / dropdown</div></div>
+        </div>
+      </section>
+
+      <!-- ============================================
+           §7 组件
+           ============================================ -->
+      <section class="ds-section" id="components">
+        <div class="ds-section-head">
+          <span class="ds-section-num">07</span>
+          <h2 class="ds-section-title">组件</h2>
+          <span class="ds-section-sub">按钮 / chip / 卡 / 表单 / 空态</span>
+        </div>
+
+        <div class="ds-subhead">按钮</div>
+
+        <div class="ds-comp">
+          <div class="ds-comp-frame">
+            <button class="btn-ghost-strategy">提交</button>
+            <button class="btn-ghost-strategy" disabled>禁用</button>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.btn-ghost-strategy</span><span>提交按钮 · 蓝边白底蓝字 → hover 实底</span></div>
+        </div>
+
+        <div class="ds-comp">
+          <div class="ds-comp-frame">
+            <a href="#" class="icon-add-btn">+</a>
+            <a href="#" class="icon-add-btn" style="opacity: 0.5;">+</a>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.icon-add-btn</span><span>新增按钮 · 32 × 32 圆 · transparent → hover bg-secondary</span></div>
+        </div>
+
+        <div class="ds-comp">
+          <div class="ds-comp-frame">
+            <button class="hero-icon-btn">✎</button>
+            <button class="hero-icon-btn">★</button>
+            <button class="hero-icon-btn">⋯</button>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.hero-icon-btn</span><span>图标按钮 · 36 × 36 圆 · hero 头部右侧 · 触屏 ≥ 44 px</span></div>
+        </div>
+
+        <div class="ds-comp">
+          <div class="ds-comp-frame">
+            <a href="#" class="lang-toggle">日本語</a>
+            <a href="#" class="lang-toggle is-active">日本語</a>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.lang-toggle / .is-active</span><span>语言切换 · primary 描边胶囊 · Cmd/Ctrl+J 触发</span></div>
+        </div>
+
+        <div class="ds-subhead">Chip / Pill</div>
+
+        <div class="ds-comp">
+          <div class="ds-comp-frame">
+            <span class="chip">学派 chip</span>
+            <span class="chip" style="border-color: var(--tag-mgmt); color: var(--tag-mgmt);">经营</span>
+            <span class="chip" style="border-color: var(--tag-blue); color: var(--tag-blue);">战略</span>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.chip</span><span>2 px 内距 · 12 px font · semibold · border + bg</span></div>
+        </div>
+
+        <div class="ds-comp">
+          <div class="ds-comp-frame">
+            <button class="tsp-chip"><span class="tsp-dot" style="--tsp-color: var(--tag-mgmt);"></span>经营</button>
+            <button class="tsp-chip is-active" style="--tsp-color: var(--tag-blue);"><span class="tsp-dot" style="--tsp-color: var(--tag-blue);"></span>战略</button>
+            <button class="tsp-chip tsp-chip--none">未分类</button>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.tsp-chip / .is-active</span><span>编辑器 single-picker · 12 px font · 圆 999 · color-mix 弱底</span></div>
+        </div>
+
+        <div class="ds-comp">
+          <div class="ds-comp-frame">
+            <a href="#" class="theme-anchor-chip">基础理论</a>
+            <a href="#" class="theme-anchor-chip is-active">战略理论</a>
+            <a href="#" class="theme-anchor-chip">组织理论</a>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.theme-anchor-chip / .is-active</span><span>scroll spy 锚点 chip · 11.5 px · active 用 text-primary 实底反白</span></div>
+        </div>
+
+        <div class="ds-comp">
+          <div class="ds-comp-frame">
+            <span class="field-tag" style="border-color: var(--tag-mgmt); color: var(--tag-mgmt);">学派</span>
+            <span class="field-tag" style="border-color: var(--tag-blue); color: var(--tag-blue);">学者</span>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.field-tag</span><span>学者页 / 学派页 hero 上方分类标</span></div>
+        </div>
+
+        <div class="ds-subhead">Alert box</div>
+        <p class="ds-comp-note" style="margin-bottom: 12px;">
+          表单错误 / 提示框。Tailwind utility 直拼：<code style="font-family: ui-monospace, monospace; font-size: 11.5px; background: var(--bg-soft); padding: 1px 4px; border-radius: 3px;">bg-badge-* + text-accent-*</code>。
+          <code style="font-family: ui-monospace, monospace; font-size: 11.5px; background: var(--bg-soft); padding: 1px 4px; border-radius: 3px;">--color-badge-*</code> token 名是历史遗留，今天承担的是 alert tone 职责。
+        </p>
+        <div class="ds-comp">
+          <div class="ds-comp-frame" style="flex-direction: column; align-items: stretch; gap: 8px;">
+            <div class="p-3 rounded-md bg-badge-limit text-accent-warning text-xs">⚠ 邀请码无效，请重新输入</div>
+            <div class="p-3 rounded-md bg-badge-meaning text-accent-classic text-xs">✓ 已保存修改</div>
+            <div class="p-3 rounded-md bg-badge-example text-xs" style="color: var(--accent-strategy, #007AFF);">ⓘ 提示信息文本</div>
+            <div class="p-3 rounded-md bg-badge-neutral text-xs" style="color: var(--color-text-secondary);">中性提示 / placeholder block</div>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">bg-badge-limit / -meaning / -example / -neutral</span><span>auth 页 / settings / scholars / admin tags 在用 · 4 种 tone 对应 warning / success / info / neutral</span></div>
+        </div>
+
+        <div class="ds-subhead">卡片</div>
+
+        <div class="ds-comp">
+          <div class="ds-comp-frame" style="flex-direction: column; align-items: stretch;">
+            <div class="hero-card">
+              <div class="hero-bar" style="background: var(--tag-mgmt);"></div>
+              <div class="hero-body">
+                <div style="flex: 1;">
+                  <div style="font-size: 20px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px;">学派名称</div>
+                  <div style="font-size: 12px; color: var(--color-text-tertiary);">School of Management</div>
+                </div>
+                <div class="hero-actions">
+                  <button class="hero-icon-btn">✎</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.hero-card / .hero-bar / .hero-body / .hero-actions</span><span>学派/学者 detail 顶部 · 6 px 左侧 tag strip + 12 px radius</span></div>
+        </div>
+
+        <div class="ds-comp">
+          <div class="ds-comp-frame" style="flex-direction: column; align-items: stretch;">
+            <div class="theme-group-box">
+              <div style="display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px;">
+                <h3 class="theme-group-title">基础理论</h3>
+                <span class="theme-group-count">12</span>
+              </div>
+              <p class="theme-group-desc">从古典管理到现代组织行为</p>
+            </div>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.theme-group-box / -title / -count / -desc</span><span>学派列表分组容器 · bg-secondary 圆角 · 12 px radius</span></div>
+        </div>
+
+        <div class="ds-subhead">表单</div>
+        <div class="ds-comp">
+          <div class="ds-comp-frame" style="flex-direction: column; align-items: stretch; gap: 10px;">
+            <input type="text" placeholder="placeholder 文本" class="border" style="padding: 8px 12px; border-radius: 6px; font-size: 13px;" />
+            <textarea rows="2" placeholder="多行文本" class="border" style="padding: 8px 12px; border-radius: 6px; font-size: 13px; resize: vertical;"></textarea>
+            <div class="cp-root">
+              <div class="cp-presets">
+                <button class="cp-swatch" style="background: var(--tag-mgmt);"></button>
+                <button class="cp-swatch is-active" style="background: var(--tag-blue);"></button>
+                <button class="cp-swatch" style="background: var(--tag-orange);"></button>
+                <button class="cp-swatch" style="background: var(--tag-purple);"></button>
+              </div>
+              <div class="cp-hex"><input class="cp-hex-input" value="#3b82f6" /></div>
+            </div>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">input / textarea / .cp-swatch / .cp-hex-input</span><span>v0.6.15 dark mode base · color picker 6 预设 + hex 兜底</span></div>
+        </div>
+
+        <div class="ds-subhead">空态</div>
+        <div class="ds-comp">
+          <div class="ds-comp-frame" style="flex-direction: column;">
+            <div class="empty-right" style="margin-top: 0; padding: 32px 24px;">
+              <div class="empty-rings" style="--accent: var(--tag-mgmt);">
+                <div class="empty-ring r1"></div>
+                <div class="empty-ring r2"></div>
+                <div class="empty-ring r3"></div>
+                <div class="empty-dot" style="background: var(--tag-mgmt);"></div>
+              </div>
+              <div class="empty-meta">
+                <div class="empty-eyebrow" style="color: var(--tag-mgmt);">
+                  <span class="empty-eyebrow-dot" style="background: var(--tag-mgmt);"></span>
+                  EMPTY STATE
+                </div>
+                <div class="empty-name">还没有内容</div>
+                <p class="empty-tip">从左栏选择学派 · 或开始新增</p>
+              </div>
+              <a href="#" class="empty-cta" style="color: var(--tag-mgmt);">
+                <span class="empty-cta-plus">+</span>新增第一条
+              </a>
+            </div>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.empty-right / .empty-rings / .empty-meta / .empty-cta</span><span>split pane 右栏空态 · accent 三圈 + dot</span></div>
+        </div>
+      </section>
+
+      <!-- ============================================
+           §8 渲染原子
+           ============================================ -->
+      <section class="ds-section" id="renderers">
+        <div class="ds-section-head">
+          <span class="ds-section-num">08</span>
+          <h2 class="ds-section-title">渲染原子</h2>
+          <span class="ds-section-sub">KP body 5 种渲染器</span>
+        </div>
+        <p class="ds-section-intro">
+          KP body 数据结构按 <code style="font-family: ui-monospace, monospace; font-size: 11.5px; background: var(--bg-soft); padding: 1px 4px; border-radius: 3px;">render.kind</code> 走 5 种渲染器：
+          <strong>flat-list / narrative / accordion / compare / quad</strong>。所有渲染器读 outer wrapper 注入的 <code style="font-family: ui-monospace, monospace; font-size: 11.5px; background: var(--bg-soft); padding: 1px 4px; border-radius: 3px;">--accent</code>（学派色），dark mode 自动反相。
+        </p>
+
+        <div class="ds-subhead">flat-list (.body-card)</div>
+        <div class="ds-comp">
+          <div class="ds-comp-frame body-fmt" style="flex-direction: column; align-items: stretch;">
+            <div class="body-items">
+              <div class="body-card">
+                <div class="body-num">1</div>
+                <div class="body-card-content">
+                  <div class="body-item-name">第一项名称</div>
+                  <div class="body-item-desc">描述文本，14 px 半粗 + 12 px 次文字描述，行高宽松</div>
+                </div>
+              </div>
+              <div class="body-card">
+                <div class="body-num">2</div>
+                <div class="body-card-content">
+                  <div class="body-item-name">第二项名称</div>
+                  <div class="body-item-desc">描述文本</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.body-items / .body-card / .body-num</span><span>编号圆 12 px radius + accent 12% color-mix</span></div>
+        </div>
+
+        <div class="ds-subhead">accordion (.acc-li)</div>
+        <div class="ds-comp">
+          <div class="ds-comp-frame" style="flex-direction: column; align-items: stretch;">
+            <ol class="acc-numbered">
+              <li class="acc-li">
+                <span class="acc-li-n">1</span>
+                <div class="acc-li-body">
+                  <div class="acc-li-name">编号项名称</div>
+                  <div class="acc-li-desc">描述：accent 22 × 22 圆环 + bg-elev 内填，hanging indent 排版</div>
+                </div>
+              </li>
+              <li class="acc-li">
+                <span class="acc-li-n">2</span>
+                <div class="acc-li-body">
+                  <div class="acc-li-name">第二项</div>
+                  <div class="acc-li-desc">描述</div>
+                </div>
+              </li>
+            </ol>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.acc-li / .acc-li-n / .acc-li-name / .acc-li-desc</span></div>
+        </div>
+
+        <div class="ds-subhead">compare cards (.cmpc-card)</div>
+        <div class="ds-comp">
+          <div class="ds-comp-frame" style="flex-direction: column; align-items: stretch;">
+            <div class="cmpc-grid" style="grid-template-columns: 1fr 1fr;">
+              <div class="cmpc-card">
+                <div class="cmpc-num">01</div>
+                <div class="cmpc-name">类型一</div>
+                <div class="cmpc-headline">核心概念</div>
+                <div class="cmpc-sub">一句话描述本类型核心特征，dashed border 分隔元数据</div>
+                <ul class="cmpc-meta">
+                  <li>· 特征 1</li>
+                  <li>· 特征 2</li>
+                </ul>
+              </div>
+              <div class="cmpc-card">
+                <div class="cmpc-num">02</div>
+                <div class="cmpc-name">类型二</div>
+                <div class="cmpc-headline">核心概念</div>
+                <div class="cmpc-sub">第二种类型的描述</div>
+                <ul class="cmpc-meta">
+                  <li>· 特征 1</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.cmpc-grid / .cmpc-card / .cmpc-num / .cmpc-headline / .cmpc-sub / .cmpc-meta</span><span>OptionA 学派详情专用 · 22 px headline 用 accent</span></div>
+        </div>
+
+        <div class="ds-subhead">compare table (.cmp-row)</div>
+        <div class="ds-comp">
+          <div class="ds-comp-frame" style="flex-direction: column; align-items: stretch;">
+            <div class="cmp-table">
+              <div class="cmp-row">
+                <div class="cmp-pill">维度 A</div>
+                <div class="cmp-cells"><div class="cmp-cell">cell 内容 · 12 px text-2 行高 1.7</div></div>
+              </div>
+              <div class="cmp-row">
+                <div class="cmp-pill">维度 B</div>
+                <div class="cmp-cells"><div class="cmp-cell">第二行</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.cmp-table / .cmp-row / .cmp-pill / .cmp-cell</span><span>120 px pill + 1fr cells · &lt; 1024 px stack</span></div>
+        </div>
+
+        <div class="ds-subhead">quad chart (.quad-cell)</div>
+        <div class="ds-comp">
+          <div class="ds-comp-frame" style="flex-direction: column; align-items: stretch;">
+            <div class="quad-wrap">
+              <div class="quad-axis-y">高 ← 维度 Y → 低</div>
+              <div class="quad-grid">
+                <div class="quad-cell"><div class="quad-emoji">●</div><div class="quad-name">象限一</div><div class="quad-tag">TAG</div><div class="quad-desc">描述</div></div>
+                <div class="quad-cell"><div class="quad-emoji">▲</div><div class="quad-name">象限二</div><div class="quad-tag">TAG</div><div class="quad-desc">描述</div></div>
+                <div class="quad-cell"><div class="quad-emoji">■</div><div class="quad-name">象限三</div><div class="quad-tag">TAG</div><div class="quad-desc">描述</div></div>
+                <div class="quad-cell"><div class="quad-emoji">◆</div><div class="quad-name">象限四</div><div class="quad-tag">TAG</div><div class="quad-desc">描述</div></div>
+              </div>
+              <div class="quad-axis-x">低 ← 维度 X → 高</div>
+            </div>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.quad-wrap / .quad-cell / .quad-axis-x/y</span><span>2×2 网格 + 文字坐标轴 · 移动端 stack 4 行</span></div>
+        </div>
+
+        <div class="ds-subhead">evaluation (.eval-row)</div>
+        <div class="ds-comp">
+          <div class="ds-comp-frame" style="flex-direction: column; align-items: stretch;">
+            <div class="eval-list">
+              <div class="eval-row">
+                <span class="eval-pill" style="--tone: var(--s-success);">意义</span>
+                <div class="eval-text">学派的<strong>核心贡献</strong>，绿色 tone 表正向。</div>
+              </div>
+              <div class="eval-row">
+                <span class="eval-pill" style="--tone: var(--s-danger);">局限</span>
+                <div class="eval-text">学派的局限性，红色 tone 表负向。</div>
+              </div>
+              <div class="eval-row">
+                <span class="eval-pill" style="--tone: var(--text-3);">举例</span>
+                <div class="eval-text">补充例证，灰色 tone 表中性。</div>
+              </div>
+            </div>
+          </div>
+          <div class="ds-comp-meta"><span class="ds-comp-name">.eval-row / .eval-pill</span><span>v0.8.23 回滚 v0.5.46 简洁版 · 56 px pill + 1fr text · tone 三色</span></div>
+        </div>
+      </section>
+
+      <!-- ============================================
+           §9 响应式
+           ============================================ -->
+      <section class="ds-section" id="responsive">
+        <div class="ds-section-head">
+          <span class="ds-section-num">09</span>
+          <h2 class="ds-section-title">响应式</h2>
+          <span class="ds-section-sub">iPad Mini 主力 · 触屏 hit area</span>
+        </div>
+        <p class="ds-section-intro">
+          唯一断点：<code style="font-family: ui-monospace, monospace; font-size: 11.5px; background: var(--bg-soft); padding: 1px 4px; border-radius: 3px;">max-width: 1023 px</code>（split pane 退化为单栏）。
+          iPad Mini portrait (768 × 1024) 触发 stack；landscape (1024 × 768) 仍 split。触屏设备（<code style="font-family: ui-monospace, monospace; font-size: 11.5px; background: var(--bg-soft); padding: 1px 4px; border-radius: 3px;">pointer: coarse</code>）所有交互元素强制 ≥ 44 × 44 px hit area。
+        </p>
+
+        <table class="ds-bp-table">
+          <thead>
+            <tr><th>设备</th><th>视口</th><th>布局</th><th>关键变化</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>iPhone</td>
+              <td><code>375–430 × ...</code></td>
+              <td>单栏 stack</td>
+              <td>split → single-col · KP open inline body · cmpc 1 col · quad 4 行</td>
+            </tr>
+            <tr>
+              <td>iPad Mini portrait</td>
+              <td><code>768 × 1024</code></td>
+              <td>单栏 stack</td>
+              <td>同上 · 触屏 hit area ≥ 44 px</td>
+            </tr>
+            <tr>
+              <td>iPad Mini landscape</td>
+              <td><code>1024 × 768</code></td>
+              <td>双栏 split</td>
+              <td>触发 split pane · 380–420 px left + 1fr right</td>
+            </tr>
+            <tr>
+              <td>iPad Pro / Desktop</td>
+              <td><code>1280+</code></td>
+              <td>双栏 split</td>
+              <td>同上 · max-w-panel 900 px 居中</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="ds-subhead">Split pane 演示（缩放浏览器宽度看变化）</div>
+        <div class="ds-mini-split">
+          <div>
+            <div style="font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">LEFT</div>
+            <div style="font-size: 12px; color: var(--text-2);">学派列表 / 学者列表</div>
+            <div style="font-size: 11.5px; color: var(--text-3); margin-top: 8px;">≥ 1024 px 显示</div>
+          </div>
+          <div>
+            <div style="font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">RIGHT</div>
+            <div style="font-size: 12px; color: var(--text-2);">KP detail pane</div>
+            <div style="font-size: 11.5px; color: var(--text-3); margin-top: 8px;">&lt; 1024 px 隐藏 → 跳独立页</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================
+           §10 守则
+           ============================================ -->
+      <section class="ds-section" id="rules">
+        <div class="ds-section-head">
+          <span class="ds-section-num">10</span>
+          <h2 class="ds-section-title">守则</h2>
+          <span class="ds-section-sub">违反需明确理由</span>
+        </div>
+        <ul class="ds-rules">
+          <li>
+            <strong>三层颜色不混用</strong> — L1 仅 focus / 主操作 / 文字；L2 仅按数据维度；L3 仅学派归属。
+            主题色不当装饰，tag 色不当 state，state 色不当 tag。
+          </li>
+          <li>
+            <strong>默认 minimalism</strong> — 能删的元素一定删（v0.8.19 删 redundant tag dot；v0.8.20 修 page chrome accent 重复）。
+            理由"用户能自己写"是合法的。增加元素需要明确职责。
+          </li>
+          <li>
+            <strong>focus outline 全局取消</strong>（<code>v0.5.90</code>）— 单人 admin / iPad 主力，键盘 Tab 视觉是噪音。
+            a11y trade-off 由用户场景决定。selected 态用 left strip / accent ring 替代 focus 环。
+          </li>
+          <li>
+            <strong>4 px 网格不破</strong> — 间距只允许 4 px 倍数 + 2 px 微缝。padding 13 px / margin 17 px 这类破坏感不允许。
+          </li>
+          <li>
+            <strong>圆角不奇数</strong> — 4 / 6 / 8 / 10 / 12 / 16 / 999。5 / 7 / 9 px 全禁。
+          </li>
+          <li>
+            <strong>page chrome accent 不重复</strong>（<code>v0.8.20</code>）— 学派/学者 detail 页 page chrome 已表达 entity 身份；
+            tab 底边 / 卡内 dot 等 redundant affordance 一律删。
+          </li>
+          <li>
+            <strong>触屏 hit area ≥ 44 px</strong> — <code>@media (pointer: coarse)</code> 强制 lang-toggle / hero-icon-btn 撑到 44 × 44。
+            视觉尺寸不变，只扩点击区。
+          </li>
+          <li>
+            <strong>Dark mode 是设计而非反相</strong> — tokens 双写 <code>html.dark</code> + <code>[data-mode="dark"]</code>。
+            tag 色不变（保持识别一致性），状态色 soft 变体专门重写。
+          </li>
+          <li>
+            <strong>新组件需色彩时先问职责</strong> — 不直接写 hex。L1 → L2 → L3 顺序选层；选不出说明 token 缺失，先补 token 再用。
+          </li>
+        </ul>
+      </section>
+
+      <footer class="ds-footer">
+        Mirror of <code style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; background: var(--bg-soft); padding: 1px 5px; border-radius: 3px;">v2/src/styles/&#123;tokens, global, components&#125;.css</code> + <code style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; background: var(--bg-soft); padding: 1px 5px; border-radius: 3px;">tailwind.config.ts</code>.
+        改源 CSS / config，本页跟着变。<br>
+        &mdash; design-audit by Claude Opus 4.7
+      </footer>
+    </main>
+
+    <script is:inline>
+      // dark mode toggle —— 与 Layout.astro 同步：data-mode + html.dark 双写
+      (function () {
+        const btn = document.querySelector('[data-toggle-mode]');
+        const icon = document.querySelector('[data-mode-icon]');
+        const label = document.querySelector('[data-mode-label]');
+        const root = document.documentElement;
+        function refresh() {
+          const isDark = root.classList.contains('dark');
+          if (icon) icon.textContent = isDark ? '☾' : '◐';
+          if (label) label.textContent = isDark ? 'Dark' : 'Light';
+        }
+        refresh();
+        btn?.addEventListener('click', () => {
+          const isDark = !root.classList.contains('dark');
+          root.classList.toggle('dark', isDark);
+          root.dataset.mode = isDark ? 'dark' : 'light';
+          try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch {}
+          refresh();
+        });
+      })();
+    </script>
+  </body>
+</html>

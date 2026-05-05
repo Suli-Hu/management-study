@@ -33,6 +33,7 @@ const PUBLIC_PATH_PREFIXES = [
   '/api/auth/',      // invite-code / password / login-password / signup* / password-reset-* / logout
   '/api/v1/webhook/',// v0.6.10: GitHub webhook (HMAC SHA-256 验签代替 cookie auth)
   '/share/',         // v0.7.30: 学习记录公开分享链接（token 自带鉴权，7 天 TTL）
+  '/design-system',  // 设计规范镜像页 — 纯 CSS reference，零敏感数据
   '/favicon',
   '/robots.txt',
   '/_astro/',        // 静态资源（dev + prod）
