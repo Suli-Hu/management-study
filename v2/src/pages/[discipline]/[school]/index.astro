@@ -128,6 +128,13 @@ if (!isPartial) {
 const requestedKpId = Astro.url.searchParams.get('kp');
 const selectedKpId = requestedKpId ?? kps[0]?.id ?? null;
 
+// v0.8.35: 编辑 ✎ 链接的 from URL — 必须保留 ?kp=<id>，否则编辑器返回时
+// fall back 到第一个 KP，丢失用户原本浏览的位置。partial=1 是 split-pane fetch 内部
+// 用，from 不带它。
+const editFromUrl = selectedKpId
+  ? `${Astro.url.pathname}?kp=${selectedKpId}`
+  : Astro.url.pathname;
+
 // 当前语言（?lang=ja 切日文，否则中文）
 const langParam = Astro.url.searchParams.get('lang');
 
@@ -234,7 +241,7 @@ const canEdit = Astro.locals.canEdit(discipline);
                 )}
                 {canEdit && (
                   <a
-                    href={editHref(`/${discipline}/kp/${selectedKp.id}/edit`, Astro.url.pathname)}
+                    href={editHref(`/${discipline}/kp/${selectedKp.id}/edit`, editFromUrl)}
                     data-edit-kp-link={selectedKp.id}
                     class="hero-icon-btn shrink-0"
                     aria-label={`编辑 ${selectedTitle}`}
@@ -287,7 +294,7 @@ const canEdit = Astro.locals.canEdit(discipline);
         {canEdit && (
           <div class="optA-hero-actions-v2">
             <a
-              href={editHref(`/${discipline}/${sch.key}/edit`, Astro.url.pathname)}
+              href={editHref(`/${discipline}/${sch.key}/edit`, editFromUrl)}
               class="hero-icon-btn"
               aria-label="编辑此学派"
               title="编辑"
@@ -350,7 +357,7 @@ const canEdit = Astro.locals.canEdit(discipline);
         {canEdit && (
           <div class="optA-tab-panel-actions">
             <a
-              href={editHref(`/${discipline}/scholars/new?school=${sch.key}`, Astro.url.pathname)}
+              href={editHref(`/${discipline}/scholars/new?school=${sch.key}`, editFromUrl)}
               class="optA-section-add"
               title="新增学者"
             >+ 新增</a>
@@ -382,7 +389,7 @@ const canEdit = Astro.locals.canEdit(discipline);
         {canEdit && (
           <div class="optA-tab-panel-actions">
             <a
-              href={editHref(`/${discipline}/kp/new?school=${sch.key}`, Astro.url.pathname)}
+              href={editHref(`/${discipline}/kp/new?school=${sch.key}`, editFromUrl)}
               class="optA-section-add"
               title="新增 KP"
             >+ 新增</a>
@@ -465,7 +472,7 @@ const canEdit = Astro.locals.canEdit(discipline);
             accentHex="var(--text-3)"
             kind="school"
             name={sch.title_zh}
-            addHref={canEdit ? editHref(`/${discipline}/kp/new?school=${sch.key}`, Astro.url.pathname) : undefined}
+            addHref={canEdit ? editHref(`/${discipline}/kp/new?school=${sch.key}`, editFromUrl) : undefined}
           />
         ) : selectedKp ? (
           <>
@@ -486,7 +493,7 @@ const canEdit = Astro.locals.canEdit(discipline);
                   )}
                   {canEdit && (
                     <a
-                      href={editHref(`/${discipline}/kp/${selectedKp.id}/edit`, Astro.url.pathname)}
+                      href={editHref(`/${discipline}/kp/${selectedKp.id}/edit`, editFromUrl)}
                       data-edit-kp-link={selectedKp.id}
                       class="hero-icon-btn shrink-0"
                       aria-label={`编辑 ${selectedTitle}`}
