@@ -442,7 +442,13 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   font-variant-numeric: tabular-nums;
 }
 
-/* ---- quad chart ---- */
+/* ---- quad chart ----
+ * v0.8.24:
+ *   - .quad-axis-y 去 transform: rotate(180deg)，let writing-mode: vertical-rl 自然顶→底
+ *     阅读 (用户 fb 字方向倒了)
+ *   - .is-2labels 双 span 分别对齐到第 1/2 列 (x 轴) 或第 1/2 行 (y 轴)，
+ *     替代老 "low-high" 用 "-" 拼接居中
+ */
 .quad-wrap {
   display: grid; grid-template-columns: 24px 1fr;
   grid-template-rows: 1fr 24px; gap: 6px;
@@ -450,7 +456,7 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 }
 .quad-axis-y {
   grid-row: 1; grid-column: 1;
-  writing-mode: vertical-rl; transform: rotate(180deg);
+  writing-mode: vertical-rl;
   font-size: 11px; color: var(--text-3);
   display: flex; align-items: center; justify-content: center;
   letter-spacing: 0.05em;
@@ -460,6 +466,27 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   font-size: 11px; color: var(--text-3);
   display: flex; align-items: center; justify-content: center;
   letter-spacing: 0.05em;
+}
+/* 2-label 模式：双 span 对齐到 cell 列 / 行端，与 .quad-grid 8px gap 对齐 */
+.quad-axis-x.is-2labels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  writing-mode: horizontal-tb;
+}
+.quad-axis-x.is-2labels .quad-axis-end {
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+}
+.quad-axis-y.is-2labels {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 8px;
+  writing-mode: horizontal-tb;
+}
+.quad-axis-y.is-2labels .quad-axis-end {
+  writing-mode: vertical-rl;
+  display: flex; align-items: center; justify-content: center;
 }
 .quad-grid {
   grid-row: 1; grid-column: 2;
@@ -1247,6 +1274,23 @@ details.eval {
     border-radius: 4px;
     text-align: left;
     grid-row: auto; grid-column: auto;
+  }
+  /* v0.8.24: mobile 单列 stack 时 .is-2labels 退回 inline 双 span (中间空格分隔) */
+  .quad-axis-y.is-2labels, .quad-axis-x.is-2labels {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+  }
+  .quad-axis-y.is-2labels .quad-axis-end,
+  .quad-axis-x.is-2labels .quad-axis-end {
+    writing-mode: horizontal-tb;
+    display: inline;
+  }
+  .quad-axis-y.is-2labels .quad-axis-low::after,
+  .quad-axis-x.is-2labels .quad-axis-low::after {
+    content: ' →';
+    color: var(--text-3);
+    margin: 0 4px;
   }
   .quad-grid {
     grid-template-columns: 1fr !important;

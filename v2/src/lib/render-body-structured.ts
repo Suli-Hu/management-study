@@ -190,11 +190,26 @@ export function renderCompareCardsStructured(body: CompareBody, accentHex: strin
   `;
 }
 
-/** QuadAxis → 渲染 label string：label 空时 "low-high"，label 非空时 "low-label-high"。 */
-function renderAxisLabel(axis: QuadAxis): string {
-  return axis.label
+/**
+ * QuadAxis → axis HTML：
+ *   - 3 labels (low + label + high 全填): 单 span 拼 "low-label-high" 居中
+ *   - 2 labels (label 空, 仅 low/high): 双 span 分别对齐到列/行端 (.is-2labels)
+ *   - 0/1 label: 同 3-label 路径，单 span (兜底)
+ * v0.8.24 fix: 2-label 老路径用 "-" 拼接居中，分不出哪头是 low / 哪头是 high；改双 span 对齐。
+ */
+function renderQuadAxis(axis: QuadAxis, dir: 'x' | 'y'): string {
+  if (!axis.low && !axis.high && !axis.label) return '';
+  const isTwoLabel = !axis.label && Boolean(axis.low) && Boolean(axis.high);
+  if (isTwoLabel) {
+    return `<div class="quad-axis-${dir} is-2labels">`
+      + `<span class="quad-axis-end quad-axis-low">${esc(axis.low)}</span>`
+      + `<span class="quad-axis-end quad-axis-high">${esc(axis.high)}</span>`
+      + `</div>`;
+  }
+  const text = axis.label
     ? `${axis.low}-${axis.label}-${axis.high}`
-    : `${axis.low}-${axis.high}`;
+    : (axis.low || axis.high || '');
+  return `<div class="quad-axis-${dir}">${esc(text)}</div>`;
 }
 
 export function renderQuadStructured(body: QuadBody, accentHex: string): string {
@@ -211,16 +226,16 @@ export function renderQuadStructured(body: QuadBody, accentHex: string): string 
     )
     .join('');
 
-  const yLabel = renderAxisLabel(body.yAxis);
-  const xLabel = renderAxisLabel(body.xAxis);
+  const yAxisHtml = renderQuadAxis(body.yAxis, 'y');
+  const xAxisHtml = renderQuadAxis(body.xAxis, 'x');
 
   return `
     <div class="body-fmt body-fmt-quad" style="--accent:${accentHex}">
       ${body.lead ? `<div class="body-lead">${body.lead}</div>` : ''}
       <div class="quad-wrap">
-        ${yLabel ? `<div class="quad-axis-y">${esc(yLabel)}</div>` : ''}
+        ${yAxisHtml}
         <div class="quad-grid">${cellsHtml}</div>
-        ${xLabel ? `<div class="quad-axis-x">${esc(xLabel)}</div>` : ''}
+        ${xAxisHtml}
       </div>
     </div>
   `;
