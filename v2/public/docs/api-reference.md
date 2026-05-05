@@ -1050,8 +1050,6 @@ PUT body 带乐观锁 `base_sha`（不一致返 `409 sha_conflict`）。
 
 | 文档 / 路径 | 用途 |
 |---|---|
-| [Main/CLAUDE.md](https://github.com/Suli-Hu/Web-Project/blob/main/Main/CLAUDE.md) | 项目核心规则、所有 session 启动必读 |
-| [Main/CONTRIBUTING.md](https://github.com/Suli-Hu/Web-Project/blob/main/Main/CONTRIBUTING.md) | 设计哲学 + KP 三层架构 + 日文对照 + 部署规范 |
 | [v2/public/docs/learning-kp-guide.md](learning-kp-guide.md) | 7 步上传流程、5 种 format 详解、agent 反馈话术 |
 | [v2/src/schemas/](https://github.com/Suli-Hu/Web-Project/tree/main/v2/src/schemas) | KP / School / Scholar / View / Discipline / Study Session zod schema 真源 |
 | [v2/src/lib/body-parser.ts](https://github.com/Suli-Hu/Web-Project/blob/main/v2/src/lib/body-parser.ts) | 5 种 format 的 body string 解析逻辑 |

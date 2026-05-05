@@ -1,4 +1,17 @@
-# 経営管理学派全览
+> ## ⚠️ Archived as of 2026-05
+>
+> **本目录是 v0/v1 旧版站点（vanilla JS + JSON 数据），已停止开发与部署。**
+>
+> - 不再有 GitHub Actions 自动部署（`.github/workflows/deploy.yml` 已删）
+> - prod 域名 `management-study.pages.dev` 冻结在最后一次部署的状态
+> - 所有新 KP / 编辑 / 部署一律走 [v2/](../v2/)（线上 `study.sususu.org`）
+> - 本目录仅保留作历史参考与回查（git history 完整）
+>
+> 想接手维护？看 [v2/README.md](../v2/README.md)。
+
+---
+
+# 経営管理学派全览（archived）
 
 日本大学院経営学研究科入试备考用知识库与练习系统。
 
