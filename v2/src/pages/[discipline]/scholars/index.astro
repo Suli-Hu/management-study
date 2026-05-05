@@ -13,11 +13,13 @@ const disc = await db
 if (!disc) return Astro.redirect('/404');
 
 // 按 key（学者英文姓氏 lowercased）排序 — 符合学界惯例（按姓氏）
+// v0.8.22 fix: drop sc.lifespan SELECT — migration 0021 已 DROP 该列 (v0.8.9 Stage 4.6)。
+// 这页之前漏了同步切换，prod 一直 D1_ERROR 500。改用 born/died 现拼。
 const result = await db
   .prepare(`
     SELECT
       sc.key, sc.name_zh, sc.name_en, sc.name_ja,
-      sc.lifespan, sc.institution,
+      sc.born, sc.died, sc.institution,
       sc.nobel_year,
       (SELECT COUNT(*) FROM kp_scholar WHERE scholar_key = sc.key) as kp_count
     FROM scholar sc
@@ -30,7 +32,8 @@ const result = await db
     name_zh: string;
     name_en: string | null;
     name_ja: string | null;
-    lifespan: string;
+    born: string | null;
+    died: string | null;
     institution: string;
     nobel_year: string | null;
     kp_count: number;
@@ -112,13 +115,19 @@ const groupKeys = Array.from(grouped.keys()).sort((a, b) => {
                       </span>
                     )}
                   </div>
-                  {(s.lifespan || s.institution) && (
-                    <div class="text-xs text-quaternary mt-0.5">
-                      {s.lifespan}
-                      {s.lifespan && s.institution && ' · '}
-                      {s.institution}
-                    </div>
-                  )}
+                  {(() => {
+                    /* v0.8.22: lifespan 由 born/died 拼，与 scholar 详情页一致 */
+                    const lifespan = s.born && s.died
+                      ? `${s.born} — ${s.died}`
+                      : (s.born || s.died || '');
+                    return (lifespan || s.institution) && (
+                      <div class="text-xs text-quaternary mt-0.5">
+                        {lifespan}
+                        {lifespan && s.institution && ' · '}
+                        {s.institution}
+                      </div>
+                    );
+                  })()}
                 </div>
                 <span
                   class:list={[
