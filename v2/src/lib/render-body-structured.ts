@@ -159,23 +159,45 @@ export function renderCompareStructured(body: CompareBody, accentHex: string): s
   `;
 }
 
-/** compare 卡片版（学派详情页用） */
+/** compare 卡片版（学派详情页用）
+ * v0.8.28: detail 字段从 meta 列表里移出来，做卡片"背面"。
+ *   - PC (≥1024px): 正面 hover 出阴影提示可翻；click → CSS 3D rotateY(180deg) 翻到背面
+ *   - 手机 (<1024px): 正面下方 inline 展开 detail (max-height 过渡)
+ *   - 没填 detail 的列保留原扁平展示，无翻转 affordance
+ *   - 行为由 /cmpc-flip.js 接管 (PC + mobile 共用 .is-flipped class)
+ */
 export function renderCompareCardsStructured(body: CompareBody, accentHex: string): string {
   const cardsHtml = body.cols
     .map((c, ri) => {
-      // headline = keyword (短标签提炼)；sub = desc (一句话定义)；secondary 列表 = type/theories/detail
-      const secondary = [c.type, c.theories, c.detail].filter(Boolean);
+      // 正面 secondary = type / theories（detail 移到背面）
+      const frontSecondary = [c.type, c.theories].filter(Boolean);
       const metaHtml =
-        secondary.length > 0
-          ? `<ul class="cmpc-meta">${secondary.map((s) => `<li>${s}</li>`).join('')}</ul>`
+        frontSecondary.length > 0
+          ? `<ul class="cmpc-meta">${frontSecondary.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>`
           : '';
+      const hasDetail = Boolean(c.detail);
+      const frontInner = `
+        <div class="cmpc-face cmpc-front">
+          <span class="cmpc-num">${String(ri + 1).padStart(1, '0')}</span>
+          <div class="cmpc-name">${esc(c.title)}</div>
+          ${c.keyword ? `<div class="cmpc-headline">${esc(c.keyword)}</div>` : ''}
+          ${c.desc ? `<div class="cmpc-sub">${esc(c.desc)}</div>` : ''}
+          ${metaHtml}
+          ${hasDetail ? `<button type="button" class="cmpc-flip-toggle cmpc-flip-toggle--front" tabindex="-1" aria-hidden="true">详情 ↻</button>` : ''}
+        </div>`;
+      const backInner = hasDetail
+        ? `
+        <div class="cmpc-face cmpc-back">
+          <div class="cmpc-detail">${c.detail}</div>
+          <button type="button" class="cmpc-flip-toggle cmpc-flip-toggle--back" tabindex="-1" aria-hidden="true">↺ 返回</button>
+        </div>`
+        : '';
       return `
-      <div class="cmpc-card">
-        <span class="cmpc-num">${String(ri + 1).padStart(1, '0')}</span>
-        <div class="cmpc-name">${c.title}</div>
-        ${c.keyword ? `<div class="cmpc-headline">${c.keyword}</div>` : ''}
-        ${c.desc ? `<div class="cmpc-sub">${c.desc}</div>` : ''}
-        ${metaHtml}
+      <div class="cmpc-card${hasDetail ? ' is-flippable' : ''}"${hasDetail ? ' role="button" tabindex="0" aria-expanded="false" aria-label="' + esc(c.title) + ' — 查看详情"' : ''}>
+        <div class="cmpc-card-inner">
+          ${frontInner}
+          ${backInner}
+        </div>
       </div>
     `;
     })
