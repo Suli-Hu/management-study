@@ -1,6 +1,7 @@
 import type { SchoolCreateInput, SchoolPatchInput } from '~/schemas/school-api';
 import { deepStripStrong } from './sanitize-strong';
 import { generateUniqueKey } from './slugify';
+import { assertTagsInLibrary } from './tag-library';
 
 export interface SchoolApiRecord {
   key: string;
@@ -236,6 +237,10 @@ export async function createSchoolRecord(
   const refs = await assertConceptsBelongToTenant(db, tenant.discipline, input.concepts ?? []);
   if (!refs.ok) return { ok: false, status: 422, reason: refs.reason, detail: refs.detail };
 
+  // v0.8.37 Phase 3: tags 必须在 discipline.tags 库里
+  const tagCheck = await assertTagsInLibrary(db, tenant.discipline, input.tags);
+  if (!tagCheck.ok) return { ok: false, status: 422, reason: tagCheck.reason, detail: tagCheck };
+
   const now = new Date().toISOString();
   const stmts: D1PreparedStatement[] = [
     db.prepare(
@@ -279,6 +284,12 @@ export async function patchSchoolRecord(
   }
   const refs = await assertConceptsBelongToTenant(db, tenant.discipline, next.concepts ?? []);
   if (!refs.ok) return { ok: false, status: 422, reason: refs.reason, detail: refs.detail };
+
+  // v0.8.37 Phase 3: tags 必须在 discipline.tags 库里 (仅当 input.tags 显式传时校验)
+  if (input.tags !== undefined) {
+    const tagCheck = await assertTagsInLibrary(db, tenant.discipline, input.tags);
+    if (!tagCheck.ok) return { ok: false, status: 422, reason: tagCheck.reason, detail: tagCheck };
+  }
 
   const now = new Date().toISOString();
   const stmts: D1PreparedStatement[] = [

@@ -1,6 +1,7 @@
 import type { ScholarCreateInput, ScholarPatchInput } from '~/schemas/scholar-api';
 import { deepStripStrong } from './sanitize-strong';
 import { generateUniqueKey } from './slugify';
+import { assertTagsInLibrary } from './tag-library';
 
 export interface ScholarApiRecord {
   key: string;
@@ -258,6 +259,10 @@ export async function createScholarRecord(
   const kpRefs = await assertKpsBelongToTenant(db, tenant.discipline, input.kpsOrder ?? []);
   if (!kpRefs.ok) return { ok: false, status: 422, reason: kpRefs.reason, detail: kpRefs.detail };
 
+  // v0.8.37 Phase 3: tags 必须在 discipline.tags 库里
+  const tagCheck = await assertTagsInLibrary(db, tenant.discipline, input.tags);
+  if (!tagCheck.ok) return { ok: false, status: 422, reason: tagCheck.reason, detail: tagCheck };
+
   const now = new Date().toISOString();
   const stmts: D1PreparedStatement[] = [
     db.prepare(
@@ -307,6 +312,12 @@ export async function patchScholarRecord(
   if (!schoolRefs.ok) return { ok: false, status: 422, reason: schoolRefs.reason, detail: schoolRefs.detail };
   const kpRefs = await assertKpsBelongToTenant(db, tenant.discipline, next.kpsOrder ?? []);
   if (!kpRefs.ok) return { ok: false, status: 422, reason: kpRefs.reason, detail: kpRefs.detail };
+
+  // v0.8.37 Phase 3: tags 必须在 discipline.tags 库里 (仅当 input.tags 显式传时校验)
+  if (input.tags !== undefined) {
+    const tagCheck = await assertTagsInLibrary(db, tenant.discipline, input.tags);
+    if (!tagCheck.ok) return { ok: false, status: 422, reason: tagCheck.reason, detail: tagCheck };
+  }
 
   const now = new Date().toISOString();
   const stmts: D1PreparedStatement[] = [

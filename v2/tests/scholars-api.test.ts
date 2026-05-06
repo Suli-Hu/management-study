@@ -62,6 +62,10 @@ function mockDb(opts: {
             return (opts.existingScholar ? { key: stmt.binds[1] } : null) as T;
           }
           if (sql.includes('FROM scholar s') && sql.includes('s.key = ?')) return row as T;
+          // v0.8.37 Phase 3: tag library 校验 mock
+          if (sql.includes('SELECT tags_json FROM discipline WHERE key = ?')) {
+            return { tags_json: JSON.stringify([{ key: 'classic', label: { zh: '经典' }, color: '#000000' }]) } as T;
+          }
           return null as T;
         },
         async all<T = unknown>() {
