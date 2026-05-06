@@ -11,6 +11,8 @@
 
 interface Props {
   href: string;
+  /** v0.10.0: school key — 用于拖拽 reorder 时识别 (data-school-key) */
+  schoolKey: string;
   cn: string;
   en?: string | null;
   meta?: string;
@@ -22,7 +24,7 @@ interface Props {
   accentHex: string;
 }
 
-const { href, cn, en, meta, count, accentHex } = Astro.props;
+const { href, schoolKey, cn, en, meta, count, accentHex } = Astro.props;
 const isNeutral = accentHex.startsWith('var(');
 ---
 
@@ -30,6 +32,7 @@ const isNeutral = accentHex.startsWith('var(');
   href={href}
   class="school-card"
   data-school-card
+  data-school-key={schoolKey}
   data-accent-neutral={isNeutral ? 'true' : undefined}
   style={`--accent: ${accentHex}`}
 >

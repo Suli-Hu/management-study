@@ -188,17 +188,24 @@ const showJustCreatedFlash = Boolean(justCreatedSchool && justCreatedThemeTitle)
 
     {/* === Resolved groups === */}
     {currentView && resolvedGroups.length > 0 && (
-      <div class="groups-stack">
+      <div
+        class="groups-stack"
+        data-reorder-kind={canEdit ? 'view-groups-order' : undefined}
+        data-view-id={canEdit ? currentView.id : undefined}
+        data-discipline={canEdit ? discipline : undefined}
+      >
         {resolvedGroups.map((g) => (
           <GroupCardCluster
             title={g.title}
             flow={g.flow}
             count={g.schools.length}
             groupId={g.id}
+            editable={canEdit}
           >
             {g.schools.map((s) => (
               <SchoolCard
                 href={`/${discipline}/${s.key}`}
+                schoolKey={s.key}
                 cn={s.cn}
                 en={s.en}
                 meta={s.meta}
@@ -261,6 +268,77 @@ const showJustCreatedFlash = Boolean(justCreatedSchool && justCreatedThemeTitle)
         url.searchParams.delete('theme');
         window.history.replaceState(null, '', url.toString());
       })();
+    </script>
+  )}
+
+  {/* v0.10.0: canEdit 时挂载学派组 + 学派拖拽 (long-press 500ms 起拖)
+       - groups-stack: 整体拖学派组 (data-reorder-kind="view-groups-order")
+       - 每 .gc-body: 拖学派 (data-reorder-kind="view-group-schools")，共享 group=view-schools 支持跨组 */}
+  {canEdit && currentView && resolvedGroups.length > 0 && (
+    <script>
+      import { mountDragReorder } from '~/lib/drag-reorder-client';
+
+      const groupsContainer = document.querySelector<HTMLElement>('[data-reorder-kind="view-groups-order"]');
+      const viewId = groupsContainer?.dataset.viewId ?? '';
+      const discipline = groupsContainer?.dataset.discipline ?? '';
+
+      async function postJson(path: string, body: unknown): Promise<{ ok: boolean; status: number }> {
+        try {
+          const res = await fetch(path, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify(body),
+          });
+          if (!res.ok) {
+            const txt = await res.text();
+            console.error(`[reorder ${path}] HTTP ${res.status}:`, txt);
+            document.dispatchEvent(new CustomEvent('view:toast', { detail: `保存失败 (HTTP ${res.status})` }));
+            return { ok: false, status: res.status };
+          }
+          return { ok: true, status: res.status };
+        } catch (e) {
+          console.error(`[reorder ${path}] fetch error:`, e);
+          document.dispatchEvent(new CustomEvent('view:toast', { detail: '保存失败 (网络错误)' }));
+          return { ok: false, status: 0 };
+        }
+      }
+
+      // 学派组顺序拖拽 (单容器)
+      if (groupsContainer && viewId && discipline) {
+        mountDragReorder(groupsContainer, {
+          getId: (el) => el.getAttribute('data-group-id'),
+          onReorder: async (idsByContainer) => {
+            // 单容器，只取 first
+            const newIds = idsByContainer.values().next().value;
+            if (!newIds || newIds.length === 0) return;
+            const r = await postJson('/api/edit/reorder/view-groups-order', {
+              discipline, viewId, groupIds: newIds,
+            });
+            if (r.ok) document.dispatchEvent(new CustomEvent('view:toast', { detail: '学派组顺序已保存' }));
+          },
+        });
+      }
+
+      // 学派拖拽 (跨 group 用 group key 'view-schools' 串起每个 .gc-body 容器)
+      const schoolContainers = document.querySelectorAll<HTMLElement>('[data-reorder-kind="view-group-schools"]');
+      schoolContainers.forEach((container) => {
+        if (!viewId || !discipline) return;
+        mountDragReorder(container, {
+          group: `view-schools-${viewId}`,
+          getId: (el) => el.getAttribute('data-school-key'),
+          getContainerKey: (c) => c.getAttribute('data-group-id') ?? '',
+          onReorder: async (idsByContainer) => {
+            // idsByContainer: Map<groupId, schoolKey[]> — 只含受影响的 group
+            const groupsSchoolIds: Record<string, string[]> = {};
+            for (const [gid, ids] of idsByContainer) groupsSchoolIds[gid] = ids;
+            const r = await postJson('/api/edit/reorder/view-group-schools', {
+              discipline, viewId, groupsSchoolIds,
+            });
+            if (r.ok) document.dispatchEvent(new CustomEvent('view:toast', { detail: '学派位置已保存' }));
+          },
+        });
+      });
     </script>
   )}
 </Layout>
