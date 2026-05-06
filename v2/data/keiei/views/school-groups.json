@@ -13,24 +13,25 @@
   "groups": [
     {
       "id": "ob_individual",
-      "title": "个体的世界",
-      "flow": "人格→态度→动机(内容→过程)→判断偏误",
+      "title": "个体层面（micro OB）",
+      "flow": "人际关系起源 → 人格 → 态度 → 动机 → 行为经济学",
       "schoolIds": [
         "personality",
         "attitude_emotion",
         "ob",
         "behavioral",
-        "beh_econ"
+        "beh_econ",
+        "humanrel"
       ]
     },
     {
       "id": "ob_group",
-      "title": "人与人之间",
-      "flow": "非正式组织→集团动力学→领导力→冲突管理",
+      "title": "群体层面（meso OB）",
+      "flow": "群体动力学 → 冲突管理 → 领导力与权力",
       "schoolIds": [
-        "humanrel",
         "leadership_theory",
-        "conflict"
+        "conflict",
+        "group_dyn"
       ]
     },
     {
@@ -51,9 +52,7 @@
       "flow": "协作系统→决策系统→学习主体→变革主体",
       "schoolIds": [
         "systems",
-        "org_learning",
-        "decision_theory",
-        "change"
+        "decision_theory"
       ]
     },
     {
@@ -144,8 +143,18 @@
         "stanford",
         "hitotsubashi"
       ]
+    },
+    {
+      "id": "gmotlpb7a",
+      "title": "组织层面（macro OB）",
+      "flow": "组织变革 → 组织文化 → 组织学习",
+      "schoolIds": [
+        "change",
+        "org_culture",
+        "org_learning"
+      ]
     }
   ],
   "createdAt": "2026-04-27T10:42:16.984Z",
-  "updatedAt": "2026-05-06T03:19:16.466Z"
+  "updatedAt": "2026-05-06T05:13:38.101Z"
 }
