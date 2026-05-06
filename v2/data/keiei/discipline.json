@@ -217,8 +217,18 @@
         "stanford",
         "hitotsubashi"
       ]
+    },
+    {
+      "key": "ob_organization",
+      "title": {
+        "zh": "组织层面（macro OB）",
+        "ja": "組織層次（macro OB）",
+        "en": "Macro OB / Organization Level"
+      },
+      "tags": [],
+      "schools": []
     }
   ],
   "createdAt": "2026-04-24T16:44:30.409Z",
-  "updatedAt": "2026-04-30T07:06:38.306Z"
+  "updatedAt": "2026-05-06T04:23:40.813Z"
 }
