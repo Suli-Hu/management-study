@@ -2,7 +2,11 @@
  * 统一资源 sync helper (v0.5.93)
  *
  * 把 v0.5.92 的 sync-from-git logic 抽到 lib，让
- * /api/v1/sync/[type]/[disc]/[id].ts 和 /api/v1/webhook/github 都能复用。
+ * /api/v1/sync-discipline/[discipline].ts 等 emergency 恢复 endpoint 复用。
+ *
+ * v0.11.3: webhook (/api/v1/webhook/github) 已删除（v0.8.27 漏网之鱼，
+ *   git push 反向覆盖 D1 是 Bug B 真因）。本 lib 现在只服务于手动调用的
+ *   endpoints（紧急恢复 / 冷启动）— 不会再被自动触发。
  *
  * 不做 RBAC / GITHUB_PAT 校验 — caller 负责。
  */

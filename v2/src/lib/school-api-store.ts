@@ -291,6 +291,10 @@ export async function patchSchoolRecord(
     if (!tagCheck.ok) return { ok: false, status: 422, reason: tagCheck.reason, detail: tagCheck };
   }
 
+  // v0.11.3 Stage 2 (PRD §4.2): concepts 改成 UPDATE position-only
+  //   - input.concepts === undefined: 不动 kp_school（仅改学派主表字段）
+  //   - input.concepts !== undefined: 必须包含该学派下全部 KP（决策点 #2=a），UPDATE position
+  // 不再 DELETE+INSERT，避免误伤 KP-driven 关联（migration 0023 后无 < 1000/>= 1000 区分）
   const now = new Date().toISOString();
   const stmts: D1PreparedStatement[] = [
     db.prepare(
@@ -313,11 +317,37 @@ export async function patchSchoolRecord(
       key,
       tenant.discipline,
     ),
-    db.prepare('DELETE FROM kp_school WHERE school_key = ? AND position < 1000').bind(key),
   ];
-  next.concepts.forEach((kpId, position) => {
-    stmts.push(db.prepare('INSERT OR IGNORE INTO kp_school (kp_id, school_key, position) VALUES (?, ?, ?)').bind(kpId, key, position));
-  });
+
+  if (input.concepts !== undefined) {
+    // 校验 input.concepts 必须等于该学派下当前 KP 集合
+    const currentKpsRows = await db
+      .prepare('SELECT kp_id FROM kp_school WHERE school_key = ?')
+      .bind(key)
+      .all<{ kp_id: string }>();
+    const currentSet = new Set((currentKpsRows.results ?? []).map((r) => r.kp_id));
+    const inputSet = new Set(input.concepts);
+    const setEqual =
+      currentSet.size === inputSet.size &&
+      [...currentSet].every((id) => inputSet.has(id));
+    if (!setEqual) {
+      return {
+        ok: false,
+        status: 422,
+        reason: 'concepts_set_mismatch',
+        detail: { current: [...currentSet], input: input.concepts },
+      };
+    }
+    // UPDATE position（不动行，不增删）
+    input.concepts.forEach((kpId, position) => {
+      stmts.push(
+        db
+          .prepare('UPDATE kp_school SET position = ? WHERE kp_id = ? AND school_key = ?')
+          .bind(position, kpId, key),
+      );
+    });
+  }
+
   await db.batch(stmts);
 
   const record = await getSchoolRecord(db, key, tenant);

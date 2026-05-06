@@ -410,11 +410,12 @@ export function mountChipPicker(host: HTMLElement, opts: ChipPickerOptions): voi
     const dd = el('div', 'kpe-chips-dd');
     dd.style.display = 'none';
 
-    const refreshDd = () => {
-      dd.innerHTML = '';
+    // v0.11.3: 把 currentMatches 抽到外层闭包，让 Enter / blur autocommit 能复用
+    let currentMatches: typeof opts.options = [];
+
+    const computeMatches = (): typeof opts.options => {
       const q = inputEl.value.trim().toLowerCase();
-      // singleSelect 模式 dropdown 不过滤已选 — 让用户可以直接换 (点新选项替换旧)
-      const matches = opts.options
+      return opts.options
         .filter((o) => opts.singleSelect ? true : !current.includes(o.key))
         .filter(
           (o) =>
@@ -424,12 +425,28 @@ export function mountChipPicker(host: HTMLElement, opts: ChipPickerOptions): voi
             (o.sub ?? '').toLowerCase().includes(q),
         )
         .slice(0, 20);
-      if (matches.length === 0) {
+    };
+
+    const commitMatch = (m: (typeof opts.options)[number]): void => {
+      if (current.includes(m.key) && !opts.singleSelect) return;
+      // v0.9.0 singleSelect: 替换；非 singleSelect: 追加
+      current = opts.singleSelect ? [m.key] : [...current, m.key];
+      opts.onChange(current);
+      inputEl.value = '';
+      render();
+    };
+
+    const refreshDd = () => {
+      dd.innerHTML = '';
+      currentMatches = computeMatches();
+      if (currentMatches.length === 0) {
         dd.style.display = 'none';
         return;
       }
-      matches.forEach((m) => {
+      currentMatches.forEach((m, idx) => {
         const it = el('div', 'kpe-dd-item');
+        // v0.11.3: 第一项视觉强调 — 提示「按 Enter / 失焦自动选中」
+        if (idx === 0) it.classList.add('is-first-match');
         const name = el('span', 'kpe-dd-name');
         name.textContent = m.label;
         it.appendChild(name);
@@ -441,12 +458,7 @@ export function mountChipPicker(host: HTMLElement, opts: ChipPickerOptions): voi
         if (current.includes(m.key)) it.classList.add('is-current');
         it.addEventListener('mousedown', (e) => {
           e.preventDefault();
-          if (current.includes(m.key) && !opts.singleSelect) return;
-          // v0.9.0 singleSelect: 替换；非 singleSelect: 追加
-          current = opts.singleSelect ? [m.key] : [...current, m.key];
-          opts.onChange(current);
-          inputEl.value = '';
-          render();
+          commitMatch(m);
           inputEl.focus();
         });
         dd.appendChild(it);
@@ -457,12 +469,23 @@ export function mountChipPicker(host: HTMLElement, opts: ChipPickerOptions): voi
     inputEl.addEventListener('focus', refreshDd);
     inputEl.addEventListener('input', refreshDd);
     inputEl.addEventListener('blur', () => {
+      // v0.11.3: 失焦时若 input 仍有内容 + 有匹配项，自动选中第一个匹配项。
+      // 防 Bug B 类事故：用户输入"战略"以为选上了，实际没点下拉项。
+      // 短延迟让 mousedown 先 fire（避免 mousedown 已选中后又被 blur 选一次）
       setTimeout(() => {
+        if (inputEl.value.trim() && currentMatches.length > 0) {
+          commitMatch(currentMatches[0]!);
+          return; // commitMatch 内部已 render，dd 已被 detach
+        }
         dd.style.display = 'none';
       }, 100);
     });
     inputEl.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        // 有匹配项就选第一个；没匹配项 (空 input 或无结果) 是 noop
+        if (currentMatches.length > 0) commitMatch(currentMatches[0]!);
+      } else if (e.key === 'Escape') {
         dd.style.display = 'none';
         inputEl.blur();
       }

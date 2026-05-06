@@ -31,7 +31,6 @@ const PUBLIC_PATH_PREFIXES = [
   '/signup',         // v0.7.2: /signup + /signup/sent
   '/password-reset', // v0.7.4: /password-reset + /password-reset/sent + /password-reset/confirm
   '/api/auth/',      // invite-code / password / login-password / signup* / password-reset-* / logout
-  '/api/v1/webhook/',// v0.6.10: GitHub webhook (HMAC SHA-256 验签代替 cookie auth)
   '/share/',         // v0.7.30: 学习记录公开分享链接（token 自带鉴权，7 天 TTL）
   '/design-system',  // 设计规范镜像页 — 纯 CSS reference，零敏感数据
   '/favicon',
@@ -58,10 +57,6 @@ function isOriginAllowed(
   if (!STATE_CHANGING_METHODS.has(request.method)) return true;
   const authHeader = request.headers.get('authorization')?.trim();
   if (authHeader?.startsWith('Bearer ')) return true;
-  // v0.6.9: GitHub webhook server-to-server 不带 Origin header，但有 HMAC SHA-256 验签
-  //   （/api/v1/webhook/github 自己用 GITHUB_WEBHOOK_SECRET 校验 X-Hub-Signature-256），
-  //   比 Origin 更强 — 豁免 CSRF Origin check 让 GitHub 能成功投递 push event。
-  if (url.pathname.startsWith('/api/v1/webhook/')) return true;
   const origin = request.headers.get('origin');
   if (!origin) return false; // 强制 Origin header
   // 允许列表：APP_URL（prod）+ 当前请求 origin（同站，覆盖 Pages preview 域名 / dev localhost）
