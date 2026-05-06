@@ -6,7 +6,43 @@
     "en": "Marketing"
   },
   "tagline": {},
-  "tags": [],
+  "tags": [
+    {
+      "key": "t_11e78a7e",
+      "label": {
+        "zh": "市场洞察"
+      },
+      "color": "#3B82F6"
+    },
+    {
+      "key": "t_544964bf",
+      "label": {
+        "zh": "战略选择"
+      },
+      "color": "#EF4444"
+    },
+    {
+      "key": "t_5a84d584",
+      "label": {
+        "zh": "价值创造"
+      },
+      "color": "#10B981"
+    },
+    {
+      "key": "t_5a0f53e1",
+      "label": {
+        "zh": "价值传播"
+      },
+      "color": "#F59E0B"
+    },
+    {
+      "key": "t_2b5c0fbd",
+      "label": {
+        "zh": "长期关系"
+      },
+      "color": "#8A7A6A"
+    }
+  ],
   "themes": [
     {
       "key": "marketing_strategy",
@@ -103,5 +139,5 @@
     }
   ],
   "createdAt": "2026-04-27T11:21:24.729Z",
-  "updatedAt": "2026-04-30T09:14:29.145Z"
+  "updatedAt": "2026-05-06T03:54:39.164Z"
 }
