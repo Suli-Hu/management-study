@@ -52,7 +52,9 @@ const discRow = await db
   .prepare('SELECT tags_json FROM discipline WHERE key = ?')
   .bind(discipline)
   .first<{ tags_json: string | null }>();
-const tagDefs = JSON.parse(discRow?.tags_json ?? '[]') as Array<{ key: string; color: string }>;
+type TagLibEntry = { key: string; label?: { zh?: string }; color: string };
+const tagDefs = JSON.parse(discRow?.tags_json ?? '[]') as TagLibEntry[];
+const tagLibByKey = new Map(tagDefs.map((t) => [t.key, t]));
 const disciplineLookup = { tags: tagDefs };
 const schools = (schoolsResult.results ?? []).map((s) => ({
   key: s.key,
@@ -62,6 +64,23 @@ const schools = (schoolsResult.results ?? []).map((s) => ({
     disciplineLookup,
   ),
 }));
+
+// v0.8.38: KP-level tag chips — 之前完全没渲染，老师打了 tag 但用户在 KP 详情看不到。
+// 从 kp.tags_json 读 key 数组 → discipline.tags 库 lookup 拿 label/color → 渲染 chip。
+// 库里没的 key (老脏数据) 直接跳过，不出 chip (v0.8.37 后理论上不会有这种)。
+const kpTagKeys: string[] = (() => {
+  try {
+    const parsed = JSON.parse(kp.tags_json ?? '[]');
+    return Array.isArray(parsed) ? parsed.filter((k): k is string => typeof k === 'string') : [];
+  } catch { return []; }
+})();
+const kpTags: Array<{ key: string; label: string; color: string }> = kpTagKeys
+  .map((k) => {
+    const def = tagLibByKey.get(k);
+    if (!def) return null;
+    return { key: k, label: def.label?.zh ?? k, color: def.color };
+  })
+  .filter((t): t is { key: string; label: string; color: string } => t !== null);
 
 // v0.8.23 跨学科隔离：scholar PK (discipline, key) — 必 JOIN 双键 + filter 双 discipline。
 const scholarsResult = await db
@@ -144,6 +163,15 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
             data-accent-neutral={s.accentHex.startsWith('var(') ? 'true' : undefined}
             style={`--accent: ${s.accentHex}`}
           >{s.title_zh}</a>
+        ))}
+        {/* v0.8.38: KP-level tag chips — 老师打的 tag 现在可见。Span (非 link)
+             — 未来可链到 tag-filter 视图。 */}
+        {kpTags.map((t) => (
+          <span
+            class="kp-tag-chip"
+            style={`--accent: ${t.color}`}
+            title={`tag: ${t.key}`}
+          >{t.label}</span>
         ))}
       </div>
     </header>
@@ -310,6 +338,21 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
   }
   :global([data-mode="dark"]) .kp-school-chip:hover {
     box-shadow: 0 2px 10px oklch(from var(--accent, var(--text-3)) l c h / 0.45);
+  }
+
+  /* v0.8.38: KP-level tag chip — 跟 .kp-school-chip 同实底色风格但更轻量
+     (无 hover 阴影动效因为非 link)，区分用 outline-style + 略小 padding */
+  .kp-tag-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 9px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    color: #fff;
+    letter-spacing: 0.02em;
   }
 
   /* ---- body wrapper ---- */
