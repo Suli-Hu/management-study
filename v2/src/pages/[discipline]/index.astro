@@ -305,9 +305,13 @@ const showJustCreatedFlash = Boolean(justCreatedSchool && justCreatedThemeTitle)
       }
 
       // 学派组顺序拖拽 (单容器)
+      // v0.11.2 fix: skipSelector 排除 .school-card —— 否则长按学派卡时外层 group drag
+      // 也会启动 pending timer，跟内层 school drag 同时触发，UX 混乱。现在长按学派
+      // 走 school drag (内层)，长按 header / .gc-body 空白区走 group drag (外层)。
       if (groupsContainer && viewId && discipline) {
         mountDragReorder(groupsContainer, {
           getId: (el) => el.getAttribute('data-group-id'),
+          skipSelector: '.school-card',
           onReorder: async (idsByContainer) => {
             // 单容器，只取 first
             const newIds = idsByContainer.values().next().value;
