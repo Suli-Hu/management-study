@@ -11,10 +11,11 @@
   - Bug B 修复 (D)：chipPicker Enter / blur 自动选中第一匹配项（防"输入不点下拉就保存"卡死）
   - Bug B 修复 (E)：下拉视觉小修（max-height 320 / align-items center / 第一项高亮）
   - Bug B 真因清理：删 webhook handler + reconcile.yml（git push 反向覆盖 D1 是 v0.8.27 漏网之鱼）
-- **v0.11.4**: Stage 3 主修复 — KP PATCH/CREATE 改 delta 模式
+- **v0.11.4**: Stage 3 主修复 — KP PATCH/CREATE 改 delta 模式 + 清理 sync-based workflows
   - patchKpRecord：kept schools 不动 position（4C 改名顺序丢失彻底修复）；removed/added 走 delta
   - createKpRecord：新建 KP 在每个 school 内塞头部（决策点 #1=b）
   - 单元测试 v2/tests/kp-school-delta.test.ts (5 tests) 覆盖 PRD §7.1 T1/T3/T4/T6/T7
+  - 删 .github/workflows/learning-flow-smoke.yml + playwright-e2e.yml（v0.8.27 漏网，依赖 git data sync 永久 fail，邮件骚扰）
 
 ---
 
