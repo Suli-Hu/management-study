@@ -18,9 +18,11 @@ interface Props {
   count: number;
   groupId: string;
   columns?: number;       // 默认 2
+  /** v0.10.0: editable mode → school grid 加 data-reorder-kind 让 drag-reorder-client 接管 */
+  editable?: boolean;
 }
 
-const { title, flow, count, groupId, columns = 2 } = Astro.props;
+const { title, flow, count, groupId, columns = 2, editable = false } = Astro.props;
 ---
 
 <details class="group-cluster" open data-group-id={groupId}>
@@ -35,7 +37,12 @@ const { title, flow, count, groupId, columns = 2 } = Astro.props;
     </div>
     <span class="gc-count">{count}</span>
   </summary>
-  <div class="gc-body" style={`--cols:${columns}`}>
+  <div
+    class="gc-body"
+    style={`--cols:${columns}`}
+    data-reorder-kind={editable ? 'view-group-schools' : undefined}
+    data-group-id={editable ? groupId : undefined}
+  >
     <slot />
   </div>
 </details>
