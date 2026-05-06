@@ -1,7 +1,11 @@
 /**
- * share_link CRUD（v0.7.30）
+ * share_link CRUD（v0.7.30 / v0.11.6 改造）
  *
- * 学习记录 7 天分享链接的存储层。所有 helper 都按 user_id 限定（防 IDOR）。
+ * 学习记录 24 小时个人记录链接的存储层。所有 helper 都按 user_id 限定（防 IDOR）。
+ *
+ * v0.11.6 改动（用户决策）：
+ *   - TTL 7 天 → 24 小时（产品定位「个人记录」，非长期分享）
+ *   - token 32 字节随机 → 12 位时间戳 YYYYMMDDHHMM（用户已知风险，1 天 TTL 限制爆破窗口）
  *
  * 设计：
  *   - per (user_id, discipline, scope) UNIQUE
@@ -10,10 +14,9 @@
  */
 
 import type { D1Database } from '@cloudflare/workers-types';
-import { generateToken } from './auth';
 
-export const SHARE_TTL_DAYS = 7;
-export const SHARE_TTL_MS = SHARE_TTL_DAYS * 24 * 60 * 60 * 1000;
+export const SHARE_TTL_HOURS = 24;
+export const SHARE_TTL_MS = SHARE_TTL_HOURS * 60 * 60 * 1000;
 
 export interface ShareLinkRow {
   token: string;
@@ -24,9 +27,25 @@ export interface ShareLinkRow {
   expires_at: string;
 }
 
-/** 32 bytes → ~43 char base64url（足够 256-bit 熵） */
+/**
+ * v0.11.6: token = 当前时间戳 YYYYMMDDHHMM（12 位，UTC 时区）
+ *
+ * 安全权衡（用户已确认承担）：
+ *   - 12 位数字 = ~10^12 组合，看似多
+ *   - 但实际有效窗口仅 24h × 60min = 1440 个组合
+ *   - 攻击者可枚举一日内所有分钟数找到任何用户的 token
+ *   - 1 天 TTL 限制了爆破窗口（超过 24h 自动失效）
+ *
+ * 历史：v0.7.30 起用 32 字节随机（256-bit），v0.11.6 改时间戳满足"短 URL"产品需求
+ */
 function newShareToken(): string {
-  return generateToken(32);
+  const now = new Date();
+  const Y = now.getUTCFullYear();
+  const M = String(now.getUTCMonth() + 1).padStart(2, '0');
+  const D = String(now.getUTCDate()).padStart(2, '0');
+  const h = String(now.getUTCHours()).padStart(2, '0');
+  const m = String(now.getUTCMinutes()).padStart(2, '0');
+  return `${Y}${M}${D}${h}${m}`;
 }
 
 /** 当前是否还有效（expires_at > now）。null = 没记录 */

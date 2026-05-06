@@ -31,7 +31,7 @@ const PUBLIC_PATH_PREFIXES = [
   '/signup',         // v0.7.2: /signup + /signup/sent
   '/password-reset', // v0.7.4: /password-reset + /password-reset/sent + /password-reset/confirm
   '/api/auth/',      // invite-code / password / login-password / signup* / password-reset-* / logout
-  '/share/',         // v0.7.30: 学习记录公开分享链接（token 自带鉴权，7 天 TTL）
+  '/private/',       // v0.7.30 / v0.11.6 改造: 学习记录 24 小时个人记录链接（token 自带鉴权）
   '/design-system',  // 设计规范镜像页 — 纯 CSS reference，零敏感数据
   '/favicon',
   '/robots.txt',
