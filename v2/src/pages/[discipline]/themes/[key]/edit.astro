@@ -33,6 +33,13 @@ const tagLibrary: Array<{ key: string; label?: { zh?: string }; color?: string }
   ? JSON.parse(discRow.tags_json)
   : [];
 
+// v0.11.5: 计算该 theme 下 school 数（参 themes/[key].ts DELETE has_dependents gate）
+const schoolCountRow = await db
+  .prepare('SELECT COUNT(*) as n FROM school WHERE discipline = ? AND theme_key = ?')
+  .bind(discipline, key)
+  .first<{ n: number }>();
+const schoolCount = schoolCountRow?.n ?? 0;
+
 const initialState: ExistingThemeInit = {
   key,
   discipline,
@@ -55,6 +62,7 @@ const editorMetadata: ThemeEditorMetadata = {
   disciplineKey: discipline,
   fromPath,
   fromLabel: fromLbl,
+  deleteGate: { schoolCount },
 };
 ---
 

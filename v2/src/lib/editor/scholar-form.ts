@@ -141,6 +141,24 @@ function buildTopBar(store: ScholarEditorStore, opts: InitScholarEditorOptions):
   bar.appendChild(left);
 
   const right = el('div', 'kpe-topbar-r');
+
+  // v0.11.5: edit 模式下加删除按钮 — has_dependents gate（kp 关联 > 0 disabled）
+  if (opts.mode === 'edit') {
+    const gate = opts.metadata.deleteGate ?? { kpCount: 0 };
+    const canDelete = gate.kpCount === 0;
+    const deleteBtn = button({
+      text: '删除',
+      cls: 'btn btn-danger',
+      onClick: () => handleDelete(store, opts),
+      ariaLabel: '删除此学者',
+    });
+    if (!canDelete) {
+      deleteBtn.disabled = true;
+      deleteBtn.title = `不能删除：还有 ${gate.kpCount} 个 KP 关联。先把这些 KP 移到别的学者或删掉再试。`;
+    }
+    right.appendChild(deleteBtn);
+  }
+
   const saveBtn = button({
     text: opts.mode === 'new' ? '创建' : '保存',
     cls: 'btn btn-primary',
@@ -567,4 +585,29 @@ async function save(store: ScholarEditorStore, opts: InitScholarEditorOptions): 
   else if (e.category === 'not_found') toastError('学者不存在或已删除');
   else if (e.category === 'network') toastError(`网络错误，请重试：${e.message}`);
   else toastError(`字段校验失败：${e.message}`);
+}
+
+/**
+ * v0.11.5: 学者删除流程。DELETE /api/scholars/:key
+ */
+async function handleDelete(store: ScholarEditorStore, opts: InitScholarEditorOptions): Promise<void> {
+  const state = store.get();
+  if (!state.key) return;
+  const name = state.name.zh.trim() || '(无姓名)';
+  if (!confirm(`确认删除学者「${name}」？\n此学者无任何 KP 关联。`)) return;
+
+  try {
+    const url = `/api/scholars/${encodeURIComponent(state.key)}?discipline=${encodeURIComponent(opts.metadata.disciplineKey)}`;
+    const res = await fetch(url, { method: 'DELETE', credentials: 'same-origin' });
+    if (res.ok) {
+      toastSuccess('已删除');
+      window.location.href = opts.metadata.fromPath;
+      return;
+    }
+    const data = (await res.json().catch(() => ({}))) as { reason?: string; detail?: unknown };
+    if (data.reason === 'scholar_has_kps') toastError(`不能删：学者下还有 ${data.detail} 个 KP`);
+    else toastError(`删除失败：${data.reason ?? `HTTP ${res.status}`}`);
+  } catch (err) {
+    toastError(`删除失败：${err instanceof Error ? err.message : String(err)}`);
+  }
 }

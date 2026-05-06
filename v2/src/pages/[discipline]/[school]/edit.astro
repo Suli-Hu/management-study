@@ -63,6 +63,12 @@ const editorMetadata: SchoolEditorMetadata = {
   disciplineKey: discipline,
   fromPath,
   fromLabel: fromLbl,
+  // v0.11.5: 删除 gate — 任一 count > 0 都拒删（参 deleteSchoolRecord 后端 gate）
+  deleteGate: {
+    kpCount: record.kp_count,
+    scholarCount: record.scholar_count,
+    viewCount: record.view_count,
+  },
 };
 ---
 

@@ -128,6 +128,28 @@ function buildTopBar(store: SchoolEditorStore, opts: InitSchoolEditorOptions): H
   bar.appendChild(left);
 
   const right = el('div', 'kpe-topbar-r');
+
+  // v0.11.5: edit 模式下加删除按钮 — has_dependents gate（kp/scholar/view 任一 > 0 disabled）
+  if (opts.mode === 'edit') {
+    const gate = opts.metadata.deleteGate ?? { kpCount: 0, scholarCount: 0, viewCount: 0 };
+    const reasons: string[] = [];
+    if (gate.kpCount > 0) reasons.push(`${gate.kpCount} 个 KP 关联`);
+    if (gate.scholarCount > 0) reasons.push(`${gate.scholarCount} 个学者关联`);
+    if (gate.viewCount > 0) reasons.push(`被 ${gate.viewCount} 个 view 引用`);
+    const canDelete = reasons.length === 0;
+    const deleteBtn = button({
+      text: '删除',
+      cls: 'btn btn-danger',
+      onClick: () => handleDelete(store, opts),
+      ariaLabel: '删除此学派',
+    });
+    if (!canDelete) {
+      deleteBtn.disabled = true;
+      deleteBtn.title = `不能删除：还有 ${reasons.join('、')}。先把这些清空再试。`;
+    }
+    right.appendChild(deleteBtn);
+  }
+
   const saveBtn = button({
     text: opts.mode === 'new' ? '创建' : '保存',
     cls: 'btn btn-primary',
@@ -400,4 +422,32 @@ async function save(store: SchoolEditorStore, opts: InitSchoolEditorOptions): Pr
   else if (e.category === 'not_found') toastError('学派不存在或已删除');
   else if (e.category === 'network') toastError(`网络错误，请重试：${e.message}`);
   else toastError(`字段校验失败：${e.message}`);
+}
+
+/**
+ * v0.11.5: 学派删除流程。DELETE /api/schools/:key
+ * 后端 has_dependents gate 仍会兜底，前端 disabled 是 UX。
+ */
+async function handleDelete(store: SchoolEditorStore, opts: InitSchoolEditorOptions): Promise<void> {
+  const state = store.get();
+  if (!state.key) return; // new mode 不该走到这里
+  const title = state.title.zh.trim() || '(无标题)';
+  if (!confirm(`确认删除学派「${title}」？\n此学派无任何 KP / 学者 / view 关联。`)) return;
+
+  try {
+    const url = `/api/schools/${encodeURIComponent(state.key)}?discipline=${encodeURIComponent(opts.metadata.disciplineKey)}`;
+    const res = await fetch(url, { method: 'DELETE', credentials: 'same-origin' });
+    if (res.ok) {
+      toastSuccess('已删除');
+      window.location.href = opts.metadata.fromPath;
+      return;
+    }
+    const data = (await res.json().catch(() => ({}))) as { reason?: string; detail?: unknown };
+    if (data.reason === 'school_has_kps') toastError(`不能删：学派下还有 ${data.detail} 个 KP`);
+    else if (data.reason === 'school_has_scholars') toastError(`不能删：学派下还有 ${data.detail} 个学者`);
+    else if (data.reason === 'school_used_in_views') toastError(`不能删：被 ${data.detail} 个 view 引用`);
+    else toastError(`删除失败：${data.reason ?? `HTTP ${res.status}`}`);
+  } catch (err) {
+    toastError(`删除失败：${err instanceof Error ? err.message : String(err)}`);
+  }
 }

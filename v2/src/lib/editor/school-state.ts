@@ -35,6 +35,8 @@ export interface SchoolEditorMetadata {
   disciplineKey: string;
   fromPath: string;
   fromLabel: string;
+  /** v0.11.5: 删除按钮 disabled gate — 任一 > 0 拒删 */
+  deleteGate?: { kpCount: number; scholarCount: number; viewCount: number };
 }
 
 // ============================================================
