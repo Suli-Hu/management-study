@@ -167,6 +167,19 @@
 
 .kp-editor-v08 .kpe-req { color: var(--s-danger); margin-left: 2px; }
 
+/* v0.9.0 Stage C-1: 必填字段 label — 自动加红 * (school/scholar form tag 字段用) */
+.kp-editor-v08 .kpe-label-required::after {
+  content: ' *';
+  color: var(--s-danger);
+  font-weight: 700;
+}
+
+/* v0.9.0: chip-picker singleSelect 模式下 dropdown 高亮当前选中项 */
+.kp-editor-v08 .kpe-dd-item.is-current {
+  background: color-mix(in oklab, var(--primary) 8%, transparent);
+  font-weight: 600;
+}
+
 .kp-editor-v08 .kpe-hint {
   font-size: 11px;
   color: var(--text-3);

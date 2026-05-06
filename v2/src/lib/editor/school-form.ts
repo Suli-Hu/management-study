@@ -142,8 +142,10 @@ function buildTopBar(store: SchoolEditorStore, opts: InitSchoolEditorOptions): H
     //   - key: server 端从 title.en/title.zh slugify 自动生成
     //   - themeKey: new.astro 已 server-side 注入 themes[0]，永远非空
     const summaryOk = s.summary.zh.trim().length > 0;
+    // v0.9.0 Stage C-1: tag 必填 (单 tag 单源色)
+    const tagsOk = s.tags.length === 1;
     const isSaving = s.saveStatus === 'saving';
-    saveBtn.disabled = !titleOk || !summaryOk || isSaving;
+    saveBtn.disabled = !titleOk || !summaryOk || !tagsOk || isSaving;
     if (isSaving) {
       saveBtn.classList.add('is-loading');
       saveBtn.textContent = opts.mode === 'new' ? '创建中...' : '保存中...';
@@ -303,9 +305,9 @@ function buildRelationsSection(
   host.innerHTML = '';
   const wrap = el('div', 'kpe-section-body');
 
-  // tags — chip multi-select
+  // tags — v0.9.0: 单选 + 必填 (Q2=① 单 tag 单源色)
   const tagsWrap = el('div', 'kpe-field');
-  const tagsLabel = el('label', 'kpe-label');
+  const tagsLabel = el('label', 'kpe-label kpe-label-required');
   tagsLabel.textContent = '标签';
   tagsWrap.appendChild(tagsLabel);
   const tagsHost = el('div');
@@ -316,10 +318,11 @@ function buildRelationsSection(
   mountChipPicker(tagsHost, {
     current: store.get().tags,
     options: tagOptions,
-    placeholder: '搜索标签（可空）',
+    placeholder: '搜索 / 选 1 个标签（必填）',
     ariaLabel: '标签',
     colorize: (key) => tagTokenMap.get(key) ?? null,
     onChange: (next) => store.update({ tags: next }),
+    singleSelect: true,
   });
 
   host.appendChild(wrap);

@@ -209,7 +209,7 @@ describe('patchKpsBatch — 真 SQLite 集成测试', () => {
     const updates = [
       { id: 'k001', ifMatchVersion: 1, patch: { title: { zh: 'k001-新中文' } } },
       { id: 'k002', ifMatchVersion: 1, patch: { year: '1980' } },
-      { id: 'k003', ifMatchVersion: 1, patch: { tags: ['t1', 't2'] } },
+      { id: 'k003', ifMatchVersion: 1, patch: { tags: ['t1'] } }, // v0.9.0 Stage C-1: single tag
     ];
     const out = await patchKpsBatch(
       db as unknown as D1Database,

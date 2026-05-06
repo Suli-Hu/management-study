@@ -51,13 +51,15 @@ interface KpResponse {
 async function seedBaseline(db: D1LikeDatabase, opts?: { withMarketing?: boolean }) {
   const disciplines: Array<[string, string]> = [['keiei', '经营学']];
   if (opts?.withMarketing) disciplines.push(['marketing', 'マーケティング']);
+  // v0.9.0 Stage C-1: discipline 必须有 1 个 tag library entry，给 seedKp / 直 POST 用
+  const TAGS_JSON = JSON.stringify([{ key: 't_test', label: { zh: 'test' }, color: '#888888' }]);
   for (const [key, title] of disciplines) {
     await db
       .prepare(
         `INSERT INTO discipline (key, title_zh, title_en, title_ja, tagline_zh, tagline_ja, accent, tags_json, themes_json, created_at, updated_at)
-         VALUES (?, ?, null, null, null, null, '', '[]', '[]', '2026-01-01', '2026-01-01')`,
+         VALUES (?, ?, null, null, null, null, '', ?, '[]', '2026-01-01', '2026-01-01')`,
       )
-      .bind(key, title)
+      .bind(key, title, TAGS_JSON)
       .run();
     await db
       .prepare(
@@ -137,7 +139,7 @@ const FLAT_LIST_BODY: KpBody = {
   items: [{ name: 'A', desc: 'a' }],
 };
 
-async function seedKp(db: D1LikeDatabase, id: string, opts?: Partial<{ ja: KpBody; evaluations: any; schools: string[] }>) {
+async function seedKp(db: D1LikeDatabase, id: string, opts?: Partial<{ ja: KpBody; evaluations: any; schools: string[]; tags: string[] }>) {
   const res = await kpsPOST(
     makeCtx(db, {
       method: 'POST',
@@ -148,6 +150,8 @@ async function seedKp(db: D1LikeDatabase, id: string, opts?: Partial<{ ja: KpBod
         body: { zh: NARRATIVE_BODY, ...(opts?.ja ? { ja: opts.ja } : {}) },
         ...(opts?.evaluations ? { evaluations: opts.evaluations } : {}),
         schools: opts?.schools ?? ['motivation'],
+        // v0.9.0 Stage C-1: tags 必填 (seedBaseline 注 't_test' 库 entry)
+        tags: opts?.tags ?? ['t_test'],
       },
     }),
   );
@@ -190,6 +194,7 @@ describe('类2 多语种边界', () => {
             ja: FLAT_LIST_BODY,
           },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -334,6 +339,7 @@ describe('类3 dryRun batch', () => {
                 title: { zh: 'NEW' },
                 year: '2026',
                 schools: ['change'],
+                tags: ['t_test'],
                 body: { zh: { format: 'narrative', prose: 'NEW PROSE' } },
               },
             },
@@ -483,6 +489,7 @@ describe('类5 特殊字符 / 边界值', () => {
             },
           },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -513,6 +520,7 @@ describe('类5 特殊字符 / 边界值', () => {
             },
           },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -538,6 +546,7 @@ describe('类5 特殊字符 / 边界值', () => {
             },
           },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -558,6 +567,7 @@ describe('类5 特殊字符 / 边界值', () => {
             zh: { meaning: long, limit: '', example: '', response: '', application: '', analogy: '' },
           },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -579,6 +589,7 @@ describe('类5 特殊字符 / 边界值', () => {
           title: { zh: 't' },
           body: { zh: { format: 'narrative', prose: '' } },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -604,6 +615,7 @@ describe('类5 特殊字符 / 边界值', () => {
             zh: { format: 'quad', lead: '', yAxis: okAxis, xAxis: okAxis, cells },
           },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -632,6 +644,7 @@ describe('类5 特殊字符 / 边界值', () => {
             },
           },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -660,6 +673,7 @@ describe('类6 ID 生成 / 冲突', () => {
           title: { zh: 't' },
           body: { zh: NARRATIVE_BODY },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -679,6 +693,7 @@ describe('类6 ID 生成 / 冲突', () => {
           title: { zh: 'dup' },
           body: { zh: NARRATIVE_BODY },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -703,6 +718,7 @@ describe('类6 ID 生成 / 冲突', () => {
             title: { zh: 't' },
             body: { zh: NARRATIVE_BODY },
             schools: ['motivation'],
+            tags: ['t_test'],
           },
         }),
       );
@@ -734,6 +750,7 @@ describe('类7 跨 tenant 防御', () => {
           title: { zh: 't' },
           body: { zh: NARRATIVE_BODY },
           schools: ['consumer'], // marketing 的 key
+          tags: ['t_test'],
         },
       }),
     );
@@ -787,6 +804,7 @@ describe('类8 legacy detector 边界', () => {
           body: { zh: NARRATIVE_BODY },
           Format: 'narrative', // 大写 F
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -809,6 +827,7 @@ describe('类8 legacy detector 边界', () => {
           format: 'narrative',
           evalContent: { zh: { 义: 'X' } },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -832,6 +851,7 @@ describe('类8 legacy detector 边界', () => {
             },
           },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -880,6 +900,7 @@ describe('类8 legacy detector 边界', () => {
             },
           },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -914,6 +935,7 @@ describe('类8 legacy detector 边界', () => {
               zh: { format: 'narrative', prose: `测试 ◆${alias}——XXX` },
             },
             schools: ['motivation'],
+            tags: ['t_test'],
           },
         }),
       );
@@ -936,6 +958,7 @@ describe('类8 legacy detector 边界', () => {
           title: { zh: 't' },
           body: 'plain string at top level', // 不是 { zh, ja } 而是 string
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -1243,6 +1266,7 @@ describe('类12 F4 + F5 (v0.8.2 Stage 4)', () => {
           title: { zh: 't' },
           body: { zh: NARRATIVE_BODY },
           schools: [],
+          tags: ['t_test'],
         },
       }),
     );
@@ -1260,6 +1284,7 @@ describe('类12 F4 + F5 (v0.8.2 Stage 4)', () => {
           title: {},
           body: { zh: NARRATIVE_BODY },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -1277,6 +1302,7 @@ describe('类12 F4 + F5 (v0.8.2 Stage 4)', () => {
           title: { zh: 't' },
           body: { zh: { format: 'flat-list', lead: '', items: [] } }, // items 空
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -1294,6 +1320,7 @@ describe('类12 F4 + F5 (v0.8.2 Stage 4)', () => {
           title: { zh: 't' },
           body: { zh: { format: 'unknown-fmt' } },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -1335,6 +1362,7 @@ describe('类12 F4 + F5 (v0.8.2 Stage 4)', () => {
             ja: { format: 'flat-list', lead: '', items: [{ name: 'a', desc: 'b' }] },
           },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -1357,6 +1385,7 @@ describe('类12 F4 + F5 (v0.8.2 Stage 4)', () => {
             ja: { format: 'narrative', prose: 'ja' },
           },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -1373,6 +1402,7 @@ describe('类12 F4 + F5 (v0.8.2 Stage 4)', () => {
           title: { zh: 't' },
           body: { zh: { format: 'narrative', prose: 'zh-only' } },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );

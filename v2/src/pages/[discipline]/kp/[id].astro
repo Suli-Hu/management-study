@@ -178,7 +178,7 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
 
     <article class="kp-body" set:html={renderStructuredBody({
       body: renderedBody,
-      accentHex: 'var(--text-3)',
+      accentHex: kpTags[0]?.color ?? 'var(--text-3)',
     })} />
     {evalContent && <div set:html={renderEvalModule(evalContent)} />}
   </main>
