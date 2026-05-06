@@ -3,10 +3,10 @@
  * StudyLogShared.astro (v0.7.30)
  *
  * 学习记录页面的公共渲染层 —— 原 /[discipline]/study-log/index.astro 的
- * HTML body + inline scripts + global style 在这里集中，主页和公开分享页
+ * HTML body + inline scripts + global style 在这里集中，主页和个人记录页
  * 都通过 props 复用：
  *   - /[discipline]/study-log → readOnly=false（编辑器 + 分享 dialog 全开）
- *   - /share/study-log/[token] → readOnly=true（CSS data-sl-readonly 隐藏写 UI；
+ *   - /private/study-log/[token] → readOnly=true（CSS data-sl-readonly 隐藏写 UI；
  *     inline JS 通过 window.__SL_READONLY__ 跳过 setupShare 等写动作 setup）
  */
 interface Props {
@@ -241,14 +241,14 @@ const {
         <header class="sls-head">
           <div>
             <h2 id="sls-title" class="sls-title">分享链接</h2>
-            <p class="sls-sub">7 天有效 · 对方无需登录 · 仅可查看本学科学习记录</p>
+            <p class="sls-sub">24 小时有效 · 仅供个人记录使用 · 仅可查看本学科学习记录</p>
           </div>
           <button type="button" class="sls-close" data-share-close aria-label="关闭">×</button>
         </header>
         <div class="sls-body">
           {/* 状态 A：尚无链接 */}
           <div class="sls-empty hidden" data-share-empty>
-            <p class="sls-empty-text">还没有分享链接。点击下方生成一个 7 天有效的只读链接。</p>
+            <p class="sls-empty-text">还没有链接。点击下方生成一个 24 小时有效的个人记录链接。</p>
             <button type="button" class="sls-btn-primary" data-share-create>生成分享链接</button>
           </div>
 
@@ -1152,12 +1152,12 @@ const {
 
   // ============================================================
   // Share Link (v0.7.30) — 7 天 TTL 公开链接 dialog
-  // 状态机：empty / active / loading / error；所有动作走 /api/share-link
+  // 状态机：empty / active / loading / error；所有动作走 /api/private-link
   // ============================================================
 
   (function setupShare() {
     // v0.7.30: 分享页（read-only）不走主页 dialog；window.__SL_READONLY__ 由
-    // /share/study-log/[token] SSR 时注入，主页是 undefined → 正常初始化
+    // /private/study-log/[token] SSR 时注入，主页是 undefined → 正常初始化
     if (window.__SL_READONLY__) return;
 
     const overlay = document.querySelector('[data-share-overlay]');
@@ -1187,7 +1187,7 @@ const {
     }
 
     function buildUrl(token) {
-      return `${location.origin}/share/study-log/${token}`;
+      return `${location.origin}/private/study-log/${token}`;
     }
 
     function fmtRemaining(expiresIso) {
@@ -1209,7 +1209,7 @@ const {
     async function loadCurrent() {
       showState('loading');
       try {
-        const res = await fetch(`/api/share-link?discipline=${encodeURIComponent(DISCIPLINE)}`, {
+        const res = await fetch(`/api/private-link?discipline=${encodeURIComponent(DISCIPLINE)}`, {
           headers: { 'accept': 'application/json' },
         });
         const data = await res.json();
@@ -1224,7 +1224,7 @@ const {
     async function createOrRegen() {
       showState('loading');
       try {
-        const res = await fetch('/api/share-link', {
+        const res = await fetch('/api/private-link', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ discipline: DISCIPLINE }),
@@ -2544,7 +2544,7 @@ const {
   }
 
 
-  /* v0.7.30: readOnly 模式（公开分享页）— 隐藏所有写 UI（最后一道防线） */
+  /* v0.7.30: readOnly 模式（个人记录页）— 隐藏所有写 UI（最后一道防线） */
   body[data-sl-readonly] .sl-add-btn,
   body[data-sl-readonly] .sl-share-btn,
   body[data-sl-readonly] .sl-fab,

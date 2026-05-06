@@ -1,8 +1,8 @@
 ---
 /**
- * /share/study-log/[token] — 学习记录公开分享页（v0.7.30）
+ * /private/study-log/[token] — 学习记录个人记录页（v0.7.30）
  *
- * 公开 + 不需要登录（middleware /share/ 白名单）。token 自带鉴权（256-bit 熵）。
+ * 公开 + 不需要登录（middleware /private/ 白名单）。token 自带鉴权（12 位时间戳，1 天 TTL）。
  *
  * 流程：
  *   1) findActiveByToken(db, token) — token 存在 + expires_at > now，否则 404

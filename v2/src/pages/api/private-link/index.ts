@@ -1,5 +1,5 @@
 /**
- * /api/share-link  (v0.7.30)
+ * /api/private-link  (v0.7.30)
  *
  *   GET   ?discipline=xxx[&scope=study-log]
  *         返回当前 active 链接（无则 null）

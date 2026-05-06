@@ -1,12 +1,12 @@
 ---
 /**
- * ShareLayout (v0.7.30) — 学习记录公开分享页布局
+ * ShareLayout (v0.7.30) — 学习记录个人记录页布局
  *
  * 与 Layout.astro 的差异：
  *   - 无 Nav（顶部 search/settings/avatar 全无）
  *   - 无 Footer
  *   - 无登录态相关 client modules（toast / cooldown / update-watcher / lang-toggle）
- *   - 顶部仅一条「学习者 · {学科} · 学习记录（公开分享）」匿名 banner，logo 不可点
+ *   - 顶部仅一条「学习者 · {学科} · 学习记录（个人记录）」匿名 banner，logo 不可点
  *   - <body data-sl-readonly> 触发 StudyLogShared 内的 CSS 隐藏所有写 UI
  *
  * 不暴露 user.email / display_name —— 仅 disciplineTitle 出现在标题栏。
@@ -55,7 +55,7 @@ const fullTitle = title ?? `学习记录 · ${disciplineTitle}`;
         <span class="share-banner-sep">·</span>
         <span class="share-banner-id">学习者 · {disciplineTitle}</span>
         <span class="share-banner-spacer"></span>
-        <span class="share-banner-tag">公开分享 · 7 天有效</span>
+        <span class="share-banner-tag">个人记录・链接24小时有效</span>
       </div>
     </header>
 
