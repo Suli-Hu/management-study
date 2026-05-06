@@ -84,7 +84,7 @@ describe('GET /api/themes (list)', () => {
   test('返回 themes 列表 + 真实 school_count', async () => {
     const res = await themesGET(makeCtx({ path: '/api/themes?discipline=keiei', method: 'GET' }));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = await res.json() as Record<string, any>;
     expect(body.themes).toHaveLength(2);
     expect(body.themes[0]).toMatchObject({ key: 'individual', school_count: 3 });
     expect(body.themes[1]).toMatchObject({ key: 'organization', school_count: 0 });
@@ -110,7 +110,7 @@ describe('GET /api/themes/:key', () => {
       refCount: 5,
     }));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = await res.json() as Record<string, any>;
     expect(body.theme).toMatchObject({ key: 'individual', school_count: 5 });
   });
 
@@ -153,7 +153,7 @@ describe('DELETE /api/themes/:key', () => {
       refCount: 3,
     }));
     expect(res.status).toBe(409);
-    const body = await res.json();
+    const body = await res.json() as Record<string, any>;
     expect(body).toMatchObject({ reason: 'has_dependents', ref_count: 3 });
   });
 

@@ -96,7 +96,7 @@ describe('POST /api/edit/reorder/view-groups-order', () => {
       body: { discipline: 'keiei', viewId: 'v1', groupIds: ['g1', 'g2', 'g3'] },
     }));
     expect(res.status).toBe(400);
-    expect((await res.json()).reason).toBe('set_mismatch');
+    expect(((await res.json()) as { reason: string }).reason).toBe('set_mismatch');
   });
 
   test('happy: groupIds 同集合不同序 → 200 + UPDATE view', async () => {
@@ -156,7 +156,7 @@ describe('POST /api/edit/reorder/view-group-schools', () => {
       },
     }));
     expect(res.status).toBe(400);
-    expect((await res.json()).reason).toBe('school_duplicated');
+    expect(((await res.json()) as { reason: string }).reason).toBe('school_duplicated');
   });
 
   test('总集合变化（不只是重排）→ 400 set_mismatch', async () => {
@@ -167,7 +167,7 @@ describe('POST /api/edit/reorder/view-group-schools', () => {
       },
     }));
     expect(res.status).toBe(400);
-    expect((await res.json()).reason).toBe('set_mismatch');
+    expect(((await res.json()) as { reason: string }).reason).toBe('set_mismatch');
   });
 
   test('group 不在 view 里 → 400 group_not_in_view', async () => {
@@ -178,7 +178,7 @@ describe('POST /api/edit/reorder/view-group-schools', () => {
       },
     }));
     expect(res.status).toBe(400);
-    expect((await res.json()).reason).toBe('group_not_in_view');
+    expect(((await res.json()) as { reason: string }).reason).toBe('group_not_in_view');
   });
 
   test('未登录 → 401', async () => {
