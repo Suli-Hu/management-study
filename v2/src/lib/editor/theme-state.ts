@@ -30,6 +30,8 @@ export interface ThemeEditorMetadata {
   disciplineKey: string;
   fromPath: string;
   fromLabel: string;
+  /** v0.11.5: 删除 gate — 该 theme 下 school 数 > 0 时拒删（避免悬空 FK） */
+  deleteGate?: { schoolCount: number };
 }
 
 // ============================================================

@@ -280,6 +280,26 @@
 }
 .kp-editor-v08 .btn-primary.is-loading { opacity: 0.7; cursor: wait; }
 
+/* v0.11.5: 删除按钮 — 用 accent-warning 色 + 边框，不抢主色 */
+.kp-editor-v08 .btn-danger {
+  background: transparent;
+  color: var(--accent-warning);
+  border-color: var(--accent-warning);
+  font-weight: 500;
+}
+.kp-editor-v08 .btn-danger:hover {
+  background: color-mix(in oklab, var(--accent-warning) 12%, transparent);
+}
+.kp-editor-v08 .btn-danger:focus-visible { outline: 2px solid var(--accent-warning); outline-offset: 2px; }
+.kp-editor-v08 .btn-danger:disabled,
+.kp-editor-v08 .btn-danger.is-disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  color: var(--text-3);
+  border-color: var(--border);
+  background: transparent;
+}
+
 @media (max-width: 640px) {
   .kp-editor-v08 .btn { min-height: 44px; padding: 10px 14px; }
 }

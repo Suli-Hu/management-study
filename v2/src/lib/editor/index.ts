@@ -220,6 +220,18 @@ function buildTopBar(store: EditorStore, opts: InitEditorOptions): HTMLElement {
   bar.appendChild(left);
 
   const right = el('div', 'kpe-topbar-r');
+
+  // v0.11.5: edit 模式下显示删除按钮（KP 无 has_dependents gate，永不 disabled）
+  if (opts.mode === 'edit') {
+    const deleteBtn = button({
+      text: '删除',
+      cls: 'btn btn-danger',
+      onClick: () => handleDelete(store, opts),
+      ariaLabel: '删除此 KP',
+    });
+    right.appendChild(deleteBtn);
+  }
+
   const saveBtn = button({
     text: opts.mode === 'new' ? '创建' : '保存',
     cls: 'btn btn-primary',
@@ -380,6 +392,32 @@ async function save(store: EditorStore, opts: InitEditorOptions): Promise<void> 
   }
   // schema_invalid / body_invalid
   toastError(`字段校验失败：${e.message}`);
+}
+
+/**
+ * v0.11.5: KP 删除流程。
+ * 走 DELETE /api/kps/:id（hard delete，version snapshot 留在 versions 表）。
+ * 决策点：浏览器原生 confirm + 删除成功跳回 fromPath。
+ */
+async function handleDelete(store: EditorStore, opts: InitEditorOptions): Promise<void> {
+  const state = store.get();
+  if (!state.id) return; // new mode 不该走到这里
+  const title = state.title.zh.trim() || '(无标题)';
+  if (!confirm(`确认删除 KP「${title}」？\n此操作不可撤销，仅在 versions 表留快照。`)) return;
+
+  try {
+    const url = `/api/kps/${encodeURIComponent(state.id)}?discipline=${encodeURIComponent(opts.metadata.disciplineKey)}`;
+    const res = await fetch(url, { method: 'DELETE', credentials: 'same-origin' });
+    if (res.ok) {
+      toastSuccess('已删除');
+      window.location.href = opts.metadata.fromPath;
+      return;
+    }
+    const data = (await res.json().catch(() => ({}))) as { reason?: string; message?: string };
+    toastError(`删除失败：${data.message ?? data.reason ?? `HTTP ${res.status}`}`);
+  } catch (err) {
+    toastError(`删除失败：${err instanceof Error ? err.message : String(err)}`);
+  }
 }
 
 function buildCreatePayload(state: EditorState, discipline: string): CreatePayload {

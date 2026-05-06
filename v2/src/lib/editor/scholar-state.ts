@@ -49,6 +49,8 @@ export interface ScholarEditorMetadata {
   disciplineKey: string;
   fromPath: string;
   fromLabel: string;
+  /** v0.11.5: 删除 gate — kp 关联 > 0 时拒删 */
+  deleteGate?: { kpCount: number };
 }
 
 // ============================================================

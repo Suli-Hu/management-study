@@ -106,6 +106,24 @@ function buildTopBar(store: ThemeEditorStore, opts: InitThemeEditorOptions): HTM
   bar.appendChild(left);
 
   const right = el('div', 'kpe-topbar-r');
+
+  // v0.11.5: edit 模式下加删除按钮 — has_dependents gate（school 数 > 0 disabled，避免悬空 FK）
+  if (opts.mode === 'edit') {
+    const gate = opts.metadata.deleteGate ?? { schoolCount: 0 };
+    const canDelete = gate.schoolCount === 0;
+    const deleteBtn = button({
+      text: '删除',
+      cls: 'btn btn-danger',
+      onClick: () => handleDelete(store, opts),
+      ariaLabel: '删除此学派组',
+    });
+    if (!canDelete) {
+      deleteBtn.disabled = true;
+      deleteBtn.title = `不能删除：该学派组下还有 ${gate.schoolCount} 个学派。先把这些学派移到别的学派组或删掉再试。`;
+    }
+    right.appendChild(deleteBtn);
+  }
+
   const saveBtn = button({
     text: opts.mode === 'new' ? '创建' : '保存',
     cls: 'btn btn-primary',
@@ -318,4 +336,29 @@ async function save(store: ThemeEditorStore, opts: InitThemeEditorOptions): Prom
   else if (e.category === 'not_found') toastError('学派组不存在或已删除');
   else if (e.category === 'network') toastError(`网络错误，请重试：${e.message}`);
   else toastError(`字段校验失败：${e.message}`);
+}
+
+/**
+ * v0.11.5: 学派组删除流程。DELETE /api/themes/:key?discipline=...
+ */
+async function handleDelete(store: ThemeEditorStore, opts: InitThemeEditorOptions): Promise<void> {
+  const state = store.get();
+  if (!state.key) return;
+  const title = state.title.zh.trim() || '(无标题)';
+  if (!confirm(`确认删除学派组「${title}」？\n此学派组下无任何学派。`)) return;
+
+  try {
+    const url = `/api/themes/${encodeURIComponent(state.key)}?discipline=${encodeURIComponent(opts.metadata.disciplineKey)}`;
+    const res = await fetch(url, { method: 'DELETE', credentials: 'same-origin' });
+    if (res.ok) {
+      toastSuccess('已删除');
+      window.location.href = opts.metadata.fromPath;
+      return;
+    }
+    const data = (await res.json().catch(() => ({}))) as { reason?: string; detail?: unknown };
+    if (data.reason === 'theme_has_schools') toastError(`不能删：学派组下还有 ${data.detail} 个学派`);
+    else toastError(`删除失败：${data.reason ?? `HTTP ${res.status}`}`);
+  } catch (err) {
+    toastError(`删除失败：${err instanceof Error ? err.message : String(err)}`);
+  }
 }
