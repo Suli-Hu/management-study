@@ -566,15 +566,15 @@
   border: 1px solid var(--border);
   border-radius: var(--r-md);
   box-shadow: 0 8px 24px oklch(0 0 0 / 0.10);
-  max-height: 240px;
+  max-height: 320px; /* v0.11.3: 240 → 320 */
   overflow-y: auto;
   z-index: 60;
-  padding: 4px;
+  padding: 6px; /* v0.11.3: 4 → 6，第一项不贴顶被截 */
 }
 
 .kp-editor-v08 .kpe-dd-item {
   display: flex;
-  align-items: baseline;
+  align-items: center; /* v0.11.3: baseline → center，避免文字基线对齐让首项视觉显得被截 */
   justify-content: space-between;
   gap: var(--sp-2);
   padding: 9px 10px;
@@ -585,6 +585,13 @@
   min-height: 36px;
 }
 .kp-editor-v08 .kpe-dd-item:hover { background: var(--bg-soft); }
+/* v0.11.3: 第一项浅色高亮，提示「按 Enter / 失焦自动选中我」 */
+.kp-editor-v08 .kpe-dd-item.is-first-match {
+  background: var(--primary-soft);
+  outline: 1px solid var(--primary);
+  outline-offset: -1px;
+}
+.kp-editor-v08 .kpe-dd-item.is-first-match:hover { background: var(--primary-soft); }
 .kp-editor-v08 .kpe-dd-name { color: var(--text); font-weight: 500; }
 .kp-editor-v08 .kpe-dd-key { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); }
 

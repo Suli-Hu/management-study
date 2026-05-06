@@ -23,6 +23,9 @@
 ### Why this rule exists
 v0.8.20-v0.8.26 期间发现：每次 engineering push 触发 deploy 都跑 `sync:d1`，用 git 的 v2/data 文件 wipe+reload D1。learning agents 无 git 权限，写入只到 D1；如果 git writeback 静默失败，下一次 engineering push 就把 D1 的新工作覆盖回 git 旧状态。审计 marketing 学科未发现实质丢失（KP.schools 字段救场让 kp_school 可重建），但架构隐患极高。v0.8.27 deploy-v2.yml 去掉 sync 步骤彻底脱钩。
 
+### v0.11.3 补完整：webhook + reconcile 一并删除
+v0.8.27 漏网了 `/api/v1/webhook/github` —— GitHub push 仍然触发 webhook，webhook 跑 syncResource 用 git data 覆盖 D1。这条反向覆盖路径在 v0.11.1 暴露：用户改学派 tag 写 D1 成功，紧接着拖拽 KP 顺序 commit git，webhook fire 把 git stale tags 写回 D1。v0.11.3 删除 webhook handler + reconcile.yml workflow（reconcile 是 webhook 的"保险栓"，webhook 没了它失业）。手动恢复路径仍保留：`POST /api/v1/sync-discipline/<discipline>` + `pnpm sync:d1` + D1 Time Travel。
+
 ---
 
 ## 多 agent 分工总览
