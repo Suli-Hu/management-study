@@ -392,9 +392,17 @@ export async function createKpRecord(
     ).bind(id, input.title.zh, input.title.en ?? '', input.title.ja ?? '', ftsTextZh, ftsTextJa),
   ];
 
-  input.schools.forEach((schoolKey, i) => {
-    stmts.push(db.prepare('INSERT INTO kp_school (kp_id, school_key, position) VALUES (?, ?, ?)').bind(id, schoolKey, 1000 + i));
-  });
+  // v0.11.4 Stage 3 (PRD §4.3): KP CREATE 也走「塞头部」(决策点 #1=b)
+  //   每个 school 先 SHIFT +1，再 INSERT position=0
+  for (const schoolKey of input.schools) {
+    stmts.push(
+      db.prepare('UPDATE kp_school SET position = position + 1 WHERE school_key = ?').bind(schoolKey),
+    );
+    stmts.push(
+      db.prepare('INSERT INTO kp_school (kp_id, school_key, position) VALUES (?, ?, 0)').bind(id, schoolKey),
+    );
+  }
+  // scholars 保持 1000+i（Stage 4 任意时候做，目前无学者拖拽 KP 顺序 UI）
   (input.scholars ?? []).forEach((scholarKey, i) => {
     stmts.push(db.prepare('INSERT INTO kp_scholar (kp_id, scholar_discipline, scholar_key, position) VALUES (?, ?, ?, ?)').bind(id, tenant.discipline, scholarKey, 1000 + i));
   });
@@ -504,7 +512,9 @@ export async function patchKpRecord(
       tenant.tenantId,
       tenant.discipline,
     ),
-    db.prepare('DELETE FROM kp_school WHERE kp_id = ?').bind(kpId),
+    // v0.11.4 Stage 3 (PRD §4.1): kp_school 改成 delta 模式 — 不再全删重建。
+    // kept schools (current ∩ next) 完全不动，保持 position；只处理 removed / added。
+    // scholars 暂保持 DELETE+INSERT (Stage 4 任意时候做；目前没有学者拖拽 KP 顺序的 UI)
     db.prepare('DELETE FROM kp_scholar WHERE kp_id = ?').bind(kpId),
     db.prepare('DELETE FROM kp_fts WHERE id = ?').bind(kpId),
     db.prepare(
@@ -512,9 +522,29 @@ export async function patchKpRecord(
     ).bind(kpId, mergedTitle.zh, mergedTitle.en ?? '', mergedTitle.ja ?? '', ftsTextZh, ftsTextJa),
   ];
 
-  nextSchools.forEach((schoolKey, i) => {
-    stmts.push(db.prepare('INSERT INTO kp_school (kp_id, school_key, position) VALUES (?, ?, ?)').bind(kpId, schoolKey, 1000 + i));
-  });
+  // kp_school delta：
+  //   removed = current.schools - nextSchools → DELETE 该 KP 在这些学派的所有 row
+  //     (决策点 #5=a：连同拖拽顺序一起清，不留孤儿)
+  //   added = nextSchools - current.schools → 每个 school SHIFT +1 + INSERT position=0
+  //     (决策点 #1=b：塞头部)
+  //   kept (current ∩ next) → 不动，保持原 position (决策点 #4=a：schools 数组顺序不影响 position)
+  const removedSchools = current.schools.filter((s) => !nextSchools.includes(s));
+  const addedSchools = nextSchools.filter((s) => !current.schools.includes(s));
+
+  for (const schoolKey of removedSchools) {
+    stmts.push(
+      db.prepare('DELETE FROM kp_school WHERE kp_id = ? AND school_key = ?').bind(kpId, schoolKey),
+    );
+  }
+  for (const schoolKey of addedSchools) {
+    stmts.push(
+      db.prepare('UPDATE kp_school SET position = position + 1 WHERE school_key = ?').bind(schoolKey),
+    );
+    stmts.push(
+      db.prepare('INSERT INTO kp_school (kp_id, school_key, position) VALUES (?, ?, 0)').bind(kpId, schoolKey),
+    );
+  }
+
   nextScholars.forEach((scholarKey, i) => {
     stmts.push(db.prepare('INSERT INTO kp_scholar (kp_id, scholar_discipline, scholar_key, position) VALUES (?, ?, ?, ?)').bind(kpId, tenant.discipline, scholarKey, 1000 + i));
   });

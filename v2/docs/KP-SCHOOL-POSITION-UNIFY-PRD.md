@@ -1,6 +1,6 @@
 # kp_school.position 单段化重构 PRD
 
-> 状态：v0.11.1 Stage 1 ✅ ship，v0.11.3 = Stage 2 + Bug B 修复 + webhook/reconcile 清理 进行中
+> 状态：v0.11.1 Stage 1 ✅ + v0.11.3 Stage 2/Bug B/webhook ✅ + v0.11.4 Stage 3 主修复 进行中
 > 起源 issue：用户改 KP 名字后，学派内 KP 拖拽顺序丢失 + tag 色丢失（4C 案例）
 > 适用版本：v0.11.x（按 stage 分 patch 发布）
 
@@ -11,6 +11,10 @@
   - Bug B 修复 (D)：chipPicker Enter / blur 自动选中第一匹配项（防"输入不点下拉就保存"卡死）
   - Bug B 修复 (E)：下拉视觉小修（max-height 320 / align-items center / 第一项高亮）
   - Bug B 真因清理：删 webhook handler + reconcile.yml（git push 反向覆盖 D1 是 v0.8.27 漏网之鱼）
+- **v0.11.4**: Stage 3 主修复 — KP PATCH/CREATE 改 delta 模式
+  - patchKpRecord：kept schools 不动 position（4C 改名顺序丢失彻底修复）；removed/added 走 delta
+  - createKpRecord：新建 KP 在每个 school 内塞头部（决策点 #1=b）
+  - 单元测试 v2/tests/kp-school-delta.test.ts (5 tests) 覆盖 PRD §7.1 T1/T3/T4/T6/T7
 
 ---
 
