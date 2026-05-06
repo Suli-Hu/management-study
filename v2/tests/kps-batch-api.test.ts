@@ -34,7 +34,7 @@ async function seedBaseline(db: D1LikeDatabase) {
   await db
     .prepare(
       `INSERT INTO discipline (key, title_zh, title_en, title_ja, tagline_zh, tagline_ja, accent, tags_json, themes_json, created_at, updated_at)
-       VALUES ('keiei', '经营学', null, null, null, null, '', '[]', '[]', '2026-01-01', '2026-01-01')`,
+       VALUES ('keiei', '经营学', null, null, null, null, '', '[{"key":"t1","label":{"zh":"T1"},"color":"#000000"},{"key":"t2","label":{"zh":"T2"},"color":"#111111"}]', '[]', '2026-01-01', '2026-01-01')`,
     )
     .run();
   await db

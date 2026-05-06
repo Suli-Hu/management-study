@@ -63,6 +63,10 @@ function mockDb(opts: {
           if (sql.includes('SELECT themes_json FROM discipline')) {
             return { themes_json: JSON.stringify([{ key: 'individual' }, { key: 'organization' }]) } as T;
           }
+          // v0.8.37 Phase 3: tag library 校验 mock
+          if (sql.includes('SELECT tags_json FROM discipline WHERE key = ?')) {
+            return { tags_json: JSON.stringify([{ key: 'classic', label: { zh: '经典' }, color: '#000000' }]) } as T;
+          }
           return null as T;
         },
         async all<T = unknown>() {

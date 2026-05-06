@@ -80,11 +80,12 @@ export interface BatchOutcome {
 interface TenantKeys {
   schools: Set<string>;
   scholars: Set<string>;
+  tags: Set<string>;             /* v0.8.37 Phase 3: tag library keys */
 }
 
-/** 一次拿全 tenant 的合法 schools/scholars key，避免 50 条触发 100 次 DB query。 */
+/** 一次拿全 tenant 的合法 schools/scholars/tags key，避免 50 条触发 N×3 次 DB query。 */
 async function prefetchTenantKeys(db: D1Database, discipline: string): Promise<TenantKeys> {
-  const [schoolsRes, scholarsRes] = await Promise.all([
+  const [schoolsRes, scholarsRes, discRow] = await Promise.all([
     db
       .prepare('SELECT key FROM school WHERE discipline = ?')
       .bind(discipline)
@@ -93,10 +94,27 @@ async function prefetchTenantKeys(db: D1Database, discipline: string): Promise<T
       .prepare('SELECT key FROM scholar WHERE discipline = ?')
       .bind(discipline)
       .all<{ key: string }>(),
+    db
+      .prepare('SELECT tags_json FROM discipline WHERE key = ?')
+      .bind(discipline)
+      .first<{ tags_json: string | null }>(),
   ]);
+  // v0.8.37: parse discipline.tags_json → key set
+  const tagKeys: string[] = [];
+  if (discRow?.tags_json) {
+    try {
+      const arr = JSON.parse(discRow.tags_json);
+      if (Array.isArray(arr)) {
+        for (const t of arr) {
+          if (t && typeof t === 'object' && typeof t.key === 'string') tagKeys.push(t.key);
+        }
+      }
+    } catch { /* tolerate malformed */ }
+  }
   return {
     schools: new Set((schoolsRes.results ?? []).map((r) => r.key)),
     scholars: new Set((scholarsRes.results ?? []).map((r) => r.key)),
+    tags: new Set(tagKeys),
   };
 }
 
@@ -524,6 +542,25 @@ async function processOne(
       current_version: currentVersion,
       detail: { invalid_keys: invalidScholars },
     };
+  }
+
+  // v0.8.37 Phase 3: 校验 tags 都在 discipline.tags 库里 — 仅当 patch.tags 显式传时
+  // 才校验 (避免老脏数据卡住改 title 等无关字段)
+  if (patch.tags !== undefined) {
+    const invalidTags = patch.tags.filter((k) => !tenantKeys.tags.has(k));
+    if (invalidTags.length > 0) {
+      return {
+        id,
+        ok: false,
+        reason: 'tag_not_in_library',
+        current_version: currentVersion,
+        detail: {
+          unknown_keys: invalidTags,
+          library_keys: [...tenantKeys.tags].slice(0, 20),
+          message: `tag key 必须先在标签库注册才能引用。通过 POST /api/edit/discipline/${options.tenant.discipline}/tags 注册新 tag。`,
+        },
+      };
+    }
   }
 
   // 10. dryRun → 计算 diff 返

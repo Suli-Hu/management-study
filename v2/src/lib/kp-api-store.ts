@@ -19,6 +19,7 @@ import type { KpCreateInput, KpPatchInput } from '~/schemas/kp-api';
 import type { KpBody, KpEvaluationsLang } from '~/schemas/kp-body-structured';
 import { hasEvaluationsContent, structuredToSearchText } from './kp-body-helpers';
 import { deepStripStrong } from './sanitize-strong';
+import { assertTagsInLibrary } from './tag-library';
 
 interface DerivedCols {
   body_zh_json: string;
@@ -347,6 +348,10 @@ export async function createKpRecord(
   const refs = await assertRefsBelongToTenant(db, tenant.discipline, input.schools, input.scholars ?? []);
   if (!refs.ok) return { ok: false, status: 422, reason: refs.reason, detail: refs.detail };
 
+  // v0.8.37 Phase 3: tags 必须在 discipline.tags 库里
+  const tagCheck = await assertTagsInLibrary(db, tenant.discipline, input.tags);
+  if (!tagCheck.ok) return { ok: false, status: 422, reason: tagCheck.reason, detail: tagCheck };
+
   const now = new Date().toISOString();
   const cols = deriveCols({
     body: input.body,
@@ -462,6 +467,13 @@ export async function patchKpRecord(
 
   const refs = await assertRefsBelongToTenant(db, tenant.discipline, nextSchools, nextScholars);
   if (!refs.ok) return { ok: false, status: 422, reason: refs.reason, detail: refs.detail };
+
+  // v0.8.37 Phase 3: tags 必须在 discipline.tags 库里 (PATCH 走 nextTags = input.tags ?? current.tags
+  // 但只在 input.tags 显式传时才校验，避免老脏数据卡住改 title 等)
+  if (input.tags !== undefined) {
+    const tagCheck = await assertTagsInLibrary(db, tenant.discipline, input.tags);
+    if (!tagCheck.ok) return { ok: false, status: 422, reason: tagCheck.reason, detail: tagCheck };
+  }
 
   const now = new Date().toISOString();
   const cols = deriveCols({ body: mergedBody, evaluations: mergedEvaluations });
