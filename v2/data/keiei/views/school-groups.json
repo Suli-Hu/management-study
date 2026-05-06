@@ -41,7 +41,8 @@
         "scientific",
         "process",
         "bureaucracy",
-        "org_types"
+        "org_types",
+        "empirical_s"
       ]
     },
     {
@@ -146,5 +147,5 @@
     }
   ],
   "createdAt": "2026-04-27T10:42:16.984Z",
-  "updatedAt": "2026-04-27T17:32:49.851Z"
+  "updatedAt": "2026-05-06T03:19:16.466Z"
 }
