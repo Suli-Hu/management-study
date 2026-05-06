@@ -70,7 +70,8 @@ export function initEditor(opts: InitEditorOptions): void {
   const tagsHost = el('div');
   relWrap.appendChild(buildLabeledField('所属学派 *', schoolsHost));
   relWrap.appendChild(buildLabeledField('关联学者', scholarsHost));
-  relWrap.appendChild(buildLabeledField('标签', tagsHost));
+  // v0.9.0 Stage C-1: tag 必填 (单 tag 单源色)
+  relWrap.appendChild(buildLabeledField('标签 *', tagsHost));
   mountSchoolsField(schoolsHost, { store, metadata: opts.metadata });
   mountScholarsField(scholarsHost, { store, metadata: opts.metadata });
   mountTagsField(tagsHost, { store, metadata: opts.metadata });
@@ -231,8 +232,10 @@ function buildTopBar(store: EditorStore, opts: InitEditorOptions): HTMLElement {
   store.subscribe((s) => {
     const titleOk = s.title.zh.trim().length > 0;
     const schoolsOk = s.schools.length > 0;
+    // v0.9.0 Stage C-1: tag 必填 (单 tag 单源色)
+    const tagsOk = s.tags.length === 1;
     const isSaving = s.saveStatus === 'saving';
-    saveBtn.disabled = !titleOk || !schoolsOk || isSaving;
+    saveBtn.disabled = !titleOk || !schoolsOk || !tagsOk || isSaving;
     if (isSaving) {
       saveBtn.classList.add('is-loading');
       saveBtn.textContent = '保存中...';

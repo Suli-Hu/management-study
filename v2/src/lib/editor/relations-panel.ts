@@ -128,12 +128,16 @@ export function mountScholarsField(host: HTMLElement, opts: RelationsPanelOption
 }
 
 export function mountTagsField(host: HTMLElement, opts: RelationsPanelOptions): void {
+  // v0.9.0 Stage C-1: 单选 + 必填 (Q2=① 单 tag 单源色)
+  // colorize 用 metadata.tags.color 映射出每 chip 真实色 (跟 school/scholar form 统一)
+  const tagColorMap = new Map(opts.metadata.tags.map((t) => [t.key, t.color] as const));
   mountChipPicker(host, {
     current: opts.store.get().tags,
     options: opts.metadata.tags.map((t) => ({ key: t.key, label: t.label })),
-    placeholder: '搜索标签（可空）',
+    placeholder: '搜索 / 选 1 个标签（必填）',
     ariaLabel: '标签',
-    colorize: 'none',
+    colorize: (key) => tagColorMap.get(key) ?? null,
     onChange: (next) => opts.store.update({ tags: next }),
+    singleSelect: true,
   });
 }

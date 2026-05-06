@@ -339,6 +339,11 @@ export interface ChipPickerOptions {
   /** schools → 自动 hash 上 --tag-* token；none / function 提供 token name */
   colorize: 'schools' | 'none' | ((key: string) => string | null);
   onChange: (next: string[]) => void;
+  /**
+   * v0.9.0: 单选模式 — 点新选项替换 (而非追加)；用于 tag 字段 (Q2=① 单 tag 约束)。
+   * 已选 1 个时 dropdown 仍允许换；点 chip × 删除还是清空。
+   */
+  singleSelect?: boolean;
 }
 
 const SCHOOL_TAG_TOKENS = [
@@ -408,8 +413,9 @@ export function mountChipPicker(host: HTMLElement, opts: ChipPickerOptions): voi
     const refreshDd = () => {
       dd.innerHTML = '';
       const q = inputEl.value.trim().toLowerCase();
+      // singleSelect 模式 dropdown 不过滤已选 — 让用户可以直接换 (点新选项替换旧)
       const matches = opts.options
-        .filter((o) => !current.includes(o.key))
+        .filter((o) => opts.singleSelect ? true : !current.includes(o.key))
         .filter(
           (o) =>
             !q ||
@@ -432,10 +438,12 @@ export function mountChipPicker(host: HTMLElement, opts: ChipPickerOptions): voi
           sub.textContent = m.sub;
           it.appendChild(sub);
         }
+        if (current.includes(m.key)) it.classList.add('is-current');
         it.addEventListener('mousedown', (e) => {
           e.preventDefault();
-          if (current.includes(m.key)) return;
-          current = [...current, m.key];
+          if (current.includes(m.key) && !opts.singleSelect) return;
+          // v0.9.0 singleSelect: 替换；非 singleSelect: 追加
+          current = opts.singleSelect ? [m.key] : [...current, m.key];
           opts.onChange(current);
           inputEl.value = '';
           render();

@@ -40,10 +40,11 @@ interface KpResponse {
 }
 
 async function seedBaseline(db: D1LikeDatabase) {
+  // v0.9.0 Stage C-1: discipline 必须有 1 个 tag library entry，给 POST 'tags: ["t_test"]' 用
   await db
     .prepare(
       `INSERT INTO discipline (key, title_zh, title_en, title_ja, tagline_zh, tagline_ja, accent, tags_json, themes_json, created_at, updated_at)
-       VALUES ('keiei', '经营学', null, null, null, null, '', '[]', '[]', '2026-01-01', '2026-01-01')`,
+       VALUES ('keiei', '经营学', null, null, null, null, '', '[{"key":"t_test","label":{"zh":"test"},"color":"#888"}]', '[]', '2026-01-01', '2026-01-01')`,
     )
     .run();
   await db
@@ -166,6 +167,7 @@ describe('v0.8.0 Stage 3: 5 format × POST /api/kps happy path', () => {
             title: { zh: `${format} test` },
             body: { zh: body },
             schools: ['motivation'],
+            tags: ['t_test'],
           },
         }),
       );
@@ -213,6 +215,7 @@ describe('v0.8.0 Stage 3: 5 format × POST /api/kps happy path', () => {
             },
           },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -261,6 +264,7 @@ describe('v0.8.0 Stage 3: 5 format × POST /api/kps happy path', () => {
             },
           },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -300,6 +304,7 @@ describe('v0.8.0 Stage 3: legacy contract 6 reason 拒绝路径', () => {
           body: { zh: VALID_BODIES.narrative },
           format: 'narrative',
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -320,6 +325,7 @@ describe('v0.8.0 Stage 3: legacy contract 6 reason 拒绝路径', () => {
           title: { zh: 't' },
           body: { zh: 'plain string body (DSL)' },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -340,6 +346,7 @@ describe('v0.8.0 Stage 3: legacy contract 6 reason 拒绝路径', () => {
           body: { zh: VALID_BODIES.narrative },
           evalContent: { zh: { 义: 'X' } },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -364,6 +371,7 @@ describe('v0.8.0 Stage 3: legacy contract 6 reason 拒绝路径', () => {
             },
           },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -382,6 +390,7 @@ describe('v0.8.0 Stage 3: legacy contract 6 reason 拒绝路径', () => {
           title: { zh: 't' },
           body: { zh: { format: 'invalid-format-name', prose: 'x' } },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -413,6 +422,7 @@ describe('v0.8.0 Stage 3: legacy contract 6 reason 拒绝路径', () => {
             },
           },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -432,6 +442,7 @@ describe('v0.8.0 Stage 3: legacy contract 6 reason 拒绝路径', () => {
           title: { zh: 't' },
           body: { zh: { format: 'flat-list', lead: '', items: [] } },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -464,6 +475,7 @@ describe('v0.8.0 Stage 3: PATCH body partial-by-language merge', () => {
             ja: { format: 'narrative', prose: 'orig ja prose' },
           },
           schools: ['motivation'],
+          tags: ['t_test'],
         },
       }),
     );
@@ -590,6 +602,7 @@ describe('v0.8.0 Stage 3: batch API 混合 legacy reason', () => {
             title: { zh: id },
             body: { zh: VALID_BODIES.narrative },
             schools: ['motivation'],
+            tags: ['t_test'],
           },
         }),
       );

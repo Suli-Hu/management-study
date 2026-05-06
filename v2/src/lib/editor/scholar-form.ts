@@ -152,8 +152,10 @@ function buildTopBar(store: ScholarEditorStore, opts: InitScholarEditorOptions):
   store.subscribe((s) => {
     const nameOk = s.name.zh.trim().length > 0;
     const contribOk = s.contribution.zh.trim().length > 0;
+    // v0.9.0 Stage C-1: tag 必填 (单 tag 单源色)
+    const tagsOk = s.tags.length === 1;
     const isSaving = s.saveStatus === 'saving';
-    saveBtn.disabled = !nameOk || !contribOk || isSaving;
+    saveBtn.disabled = !nameOk || !contribOk || !tagsOk || isSaving;
     if (isSaving) {
       saveBtn.classList.add('is-loading');
       saveBtn.textContent = opts.mode === 'new' ? '创建中...' : '保存中...';
@@ -420,9 +422,9 @@ function buildRelationsSection(
   host.innerHTML = '';
   const wrap = el('div', 'kpe-section-body');
 
-  // tags chip
+  // tags chip — v0.9.0: 单选 + 必填 (Q2=① 单 tag 单源色)
   const tagsWrap = el('div', 'kpe-field');
-  const tagsLabel = el('label', 'kpe-label');
+  const tagsLabel = el('label', 'kpe-label kpe-label-required');
   tagsLabel.textContent = '标签';
   tagsWrap.appendChild(tagsLabel);
   const tagsHost = el('div');
@@ -433,10 +435,11 @@ function buildRelationsSection(
   mountChipPicker(tagsHost, {
     current: store.get().tags,
     options: tagOptions,
-    placeholder: '搜索标签（可空）',
+    placeholder: '搜索 / 选 1 个标签（必填）',
     ariaLabel: '标签',
     colorize: (key) => tagTokenMap.get(key) ?? null,
     onChange: (next) => store.update({ tags: next }),
+    singleSelect: true,
   });
 
   // nobel — native details/summary 折叠

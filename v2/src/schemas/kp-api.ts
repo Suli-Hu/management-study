@@ -95,7 +95,8 @@ export const KpCreateInput = z
     year: z.string().trim().default(''),
     schools: z.array(SchoolKey).min(1, 'KP 至少属于一个学派'),
     scholars: z.array(ScholarKey).default([]),
-    tags: z.array(z.string()).default([]),
+    // v0.9.0 Stage C-1: 强制 1 个 tag (Q2=① 单 tag 单源色); assertTagsInLibrary 兜底库内校验
+    tags: z.array(z.string()).length(1, '必须 1 个 tag (从 discipline.tags 库选)'),
   })
   .strict();
 
@@ -109,7 +110,8 @@ export const KpPatchInput = z
     year: z.string().trim().optional(),
     schools: z.array(SchoolKey).min(1, 'schools 至少 1 个').optional(),
     scholars: z.array(ScholarKey).optional(),
-    tags: z.array(z.string()).optional(),
+    // v0.9.0 Stage C-1: 显式传 tags 时必须 1 个；缺省 = 保留原值；不允许 tags=[] 清空
+    tags: z.array(z.string()).length(1, '必须 1 个 tag (从 discipline.tags 库选)').optional(),
   })
   .strict()
   .refine((v) => Object.keys(v).length > 0, 'PATCH 至少需要一个字段');
