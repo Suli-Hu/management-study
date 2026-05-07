@@ -27,7 +27,6 @@ export function mountNarrativeForm(
     field({
       label: '正文 (prose)',
       required: true,
-      hint: '一段连续的散文 — 可含 HTML 标签 (<strong> / <em> / <br>)',
       control: textarea({
         value: current.prose,
         rows: 12,

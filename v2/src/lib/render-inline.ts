@@ -67,5 +67,7 @@ export function renderInlineHtml(s: string | null | undefined, opts?: RenderInli
   out = out
     .replace(/&lt;(\/?)(strong|em)&gt;/gi, '<$1$2>')
     .replace(/&lt;br\s*\/?&gt;/gi, '<br>');
+  // Step 4 (v0.11.7): \n → <br> — 让 textarea 按回车换行直接渲染
+  out = out.replace(/\n/g, '<br>');
   return out;
 }
