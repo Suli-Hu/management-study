@@ -32,6 +32,10 @@ For any frontend-visible change (layout, color, spacing, typography, interaction
 - Provide the demo URL (local path) and what to look for.
 - Screenshots are optional; they do not replace the demo.
 
+5) **Versioning (mandatory before push)**
+- If the push contains any user-visible change (UI, copy, behavior, API contract), **bump `v2/package.json` version** first (at least patch).
+- Commit version bump **in the same batch** as the functional change (or immediately after), then push.
+
 ## Guardrails
 - Avoid “CSS whack-a-mole”: scan all related CSS/JS usage first, then change once.
 - Safari/iOS differences are real: treat iPad validation as mandatory for UI-affecting changes.
