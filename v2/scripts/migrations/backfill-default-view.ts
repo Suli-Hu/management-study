@@ -14,11 +14,11 @@
 import { readFileSync, readdirSync, existsSync, mkdirSync, writeFileSync, statSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Discipline } from '../src/schemas/discipline.js';
-import { View, type View as ViewT } from '../src/schemas/view.js';
+import { Discipline } from '../../src/schemas/discipline.js';
+import { View, type View as ViewT } from '../../src/schemas/view.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const V2_ROOT = resolve(__dirname, '..');
+const V2_ROOT = resolve(__dirname, '..', '..');
 const DATA_ROOT = join(V2_ROOT, 'data');
 
 const force = process.argv.includes('--force');
@@ -59,7 +59,8 @@ for (const discKey of readdirSync(DATA_ROOT)) {
     kind: 'manual',
     isDefault: true,
     position: 0,
-    groups: disc.themes.map((t) => ({
+    groups: (disc.themes as Array<{ key: string; title: { zh: string }; desc?: { zh?: string }; schools: string[] }>)
+      .map((t) => ({
       id: t.key,
       title: t.title.zh,
       flow: t.desc?.zh ?? '',

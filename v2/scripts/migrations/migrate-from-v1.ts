@@ -1,7 +1,7 @@
 /**
  * v1 → v2 一次性迁移
  *
- * 读 ../Main/data.js + ../Main/data_ja.js（v1 的 JS 字面量数据），
+ * 读 ../archive/v1/data.js + ../archive/v1/data_ja.js（v1 的 JS 字面量数据），
  * 转换成 v2 schema 定义的 JSON 文件，写入 v2/data/keiei/。
  *
  * 用法（在 v2/ 目录下）：
@@ -22,15 +22,15 @@ import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runInNewContext } from 'node:vm';
 
-import { Kp, School, Scholar, Discipline, type ThemeGroup } from '../src/schemas/index.js';
+import { Kp, School, Scholar, Discipline, type ThemeGroup } from '../../src/schemas/index.js';
 
 // ============================================================
 // 常量 & 路径
 // ============================================================
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const V2_ROOT = resolve(__dirname, '..');
-const V1_MAIN = resolve(V2_ROOT, '..', 'Main');
+const V2_ROOT = resolve(__dirname, '..', '..');
+const V1_MAIN = resolve(V2_ROOT, '..', 'archive', 'v1');
 const V1_DATA = join(V1_MAIN, 'data.js');
 const V1_DATA_JA = join(V1_MAIN, 'data_ja.js');
 const OUT_ROOT = join(V2_ROOT, 'data', 'keiei');

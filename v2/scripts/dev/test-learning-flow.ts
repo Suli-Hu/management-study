@@ -24,7 +24,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const V2_ROOT = join(__dirname, '..');
+const V2_ROOT = join(__dirname, '..', '..');
 
 const TEST_KP_ID = 'kt99999';
 const TEST_KP_PATH = join(V2_ROOT, 'data/keiei/kp', `${TEST_KP_ID}.json`);

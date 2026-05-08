@@ -35,10 +35,10 @@ import { spawnSync } from 'node:child_process';
 import { writeFileSync, mkdirSync, rmSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { hashPassword, checkPasswordStrength } from '../src/lib/password';
+import { hashPassword, checkPasswordStrength } from '../../src/lib/password';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const V2_ROOT = resolve(__dirname, '..');
+const V2_ROOT = resolve(__dirname, '..', '..');
 const TMP_DIR = join(V2_ROOT, '.wrangler', 'setup-admin');
 
 const DB_NAME = process.env.D1_DATABASE_NAME ?? 'management-study-v2';

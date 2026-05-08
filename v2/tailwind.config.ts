@@ -4,7 +4,7 @@ import type { Config } from 'tailwindcss';
  * v2 设计系统 — 从 v1 迁移过来的 design tokens
  * 修改这里 = 全站视觉跟着变（"design token 化"，L1 升级核心目的）
  *
- * 来源：v1 Main/CONTRIBUTING.md §0 + v1 实际 CSS 变量
+ * 来源：v1 archive/v1/CONTRIBUTING.md §0 + v1 实际 CSS 变量
  */
 export default {
   // v0.3.9: class-based dark mode（html.dark 切换；受用户 toggle + prefers-color-scheme 驱动）

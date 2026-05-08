@@ -257,7 +257,7 @@ KP 评价（义/限/例/应/用/喻）有**两种写法**，二选一：
 
 ### 5.1 中日同步是硬要求
 - `body.zh` 改了，必须同时改 `body.ja`
-- 日语版必须用**学术标准术语**而非直译（已知术语对照原在归档的 `Main/CONTRIBUTING.md` §2，今后需要时翻该文件历史参考）
+- 日语版必须用**学术标准术语**而非直译（已知术语对照原在归档的 `archive/v1/CONTRIBUTING.md` §2，今后需要时翻该文件历史参考）
 - 日语 evalContent key 用日语汉字（`義 / 限 / 例 / 応 / 用 / 喩`）
 
 ### 5.2 schools / scholars 必须存在
@@ -276,7 +276,7 @@ KP 评价（义/限/例/应/用/喻）有**两种写法**，二选一：
 
 ### 5.5 不要走老路径
 - ❌ 直接编 `v2/data/.../json` + 等 90s GH Actions sync
-- ❌ 修改 `Main/data.js` / `Main/data_ja.js`（v1 已停用）
+- ❌ 修改 `archive/v1/data.js` / `archive/v1/data_ja.js`（v1 已停用）
 - ❌ 写 `<br><br>双因素理论` 这种 v1 风的 fenced 标签包装
 
 ---
@@ -309,7 +309,7 @@ curl -X POST \
 | `v2/src/lib/body-parser.ts` | 5 种 format 的 body string 解析逻辑（debug 时看） |
 | `v2/data/keiei/kp/_template.*.json` | 5 种 format 各一个 example，copy 起手 |
 | user memory `~/.claude/.../MEMORY.md` | 项目核心规则 + 部署规范 + KP 生成 6 原则等（跨 session 持久） |
-| `Main/CONTRIBUTING.md` §3 §4 §8（archived） | 历史背景：KP 三层架构、日文学术对照、KP 生成 6 原则 |
+| `archive/v1/CONTRIBUTING.md` §3 §4 §8（archived） | 历史背景：KP 三层架构、日文学术对照、KP 生成 6 原则 |
 
 ---
 

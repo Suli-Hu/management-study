@@ -59,7 +59,7 @@ wrangler d1 execute management-study-v2 --remote --command \
 
 **安全**：PBKDF2-SHA256 100k 轮 + 16 字节 salt；连续 5 次失败锁 30 分钟；改密 / 改邮箱 / 注销账户都要二次验证当前密码 + 失效所有现存 session（防被盗 cookie）。
 
-**super-admin 设置**：在 `wrangler.toml` 的 `ADMIN_EMAILS` 配邮箱后，跑 `pnpm setup:admin`（密码从 `ADMIN_PASSWORD` env 读，不进 git）。详见 [scripts/setup-admin.ts](scripts/setup-admin.ts)。
+**super-admin 设置**：在 `wrangler.toml` 的 `ADMIN_EMAILS` 配邮箱后，跑 `pnpm setup:admin`（密码从 `ADMIN_PASSWORD` env 读，不进 git）。详见 [scripts/ops/setup-admin.ts](scripts/ops/setup-admin.ts)。
 
 ## 4 层数据 schema 速查
 
@@ -127,10 +127,10 @@ typecheck → test → build → sync D1 → deploy CF Pages
 
 ## 与 v1 关系
 
-- **v1 (`Main/`) 已归档**（2026-05）— 不再部署、不再读写、不再触碰
+- **v1 (`archive/v1/`) 已归档**（2026-05）— 不再部署、不再读写、不再触碰
 - v1 prod 域名 `management-study.pages.dev` 冻结在最后一次部署的状态
 - v2 是当前唯一在跑的版本，prod 在 `study.sususu.org`
-- 详见 [Main/README.md](../Main/README.md) 顶部归档说明
+- 详见 [archive/v1/README.md](../archive/v1/README.md) 顶部归档说明
 
 ## 文档导航
 

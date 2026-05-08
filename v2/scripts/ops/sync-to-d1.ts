@@ -26,16 +26,16 @@ import { readFileSync, readdirSync, existsSync, mkdirSync, writeFileSync, statSy
 import { join, resolve, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { Kp, School, Scholar, Discipline, type Kp as KpT, type School as SchoolT, type Scholar as ScholarT, type Discipline as DisciplineT } from '../src/schemas/index.js';
-import { View, type View as ViewT } from '../src/schemas/view.js';
-import { hasEvaluationsContent, structuredToSearchText } from '../src/lib/kp-body-helpers.js';
+import { Kp, School, Scholar, Discipline, type Kp as KpT, type School as SchoolT, type Scholar as ScholarT, type Discipline as DisciplineT } from '../../src/schemas/index.js';
+import { View, type View as ViewT } from '../../src/schemas/view.js';
+import { hasEvaluationsContent, structuredToSearchText } from '../../src/lib/kp-body-helpers.js';
 
 // ============================================================
 // 路径
 // ============================================================
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const V2_ROOT = resolve(__dirname, '..');
+const V2_ROOT = resolve(__dirname, '..', '..');
 const DATA_ROOT = join(V2_ROOT, 'data');
 const OUT_DIR = process.env.SYNC_OUT_DIR ?? join(V2_ROOT, '.wrangler', 'sync');
 // 兼容旧 SYNC_OUT（已废弃）：若提供则单文件输出（仅本地干跑用）
@@ -152,7 +152,10 @@ for (const scholar of scholars) {
 // v0.4.20：school.themeKey 必须对应 discipline.themes[].key（首页分组依赖此）
 const themeKeysByDiscipline = new Map<string, Set<string>>();
 for (const d of disciplines) {
-  themeKeysByDiscipline.set(d.key, new Set(d.themes.map((t) => t.key)));
+  themeKeysByDiscipline.set(
+    d.key,
+    new Set((d.themes as Array<{ key: string }>).map((t: { key: string }) => t.key)),
+  );
 }
 for (const school of schools) {
   const validThemes = themeKeysByDiscipline.get(school.discipline);

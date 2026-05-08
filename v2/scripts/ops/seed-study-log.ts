@@ -27,7 +27,7 @@ import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const V2_ROOT = resolve(__dirname, '..');
+const V2_ROOT = resolve(__dirname, '..', '..');
 const KP_DIR = join(V2_ROOT, 'data', 'keiei', 'kp');
 const TMP_DIR = join(V2_ROOT, '.wrangler', 'seed-study-log');
 

@@ -4,7 +4,7 @@ description: 新建/修改知识点必须先查重、用高保真 demo 页对齐
 type: feedback
 originSessionId: 83912dfd-dab7-4ab8-81fc-2b38245f101f
 ---
-用户对之前批量生成 12 个 KP 不满意 — 与现有 k314 重复、深度不够（七种浪费只列名不展开）、没先对齐颗粒度就批量生成。2026-04-17 确立以下原则，详细版已写入 [Main/CONTRIBUTING.md](Main/CONTRIBUTING.md) 第 8 节。
+用户对之前批量生成 12 个 KP 不满意 — 与现有 k314 重复、深度不够（七种浪费只列名不展开）、没先对齐颗粒度就批量生成。2026-04-17 确立以下原则，详细版已写入 [archive/v1/CONTRIBUTING.md](../archive/v1/CONTRIBUTING.md) 第 8 节。
 
 **Why:** 批量生成不经过对齐容易重复、深度不一、偏离用户期望的颗粒度。
 
@@ -12,7 +12,7 @@ originSessionId: 83912dfd-dab7-4ab8-81fc-2b38245f101f
 
 1. **先查重** — 新建 KP 前搜 data.js / data_ja.js（title 关键词、学者名、英文名）。发现相关 KP 用 `AskUserQuestion` 问用户：补充 / 新建独立专题 / 合并替换。发现重复必须逐项对比两边独有内容列表格给用户看。
 
-2. **高保真 demo 页选颗粒度** ⭐ — 涉及新 KP 主题时必须先做 `Main/demo_granularity.html`，用网站真实 CSS 渲染 3 种方案（A 合并到父 KP，每项 50 字 / B 抽成专题 KP，每项 200 字 / C 每个子概念独立 KP，每项 400-600 字）。通过 Claude Preview 让用户视觉对比。**禁止用纯文字描述让用户选。**
+2. **高保真 demo 页选颗粒度** ⭐ — 涉及新 KP 主题时必须先做 `archive/v1/demo_granularity.html`，用网站真实 CSS 渲染 3 种方案（A 合并到父 KP，每项 50 字 / B 抽成专题 KP，每项 200 字 / C 每个子概念独立 KP，每项 400-600 字）。通过 Claude Preview 让用户视觉对比。**禁止用纯文字描述让用户选。**
 
 3. **教材优先，先样后批** — 内容来源优先级：教材 PDF > 参考书 > 权威网络。批量前先做 1-2 个样品 KP 确认格式/深度/语言风格，再生成剩余。**禁止一次性批量生成 10+ 个 KP 不经对齐。**
 

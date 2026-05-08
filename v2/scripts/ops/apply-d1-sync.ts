@@ -11,7 +11,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const V2_ROOT = join(__dirname, '..');
+const V2_ROOT = join(__dirname, '..', '..');
 const SYNC_DIR = join(V2_ROOT, '.wrangler', 'sync');
 const DB_NAME = process.env.D1_DATABASE_NAME ?? 'management-study-v2';
 

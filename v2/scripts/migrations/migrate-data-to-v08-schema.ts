@@ -33,15 +33,15 @@ import { readFileSync, readdirSync, statSync, writeFileSync, existsSync } from '
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { parseBody, type Format } from '../src/lib/body-parser.js';
+import { parseBody, type Format } from '../../src/lib/body-parser.js';
 import {
   parsedToStructured,
   evalContentToEvaluations,
   hasEvaluationsContent,
-} from '../src/lib/kp-body-helpers.js';
-import { Kp } from '../src/schemas/kp.js';
-import { KpBody as KpBodySchema } from '../src/schemas/kp-body-structured.js';
-import type { KpBody, KpEvaluationsLang, NarrativeBody } from '../src/schemas/kp-body-structured.js';
+} from '../../src/lib/kp-body-helpers.js';
+import { Kp } from '../../src/schemas/kp.js';
+import { KpBody as KpBodySchema } from '../../src/schemas/kp-body-structured.js';
+import type { KpBody, KpEvaluationsLang, NarrativeBody } from '../../src/schemas/kp-body-structured.js';
 
 /**
  * 把 raw body 字符串 + format 转成结构化 KpBody。
@@ -67,7 +67,7 @@ function safeParseToStructured(raw: string, fmt: Format): { body: KpBody; downgr
 const DRY = process.argv.includes('--dry');
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const V2_ROOT = resolve(__dirname, '..');
+const V2_ROOT = resolve(__dirname, '..', '..');
 const DATA_ROOT = join(V2_ROOT, 'data');
 
 interface DirtyEntry {
@@ -130,7 +130,7 @@ for (const discKey of readdirSync(DATA_ROOT)) {
         file: fp,
         id: String(json.id ?? fname),
         reason: 'v08_schema_invalid',
-        detail: r.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join(' | '),
+        detail: r.error.issues.map((i: any) => `${i.path.join('.')}: ${i.message}`).join(' | '),
       });
       continue;
     }
@@ -202,7 +202,7 @@ for (const discKey of readdirSync(DATA_ROOT)) {
         file: fp,
         id: String(json.id),
         reason: 'post_migration_schema_invalid',
-        detail: r.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join(' | '),
+        detail: r.error.issues.map((i: any) => `${i.path.join('.')}: ${i.message}`).join(' | '),
       });
       continue;
     }

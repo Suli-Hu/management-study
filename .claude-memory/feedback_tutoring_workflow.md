@@ -36,12 +36,12 @@ originSessionId: 97f6e1e8-2ba0-4fd9-894f-791aa7a1f2af
 4. **用户答题**
 5. **反馈 + 小结**：点评答案 + 提炼该 KP 的记忆锚点
 6. **生成 3 颗粒度卡片 + v2 KP JSON**：
-   - 🔴 **必须用真实渲染的高保真 demo 页给用户看**（按 [CONTRIBUTING.md §8 原则 2](Main/CONTRIBUTING.md)），**禁止**用纯文字描述颗粒度让用户选
+   - 🔴 **必须用真实渲染的高保真 demo 页给用户看**（按 [CONTRIBUTING.md §8 原则 2](../archive/v1/CONTRIBUTING.md)），**禁止**用纯文字描述颗粒度让用户选
    - 做法：v2 admin UI（`/keiei/kp/new` 即时渲染）或 `v2/public/demo_granularity.html` 临时页，通过 Claude Preview 视觉对比
    - 三种颗粒度：A 叙述（一段话）/ B 平铺（3–5 条）/ C 手风琴 or 对比卡（多分组展开）
    - 每个方案底下附上 KP JSON 字段（`id` / `title.zh` / `title.en?` / `title.ja?` / `body.zh` / `body.ja?` / `schools[≥1]` / `scholars[]` / `year` / `format`），写到 `v2/data/keiei/kp/{id}.json`
    - **同时**指出现有 v2 数据的 多余 / 错挂 / 缺失 / 命名问题（如学派 themeKey orphan）
-   - 遵守 [CONTRIBUTING.md §8](Main/CONTRIBUTING.md) 的 KP 生成 6 原则（先查重、教材优先、样品后批等）
+   - 遵守 [CONTRIBUTING.md §8](../archive/v1/CONTRIBUTING.md) 的 KP 生成 6 原则（先查重、教材优先、样品后批等）
    - 给出**推荐方案 + 理由**，但最终由用户决定
 
 **重要**：卡片生成是**每个 KP 的闭环动作**，不需要用户单独喊"出卡片"；并且**必须走高保真 demo 页**，不能用文字糊弄。

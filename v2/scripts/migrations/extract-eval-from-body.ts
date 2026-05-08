@@ -21,8 +21,8 @@
 
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { extractEvalTags } from '../src/lib/extract-eval-tags';
-import type { EvalContent } from '../src/lib/eval-tag-defs';
+import { extractEvalTags } from '../../src/lib/extract-eval-tags';
+import type { EvalContent } from '../../src/lib/eval-tag-defs';
 
 const DATA_ROOT = join(process.cwd(), 'data');
 const PREVIEW_FILE = join(process.cwd(), '_eval-extraction-preview.json');

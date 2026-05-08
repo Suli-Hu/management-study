@@ -11,10 +11,10 @@
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { detectFormatFromBody } from '../src/lib/body-parser.js';
+import { detectFormatFromBody } from '../../src/lib/body-parser.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const V2_ROOT = join(__dirname, '..');
+const V2_ROOT = join(__dirname, '..', '..');
 const DATA_ROOT = join(V2_ROOT, 'data');
 const WRITE = process.argv.includes('--write');
 
