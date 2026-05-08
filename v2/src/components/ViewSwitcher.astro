@@ -45,12 +45,6 @@ const { views, currentId, discipline, canEdit } = Astro.props;
   data-can-edit={canEdit ? '1' : '0'}
   data-current-id={currentId}
 >
-  <button type="button" class="vs-label-btn" data-view-collapse-toggle aria-label="折叠/展开视图区" title="点击折叠">
-    <svg class="vs-chev" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
-      <path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-    </svg>
-    <span>视图</span>
-  </button>
   <div class="vs-tabs" role="tablist" aria-label="视图切换">
     {views.map((v) => (
       <button
@@ -82,7 +76,6 @@ const { views, currentId, discipline, canEdit } = Astro.props;
     {canEdit && (
       <>
         <button type="button" class="vs-action" data-view-edit>编辑视图</button>
-        <button type="button" class="vs-kebab" data-view-menu aria-label="视图菜单">⋯</button>
       </>
     )}
   </div>
@@ -114,31 +107,7 @@ const { views, currentId, discipline, canEdit } = Astro.props;
   }
   .vs-tabs::-webkit-scrollbar { display: none; }
 
-  .vs-label-btn {
-    all: unset;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 12px;
-    color: var(--text-3);
-    padding: 4px 8px 4px 6px;
-    border-radius: 6px;
-    margin-right: 2px;
-    transition: background .12s, color .12s;
-  }
-  .vs-label-btn:hover {
-    background: var(--bg-soft);
-    color: var(--text-2);
-  }
-  .vs-chev {
-    transition: transform .18s ease;
-    flex-shrink: 0;
-  }
-  /* 折叠态 chevron 转 -90°（▾ → ▸）*/
-  :global([data-view-block][data-collapsed="1"]) .vs-chev {
-    transform: rotate(-90deg);
-  }
+  /* removed: "视图" collapse label button */
 
   .vs-tab {
     all: unset;
@@ -215,24 +184,7 @@ const { views, currentId, discipline, canEdit } = Astro.props;
   @media (pointer: coarse) {
     .vs-action { padding: 12px 12px; }
   }
-  .vs-kebab{
-    all: unset;
-    cursor: pointer;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-2);
-    border: 1px solid transparent;
-    transition: background .12s, color .12s, border-color .12s;
-  }
-  .vs-kebab:hover { background: var(--bg-soft); color: var(--text); border-color: var(--border); }
-  .vs-kebab:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
-  @media (pointer: coarse) {
-    .vs-kebab { width: 44px; height: 44px; border-radius: 12px; }
-  }
+  /* removed: kebab menu button */
 </style>
 
 <script>
@@ -250,24 +202,7 @@ const { views, currentId, discipline, canEdit } = Astro.props;
       location.href = url.toString();
     }
 
-    // v0.5.84：「视图」label 折叠 chip 行 + ViewDescription（手机省地方）
-    // localStorage 持久化 per-discipline，admin 把它合上下次进来就保持折叠态。
-    (function setupCollapse() {
-      const toggle = root.querySelector('[data-view-collapse-toggle]');
-      const wrap = root.closest('[data-view-block]');
-      if (!toggle || !wrap) return;
-      const KEY = 'view-block-collapsed:' + discipline;
-      let collapsed = false;
-      try { collapsed = localStorage.getItem(KEY) === '1'; } catch (_) {}
-      if (collapsed) wrap.setAttribute('data-collapsed', '1');
-      toggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        collapsed = !collapsed;
-        if (collapsed) wrap.setAttribute('data-collapsed', '1');
-        else wrap.removeAttribute('data-collapsed');
-        try { localStorage.setItem(KEY, collapsed ? '1' : '0'); } catch (_) {}
-      });
-    })();
+    // removed: collapse toggle (keep view area always visible)
 
     // tab 点击切换视图
     root.querySelectorAll('[data-view-tab]').forEach((tab) => {
@@ -307,26 +242,7 @@ const { views, currentId, discipline, canEdit } = Astro.props;
       });
     })();
 
-    // 视图菜单：只对当前视图（⋯）
-    (function setupMenu() {
-      const menuBtn = root.querySelector('[data-view-menu]');
-      if (!menuBtn) return;
-      menuBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const id = root.getAttribute('data-current-id');
-        if (!id) return;
-        const active = root.querySelector(`[data-view-tab][data-view-id="${CSS.escape(id)}"]`);
-        const r = (active || menuBtn).getBoundingClientRect();
-        document.dispatchEvent(new CustomEvent('view:menu', {
-          detail: {
-            viewId: id,
-            viewName: active?.getAttribute('data-view-name') || '',
-            isDefault: active?.getAttribute('data-view-default') === '1',
-            anchor: { top: r.bottom + 6, left: r.left - 80 },
-          },
-        }));
-      });
-    })();
+    // removed: view menu kebab trigger (menu actions live in edit page)
 
     // + 新建视图
     const newBtn = root.querySelector('[data-view-new]');
