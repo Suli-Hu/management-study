@@ -45,7 +45,8 @@ export interface EditorState {
 }
 
 export interface EditorMetadata {
-  schools: Array<{ key: string; label: string }>;
+  /** Schools options. color is user-defined tag hex (preferred) or null. */
+  schools: Array<{ key: string; label: string; color?: string | null }>;
   scholars: Array<{ key: string; label: string; sub: string }>;
   tags: Array<{ key: string; label: string; color: string | null }>;
   disciplineLabel: string;

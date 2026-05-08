@@ -13,6 +13,7 @@ import { parseFrom, fromLabel } from '~/lib/nav';
 import { getKpRecord, getKpStructured } from '~/lib/kp-api-store';
 import { getMetadataForTenant } from '~/lib/metadata-api-store';
 import type { ExistingKpInit, EditorMetadata } from '~/lib/editor/state';
+import { resolveAccentForSchool } from '~/lib/resolve-accent';
 
 const { discipline, id } = Astro.params;
 if (!discipline || !id) return Astro.redirect('/404');
@@ -47,7 +48,14 @@ const initialState: ExistingKpInit = {
 };
 
 const editorMetadata: EditorMetadata = {
-  schools: metadata.schools.map((s) => ({ key: s.key, label: s.title.zh })),
+  schools: metadata.schools.map((s) => ({
+    key: s.key,
+    label: s.title.zh,
+    color: resolveAccentForSchool(
+      { tags: s.tags },
+      { tags: (metadata.tags as Array<{ key: string; color?: string }>).map((t) => ({ key: t.key, color: t.color ?? '' })) },
+    ),
+  })),
   scholars: metadata.scholars.map((s) => ({
     key: s.key,
     label: s.name.zh,

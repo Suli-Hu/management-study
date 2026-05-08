@@ -96,7 +96,8 @@ export function mountSchoolsField(host: HTMLElement, opts: RelationsPanelOptions
     options: opts.metadata.schools,
     placeholder: '搜索学派（必选 ≥1）',
     ariaLabel: '所属学派',
-    colorize: 'schools',
+    // Schools should follow user-defined tag hex colors (options[].color), not token/hash colors.
+    colorize: 'none',
     onChange: (next) => opts.store.update({ schools: next }),
   });
   // re-render when state changes externally (e.g. error highlight)
@@ -109,7 +110,7 @@ export function mountSchoolsField(host: HTMLElement, opts: RelationsPanelOptions
         options: opts.metadata.schools,
         placeholder: '搜索学派（必选 ≥1）',
         ariaLabel: '所属学派',
-        colorize: 'schools',
+        colorize: 'none',
         onChange: (next) => opts.store.update({ schools: next }),
       });
     }

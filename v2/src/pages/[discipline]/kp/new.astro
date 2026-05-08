@@ -14,6 +14,7 @@ import { getDb } from '~/lib/db';
 import { parseFrom, fromLabel } from '~/lib/nav';
 import { getMetadataForTenant } from '~/lib/metadata-api-store';
 import type { EditorMetadata } from '~/lib/editor/state';
+import { resolveAccentForSchool } from '~/lib/resolve-accent';
 
 const { discipline } = Astro.params;
 if (!discipline) return Astro.redirect('/404');
@@ -33,7 +34,15 @@ const metadata = await getMetadataForTenant(db, { tenantId: tenantRow.id, discip
 const disciplineLabel = metadata.discipline?.title.zh ?? discipline;
 
 const editorMetadata: EditorMetadata = {
-  schools: metadata.schools.map((s) => ({ key: s.key, label: s.title.zh })),
+  schools: metadata.schools.map((s) => ({
+    key: s.key,
+    label: s.title.zh,
+    // Use user-defined tag hex from discipline tag library (not token/hash colors).
+    color: resolveAccentForSchool(
+      { tags: s.tags },
+      { tags: (metadata.tags as Array<{ key: string; color?: string }>).map((t) => ({ key: t.key, color: t.color ?? '' })) },
+    ),
+  })),
   scholars: metadata.scholars.map((s) => ({
     key: s.key,
     label: s.name.zh,

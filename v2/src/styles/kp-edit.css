@@ -111,7 +111,8 @@
 .kp-editor-v08 .kpe-section {
   border: 1px solid var(--border);
   border-radius: var(--r-xl);
-  overflow: hidden;
+  /* Allow chip dropdown to overflow; otherwise it gets clipped by the card. */
+  overflow: visible;
   background: var(--bg-elev);
 }
 
