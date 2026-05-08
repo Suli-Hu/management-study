@@ -858,6 +858,65 @@ Response（ok）：
 }
 ```
 
+### 9.6 `POST /api/edit/discipline/<discipline>/normalize-kp-tags` — 归一化 KP 标签（marketing 一次性维护）
+
+> 用途：清理历史“自由文本 tag”（例如 Kotler/STP/…）导致的脏数据，把 `marketing` 学科下所有 KP 的 `tags_json`
+> 统一成 5 个大类 tag（`t_xxx` key，来自 discipline.tags_json 标签库）。
+>
+> 归一化规则：按每条 KP 的 **主学派**（`kp_school.position` 最小的那条）对应的 `school.theme_key`
+> 映射到 5 个大类 tag。
+>
+> 安全：必须带 `confirm`；建议先 `dry_run=true` 看统计与样本。
+
+Request:
+
+`POST /api/edit/discipline/marketing/normalize-kp-tags`
+
+```json
+{
+  "confirm": "yes-normalize-kp-tags-marketing",
+  "dry_run": true
+}
+```
+
+Response（dry_run=true）：
+
+```json
+{
+  "ok": true,
+  "dry_run": true,
+  "total_kp": 187,
+  "would_update": 187,
+  "skipped_no_school": 0,
+  "by_theme": {
+    "marketing_strategy": 52,
+    "consumer_market": 41,
+    "value_creation": 29,
+    "value_communication": 34,
+    "growth_relationship": 31
+  },
+  "sample": [
+    {
+      "id": "m001",
+      "title_zh": "…",
+      "current_tags": ["Kotler", "STP"],
+      "next_tags": ["t_544964bf"]
+    }
+  ]
+}
+```
+
+Response（dry_run=false）：
+
+```json
+{
+  "ok": true,
+  "dry_run": false,
+  "updated_rows": 187,
+  "skipped_no_school": 0
+}
+```
+
 ---
 
 ## 10. 错误码总表
