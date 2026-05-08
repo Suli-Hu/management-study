@@ -77,7 +77,6 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
   // role=null → DELETE
   if (body.role === null || body.role === undefined) {
     await env.DB.batch([
-      env.DB.prepare('DELETE FROM user_permission WHERE user_id = ? AND discipline_key = ?').bind(userId, body.discipline),
       env.DB.prepare('DELETE FROM tenant_member WHERE user_id = ? AND tenant_id = ?').bind(userId, body.discipline),
     ]);
     return json(200, { ok: true, user_id: userId, discipline: body.discipline, role: null });
@@ -85,30 +84,20 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
 
   // UPSERT
   const now = new Date().toISOString();
-  await env.DB.batch([
-    env.DB.prepare(
-    `INSERT INTO user_permission (user_id, discipline_key, role, granted_at, granted_by)
+  await env.DB.prepare(
+    `INSERT INTO tenant_member (tenant_id, user_id, role, created_at, created_by)
      VALUES (?, ?, ?, ?, ?)
-     ON CONFLICT(user_id, discipline_key) DO UPDATE SET
+     ON CONFLICT(tenant_id, user_id) DO UPDATE SET
        role = excluded.role,
-       granted_at = excluded.granted_at,
-       granted_by = excluded.granted_by`,
-    ).bind(userId, body.discipline, body.role, now, locals.user.email),
-    env.DB.prepare(
-      `INSERT INTO tenant_member (tenant_id, user_id, role, created_at, created_by)
-       VALUES (?, ?, ?, ?, ?)
-       ON CONFLICT(tenant_id, user_id) DO UPDATE SET
-         role = excluded.role,
-         created_at = excluded.created_at,
-         created_by = excluded.created_by`,
-    ).bind(
-      body.discipline,
-      userId,
-      body.role === 'admin' ? 'editor' : 'viewer',
-      now,
-      locals.user.email,
-    ),
-  ]);
+       created_at = excluded.created_at,
+       created_by = excluded.created_by`,
+  ).bind(
+    body.discipline,
+    userId,
+    body.role === 'admin' ? 'editor' : 'viewer',
+    now,
+    locals.user.email,
+  ).run();
 
   return json(200, { ok: true, user_id: userId, discipline: body.discipline, role: body.role });
 };

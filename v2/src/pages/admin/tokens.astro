@@ -25,13 +25,17 @@ const disciplines = (await db
   .prepare('SELECT key, title_zh FROM discipline ORDER BY key')
   .all<{ key: string; title_zh: string }>()).results ?? [];
 const permissionRows = (await db
-  .prepare('SELECT user_id, discipline_key, role FROM user_permission')
-  .all<{ user_id: string; discipline_key: string; role: 'admin' | 'guest' }>()).results ?? [];
+  .prepare(`
+    SELECT tm.user_id, t.discipline_key, tm.role
+    FROM tenant_member tm
+    INNER JOIN tenant t ON t.id = tm.tenant_id
+  `)
+  .all<{ user_id: string; discipline_key: string; role: 'owner' | 'editor' | 'viewer' }>()).results ?? [];
 const superAdminEmails = (Astro.locals.runtime.env.ADMIN_EMAILS ?? '')
   .split(',')
   .map((s: string) => s.trim().toLowerCase())
   .filter(Boolean);
-const permissionsByUser = new Map<string, Record<string, 'admin' | 'guest'>>();
+const permissionsByUser = new Map<string, Record<string, 'owner' | 'editor' | 'viewer'>>();
 for (const row of permissionRows) {
   if (!permissionsByUser.has(row.user_id)) permissionsByUser.set(row.user_id, {});
   permissionsByUser.get(row.user_id)![row.discipline_key] = row.role;

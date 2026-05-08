@@ -26,8 +26,9 @@ export const GET: APIRoute = async ({ locals }) => {
       const explicitRole = locals.permissions.get(d.key);
       const role =
         locals.isSuperAdmin ? 'super-admin' :
-        explicitRole === 'admin' ? 'editor' :
-        explicitRole === 'guest' ? 'viewer' :
+        explicitRole === 'owner' ? 'owner' :
+        explicitRole === 'editor' ? 'editor' :
+        explicitRole === 'viewer' ? 'viewer' :
         locals.isInviteGuest ? 'invite-viewer' :
         'viewer';
 

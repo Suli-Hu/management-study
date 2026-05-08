@@ -11,13 +11,13 @@ import { sha256Hex } from '../src/lib/api-token';
 interface MockDbOptions {
   tokenHash?: string;
   tokenScopes?: string[];
-  userPermissions?: Array<{ discipline_key: string; role: 'admin' | 'guest' }>;
+  tenantMemberships?: Array<{ discipline_key: string; role: 'owner' | 'editor' | 'viewer' }>;
 }
 
 function mockDb(opts: MockDbOptions = {}) {
   const tokenHash = opts.tokenHash;
   const tokenScopes = opts.tokenScopes ?? ['keiei'];
-  const userPermissions = opts.userPermissions ?? [{ discipline_key: 'keiei', role: 'admin' as const }];
+  const tenantMemberships = opts.tenantMemberships ?? [{ discipline_key: 'keiei', role: 'editor' as const }];
 
   return {
     prepare(sql: string) {
@@ -58,8 +58,13 @@ function mockDb(opts: MockDbOptions = {}) {
           return null as T;
         },
         async all<T = unknown>() {
-          if (sql.includes('FROM user_permission WHERE user_id = ?')) {
-            return { results: userPermissions as T[] };
+          if (sql.includes('FROM tenant_member tm') && sql.includes('INNER JOIN tenant t')) {
+            return {
+              results: tenantMemberships.map((m) => ({
+                discipline_key: m.discipline_key,
+                role: m.role,
+              })) as T[],
+            };
           }
           return { results: [] as T[] };
         },

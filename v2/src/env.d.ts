@@ -8,8 +8,8 @@ declare namespace App {
     user: import('./lib/auth').SessionUser | null;
     isAdmin: boolean;     // 兼容字段：true = super-admin（god mode，所有学科可写）
     isGuest: boolean;
-    /** v0.4.25 RBAC: 该 user 在每个 discipline 的角色。super-admin 不在此 map（用 isSuperAdmin 判定） */
-    permissions: Map<string, 'admin' | 'guest'>;
+    /** v0.12.0+: Canonical RBAC — per-discipline role derived from tenant_member (via tenant.discipline_key). */
+    permissions: Map<string, 'owner' | 'editor' | 'viewer'>;
     /** super-admin（ADMIN_EMAILS env 命中），所有 discipline 自动 admin */
     isSuperAdmin: boolean;
     /** v0.4.33 邀请码登录的 guest（共用 INVITE_GUEST_EMAIL user）→ 全学科只读 */

@@ -5,7 +5,7 @@ export type TenantRole = 'owner' | 'editor' | 'viewer';
 export interface TenantContext {
   tenantId: string;
   discipline: string;
-  role: TenantRole | 'super-admin' | 'invite-viewer' | 'legacy-editor' | 'legacy-viewer';
+  role: TenantRole | 'super-admin' | 'invite-viewer';
 }
 
 type Access = 'read' | 'write';
@@ -53,19 +53,6 @@ export async function resolveTenantContext(
       .first<{ role: TenantRole }>();
     if (member && requiredRole.includes(member.role)) {
       return { ok: true, tenant: { tenantId: row.id, discipline: row.discipline_key, role: member.role } };
-    }
-
-    // Compatibility while tenant_member is being backfilled from user_permission.
-    const canAccess = access === 'write' ? locals.canEdit(row.discipline_key) : locals.canRead(row.discipline_key);
-    if (canAccess) {
-      return {
-        ok: true,
-        tenant: {
-          tenantId: row.id,
-          discipline: row.discipline_key,
-          role: access === 'write' ? 'legacy-editor' : 'legacy-viewer',
-        },
-      };
     }
 
     return { ok: false, status: 403, reason: access === 'write' ? 'not_editor' : 'not_viewer' };

@@ -144,7 +144,7 @@ Response:
 | `editor` | KP / School / Scholar / View CRUD |
 | `viewer` | 只读 |
 
-兼容旧权限模型：`user_permission.admin` → 可写，`user_permission.guest` → 只读。
+权限模型以 `tenant_member` 为准（不再使用 `user_permission` 作为权限真值源）。
 
 ---
 

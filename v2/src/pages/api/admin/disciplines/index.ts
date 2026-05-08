@@ -30,7 +30,7 @@ interface ListRow {
 
 interface AccessRow {
   discipline_key: string;
-  role: 'admin' | 'guest';
+  role: 'owner' | 'editor' | 'viewer';
   email: string;
   display_name: string | null;
 }
@@ -71,9 +71,10 @@ export const GET: APIRoute = async ({ locals }) => {
   ).all<ListRow>();
 
   const accessRows = await env.DB.prepare(
-    `SELECT up.discipline_key, up.role, u.email, u.display_name
-     FROM user_permission up
-     JOIN user u ON u.id = up.user_id
+    `SELECT t.discipline_key, tm.role, u.email, u.display_name
+     FROM tenant_member tm
+     INNER JOIN tenant t ON t.id = tm.tenant_id
+     INNER JOIN user u ON u.id = tm.user_id
      ORDER BY u.email`,
   ).all<AccessRow>();
 
@@ -87,7 +88,7 @@ export const GET: APIRoute = async ({ locals }) => {
     }
     const bucket = accessByDiscipline.get(row.discipline_key)!;
     const user = { email: row.email, display_name: row.display_name };
-    if (row.role === 'admin') bucket.editors.push(user);
+    if (row.role === 'owner' || row.role === 'editor') bucket.editors.push(user);
     else bucket.readers.push(user);
   }
 

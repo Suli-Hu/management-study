@@ -123,22 +123,25 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.isGuest = isGuest(context.locals.user, env?.GUEST_EMAIL);
 
   // v0.4.33: invite-code guest（共用 INVITE_GUEST_EMAIL user）—— flag 保留作身份识别，
-  // v0.7.7 起权限完全走 user_permission 表（不再用 INVITE_GUEST_DISCIPLINES env），
-  // 跟其他 user 一致：admin UI 加白才能看学科，未加白默认 0 权限置灰。
+  // v0.12.0+: 权限完全走 tenant_member（API-first canonical）。
   const inviteEmail = env?.INVITE_GUEST_EMAIL;
   context.locals.isInviteGuest =
     !!context.locals.user && !!inviteEmail && context.locals.user.email.toLowerCase() === inviteEmail.toLowerCase();
 
-  // v0.4.25 RBAC：load 该 user 的 per-discipline permissions（super-admin 跳过 = 全权）
+  // v0.12.0+: Canonical RBAC — load tenant_member roles (super-admin 跳过 = 全权)
   context.locals.permissions = new Map();
   if (context.locals.user && env?.DB && !context.locals.isSuperAdmin) {
     const rows = await env.DB
-      .prepare('SELECT discipline_key, role FROM user_permission WHERE user_id = ?')
+      .prepare(`
+        SELECT t.discipline_key, tm.role
+        FROM tenant_member tm
+        INNER JOIN tenant t ON t.id = tm.tenant_id
+        WHERE tm.user_id = ?
+        ORDER BY t.discipline_key
+      `)
       .bind(context.locals.user.id)
-      .all() as { results: Array<{ discipline_key: string; role: 'admin' | 'guest' }> };
-    for (const r of rows.results ?? []) {
-      context.locals.permissions.set(r.discipline_key, r.role);
-    }
+      .all() as { results: Array<{ discipline_key: string; role: 'owner' | 'editor' | 'viewer' }> };
+    for (const r of rows.results ?? []) context.locals.permissions.set(r.discipline_key, r.role);
   }
   // v0.5.96: API token scope 收窄检查 — 非空 scope = 必须在白名单内
   const tokenScopes = context.locals.apiTokenScopes;
@@ -150,13 +153,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.canEdit = (d: string | undefined) => {
     if (!d) return false;
     if (!tokenAllowsDiscipline(d)) return false;
-    return context.locals.isSuperAdmin || context.locals.permissions.get(d) === 'admin';
+    if (context.locals.isSuperAdmin) return true;
+    const role = context.locals.permissions.get(d);
+    return role === 'owner' || role === 'editor';
   };
   context.locals.canRead = (d: string | undefined) => {
     if (!d) return false;
     if (!tokenAllowsDiscipline(d)) return false;
     if (context.locals.isSuperAdmin) return true;
-    // v0.7.7: 邀请码不再有"默认全读"特殊路径，跟其他 user 一致走 user_permission
+    if (context.locals.isInviteGuest) return true; // invite guest: read-only across all disciplines
     return context.locals.permissions.has(d);
   };
 

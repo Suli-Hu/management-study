@@ -34,7 +34,7 @@ function mockDb(opts: {
           return null as T;
         },
         async all<T = unknown>() {
-          if (sql.includes('SELECT discipline_key FROM user_permission WHERE user_id = ?')) {
+          if (sql.includes('FROM tenant_member tm') && sql.includes('INNER JOIN tenant t')) {
             return { results: [...userPermissions].map((discipline_key) => ({ discipline_key })) as T[] };
           }
           return { results: [] as T[] };
@@ -89,7 +89,7 @@ describe('POST /api/admin/tokens', () => {
     expect(res.status).toBe(403);
     expect(await res.json()).toMatchObject({
       ok: false,
-      reason: 'scope_exceeds_user_permission',
+      reason: 'scope_exceeds_tenant_membership',
       detail: ['marketing'],
     });
   });

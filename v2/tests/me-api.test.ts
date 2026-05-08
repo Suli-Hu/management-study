@@ -31,13 +31,15 @@ function mockDb() {
 function makeCtx(opts: {
   user?: APIContext['locals']['user'];
   isSuperAdmin?: boolean;
-  permissions?: Map<string, 'admin' | 'guest'>;
+  permissions?: Map<string, 'owner' | 'editor' | 'viewer'>;
   tokenScopes?: string[] | null;
 }): APIContext {
   const url = new URL('http://localhost/api/me');
-  const permissions = opts.permissions ?? new Map<string, 'admin' | 'guest'>([['keiei', 'admin']]);
+  const permissions = opts.permissions ?? new Map<string, 'owner' | 'editor' | 'viewer'>([['keiei', 'editor']]);
   const tokenScopes = opts.tokenScopes ?? null;
   const tokenAllows = (d: string) => !tokenScopes || tokenScopes.length === 0 || tokenScopes.includes(d);
+
+  const canEditByRole = (r: 'owner' | 'editor' | 'viewer' | undefined) => r === 'owner' || r === 'editor';
 
   return {
     request: new Request(url),
@@ -56,7 +58,7 @@ function makeCtx(opts: {
       apiTokenScopes: tokenScopes,
       permissions,
       canRead: (d: string | undefined) => !!d && tokenAllows(d) && ((opts.isSuperAdmin ?? false) || permissions.has(d)),
-      canEdit: (d: string | undefined) => !!d && tokenAllows(d) && ((opts.isSuperAdmin ?? false) || permissions.get(d) === 'admin'),
+      canEdit: (d: string | undefined) => !!d && tokenAllows(d) && ((opts.isSuperAdmin ?? false) || canEditByRole(permissions.get(d))),
     } as unknown as APIContext['locals'],
   } as unknown as APIContext;
 }

@@ -71,11 +71,11 @@ function mockDb(opts: MockDbOptions = {}) {
           if (sql.includes('FROM discipline d')) {
             return { results: [makeDisciplineRow('finance')] as T[] };
           }
-          if (sql.includes('FROM user_permission up')) {
+          if (sql.includes('FROM tenant_member tm') && sql.includes('INNER JOIN tenant t')) {
             return {
               results: [
-                { discipline_key: 'finance', role: 'admin', email: 'editor@example.com', display_name: 'Editor' },
-                { discipline_key: 'finance', role: 'guest', email: 'reader@example.com', display_name: null },
+                { discipline_key: 'finance', role: 'editor', email: 'editor@example.com', display_name: 'Editor' },
+                { discipline_key: 'finance', role: 'viewer', email: 'reader@example.com', display_name: null },
               ] as T[],
             };
           }
@@ -185,7 +185,6 @@ describe('/api/admin/disciplines', () => {
     expect(db.batchCalls.map((c) => c.sql)).toEqual([
       'DELETE FROM tenant_member WHERE tenant_id = ?',
       'DELETE FROM tenant WHERE id = ?',
-      'DELETE FROM user_permission WHERE discipline_key = ?',
       'DELETE FROM discipline WHERE key = ?',
     ]);
   });

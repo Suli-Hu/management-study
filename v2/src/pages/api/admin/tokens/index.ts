@@ -10,7 +10,7 @@
  *
  * Scope safety:
  *   - scopes=[] means "all permissions this user already has"
- *   - non-super-admin target users cannot receive scopes outside their user_permission rows
+ *   - non-super-admin target users cannot receive scopes outside their tenant_member disciplines
  *   - super-admin target users may scope to any existing discipline
  */
 
@@ -111,7 +111,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   if (!targetIsSuperAdmin && scopes.length > 0) {
     const rows = await env.DB
-      .prepare('SELECT discipline_key FROM user_permission WHERE user_id = ?')
+      .prepare(`
+        SELECT t.discipline_key
+        FROM tenant_member tm
+        INNER JOIN tenant t ON t.id = tm.tenant_id
+        WHERE tm.user_id = ?
+      `)
       .bind(userId)
       .all<{ discipline_key: string }>();
     const allowed = new Set((rows.results ?? []).map((r) => r.discipline_key));
@@ -119,7 +124,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (forbidden.length > 0) {
       return json(403, {
         ok: false,
-        reason: 'scope_exceeds_user_permission',
+        reason: 'scope_exceeds_tenant_membership',
         detail: forbidden,
       });
     }

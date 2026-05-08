@@ -185,7 +185,6 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
   await env.DB.batch([
     env.DB.prepare('DELETE FROM tenant_member WHERE tenant_id = ?').bind(key),
     env.DB.prepare('DELETE FROM tenant WHERE id = ?').bind(key),
-    env.DB.prepare('DELETE FROM user_permission WHERE discipline_key = ?').bind(key),
     env.DB.prepare('DELETE FROM discipline WHERE key = ?').bind(key),
   ]);
 

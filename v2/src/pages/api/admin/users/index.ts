@@ -24,7 +24,7 @@ interface UserRow {
 interface PermRow {
   user_id: string;
   discipline_key: string;
-  role: 'admin' | 'guest';
+  role: 'owner' | 'editor' | 'viewer';
 }
 interface DisciplineRow {
   key: string;
@@ -50,14 +50,16 @@ export const GET: APIRoute = async ({ locals }) => {
   ).all<UserRow>();
 
   const permsRes = await env.DB.prepare(
-    `SELECT user_id, discipline_key, role FROM user_permission`,
+    `SELECT tm.user_id, t.discipline_key, tm.role
+       FROM tenant_member tm
+       INNER JOIN tenant t ON t.id = tm.tenant_id`,
   ).all<PermRow>();
 
   const discRes = await env.DB.prepare(
     `SELECT key, title_zh FROM discipline ORDER BY key`,
   ).all<DisciplineRow>();
 
-  const permsByUser = new Map<string, Record<string, 'admin' | 'guest'>>();
+  const permsByUser = new Map<string, Record<string, 'owner' | 'editor' | 'viewer'>>();
   for (const p of permsRes.results ?? []) {
     if (!permsByUser.has(p.user_id)) permsByUser.set(p.user_id, {});
     permsByUser.get(p.user_id)![p.discipline_key] = p.role;
