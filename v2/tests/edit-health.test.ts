@@ -1,11 +1,28 @@
 /**
  * /api/edit/health integration tests (v0.4.1)
- *   admin 自检 endpoint：验证 GITHUB_PAT 配置 + GitHub API 可达 + Contents 权限。
+ *   admin 自检 endpoint：验证 D1 binding + schema 可读。
  */
 
-import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { GET as healthGET } from '../src/pages/api/edit/health';
 import type { APIContext } from 'astro';
+
+function makeDb(opts: { throw?: string; count?: number } = {}) {
+  return {
+    prepare(sql: string) {
+      const stmt = {
+        async first<T = unknown>() {
+          if (!sql.includes('SELECT COUNT(*) as n FROM discipline')) {
+            throw new Error(`unexpected sql: ${sql}`);
+          }
+          if (opts.throw) throw new Error(opts.throw);
+          return { n: opts.count ?? 2 } as T;
+        },
+      };
+      return stmt;
+    },
+  };
+}
 
 function makeCtx(env: Record<string, unknown>, isAdmin = true): APIContext {
   const url = new URL('http://localhost/api/edit/health');
@@ -19,76 +36,37 @@ function makeCtx(env: Record<string, unknown>, isAdmin = true): APIContext {
 }
 
 describe('GET /api/edit/health', () => {
-  beforeEach(() => {
-    vi.stubGlobal('fetch', vi.fn());
-  });
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
   test('非 admin → 403 + reason=not_admin', async () => {
     const res = await healthGET(makeCtx({}, false));
     expect(res.status).toBe(403);
-    expect(await res.json()).toMatchObject({ ok: false, reason: 'not_admin' });
+    expect(res.headers.get('x-ms-docs')).toBeTruthy();
+    expect(await res.json()).toMatchObject({ ok: false, reason: 'not_admin', docs: res.headers.get('x-ms-docs') });
   });
 
-  test('PAT 缺失 → 503 + reason=pat_missing', async () => {
-    const res = await healthGET(makeCtx({ GITHUB_REPO: 'x/y' }));
+  test('DB 缺失 → 503 + reason=config_missing', async () => {
+    const res = await healthGET(makeCtx({}));
     expect(res.status).toBe(503);
-    expect(await res.json()).toMatchObject({ ok: false, reason: 'pat_missing' });
+    expect(res.headers.get('x-ms-docs')).toBeTruthy();
+    expect(await res.json()).toMatchObject({ ok: false, reason: 'config_missing', docs: res.headers.get('x-ms-docs') });
   });
 
-  test('REPO 缺失 → 503 + reason=repo_missing', async () => {
-    const res = await healthGET(makeCtx({ GITHUB_PAT: 'ghp_xxx' }));
-    expect(res.status).toBe(503);
-    expect(await res.json()).toMatchObject({ ok: false, reason: 'repo_missing' });
-  });
-
-  test('GitHub 401 → 502 + reason=pat_invalid', async () => {
-    (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
-      new Response(null, { status: 401 }),
-    );
-    const res = await healthGET(makeCtx({ GITHUB_PAT: 'bad', GITHUB_REPO: 'x/y' }));
-    expect(res.status).toBe(502);
-    expect(await res.json()).toMatchObject({ ok: false, reason: 'pat_invalid' });
-  });
-
-  test('GitHub 404 → 502 + reason=repo_unreachable', async () => {
-    (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
-      new Response(null, { status: 404 }),
-    );
-    const res = await healthGET(makeCtx({ GITHUB_PAT: 'good', GITHUB_REPO: 'no/such-repo' }));
-    expect(res.status).toBe(502);
-    expect(await res.json()).toMatchObject({ ok: false, reason: 'repo_unreachable' });
-  });
-
-  test('contents HEAD 403 → 502 + reason=contents_unreadable', async () => {
-    const fetchMock = globalThis.fetch as ReturnType<typeof vi.fn>;
-    fetchMock
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify({ name: 'mgmt' }), {
-          status: 200,
-          headers: { 'x-ratelimit-remaining': '4999' },
-        }),
-      )
-      .mockResolvedValueOnce(new Response(null, { status: 403 }));
-    const res = await healthGET(makeCtx({ GITHUB_PAT: 'good', GITHUB_REPO: 'x/y' }));
-    expect(res.status).toBe(502);
-    expect(await res.json()).toMatchObject({ ok: false, reason: 'contents_unreadable' });
-  });
-
-  test('全绿 → 200 + ok=true + rate_limit_remaining', async () => {
-    const fetchMock = globalThis.fetch as ReturnType<typeof vi.fn>;
-    fetchMock
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify({ name: 'mgmt' }), {
-          status: 200,
-          headers: { 'x-ratelimit-remaining': '4321' },
-        }),
-      )
-      .mockResolvedValueOnce(new Response(null, { status: 200 }));
-    const res = await healthGET(makeCtx({ GITHUB_PAT: 'good', GITHUB_REPO: 'x/y' }));
+  test('discipline 表存在且可读 → 200 + ok=true + discipline_count', async () => {
+    const res = await healthGET(makeCtx({ DB: makeDb({ count: 3 }) }));
     expect(res.status).toBe(200);
-    expect(await res.json()).toMatchObject({ ok: true, repo: 'x/y', rate_limit_remaining: 4321 });
+    expect(await res.json()).toMatchObject({ ok: true, db: 'd1', discipline_count: 3 });
+  });
+
+  test('D1 报 no such table → 500 + reason=db_corrupt', async () => {
+    const res = await healthGET(makeCtx({ DB: makeDb({ throw: 'no such table: discipline' }) }));
+    expect(res.status).toBe(500);
+    expect(res.headers.get('x-ms-docs')).toBeTruthy();
+    expect(await res.json()).toMatchObject({ ok: false, reason: 'db_corrupt', docs: res.headers.get('x-ms-docs') });
+  });
+
+  test('D1 其它异常 → 502 + reason=db_unreachable', async () => {
+    const res = await healthGET(makeCtx({ DB: makeDb({ throw: 'network timeout' }) }));
+    expect(res.status).toBe(502);
+    expect(res.headers.get('x-ms-docs')).toBeTruthy();
+    expect(await res.json()).toMatchObject({ ok: false, reason: 'db_unreachable', docs: res.headers.get('x-ms-docs') });
   });
 });

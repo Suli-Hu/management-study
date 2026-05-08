@@ -8,6 +8,8 @@ import type { APIContext } from 'astro';
 import { getFile, putFile, deleteFile } from './github';
 import { withRetry } from './d1-kp-write';
 import type { ZodTypeAny, infer as ZodInfer } from 'zod';
+import { jsonRes, jsonResWithInit } from './json';
+export { jsonRes, jsonResWithInit } from './json';
 
 export type EditErrorReason =
   | 'not_admin'
@@ -24,13 +26,6 @@ export interface EditError {
   reason: EditErrorReason;
   detail?: unknown;
   current_sha?: string;
-}
-
-export function jsonRes<T>(status: number, body: T): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { 'content-type': 'application/json' },
-  });
 }
 
 interface PutCtx<S extends ZodTypeAny> {

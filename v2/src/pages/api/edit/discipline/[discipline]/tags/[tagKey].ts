@@ -39,14 +39,19 @@ async function writeTagsToD1(db: D1Database, discipline: string, tags: Tag[]): P
 }
 
 async function countRefs(db: D1Database, discipline: string, tagKey: string): Promise<number> {
-  const needle = `%"${tagKey}"%`;
   const sql = `
     SELECT
-      (SELECT COUNT(*) FROM school   WHERE discipline = ?1 AND tags_json LIKE ?2) +
-      (SELECT COUNT(*) FROM scholar  WHERE discipline = ?1 AND tags_json LIKE ?2) +
-      (SELECT COUNT(*) FROM kp       WHERE discipline = ?1 AND tags_json LIKE ?2) AS n
+      (SELECT COUNT(*)
+         FROM school s, json_each(s.tags_json) je
+        WHERE s.discipline = ?1 AND je.value = ?2) +
+      (SELECT COUNT(*)
+         FROM scholar sc, json_each(sc.tags_json) je
+        WHERE sc.discipline = ?1 AND je.value = ?2) +
+      (SELECT COUNT(*)
+         FROM kp k, json_each(k.tags_json) je
+        WHERE k.discipline = ?1 AND je.value = ?2) AS n
   `;
-  const row = await db.prepare(sql).bind(discipline, needle).first<{ n: number }>();
+  const row = await db.prepare(sql).bind(discipline, tagKey).first<{ n: number }>();
   return row?.n ?? 0;
 }
 

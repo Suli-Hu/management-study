@@ -839,6 +839,25 @@ Body 是上述字段任意子集（**不允许改 `discipline`** — 防 session
 }
 ```
 
+### 9.5 `GET /api/edit/health` — 编辑功能自检（admin）
+
+v0.12.0+ 起该自检不再依赖 GitHub。用于在“进入编辑器 / 管理页”前快速确认服务端具备写入能力。
+
+- **Auth**：admin only（cookie session 或 bearer token 均可）
+- **检查项**：
+  - D1 binding 是否存在
+  - `discipline` 表是否可读（最小 schema sanity check）
+
+Response（ok）：
+
+```json
+{
+  "ok": true,
+  "db": "d1",
+  "discipline_count": 3
+}
+```
+
 ---
 
 ## 10. 错误码总表
@@ -882,7 +901,7 @@ Body 是上述字段任意子集（**不允许改 `discipline`** — 防 session
 | `school_used_in_views` | 409 | 删除前需要先从 View 中移除 |
 | `scholar_has_kps` | 409 | 删除前需要先移走或删除关联 KP |
 | `view_is_default` | 409 | 删除前需要先把其它 view 设为默认 |
-| `sha_conflict` | 409 | 编辑器路径专属，base_sha 与远端不一致（乐观锁） |
+| `sha_conflict` | 409 | 编辑器路径专属，base_sha 与远端不一致（乐观锁，git-write 路径遗留） |
 | `schema_invalid` | 422 | 请求 JSON 不符合 schema |
 | `school_not_in_tenant` | 422 | schools 引用了该学科不存在的 key |
 | `scholar_not_in_tenant` | 422 | scholars 引用了该学科不存在的 key |
@@ -1009,7 +1028,7 @@ GitHub repo 配的 webhook，所有 push 到 main 自动触发对应 sync / dele
 
 ### 12.3 旧 admin UI 写路径
 
-走 git + D1 双写。给浏览器 admin UI 用，agent 不应该碰（用 [§4-§7 API-first](#4-kp-api) 替代）。
+历史上走 git + D1 双写。给浏览器 admin UI 用；**v0.12.0+ 其中一部分已改为 D1-only**（不再依赖 GitHub 配置）。
 
 | 资源 | new POST | edit GET/PUT/DELETE |
 |---|---|---|
@@ -1019,18 +1038,25 @@ GitHub repo 配的 webhook，所有 push 到 main 自动触发对应 sync / dele
 | View | `/api/new/view` | `/api/edit/view/<discipline>/<id>` |
 | Theme | `/api/new/theme` | `/api/edit/theme/<discipline>/<key>` |
 
-PUT body 带乐观锁 `base_sha`（不一致返 `409 sha_conflict`）。
+> 注：Theme / 标签库在 v0.12.0+ 已是 **D1-only**，不再需要 `base_sha` 或 GitHub PAT。
+
+#### Theme（学派组）v0.12.0+ 行为变化
+
+- `POST /api/new/theme`：直接写 D1 `discipline.themes_json`，**不再创建 GitHub commit**，无 `commit_sha` / `deploy_eta_seconds`。
+- `GET/PUT/DELETE /api/edit/theme/<discipline>/<key>`：全部 D1-only。
+  - `DELETE` 的 `has_dependents` 以 **D1 的 `school.theme_key`** 为准（避免 themes_json stale）。
 
 #### `PUT /api/edit/discipline/<discipline>/tags`
 
 全量替换该学科的标签库。
 
+v0.12.0+：该端点为 D1-only。返回不再包含 GitHub 相关字段（`commit_sha` / `new_blob_sha` / `deploy_eta_seconds`）。
+
 ```json
 {
   "tags": [
     { "key": "t_xxx", "label": { "zh": "...", "ja": "..." }, "color": "#34C759", "description": "..." }
-  ],
-  "base_sha": "abc..."
+  ]
 }
 ```
 
@@ -1042,7 +1068,7 @@ PUT body 带乐观锁 `base_sha`（不一致返 `409 sha_conflict`）。
 | POST `/api/edit/reorder/school-concepts` | 改某 school.concepts[] 的 KP 顺序 |
 | POST `/api/edit/reorder/scholar-kps` | 改某 scholar.kpsOrder[] |
 | POST `/api/edit/reorder/views` | 改 view chip 排序（API-first 等价：`POST /api/views/reorder`） |
-| POST `/api/edit/reorder/themes-order` | 改 discipline.themes[] 顺序 |
+| POST `/api/edit/reorder/themes-order` | 改 discipline.themes[] 顺序（v0.12.0+ D1-only） |
 
 ---
 

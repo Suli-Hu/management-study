@@ -158,7 +158,6 @@ if (!disc) return Astro.redirect('/404');
   // @ts-nocheck — DOM 类型推断弱，runtime 已验证
   import { TAG_COLOR_PRESETS } from '~/lib/color-picker-client';
   import { formatZodIssues } from '~/lib/zod-errors-zh';
-  import { watchDeploy } from '~/lib/deploy-progress-client';
 
   const $ = (s) => document.querySelector(s);
   const mount = $('#tags-mount');
@@ -215,7 +214,8 @@ if (!disc) return Astro.redirect('/404');
       return;
     }
     const { tags, base_sha, ref_counts } = await res.json();
-    baseSha = base_sha;
+    // v0.12.0+: bulk 保存不再依赖 base_sha。此字段仅向后兼容保留（若后端仍返）。
+    baseSha = base_sha ?? null;
     refCounts = ref_counts ?? {};
     rows = (tags ?? []).map((t) => ({
       key: t.key,
@@ -353,7 +353,6 @@ if (!disc) return Astro.redirect('/404');
         label: { zh: r.label_zh.trim() },
         color: r.color,
       })),
-      base_sha: baseSha,
     };
     const res = await fetch(`/api/edit/discipline/${discipline}/tags`, {
       method: 'PUT',
@@ -362,15 +361,14 @@ if (!disc) return Astro.redirect('/404');
     });
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
-      if (_deployWatcher) _deployWatcher.stop();
-      _deployWatcher = watchDeploy({ statusEl: saveStatus, commitSha: data.commit_sha, savedAtIso: new Date().toISOString() });
-      baseSha = data.new_blob_sha;
+      saveStatus.textContent = '已保存';
       // 保存后重新拉一次以刷新 ref_counts
       setTimeout(() => { load(); }, 500);
     } else if (res.status === 409 && data.reason === 'has_dependents') {
       saveStatus.innerHTML = `<span style="color:var(--s-danger)">${data.detail}</span>`;
     } else if (res.status === 409 && data.reason === 'sha_conflict') {
-      saveStatus.innerHTML = `<span style="color:var(--s-danger)">冲突：discipline.json 已被其它修改，请刷新</span>`;
+      // v0.12.0+: 不应再出现（D1-only）。保留兜底文案避免旧后端/缓存导致困惑。
+      saveStatus.innerHTML = `<span style="color:var(--s-danger)">冲突：数据已被其它修改，请刷新</span>`;
     } else if (res.status === 422) {
       const lines = formatZodIssues(data.detail);
       saveStatus.innerHTML = `<span style="color:var(--s-danger)">校验失败：<br>${lines.map((l) => '• ' + l).join('<br>')}</span>`;

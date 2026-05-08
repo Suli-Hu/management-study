@@ -289,12 +289,18 @@ interface ChipOptions {
   removable?: boolean;
   /** OKLCH token name (without `--`), e.g. 'tag-mgmt'. null = neutral. */
   tagToken?: string | null;
+  /** User-defined tag hex color like '#10B981'. When set, chip uses this color. */
+  tagColor?: string | null;
   onRemove?: () => void;
 }
 
 export function chip(opts: ChipOptions): HTMLElement {
   const c = el('span', 'kpe-chip');
   if (opts.tagToken) c.setAttribute('data-tag', opts.tagToken);
+  if (opts.tagColor && /^#[0-9A-Fa-f]{6}$/.test(opts.tagColor)) {
+    c.classList.add('is-colored');
+    c.style.setProperty('--tag-color', opts.tagColor);
+  }
   c.textContent = opts.label;
   if (opts.removable && opts.onRemove) {
     const x = el('button', 'kpe-chip-x');
@@ -370,10 +376,18 @@ export function hashToTagToken(key: string): string {
 export function mountChipPicker(host: HTMLElement, opts: ChipPickerOptions): void {
   let current = [...opts.current];
 
-  const tokenFor = (key: string): string | null => {
-    if (opts.colorize === 'schools') return hashToTagToken(key);
-    if (opts.colorize === 'none') return null;
-    return opts.colorize(key);
+  const classifyColor = (v: string | null): { token: string | null; color: string | null } => {
+    if (!v) return { token: null, color: null };
+    // If it looks like user-defined hex, use it directly.
+    if (/^#[0-9A-Fa-f]{6}$/.test(v)) return { token: null, color: v };
+    // Otherwise treat as token name (e.g. 'tag-mgmt')
+    return { token: v, color: null };
+  };
+
+  const colorFor = (key: string): { token: string | null; color: string | null } => {
+    if (opts.colorize === 'schools') return { token: hashToTagToken(key), color: null };
+    if (opts.colorize === 'none') return { token: null, color: null };
+    return classifyColor(opts.colorize(key));
   };
 
   const render = () => {
@@ -387,11 +401,15 @@ export function mountChipPicker(host: HTMLElement, opts: ChipPickerOptions): voi
     current.forEach((key) => {
       const optDef = opts.options.find((o) => o.key === key);
       const label = optDef?.label ?? key;
+      const optColor = optDef?.color && /^#[0-9A-Fa-f]{6}$/.test(optDef.color) ? optDef.color : null;
+      const c = colorFor(key);
       box.appendChild(
         chip({
           label,
           removable: true,
-          tagToken: tokenFor(key),
+          // Prefer explicit option.color (user-defined hex) when present, otherwise fall back to colorize()
+          tagColor: optColor ?? c.color,
+          tagToken: c.token,
           onRemove: () => {
             current = current.filter((k) => k !== key);
             opts.onChange(current);
@@ -450,6 +468,12 @@ export function mountChipPicker(host: HTMLElement, opts: ChipPickerOptions): voi
         const name = el('span', 'kpe-dd-name');
         name.textContent = m.label;
         it.appendChild(name);
+        // Optional color dot for tag library (user-defined hex)
+        if (m.color && /^#[0-9A-Fa-f]{6}$/.test(m.color)) {
+          const dot = el('span', 'kpe-dd-dot');
+          dot.style.setProperty('--dd-dot', m.color);
+          it.insertBefore(dot, name);
+        }
         if (m.sub) {
           const sub = el('span', 'kpe-dd-key');
           sub.textContent = m.sub;

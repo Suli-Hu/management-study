@@ -5,40 +5,36 @@
  *   DELETE                                           — 删主题（schools[] > 0 时返 409 has_dependents）
  *
  *   学派组 themes 是 discipline.json 的嵌套字段，CRUD 都是 PATCH discipline.json themes[X]。
+ *
+ * v0.12.0+: D1-only。GitHub 不再是真源，也不再作为审计写入。
  */
 
 import type { APIRoute } from 'astro';
-import { getFile, putFile } from '~/lib/github';
 import { jsonRes, type EditError } from '~/lib/edit-helpers';
-import { Discipline, ThemeGroup } from '~/schemas/discipline';
-import { upsertDisciplineInD1 } from '~/lib/d1-discipline-write';
-import { withRetry } from '~/lib/d1-kp-write';
+import { ThemeGroup } from '~/schemas/discipline';
 
-type LoadResult =
-  | { error: Response; disc?: never; sha?: never; path?: never }
-  | { error?: never; disc: ReturnType<typeof Discipline.parse>; sha: string; path: string };
-
-async function loadDiscipline(env: any, discipline: string): Promise<LoadResult> {
-  const path = `v2/data/${discipline}/discipline.json`;
-  const fetched = await getFile({ pat: env.GITHUB_PAT, repo: env.GITHUB_REPO }, path);
-  if (!fetched.ok) return { error: jsonRes<EditError>(502, { ok: false, reason: 'github_error', detail: fetched.detail }) };
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(fetched.data.content);
-  } catch (e) {
-    return { error: jsonRes<EditError>(502, { ok: false, reason: 'github_error', detail: `invalid json: ${(e as Error).message}` }) };
-  }
-  const checked = Discipline.safeParse(parsed);
-  if (!checked.success) {
-    return { error: jsonRes<EditError>(422, { ok: false, reason: 'schema_invalid', detail: checked.error.issues }) };
-  }
-  return { disc: checked.data, sha: fetched.data.sha, path };
+async function loadThemes(
+  db: D1Database,
+  discipline: string,
+): Promise<ReturnType<typeof ThemeGroup.parse>[] | null> {
+  const row = await db
+    .prepare('SELECT themes_json FROM discipline WHERE key = ?')
+    .bind(discipline)
+    .first<{ themes_json: string | null }>();
+  if (!row) return null;
+  let raw: unknown;
+  try { raw = JSON.parse(row.themes_json ?? '[]'); } catch { raw = []; }
+  const list = Array.isArray(raw) ? raw : [];
+  return list
+    .map((t) => ThemeGroup.safeParse(t))
+    .filter((p): p is { success: true; data: ReturnType<typeof ThemeGroup.parse> } => p.success)
+    .map((p) => p.data);
 }
 
 export const PUT: APIRoute = async ({ params, request, locals }) => {
   if (!locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
   const env = locals.runtime.env;
-  if (!env.GITHUB_PAT || !env.GITHUB_REPO) return jsonRes<EditError>(503, { ok: false, reason: 'config_missing' });
+  if (!env.DB) return jsonRes<EditError>(503, { ok: false, reason: 'config_missing', detail: 'D1 not bound' });
   const discipline = params.discipline;
   const key = params.key;
   if (!discipline || !key) return jsonRes<EditError>(400, { ok: false, reason: 'bad_request' });
@@ -47,99 +43,98 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
   let body: unknown;
   try { body = await request.json(); } catch { return jsonRes<EditError>(400, { ok: false, reason: 'bad_request', detail: 'body must be JSON' }); }
 
-  const loaded = await loadDiscipline(env, discipline);
-  if (loaded.error) return loaded.error;
-  const { disc, sha, path } = loaded;
+  const themes = await loadThemes(env.DB, discipline);
+  if (themes === null) return jsonRes<EditError>(404, { ok: false, reason: 'not_found' });
 
-  const idx = disc.themes.findIndex((t) => t.key === key);
+  const idx = themes.findIndex((t) => t.key === key);
   if (idx < 0) return jsonRes<EditError>(404, { ok: false, reason: 'not_found' });
 
   // 合并新字段 — key + schools[] 不变（schools 由 reorder API 管）
-  const merged = { ...disc.themes[idx], ...(body as object), key, schools: disc.themes[idx].schools };
+  const merged = { ...themes[idx], ...(body as object), key, schools: themes[idx].schools };
   const validated = ThemeGroup.safeParse(merged);
   if (!validated.success) return jsonRes<EditError>(422, { ok: false, reason: 'schema_invalid', detail: validated.error.issues });
 
-  disc.themes[idx] = validated.data;
-  disc.updatedAt = new Date().toISOString();
-
-  const adminEmail = locals.user.email ?? 'unknown@admin';
-  const message = `v2: edit theme/${discipline}/${key} by ${adminEmail}`;
-  const content = JSON.stringify(disc, null, 2) + '\n';
-  const res = await putFile({ pat: env.GITHUB_PAT, repo: env.GITHUB_REPO }, path, { content, message, sha, branch: 'main' });
-  if (!res.ok) {
-    return jsonRes<EditError>(res.reason === 'conflict' ? 409 : 502, { ok: false, reason: res.reason === 'conflict' ? 'sha_conflict' : 'github_error', detail: res.detail });
+  themes[idx] = validated.data;
+  try {
+    await env.DB
+      .prepare('UPDATE discipline SET themes_json = ?, updated_at = ? WHERE key = ?')
+      .bind(JSON.stringify(themes), new Date().toISOString(), discipline)
+      .run();
+  } catch (e) {
+    return jsonRes<EditError>(500, { ok: false, reason: 'd1_write_failed' as never, detail: (e as Error).message });
   }
 
-  // v0.6.7: D1 双写
-  if (env.DB) {
-    try { await withRetry(() => upsertDisciplineInD1(env.DB, disc)); }
-    catch (d1Err) { console.error(`[edit/theme PUT ${discipline}/${key}] D1 dual-write failed (git committed):`, d1Err); }
-  }
-
-  return jsonRes(200, { ok: true, commit_sha: res.data.commit_sha, deploy_eta_seconds: 90 });
+  return jsonRes(200, { ok: true, updated: key, source: 'd1' });
 };
 
 export const DELETE: APIRoute = async ({ params, locals }) => {
   if (!locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
   const env = locals.runtime.env;
-  if (!env.GITHUB_PAT || !env.GITHUB_REPO) return jsonRes<EditError>(503, { ok: false, reason: 'config_missing' });
+  if (!env.DB) return jsonRes<EditError>(503, { ok: false, reason: 'config_missing', detail: 'D1 not bound' });
   const discipline = params.discipline;
   const key = params.key;
   if (!discipline || !key) return jsonRes<EditError>(400, { ok: false, reason: 'bad_request' });
   if (!locals.canEdit(discipline)) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
-  const loaded = await loadDiscipline(env, discipline);
-  if (loaded.error) return loaded.error;
-  const { disc, sha, path } = loaded;
+  const themes = await loadThemes(env.DB, discipline);
+  if (themes === null) return jsonRes<EditError>(404, { ok: false, reason: 'not_found' });
 
-  const idx = disc.themes.findIndex((t) => t.key === key);
+  const idx = themes.findIndex((t) => t.key === key);
   if (idx < 0) return jsonRes<EditError>(404, { ok: false, reason: 'not_found' });
 
-  // has_dependents gate：theme.schools[] 还有学派 → 拒绝
-  const theme = disc.themes[idx];
-  if (theme.schools.length > 0) {
+  // has_dependents gate：检查 school 表实际 FK，避免 themes_json stale
+  const countRow = await env.DB
+    .prepare('SELECT COUNT(*) as n FROM school WHERE discipline = ? AND theme_key = ?')
+    .bind(discipline, key)
+    .first<{ n: number }>();
+  const refCount = countRow?.n ?? 0;
+  if (refCount > 0) {
     return jsonRes(409, {
       ok: false,
       reason: 'has_dependents' as const,
-      detail: `学派组「${theme.title?.zh ?? key}」下还有 ${theme.schools.length} 个学派。先把它们移到别的学派组或删掉再试。`,
+      detail: `theme "${key}" 还被 ${refCount} 个学派引用 (school.theme_key)。先把它们 PATCH 到别的 theme 再删。`,
+      ref_count: refCount,
     });
   }
 
-  disc.themes.splice(idx, 1);
-  disc.updatedAt = new Date().toISOString();
+  themes.splice(idx, 1);
 
-  const adminEmail = locals.user.email ?? 'unknown@admin';
-  const message = `v2: delete theme/${discipline}/${key} by ${adminEmail}`;
-  const content = JSON.stringify(disc, null, 2) + '\n';
-  const res = await putFile({ pat: env.GITHUB_PAT, repo: env.GITHUB_REPO }, path, { content, message, sha, branch: 'main' });
-  if (!res.ok) {
-    return jsonRes<EditError>(res.reason === 'conflict' ? 409 : 502, { ok: false, reason: res.reason === 'conflict' ? 'sha_conflict' : 'github_error', detail: res.detail });
+  try {
+    await env.DB
+      .prepare('UPDATE discipline SET themes_json = ?, updated_at = ? WHERE key = ?')
+      .bind(JSON.stringify(themes), new Date().toISOString(), discipline)
+      .run();
+  } catch (e) {
+    return jsonRes<EditError>(500, { ok: false, reason: 'd1_write_failed' as never, detail: (e as Error).message });
   }
 
-  // v0.6.7: D1 双写
-  if (env.DB) {
-    try { await withRetry(() => upsertDisciplineInD1(env.DB, disc)); }
-    catch (d1Err) { console.error(`[edit/theme DELETE ${discipline}/${key}] D1 dual-write failed (git committed):`, d1Err); }
-  }
-
-  return jsonRes(200, { ok: true, commit_sha: res.data.commit_sha, deploy_eta_seconds: 90 });
+  return jsonRes(200, { ok: true, deleted: key, source: 'd1' });
 };
 
 /** GET 用于编辑器加载（key 已在 url，返当前 theme + 该 discipline 所有 theme keys 用于校验） */
 export const GET: APIRoute = async ({ params, locals }) => {
   if (!locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
   const env = locals.runtime.env;
-  if (!env.GITHUB_PAT || !env.GITHUB_REPO) return jsonRes<EditError>(503, { ok: false, reason: 'config_missing' });
+  if (!env.DB) return jsonRes<EditError>(503, { ok: false, reason: 'config_missing', detail: 'D1 not bound' });
   const discipline = params.discipline;
   const key = params.key;
   if (!discipline || !key) return jsonRes<EditError>(400, { ok: false, reason: 'bad_request' });
   if (!locals.canEdit(discipline)) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
-  const loaded = await loadDiscipline(env, discipline);
-  if (loaded.error) return loaded.error;
-  const { disc, sha } = loaded;
-  const theme = disc.themes.find((t) => t.key === key);
+  const themes = await loadThemes(env.DB, discipline);
+  if (themes === null) return jsonRes<EditError>(404, { ok: false, reason: 'not_found' });
+  const theme = themes.find((t) => t.key === key);
   if (!theme) return jsonRes<EditError>(404, { ok: false, reason: 'not_found' });
 
-  return jsonRes(200, { ok: true, json: theme, base_sha: sha, school_count: theme.schools.length });
+  const countRow = await env.DB
+    .prepare('SELECT COUNT(*) as n FROM school WHERE discipline = ? AND theme_key = ?')
+    .bind(discipline, key)
+    .first<{ n: number }>();
+
+  return jsonRes(200, {
+    ok: true,
+    json: theme,
+    source: 'd1',
+    school_count: countRow?.n ?? 0,
+  });
 };

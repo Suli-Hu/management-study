@@ -533,6 +533,13 @@
   color: var(--text);
 }
 
+/* Tag library color (user-defined hex) — preferred for tags field chips */
+.kp-editor-v08 .kpe-chip.is-colored {
+  background: oklch(from var(--tag-color) l c h / 0.15);
+  color: oklch(from var(--tag-color) calc(l - 0.35) c h);
+  border-color: oklch(from var(--tag-color) l c h / 0.4);
+}
+
 /* 学派 chip 按 --tag-* 着色（PRD §13.4 必接 tag 系统）*/
 .kp-editor-v08 .kpe-chip[data-tag="tag-mgmt"]   { background: oklch(from var(--tag-mgmt)   l c h / 0.15); color: oklch(from var(--tag-mgmt)   calc(l - 0.35) c h); border-color: oklch(from var(--tag-mgmt)   l c h / 0.4); }
 .kp-editor-v08 .kpe-chip[data-tag="tag-mkt"]    { background: oklch(from var(--tag-mkt)    l c h / 0.15); color: oklch(from var(--tag-mkt)    calc(l - 0.35) c h); border-color: oklch(from var(--tag-mkt)    l c h / 0.4); }
@@ -614,6 +621,16 @@
 .kp-editor-v08 .kpe-dd-item.is-first-match:hover { background: var(--primary-soft); }
 .kp-editor-v08 .kpe-dd-name { color: var(--text); font-weight: 500; }
 .kp-editor-v08 .kpe-dd-key { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); }
+
+/* dropdown dot (optional) */
+.kp-editor-v08 .kpe-dd-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--dd-dot);
+  box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.10);
+  flex: 0 0 auto;
+}
 
 /* ─── Body editor structures ──────────────────────────────── */
 

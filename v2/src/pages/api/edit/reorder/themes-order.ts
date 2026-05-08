@@ -4,19 +4,19 @@
  *   行为：仅重排 discipline.themes[] 数组本身（章节顺序），各 theme 内 schools[] 不变
  *
  *   校验：themeKeys 必须是原 themes[].key 的同集合（reorder only，不能凭空增删）
+ *
+ * v0.12.0+: D1-only。GitHub 不再是真源，也不再作为审计写入。
  */
 
 import type { APIRoute } from 'astro';
-import { getFile, putFile } from '~/lib/github';
 import { jsonRes, type EditError } from '~/lib/edit-helpers';
-import { Discipline } from '~/schemas/discipline';
-import { upsertDisciplineInD1 } from '~/lib/d1-discipline-write';
-import { withRetry } from '~/lib/d1-kp-write';
+import { ThemeGroup } from '~/schemas/discipline';
+import { z } from 'zod';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   if (!locals.user) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
   const env = locals.runtime.env;
-  if (!env.GITHUB_PAT || !env.GITHUB_REPO) return jsonRes<EditError>(503, { ok: false, reason: 'config_missing' });
+  if (!env.DB) return jsonRes<EditError>(503, { ok: false, reason: 'config_missing', detail: 'D1 not bound' });
 
   let body: { discipline?: string; themeKeys?: string[] };
   try { body = (await request.json()) as typeof body; } catch {
@@ -28,19 +28,24 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
   if (!locals.canEdit(discipline)) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
 
-  const path = `v2/data/${discipline}/discipline.json`;
-  const fetched = await getFile({ pat: env.GITHUB_PAT, repo: env.GITHUB_REPO }, path);
-  if (!fetched.ok) return jsonRes<EditError>(502, { ok: false, reason: 'github_error', detail: fetched.detail });
-  let parsed: unknown;
-  try { parsed = JSON.parse(fetched.data.content); } catch (e) {
-    return jsonRes<EditError>(502, { ok: false, reason: 'github_error', detail: `invalid json: ${(e as Error).message}` });
+  const row = await env.DB
+    .prepare('SELECT themes_json FROM discipline WHERE key = ?')
+    .bind(discipline)
+    .first<{ themes_json: string | null }>();
+  if (!row) return jsonRes<EditError>(404, { ok: false, reason: 'not_found' });
+
+  let raw: unknown;
+  try { raw = JSON.parse(row.themes_json ?? '[]'); } catch (e) {
+    return jsonRes<EditError>(500, { ok: false, reason: 'db_corrupt' as never, detail: `discipline.themes_json invalid: ${(e as Error).message}` });
   }
-  const checked = Discipline.safeParse(parsed);
-  if (!checked.success) return jsonRes<EditError>(422, { ok: false, reason: 'schema_invalid', detail: checked.error.issues });
-  const disc = checked.data;
+  const themesParsed = z.array(ThemeGroup).safeParse(raw);
+  if (!themesParsed.success) {
+    return jsonRes<EditError>(500, { ok: false, reason: 'db_corrupt' as never, detail: themesParsed.error.issues });
+  }
+  const themes = themesParsed.data;
 
   // 集合校验
-  const orig = new Set(disc.themes.map((t) => t.key));
+  const orig = new Set(themes.map((t) => t.key));
   const next = new Set(themeKeys);
   if (orig.size !== next.size || [...orig].some((k) => !next.has(k))) {
     return jsonRes(400, {
@@ -51,27 +56,16 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   // 按新顺序重新排列 themes 数组
-  const themesByKey = new Map(disc.themes.map((t) => [t.key, t]));
-  disc.themes = themeKeys.map((k) => themesByKey.get(k)!).filter(Boolean);
-  disc.updatedAt = new Date().toISOString();
-
-  const adminEmail = locals.user.email ?? 'unknown@admin';
-  const message = `v2: reorder discipline/${discipline} themes[] order by ${adminEmail}`;
-  const content = JSON.stringify(disc, null, 2) + '\n';
-  const res = await putFile(
-    { pat: env.GITHUB_PAT, repo: env.GITHUB_REPO },
-    path,
-    { content, message, sha: fetched.data.sha, branch: 'main' },
-  );
-  if (!res.ok) {
-    return jsonRes<EditError>(res.reason === 'conflict' ? 409 : 502, { ok: false, reason: res.reason === 'conflict' ? 'sha_conflict' : 'github_error', detail: res.detail });
+  const themesByKey = new Map(themes.map((t) => [t.key, t]));
+  const reordered = themeKeys.map((k) => themesByKey.get(k)).filter(Boolean);
+  try {
+    await env.DB
+      .prepare('UPDATE discipline SET themes_json = ?, updated_at = ? WHERE key = ?')
+      .bind(JSON.stringify(reordered), new Date().toISOString(), discipline)
+      .run();
+  } catch (e) {
+    return jsonRes<EditError>(500, { ok: false, reason: 'd1_write_failed' as never, detail: (e as Error).message });
   }
 
-  // v0.6.7: D1 双写
-  if (env.DB) {
-    try { await withRetry(() => upsertDisciplineInD1(env.DB, disc)); }
-    catch (d1Err) { console.error(`[reorder/themes-order ${discipline}] D1 dual-write failed (git committed):`, d1Err); }
-  }
-
-  return jsonRes(200, { ok: true, commit_sha: res.data.commit_sha, deploy_eta_seconds: 90 });
+  return jsonRes(200, { ok: true, d1_updated: true });
 };
