@@ -38,7 +38,7 @@ const orphan = Math.max(0, totalSchools - count);
     <div class="vd-name-row">
       <div class="vd-name">{view.name}</div>
       {canEdit && orphan > 0 && (
-        <span class="vd-orphan" data-view-edit aria-label={`未收录 ${orphan} 个学派`}>
+        <span class="vd-orphan" aria-label={`未收录 ${orphan} 个学派`}>
           <button class="vd-orphan-btn" type="button">!</button>
           <span class="vd-orphan-tip">未收录 {orphan} 个学派</span>
         </span>
@@ -47,11 +47,9 @@ const orphan = Math.max(0, totalSchools - count);
     {view.description ? (
       <div
         class="vd-desc"
-        data-view-edit={canEdit ? '1' : undefined}
-        title={canEdit ? '点击编辑视图' : undefined}
       >{view.description}</div>
     ) : canEdit ? (
-      <button class="vd-add-desc" type="button" data-view-edit>+ 添加视图说明</button>
+      <button class="vd-add-desc" type="button" data-open-editor>+ 添加视图说明（编辑视图）</button>
     ) : null}
     {view.flow && (
       <div class="vd-flow">{view.flow}</div>
@@ -142,11 +140,11 @@ const orphan = Math.max(0, totalSchools - count);
     cursor: default;
     transition: background .12s;
   }
-  .vd-desc[data-view-edit] {
-    cursor: pointer;
-  }
-  .vd-desc[data-view-edit]:hover {
-    background: var(--bg-elev);
+  /* Description is read-only; editing happens via “编辑视图页”. */
+
+  /* Option C: allow hiding the whole description block */
+  :global([data-view-block]:not([data-desc-open])) .view-desc {
+    display: none;
   }
 
   .vd-add-desc {
@@ -169,13 +167,11 @@ const orphan = Math.max(0, totalSchools - count);
 
 <script>
   // @ts-nocheck
-  // v0.5.80：description 点击 / orphan 徽章点击 → 直接进 ViewEditor
-  // 之前还有独立的 ViewInfoEditor，这版砍了，统一用主编辑器编辑 icon/name/desc
   (() => {
     const wrap = document.querySelector('.view-desc[data-view-id]');
     if (!wrap) return;
     const viewId = wrap.getAttribute('data-view-id');
-    document.querySelectorAll('[data-view-edit]').forEach((el) => {
+    document.querySelectorAll('[data-open-editor]').forEach((el) => {
       el.addEventListener('click', () => {
         document.dispatchEvent(new CustomEvent('view:editor', { detail: { viewId } }));
       });

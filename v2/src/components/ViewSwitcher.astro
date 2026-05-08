@@ -38,40 +38,54 @@ interface Props {
 const { views, currentId, discipline, canEdit } = Astro.props;
 ---
 
-<div class="view-switcher" data-view-switcher data-discipline={discipline} data-can-edit={canEdit ? '1' : '0'}>
+<div
+  class="view-switcher"
+  data-view-switcher
+  data-discipline={discipline}
+  data-can-edit={canEdit ? '1' : '0'}
+  data-current-id={currentId}
+>
   <button type="button" class="vs-label-btn" data-view-collapse-toggle aria-label="折叠/展开视图区" title="点击折叠">
     <svg class="vs-chev" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
       <path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
     </svg>
     <span>视图</span>
   </button>
-  {views.map((v) => (
-    <div
-      class:list={['vs-chip', v.id === currentId && 'is-active']}
-      data-view-chip
-      data-view-id={v.id}
-      data-view-name={v.name}
-      data-view-default={v.isDefault ? '1' : '0'}
-      draggable={canEdit ? 'true' : 'false'}
-      title={canEdit ? '长按拖动可调整顺序' : undefined}
-    >
-      <span class="vs-chip-icon">{v.icon}</span>
-      <span class="vs-chip-name">{v.name}</span>
-      <button class="vs-chip-menu" data-view-chip-menu aria-label={`${v.name} 操作菜单`}>
-        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-          <circle cx="3"  cy="7" r="1.2" fill="currentColor"/>
-          <circle cx="7"  cy="7" r="1.2" fill="currentColor"/>
-          <circle cx="11" cy="7" r="1.2" fill="currentColor"/>
-        </svg>
+  <div class="vs-tabs" role="tablist" aria-label="视图切换">
+    {views.map((v) => (
+      <button
+        type="button"
+        class:list={['vs-tab', v.id === currentId && 'is-active']}
+        role="tab"
+        aria-selected={v.id === currentId ? 'true' : 'false'}
+        data-view-tab
+        data-view-id={v.id}
+        data-view-name={v.name}
+        data-view-default={v.isDefault ? '1' : '0'}
+        draggable={canEdit ? 'true' : 'false'}
+        title={canEdit ? '长按拖动可调整顺序' : undefined}
+      >
+        <span class="vs-tab-icon" aria-hidden="true">{v.icon}</span>
+        <span class="vs-tab-name">{v.name}</span>
       </button>
-    </div>
-  ))}
-  {canEdit && (
-    <button class="vs-new" data-view-new>
-      <span class="vs-new-plus">+</span>
-      <span>新建视图</span>
-    </button>
-  )}
+    ))}
+    {canEdit && (
+      <button class="vs-new" type="button" data-view-new>
+        <span class="vs-new-plus">+</span>
+        <span>新建视图</span>
+      </button>
+    )}
+  </div>
+
+  <div class="vs-actions">
+    <button type="button" class="vs-action" data-view-desc-toggle>说明</button>
+    {canEdit && (
+      <>
+        <button type="button" class="vs-action" data-view-edit>编辑视图</button>
+        <button type="button" class="vs-kebab" data-view-menu aria-label="视图菜单">⋯</button>
+      </>
+    )}
+  </div>
 </div>
 
 <style>
@@ -81,12 +95,24 @@ const { views, currentId, discipline, canEdit } = Astro.props;
     display: flex;
     align-items: center;
     gap: 8px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     padding: 14px 0 6px;
     border-bottom: 1px solid var(--border-soft);
     margin-bottom: 18px;
     font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
   }
+  .vs-tabs {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 2px 0;
+  }
+  .vs-tabs::-webkit-scrollbar { display: none; }
 
   .vs-label-btn {
     all: unset;
@@ -114,52 +140,40 @@ const { views, currentId, discipline, canEdit } = Astro.props;
     transform: rotate(-90deg);
   }
 
-  .vs-chip {
+  .vs-tab {
+    all: unset;
+    cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 4px 6px 12px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--bg-elev);
+    padding: 8px 10px;
+    border-radius: 10px;
     color: var(--text-2);
     font-size: 13px;
     font-weight: 500;
-    cursor: grab;
-    transition: border-color .12s, transform .12s, background .12s;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background .12s, color .12s, transform .12s;
   }
-  .vs-chip:active { cursor: grabbing; }
-  .vs-chip:hover { background: var(--bg-soft); }
-  .vs-chip.is-active {
-    background: var(--primary);
-    color: var(--primary-fg);
-    border-color: var(--primary);
+  .vs-tab:hover { background: var(--primary-soft); color: var(--text); }
+  .vs-tab.is-active {
+    background: var(--primary-soft);
+    color: var(--text);
+    font-weight: 600;
   }
-  .vs-chip.is-drag-over {
-    border-color: var(--text-2);
-    transform: translateX(4px);
+  /* iPad coarse pointer: keep hit area ≥44px without chunky visuals */
+  @media (pointer: coarse) {
+    .vs-tab { padding: 12px 12px; }
   }
-  .vs-chip.is-dragging { opacity: 0.4; }
+  .vs-tab:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+  .vs-tab.is-drag-over { transform: translateX(4px); }
+  .vs-tab.is-dragging { opacity: 0.4; }
 
-  .vs-chip-icon { font-size: 12px; opacity: 0.85; line-height: 1; }
-  .vs-chip-name { line-height: 1; }
-  .vs-chip-menu {
-    all: unset;
-    box-sizing: border-box;
-    cursor: pointer;
-    width: 22px;
-    height: 22px;
-    border-radius: 999px;
-    margin-left: 2px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: currentColor;
-    opacity: 0.55;
-    transition: opacity .12s;
-  }
-  .vs-chip:hover .vs-chip-menu,
-  .vs-chip.is-active .vs-chip-menu { opacity: 1; }
+  .vs-tab-icon { font-size: 12px; opacity: 0.85; line-height: 1; }
+  .vs-tab-name { line-height: 1; }
 
   .vs-new {
     all: unset;
@@ -178,6 +192,47 @@ const { views, currentId, discipline, canEdit } = Astro.props;
   }
   .vs-new:hover { border-color: var(--text-2); color: var(--text); }
   .vs-new-plus { font-size: 14px; line-height: 1; margin-top: -1px; }
+
+  .vs-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .vs-action {
+    all: unset;
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: 10px;
+    color: var(--text-2);
+    font-size: 12px;
+    font-weight: 500;
+    transition: background .12s, color .12s, border-color .12s;
+    border: 1px solid transparent;
+  }
+  .vs-action:hover { background: var(--bg-soft); color: var(--text); border-color: var(--border); }
+  .vs-action:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+  @media (pointer: coarse) {
+    .vs-action { padding: 12px 12px; }
+  }
+  .vs-kebab{
+    all: unset;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-2);
+    border: 1px solid transparent;
+    transition: background .12s, color .12s, border-color .12s;
+  }
+  .vs-kebab:hover { background: var(--bg-soft); color: var(--text); border-color: var(--border); }
+  .vs-kebab:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+  @media (pointer: coarse) {
+    .vs-kebab { width: 44px; height: 44px; border-radius: 12px; }
+  }
 </style>
 
 <script>
@@ -214,32 +269,64 @@ const { views, currentId, discipline, canEdit } = Astro.props;
       });
     })();
 
-    // chip 点击切换视图（菜单按钮点击除外）
-    root.querySelectorAll('[data-view-chip]').forEach((chip) => {
-      chip.addEventListener('click', (e) => {
-        if (e.target.closest('[data-view-chip-menu]')) return;
-        const id = chip.getAttribute('data-view-id');
+    // tab 点击切换视图
+    root.querySelectorAll('[data-view-tab]').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const id = tab.getAttribute('data-view-id');
         if (id) setUrlView(id);
       });
     });
 
-    // ··· 菜单按钮：触发自定义事件（让页面级 ViewMenu 接管）
-    root.querySelectorAll('[data-view-chip-menu]').forEach((btn) => {
+    // 说明 toggle：只隐藏/显示 ViewDescription，不折叠整个视图区
+    (function setupDescToggle() {
+      const btn = root.querySelector('[data-view-desc-toggle]');
+      const wrap = root.closest('[data-view-block]');
+      if (!btn || !wrap) return;
+      const KEY = 'view-desc-open:' + discipline;
+      let open = false;
+      try { open = localStorage.getItem(KEY) === '1'; } catch (_) {}
+      if (open) wrap.setAttribute('data-desc-open', '1');
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const chip = btn.closest('[data-view-chip]');
-        if (!chip) return;
-        const r = chip.getBoundingClientRect();
+        open = !wrap.hasAttribute('data-desc-open');
+        if (open) wrap.setAttribute('data-desc-open', '1');
+        else wrap.removeAttribute('data-desc-open');
+        try { localStorage.setItem(KEY, open ? '1' : '0'); } catch (_) {}
+      });
+    })();
+
+    // 编辑视图：走 ViewEditor（编辑视图页入口）
+    (function setupEdit() {
+      const editBtn = root.querySelector('[data-view-edit]');
+      if (!editBtn) return;
+      editBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = root.getAttribute('data-current-id');
+        if (!id) return;
+        document.dispatchEvent(new CustomEvent('view:editor', { detail: { viewId: id } }));
+      });
+    })();
+
+    // 视图菜单：只对当前视图（⋯）
+    (function setupMenu() {
+      const menuBtn = root.querySelector('[data-view-menu]');
+      if (!menuBtn) return;
+      menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = root.getAttribute('data-current-id');
+        if (!id) return;
+        const active = root.querySelector(`[data-view-tab][data-view-id="${CSS.escape(id)}"]`);
+        const r = (active || menuBtn).getBoundingClientRect();
         document.dispatchEvent(new CustomEvent('view:menu', {
           detail: {
-            viewId: chip.getAttribute('data-view-id'),
-            viewName: chip.getAttribute('data-view-name'),
-            isDefault: chip.getAttribute('data-view-default') === '1',
+            viewId: id,
+            viewName: active?.getAttribute('data-view-name') || '',
+            isDefault: active?.getAttribute('data-view-default') === '1',
             anchor: { top: r.bottom + 6, left: r.left - 80 },
           },
         }));
       });
-    });
+    })();
 
     // + 新建视图
     const newBtn = root.querySelector('[data-view-new]');
@@ -253,36 +340,36 @@ const { views, currentId, discipline, canEdit } = Astro.props;
 
     // === HTML5 drag-to-reorder（仅 canEdit 时） ===
     let dragId = null;
-    const chips = Array.from(root.querySelectorAll('[data-view-chip]'));
-    chips.forEach((chip) => {
-      chip.addEventListener('dragstart', (e) => {
-        dragId = chip.getAttribute('data-view-id');
-        chip.classList.add('is-dragging');
+    const tabs = Array.from(root.querySelectorAll('[data-view-tab]'));
+    tabs.forEach((tab) => {
+      tab.addEventListener('dragstart', (e) => {
+        dragId = tab.getAttribute('data-view-id');
+        tab.classList.add('is-dragging');
         if (e.dataTransfer) {
           e.dataTransfer.effectAllowed = 'move';
           e.dataTransfer.setData('text/plain', dragId);
         }
       });
-      chip.addEventListener('dragend', () => {
-        chip.classList.remove('is-dragging');
-        chips.forEach((c) => c.classList.remove('is-drag-over'));
+      tab.addEventListener('dragend', () => {
+        tab.classList.remove('is-dragging');
+        tabs.forEach((c) => c.classList.remove('is-drag-over'));
         dragId = null;
       });
-      chip.addEventListener('dragover', (e) => {
+      tab.addEventListener('dragover', (e) => {
         e.preventDefault();
-        if (!dragId || chip.getAttribute('data-view-id') === dragId) return;
-        chips.forEach((c) => c.classList.toggle('is-drag-over', c === chip));
+        if (!dragId || tab.getAttribute('data-view-id') === dragId) return;
+        tabs.forEach((c) => c.classList.toggle('is-drag-over', c === tab));
       });
-      chip.addEventListener('dragleave', () => {
-        chip.classList.remove('is-drag-over');
+      tab.addEventListener('dragleave', () => {
+        tab.classList.remove('is-drag-over');
       });
-      chip.addEventListener('drop', async (e) => {
+      tab.addEventListener('drop', async (e) => {
         e.preventDefault();
-        chip.classList.remove('is-drag-over');
-        const droppedOnId = chip.getAttribute('data-view-id');
+        tab.classList.remove('is-drag-over');
+        const droppedOnId = tab.getAttribute('data-view-id');
         if (!dragId || !droppedOnId || dragId === droppedOnId) return;
         // 计算新顺序
-        const ids = chips.map((c) => c.getAttribute('data-view-id'));
+        const ids = tabs.map((c) => c.getAttribute('data-view-id'));
         const fromIdx = ids.indexOf(dragId);
         const toIdx = ids.indexOf(droppedOnId);
         if (fromIdx < 0 || toIdx < 0) return;
