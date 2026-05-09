@@ -36,6 +36,7 @@ Core content model (4 layers):
 ## Frontend workflow (required for UI changes)
 - For any frontend-visible requirement: **run local dev server + provide an HTML demo** as the default acceptance artifact.
 - See `agent/FRONTEND_WORKFLOW.md`.
+- **Design PRDs** (mirrored for designers): `agent/design/` — re-copy from `v2/docs/*.md` when those files change; see `agent/design/README.md`.
 
 ## HTTP API (agents / scripts)
 - Short checklist for Base URL, auth, `discipline` key, list/create endpoints: `agent/API.md`.
