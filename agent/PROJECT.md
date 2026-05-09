@@ -37,7 +37,13 @@ Core content model (4 layers):
 - For any frontend-visible requirement: **run local dev server + provide an HTML demo** as the default acceptance artifact.
 - See `agent/FRONTEND_WORKFLOW.md`.
 
+## HTTP API (agents / scripts)
+- Short checklist for Base URL, auth, `discipline` key, list/create endpoints: `agent/API.md`.
+- Full reference (deployed mirror): https://study.sususu.org/docs/api-reference.md
+
 ## Operational gotchas (engineering)
+- **`kp` column drift (post-0022)**: the `format` column was removed in favor of **`body_format`**. Any raw SQL still selecting `kp.format` will fail at runtime (e.g. **`GET /api/v1/index/<discipline>`** returning HTTP 500). After schema changes, grep for dropped names before merge.
+- **Discipline home vs `view` table**: the schools grid is primarily driven by **`view.groups_json`**. API-first disciplines may have schools/KPs in D1 but **no `view` rows** yet — the UI used to look “empty” until a fallback or a default view exists; if users report “REST lists show data but home is blank”, check **`view`** and permissions, not only CSS.
 - **D1 bind limit**: large `IN (?,?,...)` can fail around ~100 binds; prefer discipline-scoped queries or chunking.
 - **Local D1 is per worktree**: new worktrees start with an empty local D1 unless migrations/data are applied.
 - **Wrangler D1 import can be flaky**: rerun may succeed; don’t misdiagnose code without checking rerun behavior.

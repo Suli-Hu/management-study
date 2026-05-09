@@ -27,6 +27,7 @@
 - Prefer repo-native checks (e.g. `pnpm -C v2 typecheck`, `pnpm -C v2 test`, `pnpm -C v2 validate` when relevant).
 - When making claims, attach evidence: file paths, code snippets, or command output.
 - For frontend changes, evidence should include the **demo page path/URL** (screenshots are optional).
+- **D1 schema / migration PRs** (rename or `DROP COLUMN` on content tables such as `kp`): **globally search** the repo for the **old column names** (e.g. legacy `format`, `body_zh`) and update every SQL / store path; then **smoke-test** at least `GET /api/v1/index/<discipline>` **with a token** on an environment that has real rows (empty DB can hide bad SQL). A **500 + empty body** on that route often means **SQL error against stale column names**, not “no data”.
 
 ### Learn
 - When a rule is clarified (by user feedback or a post-mortem), record it in the appropriate `agent/*.md` doc.

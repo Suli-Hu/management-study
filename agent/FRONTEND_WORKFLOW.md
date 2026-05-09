@@ -85,3 +85,11 @@ Use these as a checklist for future UI tasks.
 - Prefer calm shapes: tabs/links/ghost actions over heavy pill clusters when density feels uncomfortable.
 - Maintain iPad hit targets without resorting to chunky pills; use spacing, padding, and subtle states instead.
 
+## When the discipline home “looks empty” (not always a UI bug)
+Before spending time on layout/CSS, triage **data + API + RBAC** (see `agent/PROJECT.md` operational notes and `agent/API.md` §9–§10).
+
+- **REST lists** (`/api/kps`, `/api/schools`, …) **200** but the **browser page** shows almost nothing → often **no `view` rows** yet for that discipline (groups drive the grid), or **logged-in user lacks `canRead`** for that path while an API token test used a different scope.
+- **`GET /api/v1/index/<discipline>`** **500** with **empty body** while list endpoints work → treat as **backend/schema mismatch** (e.g. stale `kp` column in SQL), not a frontend regression; engineering should fix the handler and redeploy.
+
+For **migration work** that touches `kp` columns: follow **`agent/PLAYBOOK.md` → Verify** (search old column names + smoke manifest).
+

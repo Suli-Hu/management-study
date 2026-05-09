@@ -131,3 +131,14 @@ curl -sS -X POST "$BASE/api/kps?discipline=$DISCIPLINE_KEY" \
 - 用中文学科名当 `discipline=` → **400/403**。先 `/api/me` 或问用户要 **key**。
 - `tags` 在写入侧多为 **标签库 key**（如 `t_xxx`），不要随意造自由文本；先 `GET /api/metadata` 看 `tags[]`。
 - Theme 创建走 `POST /api/new/theme` + `{ discipline, json }`，不要假设与 `POST /api/schools` 同形。
+
+## 9. 排查：`GET /api/v1/index/<key>` 500 且 body 为空
+
+- **含义**：多为服务端 **SQL/运行时错误**（例如查询仍引用已删除列 `kp.format`，应使用 `body_format`），**不是**「学科没有数据」。
+- **对比**：若 `GET /api/kps?discipline=...` 等为 200，仅 manifest 500，优先让工程侧查 **`v2/src/pages/api/v1/index/[discipline].ts`** 与 **最新 migrations** 是否一致。
+- **记录现场**：把 **UTC 时间**、**路径**、**discipline key** 发给工程侧查 Workers 日志。
+
+## 10. 「列表有数据，网页学科首页像空的」
+
+- **可能 1**：该学科 **`view` 表尚无记录**（纯 API 写入常见）；首页学派区依赖视图分组。工程侧可有「无视图时列出全部学派」的兜底；内容侧也可补 **默认视图**。
+- **可能 2**：当前登录用户对 `/<discipline>/` **无读权限**（会跳首页），与 API token scope / `tenant_member` 不一致时看起来像「没数据」。
