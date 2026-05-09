@@ -28,6 +28,37 @@
 - Mindmaps/lecture notes must not be presented as “textbook original text”.
 - Prefer: real textbooks (author/year/title) + past exams. Treat mindmaps as structure hints only.
 
+## Multilingual content rules (KP titles & bodies)
+**Goal**: No “Chinese + Japanese + English soup” inside a single language field. Align with existing disciplines (e.g. keiei / marketing): **split by JSON keys** — `title.zh` / `body.zh` / `evaluations.zh` vs `title.ja` / `body.ja` / `evaluations.ja`.
+
+### Per-field language purity
+- **`*.zh`**: Modern **Chinese only** (full sentences, headings, bullets). Do not embed Japanese headings, katakana blocks, or standalone English sentences as definitions.
+- **`*.ja`**: **Japanese only** (kanji + kana). Do not paste Simplified-Chinese phrasing or mixed zh-ja explanatory paragraphs.
+
+### English only as gloss (inside parentheses)
+- **First mention** of a proper noun / framework: **中文（English）**, e.g. **市场细分（Market Segmentation）**、**市场风险（Market Risk）**. Use **full-width parentheses** `（…）` in Chinese text.
+- **General terms**: Prefer established **Chinese translations** in the field; if an English acronym is standard, still attach after Chinese once: **信用风险（Credit Risk）**.
+- **Do not** use **bare English** as a section or bullet **title** in `*.zh` — write a Chinese title and put English in parentheses if needed.
+
+### Citations & proper names (pragmatic exceptions)
+- Journal / book / organization names may stay in Latin or original form (quotes or `<em>…</em>`); surrounding sentences stay in the **current** language field (e.g. zh narrative + English journal title is OK).
+- Laws / supervisory materials: use official names in that locale’s language; material written in `body.ja` stays Japanese throughout.
+
+### Structure
+- **Headings and list item titles** must match the field language: zh sections use Chinese titles; ja sections use Japanese titles.
+- **Do not** stack “one line Chinese + one line Japanese” inside the same `*.zh` string — put Japanese in `*.ja` and rely on separate fields / UI.
+
+### Terminology quality (not machine-translation slop)
+- For **domain terms**, **verify** the conventional expression in that language (textbook, authoritative glossary, regulator/association terminology in that locale). **Do not** rely on raw machine translation for technical labels, risk types, or regulatory phrases — wrong calques read unprofessional and confuse learners.
+
+### Scope
+- **New uploads** (e.g. risk_management and onward) **must** follow this section. **Legacy** content in other disciplines may be cleaned up in separate maintenance passes; do not block new work on full backfill.
+
+### 30-second self-check before submit
+- Read `body.zh`: any standalone **ja** headings or big **katakana** chunks? Any **English-only** bullet titles? → Fix to Chinese + optional `（English）`.
+- Read `body.ja`: any **Chinese idioms / mainland phrasing**? → Rewrite in natural Japanese.
+- First mention of key terms: **localized name + `（English）`** where useful; avoid random language switching mid-paragraph.
+
 ## API/data notes (safety)
 - **HTTP 调用清单（Base URL、鉴权、`discipline` key、GET 列表/POST 创建、curl）**：必读 `agent/API.md`；完整字段表见 https://study.sususu.org/docs/api-reference.md
 - Treat tags as governed keys (not free text) where enforced by the system.
