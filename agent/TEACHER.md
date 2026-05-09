@@ -29,6 +29,7 @@
 - Prefer: real textbooks (author/year/title) + past exams. Treat mindmaps as structure hints only.
 
 ## API/data notes (safety)
+- **HTTP 调用清单（Base URL、鉴权、`discipline` key、GET 列表/POST 创建、curl）**：必读 `agent/API.md`；完整字段表见 https://study.sususu.org/docs/api-reference.md
 - Treat tags as governed keys (not free text) where enforced by the system.
 - Prefer D1-first / API-first flows for content changes; avoid reviving v1-era data editing paths.
 
