@@ -75,6 +75,7 @@ const schoolsResult = await db
       (SELECT COUNT(*) FROM kp_school WHERE school_key = school.key) as kp_count
     FROM school
     WHERE discipline = ?
+    ORDER BY key ASC
   `)
   .bind(discipline)
   .all<{
@@ -98,6 +99,8 @@ const schools = (schoolsResult.results ?? []).map((s) => {
 });
 const schoolByKey = new Map(schools.map((s) => [s.key, s]));
 const totalSchools = schools.length;
+/** API-first 新学科可能尚未写入 view 表；无视图时首页仍展示学派列表 */
+const hasNoViews = allViews.length === 0;
 
 // 解析当前视图的 groups（manual kind only）
 type Resolved = { id: string; title: string; flow: string; schools: typeof schools };
@@ -221,6 +224,30 @@ const showJustCreatedFlash = Boolean(justCreatedSchool && justCreatedThemeTitle)
     {currentView && resolvedGroups.length === 0 && (
       <div class="empty-groups">
         当前视图暂无分组。{canEdit ? '点 chip 上 ··· 选择「编辑视图」开始建组。' : ''}
+      </div>
+    )}
+
+    {hasNoViews && schools.length > 0 && (
+      <div class="groups-stack">
+        <GroupCardCluster
+          title="学派"
+          flow=""
+          count={schools.length}
+          groupId="_fallback"
+          editable={false}
+        >
+          {schools.map((s) => (
+            <SchoolCard
+              href={`/${discipline}/${s.key}`}
+              schoolKey={s.key}
+              cn={s.cn}
+              en={s.en}
+              meta={s.meta}
+              count={s.count}
+              accentHex={s.accentHex}
+            />
+          ))}
+        </GroupCardCluster>
       </div>
     )}
   </main>

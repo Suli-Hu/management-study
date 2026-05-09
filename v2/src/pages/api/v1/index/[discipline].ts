@@ -8,7 +8,7 @@
  *
  * 认证：Bearer token 或 cookie，且 canRead(discipline) = true。
  *   - super-admin（ADMIN_EMAILS） → 直接通过
- *   - 普通 user → 必须 user_permission 表里有 discipline 的 admin/guest 角色
+ *   - 普通 user → tenant_member 决定 canRead / canEdit
  *   - token scope 收窄已在 middleware.canRead 内置
  *
  * 返：{ ok, discipline, themes[], schools[], scholars[], kps[], counts }
@@ -111,7 +111,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
   // 4) kps — 按 id 升序，附 schools / scholars CSV 便于 agent 一眼看清归属
   const kpRes = await env.DB
     .prepare(`
-      SELECT k.id, k.title_zh, k.title_ja, k.year, k.format,
+      SELECT k.id, k.title_zh, k.title_ja, k.year, k.body_format AS format,
         (SELECT GROUP_CONCAT(school_key,  ',') FROM kp_school  WHERE kp_id = k.id ORDER BY position) AS schools_csv,
         (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id AND scholar_discipline = k.discipline ORDER BY position) AS scholars_csv
       FROM kp k
