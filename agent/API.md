@@ -45,6 +45,7 @@ API 使用的是 **学科 key（英文短码 slug）**，**不是** 界面上的
 | 层级 | 说明 | Endpoint |
 |------|------|----------|
 | 学派组（Theme） | 学派分组 | `GET /api/themes?discipline=<key>` |
+| 标签库（Tag） | discipline.tags[]（用于着色/分类） | `GET /api/tags?discipline=<key>` |
 | 学派（School） | 含 `q`、`theme` | `GET /api/schools?discipline=<key>&q=...` |
 | 学者（Scholar） | 含 `q`、`school` | `GET /api/scholars?discipline=<key>&q=...` |
 | 知识点（KP） | 含 `q`、`school`、`scholar` | `GET /api/kps?discipline=<key>&q=...` |
@@ -61,6 +62,7 @@ API 使用的是 **学科 key（英文短码 slug）**，**不是** 界面上的
 | KP | `POST /api/kps?discipline=<key>` | Body 勿手写 `tenant_id` / `discipline`（服务端注入） |
 | 学派 | `POST /api/schools?discipline=<key>` | `themeKey` 须属于该学科 |
 | 学者 | `POST /api/scholars?discipline=<key>` | `schools` / `kpsOrder` 须为同学科 key |
+| 标签（Tag） | `POST /api/tags?discipline=<key>` | **冷启动可先创建 tag**；删除/更新见 `PATCH/DELETE /api/tags/:key` |
 | 学派组（Theme） | `POST /api/new/theme` | **形状特殊**，见下节 |
 
 ### 5.1 学派组创建（与 REST 不同）
@@ -78,6 +80,21 @@ API 使用的是 **学科 key（英文短码 slug）**，**不是** 界面上的
 ```
 
 `key` 可省略，服务端会生成；显式传 `key` 时不要与已有重复。
+
+### 5.2 学派组更新（PATCH）
+
+`PATCH /api/themes/<themeKey>?discipline=<key>`
+
+```json
+{
+  "json": {
+    "title": { "zh": "可选更新" },
+    "desc":  { "zh": "可选更新" }
+  }
+}
+```
+
+语义：对 `title/desc` **按语言 shallow merge**（不会覆盖未提供的语种）。
 
 ## 6. 可直接复制的 curl 样例
 

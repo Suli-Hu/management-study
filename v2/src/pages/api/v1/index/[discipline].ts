@@ -18,6 +18,11 @@
 
 import type { APIRoute } from 'astro';
 
+function reqId(): string {
+  // Short, log-friendly id for correlating Workers logs with client reports.
+  return crypto.randomUUID().slice(0, 8);
+}
+
 interface ThemeEntry {
   key: string;
   title?: { zh?: string; ja?: string; en?: string };
@@ -61,6 +66,7 @@ function json<T>(status: number, body: T): Response {
 }
 
 export const GET: APIRoute = async ({ params, locals }) => {
+  const requestId = reqId();
   const discipline = params.discipline;
   if (!discipline) return json(400, { ok: false, reason: 'bad_request', detail: 'missing discipline' });
   if (!locals.user) return json(403, { ok: false, reason: 'not_authenticated' });
@@ -69,84 +75,89 @@ export const GET: APIRoute = async ({ params, locals }) => {
   const env = locals.runtime.env;
   if (!env?.DB) return json(503, { ok: false, reason: 'config_missing', detail: 'D1 binding missing' });
 
-  // 1) discipline 行（拿 themes_json + 标题）
-  const discRow = await env.DB
-    .prepare('SELECT key, title_zh, title_ja, title_en, themes_json FROM discipline WHERE key = ?')
-    .bind(discipline)
-    .first<{ key: string; title_zh: string; title_ja: string | null; title_en: string | null; themes_json: string }>();
-  if (!discRow) return json(404, { ok: false, reason: 'discipline_not_found', detail: discipline });
-
-  let themes: ThemeEntry[] = [];
   try {
-    const parsed = JSON.parse(discRow.themes_json) as unknown;
-    if (Array.isArray(parsed)) themes = parsed as ThemeEntry[];
-  } catch { /* 容错：themes_json 损坏也返空，不阻断 */ }
+    // 1) discipline 行（拿 themes_json + 标题）
+    const discRow = await env.DB
+      .prepare('SELECT key, title_zh, title_ja, title_en, themes_json FROM discipline WHERE key = ?')
+      .bind(discipline)
+      .first<{ key: string; title_zh: string; title_ja: string | null; title_en: string | null; themes_json: string }>();
+    if (!discRow) return json(404, { ok: false, reason: 'discipline_not_found', detail: discipline });
 
-  // 2) schools — 按 key 升序，附 kp_count
-  const schoolRes = await env.DB
-    .prepare(`
-      SELECT s.key, s.title_zh, s.title_en, s.title_ja, s.era, s.theme_key,
-        (SELECT COUNT(*) FROM kp_school WHERE school_key = s.key) AS kp_count
-      FROM school s
-      WHERE s.discipline = ?
-      ORDER BY s.key
-    `)
-    .bind(discipline)
-    .all<SchoolRow>();
-  const schools = schoolRes.results ?? [];
+    let themes: ThemeEntry[] = [];
+    try {
+      const parsed = JSON.parse(discRow.themes_json) as unknown;
+      if (Array.isArray(parsed)) themes = parsed as ThemeEntry[];
+    } catch { /* 容错：themes_json 损坏也返空，不阻断 */ }
 
-  // 3) scholars — 按 key 升序，附 kp_count
-  const scholarRes = await env.DB
-    .prepare(`
-      SELECT s.key, s.name_zh, s.name_en, s.name_ja,
-        (SELECT COUNT(*) FROM kp_scholar WHERE scholar_discipline = s.discipline AND scholar_key = s.key) AS kp_count
-      FROM scholar s
-      WHERE s.discipline = ?
-      ORDER BY s.key
-    `)
-    .bind(discipline)
-    .all<ScholarRow>();
-  const scholars = scholarRes.results ?? [];
+    // 2) schools — 按 key 升序，附 kp_count
+    const schoolRes = await env.DB
+      .prepare(`
+        SELECT s.key, s.title_zh, s.title_en, s.title_ja, s.era, s.theme_key,
+          (SELECT COUNT(*) FROM kp_school WHERE school_key = s.key) AS kp_count
+        FROM school s
+        WHERE s.discipline = ?
+        ORDER BY s.key
+      `)
+      .bind(discipline)
+      .all<SchoolRow>();
+    const schools = schoolRes.results ?? [];
 
-  // 4) kps — 按 id 升序，附 schools / scholars CSV 便于 agent 一眼看清归属
-  const kpRes = await env.DB
-    .prepare(`
-      SELECT k.id, k.title_zh, k.title_ja, k.year, k.body_format AS format,
-        (SELECT GROUP_CONCAT(school_key,  ',') FROM kp_school  WHERE kp_id = k.id ORDER BY position) AS schools_csv,
-        (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id AND scholar_discipline = k.discipline ORDER BY position) AS scholars_csv
-      FROM kp k
-      WHERE k.discipline = ?
-      ORDER BY k.id
-    `)
-    .bind(discipline)
-    .all<KpRow>();
-  const kps = (kpRes.results ?? []).map((k) => ({
-    id: k.id,
-    title_zh: k.title_zh,
-    title_ja: k.title_ja,
-    year: k.year,
-    format: k.format,
-    schools: (k.schools_csv ?? '').split(',').filter(Boolean),
-    scholars: (k.scholars_csv ?? '').split(',').filter(Boolean),
-  }));
+    // 3) scholars — 按 key 升序，附 kp_count
+    const scholarRes = await env.DB
+      .prepare(`
+        SELECT s.key, s.name_zh, s.name_en, s.name_ja,
+          (SELECT COUNT(*) FROM kp_scholar WHERE scholar_discipline = s.discipline AND scholar_key = s.key) AS kp_count
+        FROM scholar s
+        WHERE s.discipline = ?
+        ORDER BY s.key
+      `)
+      .bind(discipline)
+      .all<ScholarRow>();
+    const scholars = scholarRes.results ?? [];
 
-  return json(200, {
-    ok: true,
-    discipline: {
-      key: discRow.key,
-      title_zh: discRow.title_zh,
-      title_ja: discRow.title_ja,
-      title_en: discRow.title_en,
-    },
-    counts: {
-      themes: themes.length,
-      schools: schools.length,
-      scholars: scholars.length,
-      kps: kps.length,
-    },
-    themes,
-    schools,
-    scholars,
-    kps,
-  });
+    // 4) kps — 按 id 升序，附 schools / scholars CSV 便于 agent 一眼看清归属
+    const kpRes = await env.DB
+      .prepare(`
+        SELECT k.id, k.title_zh, k.title_ja, k.year, k.body_format AS format,
+          (SELECT GROUP_CONCAT(school_key,  ',') FROM kp_school  WHERE kp_id = k.id ORDER BY position) AS schools_csv,
+          (SELECT GROUP_CONCAT(scholar_key, ',') FROM kp_scholar WHERE kp_id = k.id AND scholar_discipline = k.discipline ORDER BY position) AS scholars_csv
+        FROM kp k
+        WHERE k.discipline = ?
+        ORDER BY k.id
+      `)
+      .bind(discipline)
+      .all<KpRow>();
+    const kps = (kpRes.results ?? []).map((k) => ({
+      id: k.id,
+      title_zh: k.title_zh,
+      title_ja: k.title_ja,
+      year: k.year,
+      format: k.format,
+      schools: (k.schools_csv ?? '').split(',').filter(Boolean),
+      scholars: (k.scholars_csv ?? '').split(',').filter(Boolean),
+    }));
+
+    return json(200, {
+      ok: true,
+      discipline: {
+        key: discRow.key,
+        title_zh: discRow.title_zh,
+        title_ja: discRow.title_ja,
+        title_en: discRow.title_en,
+      },
+      counts: {
+        themes: themes.length,
+        schools: schools.length,
+        scholars: scholars.length,
+        kps: kps.length,
+      },
+      themes,
+      schools,
+      scholars,
+      kps,
+    });
+  } catch (err) {
+    console.error('[api/v1/index] internal_error', { requestId, discipline, err });
+    return json(500, { ok: false, reason: 'internal_error', requestId });
+  }
 };

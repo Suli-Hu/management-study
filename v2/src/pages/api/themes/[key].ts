@@ -1,9 +1,10 @@
 /**
  * GET    /api/themes/:key?discipline=<key>
  * DELETE /api/themes/:key?discipline=<key>
+ * PATCH  /api/themes/:key?discipline=<key>
  *
  * v0.10.0 (Issue #2 of v2 grouping refactor)：theme CRUD 补全。
- * PATCH 走 /api/edit/theme/[discipline]/[key] (v0.4.29 已有，git+D1 双写遗留)。
+ * v0.12.1+: PATCH 也提供在 /api/themes/:key，给 API-first / agent 使用（D1-only）。
  * POST 走 /api/new/theme (v0.4.29 已有)。
  *
  * 这里 GET / DELETE 是 D1-only (v0.8.27 后 D1 是真值源)。
@@ -14,6 +15,7 @@
 import type { APIRoute } from 'astro';
 import { jsonRes, type EditError } from '~/lib/edit-helpers';
 import { ThemeGroup } from '~/schemas/discipline';
+import { z } from 'zod';
 
 async function loadThemes(
   db: D1Database,
@@ -100,4 +102,63 @@ export const DELETE: APIRoute = async ({ params, url, locals }) => {
     .run();
 
   return jsonRes(200, { ok: true, deleted: key });
+};
+
+const ThemePatchBody = z.object({
+  json: z.object({
+    title: z.object({
+      zh: z.string().trim().min(1).optional(),
+      ja: z.string().trim().min(1).optional(),
+      en: z.string().trim().min(1).optional(),
+    }).optional(),
+    desc: z.object({
+      zh: z.string().trim().min(1).optional(),
+      ja: z.string().trim().min(1).optional(),
+    }).optional(),
+    // tags / schools are intentionally not patchable via this endpoint (avoid rewire accidents).
+  }),
+});
+
+export const PATCH: APIRoute = async ({ request, params, url, locals }) => {
+  const env = locals.runtime.env;
+  if (!env.DB) return jsonRes<EditError>(503, { ok: false, reason: 'config_missing', detail: 'D1 not bound' });
+  const key = params.key;
+  const discipline = url.searchParams.get('discipline');
+  if (!key || !discipline) return jsonRes<EditError>(400, { ok: false, reason: 'bad_request', detail: 'key + discipline 必填' });
+  if (!locals.user) return jsonRes<EditError>(401, { ok: false, reason: 'not_admin' });
+  if (!locals.canEdit(discipline)) return jsonRes<EditError>(403, { ok: false, reason: 'not_admin' });
+
+  let raw: unknown;
+  try { raw = await request.json(); }
+  catch { return jsonRes<EditError>(400, { ok: false, reason: 'bad_request', detail: 'invalid json' }); }
+  const parsed = ThemePatchBody.safeParse(raw);
+  if (!parsed.success) return jsonRes(422, { ok: false, reason: 'schema_invalid' as const, detail: parsed.error.issues });
+
+  const themes = await loadThemes(env.DB, discipline);
+  if (themes === null) return jsonRes<EditError>(404, { ok: false, reason: 'not_found', detail: `discipline ${discipline} 不存在` });
+  const idx = themes.findIndex((t) => t.key === key);
+  if (idx < 0) return jsonRes<EditError>(404, { ok: false, reason: 'not_found', detail: `theme ${key} 不存在` });
+
+  const cur = themes[idx];
+  const incoming = parsed.data.json;
+
+  const merged = {
+    ...cur,
+    key,
+    title: incoming.title ? { ...(cur.title ?? {}), ...incoming.title } : cur.title,
+    desc: incoming.desc ? { ...(cur.desc ?? {}), ...incoming.desc } : cur.desc,
+    schools: cur.schools, // never patch via this endpoint
+    tags: cur.tags,
+  };
+
+  const validated = ThemeGroup.safeParse(merged);
+  if (!validated.success) return jsonRes(422, { ok: false, reason: 'schema_invalid' as const, detail: validated.error.issues });
+
+  themes[idx] = validated.data;
+  await env.DB
+    .prepare('UPDATE discipline SET themes_json = ?, updated_at = ? WHERE key = ?')
+    .bind(JSON.stringify(themes), new Date().toISOString(), discipline)
+    .run();
+
+  return jsonRes(200, { ok: true, updated: key, theme: { key, title: validated.data.title, desc: validated.data.desc, tags: validated.data.tags } });
 };

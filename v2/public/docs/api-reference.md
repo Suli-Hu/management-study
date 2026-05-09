@@ -1104,6 +1104,22 @@ GitHub repo 配的 webhook，所有 push 到 main 自动触发对应 sync / dele
 - `POST /api/new/theme`：直接写 D1 `discipline.themes_json`，**不再创建 GitHub commit**，无 `commit_sha` / `deploy_eta_seconds`。
 - `GET/PUT/DELETE /api/edit/theme/<discipline>/<key>`：全部 D1-only。
   - `DELETE` 的 `has_dependents` 以 **D1 的 `school.theme_key`** 为准（避免 themes_json stale）。
+- **API-first** 更新 theme（推荐给 agent / 脚本）：`PATCH /api/themes/<key>?discipline=<discipline>`，请求体：
+
+```json
+{ "json": { "title": { "zh": "..." }, "desc": { "zh": "..." } } }
+```
+
+语义：对 `title/desc` 按语言 shallow merge（未提供的语种不会被覆盖）。
+
+#### `GET/POST/PATCH/DELETE /api/tags`（标签库 · API-first）
+
+标签库（`discipline.tags_json`）用于 School/Scholar/KP 的 `tags` 引用与着色。
+
+- `GET /api/tags?discipline=<key>` — list
+- `POST /api/tags?discipline=<key>` — create one tag（server 生成 `t_xxxxxxxx` key）
+- `PATCH /api/tags/<tagKey>?discipline=<key>` — 更新 label/color
+- `DELETE /api/tags/<tagKey>?discipline=<key>` — 仅当无引用时允许删除（否则 409）
 
 #### `PUT /api/edit/discipline/<discipline>/tags`
 

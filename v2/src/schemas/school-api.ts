@@ -12,8 +12,9 @@ export const SchoolCreateInput = z.object({
   era: z.string().trim().default(''),
   summary: BilingualBody,
   themeKey: z.string().trim().min(1, 'themeKey 必填'),
-  // v0.9.0 Stage C-1: 强制 1 个 tag (Q2=① 单 tag 单源色); assertTagsInLibrary 兜底库内校验
-  tags: z.array(z.string()).length(1, '必须 1 个 tag (从 discipline.tags 库选)'),
+  // v0.12.1: 冷启动允许 tags 为空（discipline.tags 库可能尚未初始化）。
+  // 若提供 tag，仍限制最多 1 个（单源色）。
+  tags: z.array(z.string()).max(1, '最多 1 个 tag (从 discipline.tags 库选)').default([]),
   concepts: z.array(KpId).default([]),
 }).strict();
 

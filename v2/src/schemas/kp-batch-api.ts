@@ -28,8 +28,8 @@ export const KpBatchPatchInput = z
     year: z.string().trim().optional(),
     schools: z.array(SchoolKey).min(1, 'schools 至少 1 个').optional(),
     scholars: z.array(ScholarKey).optional(),
-    // v0.9.0 Stage C-1: 显式传 tags 时必须 1 个；缺省 = 保留原值；不允许 tags=[] 清空
-    tags: z.array(z.string()).length(1, '必须 1 个 tag (从 discipline.tags 库选)').optional(),
+    // v0.12.1: 显式传 tags 时允许 [] 清空；仍限制最多 1 个（单源色）
+    tags: z.array(z.string()).max(1, '最多 1 个 tag (从 discipline.tags 库选)').optional(),
   })
   .strict()
   .refine((v) => Object.keys(v).length > 0, 'patch 至少需要一个字段');

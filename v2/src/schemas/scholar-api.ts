@@ -18,8 +18,9 @@ export const ScholarCreateInput = z.object({
   flag: z.string().trim().default(''),
   origin: z.string().trim().default(''),
   field: z.string().trim().default(''),
-  // v0.9.0 Stage C-1: 强制 1 个 tag (Q2=① 单 tag 单源色); assertTagsInLibrary 兜底库内校验
-  tags: z.array(z.string()).length(1, '必须 1 个 tag (从 discipline.tags 库选)'),
+  // v0.12.1: 冷启动允许 tags 为空（discipline.tags 库可能尚未初始化）。
+  // 若提供 tag，仍限制最多 1 个（单源色）。
+  tags: z.array(z.string()).max(1, '最多 1 个 tag (从 discipline.tags 库选)').default([]),
   nobel: z.object({
     year: z.string(),
     detail: z.string(),
