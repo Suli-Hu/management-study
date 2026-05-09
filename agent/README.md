@@ -16,7 +16,8 @@
 > 1) `agent/PLAYBOOK.md` — how to work (Plan → Execute → Verify → Learn)
 > 2) `agent/PRODUCT_HANDBOOK.md` — **product positioning + feature map** (read before UI/spec work — designers & PM)
 > 3) `agent/PROJECT.md` — engineering facts + product model (what/where/how)
-> 4) `agent/design/README.md` — **design PRD index** + link to live design-system page
+> 4) `agent/design/README.md` — **design PRD index** + link to live design-system page  
+>    - Filling the design-system foundation brief: `agent/design/DESIGN-DOC-BRIEF-FOR-PRODUCT.md`
 > 5) `agent/API.md` — HTTP API checklist (Base URL, auth, discipline **key**, list/create endpoints, curl) — **read before any programmatic writes**
 > 6) `agent/TEACHER.md` — teacher-agent rules + learning workflow + pedagogy notes
 > 7) `agent/FRONTEND_WORKFLOW.md` — local server + HTML demo workflow for UI changes

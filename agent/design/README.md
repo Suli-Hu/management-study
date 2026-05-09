@@ -14,6 +14,8 @@
 
 | File | Contents |
 |------|----------|
+| `DESIGN-DOC-BRIEF-FOR-PRODUCT.md` | **设计系统文档调研 brief**（产品填写清单）；研发已部分代填 token / chip 八问 / 语言规则。 |
+| `tokens-snapshot.css` | 从 `v2/src/styles/tokens.css` 复制的颜色 token 快照，供 brief §2 引用。 |
 | `STAGE-6-DESIGN-SYSTEM-SWAP-PRD.md` | Design system swap, tiers (L1 theme / L2 semantic / L3 tags), rollout notes. |
 | `KP-EDITOR-V0.8-PRD.md` | KP editor (structured body, formats, evaluation fields) — **UI-heavy**. |
 | `SCHOOL-SCHOLAR-THEME-EDITOR-V0.8-PRD.md` | School / scholar / theme editors, admin flows. |
