@@ -7,7 +7,8 @@ Core content model (4 layers):
 - **Theme (学派组)** → **School (学派)** → **Scholar (学者)** → **KP (知识点)**
 
 ## Source of truth
-- **Code**: GitHub repo (this repository)
+- **Code**: GitHub — **private** canonical repo (full tree: `v2/`, `agent/`, etc.)
+- **Agent cold start (public)**: **separate** GitHub repo that mirrors **only** `agent/` for model onboarding (see `agent/README.md` → “Two-repo layout”). Product code stays private.
 - **Data**: **D1 is the source of truth** (content is managed via API-first flows)
 - `archive/v1/` is **legacy** and should be treated as read-only.
 
