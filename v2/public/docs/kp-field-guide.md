@@ -206,6 +206,13 @@
 
 ## 2. Body 内的字段语义
 
+### 2.0 内联强调（`**` 与 HTML）
+
+- **加粗**：使用成对 **`**像这样**`**。阅读页在**渲染时**转为 `<strong>`；**不要**写 `<strong>…</strong>` — 写入 API 时仍会被静默剥除（[migration-v0.8 §11](migration-v0.8.md#11-禁止的-inline-html-strong)）。
+- **斜体 / 换行 / 代码**：继续用 `<em>`、`\n` 或字面 `<br>`、`<code>`。
+- **范围**：narrative / flat-list / accordion 组内条目 / compare **背面** `detail` / quad 单元格 / `evaluations` 六格等走「trusted prose」的字段均支持；compare **正面**列标题与摘要仍为纯转义文本，**不支持** `**`。
+- **少用**：对比句、与相邻 KP 的区分处点一两处即可，避免星号满屏。
+
 ### 2.1 `lead` — 导语（除 narrative 外所有 format 都有）
 
 **定义**：在所有条目 / 分组 / 列 / 象限**之前**的**总起一句**。回答"接下来这堆东西在说什么 / 为什么放一起"。
@@ -224,7 +231,7 @@
 - 如果 KP title + 后续条目已经自解释，**lead 可以为空字符串**
 - 不要硬凑
 
-> ⚠️ **不要写 `<strong>foo</strong>`** — server 自动 strip（v0.8.7 起，[详见](migration-v0.8.md#11-禁止的-inline-html-strong)）。想强调用 `<em>` 或不强调（首选不强调）。
+> ⚠️ **不要写 `<strong>`** — server 自动 strip。加粗用 **`**…**`**（见 §2.0）；斜体用 `<em>` 或不强调。
 
 ---
 
@@ -245,7 +252,7 @@ desc: "各属性按重要度加权，总分最高者被选择。某一属性弱�
 - ❌ desc 只有 5 个字（"加权选择"）— 补充足够信息
 - ❌ desc 占半页 — 拆成 accordion 里的 items
 
-> ⚠️ **不要在 name / desc 里加 `<strong>`** — server 自动 strip（v0.8.7 起）。
+> ⚠️ **不要在 name / desc 里写 `<strong>`** — 会被 strip。加粗用 **`**…**`**（§2.0）。
 
 ---
 
@@ -267,7 +274,7 @@ desc: "各属性按重要度加权，总分最高者被选择。某一属性弱�
 
 **groups[].items**：跟 flat-list 的 items 同语义。组内通常 2-5 条。
 
-> ⚠️ **不要在 title / items[].name / items[].desc 里加 `<strong>`** — server 自动 strip（v0.8.7 起）。
+> ⚠️ **不要在 title / items[].name / items[].desc 里写 `<strong>`** — 会被 strip。加粗用 **`**…**`**（§2.0）。
 
 ---
 
@@ -398,7 +405,7 @@ title (必填) → desc (强烈建议) → keyword (有则填) → type (有则�
 
 **6 个字段全填的列很重，反而模糊**。**按对象需要选 3-5 个填**就好。
 
-> ⚠️ **6 列字段任一里都不要加 `<strong>`** — server 自动 strip（v0.8.7 起）。
+> ⚠️ **正面 6 列不要写 `<strong>`** — 会被 strip；正面为纯文本。**背面 `detail`** 可加粗用 **`**…**`**（§2.0）。
 
 ---
 
@@ -550,7 +557,7 @@ cells[].detail (主体内容)
 cells[].emoji (锦上添花)
 ```
 
-> ⚠️ **cells[].name / sub / detail 里不要加 `<strong>`** — server 自动 strip（v0.8.7 起）。
+> ⚠️ **不要写 `<strong>`** — 会被 strip。`cells[].detail` / `detailBack` 加粗用 **`**…**`**（§2.0）；`name` / `sub` 建议短标签、少用粗体。
 
 ---
 
@@ -558,9 +565,11 @@ cells[].emoji (锦上添花)
 
 > **重要**：实测中 AI agent 经常把这 6 个字段写成"如何用这个 KP 答题"，导致评价空洞。**写之前必读这一节**。
 
-每个 KP 的 `evalContent.zh` 是 dict，含 6 个 key。**所有字段都可选**（不写就不显示），但写就要符合语义。
+> **存放位置（API / agent）**：六格内容必须写在文档根下的 **`evaluations`**（如 `evaluations.zh` / `evaluations.ja`），键名为 `meaning`（义）、`limit`（限）、`example`（例）、`response`（应）、`application`（用）、`analogy`（喻）。**不要**把意义、限界或整段评价写进 `body` — 前端有独立评价区，混写会导致重复展示与契约错误。
 
-> ⚠️ **6 字段任一里都不要加 `<strong>`** — server 自动 strip（v0.8.7 起，[详见](migration-v0.8.md#11-禁止的-inline-html-strong)）。
+每个语言下的评价对象是 dict，含上述 6 个 key。**所有字段都可选**（不写就不显示），但写就要符合语义。
+
+> ⚠️ **不要写 `<strong>`** — 会被 strip。加粗用 **`**…**`**（§2.0，[migration §11](migration-v0.8.md#11-禁止的-inline-html-strong)）。
 
 ### 3.1 `义` (meaning) — 意义
 
@@ -802,7 +811,7 @@ KP 没有 themeKey 字段；该字段属于 School。
 | schools / scholars 写中文名而非 key | 调 `/api/metadata` 拿 key |
 | year 写"1979 年" | 改 `"1979"` |
 | 强行填空 evaluations 字段凑数 | 留空 |
-| 在 desc / prose / lead 里加 `<strong>foo</strong>` | server 自动 strip（v0.8.7 起），写了也会被剥；想强调用 `<em>` 或不强调，详见 [migration-v0.8.md §11](migration-v0.8.md#11-禁止的-inline-html-strong) |
+| 在正文里写 `<strong>` | 写入仍会被 strip；加粗请用 **`**…**`**（§2.0）；斜体用 `<em>` |
 
 ---
 

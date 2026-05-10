@@ -31,6 +31,15 @@
 ## Multilingual content rules (KP titles & bodies)
 **Goal**: No “Chinese + Japanese + English soup” inside a single language field. Align with existing disciplines (e.g. keiei / marketing): **split by JSON keys** — `title.zh` / `body.zh` / `evaluations.zh` vs `title.ja` / `body.ja` / `evaluations.ja`.
 
+### Inline emphasis (`body` / `evaluations`)
+- **Bold**: use Markdown-style **`**phrase**`** — the reader UI turns pairs into `<strong>` at **render time only**.
+- **Do not** use `<strong>...</strong>` in JSON — the API **strips** it on write (see `migration-v0.8.md` §11). Italic may use `<em>...</em>`; do not overuse bold.
+
+### Evaluations vs `body`（API / 写入契约）
+- **评价区六格**（义·意义、限·局限、例、应、用、喻）在 UI 与 API 中对应**独立字段** `evaluations`（双语：`evaluations.zh` / `evaluations.ja`；键名与 schema 一致：`meaning`, `limit`, `example`, `response`, `application`, `analogy`）。
+- **`body.zh` / `body.ja` 只承载 format 规定的正文**（叙事 / 列表 / accordion 等）。**禁止**把「意义」「限界」或整段「评价」再写进 body（避免重复渲染、语言切换错位、违背字段契约）。
+- 六格**写什么、不写什么**：必读站内文档 [KP 字段全解析 · §3 Evaluations](https://study.sususu.org/docs/kp-field-guide.md#3-evaluations-6-字段语义)（仓库内：`v2/public/docs/kp-field-guide.md`）。
+
 ### Per-field language purity
 - **`*.zh`**: Modern **Chinese only** (full sentences, headings, bullets). Do not embed Japanese headings, katakana blocks, or standalone English sentences as definitions.
 - **`*.ja`**: **Japanese only** (kanji + kana). Do not paste Simplified-Chinese phrasing or mixed zh-ja explanatory paragraphs.
@@ -57,6 +66,7 @@
 ### 30-second self-check before submit
 - Read `body.zh`: any standalone **ja** headings or big **katakana** chunks? Any **English-only** bullet titles? → Fix to Chinese + optional `（English）`.
 - Read `body.ja`: any **Chinese idioms / mainland phrasing**? → Rewrite in natural Japanese.
+- **意义 / 限界 / 评价六格**：是否在 **`evaluations.zh` / `evaluations.ja`**，而不是写在 `body` 里冒充正文小节？
 - First mention of key terms: **localized name + `（English）`** where useful; avoid random language switching mid-paragraph.
 
 ## API/data notes (safety)

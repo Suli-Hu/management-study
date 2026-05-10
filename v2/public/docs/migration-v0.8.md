@@ -570,8 +570,9 @@ batch API 每条 `results[]` 的 `reason` 字段也会出现上述 `legacy_*` �
 ### 11.3 调用方该怎么做
 
 - **不要主动在文本里加 `<strong>`** — 加了也会被静默 strip（不返错、不告警）
-- 如果想强调某个词，用 `<em>foo</em>` 或不强调（首选不强调）
-- AI 生成 KP 描述时**尤其注意**：不要默认加粗概念名
+- **需要加粗时**：在正文 / 评价等字段写 **`**一段文字**`**（渲染层转粗体，见下文 §11.7）；不要依赖 `<strong>` 入库
+- 斜体仍可用 `<em>foo</em>`；或不强调（首选不滥用粗体）
+- AI 生成 KP 描述时**尤其注意**：不要默认给每个概念名加粗
 
 ### 11.4 例
 
@@ -606,6 +607,13 @@ v0.8.7 ship 当天跑了一次性清理：
 - prod D1：super-admin 调 `POST /api/admin/strip-strong-from-d1` 同步清
 
 后续新写入由 sanitize 拦截 — 不会再有 `<strong>` 累积。
+
+### 11.7 附录：阅读页 Markdown 粗体子集（v0.11.x）
+
+- **与 §11 不矛盾**：**写入路径**仍拒绝持久化 `<strong>`（`deepStripStrong` 不变）；存盘内容继续是纯文本或 `**` 字面量。
+- **阅读页**（`render-body-structured` / `format-trusted-prose-html`）：在生成 HTML 时把**成对**的 `**片段**` 转为 `<strong>片段</strong>`，再执行 `\n` → `<br>`。
+- **调用方**：需要加粗时**优先写 `**…**`**，不要写 `<strong>`（会被剥且与渲染层策略重复）。
+- **限制**：非完整 Markdown；不成对 `**` 保持原样；`**` 不宜跨段落切分（与 `renderParas` 按 `\n`/`<br>` 分段一致）。compare 卡片**正面** `title` / `desc` / `keyword` 仍为 `escape` 纯文本，**不支持** `**`（仅背面 `detail` 与 narrative / list / quad / eval 等走 trusted prose 的字段支持）。
 
 ---
 

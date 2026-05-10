@@ -23,6 +23,8 @@ import type {
   KpEvaluationsLang,
 } from '~/schemas/kp-body-structured';
 
+import { formatTrustedProseHtml, inlineMdDoubleStarToStrong } from './format-trusted-prose-html';
+
 const FALLBACK_ACCENT = '#8a7a6a';
 
 // ============================================================
@@ -36,26 +38,17 @@ function esc(s: string | undefined | null): string {
   );
 }
 
-/**
- * v0.11.7: \n → <br> — 让老师在 textarea 按回车换行直接渲染。
- * 数据是 admin trusted（learning agents 通过 admin API 写）— 不 escape，保留 <strong>/<em>/<br> 等。
- * 老 KP 字面 <br> 标签依然 work（未替换的内容直接通过）；新输入的 \n 转 <br>，混存兼容。
- */
-function nlToBr(s: string | undefined | null): string {
-  if (!s) return '';
-  return String(s).replace(/\n/g, '<br>');
-}
-
 /** prose 文本按 <br> 或 \n 分段 → <p class="narrative-p">
  * v0.8.30: 兼容用户在 admin textarea 里直接 Enter 换行存的字面 \n（v1 era 数据用 <br>，
  * v2 admin UI 通常存 \n）。两种都识别为段落分隔。
+ * v0.11.x: 每段内 `**…**` → `<strong>`（见 format-trusted-prose-html）。
  */
 function renderParas(text: string, wrapperStyle = ''): string {
   const paras = text.split(/<br\s*\/?>|\n/i).map((p) => p.trim()).filter(Boolean);
   if (paras.length === 0) return '';
   const wrapAttr = wrapperStyle ? ` style="${wrapperStyle}"` : '';
   return `<div class="body-narrative"${wrapAttr}>${
-    paras.map((p) => `<p class="narrative-p">${p}</p>`).join('')
+    paras.map((p) => `<p class="narrative-p">${formatTrustedProseHtml(p)}</p>`).join('')
   }</div>`;
 }
 
@@ -81,14 +74,14 @@ export function renderFlatListStructured(body: FlatListBody, accentHex: string):
     <div class="body-card">
       <div class="body-num">${i + 1}</div>
       <div class="body-card-content">
-        ${it.name ? `<div class="body-item-name">${nlToBr(it.name)}</div>` : ''}
-        <div class="body-item-desc">${nlToBr(it.desc)}</div>
+        ${it.name ? `<div class="body-item-name">${formatTrustedProseHtml(it.name)}</div>` : ''}
+        <div class="body-item-desc">${formatTrustedProseHtml(it.desc)}</div>
       </div>
     </div>
   `,
     )
     .join('');
-  return `<div class="body-fmt body-fmt-flat" style="--accent:${accentHex}">${body.lead ? `<div class="body-lead">${nlToBr(body.lead)}</div>` : ''}<div class="body-items">${cards}</div></div>`;
+  return `<div class="body-fmt body-fmt-flat" style="--accent:${accentHex}">${body.lead ? `<div class="body-lead">${formatTrustedProseHtml(body.lead)}</div>` : ''}<div class="body-items">${cards}</div></div>`;
 }
 
 export function renderAccordionStructured(body: AccordionBody, accentHex: string): string {
@@ -104,8 +97,8 @@ export function renderAccordionStructured(body: AccordionBody, accentHex: string
           <li class="acc-li">
             <span class="acc-li-n">${i + 1}</span>
             <div class="acc-li-body">
-              ${it.name ? `<span class="acc-li-name">${nlToBr(it.name)}</span>` : ''}
-              ${it.desc ? `<div class="acc-li-desc">${nlToBr(it.desc)}</div>` : ''}
+              ${it.name ? `<span class="acc-li-name">${formatTrustedProseHtml(it.name)}</span>` : ''}
+              ${it.desc ? `<div class="acc-li-desc">${formatTrustedProseHtml(it.desc)}</div>` : ''}
             </div>
           </li>
         `,
@@ -114,7 +107,7 @@ export function renderAccordionStructured(body: AccordionBody, accentHex: string
       return `
       <details class="acc-block" open>
         <summary class="acc-head">
-          <h3 class="acc-title">${name}${sub ? `<span class="acc-sub">${sub}</span>` : ''}</h3>
+          <h3 class="acc-title">${inlineMdDoubleStarToStrong(name)}${sub ? `<span class="acc-sub">${inlineMdDoubleStarToStrong(sub)}</span>` : ''}</h3>
           <span class="acc-chev">▾</span>
         </summary>
         ${inner}
@@ -169,7 +162,7 @@ export function renderCompareCardsStructured(body: CompareBody, accentHex: strin
       const backInner = hasDetail
         ? `
         <div class="cmpc-face cmpc-back">
-          <div class="cmpc-detail">${nlToBr(c.detail)}</div>
+          <div class="cmpc-detail">${formatTrustedProseHtml(c.detail)}</div>
         </div>`
         : '';
       return `
@@ -226,11 +219,11 @@ export function renderQuadStructured(body: QuadBody, accentHex: string): string 
           <div class="quad-emoji">${esc(q.emoji)}</div>
           <div class="quad-name">${esc(q.name)}</div>
           <div class="quad-tag">${esc(q.sub)}</div>
-          <div class="quad-desc">${nlToBr(q.detail)}</div>
+          <div class="quad-desc">${formatTrustedProseHtml(q.detail)}</div>
         </div>
         <div class="quad-face quad-back">
           <div class="quad-back-name">${esc(q.name)}</div>
-          <div class="quad-detail">${nlToBr(q.detailBack)}</div>
+          <div class="quad-detail">${formatTrustedProseHtml(q.detailBack)}</div>
         </div>
       </div>
     </div>
@@ -243,7 +236,7 @@ export function renderQuadStructured(body: QuadBody, accentHex: string): string 
 
   return `
     <div class="body-fmt body-fmt-quad" style="--accent:${accentHex}">
-      ${body.lead ? `<div class="body-lead">${nlToBr(body.lead)}</div>` : ''}
+      ${body.lead ? `<div class="body-lead">${formatTrustedProseHtml(body.lead)}</div>` : ''}
       <div class="quad-wrap">
         ${yAxisHtml}
         <div class="quad-grid">${cellsHtml}</div>
@@ -327,7 +320,7 @@ export function renderEvalModule(content: KpEvaluationsLang | null | undefined):
   const rowsHtml = rows.map(({ def, text }) => `
     <div class="eval-row" style="--tone:${def.tone}">
       <span class="eval-pill">${def.label}</span>
-      <div class="eval-text">${nlToBr(text)}</div>
+      <div class="eval-text">${formatTrustedProseHtml(text)}</div>
     </div>
   `).join('');
 

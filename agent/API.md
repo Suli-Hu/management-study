@@ -123,6 +123,7 @@ curl -sS "$BASE/api/themes?discipline=$DISCIPLINE_KEY" \
   -H "Authorization: Bearer $MS_TOKEN" | jq .
 
 # 创建 KP（最小字段示意；完整必填项见 api-reference §4）
+# 注意：「意义 / 限界」等评价六格必须写在 evaluations，不要塞进 body（见 agent/TEACHER.md）。
 curl -sS -X POST "$BASE/api/kps?discipline=$DISCIPLINE_KEY" \
   -H "Authorization: Bearer $MS_TOKEN" \
   -H "Content-Type: application/json" \
@@ -130,6 +131,9 @@ curl -sS -X POST "$BASE/api/kps?discipline=$DISCIPLINE_KEY" \
     "id": "k999",
     "title": { "zh": "示例标题", "en": "Example" },
     "body": { "zh": "示例正文" },
+    "evaluations": {
+      "zh": { "meaning": "…", "limit": "…" }
+    },
     "format": "narrative",
     "year": "",
     "schools": ["motivation"],
