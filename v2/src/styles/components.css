@@ -996,19 +996,37 @@ details.eval {
   font-size: 13px; color: var(--color-text-secondary);
 }
 .optA-kp-body { flex: 1; min-width: 0; }
+/* 一行：标题 + 学者串（过长省略号）+ 年份；学派/学者详情左栏 KP 卡 */
 .optA-kp-title {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
   font-size: 14px; font-weight: 600; color: var(--color-text-primary); line-height: 1.45;
+}
+.optA-kp-title-core {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 /* v0.8.18 .kp-list-dot 已删 (v0.8.19 minimalism — 学派/学者 detail 页 page chrome
    已表达 entity 身份，dot 重复学派色为 redundant affordance)。 */
 .optA-kp-scholar {
+  flex: 1 1 0;
+  min-width: 0;
   font-size: 11px; font-weight: 500;
   color: var(--color-text-secondary);
-  margin-left: 6px; vertical-align: baseline; white-space: nowrap;
+  vertical-align: baseline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .optA-kp-year {
+  flex-shrink: 0;
   font-size: 11px; color: var(--color-text-quaternary);
-  margin-left: 4px; font-weight: 400;
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
 }
 .optA-kp-sub-ja {

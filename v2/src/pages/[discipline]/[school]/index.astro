@@ -438,8 +438,10 @@ const canEdit = Astro.locals.canEdit(discipline);
                     >
                       <div class="optA-kp-body">
                         <div class="optA-kp-title">
-                          {k.title_zh}
-                          {scholarLabel && <span class="optA-kp-scholar">{scholarLabel}</span>}
+                          <span class="optA-kp-title-core">{k.title_zh}</span>
+                          {scholarLabel && (
+                            <span class="optA-kp-scholar" title={scholarLabel}>{scholarLabel}</span>
+                          )}
                           {k.year && <span class="optA-kp-year">{shortYear(k.year)}</span>}
                         </div>
                         {k.title_ja && <div class="optA-kp-sub-ja">{k.title_ja}</div>}
