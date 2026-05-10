@@ -94,6 +94,8 @@ type KpListItem = {
   body_zh_json: string; body_ja_json: string | null;
   evaluations_zh_json: string | null; evaluations_ja_json: string | null;
   body_format: string;
+  /** kp_school 中 position 最小的主学派（与编辑页 / tier 主学派一致），无关联则为 null */
+  primary_school_title_zh: string | null;
 };
 let kps: KpListItem[] = [];
 
@@ -146,7 +148,15 @@ if (!isPartial) {
     .prepare(`
       SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year,
         k.body_zh_json, k.body_ja_json, k.body_format,
-        k.evaluations_zh_json, k.evaluations_ja_json
+        k.evaluations_zh_json, k.evaluations_ja_json,
+        (
+          SELECT s.title_zh
+          FROM kp_school kps0
+          INNER JOIN school s ON s.key = kps0.school_key AND s.discipline = k.discipline
+          WHERE kps0.kp_id = k.id
+          ORDER BY kps0.position ASC, kps0.school_key ASC
+          LIMIT 1
+        ) AS primary_school_title_zh
       FROM kp k
       INNER JOIN kp_scholar ks ON ks.kp_id = k.id
       WHERE ks.scholar_key = ?
@@ -494,7 +504,8 @@ const canEdit = Astro.locals.canEdit(discipline);
           >
             {kps.map((k) => {
               const isActive = selectedKpId === k.id;
-              const schoolHint = schools[0]?.title_zh ?? '';
+              // 须按「本 KP 的主学派」显示，勿用学者 schools[0]（跨学派学者会全员错标成同一学派）
+              const schoolHint = k.primary_school_title_zh ?? '';
               // v0.5.75：跟学派页一致 — <details>/<summary> 包裹，手机 inline 展开
               // 桌面 split-pane.js MQ ≥1024px 拦截点击改 fetch swap，inline body 由 CSS 隐藏
               // v0.5.78: inline body 跟随页面 ?lang=；该 KP 没 ja → 退回 zh
