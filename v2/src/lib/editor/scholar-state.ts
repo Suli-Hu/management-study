@@ -3,6 +3,7 @@
  *
  * 4 sections: 基本信息 / 学术身份 / 生平 / 关联
  * D6=B 不暴露 kpsOrder（自动从 KP.scholars[] 反向派生 + 字典序）
+ * 产品 B：所属学派不在此编辑 — 仅由学者所关联 KP 的 kp_school 推导（详情页 / 列表以存储为准时可另议）
  *
  * 见 v2/docs/SCHOOL-SCHOLAR-THEME-EDITOR-V0.8-PRD.md §5.2
  */
@@ -43,7 +44,6 @@ export interface ScholarEditorState {
 }
 
 export interface ScholarEditorMetadata {
-  schools: Array<{ key: string; label: string }>;
   tags: Array<{ key: string; label: string; color: string | null }>;
   disciplineLabel: string;
   disciplineKey: string;
@@ -57,15 +57,12 @@ export interface ScholarEditorMetadata {
 // Initial state factories
 // ============================================================
 
-export function makeNewScholarState(
-  discipline: string,
-  presetSchool = '',
-): ScholarEditorState {
+export function makeNewScholarState(discipline: string): ScholarEditorState {
   return {
     key: null,
     discipline,
     name: { zh: '', ja: '', en: '' },
-    schools: presetSchool ? [presetSchool] : [],
+    schools: [],
     contribution: { zh: '', ja: '' },
     field: '',
     institution: '',

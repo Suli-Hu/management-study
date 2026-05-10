@@ -23,16 +23,7 @@ const tagLibrary: Array<{ key: string; label?: { zh?: string }; color?: string }
   ? JSON.parse(discRow.tags_json)
   : [];
 
-const schoolsResult = await db
-  .prepare('SELECT key, title_zh FROM school WHERE discipline = ? ORDER BY title_zh ASC, key ASC')
-  .bind(discipline)
-  .all<{ key: string; title_zh: string }>();
-const allSchools = (schoolsResult.results ?? []).map((s) => ({ key: s.key, label: s.title_zh }));
-
-const preselectSchool = Astro.url.searchParams.get('school') ?? '';
-
 const editorMetadata: ScholarEditorMetadata = {
-  schools: allSchools,
   tags: tagLibrary.map((t) => ({
     key: t.key,
     label: t.label?.zh ?? t.key,
@@ -52,7 +43,7 @@ const editorMetadata: ScholarEditorMetadata = {
     type="application/json"
     is:inline
     id="scholar-editor-init"
-    set:html={JSON.stringify({ metadata: editorMetadata, preselectSchool })}
+    set:html={JSON.stringify({ metadata: editorMetadata })}
   ></script>
 </Layout>
 
@@ -65,11 +56,10 @@ const editorMetadata: ScholarEditorMetadata = {
   if (!root || !initJson) {
     console.error('[scholar-editor] init payload missing');
   } else {
-    const { metadata, preselectSchool } = JSON.parse(initJson) as {
+    const { metadata } = JSON.parse(initJson) as {
       metadata: ScholarEditorMetadata;
-      preselectSchool: string;
     };
-    const initialState = makeNewScholarState(metadata.disciplineKey, preselectSchool);
+    const initialState = makeNewScholarState(metadata.disciplineKey);
     initScholarEditor({
       root: root as HTMLElement,
       initialState,

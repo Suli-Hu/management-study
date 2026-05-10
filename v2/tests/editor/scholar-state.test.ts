@@ -30,10 +30,6 @@ describe('makeNewScholarState', () => {
     expect(s.isDirty).toBe(false);
   });
 
-  test('presetSchool 注入 schools[0]', () => {
-    const s = makeNewScholarState('keiei', 'lewin_school');
-    expect(s.schools).toEqual(['lewin_school']);
-  });
 });
 
 describe('makeEditingScholarState', () => {

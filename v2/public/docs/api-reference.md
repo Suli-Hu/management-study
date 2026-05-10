@@ -215,8 +215,8 @@ api-reference 是**字段表参照**，本文件主要回答"叫什么、什么�
 | `key` | — | string | v0.8.9 起可选 — 不传则 server 端从 `name.en` slugify 自动生成（冲突加 `_2/_3` 后缀，仍冲突走 6 位 random fallback） |
 | `name.zh` | ✓ | string | 中文名 |
 | `name.en` / `name.ja` | — | string | `name.en` 是 key 自动生成的来源 — 建议填 |
-| `schools` | — | string[] | 主属学派（默认 []） |
-| `schoolsExplicit` | — | boolean | 默认 false。**API 写入时设 true** = schools[] 是真源，sync 跳过 KP 反向派生 |
+| `schools` | — | string[] | 落库为 `scholar_school`。**产品 B（2026-05）**：站点学者详情页「所属学派」以 **KP → kp_school 聚合** 为准；日常维护请改各 KP 的 `schools[]` / `scholars[]`，不必依赖本字段。新建学者可传 `[]`。 |
+| `schoolsExplicit` | — | boolean | **Git / `scholar.json` + 全量 sync 路径**：为 true 时 sync 可对该学者跳过 KP 反向写入 `scholar_school`。**Scholar REST 的 PATCH/POST body 不含此键**（见 `ScholarCreateInput` / `ScholarPatchInput`）。 |
 | `contribution.zh` | ✓ | string | |
 | `contribution.ja` | — | string | |
 | `born` | — | string | 出生年（如 `"1908"` / `"1890年9月9日"`） |
@@ -583,12 +583,14 @@ Response:
 
 ### 6.2 `POST /api/scholars?discipline=<key>` — 创建
 
-`schools` 和 `kpsOrder` 里的 key/id 必须属于同一 tenant。Body 不能含 `tenant_id` / `discipline`。
+`schools` 和 `kpsOrder` 里的 key/id 必须属于同一 tenant（可为空数组）。Body 不能含 `tenant_id` / `discipline`。
+
+**产品 B**：新建学者时 **`schools` 常填 `[]`**，学派归属随后在各 KP 的 `scholars[]` / `schools[]` 中维护。
 
 ```json
 {
   "name": { "zh": "马斯洛", "ja": "マズロー", "en": "Abraham Maslow" },
-  "schools": ["motivation"],
+  "schools": [],
   "contribution": { "zh": "提出需求层次理论。", "ja": "欲求階層説を提唱。" },
   "born": "1908",
   "died": "1970",
@@ -604,6 +606,13 @@ Response:
 ### 6.3 `GET /api/scholars/:key?discipline=<key>` — 读
 
 ### 6.4 `PATCH /api/scholars/:key?discipline=<key>` — 局部更新
+
+**`schools`（可选）**
+
+- **省略 `schools`**：不修改 `scholar_school`（适合产品 B：老师/自动化只改姓名、贡献等，学派只通过 KP 维护）。
+- **包含 `schools`**：对该学者的 `scholar_school` **整学者全量替换**（先删尽再按数组顺序插入）；供迁移、脚本纠偏；非法 key 仍 `422 school_not_in_tenant`。
+
+**与站点展示**：学者详情 SSR 已按 **该学者关联 KP 的学派** 聚合展示「所属学派」；`GET /api/scholars` 返回的 `schools` 仍来自 `scholar_school`，**可能与 KP 聚合不一致**，直至数据清洗或列表接口对齐。
 
 ### 6.5 `DELETE /api/scholars/:key?discipline=<key>` — 删除
 
@@ -990,14 +999,18 @@ Response（dry_run=false）：
    https://study.sususu.org/<disc>/kp/<id>
 ```
 
-### 11.2 移动 scholar 到另一个 school
+### 11.2 调整学者与学派的关系（产品 B：以 KP 为准）
+
+**推荐**（与站点学者详情「所属学派」口径一致）：
 
 ```
-1. PATCH /api/scholars/<key>?discipline=<disc>
-   body: { "schools": ["new_school"], "schoolsExplicit": true }
-2. （可选）PATCH /api/schools/<old>?discipline=<disc> 改 concepts[]
-   PATCH /api/schools/<new>?discipline=<disc> 改 concepts[]
+1. 在「旧学派」下的相关 KP 上 PATCH，从 scholars[] 移除该学者（或把 KP 改挂到新学派）；
+2. 在「新学派」下的 KP 上 PATCH，把该学者加入 scholars[]（并保证 KP.schools 含目标学派）；
+3. 按需调整 PATCH /api/schools/<key>?discipline=<disc> 的 concepts[]（排序/收录 KP）。
 ```
+
+**仅当**要直接修正 D1 的 `scholar_school` 表（迁移/一次性脚本）时，可用  
+`PATCH /api/scholars/<key>?discipline=<disc>`，`body` 带 **`schools`: 完整目标列表**（全量替换，见 §6.4）。**不要**在 body 里传 `schoolsExplicit`（该字段不属于 Scholar REST schema）。
 
 ### 11.3 删 KP
 

@@ -349,15 +349,29 @@ export async function patchScholarRecord(
       key,
       tenant.discipline,
     ),
-    db.prepare('DELETE FROM scholar_school WHERE scholar_discipline = ? AND scholar_key = ? AND position < 1000').bind(tenant.discipline, key),
-    db.prepare('DELETE FROM kp_scholar WHERE scholar_discipline = ? AND scholar_key = ? AND position < 1000').bind(tenant.discipline, key),
   ];
-  next.schools.forEach((schoolKey, position) => {
-    stmts.push(db.prepare('INSERT OR IGNORE INTO scholar_school (scholar_discipline, scholar_key, school_key, position) VALUES (?, ?, ?, ?)').bind(tenant.discipline, key, schoolKey, position));
-  });
-  next.kpsOrder.forEach((kpId, position) => {
-    stmts.push(db.prepare('INSERT OR IGNORE INTO kp_scholar (kp_id, scholar_discipline, scholar_key, position) VALUES (?, ?, ?, ?)').bind(kpId, tenant.discipline, key, position));
-  });
+
+  // schools: 仅当 PATCH 显式带 schools 时写库。全量替换 scholar_school（含 sync 写入的 position≥1000），
+  // 否则仅删 position<1000 会残留 KP 反填的学派行，导致无法剔除已迁走的 school。
+  if (input.schools !== undefined) {
+    stmts.push(db.prepare('DELETE FROM scholar_school WHERE scholar_discipline = ? AND scholar_key = ?').bind(tenant.discipline, key));
+    next.schools.forEach((schoolKey, position) => {
+      stmts.push(
+        db
+          .prepare('INSERT OR IGNORE INTO scholar_school (scholar_discipline, scholar_key, school_key, position) VALUES (?, ?, ?, ?)')
+          .bind(tenant.discipline, key, schoolKey, position),
+      );
+    });
+  }
+
+  // kpsOrder: 同上，局部 PATCH 其它字段时不应重建 kp_scholar（避免与 KP 反填的 position≥1000 混叠）。
+  if (input.kpsOrder !== undefined) {
+    stmts.push(db.prepare('DELETE FROM kp_scholar WHERE scholar_discipline = ? AND scholar_key = ? AND position < 1000').bind(tenant.discipline, key));
+    next.kpsOrder.forEach((kpId, position) => {
+      stmts.push(db.prepare('INSERT OR IGNORE INTO kp_scholar (kp_id, scholar_discipline, scholar_key, position) VALUES (?, ?, ?, ?)').bind(kpId, tenant.discipline, key, position));
+    });
+  }
+
   await db.batch(stmts);
 
   const record = await getScholarRecord(db, key, tenant);

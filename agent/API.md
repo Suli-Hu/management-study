@@ -61,7 +61,7 @@ API 使用的是 **学科 key（英文短码 slug）**，**不是** 界面上的
 |------|----------|------|
 | KP | `POST /api/kps?discipline=<key>` | Body 勿手写 `tenant_id` / `discipline`（服务端注入） |
 | 学派 | `POST /api/schools?discipline=<key>` | `themeKey` 须属于该学科 |
-| 学者 | `POST /api/scholars?discipline=<key>` | `schools` / `kpsOrder` 须为同学科 key |
+| 学者 | `POST /api/scholars?discipline=<key>` | `schools` / `kpsOrder` 须为同学科 key（**产品 B** 下新建常传 `schools: []`，学派靠 KP 维护；见 api-reference §6） |
 | 标签（Tag） | `POST /api/tags?discipline=<key>` | **冷启动可先创建 tag**；删除/更新见 `PATCH/DELETE /api/tags/:key` |
 | 学派组（Theme） | `POST /api/new/theme` | **形状特殊**，见下节 |
 
@@ -149,6 +149,7 @@ curl -sS -X POST "$BASE/api/kps?discipline=$DISCIPLINE_KEY" \
 
 ## 8. 常见卡点
 
+- **改学者所属学派**：优先 **PATCH `/api/kps/:id`**（`schools` / `scholars`），与站点学者详情展示口径一致；不要默认 `PATCH /api/scholars/:key` 只改 `schools`（省略 `schools` 时 API 不会动 `scholar_school` 表）。详见 api-reference §6.4、§11.2。
 - 用中文学科名当 `discipline=` → **400/403**。先 `/api/me` 或问用户要 **key**。
 - `tags` 在写入侧多为 **标签库 key**（如 `t_xxx`），不要随意造自由文本；先 `GET /api/metadata` 看 `tags[]`。
 - Theme 创建走 `POST /api/new/theme` + `{ discipline, json }`，不要假设与 `POST /api/schools` 同形。

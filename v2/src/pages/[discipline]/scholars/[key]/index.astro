@@ -98,20 +98,23 @@ type KpListItem = {
 let kps: KpListItem[] = [];
 
 // v0.8.20: schools query 移出 !isPartial — partial 模式右栏 page chrome strip 也需要 schools[0].accent
-// v0.8.23 fix 跨学科泄露：scholar_school PK = (scholar_discipline, scholar_key, school_key)
-//   而 school PK 全局唯一 key — 老 query 仅 ss.scholar_key=? 漏 ss.scholar_discipline=?，
-//   keiei ansoff 误 join 到 marketing 的 "战略营销" 学派。加 discipline 双重过滤。
+// 产品 B：所属学派不从 scholar_school 读，而从该学者关联 KP 的 kp_school 去重推导（与「仅能在 KP 上维护学派」一致）。
 const schoolsResult = await db
   .prepare(`
     SELECT s.key, s.title_zh, s.title_en, s.theme_key, s.tags_json
     FROM school s
-    INNER JOIN scholar_school ss ON ss.school_key = s.key
-    WHERE ss.scholar_key = ?
-      AND ss.scholar_discipline = ?
-      AND s.discipline = ?
-    ORDER BY ss.position, s.key
+    WHERE s.discipline = ?
+      AND s.key IN (
+        SELECT kps.school_key
+        FROM kp_school kps
+        INNER JOIN kp k ON k.id = kps.kp_id AND k.discipline = ?
+        INNER JOIN kp_scholar ks ON ks.kp_id = k.id
+          AND ks.scholar_key = ?
+          AND ks.scholar_discipline = ?
+      )
+    ORDER BY s.title_zh ASC, s.key ASC
   `)
-  .bind(key, discipline, discipline)
+  .bind(discipline, discipline, key, discipline)
   .all<{ key: string; title_zh: string; title_en: string | null; theme_key: string; tags_json: string | null }>();
 schools = (schoolsResult.results ?? []).map((s) => ({
   key: s.key,

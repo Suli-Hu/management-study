@@ -71,6 +71,7 @@
 
 ## API/data notes (safety)
 - **HTTP 调用清单（Base URL、鉴权、`discipline` key、GET 列表/POST 创建、curl）**：必读 `agent/API.md`；完整字段表见 https://study.sususu.org/docs/api-reference.md
+- **学者 ↔ 学派（产品 B）**：站点上「学者属于哪些学派」以 **该学者已关联 KP 的学派** 为准。调整归属时 **PATCH 各 KP** 的 `schools[]` / `scholars[]`，不要默认靠 `PATCH /api/scholars/:key` 的 `schools`（管理端编辑器已不手选学派；API 仍支持传 `schools` 做全量替换，见 api-reference §6.4）。
 - Treat tags as governed keys (not free text) where enforced by the system.
 - Prefer D1-first / API-first flows for content changes; avoid reviving v1-era data editing paths.
 

@@ -261,14 +261,35 @@ describe('GET/PATCH/DELETE /api/scholars/:key', () => {
   });
 
   test('PATCH 可以局部修改', async () => {
-    const res = await scholarPATCH(makeCtx({
+    const ctx = makeCtx({
       path: '/api/scholars/maslow?discipline=keiei',
       method: 'PATCH',
       params: { key: 'maslow' },
       body: { name: { zh: '亚伯拉罕·马斯洛' } },
-    }));
+    });
+    const res = await scholarPATCH(ctx);
     expect(res.status).toBe(200);
     expect(await res.json()).toMatchObject({ ok: true, scholar: { key: 'maslow' } });
+    const db = ctx.locals.runtime.env.DB as unknown as ReturnType<typeof mockDb>;
+    expect(db.calls.some((c) => c.sql.includes('DELETE FROM scholar_school'))).toBe(false);
+    expect(db.calls.some((c) => c.sql.includes('DELETE FROM kp_scholar'))).toBe(false);
+  });
+
+  test('PATCH schools 全量替换 scholar_school（含剔除 sync 的 position≥1000）', async () => {
+    const ctx = makeCtx({
+      path: '/api/scholars/maslow?discipline=keiei',
+      method: 'PATCH',
+      params: { key: 'maslow' },
+      body: { schools: ['motivation'] },
+    });
+    const res = await scholarPATCH(ctx);
+    expect(res.status).toBe(200);
+    const db = ctx.locals.runtime.env.DB as unknown as ReturnType<typeof mockDb>;
+    const fullDelete = db.calls.find(
+      (c) => c.sql.includes('DELETE FROM scholar_school') && !c.sql.includes('position <'),
+    );
+    expect(fullDelete).toBeDefined();
+    expect(fullDelete?.binds).toEqual(['keiei', 'maslow']);
   });
 
   test('DELETE 有 KP 关联时保护性拒绝', async () => {

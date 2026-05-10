@@ -4,8 +4,8 @@
  * POST /api/scholars?discipline=<key>          — 创建
  * PATCH /api/scholars/:key?discipline=<key>    — 更新
  *
- * 注：API-first 不接受 schoolsExplicit / kpsOrder。schoolsExplicit 由 backend 隐式
- * 视为 true（admin 显式选 schools[]）；kpsOrder 自动派生（D6=B）。
+ * 注：API-first 不接受 schoolsExplicit / kpsOrder；kpsOrder 自动派生（D6=B）。
+ * 产品 B：管理端学者编辑器不再 PATCH schools；创建时传空数组，学派仅由 KP 关联推导（详情页展示与同口径）。
  */
 
 export interface ScholarSaveOk {

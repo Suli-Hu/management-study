@@ -3,7 +3,7 @@
  *
  * 4 sections:
  *   - 基本信息: name.zh/ja/en（key 不渲染 — new mode server 自动生成；edit mode URL 带）
- *   - 学术身份: schools (chip autocomplete) + contribution.zh/ja + field + institution
+ *   - 学术身份: 所属学派（只读说明）+ contribution.zh/ja + field + institution
  *   - 生平: born + died + nationality + flag (emoji maxlen=8) + origin
  *   - 关联: tags (chip) + nobel (折叠区: year + detail)
  *
@@ -75,7 +75,7 @@ export function initScholarEditor(opts: InitScholarEditorOptions): void {
       body: academicHost,
     }),
   );
-  buildAcademicSection(academicHost, store, opts.metadata);
+  buildAcademicSection(academicHost, store);
 
   // 生平
   const lifeHost = el('div');
@@ -257,30 +257,19 @@ function buildBasicSection(
 // Section 2: 学术身份
 // ============================================================
 
-function buildAcademicSection(
-  host: HTMLElement,
-  store: ScholarEditorStore,
-  metadata: ScholarEditorMetadata,
-): void {
+function buildAcademicSection(host: HTMLElement, store: ScholarEditorStore): void {
   host.innerHTML = '';
   const wrap = el('div', 'kpe-section-body');
 
-  // schools — chip autocomplete
   const schoolsWrap = el('div', 'kpe-field');
-  const schoolsLabel = el('label', 'kpe-label');
+  const schoolsLabel = el('div', 'kpe-label');
   schoolsLabel.textContent = '所属学派';
   schoolsWrap.appendChild(schoolsLabel);
-  const schoolsHost = el('div');
-  schoolsWrap.appendChild(schoolsHost);
+  const schoolsNote = el('p', 'kpe-hint');
+  schoolsNote.textContent =
+    '由关联知识点自动决定：请在各知识点的「所属学派 / 关联学者」中维护；此处不可手动选择。';
+  schoolsWrap.appendChild(schoolsNote);
   wrap.appendChild(schoolsWrap);
-  mountChipPicker(schoolsHost, {
-    current: store.get().schools,
-    options: metadata.schools,
-    placeholder: '搜索学派（可空）',
-    ariaLabel: '所属学派',
-    colorize: 'schools',
-    onChange: (next) => store.update({ schools: next }),
-  });
 
   // contribution.zh (必填)
   wrap.appendChild(
@@ -549,7 +538,6 @@ async function save(store: ScholarEditorStore, opts: InitScholarEditorOptions): 
     const payload: ScholarPatchPayload = {
       discipline: state.discipline,
       name: buildI18nName(state.name),
-      schools: [...state.schools],
       contribution: buildContribution(state.contribution),
       institution: state.institution.trim(),
       born: state.born.trim(),

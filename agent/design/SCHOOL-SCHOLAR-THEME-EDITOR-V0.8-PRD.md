@@ -58,6 +58,12 @@ KP editor v0.8 重写完，但 **school / scholar / discipline themes** editor �
 | **D6** | school.concepts / scholar.kpsOrder 是否暴露输入字段？ | **B 不暴露**（**第 4 次 minimalism 贯彻**） | 用户决策：让自动派生 — KP editor 设 schools[] 自动写 kp_school 表；顺序按 kp_id 字典序。重复维护是冗余。同理 scholar.kpsOrder |
 | D7 | new.astro 独立路由 | **A 是** | 与 KP editor D6 一致 |
 
+### 3.1 学派归属真源（产品 B，2026-05 增补）
+
+- **站点学者详情页**「所属学派」由该学者已关联 KP 的 **`kp_school` 聚合**推导，不以学者档案里可编辑的学派列表为真源。
+- **管理端学者编辑器**：**不提供**「所属学派」多选；文案引导编辑者在各 **KP** 的学派 / 关联学者中维护。
+- **REST 契约**仍以 api-reference §6 为准：`PATCH /api/scholars` 可省略 `schools`；传入则全量替换 `scholar_school`（供脚本/迁移）。
+
 **第 4 次 minimalism 贯彻**（D6=B）— PM 默认推 typeahead chip 是"小 affordance"，用户 reject "干啥用的没必要吧"。memory `feedback_minimalism_default.md` 已 capture pattern：
 1. Q6（Stage 4）：上下箭头排序 reject
 2. D2（Stage 4）：复制 zh 起手按钮 reject
@@ -74,8 +80,8 @@ PRD 起草时 PM 默认推荐"做"被用户 reject 4 次 — 后续 PM 起草默
 |---|---|---|---|
 | U1 | 新建 school | `/[discipline]/schools/new` | 填 key/title/era/summary/theme/tags/concepts → 保存 |
 | U2 | 编辑 school | `/[discipline]/[school]/edit` | GET prefill → 改字段 → 保存 |
-| U3 | 新建 scholar | `/[discipline]/scholars/new` | 填 14+ 字段（4 section）→ 保存 |
-| U4 | 编辑 scholar | `/[discipline]/scholars/[key]/edit` | GET prefill → 改字段 → 保存 |
+| U3 | 新建 scholar | `/[discipline]/scholars/new` | 填字段（4 section；**无学派 chip**）→ 保存；学派靠后续 KP 关联 |
+| U4 | 编辑 scholar | `/[discipline]/scholars/[key]/edit` | GET prefill → 改字段 → 保存（**无学派 chip**） |
 | U5 | 新建 theme | `/[discipline]/themes/new` | 填 key/title/desc/tags/schools → 保存 |
 | U6 | 编辑 theme | `/[discipline]/themes/[key]/edit` | GET prefill → 改字段 → 保存 |
 | U7 | 错误处理 | 各 edit/new | 422 zod / 409 conflict / 500 → inline banner 不丢输入 |
@@ -112,8 +118,7 @@ PRD 起草时 PM 默认推荐"做"被用户 reject 4 次 — 后续 PM 起草默
 #### Section 学术身份
 | 字段 | 类型 | 必填 | 控件 |
 |---|---|---|---|
-| `schools` | string[] | — | chip select autocomplete |
-| `schoolsExplicit` | boolean | — | checkbox |
+| ~~`schools`~~ / ~~`schoolsExplicit`~~ | — | — | **产品 B（2026-05）已移除**：只读说明文案 — 学派由 KP 维护（见 §3.1） |
 | `contribution.zh` | string | ✓ | textarea rows=6 |
 | `contribution.ja` | string | — | textarea rows=4 |
 | `field` | string | — | text |
@@ -203,15 +208,15 @@ PRD 起草时 PM 默认推荐"做"被用户 reject 4 次 — 后续 PM 起草默
 │ key + name (3 lang)             │
 ├─────────────────────────────────┤
 │ ## 学术身份                     │
-│ schools chip + contribution     │
-│ + field + institution           │
+│ （学派：只读说明，产品 B）       │
+│ contribution + field + inst.    │
 ├─────────────────────────────────┤
 │ ## 生平（可选）                 │
 │ lifespan / born / died /        │
 │ nationality / flag / origin     │
 ├─────────────────────────────────┤
 │ ## 关联                         │
-│ tags + nobel + kpsOrder         │
+│ tags + nobel（kpsOrder 不暴露） │
 └─────────────────────────────────┘
 ```
 
