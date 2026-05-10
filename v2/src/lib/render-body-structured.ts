@@ -183,10 +183,11 @@ export function renderCompareCardsStructured(body: CompareBody, accentHex: strin
     .join('');
 
   // v0.8.30: auto-fit 自适应。KP 详情窄栏多列时自动换行；宽栏按数据列数撑开
+  // lead 置卡片下方：先对比、后总起/注脚式导语
   return `
     <div class="body-fmt body-fmt-cmpc" style="--accent:${accentHex}">
-      ${body.lead ? renderParas(body.lead, 'margin-bottom:18px') : ''}
       <div class="cmpc-grid">${cardsHtml}</div>
+      ${body.lead ? renderParas(body.lead, 'margin-top:18px') : ''}
     </div>
   `;
 }

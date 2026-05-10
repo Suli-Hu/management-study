@@ -8,8 +8,9 @@
  * - PC (≥1024px): click → 切 .is-flipped → CSS 3D flip
  * - mobile (<1024px): 同样 click 切 .is-flipped → CSS max-height expand
  * - Enter / Space 等价 click（卡片自带 role=button + tabindex=0）
- * - 第二次点同卡 → 翻回 / 收起；点别的卡 → 老卡自动收
- * - 互斥范围 = closest('.cmpc-grid, .quad-grid') (compare 同 grid 互斥；quad 同 grid 互斥)
+ * - 第二次点同卡 → 翻回 / 收起
+ * - compare (.cmpc-grid)：多张可同时翻面，便于左右对照
+ * - quad (.quad-grid)：同 grid 仍互斥，避免四格同时展开过长
  *
  * 同时存在 split-pane fetch swap (右栏 KP 切换) 时需重新绑事件 — 用 event delegation
  * 挂 document 上，免重绑。
@@ -25,15 +26,17 @@
   function toggleCard(card) {
     if (!card) return;
     var willOpen = !card.classList.contains('is-flipped');
-    // 同一 grid 里只允许一张卡翻开，避免视觉混乱
-    var grid = card.closest('.cmpc-grid, .quad-grid');
-    if (grid && willOpen) {
-      grid.querySelectorAll('[data-flippable].is-flipped').forEach(function (other) {
-        if (other !== card) {
-          other.classList.remove('is-flipped');
-          other.setAttribute('aria-expanded', 'false');
-        }
-      });
+    // 仅 quad 网格互斥；compare 允许多卡同时翻面
+    if (willOpen) {
+      var quadGrid = card.closest('.quad-grid');
+      if (quadGrid) {
+        quadGrid.querySelectorAll('[data-flippable].is-flipped').forEach(function (other) {
+          if (other !== card) {
+            other.classList.remove('is-flipped');
+            other.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
     }
     card.classList.toggle('is-flipped', willOpen);
     card.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
