@@ -16,6 +16,7 @@ import {
   updateStudySession,
   deleteStudySession,
   ensureKpInDiscipline,
+  ensureSchoolInDiscipline,
 } from '~/lib/study-session-store';
 
 export const GET: APIRoute = async ({ params, locals }) => {
@@ -46,11 +47,10 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
   }
   const patch = parsed.data;
 
-  // 如果 patch 改了 kp_id，需要重新校验 KP 存在 + discipline 匹配
-  // discipline 取自 session 行（PATCH 不允许改 discipline）
+  const existing = await getStudySession(env.DB, locals.user.id, id);
+  if (!existing) return apiError(404, 'not_found');
+
   if (patch.kp_id !== undefined) {
-    const existing = await getStudySession(env.DB, locals.user.id, id);
-    if (!existing) return apiError(404, 'not_found');
     const kpCheck = await ensureKpInDiscipline(env.DB, patch.kp_id, existing.discipline);
     if (!kpCheck.ok) {
       return apiError(
@@ -58,6 +58,19 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
         kpCheck.reason,
         kpCheck.reason === 'kp_discipline_mismatch'
           ? `kp_id ${patch.kp_id} 实际属于 ${kpCheck.actualDiscipline}，不能跨学科改`
+          : undefined,
+      );
+    }
+  }
+
+  if (patch.school_key !== undefined) {
+    const schCheck = await ensureSchoolInDiscipline(env.DB, patch.school_key, existing.discipline);
+    if (!schCheck.ok) {
+      return apiError(
+        schCheck.reason === 'school_not_found' ? 404 : 400,
+        schCheck.reason,
+        schCheck.reason === 'school_discipline_mismatch'
+          ? `school_key ${patch.school_key} 实际属于 ${schCheck.actualDiscipline}，不能跨学科改`
           : undefined,
       );
     }

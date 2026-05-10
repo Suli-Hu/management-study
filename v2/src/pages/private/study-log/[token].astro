@@ -62,6 +62,7 @@ interface SessionRow {
   note: string | null;
   kp_id: string | null;
   kp_title: string | null;
+  session_school_key: string | null;
   school_key: string | null;
   school_title: string | null;
 }
@@ -70,18 +71,21 @@ const result = await db
   .prepare(
     `SELECT
        s.id, s.date, s.start_time, s.duration_min, s.rating, s.note, s.kp_id,
-       k.title_zh as kp_title,
-       (SELECT ks.school_key
-        FROM kp_school ks
-        WHERE ks.kp_id = s.kp_id
-        ORDER BY ks.position
-        LIMIT 1) as school_key,
-       (SELECT sc.title_zh
-        FROM kp_school ks
-        INNER JOIN school sc ON sc.key = ks.school_key
-        WHERE ks.kp_id = s.kp_id
-        ORDER BY ks.position
-        LIMIT 1) as school_title
+       s.school_key AS session_school_key,
+       k.title_zh AS kp_title,
+       COALESCE(
+         s.school_key,
+         (SELECT ks.school_key FROM kp_school ks WHERE ks.kp_id = s.kp_id ORDER BY ks.position LIMIT 1)
+       ) AS school_key,
+       COALESCE(
+         (SELECT sc.title_zh FROM school sc WHERE sc.discipline = s.discipline AND sc.key = s.school_key),
+         (SELECT sc.title_zh
+          FROM kp_school ks
+          INNER JOIN school sc ON sc.key = ks.school_key AND sc.discipline = s.discipline
+          WHERE ks.kp_id = s.kp_id
+          ORDER BY ks.position
+          LIMIT 1)
+       ) AS school_title
      FROM study_session s
      LEFT JOIN kp k ON k.id = s.kp_id
      WHERE s.user_id = ? AND s.discipline = ? AND s.date >= ?
@@ -126,9 +130,7 @@ const tierStatesEnriched: TierStateWithMeta[] = tierStates.map((t) => ({
 const tierStatesJson = JSON.stringify(tierStatesEnriched);
 const tierLevels = TIERS.map((t) => ({ key: t.key, threshold: t.threshold }));
 
-// SessionEditor 在分享页是隐藏的（CSS data-sl-readonly），但 inline JS 还要
-// querySelector 编辑器 modal 元素；KP combobox 数据可以传空数组（不会用上）。
-const kpGroupedJson = '[]';
+const schoolsOptionsJson = JSON.stringify(allSchools.map((s) => ({ key: s.key, title_zh: s.title_zh })));
 ---
 <ShareLayout disciplineTitle={disc.title_zh}>
   <StudyLogShared
@@ -136,7 +138,7 @@ const kpGroupedJson = '[]';
     disciplineTitle={disc.title_zh}
     sessionsJson={sessionsJson}
     tierStatesJson={tierStatesJson}
-    kpGroupedJson={kpGroupedJson}
+    schoolsOptionsJson={schoolsOptionsJson}
     today={TODAY}
     tierLevels={tierLevels}
     readOnly={true}

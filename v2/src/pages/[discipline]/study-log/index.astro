@@ -62,6 +62,8 @@ interface SessionRow {
   note: string | null;
   kp_id: string | null;
   kp_title: string | null;
+  /** 行内直接存的学派（学派记账时非空） */
+  session_school_key: string | null;
   school_key: string | null;
   school_title: string | null;
 }
@@ -70,18 +72,21 @@ const result = await db
   .prepare(
     `SELECT
        s.id, s.date, s.start_time, s.duration_min, s.rating, s.note, s.kp_id,
-       k.title_zh as kp_title,
-       (SELECT ks.school_key
-        FROM kp_school ks
-        WHERE ks.kp_id = s.kp_id
-        ORDER BY ks.position
-        LIMIT 1) as school_key,
-       (SELECT sc.title_zh
-        FROM kp_school ks
-        INNER JOIN school sc ON sc.key = ks.school_key
-        WHERE ks.kp_id = s.kp_id
-        ORDER BY ks.position
-        LIMIT 1) as school_title
+       s.school_key AS session_school_key,
+       k.title_zh AS kp_title,
+       COALESCE(
+         s.school_key,
+         (SELECT ks.school_key FROM kp_school ks WHERE ks.kp_id = s.kp_id ORDER BY ks.position LIMIT 1)
+       ) AS school_key,
+       COALESCE(
+         (SELECT sc.title_zh FROM school sc WHERE sc.discipline = s.discipline AND sc.key = s.school_key),
+         (SELECT sc.title_zh
+          FROM kp_school ks
+          INNER JOIN school sc ON sc.key = ks.school_key AND sc.discipline = s.discipline
+          WHERE ks.kp_id = s.kp_id
+          ORDER BY ks.position
+          LIMIT 1)
+       ) AS school_title
      FROM study_session s
      LEFT JOIN kp k ON k.id = s.kp_id
      WHERE s.user_id = ? AND s.discipline = ? AND s.date >= ?
@@ -135,33 +140,7 @@ const tierStatesJson = JSON.stringify(tierStatesEnriched);
 // 段位章 / 阈值 SSR 渲染顶部说明
 const tierLevels = TIERS.map((t) => ({ key: t.key, threshold: t.threshold }));
 
-// ============================================================
-// SessionEditor: 拉所有 KP（select 选项，按学派分组）
-// ============================================================
-
-interface KpOptionRow { id: string; title_zh: string; school_key: string | null; school_title: string | null; }
-const kpOptionsResult = await db
-  .prepare(`
-    SELECT
-      k.id, k.title_zh,
-      (SELECT ks.school_key FROM kp_school ks WHERE ks.kp_id = k.id ORDER BY ks.position LIMIT 1) as school_key,
-      (SELECT sc.title_zh FROM kp_school ks INNER JOIN school sc ON sc.key = ks.school_key WHERE ks.kp_id = k.id ORDER BY ks.position LIMIT 1) as school_title
-    FROM kp k
-    WHERE k.discipline = ?
-    ORDER BY k.id
-  `)
-  .bind(discipline)
-  .all<KpOptionRow>();
-const kpOptions = kpOptionsResult.results ?? [];
-
-// 按学派分组：Map<school_title, Array<{id, title_zh}>>
-const kpByGroup = new Map<string, Array<{ id: string; title_zh: string }>>();
-for (const k of kpOptions) {
-  const group = k.school_title ?? '未分组';
-  if (!kpByGroup.has(group)) kpByGroup.set(group, []);
-  kpByGroup.get(group)!.push({ id: k.id, title_zh: k.title_zh });
-}
-const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
+const schoolsOptionsJson = JSON.stringify(allSchools.map((s) => ({ key: s.key, title_zh: s.title_zh })));
 ---
 <Layout title={`学习记录 · ${disc.title_zh}`} currentDiscipline={discipline} currentSection="study-log">
   <StudyLogShared
@@ -169,7 +148,7 @@ const kpGroupedJson = JSON.stringify([...kpByGroup.entries()]);
     disciplineTitle={disc.title_zh}
     sessionsJson={sessionsJson}
     tierStatesJson={tierStatesJson}
-    kpGroupedJson={kpGroupedJson}
+    schoolsOptionsJson={schoolsOptionsJson}
     today={TODAY}
     tierLevels={tierLevels}
     readOnly={false}

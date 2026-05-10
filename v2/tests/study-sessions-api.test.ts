@@ -25,6 +25,7 @@ interface SessionTableRow {
   user_id: string;
   discipline: string;
   kp_id: string | null;
+  school_key: string | null;
   date: string;
   start_time: string;
   duration_min: number;
@@ -37,9 +38,11 @@ interface SessionTableRow {
 function mockDb(opts: {
   sessions?: SessionTableRow[];
   kps?: Array<{ id: string; discipline: string }>;
+  schools?: Array<{ key: string; discipline: string }>;
 } = {}) {
   const sessions = [...(opts.sessions ?? [])];
   const kps = opts.kps ?? [];
+  const schools = opts.schools ?? [];
   const calls: Array<{ sql: string; binds: unknown[] }> = [];
 
   const db = {
@@ -56,6 +59,10 @@ function mockDb(opts: {
           if (/^SELECT discipline FROM kp WHERE id/.test(sql)) {
             const kp = kps.find((k) => k.id === stmt.binds[0]);
             return (kp ?? null) as T | null;
+          }
+          if (/^SELECT discipline FROM school WHERE key/.test(sql)) {
+            const sch = schools.find((s) => s.key === stmt.binds[0]);
+            return (sch ?? null) as T | null;
           }
           // SELECT * FROM study_session WHERE id = ? AND user_id = ?
           if (/SELECT \* FROM study_session WHERE id = \? AND user_id = \?/.test(sql)) {
@@ -98,10 +105,11 @@ function mockDb(opts: {
           calls.push({ sql, binds: stmt.binds });
           // INSERT INTO study_session ...
           if (/^INSERT INTO study_session/.test(sql)) {
-            const [id, user_id, discipline, kp_id, date, start_time, duration_min, rating, note, created_at, updated_at] = stmt.binds;
+            const [id, user_id, discipline, kp_id, school_key, date, start_time, duration_min, rating, note, created_at, updated_at] = stmt.binds;
             sessions.push({
               id: id as string, user_id: user_id as string, discipline: discipline as string,
               kp_id: kp_id as string | null,
+              school_key: school_key as string | null,
               date: date as string, start_time: start_time as string,
               duration_min: duration_min as number,
               rating: rating as number | null, note: note as string | null,
@@ -195,7 +203,7 @@ afterEach(() => { console.error = originalError; });
 
 const VALID_INPUT = {
   discipline: 'keiei',
-  kp_id: 'k001',
+  school_key: 'school_keiei_a',
   date: '2026-05-02',
   start_time: '14:30',
   duration_min: 30,
@@ -203,7 +211,18 @@ const VALID_INPUT = {
   note: 'first session',
 };
 
+const VALID_KP_INPUT = {
+  discipline: 'keiei',
+  kp_id: 'k001',
+  date: '2026-05-02',
+  start_time: '14:30',
+  duration_min: 30,
+  rating: 4,
+  note: 'kp session',
+};
+
 const KEIEI_KPS = [{ id: 'k001', discipline: 'keiei' }, { id: 'k002', discipline: 'keiei' }];
+const KEIEI_SCHOOLS = [{ key: 'school_keiei_a', discipline: 'keiei' }, { key: 'school_keiei_b', discipline: 'keiei' }];
 
 // ============================================================
 // auth gate
@@ -242,16 +261,26 @@ describe('Study sessions API — auth gate', () => {
 // ============================================================
 
 describe('POST /api/study-sessions — create', () => {
-  test('合法 → 200 + session 写入', async () => {
-    const db = mockDb({ kps: KEIEI_KPS });
+  test('合法（学派）→ 200 + session 写入', async () => {
+    const db = mockDb({ kps: KEIEI_KPS, schools: KEIEI_SCHOOLS });
     const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', VALID_INPUT), db));
     expect(res.status).toBe(200);
-    const body = await res.json() as { ok: boolean; session: { id: string; user_id: string; kp_id: string } };
+    const body = await res.json() as { ok: boolean; session: { id: string; user_id: string; school_key: string | null; kp_id: string | null } };
     expect(body.ok).toBe(true);
     expect(body.session.user_id).toBe('u_me');
-    expect(body.session.kp_id).toBe('k001');
+    expect(body.session.school_key).toBe('school_keiei_a');
+    expect(body.session.kp_id).toBeNull();
     expect(db.sessions).toHaveLength(1);
     expect(body.session.id).toMatch(/^ss_/);
+  });
+
+  test('合法（kp_id 兼容）→ 200', async () => {
+    const db = mockDb({ kps: KEIEI_KPS, schools: KEIEI_SCHOOLS });
+    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', VALID_KP_INPUT), db));
+    expect(res.status).toBe(200);
+    const body = await res.json() as { session: { kp_id: string | null; school_key: string | null } };
+    expect(body.session.kp_id).toBe('k001');
+    expect(body.session.school_key).toBeNull();
   });
 
   test('非法 JSON → 400 bad_request', async () => {
@@ -260,64 +289,75 @@ describe('POST /api/study-sessions — create', () => {
       headers: { 'content-type': 'application/json' },
       body: '{{not json}}',
     });
-    const res = await createPOST(makeCtx(req, mockDb({ kps: KEIEI_KPS })));
+    const res = await createPOST(makeCtx(req, mockDb({ kps: KEIEI_KPS, schools: KEIEI_SCHOOLS })));
     expect(res.status).toBe(400);
     expect(await res.json()).toMatchObject({ reason: 'bad_request' });
   });
 
   test('duration_min = 0 → invalid_input', async () => {
-    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, duration_min: 0 }), mockDb({ kps: KEIEI_KPS })));
+    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, duration_min: 0 }), mockDb({ kps: KEIEI_KPS, schools: KEIEI_SCHOOLS })));
     expect(res.status).toBe(400);
     expect((await res.json() as { reason: string }).reason).toBe('invalid_input');
   });
 
   test('duration_min = 601 → invalid_input', async () => {
-    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, duration_min: 601 }), mockDb({ kps: KEIEI_KPS })));
+    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, duration_min: 601 }), mockDb({ kps: KEIEI_KPS, schools: KEIEI_SCHOOLS })));
     expect(res.status).toBe(400);
   });
 
   test('rating = 6 → invalid_input', async () => {
-    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, rating: 6 }), mockDb({ kps: KEIEI_KPS })));
+    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, rating: 6 }), mockDb({ kps: KEIEI_KPS, schools: KEIEI_SCHOOLS })));
     expect(res.status).toBe(400);
   });
 
   test('rating = null → 接受', async () => {
-    const db = mockDb({ kps: KEIEI_KPS });
+    const db = mockDb({ kps: KEIEI_KPS, schools: KEIEI_SCHOOLS });
     const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, rating: null }), db));
     expect(res.status).toBe(200);
     expect(db.sessions[0].rating).toBeNull();
   });
 
   test('date 格式不对 → invalid_input', async () => {
-    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, date: '2026/05/02' }), mockDb({ kps: KEIEI_KPS })));
+    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, date: '2026/05/02' }), mockDb({ kps: KEIEI_KPS, schools: KEIEI_SCHOOLS })));
     expect(res.status).toBe(400);
   });
 
   test('start_time 格式不对 → invalid_input', async () => {
-    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, start_time: '14h30' }), mockDb({ kps: KEIEI_KPS })));
+    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, start_time: '14h30' }), mockDb({ kps: KEIEI_KPS, schools: KEIEI_SCHOOLS })));
     expect(res.status).toBe(400);
   });
 
   test('额外字段（strict）→ invalid_input', async () => {
-    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, foo: 'bar' }), mockDb({ kps: KEIEI_KPS })));
+    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, foo: 'bar' }), mockDb({ kps: KEIEI_KPS, schools: KEIEI_SCHOOLS })));
     expect(res.status).toBe(400);
   });
 
   test('kp_id 不存在 → 404 kp_not_found', async () => {
-    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, kp_id: 'k_missing' }), mockDb({ kps: KEIEI_KPS })));
+    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_KP_INPUT, kp_id: 'k_missing' }), mockDb({ kps: KEIEI_KPS, schools: KEIEI_SCHOOLS })));
     expect(res.status).toBe(404);
     expect(await res.json()).toMatchObject({ reason: 'kp_not_found' });
   });
 
   test('kp_id 在别的 discipline → 400 kp_discipline_mismatch', async () => {
     const res = await createPOST(makeCtx(
-      jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, kp_id: 'm001' }),
-      mockDb({ kps: [...KEIEI_KPS, { id: 'm001', discipline: 'marketing' }] }),
+      jsonReq('http://localhost/api/study-sessions', { ...VALID_KP_INPUT, kp_id: 'm001' }),
+      mockDb({ kps: [...KEIEI_KPS, { id: 'm001', discipline: 'marketing' }], schools: KEIEI_SCHOOLS }),
     ));
     expect(res.status).toBe(400);
     const body = await res.json() as { reason: string; detail: string };
     expect(body.reason).toBe('kp_discipline_mismatch');
     expect(body.detail).toContain('marketing');
+  });
+
+  test('school_key 不存在 → 404 school_not_found', async () => {
+    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, school_key: 'ghost_school' }), mockDb({ schools: KEIEI_SCHOOLS })));
+    expect(res.status).toBe(404);
+    expect(await res.json()).toMatchObject({ reason: 'school_not_found' });
+  });
+
+  test('同时 kp_id + school_key → invalid_input', async () => {
+    const res = await createPOST(makeCtx(jsonReq('http://localhost/api/study-sessions', { ...VALID_INPUT, kp_id: 'k001' }), mockDb({ kps: KEIEI_KPS, schools: KEIEI_SCHOOLS })));
+    expect(res.status).toBe(400);
   });
 });
 
@@ -328,10 +368,10 @@ describe('POST /api/study-sessions — create', () => {
 describe('GET /api/study-sessions — list', () => {
   function seedSessions(): SessionTableRow[] {
     return [
-      { id: 'ss_a', user_id: 'u_me', discipline: 'keiei', kp_id: 'k001', date: '2026-05-02', start_time: '10:00', duration_min: 30, rating: 4, note: null, created_at: '', updated_at: '' },
-      { id: 'ss_b', user_id: 'u_me', discipline: 'keiei', kp_id: 'k002', date: '2026-05-01', start_time: '14:00', duration_min: 60, rating: 5, note: null, created_at: '', updated_at: '' },
-      { id: 'ss_c', user_id: 'u_me', discipline: 'marketing', kp_id: 'm001', date: '2026-05-02', start_time: '08:00', duration_min: 20, rating: 3, note: null, created_at: '', updated_at: '' },
-      { id: 'ss_other', user_id: 'u_other', discipline: 'keiei', kp_id: 'k001', date: '2026-05-02', start_time: '20:00', duration_min: 90, rating: null, note: null, created_at: '', updated_at: '' },
+      { id: 'ss_a', user_id: 'u_me', discipline: 'keiei', kp_id: 'k001', school_key: null, date: '2026-05-02', start_time: '10:00', duration_min: 30, rating: 4, note: null, created_at: '', updated_at: '' },
+      { id: 'ss_b', user_id: 'u_me', discipline: 'keiei', kp_id: 'k002', school_key: null, date: '2026-05-01', start_time: '14:00', duration_min: 60, rating: 5, note: null, created_at: '', updated_at: '' },
+      { id: 'ss_c', user_id: 'u_me', discipline: 'marketing', kp_id: 'm001', school_key: null, date: '2026-05-02', start_time: '08:00', duration_min: 20, rating: 3, note: null, created_at: '', updated_at: '' },
+      { id: 'ss_other', user_id: 'u_other', discipline: 'keiei', kp_id: 'k001', school_key: null, date: '2026-05-02', start_time: '20:00', duration_min: 90, rating: null, note: null, created_at: '', updated_at: '' },
     ];
   }
 
@@ -374,7 +414,7 @@ describe('GET /api/study-sessions — list', () => {
 describe('Study session detail endpoints', () => {
   function seed(): SessionTableRow {
     return {
-      id: 'ss_a', user_id: 'u_me', discipline: 'keiei', kp_id: 'k001',
+      id: 'ss_a', user_id: 'u_me', discipline: 'keiei', kp_id: 'k001', school_key: null,
       date: '2026-05-02', start_time: '10:00', duration_min: 30, rating: 4, note: 'orig',
       created_at: '', updated_at: '',
     };

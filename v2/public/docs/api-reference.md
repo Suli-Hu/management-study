@@ -254,7 +254,8 @@ api-reference 是**字段表参照**，本文件主要回答"叫什么、什么�
 | 字段 | 类型 | 必填 | 约束 |
 |---|---|---|---|
 | `discipline` | string | ✓ | 1-60 字符，必须 ∈ D1 已存在 discipline.key |
-| `kp_id` | string | ✓ | 1-60 字符，KP 必须存在且属于 `discipline` |
+| `school_key` | string | △ | 与 `kp_id` **二选一**：学派 `school.key`，须属于 `discipline`（**UI 默认**） |
+| `kp_id` | string | △ | 与 `school_key` **二选一**：KP id，须存在且属于 `discipline`（兼容旧客户端） |
 | `date` | string | ✓ | `YYYY-MM-DD` |
 | `start_time` | string | ✓ | `HH:mm`（24h） |
 | `duration_min` | int | ✓ | 1-600 |
@@ -667,7 +668,7 @@ View = "学派列表页怎么组织和分组"。只影响展示组织方式，�
 
 ### 8.1 命名说明（先看这一节）
 
-文档 / UI 叫「**学习日志 · Study Log**」，后端 endpoint / 数据模型叫 **`study-sessions` / `study_session`**（一条会话 = 一段时长 + KP）。两套叫法并存：UI 上一条记录就是「日志一条」，但底层是「学习 session 的时间序列」。
+文档 / UI 叫「**学习日志 · Study Log**」，后端 endpoint / 数据模型叫 **`study-sessions` / `study_session`**（一条会话 = 一段时长 + **学派或知识点**）。UI 默认按学派记账；`kp_id` 仍支持兼容。
 
 | 层 | 命名 | 例 |
 |---|---|---|
@@ -695,7 +696,7 @@ GET /api/study-sessions?discipline=keiei&from=2026-04-01&to=2026-05-02&limit=200
 {
   "ok": true,
   "sessions": [
-    { "id": "...", "discipline": "keiei", "kp_id": "k_001",
+    { "id": "...", "discipline": "keiei", "kp_id": null, "school_key": "scientific_management",
       "date": "2026-05-02", "start_time": "14:30",
       "duration_min": 30, "rating": 4, "note": "..." }
   ]

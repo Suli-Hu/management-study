@@ -4,9 +4,9 @@
  * 所有 helper 都是 per-user scoped：调用方传 userId，store 用 user_id
  * 在 WHERE 里限定 —— 即使知道别人的 session id 也读/改不到（防 IDOR）。
  *
- * kp_id 引用 v2 KP 数据；migration 0016 配的是 ON DELETE SET NULL，
- * 所以 KP 被删后 session 仍保留（kp_id = NULL）。创建 / patch 时
- * 调用方负责先校验 KP 存在 + discipline 匹配（参考 ensureKpInDiscipline）。
+ * kp_id / school_key 互斥：学派记账写 school_key、kp_id NULL；旧数据或兼容写 kp。
+ * KP 删除后 kp_id = NULL（0016 ON DELETE SET NULL）。创建前校验见
+ * ensureKpInDiscipline / ensureSchoolInDiscipline。
  */
 
 import type { D1Database } from '@cloudflare/workers-types';
@@ -16,6 +16,8 @@ export interface StudySessionRow {
   user_id: string;
   discipline: string;
   kp_id: string | null;
+  /** 直接记的学派（与 kp_id 互斥；kp 行一般为 null） */
+  school_key: string | null;
   date: string;          // YYYY-MM-DD
   start_time: string;    // HH:mm
   duration_min: number;
@@ -72,6 +74,26 @@ export async function ensureKpInDiscipline(
   return { ok: true };
 }
 
+export type SchoolCheckResult =
+  | { ok: true }
+  | { ok: false; reason: 'school_not_found' | 'school_discipline_mismatch'; actualDiscipline?: string };
+
+export async function ensureSchoolInDiscipline(
+  db: D1Database,
+  schoolKey: string,
+  discipline: string,
+): Promise<SchoolCheckResult> {
+  const row = await db
+    .prepare('SELECT discipline FROM school WHERE key = ?')
+    .bind(schoolKey)
+    .first<{ discipline: string }>();
+  if (!row) return { ok: false, reason: 'school_not_found' };
+  if (row.discipline !== discipline) {
+    return { ok: false, reason: 'school_discipline_mismatch', actualDiscipline: row.discipline };
+  }
+  return { ok: true };
+}
+
 // ============================================================
 // CRUD
 // ============================================================
@@ -81,7 +103,8 @@ export async function createStudySession(
   userId: string,
   input: {
     discipline: string;
-    kp_id: string;
+    kp_id: string | null;
+    school_key: string | null;
     date: string;
     start_time: string;
     duration_min: number;
@@ -94,17 +117,17 @@ export async function createStudySession(
   await db
     .prepare(
       `INSERT INTO study_session
-         (id, user_id, discipline, kp_id, date, start_time, duration_min, rating, note, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         (id, user_id, discipline, kp_id, school_key, date, start_time, duration_min, rating, note, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
-      id, userId, input.discipline, input.kp_id, input.date, input.start_time,
+      id, userId, input.discipline, input.kp_id, input.school_key, input.date, input.start_time,
       input.duration_min, input.rating, input.note, now, now,
     )
     .run();
   return {
     id, user_id: userId,
-    discipline: input.discipline, kp_id: input.kp_id,
+    discipline: input.discipline, kp_id: input.kp_id, school_key: input.school_key,
     date: input.date, start_time: input.start_time, duration_min: input.duration_min,
     rating: input.rating, note: input.note,
     created_at: now, updated_at: now,
@@ -163,7 +186,8 @@ export async function updateStudySession(
   userId: string,
   sessionId: string,
   patch: Partial<{
-    kp_id: string;
+    kp_id: string | null;
+    school_key: string | null;
     date: string;
     start_time: string;
     duration_min: number;
@@ -177,7 +201,18 @@ export async function updateStudySession(
 
   const set: string[] = [];
   const binds: unknown[] = [];
-  if (patch.kp_id !== undefined) { set.push('kp_id = ?'); binds.push(patch.kp_id); }
+  if (patch.kp_id !== undefined) {
+    set.push('kp_id = ?');
+    binds.push(patch.kp_id);
+    set.push('school_key = ?');
+    binds.push(null);
+  }
+  if (patch.school_key !== undefined) {
+    set.push('school_key = ?');
+    binds.push(patch.school_key);
+    set.push('kp_id = ?');
+    binds.push(null);
+  }
   if (patch.date !== undefined) { set.push('date = ?'); binds.push(patch.date); }
   if (patch.start_time !== undefined) { set.push('start_time = ?'); binds.push(patch.start_time); }
   if (patch.duration_min !== undefined) { set.push('duration_min = ?'); binds.push(patch.duration_min); }

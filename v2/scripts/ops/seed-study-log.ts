@@ -274,11 +274,11 @@ function insertSessions(rows: SessionRow[]): number {
       .map((r) => {
         const note = r.note === null ? 'NULL' : `'${r.note.replace(/'/g, "''")}'`;
         const rating = r.rating === null ? 'NULL' : String(r.rating);
-        return `('${r.id}','${r.user_id}','${r.discipline}','${r.kp_id}','${r.date}','${r.start_time}',${r.duration_min},${rating},${note},'${r.created_at}','${r.updated_at}')`;
+        return `('${r.id}','${r.user_id}','${r.discipline}','${r.kp_id}',NULL,'${r.date}','${r.start_time}',${r.duration_min},${rating},${note},'${r.created_at}','${r.updated_at}')`;
       })
       .join(',\n  ');
     const sql = `INSERT INTO study_session
-  (id, user_id, discipline, kp_id, date, start_time, duration_min, rating, note, created_at, updated_at)
+  (id, user_id, discipline, kp_id, school_key, date, start_time, duration_min, rating, note, created_at, updated_at)
 VALUES
   ${values};`;
     const { stdout, status } = runWranglerSql(sql);

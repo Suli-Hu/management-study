@@ -14,7 +14,8 @@ interface Props {
   disciplineTitle: string;
   sessionsJson: string;
   tierStatesJson: string;
-  kpGroupedJson: string;
+  /** JSON: Array<{ key: string; title_zh: string }> 本学科学派列表 */
+  schoolsOptionsJson: string;
   today: string;
   tierLevels: Array<{ key: string; threshold: number }>;
   readOnly?: boolean;
@@ -25,7 +26,7 @@ const {
   disciplineTitle,
   sessionsJson,
   tierStatesJson,
-  kpGroupedJson,
+  schoolsOptionsJson,
   today: TODAY,
   tierLevels,
   readOnly = false,
@@ -63,7 +64,7 @@ const {
 
     <div class="sl-switcher" role="tablist">
       <button type="button" data-view="log" class="sl-seg sl-seg-active" role="tab">日志流</button>
-      <button type="button" data-view="rank" class="sl-seg" role="tab">知识点排行</button>
+      <button type="button" data-view="rank" class="sl-seg" role="tab">学习排行</button>
       <button type="button" data-view="tier" class="sl-seg" role="tab">学派段位</button>
     </div>
 
@@ -120,10 +121,10 @@ const {
     </section>
 
     {/* ============================================================ */}
-    {/* 视图 B · 知识点排行（v0.5.5） */}
+    {/* 视图 B · 学习排行（知识点 + 学派汇总） */}
     {/* ============================================================ */}
     <section data-view-pane="rank" class="sl-view hidden">
-      <p class="sl-rank-hint">按累计学习时长降序排列；行底 progress 是该 KP 占总时长的百分比。</p>
+      <p class="sl-rank-hint">按累计学习时长降序；含按知识点与按学派直接记录；进度条相对本页最长一行。</p>
       <div data-rank-list class="sl-rank-list">
         {/* client JS 渲染 */}
       </div>
@@ -145,23 +146,23 @@ const {
           <input type="hidden" name="id" data-editor-id />
 
           <div class="sl-field">
-            <label class="sl-field-label" for="sl-kp">知识点</label>
-            <div class="sl-kp-combo" data-editor-kp-combo>
-              <input type="hidden" name="kp_id" required data-editor-kp-value />
+            <label class="sl-field-label" for="sl-school">学派（理论）</label>
+            <div class="sl-kp-combo" data-editor-sch-combo>
+              <input type="hidden" name="school_key" required data-editor-sch-value />
               <input
                 type="text"
-                id="sl-kp"
+                id="sl-school"
                 class="sl-field-input sl-kp-input"
-                placeholder="搜索或选择知识点…"
+                placeholder="搜索或选择学派…"
                 autocomplete="off"
                 role="combobox"
                 aria-expanded="false"
                 aria-autocomplete="list"
-                aria-controls="sl-kp-list"
-                data-editor-kp-input
+                aria-controls="sl-school-list"
+                data-editor-sch-input
               />
-              <button type="button" class="sl-kp-clear hidden" data-editor-kp-clear aria-label="清除选择" tabindex="-1">×</button>
-              <div id="sl-kp-list" class="sl-kp-list hidden" role="listbox" data-editor-kp-list></div>
+              <button type="button" class="sl-kp-clear hidden" data-editor-sch-clear aria-label="清除选择" tabindex="-1">×</button>
+              <div id="sl-school-list" class="sl-kp-list hidden" role="listbox" data-editor-sch-list></div>
             </div>
           </div>
 
@@ -283,7 +284,7 @@ const {
 )}
 
 <script is:inline set:html={`window.__SL_TIERS__ = ${tierStatesJson};`}></script>
-<script is:inline set:html={`window.__SL_KPS_GROUPED__ = ${kpGroupedJson};`}></script>
+<script is:inline set:html={`window.__SL_SCHOOLS__ = ${schoolsOptionsJson};`}></script>
 
 <script is:inline define:vars={{ TODAY, DISCIPLINE: discipline }} set:html={`window.__SL_SESSIONS__ = ${sessionsJson};`}></script>
 
@@ -292,7 +293,7 @@ const {
   // 数据模型 + 工具函数
   // ============================================================
 
-  /** @type {Array<{id:string,date:string,start_time:string,duration_min:number,rating:number|null,note:string|null,kp_id:string|null,kp_title:string|null,school_key:string|null,school_title:string|null}>} */
+  /** @type {Array<{id:string,date:string,start_time:string,duration_min:number,rating:number|null,note:string|null,kp_id:string|null,kp_title:string|null,session_school_key:string|null,school_key:string|null,school_title:string|null}>} */
   const ALL_SESSIONS = window.__SL_SESSIONS__ || [];
 
   function fmtDuration(min) {
@@ -506,16 +507,27 @@ const {
       const headDow = escapeHtml(chineseDay(date));
       const headStat = escapeHtml(`${items.length} 次 · ${fmtDuration(totalMin)}`);
       const rows = items.map((s) => {
-        const kpTitle = escapeHtml(s.kp_title ?? (s.kp_id ? `[已删除] ${s.kp_id}` : '[KP 信息缺失]'));
-        const schoolTitle = escapeHtml(s.school_title ?? '');
+        const schoolTitleRaw = s.school_title ?? '';
+        let mainLabel;
+        let mainTitleAttr;
+        let schoolChip = '';
+        if (s.kp_title) {
+          mainLabel = escapeHtml(s.kp_title);
+          mainTitleAttr = mainLabel;
+          if (schoolTitleRaw) schoolChip = `<span class="sl-row-school">${escapeHtml(schoolTitleRaw)}</span>`;
+        } else {
+          mainLabel = escapeHtml(schoolTitleRaw || (s.school_key ? `[学派] ${s.school_key}` : '学派'));
+          mainTitleAttr = mainLabel;
+          schoolChip = '';
+        }
         const rating = s.rating ? '★'.repeat(s.rating) + '☆'.repeat(5 - s.rating) : '';
         const note = s.note ? escapeHtml(s.note) : '';
         return `
           <div class="sl-row" data-row data-id="${escapeHtml(s.id)}">
             <div class="sl-row-main">
               <span class="sl-row-time">${escapeHtml(s.start_time)}</span>
-              <span class="sl-row-kp" title="${kpTitle}">${kpTitle}</span>
-              ${schoolTitle ? `<span class="sl-row-school">${schoolTitle}</span>` : ''}
+              <span class="sl-row-kp" title="${mainTitleAttr}">${mainLabel}</span>
+              ${schoolChip}
               ${note ? `<span class="sl-row-note-preview">${note.slice(0, 40)}${note.length > 40 ? '…' : ''}</span>` : '<span class="sl-row-note-preview sl-empty-note"></span>'}
               <span class="sl-row-dur">${fmtDuration(s.duration_min)}</span>
               ${rating ? `<span class="sl-row-rating">${rating}</span>` : '<span class="sl-row-rating sl-empty-rating"></span>'}
@@ -614,14 +626,22 @@ const {
     }
     empty.classList.add('hidden');
 
-    // 按 kp_id 聚合
+    function rankBucketKey(s) {
+      if (s.kp_id) return `kp:${s.kp_id}`;
+      if (s.school_key) return `sch:${s.school_key}`;
+      return '__orphan__';
+    }
+
     const byKp = new Map();
     for (const s of ALL_SESSIONS) {
-      const key = s.kp_id ?? '__deleted__';
+      const key = rankBucketKey(s);
       if (!byKp.has(key)) {
+        const isKp = Boolean(s.kp_id);
         byKp.set(key, {
+          kind: isKp ? 'kp' : 'sch',
           kp_id: s.kp_id,
           kp_title: s.kp_title,
+          school_key: s.school_key,
           school_title: s.school_title,
           totalMin: 0,
           count: 0,
@@ -656,7 +676,7 @@ const {
 
     list.innerHTML = `
       <div class="sl-rank-head">
-        <span class="sl-rank-col-title">知识点</span>
+        <span class="sl-rank-col-title">对象</span>
         ${colHtml('累计', 'totalMin')}
         ${colHtml('次数', 'count')}
         ${colHtml('平均评分', 'avg')}
@@ -666,15 +686,23 @@ const {
         const pct = Math.max(2, Math.round((r.totalMin / maxMin) * 100));
         const avg = r.ratingCount > 0 ? Math.round(r.ratingSum / r.ratingCount) : 0;
         const stars = avg > 0 ? '★'.repeat(avg) + '☆'.repeat(5 - avg) : '—';
-        const kpDisplay = r.kp_title ?? (r.kp_id ? `[已删除] ${r.kp_id}` : '[KP 信息缺失]');
+        let titleMain;
+        let titleSub = '';
+        if (r.kind === 'kp') {
+          titleMain = r.kp_title ?? (r.kp_id ? `[已删除] ${r.kp_id}` : '[KP 信息缺失]');
+          if (r.school_title) titleSub = r.school_title;
+        } else {
+          titleMain = r.school_title ?? (r.school_key ? r.school_key : '学派');
+          titleSub = '学派汇总';
+        }
         const sharePct = totalAll > 0 ? ((r.totalMin / totalAll) * 100).toFixed(1) : '0';
         return `
           <div class="sl-rank-row" title="占总时长 ${sharePct}%">
             <div class="sl-rank-progress-bg" style="width:${pct}%"></div>
             <div class="sl-rank-content">
               <div class="sl-rank-title">
-                <p class="sl-rank-kp">${escapeHtml(kpDisplay)}</p>
-                ${r.school_title ? `<p class="sl-rank-school">${escapeHtml(r.school_title)}</p>` : ''}
+                <p class="sl-rank-kp">${escapeHtml(titleMain)}</p>
+                ${titleSub ? `<p class="sl-rank-school">${escapeHtml(titleSub)}</p>` : ''}
               </div>
               <span class="sl-rank-num">${fmtDuration(r.totalMin)}</span>
               <span class="sl-rank-num">${r.count}</span>
@@ -814,16 +842,18 @@ const {
   // SessionEditor (v0.5.5)
   // ============================================================
 
-  const KPS_GROUPED = window.__SL_KPS_GROUPED__ || [];
+  const SCH_OPTS = window.__SL_SCHOOLS__ || [];
+  const SCH_TITLE_BY_KEY = new Map(SCH_OPTS.map((s) => [s.key, s.title_zh]));
+
   const overlay = document.querySelector('[data-editor-overlay]');
   const form = document.querySelector('[data-editor-form]');
   const titleEl = document.querySelector('[data-editor-title]');
   const idInput = document.querySelector('[data-editor-id]');
-  const kpCombo = document.querySelector('[data-editor-kp-combo]');
-  const kpInput = document.querySelector('[data-editor-kp-input]');
-  const kpValue = document.querySelector('[data-editor-kp-value]');
-  const kpList = document.querySelector('[data-editor-kp-list]');
-  const kpClear = document.querySelector('[data-editor-kp-clear]');
+  const schCombo = document.querySelector('[data-editor-sch-combo]');
+  const schInput = document.querySelector('[data-editor-sch-input]');
+  const schValue = document.querySelector('[data-editor-sch-value]');
+  const schList = document.querySelector('[data-editor-sch-list]');
+  const schClear = document.querySelector('[data-editor-sch-clear]');
   const dateInput = document.querySelector('[data-editor-date]');
   const timeInput = document.querySelector('[data-editor-time]');
   const durInput = document.querySelector('[data-editor-dur]');
@@ -832,135 +862,110 @@ const {
   const submitBtn = document.querySelector('[data-editor-submit]');
   const errorBox = document.querySelector('[data-editor-error]');
 
-  // KP combobox：搜索 + 学派分组 dropdown（替代原 native select）
-  // 选项数据扁平化方便 keyboard nav；group label 渲染时插入
-  const KP_FLAT = [];
-  const KP_TITLE_BY_ID = new Map();
-  for (const [group, items] of KPS_GROUPED) {
-    for (const k of items) {
-      KP_FLAT.push({ id: k.id, title: k.title_zh, group });
-      KP_TITLE_BY_ID.set(k.id, k.title_zh);
-    }
-  }
-
-  function renderKpList(query) {
-    if (!kpList) return;
+  function renderSchList(query) {
+    if (!schList) return;
     const q = (query || '').trim().toLowerCase();
-    const buckets = new Map();
-    for (const k of KP_FLAT) {
-      if (q && !k.title.toLowerCase().includes(q)) continue;
-      if (!buckets.has(k.group)) buckets.set(k.group, []);
-      buckets.get(k.group).push(k);
-    }
-    if (buckets.size === 0) {
-      kpList.innerHTML = '<div class="sl-kp-empty">没找到匹配的知识点</div>';
+    const items = SCH_OPTS.filter(
+      (s) => !q || s.title_zh.toLowerCase().includes(q) || s.key.toLowerCase().includes(q),
+    );
+    if (items.length === 0) {
+      schList.innerHTML = '<div class="sl-kp-empty">没找到匹配的学派</div>';
       return;
     }
-    let html = '';
-    for (const [group, items] of buckets) {
-      html += `<div class="sl-kp-group-label">${escapeHtml(group)}</div>`;
-      for (const k of items) {
-        const selected = kpValue.value === k.id;
-        html += `<div class="sl-kp-option${selected ? ' is-selected' : ''}" role="option" data-kp-id="${escapeHtml(k.id)}" data-kp-title="${escapeHtml(k.title)}">${escapeHtml(k.title)}</div>`;
-      }
-    }
-    kpList.innerHTML = html;
+    schList.innerHTML = items
+      .map((s) => {
+        const selected = schValue.value === s.key;
+        return `<div class="sl-kp-option${selected ? ' is-selected' : ''}" role="option" data-sch-key="${escapeHtml(s.key)}" data-sch-title="${escapeHtml(s.title_zh)}">${escapeHtml(s.title_zh)}</div>`;
+      })
+      .join('');
   }
 
-  function openKpList() {
-    if (!kpList) return;
-    renderKpList(kpInput.value);
-    kpList.classList.remove('hidden');
-    kpInput.setAttribute('aria-expanded', 'true');
-    // 滚到当前选中
-    const sel = kpList.querySelector('.sl-kp-option.is-selected');
+  function openSchList() {
+    if (!schList) return;
+    renderSchList(schInput.value);
+    schList.classList.remove('hidden');
+    schInput.setAttribute('aria-expanded', 'true');
+    const sel = schList.querySelector('.sl-kp-option.is-selected');
     if (sel) sel.scrollIntoView({ block: 'nearest' });
   }
 
-  function closeKpList() {
-    kpList?.classList.add('hidden');
-    kpInput?.setAttribute('aria-expanded', 'false');
-    clearHighlight();
+  function closeSchList() {
+    schList?.classList.add('hidden');
+    schInput?.setAttribute('aria-expanded', 'false');
+    schList?.querySelectorAll('.sl-kp-option.is-highlighted').forEach((el) => el.classList.remove('is-highlighted'));
   }
 
-  function clearHighlight() {
-    kpList?.querySelectorAll('.sl-kp-option.is-highlighted').forEach((el) => el.classList.remove('is-highlighted'));
-  }
-
-  function moveHighlight(dir) {
-    if (!kpList || kpList.classList.contains('hidden')) {
-      openKpList();
+  function moveSchHighlight(dir) {
+    if (!schList || schList.classList.contains('hidden')) {
+      openSchList();
       return;
     }
-    const opts = Array.from(kpList.querySelectorAll('.sl-kp-option'));
+    const opts = Array.from(schList.querySelectorAll('.sl-kp-option'));
     if (opts.length === 0) return;
-    const cur = kpList.querySelector('.sl-kp-option.is-highlighted');
+    const cur = schList.querySelector('.sl-kp-option.is-highlighted');
     let idx = cur ? opts.indexOf(cur) : -1;
     idx = (idx + dir + opts.length) % opts.length;
-    clearHighlight();
+    schList.querySelectorAll('.sl-kp-option.is-highlighted').forEach((el) => el.classList.remove('is-highlighted'));
     opts[idx].classList.add('is-highlighted');
     opts[idx].scrollIntoView({ block: 'nearest' });
   }
 
-  function setKp(id) {
-    if (!kpInput || !kpValue || !kpClear) return;
-    if (id) {
-      kpValue.value = id;
-      kpInput.value = KP_TITLE_BY_ID.get(id) ?? '';
-      kpClear.classList.remove('hidden');
+  function setSch(key) {
+    if (!schInput || !schValue || !schClear) return;
+    if (key) {
+      schValue.value = key;
+      schInput.value = SCH_TITLE_BY_KEY.get(key) ?? '';
+      schClear.classList.remove('hidden');
     } else {
-      kpValue.value = '';
-      kpInput.value = '';
-      kpClear.classList.add('hidden');
+      schValue.value = '';
+      schInput.value = '';
+      schClear.classList.add('hidden');
     }
   }
 
-  if (kpInput && kpList) {
-    kpInput.addEventListener('focus', openKpList);
-    kpInput.addEventListener('click', openKpList);
-    kpInput.addEventListener('input', () => {
-      // 用户输入 = 重新过滤；意味着当前 hidden value 不再匹配 → 清掉
-      kpValue.value = '';
-      kpClear.classList.toggle('hidden', !kpInput.value);
-      renderKpList(kpInput.value);
-      kpList.classList.remove('hidden');
-      kpInput.setAttribute('aria-expanded', 'true');
+  if (schInput && schList) {
+    schInput.addEventListener('focus', openSchList);
+    schInput.addEventListener('click', openSchList);
+    schInput.addEventListener('input', () => {
+      schValue.value = '';
+      schClear.classList.toggle('hidden', !schInput.value);
+      renderSchList(schInput.value);
+      schList.classList.remove('hidden');
+      schInput.setAttribute('aria-expanded', 'true');
     });
-    kpInput.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowDown') { e.preventDefault(); moveHighlight(1); }
-      else if (e.key === 'ArrowUp') { e.preventDefault(); moveHighlight(-1); }
+    schInput.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveSchHighlight(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveSchHighlight(-1); }
       else if (e.key === 'Enter') {
-        const cur = kpList.querySelector('.sl-kp-option.is-highlighted');
+        const cur = schList.querySelector('.sl-kp-option.is-highlighted');
         if (cur) {
           e.preventDefault();
-          setKp(cur.getAttribute('data-kp-id'));
-          closeKpList();
+          setSch(cur.getAttribute('data-sch-key'));
+          closeSchList();
         }
       } else if (e.key === 'Escape') {
-        if (!kpList.classList.contains('hidden')) {
+        if (!schList.classList.contains('hidden')) {
           e.preventDefault();
-          closeKpList();
+          closeSchList();
         }
       }
     });
 
-    kpList.addEventListener('mousedown', (e) => {
-      // mousedown 而非 click：避免 input blur 早于 click 关闭 dropdown
+    schList.addEventListener('mousedown', (e) => {
       const opt = e.target.closest('.sl-kp-option');
       if (!opt) return;
       e.preventDefault();
-      setKp(opt.getAttribute('data-kp-id'));
-      closeKpList();
+      setSch(opt.getAttribute('data-sch-key'));
+      closeSchList();
     });
 
-    kpClear.addEventListener('click', () => {
-      setKp(null);
-      kpInput.focus();
+    schClear.addEventListener('click', () => {
+      setSch(null);
+      schInput.focus();
     });
 
-    // 点外部关闭
     document.addEventListener('click', (e) => {
-      if (!kpCombo.contains(e.target)) closeKpList();
+      if (!schCombo.contains(e.target)) closeSchList();
     });
   }
 
@@ -988,7 +993,7 @@ const {
     if (session) {
       titleEl.textContent = '编辑学习记录';
       idInput.value = session.id;
-      setKp(session.kp_id ?? null);
+      setSch(session.school_key ?? null);
       dateInput.value = session.date;
       timeInput.value = session.start_time;
       durInput.value = String(session.duration_min);
@@ -1002,7 +1007,7 @@ const {
     } else {
       titleEl.textContent = '新建学习记录';
       idInput.value = '';
-      setKp(null);
+      setSch(null);
       dateInput.value = TODAY;
       timeInput.value = nowHM();
       durInput.value = '30';
@@ -1011,7 +1016,7 @@ const {
       document.querySelectorAll('[data-rating-val]').forEach((b) => b.classList.remove('sl-rating-active'));
     }
     overlay.classList.remove('hidden');
-    setTimeout(() => kpInput?.focus(), 50);
+    setTimeout(() => schInput?.focus(), 50);
   }
 
   function closeEditor() {
@@ -1073,7 +1078,7 @@ const {
     const ratingVal = ratingValueInput.value.trim();
     const noteVal = noteInput.value.trim();
     const body = {
-      kp_id: kpValue.value,
+      school_key: schValue.value,
       date: dateInput.value,
       start_time: timeInput.value,
       duration_min: parseInt(durInput.value, 10),
