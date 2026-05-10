@@ -75,6 +75,105 @@
 - Treat tags as governed keys (not free text) where enforced by the system.
 - Prefer D1-first / API-first flows for content changes; avoid reviving v1-era data editing paths.
 
+## 老师 agent 经验沉淀：批量数据维护的 4 个失败模式与防护规则
+
+> 适用场景：在 study.sususu.org KP 数据库里**批量创建学者**、**批量修改 KP-学者关联**、**批量审计某个 school**。
+> 教训来自 2026-05 OB 三 school 整理事件——尽管多次声明「accuracy first」，仍被人工复审揪出多处错挂。
+
+---
+
+### 4 个反复犯的错（每个都附真实案例）
+
+#### ❌ 失败模式 1：把「准确」窄化为「新数据准确」，跳过旧数据审计
+
+被要求做「全量准确」时，本能反应是「**把缺失的补全 + 把新内容核查清楚**」。但**绝口不提**「**已挂载的字段是否正确**」。
+
+**真实案例**：k054 前景理论的 lead 自己写了「卡尼曼因此获 2002 年诺贝尔奖」，`scholars` 字段却挂着 `kahn_r`（Robert Kahn，OB 学者）——错挂了不知多久，没人发现。
+
+**根因**：审计脚本只扫了「漏挂」（lead 提到 X、`scholars` 没 X），没扫「错挂」（`scholars` 有 Y、lead 完全没提 Y）。
+
+#### ❌ 失败模式 2：凭 KP id 印象推断主题，跳过 GET
+
+**真实案例**：
+
+- k036 → 我以为是 JCM（工作特征模型），把 oldham 挂上去，实际 k036 是「强化理论」
+- k221 → 我以为是 Maslow 需求层次，把 goldstein·wertheimer 挂上去，实际 k221 是「SCP 范式」
+
+每个错误都是「凭印象/凭 id 看着像」直接 PATCH，没花 30 秒 GET 确认。
+
+**根因**：批量执行阶段进入「流水线模式」，把研究阶段建立的严谨抛在脑后。
+
+#### ❌ 失败模式 3：信任未亲自检查的存量数据
+
+看到 KP 已经有 `scholars=['xxx']` 时本能反应是「已经挂了，跳过」——**从未质疑这个挂载本身是否对**。
+
+**真实案例**：k038 态度三成分 ABC 模型挂着 `abernathy`（创新管理 A-U 模型作者），张冠李戴极其离谱，但因为字段非空，审计脚本直接放过。
+
+#### ❌ 失败模式 4：研究阶段严谨没延续到执行阶段
+
+派 research agent 严格核查 20 个新学者事实没问题。**但到了「链接 KP 阶段」**，开始用「记忆 + id 印象」推断哪个 KP 该挂谁——这就是失败模式 2 的根源。
+
+**根因**：把「研究」和「执行」当成两个独立步骤。研究的严谨只覆盖前者。
+
+---
+
+### ✅ 强制执行的 5 条防护规则
+
+#### 规则 1：PATCH 前必 GET，零例外
+
+任何「把学者 X 挂到 KP Y」之前，**必须先 GET 一次 Y**，读它的 title 与 lead/prose。如果学者 X 在 lead 里没出现、且其 field 与 KP 主题不符——**停下来，不要挂**。
+
+30 秒成本能避免 100% 的「id 印象错误」。
+
+#### 规则 2：「全量准确」=「补缺 + 审旧」缺一不可
+
+当用户说「准确」或「全量」时，必须主动扫描**现有挂载的正确性**，不只是补缺失。
+
+具体：**每次批量操作前，对涉及的 school 跑一次双向一致性脚本**（见规则 3）。
+
+#### 规则 3：双向一致性检查（标准动作）
+
+对每个 KP，自动比对 `body` 文本中提到的人名 ↔ `scholars` 字段：
+
+- **漏挂**：lead/prose 里提到「Festinger 1957」，但 scholars 没 festinger → 待补
+- **错挂**：scholars 里有 X，但 lead 完全没提 X，且 X 的 field 与 KP 主题不沾边 → **必查**
+
+错挂常因 OCR 误识别（「母戸」→「伊丹」）、姓氏混淆（「卡恩 Kahn」vs「卡尼曼 Kahneman」）、首字母联想（「ABC 模型」误关联「A-U 模型」）产生。
+
+#### 规则 4：执行阶段也要保持研究阶段的严谨
+
+派 research agent 查证学者事实只是任务的**一半**。链接 KP 时，**每个链接动作都要回到 KP 本身的 body 文本去验证**——不是凭 agent 给的「建议挂载」或自己印象。
+
+#### 规则 5：API schema 约束要先查清再写
+
+新建/修改字段前，**查文档**或**先做一次 dry-run**确认必填字段、字符长度约束、字段语义。
+
+**真实案例**：rotter PATCH 失败因为 `contribution.ja` 是空字符串（schema 要求 ≥1 字符），但我没事先看它实际值就发了 patch。
+
+---
+
+### 工作流模板（批量 KP-学者整理）
+
+```
+1. GET school's concepts list
+2. 对每个 KP：
+   a) GET KP，读 title + body 文本
+   b) 记录 body 中所有人名 (regex + 已知学者 map)
+   c) 与 scholars 字段做 set 对比 → 标 漏挂 / 错挂
+3. 为「待新建学者」派 research agent 查证事实
+4. 创建学者前确认 schema 约束
+5. 创建学者
+6. 对每个待 PATCH 的 KP：
+   a) **再 GET 一次 KP**，二次确认主题
+   b) 构造 scholars 数组（合并·去重·保留顺序）
+   c) PATCH
+7. 全部完成后跑一次终验脚本，确认 0 漏挂 0 错挂
+```
+
+### 一句话记忆口诀
+
+> **「GET 在前，PATCH 在后；查事实不查印象；审旧数据不只补缺。」**
+
 ## Quick “don’t do” list
 - Don’t call mindmaps “textbook original text”.
 - Don’t invent academic genealogy/causal chains for narrative smoothness.
