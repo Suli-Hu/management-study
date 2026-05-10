@@ -1,0 +1,14 @@
+---
+description: After pushing to deploy branches, always report semver + git SHA for verification
+alwaysApply: true
+---
+
+# 发布与验证：版本号汇报
+
+当在本仓库完成 **`git push`**（尤其是 `main` 或用于生产的分支）且改动面向上线验证时，**必须在同一次对话的回复里**给出：
+
+1. **`v2/package.json` 的 `version` 字段**（如 `0.11.17`）— 这是 PM/老师对照「部署的是哪一版」的首选号。
+2. **Git commit**：至少 **短 SHA**（7 位），并建议附上 **完整 SHA** 或 GitHub compare 链接（若已知 remote）。
+3. 若本次发布 **未** 同步 bump `package.json` 的 `version`，应提醒补一次 patch bump 再 push，以便下次可验证。
+
+说明：`package.json` 的 version 需在有意义的发版/合并前由 agent 或维护者递增（通常 patch +1），与 Cloudflare Pages 等部署无自动绑定，但以该字段为团队口头「版本号」真源。
