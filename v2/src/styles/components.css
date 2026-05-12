@@ -241,6 +241,84 @@ mark {
   overflow-y: auto;
   background: var(--color-bg-primary);
   min-height: 0;
+  /* v0.11.30 hide native scrollbar — kp-list-scrollbar.js 自绘 overlay thumb */
+  scrollbar-width: none;          /* Firefox */
+}
+.split > .left::-webkit-scrollbar { width: 0; height: 0; }  /* Chrome / Safari / Edge */
+
+/* v0.11.30 KP list overlay scrollbar
+   - .kpsb-host sticky top:0 in .left, 0 height, hosts absolute thumb
+   - .kpsb-thumb: 4px default → 6px hover；rgba 黑 22% → 40% hover
+   - .kpsb-fade-top sticky top: tabs height (~40px) below sticky tabs
+   - .kpsb-fade-bottom sticky bottom: 0
+   - 触屏走原生（JS 检 pointer: coarse 不挂载）；这里 CSS 仍 hide 原生
+     scrollbar 但触屏一般不显示原生 bar，不影响 */
+.kpsb-host {
+  position: sticky;
+  top: 0;
+  height: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+.kpsb-thumb {
+  position: absolute;
+  right: 4px;
+  top: 0;
+  width: 4px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.22);
+  border-radius: 3px;
+  opacity: 0;
+  pointer-events: auto;
+  will-change: transform;
+  transition:
+    opacity 200ms ease-in,
+    width 120ms ease,
+    background-color 120ms ease;
+}
+[data-mode='dark'] .kpsb-thumb,
+html.dark .kpsb-thumb {
+  background: rgba(255, 255, 255, 0.22);
+}
+.kpsb-thumb.is-visible {
+  opacity: 1;
+  transition:
+    opacity 120ms ease-out,
+    width 120ms ease,
+    background-color 120ms ease;
+}
+.kpsb-thumb:hover {
+  width: 6px;
+  background: rgba(0, 0, 0, 0.40);
+}
+[data-mode='dark'] .kpsb-thumb:hover,
+html.dark .kpsb-thumb:hover {
+  background: rgba(255, 255, 255, 0.40);
+}
+
+.kpsb-fade-top,
+.kpsb-fade-bottom {
+  position: sticky;
+  width: 100%;
+  height: 18px;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+.kpsb-fade-top {
+  top: 40px;                  /* 卡在 .optA-tabs sticky bar 下方（tabs 总高 ~40px） */
+  margin-bottom: -18px;       /* 不占内容垂直空间 */
+  background: linear-gradient(to bottom, var(--color-bg-primary) 0%, transparent 100%);
+}
+.kpsb-fade-bottom {
+  bottom: 0;
+  margin-top: -18px;
+  background: linear-gradient(to top, var(--color-bg-primary) 0%, transparent 100%);
+}
+.kpsb-fade-top.is-visible,
+.kpsb-fade-bottom.is-visible {
+  opacity: 1;
 }
 .split > .right {
   overflow-y: auto;
