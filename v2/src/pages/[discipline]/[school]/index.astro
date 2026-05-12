@@ -384,17 +384,8 @@ const canEdit = Astro.locals.canEdit(discipline);
         </ul>
       </section>
 
-      {/* Tab Panel: 核心概念（默认 active）*/}
+      {/* Tab Panel: 核心概念（默认 active）—— v0.11.28: "+ 新增" 移到列表末 add-cell */}
       <section class="optA-tab-panel" data-tab-panel="concepts">
-        {canEdit && (
-          <div class="optA-tab-panel-actions">
-            <a
-              href={editHref(`/${discipline}/kp/new?school=${sch.key}`, editFromUrl)}
-              class="optA-section-add"
-              title="新增 KP"
-            >+ 新增</a>
-          </div>
-        )}
         <ul
           class="optA-kps drag-reorder"
           data-reorder-kind="school-concepts"
@@ -457,8 +448,20 @@ const canEdit = Astro.locals.canEdit(discipline);
               </li>
             );
           })}
+          {canEdit && (
+            <li class="optA-kp-add-li">
+              <a
+                href={editHref(`/${discipline}/kp/new?school=${sch.key}`, editFromUrl)}
+                class="optA-kp-add"
+                title="新增 KP"
+              >
+                <span class="optA-kp-add-icon" aria-hidden="true">+</span>
+                <span class="optA-kp-add-label">新增</span>
+              </a>
+            </li>
+          )}
         </ul>
-        {kps.length === 0 && (
+        {kps.length === 0 && !canEdit && (
           <p class="text-xs text-quaternary px-2 py-2">暂无核心概念。</p>
         )}
       </section>
