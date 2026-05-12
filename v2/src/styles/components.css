@@ -238,8 +238,8 @@ mark {
   border-right: 1px solid var(--color-border);
   /* v0.5.8: padding-top: 0 让 .optA-hero 可以 sticky 紧贴顶部（hero 自带 padding）
      v0.11.35: padding-right: 0 — scrollbar 直接贴 .left 右内沿，无额外留白
-     （.optA-tabs / .optA-hero-v2 各自有内部 padding 不依赖 .left 右 padding） */
-  padding: 0 0 20px 18px;
+     v0.11.36: padding-left 18 → 4 — 释放 14px 给 cell（tabs / hero 有自己的 padding） */
+  padding: 0 0 20px 4px;
   overflow-y: auto;
   background: var(--color-bg-primary);
   min-height: 0;
@@ -1116,13 +1116,15 @@ details.eval {
     border-right: 1px solid var(--color-border);
   }
   .optA-kp-li:nth-child(2n) .optA-kp { border-right: 0; }
-  .optA-kp-summary { padding: 11px 12px; }
+  /* v0.11.36 cell padding 11/12 → 10/8，扩 8px 内容横向空间 */
+  .optA-kp-summary { padding: 10px 8px; }
 
-  /* title row: flex 已由 v0.11.22 set；这里切 wrap + reorder */
+  /* title row: flex 已由 v0.11.22 set；这里切 wrap + reorder
+     v0.11.36 font 13.5 → 12px，配合 padding 优化让 title 单行容 ~14 字 */
   .optA-kp-title {
     flex-wrap: wrap;
     row-gap: 0;
-    font-size: 13.5px;
+    font-size: 12px;
   }
   /* title-core: 允许换行，最多 2 行 */
   .optA-kp-title-core {
