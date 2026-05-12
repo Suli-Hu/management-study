@@ -22,20 +22,24 @@
     if (!left) return;
 
     // Thumb host: sticky in .left's scroll viewport, 0 height, hosts absolute thumb
+    // v0.11.32 fix: 必须 prepend（不能 append），sticky top:0 才会粘在 viewport 顶
+    // append 到末尾 → sticky 元素自然位置在 content 底，scrollTop=0 时它在 viewport 之下
+    // → sticky 不触发 → thumb 渲染在 content 底（bug 现象）
     const host = document.createElement('div');
     host.className = 'kpsb-host';
     const thumb = document.createElement('div');
     thumb.className = 'kpsb-thumb';
     host.appendChild(thumb);
-    left.appendChild(host);
 
     // Fade masks
     const fadeTop = document.createElement('div');
     fadeTop.className = 'kpsb-fade-top';
     const fadeBottom = document.createElement('div');
     fadeBottom.className = 'kpsb-fade-bottom';
-    left.appendChild(fadeTop);
-    left.appendChild(fadeBottom);
+
+    left.prepend(fadeTop);
+    left.prepend(host);             // host 在最前（z-index 5 在 fadeTop 上）
+    left.appendChild(fadeBottom);   // bottom fade 反过来 — 必须在 content 末，sticky bottom:0 才生效
 
     let rafId = null;
     let hideTimer = null;
