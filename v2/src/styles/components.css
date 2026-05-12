@@ -241,6 +241,31 @@ mark {
   overflow-y: auto;
   background: var(--color-bg-primary);
   min-height: 0;
+  /* v0.11.34 缩窄 native scrollbar 14px → 6px（永远占位，但比原生窄一半多） */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.22) transparent;
+}
+.split > .left::-webkit-scrollbar { width: 6px; height: 6px; }
+.split > .left::-webkit-scrollbar-track { background: transparent; }
+.split > .left::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.22);
+  border-radius: 3px;
+}
+.split > .left::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.40);
+}
+/* dark mode 反相 */
+[data-mode='dark'] .split > .left,
+html.dark .split > .left {
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+}
+[data-mode='dark'] .split > .left::-webkit-scrollbar-thumb,
+html.dark .split > .left::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+}
+[data-mode='dark'] .split > .left::-webkit-scrollbar-thumb:hover,
+html.dark .split > .left::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.40);
 }
 .split > .right {
   overflow-y: auto;
