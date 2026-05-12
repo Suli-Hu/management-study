@@ -482,18 +482,9 @@ const canEdit = Astro.locals.canEdit(discipline);
         </section>
       )}
 
-      {/* Tab Panel: 关联知识（KP flat list）*/}
+      {/* Tab Panel: 关联知识（KP flat list）—— v0.11.28: "+ 新增" 移到列表末 add-cell */}
       <section class="optA-tab-panel" data-tab-panel="kps" hidden>
-        {canEdit && (
-          <div class="optA-tab-panel-actions">
-            <a
-              href={editHref(`/${discipline}/kp/new?scholar=${scholar.key}`, editFromUrl)}
-              class="optA-section-add"
-              title="新增 KP"
-            >+ 新增</a>
-          </div>
-        )}
-        {kps.length === 0 ? (
+        {kps.length === 0 && !canEdit ? (
           <p class="text-xs text-quaternary px-2 py-2">暂无关联知识点。</p>
         ) : (
           <ul
@@ -558,6 +549,18 @@ const canEdit = Astro.locals.canEdit(discipline);
                 </li>
               );
             })}
+            {canEdit && (
+              <li class="optA-kp-add-li">
+                <a
+                  href={editHref(`/${discipline}/kp/new?scholar=${scholar.key}`, editFromUrl)}
+                  class="optA-kp-add"
+                  title="新增 KP"
+                >
+                  <span class="optA-kp-add-icon" aria-hidden="true">+</span>
+                  <span class="optA-kp-add-label">新增</span>
+                </a>
+              </li>
+            )}
           </ul>
         )}
       </section>

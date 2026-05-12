@@ -820,7 +820,9 @@ details.eval {
 }
 .optA-tab-btn[data-active] .optA-tab-count { color: var(--color-text-tertiary); }
 
-.optA-tab-panel { padding: 8px 0 24px; }
+/* v0.11.28: 顶 padding 0（原 8px）+ 移除 .optA-tab-panel-actions 单独行
+   "+ 新增" 改成 list 末尾 .optA-kp-add 单元格 */
+.optA-tab-panel { padding: 0 0 24px; }
 .optA-tab-panel[hidden] { display: none; }
 .optA-tab-panel-actions {
   display: flex; justify-content: flex-end;
@@ -1135,6 +1137,55 @@ details.eval {
   .optA-kp.is-active {
     box-shadow: inset 0 0 0 1.5px var(--accent, var(--color-text-quaternary));
   }
+
+  /* v0.11.28 add-cell（admin "+ 新增"）双排适配：
+     - 与普通 .optA-kp-li 同 flex + min-width: 0
+     - .optA-kp-add flex: 1 撑满 cell，border-right hairline 配合 grid
+     - :nth-child(2n) 取消最右列 border-right（同 .optA-kp 规则）
+     - 高度自然 grid-auto-rows: 112px */
+  .optA-kp-add-li {
+    display: flex;
+    min-width: 0;
+  }
+  .optA-kp-add {
+    flex: 1;
+    border-right: 1px solid var(--color-border);
+    border-bottom: 0;
+  }
+  .optA-kp-add-li:nth-child(2n) .optA-kp-add {
+    border-right: 0;
+  }
+}
+
+/* v0.11.28 add-cell（base，1-col + 2-col 共用基础样式）
+   admin only；显示淡灰 "+ 新增"，hover 渐变到学派 accent 色 */
+.optA-kp-add-li {
+  list-style: none;
+}
+.optA-kp-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 12px;
+  height: 100%;
+  text-decoration: none;
+  color: var(--color-text-quaternary);
+  border-bottom: 1px solid var(--color-border);
+  transition: color .15s ease, background .15s ease;
+}
+.optA-kp-add:hover {
+  color: var(--accent, var(--color-text-secondary));
+  background: color-mix(in oklab, var(--accent, var(--color-text-tertiary)) 4%, var(--color-bg-primary));
+}
+.optA-kp-add-icon {
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1;
+}
+.optA-kp-add-label {
+  font-size: 12px;
+  font-weight: 500;
 }
 
 /* ---- summary wrapper ---- */
