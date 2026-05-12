@@ -1112,45 +1112,48 @@ details.eval {
     min-width: 0;                   /* 同上，flex item 允许缩小（含长 word-break 内容） */
     display: flex;
     flex-direction: column;
-    justify-content: center;        /* 内容垂直居中 */
+    justify-content: flex-start;    /* v0.11.37: top-align，title/scholar/en 在所有 cell 同 Y 位置 */
     border-right: 1px solid var(--color-border);
   }
   .optA-kp-li:nth-child(2n) .optA-kp { border-right: 0; }
-  /* v0.11.36 cell padding 11/12 → 10/8，扩 8px 内容横向空间 */
-  .optA-kp-summary { padding: 10px 8px; }
+  /* v0.11.37 cell layout 重构：固定 4 行结构 (title / scholar / en×2)
+     year 抽到右上角 absolute，不再吃 title 横向空间 */
+  .optA-kp-summary {
+    position: relative;
+    padding: 10px 8px;
+  }
 
-  /* title row: flex 已由 v0.11.22 set；这里切 wrap + reorder
-     v0.11.36 font 13.5 → 12px，配合 padding 优化让 title 单行容 ~14 字 */
+  /* title: 单行 nowrap ellipsis；不再 flex（不跟 scholar/year 同行竞争） */
   .optA-kp-title {
-    flex-wrap: wrap;
-    row-gap: 0;
+    display: block;
     font-size: 12px;
+    padding-right: 22px;            /* 留 year 右上角空间 */
   }
-  /* title-core: 允许换行，最多 2 行 */
   .optA-kp-title-core {
+    display: block;
     overflow: hidden;
-    white-space: normal;
     text-overflow: ellipsis;
+    white-space: nowrap;
     line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
   }
-  /* year: 右上角，order 1 紧跟 core 在第一行 */
+  /* year: 抽离到 cell 右上角 absolute */
   .optA-kp-year {
-    order: 1;
-    margin-left: auto;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    margin: 0;
+    font-size: 11px;
   }
-  /* scholar: 第二行（flex:0 0 100% 强制 wrap）；保留 v0.11.22 的 1 行 ellipsis */
+  /* scholar: 独占第 2 行，单行 ellipsis（沿用 base 的 nowrap） */
   .optA-kp-scholar {
-    order: 2;
-    flex: 0 0 100%;
+    display: block;
+    margin-left: 0;
     margin-top: 2px;
     font-size: 11px;
-    /* overflow/text-overflow/white-space 沿用 base（nowrap + ellipsis） */
   }
-  /* en: 最多 2 行 */
+  /* en: 第 3-4 行（最多 2 行 ellipsis） */
   .optA-kp-sub-en {
+    margin-top: 2px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
