@@ -24,6 +24,8 @@
  *   - <a> / <script> / <img> 等任何其它标签都 escape
  */
 
+import { inlineMdDoubleStarToStrong } from './format-trusted-prose-html';
+
 export type CodeResolver = (key: string) => { text: string; href?: string } | null;
 
 export interface RenderInlineOpts {
@@ -67,6 +69,11 @@ export function renderInlineHtml(s: string | null | undefined, opts?: RenderInli
   out = out
     .replace(/&lt;(\/?)(strong|em)&gt;/gi, '<$1$2>')
     .replace(/&lt;br\s*\/?&gt;/gi, '<br>');
+  // Step 3.5 (v0.11.31): markdown `**bold**` → <strong>bold</strong>
+  // 在 HTML escape 之后跑 — 用户输入中的 < > 已转义为 &lt; / &gt;，** 不是 HTML 特殊字符
+  // 不会被 escape 流程影响；这里成对 ** 内的内容已是 escaped 安全文本，包 <strong> 不引入 XSS。
+  // 复用 format-trusted-prose-html.ts 的 inlineMdDoubleStarToStrong 保持跟 KP body / evaluations 一致。
+  out = inlineMdDoubleStarToStrong(out);
   // Step 4 (v0.11.7): \n → <br> — 让 textarea 按回车换行直接渲染
   out = out.replace(/\n/g, '<br>');
   return out;
