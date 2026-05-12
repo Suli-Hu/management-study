@@ -140,35 +140,70 @@
     //   2) current source：以前用 URLSearchParams ?kp=（首次进页 URL 里没 ?kp=）→
     //      curIdx=-1，baseIdx=-1，next=0，但 activeKpId 内部已是 items[0].id →
     //      setActiveImmediate 走 early-return → 无反应。改用 closure activeKpId（真源）。
+    //
+    // v0.11.24 双排 KP list 适配：
+    //   - 1-col (.optA-kps grid-template-columns = "1fr") → 原行为不变（←→ 切, ↑↓ 滚）
+    //   - 2-col (.optA-kps grid-template-columns = "1fr 1fr") → ←→↑↓ 2D 导航
+    //   - Shift+↑↓ 任意模式下都滚右栏（2-col 模式下 ↑↓ 已被切卡占用）
+    //   - colCount 通过 getComputedStyle 实时读，CSS @media 切换 / 屏幕缩放都跟得上
     document.addEventListener('keydown', (e) => {
       if (!MQ.matches) return;
       const tag = e.target?.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target?.isContentEditable) return;
 
-      // ←/→ 切 KP（边界 stop，不 wrap）
-      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-        const items = Array.from(document.querySelectorAll('.left [data-kp-id]'));
-        if (!items.length) return;
-        const curIdx = items.findIndex((el) => el.getAttribute('data-kp-id') === activeKpId);
-        // 找不到 active（防御 fallback，正常应该有）— ← 留 0，→ 去 1
-        const baseIdx = curIdx < 0 ? (e.key === 'ArrowRight' ? -1 : 0) : curIdx;
-        const next = baseIdx + (e.key === 'ArrowRight' ? 1 : -1);
-        if (next < 0 || next >= items.length) return;   // 到头/到尾，让默认行为 / no-op
-        const nextId = items[next].getAttribute('data-kp-id');
-        if (!nextId || nextId === activeKpId) return;
+      const isArrow =
+        e.key === 'ArrowLeft' || e.key === 'ArrowRight' ||
+        e.key === 'ArrowUp'   || e.key === 'ArrowDown';
+      if (!isArrow) return;
+
+      // Shift + ↑↓ → 任意模式都滚右栏（修饰键优先于切卡）
+      if (e.shiftKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+        if (!detailPane) return;
         e.preventDefault();
-        showKpInPane(nextId);
-        items[next].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        detailPane.scrollBy({ top: e.key === 'ArrowDown' ? 80 : -80, behavior: 'smooth' });
         return;
       }
 
-      // ↑/↓ 滚右栏（detailPane 自身 overflow-y:auto）
-      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      const items = Array.from(document.querySelectorAll('.left [data-kp-id]'));
+      if (!items.length) return;
+
+      // 实时探 list 列数；CSS @media 切换 / 拉宽窗口都能跟上
+      const list = items[0].parentElement;
+      const tmpl = list ? getComputedStyle(list).gridTemplateColumns : '';
+      const colCount = tmpl ? tmpl.split(' ').filter((s) => s.trim()).length : 1;
+
+      // 1-col + ↑↓ → 原 prod 行为：滚右栏
+      if (colCount <= 1 && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
         if (!detailPane) return;
         e.preventDefault();
-        const step = e.key === 'ArrowDown' ? 80 : -80;
-        detailPane.scrollBy({ top: step, behavior: 'smooth' });
+        detailPane.scrollBy({ top: e.key === 'ArrowDown' ? 80 : -80, behavior: 'smooth' });
+        return;
       }
+
+      // 切 KP 导航
+      const curIdx = items.findIndex((el) => el.getAttribute('data-kp-id') === activeKpId);
+      const baseIdx = curIdx < 0 ? 0 : curIdx;
+      let next = -1;
+
+      if (colCount > 1) {
+        // 2D grid nav（DOM 顺序 = 左到右、上到下）
+        const col = baseIdx % colCount;
+        if (e.key === 'ArrowLeft'  && col > 0)                                    next = baseIdx - 1;
+        else if (e.key === 'ArrowRight' && col < colCount - 1 && baseIdx + 1 < items.length) next = baseIdx + 1;
+        else if (e.key === 'ArrowUp'    && baseIdx - colCount >= 0)               next = baseIdx - colCount;
+        else if (e.key === 'ArrowDown'  && baseIdx + colCount < items.length)     next = baseIdx + colCount;
+      } else {
+        // 1-col linear nav（←→）
+        if (e.key === 'ArrowLeft'  && baseIdx > 0)              next = baseIdx - 1;
+        else if (e.key === 'ArrowRight' && baseIdx + 1 < items.length) next = baseIdx + 1;
+      }
+
+      if (next < 0 || next >= items.length) return; // 边界 no-op
+      const nextId = items[next].getAttribute('data-kp-id');
+      if (!nextId || nextId === activeKpId) return;
+      e.preventDefault();
+      showKpInPane(nextId);
+      items[next].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     });
 
     if (MQ.matches) {

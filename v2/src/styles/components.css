@@ -1040,6 +1040,76 @@ details.eval {
   word-break: break-word;
 }
 
+/* ============================================================
+ * v0.11.24 学派/学者 detail 左栏 KP list 双排（desktop split pane only）
+ * 提升信息密度：6 KP 占高 ~520px → ~260px，视窗内 ~4 → ~7-8 张可见
+ *
+ * 实现要点：
+ *   - 不改 DOM；纯 CSS。v0.11.22 已把 .optA-kp-title 改成 flex + .optA-kp-title-core 包裹
+ *     title 文本，本节只是切到 flex-wrap + reorder（core + year 同行；scholar wrap 第二行）
+ *   - scholar `flex: 0 0 100% + order: 2` 强制换行；重置 v0.11.22 的 ellipsis 让其自然换行
+ *   - title-core 也允许换行（cell ~195px 窄，长 title 不被截）
+ *   - year `margin-left: auto + order: 1` 右上角
+ *   - ja 默认收起，hover/is-active 时 max-height transition 展开（progressive disclosure）
+ *   - active 左 3px ::before strip 在 grid cell 内仍生效（每个 .optA-kp 独立 positioning）
+ *   - mobile <1024px 走原 single col + inline body expand（响应式 § 已 set）
+ * ============================================================ */
+@media (min-width: 1024px) {
+  .optA-kps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .optA-kp { border-right: 1px solid var(--color-border); }
+  .optA-kp-li:nth-child(2n) .optA-kp { border-right: 0; }
+  .optA-kp-summary { padding: 11px 12px; }
+
+  /* title row: flex 已由 v0.11.22 set；这里切 wrap + reorder */
+  .optA-kp-title {
+    flex-wrap: wrap;
+    row-gap: 0;
+    font-size: 13.5px;
+  }
+  /* title-core: 允许换行（cell 窄时长 title 不被截） */
+  .optA-kp-title-core {
+    overflow: visible;
+    white-space: normal;
+    text-overflow: clip;
+    line-height: 1.4;
+  }
+  /* year: 右上角，order 1 紧跟 core 在第一行 */
+  .optA-kp-year {
+    order: 1;
+    margin-left: auto;
+  }
+  /* scholar: 第二行（flex:0 0 100% 强制 wrap），重置 v0.11.22 的 ellipsis */
+  .optA-kp-scholar {
+    order: 2;
+    flex: 0 0 100%;
+    margin-top: 2px;
+    font-size: 11px;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    line-height: 1.4;
+  }
+
+  /* ja: 默认收起，hover/active reveal */
+  .optA-kp-sub-ja {
+    max-height: 0;
+    overflow: hidden;
+    margin-top: 0;
+    opacity: 0;
+    transition: max-height .18s ease, opacity .18s ease, margin-top .18s ease;
+  }
+  .optA-kp:hover .optA-kp-sub-ja,
+  .optA-kp.is-active .optA-kp-sub-ja {
+    max-height: 24px;
+    margin-top: 3px;
+    opacity: 1;
+  }
+}
+
 /* ---- summary wrapper ---- */
 .optA-summary-wrap {
   padding: 0 8px 8px;
