@@ -1126,6 +1126,15 @@ details.eval {
   }
   /* ja: list 里不展示（右栏 detail 仍有） */
   .optA-kp-sub-ja { display: none; }
+
+  /* v0.11.27 active 状态：双排里隐左 strip，改 cell 全边框 inset accent
+     - 左 strip 在双排 grid 里视觉不对称、跟 hairline 切割竞争
+     - 改成 inset 1.5px accent box-shadow = 4 边对称、不引入 shadow（保持扁平）
+     - 5% accent bg tint 沿用 base，不动 */
+  .optA-kp.is-active::before { display: none; }
+  .optA-kp.is-active {
+    box-shadow: inset 0 0 0 1.5px var(--accent, var(--color-text-quaternary));
+  }
 }
 
 /* ---- summary wrapper ---- */
