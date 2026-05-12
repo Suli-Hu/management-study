@@ -811,7 +811,9 @@ details.eval {
 .optA-tab-btn[data-active] {
   font-weight: 600;
   color: var(--color-text-primary);
-  border-bottom-color: var(--tone-hex, var(--color-text-primary));
+  /* v0.11.29: 删 border-bottom-color underline — 加粗 + 主文字色已表选中
+     原 var(--tone-hex, --color-text-primary) 在 v0.8.19 起 --tone-hex 已不注入，
+     fallback 永远是黑 underline，跟 bold 重复 */
 }
 .optA-tab-count {
   font-size: 11px;
