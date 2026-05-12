@@ -1064,15 +1064,21 @@ details.eval {
 @media (min-width: 1024px) {
   .optA-kps {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* v0.11.26 fix: 用 minmax(0, 1fr) 而非 1fr 1fr — 后者 = minmax(auto, 1fr)，
+       auto = min-content，长 en（如 "Environmental Change and Development
+       of Motivation Theory"）会撑大左列 min-content 把分割线推过 50%。
+       minmax(0, 1fr) 强制最小为 0，确保严格 50/50。 */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-auto-rows: 112px;          /* 严格等高 */
     gap: 0;
   }
   .optA-kp-li {
     display: flex;                  /* 让 .optA-kp 撑满 cell 高度，便于内部 center */
+    min-width: 0;                   /* 配合 minmax(0,1fr)：grid item 允许缩小到 0 */
   }
   .optA-kp {
     flex: 1;
+    min-width: 0;                   /* 同上，flex item 允许缩小（含长 word-break 内容） */
     display: flex;
     flex-direction: column;
     justify-content: center;        /* 内容垂直居中 */
