@@ -236,8 +236,10 @@ mark {
 }
 .split > .left {
   border-right: 1px solid var(--color-border);
-  /* v0.5.8: padding-top: 0 让 .optA-hero 可以 sticky 紧贴顶部（hero 自带 padding） */
-  padding: 0 18px 20px;
+  /* v0.5.8: padding-top: 0 让 .optA-hero 可以 sticky 紧贴顶部（hero 自带 padding）
+     v0.11.32: padding-right 从 18 → 4 — 既然 v0.11.30 隐了 native scrollbar，
+     这 14px 释放给 cell 内容；.optA-tabs 内部 padding 已独立保持文字水平位置 */
+  padding: 0 4px 20px 18px;
   overflow-y: auto;
   background: var(--color-bg-primary);
   min-height: 0;
@@ -259,10 +261,12 @@ mark {
   height: 0;
   z-index: 5;
   pointer-events: none;
+  /* v0.11.32: 负 margin 让 host 跨过 .left 4px 右 padding，thumb 贴 .left 右内边 */
+  margin-right: -4px;
 }
 .kpsb-thumb {
   position: absolute;
-  right: 4px;
+  right: 0;
   top: 0;
   width: 4px;
   height: 24px;
