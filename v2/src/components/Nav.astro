@@ -76,7 +76,7 @@ const isSuperAdmin = Astro.locals.isSuperAdmin;
 
     <div class="tn-spacer"></div>
 
-    {/* 中：三 tab underline */}
+    {/* 中：三 tab —— v0.11.29 删 underline，bold + 主文字色已表选中 */}
     {currentDiscipline && (
       <div class="tn-tabs">
         {sections.map((s) => (
@@ -85,7 +85,6 @@ const isSuperAdmin = Astro.locals.isSuperAdmin;
             class:list={['tn-tab', currentSection === s.key && 'is-active']}
           >
             <span class="tn-tab-label">{s.label}</span>
-            {currentSection === s.key && <span class="tn-tab-underline" />}
           </a>
         ))}
       </div>
@@ -280,14 +279,7 @@ const isSuperAdmin = Astro.locals.isSuperAdmin;
     color: var(--text);
     font-weight: 600;
   }
-  .tn-tab-underline {
-    position: absolute;
-    left: 0; right: 0;
-    bottom: -13px;     /* row padding 12 + 1 ≈ underlines at the nav border */
-    height: 2px;
-    background: var(--primary);
-    border-radius: 2px;
-  }
+  /* v0.11.29 .tn-tab-underline 已删（active 仅靠 bold + 主文字色） */
 
   /* === Right cluster === */
   .tn-right {
