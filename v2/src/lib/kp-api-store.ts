@@ -313,10 +313,33 @@ async function assertRefsBelongToTenant(
   return { ok: true };
 }
 
-function generatedKpId(discipline: string): string {
+/**
+ * v0.11.38 生成顺延数字 KP id（如 k629 = 当前 keiei 最大 k 编号 +1）
+ *
+ * 旧实现：`${prefix}${Date.now()}${rand3}` 17 字符 timestamp id，丑且不连续。
+ * 新实现：查 discipline 下符合 {prefix}### 模式的最大数字 id，加 1。
+ *
+ * 跳过的 id 形式：
+ *   - 长 timestamp id (length > 6) — 老 generatedKpId 残留
+ *   - 非数字后缀（如 "k562.example"）— CAST(.) > 0 过滤掉
+ *
+ * 并发安全：调用方 createKpRecord 会再做一次 existence 检查 + retry。
+ */
+async function generatedKpId(db: D1Database, discipline: string): Promise<string> {
   const prefix = discipline.match(/^[a-z]/)?.[0] ?? 'k';
-  const rand = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-  return `${prefix}${Date.now()}${rand}`;
+  const row = await db
+    .prepare(`
+      SELECT MAX(CAST(SUBSTR(id, 2) AS INTEGER)) AS max_n
+      FROM kp
+      WHERE discipline = ?
+        AND length(id) BETWEEN 4 AND 6
+        AND SUBSTR(id, 1, 1) = ?
+        AND CAST(SUBSTR(id, 2) AS INTEGER) > 0
+    `)
+    .bind(discipline, prefix)
+    .first<{ max_n: number | null }>();
+  const next = (row?.max_n ?? 0) + 1;
+  return `${prefix}${next.toString().padStart(3, '0')}`;
 }
 
 async function nextVersion(db: D1Database, kpId: string): Promise<number> {
@@ -341,9 +364,25 @@ export async function createKpRecord(
   // 见 migration-v0.8.md §11 + sanitize-strong.ts。
   input = deepStripStrong(input);
 
-  const id = input.id ?? generatedKpId(tenant.discipline);
-  const existing = await db.prepare('SELECT id FROM kp WHERE id = ?').bind(id).first<{ id: string }>();
-  if (existing) return { ok: false, status: 409, reason: 'kp_id_exists' };
+  // v0.11.38 顺延数字 ID 生成 + 并发碰撞 retry（最多 3 次）
+  //   原因：generatedKpId 改成 async (DB MAX 查询)，理论上并发可能撞号
+  //   场景：admin tool 单用户，碰撞极罕见；retry 兜底
+  //   显式 input.id 跳过生成 + retry，保持显式语义
+  let id: string;
+  if (input.id) {
+    id = input.id;
+    const existing = await db.prepare('SELECT id FROM kp WHERE id = ?').bind(id).first<{ id: string }>();
+    if (existing) return { ok: false, status: 409, reason: 'kp_id_exists' };
+  } else {
+    let attempt = 0;
+    while (true) {
+      id = await generatedKpId(db, tenant.discipline);
+      const existing = await db.prepare('SELECT id FROM kp WHERE id = ?').bind(id).first<{ id: string }>();
+      if (!existing) break;
+      attempt++;
+      if (attempt >= 3) return { ok: false, status: 500, reason: 'kp_id_generation_collision' };
+    }
+  }
 
   const refs = await assertRefsBelongToTenant(db, tenant.discipline, input.schools, input.scholars ?? []);
   if (!refs.ok) return { ok: false, status: 422, reason: refs.reason, detail: refs.detail };
