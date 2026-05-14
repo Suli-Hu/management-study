@@ -446,7 +446,7 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 .cmpc-grid {
   display: grid; gap: 14px; margin: 6px 0 8px;
   /* 默认 align-items: stretch — 同一行所有卡与最高卡对齐 */
-  grid-auto-rows: minmax(0, 140px); /* v0.11.50: 行高 min(内容, 140px)；短内容自适应 */
+  grid-auto-rows: minmax(0, 600px); /* v0.11.51: cap 140→600 让较长卡也能不滚就看完 */
   /* v0.8.30: auto-fit 自适应列数 — KP 详情窄栏 (max 720px) 多列时自动换行；宽栏按数据列撑开。
      min 180px 是经验值：再窄文字挤；可再调。 */
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -458,7 +458,7 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   flex-direction: column;
   height: 100%;
   width: 100%;
-  max-height: 140px;          /* v0.11.50: 真 140px（之前 140vh ≈ 1000px 等于没卡） */
+  max-height: 600px;          /* v0.11.51: 140 → 600 — 多数卡能完整显示，极长才滚 */
   overflow: hidden;
   min-width: 0;
   border-radius: 12px;
