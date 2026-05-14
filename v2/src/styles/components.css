@@ -1153,6 +1153,18 @@ details.eval {
   .optA-kp-summary {
     position: relative;
     padding: 10px 8px;
+    flex: 1;                       /* v0.11.43: 撑满 grid cell，下方留白仍在 summary 内 */
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .optA-kp-link {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   /* title: 单行 nowrap ellipsis；不再 flex（不跟 scholar/year 同行竞争） */
