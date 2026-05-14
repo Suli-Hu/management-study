@@ -420,6 +420,9 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
  *   - PC (≥1024px): hover 出阴影提示可翻；click → CSS 3D rotateY(180deg) 翻面
  *   - mobile (<1024px): inline expand (max-height 过渡)，由 max-width:1023px media query 覆盖
  *   - 没填 detail 的列退化为原扁平卡片，无 affordance
+ *
+ * v0.11.24: 桌面端 ~0.8 视口高封顶 + face 内滚动。原因：Grid 等高 + height:100% 链在
+ *   长 meta 时行高解析可能小于内容，出现「自适应却仍裁切」；极端长文也不能无限撑页。
  */
 .cmpc-grid {
   display: grid; gap: 14px; margin: 6px 0 8px;
@@ -431,6 +434,9 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 .cmpc-card {
   position: relative;
   height: 100%;                  /* v0.8.29: 填满 stretched grid cell，避免 transparent gap */
+  max-height: 80vh;              /* ~0.8 屏高：封顶防撑爆 + 触发 face 内滚 */
+  max-height: 80dvh;
+  min-height: 0;                 /* 允许行高在 max-height 内收缩，子项才能 overflow 滚动 */
   border-radius: 12px;
   background: transparent;       /* 实底色挂在 .cmpc-face 上让 backface 也有底 */
   transition: box-shadow .2s, transform .2s;
@@ -451,6 +457,8 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   position: relative;
   width: 100%;
   height: 100%;                  /* v0.8.29: 同上，传递 stretched 高度 */
+  min-height: 0;
+  overflow: hidden;              /* 滚动交给 .cmpc-face，避免背面 absolute 画出界 */
   transform-style: preserve-3d;
   transition: transform .55s cubic-bezier(.4, 0, .2, 1);
 }
@@ -466,6 +474,9 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   height: 100%;                  /* v0.8.29: 填满 .cmpc-card-inner，避免短卡 face 不到底 */
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;             /* 长 meta / 长 detail：在卡片内滚，不裁切、不撑爆整页 */
   box-sizing: border-box;
 }
 .cmpc-front {
@@ -1563,7 +1574,11 @@ details.eval {
    * v0.8.32: 重置桌面 .cmpc-face/.cmpc-card-inner 的 height:100%；
    *   单列 grid 不需要 stretch，cards 跟内容自适应高度。
    *   原 height:100% 让 .cmpc-back 跟 max-height:600px 冲突，detail 不可见。 */
-  .cmpc-card { height: auto; }
+  .cmpc-card {
+    height: auto;
+    max-height: 85vh;
+    max-height: min(85vh, 85dvh); /* 单列长文仍封顶；dvh 不支持时退回上一行 */
+  }
   .cmpc-card-inner { transform-style: flat; transition: none; height: auto; }
   .cmpc-card.is-flipped .cmpc-card-inner { transform: none; }
   .cmpc-front { height: auto; }

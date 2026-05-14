@@ -50,6 +50,15 @@ API 使用的是 **学科 key（英文短码 slug）**，**不是** 界面上的
 | 学者（Scholar） | 含 `q`、`school` | `GET /api/scholars?discipline=<key>&q=...` |
 | 知识点（KP） | 含 `q`、`school`、`scholar` | `GET /api/kps?discipline=<key>&q=...` |
 
+### 列表分页（必读，防「清单缺一半」）
+
+`GET /api/kps`、`GET /api/schools`、`GET /api/scholars` 等**分页列表**：
+
+- **默认** `limit=50`；单页**最大** `limit=200`（再大也会被服务端截成 200）。
+- 响应里的 **`page.total`** 是总条数；**`page.next_offset`** 非 `null` 表示**还有下一页**，必须继续请求（同一 query，把 `offset` 设为返回的 `next_offset`），直到 **`next_offset` 为 `null`** 才算拉全。
+- **禁止**默认只打一页就当「全量清单」；做审计、统计、批量脚本前先看 `page.total`，再决定是一页 `limit=200` 还是循环翻页。
+- 需要「同学科 key 全景」做防重复时，优先 **`GET /api/v1/index/<discipline>`**（manifest），不要只靠单次 `GET /api/kps` 第一页。
+
 **一次拉全库结构（推荐开局调用）**：
 
 - `GET /api/metadata?discipline=<key>` — 字典级 themes / schools / scholars / tags / views / formats。
