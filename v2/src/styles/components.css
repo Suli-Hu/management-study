@@ -433,6 +433,8 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
  * v0.11.44: 勿在 .cmpc-card / .cmpc-front 上使用 min-height:0 — 会破坏 grid 行「至少等于
  *   本行最长卡内容高」的隐式最小值，长 theories 被裁且 face-body 可滚区域塌成一条。
  *   min-height:0 只留在 .cmpc-card-inner / .cmpc-face-body 等需 flex 内滚的子层。
+ * v0.11.45: 正背面同格叠放（grid 同 cell），背面不再 absolute 脱出流 — 行高与单卡 intrinsic
+ *   高由 max(正面, 背面 detail) 决定；用户要求「按 detail 长度」时与长背面一致，仍 stretch 同行等高。
  */
 .cmpc-grid {
   display: grid; gap: 14px; margin: 6px 0 8px;
@@ -444,6 +446,8 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 }
 .cmpc-card {
   position: relative;
+  display: flex;                 /* v0.11.45: 子层 inner 用 flex:1 吃满 stretch 行高 */
+  flex-direction: column;
   height: 100%;                  /* v0.11.42: 填满 grid 行高，与同行对齐 */
   width: 100%;
   max-height: 140vh;             /* v0.11.42: 略放宽上限，长文仍内滚、不无限撑页 */
@@ -466,12 +470,18 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 }
 .cmpc-card-inner {
   position: relative;
+  flex: 1 1 auto;                /* v0.11.45: 吃满 .cmpc-card 拉伸后的剩余高度 */
   width: 100%;
-  height: 100%;                  /* v0.11.42: 与 .cmpc-card 同高，背面 absolute 与正面等高 */
-  min-height: 0;
+  min-width: 0;
+  min-height: min-content;       /* 至少 max(正,背) intrinsic，长 detail 撑开整行 */
   overflow: visible;             /* v0.11.41: hidden 会破坏 WebKit 背面合成；圆角由 face 承担 */
   transform-style: preserve-3d;
   transition: transform .55s cubic-bezier(.4, 0, .2, 1);
+  /* v0.11.45: 单格叠放正背面，背面参与排版 — 行高按 max(正面, detail) 与同行取 max */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto;
+  align-content: start;
 }
 .cmpc-card.is-flipped .cmpc-card-inner {
   transform: rotateY(180deg);
@@ -502,13 +512,31 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 }
 .cmpc-front {
   position: relative;            /* num 绝对定位锚点 */
-  height: 100%;                  /* v0.11.42: 与同行最高卡同高；短正文时底部留白 */
-  min-height: min-content;       /* v0.11.44: 不低于正文 intrinsic 高，避免 grid 行被算矮裁切 */
+  grid-column: 1;
+  grid-row: 1;
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+  min-height: min-content;
+  z-index: 2;                    /* 默认在上层，保证可点翻面 */
   transform: translateZ(0.5px);  /* 减轻部分引擎背面与正面的 Z-fighting */
 }
 .cmpc-back {
-  position: absolute; inset: 0;
+  grid-column: 1;
+  grid-row: 1;
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+  min-height: min-content;
+  position: relative;           /* v0.11.45: 与正面同格叠放，参与 intrinsic 高度（长 detail 撑行） */
+  z-index: 1;                   /* 未翻面时正面在上，避免背面挡点击 */
   transform: rotateY(180deg) translateZ(0.5px);
+}
+.cmpc-card.is-flipped .cmpc-front {
+  z-index: 1;
+}
+.cmpc-card.is-flipped .cmpc-back {
+  z-index: 2;
 }
 .cmpc-num {
   position: absolute; top: 14px; right: 18px;
@@ -1610,14 +1638,37 @@ details.eval {
    *   单列 grid 不需要 stretch，cards 跟内容自适应高度。
    *   原 height:100% 让 .cmpc-back 跟 max-height:600px 冲突，detail 不可见。 */
   .cmpc-card {
+    display: block;               /* v0.11.45: 覆盖桌面 flex；手机单列 auto 高 */
     height: auto;
     max-height: 140vh;             /* v0.11.42: 与桌面放宽封顶同量级 */
     max-height: min(140vh, 140dvh);
   }
-  .cmpc-card-inner { transform-style: flat; transition: none; height: auto; }
-  .cmpc-card.is-flipped .cmpc-card-inner { transform: none; }
-  .cmpc-front { height: auto; }
+  .cmpc-card-inner {
+    display: block;               /* v0.11.45: 覆盖桌面 grid 叠格；手机仍纵向流式 + expand */
+    flex: none;
+    min-height: 0;
+    transform-style: flat;
+    transition: none;
+    grid-template-columns: unset;
+    grid-template-rows: unset;
+    align-content: unset;
+  }
+  .cmpc-card.is-flipped .cmpc-card-inner {
+    transform: none;
+  }
+  .cmpc-front {
+    grid-column: unset;
+    grid-row: unset;
+    align-self: unset;
+    width: 100%;
+    min-height: 0;
+  }
   .cmpc-back {
+    grid-column: unset;
+    grid-row: unset;
+    align-self: unset;
+    width: 100%;
+    min-height: 0;
     position: static;
     transform: none;
     inset: auto;
