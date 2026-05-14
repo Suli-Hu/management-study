@@ -509,6 +509,13 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;         /* v0.11.46: 隐藏滚动条，仍可滚轮/触控滑动 */
+  -ms-overflow-style: none;
+}
+.cmpc-face-body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 .cmpc-front {
   position: relative;            /* num 绝对定位锚点 */
@@ -670,6 +677,13 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   position: absolute; inset: 0;
   transform: rotateY(180deg);
   overflow-y: auto;                /* detail 长时背面滚动 */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.quad-back::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 .quad-back-name {
   font-size: 11px; font-weight: 600; color: var(--text-3);
