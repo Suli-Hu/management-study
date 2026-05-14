@@ -440,11 +440,13 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
  *   完整 intrinsic 长高，max-height 只夹「画出来的盒子」夹不住「行高分配」。改：.cmpc-grid
  *   用 grid-auto-rows: minmax(min-content, min(140vh,140dvh)) 封顶行轨道；卡上去掉 min-height:min-content；
  *   正背面 min-height:0 在封顶行内交给 .cmpc-face-body 滚（条仍隐藏）。
+ * v0.11.50: 单位 bug — 140vh ≈ 视口 140%（桌面 ~1000px+）实际等于没卡。改 140px 真值；
+ *   grid-auto-rows min 改 0 让短内容 row 自适应、不被 min-content 推爆。
  */
 .cmpc-grid {
   display: grid; gap: 14px; margin: 6px 0 8px;
   /* 默认 align-items: stretch — 同一行所有卡与最高卡对齐 */
-  grid-auto-rows: minmax(min-content, min(140vh, 140dvh)); /* v0.11.49: 行高 min(整行内容, 140vh) */
+  grid-auto-rows: minmax(0, 140px); /* v0.11.50: 行高 min(内容, 140px)；短内容自适应 */
   /* v0.8.30: auto-fit 自适应列数 — KP 详情窄栏 (max 720px) 多列时自动换行；宽栏按数据列撑开。
      min 180px 是经验值：再窄文字挤；可再调。 */
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -456,8 +458,7 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   flex-direction: column;
   height: 100%;
   width: 100%;
-  max-height: 140vh;
-  max-height: 140dvh;
+  max-height: 140px;          /* v0.11.50: 真 140px（之前 140vh ≈ 1000px 等于没卡） */
   overflow: hidden;
   min-width: 0;
   border-radius: 12px;
