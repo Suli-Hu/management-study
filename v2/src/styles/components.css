@@ -423,9 +423,16 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
  *
  * v0.11.24: 桌面端 ~0.8 视口高封顶 + face 内滚动。原因：Grid 等高 + height:100% 链在
  *   长 meta 时行高解析可能小于内容，出现「自适应却仍裁切」；极端长文也不能无限撑页。
+ *
+ * v0.11.41: 翻面镜像 / 背面 detail 异常 — 父级 .cmpc-card 上 hover transform 与 preserve-3d
+ *   子级组合会压扁 3D，Safari/WebKit 上常见「看到正面镜像」；overflow 非 visible 直接加在
+ *   参与 rotateY 的 .cmpc-face 上也会触发合成 bug。改：卡 hover 仅用阴影；滚动挪到
+ *   .cmpc-face-body；inner overflow:visible；grid align-items:start + 卡 height:auto 短内容贴高；
+ *   封顶 80vh→120vh（约 1.5×）给长 detail。
  */
 .cmpc-grid {
   display: grid; gap: 14px; margin: 6px 0 8px;
+  align-items: start;          /* v0.11.41: 短卡按内容高度，不与同行最高卡强行等高 */
   /* v0.8.30: auto-fit 自适应列数 — KP 详情窄栏 (max 720px) 多列时自动换行；宽栏按数据列撑开。
      min 180px 是经验值：再窄文字挤；可再调。 */
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -433,13 +440,14 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 }
 .cmpc-card {
   position: relative;
-  height: 100%;                  /* v0.8.29: 填满 stretched grid cell，避免 transparent gap */
-  max-height: 80vh;              /* ~0.8 屏高：封顶防撑爆 + 触发 face 内滚 */
-  max-height: 80dvh;
+  height: auto;                  /* v0.11.41: 与 align-items:start 配合，短内容贴高 */
+  width: 100%;
+  max-height: 120vh;             /* v0.11.41: 约 1.5× 原 80vh 封顶，长 detail 多露一点再内滚 */
+  max-height: 120dvh;
   min-height: 0;                 /* 允许行高在 max-height 内收缩，子项才能 overflow 滚动 */
   border-radius: 12px;
   background: transparent;       /* 实底色挂在 .cmpc-face 上让 backface 也有底 */
-  transition: box-shadow .2s, transform .2s;
+  transition: box-shadow .2s;  /* v0.11.41: 不在卡上再用 transform hover，免压扁 3D */
 }
 .cmpc-card.is-flippable {
   cursor: pointer;
@@ -447,7 +455,6 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 .cmpc-card.is-flippable:hover {
   box-shadow: 0 4px 16px oklch(from var(--accent, var(--text-3)) l c h / 0.18),
               0 1px 4px oklch(from var(--accent, var(--text-3)) l c h / 0.10);
-  transform: translateY(-2px);
 }
 .cmpc-card.is-flippable:focus-visible {
   outline: 2px solid var(--accent, var(--text-3));
@@ -456,9 +463,9 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 .cmpc-card-inner {
   position: relative;
   width: 100%;
-  height: 100%;                  /* v0.8.29: 同上，传递 stretched 高度 */
+  height: auto;                  /* v0.11.41: 随正面内容定高；避免父 auto + 子 100% 循环 */
   min-height: 0;
-  overflow: hidden;              /* 滚动交给 .cmpc-face，避免背面 absolute 画出界 */
+  overflow: visible;             /* v0.11.41: hidden 会破坏 WebKit 背面合成；圆角由 face 承担 */
   transform-style: preserve-3d;
   transition: transform .55s cubic-bezier(.4, 0, .2, 1);
 }
@@ -470,22 +477,33 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--bg-elev);
-  display: flex; flex-direction: column; gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  height: 100%;                  /* v0.8.29: 填满 .cmpc-card-inner，避免短卡 face 不到底 */
   min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;             /* 长 meta / 长 detail：在卡片内滚，不裁切、不撑爆整页 */
+  overflow: visible;             /* v0.11.41: 滚动下放到 .cmpc-face-body，避免与 rotateY 同层 */
   box-sizing: border-box;
+}
+/* v0.11.41: 与背面 rotateY 分离的滚动层，避免 Safari 背面镜像 / detail 空白 */
+.cmpc-face-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .cmpc-front {
   position: relative;            /* num 绝对定位锚点 */
+  transform: translateZ(0.5px);  /* 减轻部分引擎背面与正面的 Z-fighting */
 }
 .cmpc-back {
   position: absolute; inset: 0;
-  transform: rotateY(180deg);
-  overflow-y: auto;              /* detail 长时背面可滚 */
+  transform: rotateY(180deg) translateZ(0.5px);
 }
 .cmpc-num {
   position: absolute; top: 14px; right: 18px;
@@ -585,13 +603,13 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   min-height: 140px;               /* v0.8.33: 110→140 detail 移到背面后正面看着不寒酸 */
   border-radius: 10px;
   background: transparent;          /* 实底色挂在 .quad-face */
-  transition: box-shadow .2s, transform .2s;
+  transition: box-shadow .2s;
 }
 .quad-cell.is-flippable { cursor: pointer; }
 .quad-cell.is-flippable:hover {
   box-shadow: 0 4px 16px oklch(from var(--accent, var(--text-3)) l c h / 0.18),
               0 1px 4px oklch(from var(--accent, var(--text-3)) l c h / 0.10);
-  transform: translateY(-2px);
+  /* v0.11.41: 不用 translateY — 与 .quad-cell-inner preserve-3d 同构于 cmpc，避免压扁翻面 */
 }
 .quad-cell.is-flippable:focus-visible {
   outline: 2px solid var(--accent, var(--text-3));
@@ -1576,8 +1594,8 @@ details.eval {
    *   原 height:100% 让 .cmpc-back 跟 max-height:600px 冲突，detail 不可见。 */
   .cmpc-card {
     height: auto;
-    max-height: 85vh;
-    max-height: min(85vh, 85dvh); /* 单列长文仍封顶；dvh 不支持时退回上一行 */
+    max-height: 127.5vh;         /* v0.11.41: 约 1.5× 原 85vh 单列封顶 */
+    max-height: min(127.5vh, 127.5dvh);
   }
   .cmpc-card-inner { transform-style: flat; transition: none; height: auto; }
   .cmpc-card.is-flipped .cmpc-card-inner { transform: none; }

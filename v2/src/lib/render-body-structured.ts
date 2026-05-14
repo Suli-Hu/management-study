@@ -160,15 +160,19 @@ export function renderCompareCardsStructured(body: CompareBody, accentHex: strin
       const frontInner = `
         <div class="cmpc-face cmpc-front">
           <span class="cmpc-num">${String(ri + 1).padStart(1, '0')}</span>
-          <div class="cmpc-name">${esc(c.title)}</div>
-          ${c.keyword ? `<div class="cmpc-headline">${esc(c.keyword)}</div>` : ''}
-          ${c.desc ? `<div class="cmpc-sub">${esc(c.desc)}</div>` : ''}
-          ${metaHtml}
+          <div class="cmpc-face-body">
+            <div class="cmpc-name">${esc(c.title)}</div>
+            ${c.keyword ? `<div class="cmpc-headline">${esc(c.keyword)}</div>` : ''}
+            ${c.desc ? `<div class="cmpc-sub">${esc(c.desc)}</div>` : ''}
+            ${metaHtml}
+          </div>
         </div>`;
       const backInner = hasDetail
         ? `
         <div class="cmpc-face cmpc-back">
-          <div class="cmpc-detail">${formatTrustedProseHtml(c.detail)}</div>
+          <div class="cmpc-face-body">
+            <div class="cmpc-detail">${formatTrustedProseHtml(c.detail)}</div>
+          </div>
         </div>`
         : '';
       return `
