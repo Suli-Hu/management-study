@@ -436,12 +436,15 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
  * v0.11.45: 正背面同格叠放（grid 同 cell），背面不再 absolute 脱出流 — 行高与单卡 intrinsic
  *   高由 max(正面, 背面 detail) 决定；用户要求「按 detail 长度」时与长背面一致，仍 stretch 同行等高。
  * v0.11.47: 曾改为 absolute + 70vh，行高只看正面；与「背面 detail 参与高度」冲突。
- * v0.11.48: 恢复同格叠放；单卡 used 高 = min(max(正,背), 140vh) — max-height:140vh + overflow:hidden
- *   卡壳，超出在 .cmpc-face-body 内滚（scrollbar 仍隐藏）；同行 stretch 等高不变。
+ * v0.11.49: 线上仍整行撑爆 — 根因是 .cmpc-card min-height:min-content 让 grid 行轨道按
+ *   完整 intrinsic 长高，max-height 只夹「画出来的盒子」夹不住「行高分配」。改：.cmpc-grid
+ *   用 grid-auto-rows: minmax(min-content, min(140vh,140dvh)) 封顶行轨道；卡上去掉 min-height:min-content；
+ *   正背面 min-height:0 在封顶行内交给 .cmpc-face-body 滚（条仍隐藏）。
  */
 .cmpc-grid {
   display: grid; gap: 14px; margin: 6px 0 8px;
   /* 默认 align-items: stretch — 同一行所有卡与最高卡对齐 */
+  grid-auto-rows: minmax(min-content, min(140vh, 140dvh)); /* v0.11.49: 行高 min(整行内容, 140vh) */
   /* v0.8.30: auto-fit 自适应列数 — KP 详情窄栏 (max 720px) 多列时自动换行；宽栏按数据列撑开。
      min 180px 是经验值：再窄文字挤；可再调。 */
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -453,7 +456,6 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   flex-direction: column;
   height: 100%;
   width: 100%;
-  min-height: min-content;       /* v0.11.48: 来自 inner 叠格 max(正,背)，供同行取高 */
   max-height: 140vh;
   max-height: 140dvh;
   overflow: hidden;
@@ -530,7 +532,7 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   align-self: stretch;
   width: 100%;
   min-width: 0;
-  min-height: min-content;
+  min-height: 0;
   height: 100%;
   z-index: 2;
   transform: translateZ(0.5px);
@@ -541,7 +543,7 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   align-self: stretch;
   width: 100%;
   min-width: 0;
-  min-height: min-content;
+  min-height: 0;
   height: 100%;
   position: relative;
   z-index: 1;
@@ -1649,6 +1651,7 @@ details.eval {
      mobile media query 这里强制单列 */
   .cmpc-grid {
     grid-template-columns: 1fr !important;
+    grid-auto-rows: auto;          /* v0.11.49: 单列不锁 140vh 行高 */
     gap: 10px !important;
     perspective: none;             /* 手机不做 3D flip */
   }
