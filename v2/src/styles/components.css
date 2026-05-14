@@ -430,6 +430,9 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
  *   .cmpc-face-body；inner overflow:visible。
  * v0.11.42: 同行卡片必须等高（grid 默认 stretch + 卡/inner/正面 height:100%）；行高仍受
  *   max-height 封顶（约红框示意：~140vh），超出在 .cmpc-face-body 内滚。
+ * v0.11.44: 勿在 .cmpc-card / .cmpc-front 上使用 min-height:0 — 会破坏 grid 行「至少等于
+ *   本行最长卡内容高」的隐式最小值，长 theories 被裁且 face-body 可滚区域塌成一条。
+ *   min-height:0 只留在 .cmpc-card-inner / .cmpc-face-body 等需 flex 内滚的子层。
  */
 .cmpc-grid {
   display: grid; gap: 14px; margin: 6px 0 8px;
@@ -445,7 +448,7 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   width: 100%;
   max-height: 140vh;             /* v0.11.42: 略放宽上限，长文仍内滚、不无限撑页 */
   max-height: 140dvh;
-  min-height: 0;                 /* 允许行高在 max-height 内收缩，子项才能 overflow 滚动 */
+  min-height: auto;              /* v0.11.44: 参与 grid 内容最小高度，避免长 meta 行高被压扁 */
   border-radius: 12px;
   background: transparent;       /* 实底色挂在 .cmpc-face 上让 backface 也有底 */
   transition: box-shadow .2s;  /* v0.11.41: 不在卡上再用 transform hover，免压扁 3D */
@@ -483,7 +486,6 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   gap: 0;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  min-height: 0;
   overflow: visible;             /* v0.11.41: 滚动下放到 .cmpc-face-body，避免与 rotateY 同层 */
   box-sizing: border-box;
 }
@@ -501,7 +503,7 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 .cmpc-front {
   position: relative;            /* num 绝对定位锚点 */
   height: 100%;                  /* v0.11.42: 与同行最高卡同高；短正文时底部留白 */
-  min-height: 0;
+  min-height: min-content;       /* v0.11.44: 不低于正文 intrinsic 高，避免 grid 行被算矮裁切 */
   transform: translateZ(0.5px);  /* 减轻部分引擎背面与正面的 Z-fighting */
 }
 .cmpc-back {
