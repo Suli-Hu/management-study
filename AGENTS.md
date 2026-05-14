@@ -5,6 +5,7 @@
 
 ## 你应该先读什么（所有模型通用）
 - **优先读**：`agent/README.md`（模型无关的冷启动入口：工作法/项目事实/老师工作流）
+- **写 / 改 / 审 KP 或批量维护内容数据**：`agent/KP_WRITING_GUIDE.md`（必读，优先级高于 `TEACHER.md` 中与 KP 写作重复的细节；与 `v2/public/docs/kp-field-guide.md`、`agent/API.md` 配套）
 - **再读**：`v2/README.md`（架构、开发、部署、数据模型）
 - **可选**：`.claude-memory/`（历史记忆源，未来可能弃用；不要依赖它才能启动）
 - **需要历史对照时**：`archive/v1/README.md` / `archive/v1/CONTRIBUTING.md`

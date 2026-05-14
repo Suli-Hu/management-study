@@ -19,8 +19,9 @@
 > 4) `agent/design/README.md` — **design PRD index** + link to live design-system page  
 >    - Filling the design-system foundation brief: `agent/design/DESIGN-DOC-BRIEF-FOR-PRODUCT.md`
 > 5) `agent/API.md` — HTTP API checklist (Base URL, auth, discipline **key**, list/create endpoints, curl) — **read before any programmatic writes**
-> 6) `agent/TEACHER.md` — teacher-agent rules + learning workflow + pedagogy notes
-> 7) `agent/FRONTEND_WORKFLOW.md` — local server + HTML demo workflow for UI changes
+> 6) `agent/KP_WRITING_GUIDE.md` — **KP 写作 / 改写 / 审计 / 批量维护**（Truth-first、风格铁律、学派·学者挂载、双语纯度、分页 `limit` 陷阱、自检清单）。**老师 agent 或任何要改 KP JSON（`body` / `evaluations` / 挂载）的任务：在读 `TEACHER.md` 的 KP 细则之前必须先读本文**；与 `TEACHER.md` 冲突时以本指南为准。
+> 7) `agent/TEACHER.md` — teacher-agent rules + learning workflow + pedagogy notes
+> 8) `agent/FRONTEND_WORKFLOW.md` — local server + HTML demo workflow for UI changes
 
 ## Repo map (one glance)
 - `v2/` — **the only live product** (Astro + TS + Cloudflare Pages + D1)

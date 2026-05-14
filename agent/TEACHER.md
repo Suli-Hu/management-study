@@ -4,6 +4,13 @@
 - **老师身份/学科不是默认值**：如果用户没有明确指定（例如“你是经营学老师/marketing 老师/…老师”），必须先问清楚再开始教学与写入。
 - 原因：用户未来会学习多学科，不希望 agent 擅自假设学科范围。
 
+## 必读：`agent/KP_WRITING_GUIDE.md`（KP 写入 / 改写 / 审计 — 最高优先级）
+
+**在创建、批量修改、审计、或「只改一段 lead」等任何 touching KP JSON（`body` / `evaluations` / `schools` / `scholars`）的工作之前，必须先通读 `agent/KP_WRITING_GUIDE.md`，再执行本文件其余 KP 相关段落。** 该文档沉淀了 Truth-first 工作流、引用 WebFetch 验证、写作铁律（lead 禁「核心命题：」前缀、案例归位、禁 `①` 与 `——` 等）、结构原则、学派/学者挂载审查、双语纯度、审计分级、**API `limit=50` 陷阱**、标准模板与自检清单。
+
+- **冲突处理**：若本 `TEACHER.md` 与 `KP_WRITING_GUIDE.md` 对同一规则表述不一致，**以 `KP_WRITING_GUIDE.md` 为准**（并欢迎开 issue / PR 收敛本文件措辞）。
+- **字段语义**：Evaluations 六格「写什么 / 不写什么」仍以站内 **`v2/public/docs/kp-field-guide.md`**（及 `agent/API.md` 契约）为准；写作风格与事实流程以 **`KP_WRITING_GUIDE.md`** 为准。
+
 ## 最高元规则：真实性优先（Truth first）
 - **禁止编造**：年份、学者、论文标题、出版社信息、以及“X 是对 Y 的回应”这类因果链。
 - **三级来源标注**：
@@ -11,6 +18,7 @@
   - 综合/推论：必须明确标注“我的综合/推论”
   - 不确定：标注“待查证”，宁可留空也不装作知道
 - **被用户纠正时**：立刻拆清“原文/推论/不确定”三类，并给出补救方案（补证据或删掉不实部分）。
+- **操作级清单与事故案例**（Holman 编造、audit 误报、分页漏单等）：见 **`agent/KP_WRITING_GUIDE.md`** 第一、七、八、十二章。
 
 ## User profile (operationally relevant)
 - Primary device: **iPad Mini**; UI changes must be validated in real iPad-sized viewports.
@@ -18,6 +26,7 @@
 - Expectation: do not offload testing back to the user as “you try it”.
 
 ## Teacher workflow (KP / tutoring)
+- **前置**：凡涉及 KP 数据写入，先完成 **`agent/KP_WRITING_GUIDE.md` 必读**（见上一节），再进入下列循环。
 - Default loop:
   - **check duplicates** → **align granularity with a concrete example** → **produce 1–2 samples** → **then batch**
 - Tutoring loop (per KP):
@@ -83,7 +92,7 @@
 ### Evaluations vs `body`（API / 写入契约）
 - **评价区六格**（义·意义、限·局限、例、应、用、喻）在 UI 与 API 中对应**独立字段** `evaluations`（双语：`evaluations.zh` / `evaluations.ja`；键名与 schema 一致：`meaning`, `limit`, `example`, `response`, `application`, `analogy`）。
 - **`body.zh` / `body.ja` 只承载 format 规定的正文**（叙事 / 列表 / accordion 等）。**禁止**把「意义」「限界」或整段「评价」再写进 body（避免重复渲染、语言切换错位、违背字段契约）。
-- 六格**写什么、不写什么**：必读站内文档 [KP 字段全解析 · §3 Evaluations](https://study.sususu.org/docs/kp-field-guide.md#3-evaluations-6-字段语义)（仓库内：`v2/public/docs/kp-field-guide.md`）。
+- 六格**写什么、不写什么**：必读站内文档 [KP 字段全解析 · §3 Evaluations](https://study.sususu.org/docs/kp-field-guide.md#3-evaluations-6-字段语义)（仓库内：`v2/public/docs/kp-field-guide.md`）。**写作铁律与 lead/案例分工**已与 **`agent/KP_WRITING_GUIDE.md`** 对齐；两文档一起读。
 
 ### Per-field language purity
 - **`*.zh`**: Modern **Chinese only** (full sentences, headings, bullets). Do not embed Japanese headings, katakana blocks, or standalone English sentences as definitions.
