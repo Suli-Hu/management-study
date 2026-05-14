@@ -443,6 +443,13 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
  * v0.11.50: 单位 bug — 140vh ≈ 视口 140%（桌面 ~1000px+）实际等于没卡。改 140px 真值；
  *   grid-auto-rows min 改 0 让短内容 row 自适应、不被 min-content 推爆。
  */
+/* v0.11.52: compare 格式两侧留白 28 → 14（仅此格式，其它 format 不变）
+   .kp-pane-content padding 28px L/R 不动；用 .body-fmt-cmpc 负 margin 向外
+   bleed 14px。lead + grid 一起拓宽，每行多 28px 可分给卡片。 */
+.body-fmt-cmpc {
+  margin-left: -14px;
+  margin-right: -14px;
+}
 .cmpc-grid {
   display: grid; gap: 14px; margin: 6px 0 8px;
   /* 默认 align-items: stretch — 同一行所有卡与最高卡对齐 */
