@@ -662,6 +662,33 @@
   font-family: var(--font-mono);
 }
 
+/* v0.11.53 — bullet/group-bullet 作为长按拖动 handle */
+.kp-editor-v08 .kpe-drag-handle,
+.kp-editor-v08 .kpe-drag-handle-group {
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+.kp-editor-v08 .kpe-drag-handle:active,
+.kp-editor-v08 .kpe-drag-handle-group:active {
+  cursor: grabbing;
+}
+
+.kp-editor-v08 .kpe-group-bullet {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 32px;
+  padding: 0 4px;
+  font-size: 13px;
+  color: var(--primary);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+}
+
 .kp-editor-v08 .kpe-list-fields { display: flex; flex-direction: column; gap: 5px; }
 .kp-editor-v08 .kpe-list-name-input { font-size: 13px; font-weight: 600; padding: 7px 10px; }
 .kp-editor-v08 .kpe-list-desc-input { min-height: 70px; font-size: 13px; }
@@ -681,7 +708,7 @@
 
 .kp-editor-v08 .kpe-group-head {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: auto 1fr auto;
   gap: var(--sp-2);
   align-items: center;
 }
