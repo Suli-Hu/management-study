@@ -453,7 +453,7 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 .cmpc-grid {
   display: grid; gap: 14px; margin: 6px 0 8px;
   /* 默认 align-items: stretch — 同一行所有卡与最高卡对齐 */
-  grid-auto-rows: minmax(0, 600px); /* v0.11.51: cap 140→600 让较长卡也能不滚就看完 */
+  grid-auto-rows: minmax(0, 450px); /* v0.11.55: 同步 card cap 600→450，否则 row 比 card 高留空白 */
   /* v0.8.30: auto-fit 自适应列数 — KP 详情窄栏 (max 720px) 多列时自动换行；宽栏按数据列撑开。
      min 180px 是经验值：再窄文字挤；可再调。 */
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
