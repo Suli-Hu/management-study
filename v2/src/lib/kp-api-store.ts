@@ -69,6 +69,10 @@ export interface KpApiRecord {
   updated_by: string | null;
   created_at: string;
   updated_at: string;
+  /** v0.11.58 锁定时间 ISO 字符串；null = 未锁。锁定时所有 PATCH/DELETE 走 422 拒绝。 */
+  locked_at: string | null;
+  /** 谁锁的 user id（audit） */
+  locked_by: string | null;
 }
 
 export interface KpVersionRecord {
@@ -109,6 +113,8 @@ interface KpRow {
   updated_by?: string | null;
   created_at: string;
   updated_at: string;
+  locked_at?: string | null;
+  locked_by?: string | null;
 }
 
 function parseJson<T>(value: string | null | undefined, fallback: T): T {
@@ -177,6 +183,8 @@ async function toRecord(db: D1Database, row: KpRow): Promise<KpApiRecord> {
     updated_by: row.updated_by ?? null,
     created_at: row.created_at,
     updated_at: row.updated_at,
+    locked_at: row.locked_at ?? null,
+    locked_by: row.locked_by ?? null,
   };
 }
 
@@ -472,6 +480,10 @@ export async function patchKpRecord(
   if (current.tenant_id !== tenant.tenantId || current.discipline !== tenant.discipline) {
     return { ok: false, status: 403, reason: 'tenant_mismatch' };
   }
+  // v0.11.58 锁定保护 — locked KP 拒绝任何内容修改（unlock 走专用 endpoint）
+  if (current.locked_at) {
+    return { ok: false, status: 422, reason: 'kp_locked', detail: { locked_at: current.locked_at } };
+  }
 
   const currentStructured = await getKpStructured(db, kpId);
   if (!currentStructured) {
@@ -610,6 +622,9 @@ export async function deleteKpRecord(
   if (current.tenant_id !== tenant.tenantId || current.discipline !== tenant.discipline) {
     return { ok: false, status: 403, reason: 'tenant_mismatch' };
   }
+  if (current.locked_at) {
+    return { ok: false, status: 422, reason: 'kp_locked' };
+  }
 
   const now = new Date().toISOString();
   const version = await nextVersion(db, kpId);
@@ -624,6 +639,47 @@ export async function deleteKpRecord(
   ]);
 
   return { ok: true };
+}
+
+/**
+ * v0.11.58 KP 锁切换 — admin-only。
+ * lock=true：未锁 → 锁；已锁 → noop（返回当前 record）
+ * lock=false：已锁 → 解锁；未锁 → noop
+ * 不增加 version、不写 knowledge_point_versions（锁状态不是内容变更）
+ */
+export async function setKpLock(
+  db: D1Database,
+  kpId: string,
+  tenant: { tenantId: string; discipline: string },
+  lock: boolean,
+  userId: string,
+): Promise<{ ok: true; record: KpApiRecord } | { ok: false; status: number; reason: string }> {
+  const current = await getKpRecord(db, kpId);
+  if (!current) return { ok: false, status: 404, reason: 'kp_not_found' };
+  if (current.tenant_id !== tenant.tenantId || current.discipline !== tenant.discipline) {
+    return { ok: false, status: 403, reason: 'tenant_mismatch' };
+  }
+
+  const now = new Date().toISOString();
+  if (lock) {
+    if (!current.locked_at) {
+      await db
+        .prepare('UPDATE kp SET locked_at = ?, locked_by = ? WHERE id = ?')
+        .bind(now, userId, kpId)
+        .run();
+    }
+  } else {
+    if (current.locked_at) {
+      await db
+        .prepare('UPDATE kp SET locked_at = NULL, locked_by = NULL WHERE id = ?')
+        .bind(kpId)
+        .run();
+    }
+  }
+
+  const refreshed = await getKpRecord(db, kpId);
+  if (!refreshed) return { ok: false, status: 500, reason: 'kp_disappeared' };
+  return { ok: true, record: refreshed };
 }
 
 export async function listKpVersions(

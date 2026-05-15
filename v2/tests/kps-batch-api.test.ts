@@ -516,6 +516,7 @@ describe('patchKpsBatch — 真 SQLite 集成测试', () => {
       body: { zh: { format: 'narrative', prose: 'B' } },
       tags: ['old'], schools: ['s1'], scholars: ['sc1'],
       created_by: null, updated_by: null, created_at: '', updated_at: '',
+      locked_at: null, locked_by: null,
     };
     const currentS = {
       body: { zh: { format: 'narrative' as const, prose: 'B' } },
@@ -536,6 +537,7 @@ describe('patchKpsBatch — 真 SQLite 集成测试', () => {
       body: { zh: { format: 'narrative', prose: 'B' } },
       tags: [], schools: [], scholars: [],
       created_by: null, updated_by: null, created_at: '', updated_at: '',
+      locked_at: null, locked_by: null,
     };
     const merged: KpApiRecord = { ...current, title: { zh: '新', ja: '保持' } };
     const diff = computeDiff(current, merged);

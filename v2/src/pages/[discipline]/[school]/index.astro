@@ -73,6 +73,7 @@ type KpListItem = {
   evaluations_zh_json: string | null; evaluations_ja_json: string | null;
   body_format: string;
   scholars_csv: string | null;
+  locked_at: string | null;
 };
 
 // 完整页用：list query（v0.5.49 的 fat 查询，给左栏 + mobile inline expand 用）
@@ -88,6 +89,7 @@ if (!isPartial) {
       SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year,
         k.body_zh_json, k.body_ja_json, k.body_format,
         k.evaluations_zh_json, k.evaluations_ja_json,
+        k.locked_at,
         (SELECT GROUP_CONCAT(scholar_key, ',')
            FROM kp_scholar
            WHERE kp_id = k.id AND scholar_discipline = k.discipline
@@ -241,6 +243,22 @@ const canEdit = Astro.locals.canEdit(discipline);
                   </a>
                 )}
                 {canEdit && (
+                  <button
+                    type="button"
+                    data-kp-lock-toggle
+                    data-kp-id={selectedKp.id}
+                    class:list={['kp-lock-toggle shrink-0', selectedKp.locked_at && 'is-locked']}
+                    aria-label={selectedKp.locked_at ? '解锁' : '锁定'}
+                    aria-pressed={selectedKp.locked_at ? 'true' : 'false'}
+                    title={selectedKp.locked_at ? '点击解锁' : '点击锁定'}
+                  >
+                    <span class="kp-lock-emoji" aria-hidden="true">🔒</span>
+                    <span class="kp-lock-text" aria-hidden="true">{selectedKp.locked_at ? '解锁' : '锁定'}</span>
+                  </button>
+                )}
+                {canEdit && (selectedKp.locked_at ? (
+                  <span class="hero-icon-btn shrink-0 is-disabled" aria-disabled="true" title="已锁定，无法编辑">✎</span>
+                ) : (
                   <a
                     href={editHref(`/${discipline}/kp/${selectedKp.id}/edit`, editFromUrl)}
                     data-edit-kp-link={selectedKp.id}
@@ -248,7 +266,7 @@ const canEdit = Astro.locals.canEdit(discipline);
                     aria-label={`编辑 ${selectedTitle}`}
                     title="编辑"
                   >✎</a>
-                )}
+                ))}
               </div>
               <div class="text-xs text-tertiary mt-2 flex flex-wrap items-baseline gap-2">
                 {selectedScholars.map((s) => (
@@ -498,6 +516,22 @@ const canEdit = Astro.locals.canEdit(discipline);
                     </a>
                   )}
                   {canEdit && (
+                    <button
+                      type="button"
+                      data-kp-lock-toggle
+                      data-kp-id={selectedKp.id}
+                      class:list={['kp-lock-toggle shrink-0', selectedKp.locked_at && 'is-locked']}
+                      aria-label={selectedKp.locked_at ? '解锁' : '锁定'}
+                      aria-pressed={selectedKp.locked_at ? 'true' : 'false'}
+                      title={selectedKp.locked_at ? '点击解锁' : '点击锁定'}
+                    >
+                      <span class="kp-lock-emoji" aria-hidden="true">🔒</span>
+                      <span class="kp-lock-text" aria-hidden="true">{selectedKp.locked_at ? '解锁' : '锁定'}</span>
+                    </button>
+                  )}
+                  {canEdit && (selectedKp.locked_at ? (
+                    <span class="hero-icon-btn shrink-0 is-disabled" aria-disabled="true" title="已锁定，无法编辑">✎</span>
+                  ) : (
                     <a
                       href={editHref(`/${discipline}/kp/${selectedKp.id}/edit`, editFromUrl)}
                       data-edit-kp-link={selectedKp.id}
@@ -505,7 +539,7 @@ const canEdit = Astro.locals.canEdit(discipline);
                       aria-label={`编辑 ${selectedTitle}`}
                       title="编辑"
                     >✎</a>
-                  )}
+                  ))}
                 </div>
                 <div class="text-xs text-tertiary mt-2 flex flex-wrap items-baseline gap-2">
                   {selectedScholars.map((s) => (
@@ -544,6 +578,7 @@ const canEdit = Astro.locals.canEdit(discipline);
 <script is:inline src={`/split-pane.js?v=${APP_VERSION}`}></script>
 <script is:inline src={`/admin-tools.js?v=${APP_VERSION}`}></script>
 <script is:inline src={`/cmpc-flip.js?v=${APP_VERSION}`}></script>
+<script is:inline src={`/kp-lock.js?v=${APP_VERSION}`}></script>
 
 <script is:inline>
   // Cmd/Ctrl + J：切换日语 / 中文（V1 search.js:344 移植）

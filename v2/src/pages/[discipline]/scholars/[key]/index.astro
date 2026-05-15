@@ -97,6 +97,7 @@ type KpListItem = {
   body_format: string;
   /** kp_school 中 position 最小的主学派（与编辑页 / tier 主学派一致），无关联则为 null */
   primary_school_title_zh: string | null;
+  locked_at: string | null;
 };
 let kps: KpListItem[] = [];
 
@@ -150,6 +151,7 @@ if (!isPartial) {
       SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year,
         k.body_zh_json, k.body_ja_json, k.body_format,
         k.evaluations_zh_json, k.evaluations_ja_json,
+        k.locked_at,
         (
           SELECT s.title_zh
           FROM kp_school kps0
@@ -187,7 +189,7 @@ let selectedScholars: Array<{ key: string; name_zh: string; name_en: string | nu
 let selectedEvalContent: KpEvaluationsLang | null = null;
 if (selectedKpId) {
   const kpRow = await db
-    .prepare('SELECT id, title_zh, title_en, title_ja, year, body_zh_json, body_ja_json, body_format, evaluations_zh_json, evaluations_ja_json FROM kp WHERE id = ? AND discipline = ?')
+    .prepare('SELECT id, title_zh, title_en, title_ja, year, body_zh_json, body_ja_json, body_format, evaluations_zh_json, evaluations_ja_json, locked_at FROM kp WHERE id = ? AND discipline = ?')
     .bind(selectedKpId, discipline)
     .first() as SelectedKp | null;
   selectedKp = kpRow ?? null;
@@ -276,6 +278,22 @@ const canEdit = Astro.locals.canEdit(discipline);
                   </a>
                 )}
                 {canEdit && (
+                  <button
+                    type="button"
+                    data-kp-lock-toggle
+                    data-kp-id={selectedKp.id}
+                    class:list={['kp-lock-toggle shrink-0', selectedKp.locked_at && 'is-locked']}
+                    aria-label={selectedKp.locked_at ? '解锁' : '锁定'}
+                    aria-pressed={selectedKp.locked_at ? 'true' : 'false'}
+                    title={selectedKp.locked_at ? '点击解锁' : '点击锁定'}
+                  >
+                    <span class="kp-lock-emoji" aria-hidden="true">🔒</span>
+                    <span class="kp-lock-text" aria-hidden="true">{selectedKp.locked_at ? '解锁' : '锁定'}</span>
+                  </button>
+                )}
+                {canEdit && (selectedKp.locked_at ? (
+                  <span class="hero-icon-btn shrink-0 is-disabled" aria-disabled="true" title="已锁定，无法编辑">✎</span>
+                ) : (
                   <a
                     href={editHref(`/${discipline}/kp/${selectedKp.id}/edit`, editFromUrl)}
                     data-edit-kp-link={selectedKp.id}
@@ -283,7 +301,7 @@ const canEdit = Astro.locals.canEdit(discipline);
                     aria-label={`编辑 ${selectedTitle}`}
                     title="编辑"
                   >✎</a>
-                )}
+                ))}
               </div>
               <div class="text-xs text-tertiary mt-2 flex flex-wrap items-baseline gap-2">
                 {selectedScholars.map((s) => (
@@ -597,13 +615,29 @@ const canEdit = Astro.locals.canEdit(discipline);
                     </a>
                   )}
                   {canEdit && (
+                    <button
+                      type="button"
+                      data-kp-lock-toggle
+                      data-kp-id={selectedKp.id}
+                      class:list={['kp-lock-toggle shrink-0', selectedKp.locked_at && 'is-locked']}
+                      aria-label={selectedKp.locked_at ? '解锁' : '锁定'}
+                      aria-pressed={selectedKp.locked_at ? 'true' : 'false'}
+                      title={selectedKp.locked_at ? '点击解锁' : '点击锁定'}
+                    >
+                      <span class="kp-lock-emoji" aria-hidden="true">🔒</span>
+                      <span class="kp-lock-text" aria-hidden="true">{selectedKp.locked_at ? '解锁' : '锁定'}</span>
+                    </button>
+                  )}
+                  {canEdit && (selectedKp.locked_at ? (
+                    <span class="hero-icon-btn shrink-0 is-disabled" aria-disabled="true" title="已锁定，无法编辑">✎</span>
+                  ) : (
                     <a
                       href={editHref(`/${discipline}/kp/${selectedKp.id}/edit`, editFromUrl)}
                       class="hero-icon-btn shrink-0"
                       aria-label={`编辑 ${selectedTitle}`}
                       title="编辑"
                     >✎</a>
-                  )}
+                  ))}
                 </div>
                 <div class="text-xs text-tertiary mt-2 flex flex-wrap items-baseline gap-2">
                   {selectedScholars.map((s) => (
@@ -642,6 +676,7 @@ const canEdit = Astro.locals.canEdit(discipline);
 <script is:inline src={`/split-pane.js?v=${APP_VERSION}`}></script>
 <script is:inline src={`/admin-tools.js?v=${APP_VERSION}`}></script>
 <script is:inline src={`/cmpc-flip.js?v=${APP_VERSION}`}></script>
+<script is:inline src={`/kp-lock.js?v=${APP_VERSION}`}></script>
 
 {canEdit && (
   <div data-reorder-bootstrap="scholar-kps" class="hidden"></div>
