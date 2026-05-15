@@ -141,10 +141,10 @@
     //      curIdx=-1，baseIdx=-1，next=0，但 activeKpId 内部已是 items[0].id →
     //      setActiveImmediate 走 early-return → 无反应。改用 closure activeKpId（真源）。
     //
-    // v0.11.24 双排 KP list 适配：
-    //   - 1-col (.optA-kps grid-template-columns = "1fr") → 原行为不变（←→ 切, ↑↓ 滚）
-    //   - 2-col (.optA-kps grid-template-columns = "1fr 1fr") → ←→↑↓ 2D 导航
-    //   - Shift+↑↓ 任意模式下都滚右栏（2-col 模式下 ↑↓ 已被切卡占用）
+    // v0.11.56 键位重排（用户偏好）：
+    //   - 无修饰键 + ↑↓ → 滚右栏（任意模式）
+    //   - 无修饰键 + ←→ → no-op（避免和系统/浏览器 horizontal scroll 冲突）
+    //   - Shift + ↑↓←→ → 切 KP（1-col 线性 / 2-col 2D，按 colCount 实时探）
     //   - colCount 通过 getComputedStyle 实时读，CSS @media 切换 / 屏幕缩放都跟得上
     document.addEventListener('keydown', (e) => {
       if (!MQ.matches) return;
@@ -156,31 +156,26 @@
         e.key === 'ArrowUp'   || e.key === 'ArrowDown';
       if (!isArrow) return;
 
-      // Shift + ↑↓ → 任意模式都滚右栏（修饰键优先于切卡）
-      if (e.shiftKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+      // 无 shift + ↑↓ → 滚右栏
+      if (!e.shiftKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
         if (!detailPane) return;
         e.preventDefault();
         detailPane.scrollBy({ top: e.key === 'ArrowDown' ? 80 : -80, behavior: 'smooth' });
         return;
       }
 
+      // 无 shift + ←→ → 不做处理（让浏览器/系统默认）
+      if (!e.shiftKey) return;
+
+      // ===== Shift + Arrow：切 KP =====
       const items = Array.from(document.querySelectorAll('.left [data-kp-id]'));
       if (!items.length) return;
 
-      // 实时探 list 列数；CSS @media 切换 / 拉宽窗口都能跟上
+      // 实时探 list 列数
       const list = items[0].parentElement;
       const tmpl = list ? getComputedStyle(list).gridTemplateColumns : '';
       const colCount = tmpl ? tmpl.split(' ').filter((s) => s.trim()).length : 1;
 
-      // 1-col + ↑↓ → 原 prod 行为：滚右栏
-      if (colCount <= 1 && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
-        if (!detailPane) return;
-        e.preventDefault();
-        detailPane.scrollBy({ top: e.key === 'ArrowDown' ? 80 : -80, behavior: 'smooth' });
-        return;
-      }
-
-      // 切 KP 导航
       const curIdx = items.findIndex((el) => el.getAttribute('data-kp-id') === activeKpId);
       const baseIdx = curIdx < 0 ? 0 : curIdx;
       let next = -1;
@@ -193,9 +188,9 @@
         else if (e.key === 'ArrowUp'    && baseIdx - colCount >= 0)               next = baseIdx - colCount;
         else if (e.key === 'ArrowDown'  && baseIdx + colCount < items.length)     next = baseIdx + colCount;
       } else {
-        // 1-col linear nav（←→）
-        if (e.key === 'ArrowLeft'  && baseIdx > 0)              next = baseIdx - 1;
-        else if (e.key === 'ArrowRight' && baseIdx + 1 < items.length) next = baseIdx + 1;
+        // 1-col linear nav — ←/↑ 上一条，→/↓ 下一条
+        if ((e.key === 'ArrowLeft' || e.key === 'ArrowUp') && baseIdx > 0)              next = baseIdx - 1;
+        else if ((e.key === 'ArrowRight' || e.key === 'ArrowDown') && baseIdx + 1 < items.length) next = baseIdx + 1;
       }
 
       if (next < 0 || next >= items.length) return; // 边界 no-op
