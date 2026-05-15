@@ -1899,13 +1899,11 @@ details.eval {
 }
 
 /* ============================================================
- * v0.11.58 KP 锁切换按钮 — head bar 右侧 ✎ 编辑按钮旁
+ * v0.11.59 KP 锁切换按钮 — head bar 右侧 ✎ 编辑按钮旁
  *
- * 默认（未锁）：emoji 透明，整按钮"占位但不可见"
- * Hover（PC）：emoji 浮现 + 文字"锁定"显示
- * 锁定态：emoji 永远可见
- * Hover 锁定态（PC）：文字"解锁"显示
- * Mobile（<1024px）：pointer-events:none，不可点；锁定态 emoji 仍展示
+ * 锁定态：🔒 emoji 一直显示。点击直接解锁。hover 无文字浮现。
+ * 未锁态：默认透明占位。hover（PC）才浮现「锁定」文字按钮，点击锁定。
+ * Mobile（<1024px）：pointer-events:none — 锁定态 🔒 仍展示，但不可点击切换。
  * ============================================================ */
 .kp-lock-toggle {
   position: relative;
@@ -1940,15 +1938,17 @@ details.eval {
   white-space: nowrap;
 }
 @media (min-width: 1024px) {
-  .kp-lock-toggle:hover {
+  /* 未锁 hover：背景高亮 + 「锁定」文字浮现 */
+  .kp-lock-toggle:not(.is-locked):hover {
     background: var(--color-bg-soft, var(--bg-soft));
     border-color: var(--color-border, var(--border));
   }
-  .kp-lock-toggle:hover .kp-lock-emoji {
-    opacity: 1;
-  }
-  .kp-lock-toggle:hover .kp-lock-text {
+  .kp-lock-toggle:not(.is-locked):hover .kp-lock-text {
     display: inline;
+  }
+  /* 锁定 hover：仅背景轻量高亮（提示可点击），不切文字 */
+  .kp-lock-toggle.is-locked:hover {
+    background: var(--color-bg-soft, var(--bg-soft));
   }
   .kp-lock-toggle:focus-visible {
     outline: 2px solid var(--focus, var(--primary));
