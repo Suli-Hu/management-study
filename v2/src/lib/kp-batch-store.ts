@@ -486,6 +486,12 @@ async function processOne(
     return { id, ok: false, reason: 'kp_not_in_tenant' };
   }
 
+  // 5b. v0.11.58 锁定保护 — locked KP 整条 skip（不影响其它条）
+  if (current.locked_at) {
+    const currentVersion = await getCurrentVersion(db, id);
+    return { id, ok: false, reason: 'kp_locked', current_version: currentVersion };
+  }
+
   // 6. version 校验（乐观锁）
   const currentVersion = await getCurrentVersion(db, id);
   if (!options.dryRun) {

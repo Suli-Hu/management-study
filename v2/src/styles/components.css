@@ -1897,3 +1897,80 @@ details.eval {
   color: var(--color-bg-primary);
   border-color: var(--color-text-primary);
 }
+
+/* ============================================================
+ * v0.11.58 KP 锁切换按钮 — head bar 右侧 ✎ 编辑按钮旁
+ *
+ * 默认（未锁）：emoji 透明，整按钮"占位但不可见"
+ * Hover（PC）：emoji 浮现 + 文字"锁定"显示
+ * 锁定态：emoji 永远可见
+ * Hover 锁定态（PC）：文字"解锁"显示
+ * Mobile（<1024px）：pointer-events:none，不可点；锁定态 emoji 仍展示
+ * ============================================================ */
+.kp-lock-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-text-secondary, var(--text-2));
+  border-radius: 6px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.kp-lock-emoji {
+  font-size: 16px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.kp-lock-toggle.is-locked .kp-lock-emoji {
+  opacity: 1;
+}
+.kp-lock-text {
+  display: none;
+  font-size: 12px;
+  color: var(--color-text-secondary, var(--text-2));
+  white-space: nowrap;
+}
+@media (min-width: 1024px) {
+  .kp-lock-toggle:hover {
+    background: var(--color-bg-soft, var(--bg-soft));
+    border-color: var(--color-border, var(--border));
+  }
+  .kp-lock-toggle:hover .kp-lock-emoji {
+    opacity: 1;
+  }
+  .kp-lock-toggle:hover .kp-lock-text {
+    display: inline;
+  }
+  .kp-lock-toggle:focus-visible {
+    outline: 2px solid var(--focus, var(--primary));
+    outline-offset: 2px;
+  }
+}
+@media (max-width: 1023px) {
+  .kp-lock-toggle {
+    pointer-events: none;
+    cursor: default;
+  }
+}
+
+/* ✎ 编辑按钮 disabled 态（locked KP）— 既适用全屏 .kp-edit-btn，也适用 split-pane .hero-icon-btn */
+.kp-edit-btn.is-disabled,
+.hero-icon-btn.is-disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+.kp-edit-btn.is-disabled:hover,
+.hero-icon-btn.is-disabled:hover {
+  background: transparent;
+  opacity: 0.35;
+}
