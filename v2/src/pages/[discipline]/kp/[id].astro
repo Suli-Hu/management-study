@@ -8,6 +8,7 @@ import { editHref } from '~/lib/nav';
 import { shortYear } from '~/lib/format-year';
 import { lastName } from '~/lib/format-name';
 import { resolveAccentForSchool } from '~/lib/resolve-accent';
+import { APP_VERSION } from '~/lib/version';
 
 const { discipline, id } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
@@ -188,7 +189,7 @@ const langToggleHref = langToggleQs ? `${Astro.url.pathname}?${langToggleQs}` : 
   {bodyJa && <LangFab lang={lang} accentHex="var(--primary)" />}
 </Layout>
 
-<script is:inline src="/cmpc-flip.js"></script>
+<script is:inline src={`/cmpc-flip.js?v=${APP_VERSION}`}></script>
 
 <script is:inline>
   // Cmd/Ctrl + J：切换日语 / 中文（V1 search.js:344 移植）

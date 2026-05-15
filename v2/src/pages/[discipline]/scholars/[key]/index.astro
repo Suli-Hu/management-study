@@ -26,6 +26,7 @@ import { editHref } from '~/lib/nav';
 import { shortYear } from '~/lib/format-year';
 import { lastName } from '~/lib/format-name';
 import { resolveAccentForSchool } from '~/lib/resolve-accent';
+import { APP_VERSION } from '~/lib/version';
 
 const { discipline, key } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
@@ -638,9 +639,9 @@ const canEdit = Astro.locals.canEdit(discipline);
   {selectedKp?.body_ja_json && <LangFab lang={selectedLang} accentHex="var(--primary)" />}
 </Layout>
 
-<script is:inline src="/split-pane.js"></script>
-<script is:inline src="/admin-tools.js"></script>
-<script is:inline src="/cmpc-flip.js"></script>
+<script is:inline src={`/split-pane.js?v=${APP_VERSION}`}></script>
+<script is:inline src={`/admin-tools.js?v=${APP_VERSION}`}></script>
+<script is:inline src={`/cmpc-flip.js?v=${APP_VERSION}`}></script>
 
 {canEdit && (
   <div data-reorder-bootstrap="scholar-kps" class="hidden"></div>

@@ -23,6 +23,7 @@ import { editHref } from '~/lib/nav';
 import { shortYear } from '~/lib/format-year';
 import { lastName, splitName } from '~/lib/format-name';
 import { resolveAccentForSchool } from '~/lib/resolve-accent';
+import { APP_VERSION } from '~/lib/version';
 
 const { discipline, school } = Astro.params;
 const db = getDb(Astro.locals.runtime.env);
@@ -540,9 +541,9 @@ const canEdit = Astro.locals.canEdit(discipline);
   {selectedKp?.body_ja_json && <LangFab lang={selectedLang} accentHex="var(--primary)" />}
 </Layout>
 
-<script is:inline src="/split-pane.js"></script>
-<script is:inline src="/admin-tools.js"></script>
-<script is:inline src="/cmpc-flip.js"></script>
+<script is:inline src={`/split-pane.js?v=${APP_VERSION}`}></script>
+<script is:inline src={`/admin-tools.js?v=${APP_VERSION}`}></script>
+<script is:inline src={`/cmpc-flip.js?v=${APP_VERSION}`}></script>
 
 <script is:inline>
   // Cmd/Ctrl + J：切换日语 / 中文（V1 search.js:344 移植）
