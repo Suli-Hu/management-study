@@ -151,6 +151,7 @@ if (selectedKpId) {
         SELECT k.id, k.title_zh, k.title_en, k.title_ja, k.year,
           k.body_zh_json, k.body_ja_json, k.body_format,
           k.evaluations_zh_json, k.evaluations_ja_json,
+          k.locked_at,
           (SELECT GROUP_CONCAT(scholar_key, ',')
              FROM kp_scholar
              WHERE kp_id = k.id AND scholar_discipline = k.discipline
