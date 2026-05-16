@@ -452,9 +452,8 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
 }
 .cmpc-grid {
   display: grid; gap: 14px; margin: 6px 0 8px;
-  /* v0.11.62: 反转 v0.11.42 的 stretch 设计 — 短 card 按内容自适应、不被同行长 card 拉高。
-     长 card 仍受 grid-auto-rows cap 450 限制；同行内长卡会撑高 row，短卡顶部对齐。 */
-  align-items: start;
+  /* v0.11.63: revert v0.11.62 — 用户选择 design A (同行 stretch 等高)；接受背面 detail 长撑 row 的留白 tradeoff */
+  /* 默认 align-items: stretch — 同一行所有卡与最高卡对齐 */
   grid-auto-rows: minmax(0, 450px);
   /* v0.8.30: auto-fit 自适应列数 — KP 详情窄栏 (max 720px) 多列时自动换行；宽栏按数据列撑开。
      min 180px 是经验值：再窄文字挤；可再调。 */
@@ -465,7 +464,7 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   position: relative;
   display: flex;
   flex-direction: column;
-  /* v0.11.62: 删 height:100% 让 card 高度由自身 content 决定（max-height 仍 cap 450） */
+  height: 100%;
   width: 100%;
   max-height: 450px;
   overflow: hidden;
