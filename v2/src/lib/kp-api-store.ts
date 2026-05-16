@@ -73,6 +73,10 @@ export interface KpApiRecord {
   locked_at: string | null;
   /** 谁锁的 user id（audit） */
   locked_by: string | null;
+  /** v0.11.61 上次 ja 字段被写入的时间（手动编辑或 agent 翻译），null = 从未翻译 */
+  ja_translated_at: string | null;
+  /** v0.11.61 ja 写入时对应的 zh 内容 SHA-256；自动翻译 loop 用此判定 zh 是否变化 */
+  ja_zh_hash: string | null;
 }
 
 export interface KpVersionRecord {
@@ -115,6 +119,8 @@ interface KpRow {
   updated_at: string;
   locked_at?: string | null;
   locked_by?: string | null;
+  ja_translated_at?: string | null;
+  ja_zh_hash?: string | null;
 }
 
 function parseJson<T>(value: string | null | undefined, fallback: T): T {
@@ -185,7 +191,23 @@ async function toRecord(db: D1Database, row: KpRow): Promise<KpApiRecord> {
     updated_at: row.updated_at,
     locked_at: row.locked_at ?? null,
     locked_by: row.locked_by ?? null,
+    ja_translated_at: row.ja_translated_at ?? null,
+    ja_zh_hash: row.ja_zh_hash ?? null,
   };
+}
+
+/**
+ * v0.11.61 计算 KP 的 zh 内容指纹（SHA-256）— 用于判定 zh 是否自上次翻译以来变化。
+ * 包含 body_zh_json、title_zh、evaluations_zh_json 三部分。
+ */
+export async function computeZhHash(
+  bodyZhJson: string,
+  titleZh: string,
+  evaluationsZhJson: string | null,
+): Promise<string> {
+  const data = bodyZhJson + '|' + titleZh + '|' + (evaluationsZhJson ?? '');
+  const buffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
+  return Array.from(new Uint8Array(buffer)).map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 /** 内部 helper：从 D1 row 反序列化结构化 body / evaluations（PATCH 合并时用）。 */
@@ -407,13 +429,22 @@ export async function createKpRecord(
   const ftsTextZh = structuredToSearchText(input.body.zh);
   const ftsTextJa = input.body.ja ? structuredToSearchText(input.body.ja) : '';
 
+  // v0.11.61 ja 翻译追踪 — 新建时若已有 ja 内容（title.ja / body.ja / evaluations.ja），init 时戳 + zh hash
+  const jaProvided =
+    input.title.ja !== undefined || input.body.ja !== undefined || input.evaluations?.ja !== undefined;
+  const initJaTranslatedAt = jaProvided ? now : null;
+  const initJaZhHash = jaProvided
+    ? await computeZhHash(cols.body_zh_json, input.title.zh, cols.evaluations_zh_json)
+    : null;
+
   const stmts: D1PreparedStatement[] = [
     db.prepare(
       `INSERT INTO kp (
         id, tenant_id, discipline, year, title_zh, title_en, title_ja,
         tags_json, created_by, updated_by, created_at, updated_at,
-        body_zh_json, body_ja_json, evaluations_zh_json, evaluations_ja_json, body_format
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        body_zh_json, body_ja_json, evaluations_zh_json, evaluations_ja_json, body_format,
+        ja_translated_at, ja_zh_hash
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     ).bind(
       id,
       tenant.tenantId,
@@ -432,6 +463,8 @@ export async function createKpRecord(
       cols.evaluations_zh_json,
       cols.evaluations_ja_json,
       cols.body_format,
+      initJaTranslatedAt,
+      initJaZhHash,
     ),
     db.prepare('DELETE FROM kp_fts WHERE id = ?').bind(id),
     db.prepare(
@@ -539,12 +572,24 @@ export async function patchKpRecord(
   const ftsTextZh = structuredToSearchText(mergedBody.zh);
   const ftsTextJa = mergedBody.ja ? structuredToSearchText(mergedBody.ja) : '';
 
+  // v0.11.61 ja 翻译追踪 — 如果 PATCH 触动了任一 ja 字段，记录 ja_translated_at + ja_zh_hash
+  // 让每日自动翻译 loop 用 hash 比对判定 zh 是否变化以决定是否重译。
+  const jaTouched =
+    input.title?.ja !== undefined ||
+    input.body?.ja !== undefined ||
+    input.evaluations?.ja !== undefined;
+  const nextJaTranslatedAt = jaTouched ? now : (current.ja_translated_at ?? null);
+  const nextJaZhHash = jaTouched
+    ? await computeZhHash(cols.body_zh_json, mergedTitle.zh, cols.evaluations_zh_json)
+    : (current.ja_zh_hash ?? null);
+
   const stmts: D1PreparedStatement[] = [
     db.prepare(
       `UPDATE kp SET
         year = ?, title_zh = ?, title_en = ?, title_ja = ?,
         tags_json = ?, updated_by = ?, updated_at = ?,
-        body_zh_json = ?, body_ja_json = ?, evaluations_zh_json = ?, evaluations_ja_json = ?, body_format = ?
+        body_zh_json = ?, body_ja_json = ?, evaluations_zh_json = ?, evaluations_ja_json = ?, body_format = ?,
+        ja_translated_at = ?, ja_zh_hash = ?
        WHERE id = ? AND COALESCE(tenant_id, discipline) = ? AND discipline = ?`,
     ).bind(
       nextYear,
@@ -559,6 +604,8 @@ export async function patchKpRecord(
       cols.evaluations_zh_json,
       cols.evaluations_ja_json,
       cols.body_format,
+      nextJaTranslatedAt,
+      nextJaZhHash,
       kpId,
       tenant.tenantId,
       tenant.discipline,
