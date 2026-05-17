@@ -28,7 +28,8 @@ import { mountFlatListForm } from '~/lib/editor/forms/flat-list';
 import { mountAccordionForm } from '~/lib/editor/forms/accordion';
 import { mountCompareForm } from '~/lib/editor/forms/compare';
 import { mountQuadForm } from '~/lib/editor/forms/quad';
-import { emptyKpBodyByFormat } from '~/lib/editor/state';
+import { emptyKpBodyByFormat, extractLead, applyCarryLead, type Format } from '~/lib/editor/state';
+import { mountChipPicker, type ChipPickerOption } from '~/lib/editor/dom-helpers';
 import { patchKp, type PatchPayload } from '~/lib/editor/api';
 
 // ============================================================
@@ -40,6 +41,21 @@ type Lang = 'zh' | 'ja';
 const EMPTY_EVAL: KpEvaluationsLang = {
   meaning: '', limit: '', example: '', response: '', application: '', analogy: '',
 };
+
+const FORMAT_LABELS: Record<Format, string> = {
+  narrative: '叙事',
+  'flat-list': '条目',
+  accordion: '折叠',
+  compare: '对比',
+  quad: '四象限',
+};
+
+interface Metadata {
+  schools: ChipPickerOption[];
+  scholars: ChipPickerOption[];
+  tags: ChipPickerOption[];
+  tagColorMap: Map<string, string | null>;
+}
 
 const EVAL_FIELDS: Array<{ key: keyof KpEvaluationsLang; label: string; hint: string }> = [
   { key: 'meaning', label: '义 · 意义', hint: 'KP 的学术 / 实务贡献' },
@@ -56,34 +72,44 @@ const EVAL_FIELDS: Array<{ key: keyof KpEvaluationsLang; label: string; hint: st
 
 interface InlineEditState {
   kpId: string;
+  discipline: string;
   activeLang: Lang;
+  metadata: Metadata;
 
   // DOM refs (locked at enterEditMode)
   titleEl: HTMLElement;
   bodyContainer: HTMLElement;
   evalContainer: HTMLElement;
-  editorHost: HTMLElement; // 内嵌在 bodyContainer 内，body form mount 在此
-  langTabsEl: HTMLElement | null;
+  editorHost: HTMLElement;
+  topBarEl: HTMLElement | null;
+  relationsEl: HTMLElement | null;
 
   // Restore HTML on cancel
   originalBodyHtml: string;
   originalEvalHtml: string;
 
-  // Current values（双语）
+  // Current values
   currentTitle: { zh: string; ja: string };
   currentBody: { zh: KpBody; ja: KpBody | null };
   currentEval: { zh: KpEvaluationsLang; ja: KpEvaluationsLang };
   currentYear: string;
+  currentSchools: string[];
+  currentScholars: string[];
+  currentTags: string[];
 
-  // Baseline for dirty check
+  // Baseline
   originalTitle: { zh: string; ja: string };
   originalBody: { zh: KpBody; ja: KpBody | null };
   originalEval: { zh: KpEvaluationsLang; ja: KpEvaluationsLang };
   originalYear: string;
+  originalSchools: string[];
+  originalScholars: string[];
+  originalTags: string[];
 
   // Mounted children
   titleInput: HTMLInputElement | null;
   yearInput: HTMLInputElement | null;
+  formSelect: HTMLSelectElement | null;
   formModule: FormModule | null;
   evalEditor: { destroy: () => void } | null;
 
@@ -119,7 +145,32 @@ function isDirty(s: InlineEditState): boolean {
   if (JSON.stringify(s.currentBody.ja) !== JSON.stringify(s.originalBody.ja)) return true;
   if (JSON.stringify(s.currentEval.zh) !== JSON.stringify(s.originalEval.zh)) return true;
   if (JSON.stringify(s.currentEval.ja) !== JSON.stringify(s.originalEval.ja)) return true;
+  if (JSON.stringify(s.currentSchools) !== JSON.stringify(s.originalSchools)) return true;
+  if (JSON.stringify(s.currentScholars) !== JSON.stringify(s.originalScholars)) return true;
+  if (JSON.stringify(s.currentTags) !== JSON.stringify(s.originalTags)) return true;
   return false;
+}
+
+async function fetchMetadata(discipline: string): Promise<Metadata> {
+  const res = await fetch(`/api/metadata?discipline=${encodeURIComponent(discipline)}`, {
+    headers: { accept: 'application/json' },
+    credentials: 'same-origin',
+  });
+  if (!res.ok) throw new Error(`metadata fetch ${res.status}`);
+  const data = (await res.json()) as {
+    ok: boolean;
+    schools: Array<{ key: string; title: { zh: string }; tags?: string[] }>;
+    scholars: Array<{ key: string; name: { zh: string; en?: string } }>;
+    tags: Array<{ key: string; label?: { zh: string }; color?: string }>;
+  };
+  const tagColorMap = new Map<string, string | null>();
+  for (const t of data.tags) tagColorMap.set(t.key, t.color ?? null);
+  return {
+    schools: data.schools.map((s) => ({ key: s.key, label: s.title.zh })),
+    scholars: data.scholars.map((s) => ({ key: s.key, label: s.name.zh, sub: s.name.en ?? '' })),
+    tags: data.tags.map((t) => ({ key: t.key, label: t.label?.zh ?? t.key })),
+    tagColorMap,
+  };
 }
 
 function updateSaveBtnState(s: InlineEditState): void {
@@ -257,10 +308,12 @@ function mountEvalEditor(
 function mountTopBar(
   bodyContainer: HTMLElement,
   initialLang: Lang,
+  initialFormat: Format,
   initialYear: string,
   onLangChange: (lang: Lang) => void,
+  onFormatChange: (newFmt: Format) => void,
   onYearChange: (year: string) => void,
-): { el: HTMLElement; yearInput: HTMLInputElement; destroy: () => void } {
+): { el: HTMLElement; yearInput: HTMLInputElement; formatSelect: HTMLSelectElement; destroy: () => void } {
   const bar = document.createElement('div');
   bar.className = 'kpe-inline-topbar';
 
@@ -284,6 +337,34 @@ function mountTopBar(
   });
   bar.appendChild(tabs);
 
+  // Format dropdown
+  const fmtWrap = document.createElement('label');
+  fmtWrap.className = 'kpe-inline-year';
+  const fmtLabel = document.createElement('span');
+  fmtLabel.className = 'kpe-inline-year-label';
+  fmtLabel.textContent = '格式';
+  fmtWrap.appendChild(fmtLabel);
+  const fmtSelect = document.createElement('select');
+  fmtSelect.className = 'kpe-inline-fmt-select';
+  (Object.keys(FORMAT_LABELS) as Format[]).forEach((f) => {
+    const opt = document.createElement('option');
+    opt.value = f;
+    opt.textContent = FORMAT_LABELS[f];
+    if (f === initialFormat) opt.selected = true;
+    fmtSelect.appendChild(opt);
+  });
+  fmtSelect.addEventListener('change', () => {
+    const newFmt = fmtSelect.value as Format;
+    if (!confirm(`切到「${FORMAT_LABELS[newFmt]}」格式？\n现有 body 内容会按新结构重置，lead 文字会被保留。`)) {
+      // 用户取消 → 回退 select
+      fmtSelect.value = initialFormat;
+      return;
+    }
+    onFormatChange(newFmt);
+  });
+  fmtWrap.appendChild(fmtSelect);
+  bar.appendChild(fmtWrap);
+
   // Year input
   const yearWrap = document.createElement('label');
   yearWrap.className = 'kpe-inline-year';
@@ -305,8 +386,103 @@ function mountTopBar(
   return {
     el: bar,
     yearInput,
+    formatSelect: fmtSelect,
     destroy: () => bar.remove(),
   };
+}
+
+// ============================================================
+// Relations panel (schools / scholars / tags)
+// ============================================================
+
+function mountRelationsPanel(
+  bodyContainer: HTMLElement,
+  state: InlineEditState,
+): { el: HTMLElement; destroy: () => void } {
+  const panel = document.createElement('div');
+  panel.className = 'kpe-inline-relations';
+
+  const renderRow = (
+    labelText: string,
+    hostClass: string,
+    pickerOpts: Parameters<typeof mountChipPicker>[1],
+  ) => {
+    const row = document.createElement('div');
+    row.className = 'kpe-inline-rel-row';
+    const labelEl = document.createElement('label');
+    labelEl.className = 'kpe-inline-rel-label';
+    labelEl.textContent = labelText;
+    row.appendChild(labelEl);
+    const host = document.createElement('div');
+    host.className = hostClass;
+    row.appendChild(host);
+    panel.appendChild(row);
+    mountChipPicker(host, pickerOpts);
+  };
+
+  renderRow('学派', 'kpe-inline-chip-host', {
+    current: state.currentSchools,
+    options: state.metadata.schools,
+    placeholder: '搜索学派（必选 ≥1）',
+    ariaLabel: '所属学派',
+    colorize: 'none',
+    onChange: (next) => {
+      state.currentSchools = next;
+      updateSaveBtnState(state);
+    },
+  });
+
+  renderRow('学者', 'kpe-inline-chip-host', {
+    current: state.currentScholars,
+    options: state.metadata.scholars,
+    placeholder: '搜索学者（可空）',
+    ariaLabel: '关联学者',
+    colorize: 'none',
+    onChange: (next) => {
+      state.currentScholars = next;
+      updateSaveBtnState(state);
+    },
+  });
+
+  renderRow('标签', 'kpe-inline-chip-host', {
+    current: state.currentTags,
+    options: state.metadata.tags,
+    placeholder: '搜索 / 选 1 个标签（必填）',
+    ariaLabel: '标签',
+    colorize: (key) => state.metadata.tagColorMap.get(key) ?? null,
+    onChange: (next) => {
+      state.currentTags = next;
+      updateSaveBtnState(state);
+    },
+    singleSelect: true,
+  });
+
+  bodyContainer.parentElement?.insertBefore(panel, bodyContainer);
+
+  return {
+    el: panel,
+    destroy: () => panel.remove(),
+  };
+}
+
+// ============================================================
+// Format switch handler
+// ============================================================
+
+function switchFormat(state: InlineEditState, newFmt: Format): void {
+  // 抽出当前 zh body 的 lead-equivalent，灌入新 format
+  const carryLead = extractLead(state.currentBody.zh);
+  const newZh = applyCarryLead(emptyKpBodyByFormat(newFmt), carryLead);
+  // ja 同步切（F5 强制）：若 ja 存在则也重置，carry ja 自己的 lead
+  let newJa: KpBody | null = null;
+  if (state.currentBody.ja) {
+    const jaCarry = extractLead(state.currentBody.ja);
+    newJa = applyCarryLead(emptyKpBodyByFormat(newFmt), jaCarry);
+  }
+  state.currentBody = { zh: newZh, ja: newJa };
+  updateSaveBtnState(state);
+  // 重 mount body
+  remountBody(state);
 }
 
 // ============================================================
@@ -368,7 +544,8 @@ function exitEditMode(state: InlineEditState, restoreHtml: boolean): void {
     state.titleInput?.remove();
     state.titleEl.style.display = '';
   }
-  state.langTabsEl?.remove();
+  state.topBarEl?.remove();
+  state.relationsEl?.remove();
   state.saveBtn?.remove();
   state.cancelBtn?.remove();
   const toggle = document.querySelector<HTMLButtonElement>('[data-inline-edit-toggle]');
@@ -388,24 +565,30 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
   toggle.disabled = true;
   toggle.textContent = '载入中…';
 
-  // Fetch full KP
+  // Fetch full KP + metadata (parallel)
   type FetchedKp = {
+    discipline: string;
     year: string;
     title: { zh: string; ja?: string };
     body: { zh: KpBody; ja?: KpBody };
     evaluations?: { zh?: KpEvaluationsLang; ja?: KpEvaluationsLang };
+    schools: string[];
+    scholars: string[];
+    tags: string[];
   };
   let kp: FetchedKp;
+  let metadata: Metadata;
   try {
-    const res = await fetch(`/api/kps/${encodeURIComponent(kpId)}`, {
+    const kpRes = await fetch(`/api/kps/${encodeURIComponent(kpId)}`, {
       headers: { accept: 'application/json' },
       credentials: 'same-origin',
     });
-    if (!res.ok) throw new Error(`fetch ${res.status}`);
-    const data = (await res.json()) as { ok: boolean; kp: FetchedKp };
+    if (!kpRes.ok) throw new Error(`fetch kp ${kpRes.status}`);
+    const data = (await kpRes.json()) as { ok: boolean; kp: FetchedKp };
     kp = data.kp;
+    metadata = await fetchMetadata(kp.discipline);
   } catch (e) {
-    alert(`载入 KP 失败：${e}`);
+    alert(`载入 KP / metadata 失败：${e}`);
     toggle.disabled = false;
     toggle.textContent = '编辑';
     return;
@@ -455,24 +638,34 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
 
   const state: InlineEditState = {
     kpId,
+    discipline: kp.discipline,
     activeLang: 'zh',
+    metadata,
     titleEl,
     bodyContainer,
     evalContainer,
     editorHost,
-    langTabsEl: null,
+    topBarEl: null,
+    relationsEl: null,
     originalBodyHtml: capturedBodyHtml,
     originalEvalHtml: capturedEvalHtml,
     currentTitle: { ...initialTitle },
     currentBody: { ...initialBody },
     currentEval: { zh: { ...initialEval.zh }, ja: { ...initialEval.ja } },
     currentYear: initialYear,
+    currentSchools: [...kp.schools],
+    currentScholars: [...kp.scholars],
+    currentTags: [...kp.tags],
     originalTitle: { ...initialTitle },
     originalBody: { zh: initialBody.zh, ja: initialBody.ja ? { ...initialBody.ja } : null },
     originalEval: { zh: { ...initialEval.zh }, ja: { ...initialEval.ja } },
     originalYear: initialYear,
+    originalSchools: [...kp.schools],
+    originalScholars: [...kp.scholars],
+    originalTags: [...kp.tags],
     titleInput: null,
     yearInput: null,
+    formSelect: null,
     formModule: null,
     evalEditor: null,
     saveBtn: null,
@@ -486,19 +679,26 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
   });
   state.titleInput = titleMount.input;
 
-  // 2. Top bar (lang tabs + year)
+  // 2. Top bar (lang tabs + format dropdown + year)
   const topBar = mountTopBar(
     bodyContainer,
     state.activeLang,
+    state.currentBody.zh.format,
     initialYear,
     (newLang) => switchLang(state, newLang),
+    (newFmt) => switchFormat(state, newFmt),
     (newYear) => {
       state.currentYear = newYear;
       updateSaveBtnState(state);
     },
   );
-  state.langTabsEl = topBar.el;
+  state.topBarEl = topBar.el;
   state.yearInput = topBar.yearInput;
+  state.formSelect = topBar.formatSelect;
+
+  // 2b. Relations panel (schools / scholars / tags) — 在 top bar 与 body 之间
+  const relations = mountRelationsPanel(bodyContainer, state);
+  state.relationsEl = relations.el;
 
   // 3. Mount body form (initial lang = zh)
   state.formModule = mountFormByFormat(editorHost, state.currentBody.zh, (newBody) => {
@@ -582,6 +782,17 @@ async function handleSave(state: InlineEditState): Promise<void> {
   // Year
   if (state.currentYear !== state.originalYear) {
     payload.year = state.currentYear;
+  }
+
+  // Relations
+  if (JSON.stringify(state.currentSchools) !== JSON.stringify(state.originalSchools)) {
+    payload.schools = state.currentSchools;
+  }
+  if (JSON.stringify(state.currentScholars) !== JSON.stringify(state.originalScholars)) {
+    payload.scholars = state.currentScholars;
+  }
+  if (JSON.stringify(state.currentTags) !== JSON.stringify(state.originalTags)) {
+    payload.tags = state.currentTags;
   }
 
   const result = await patchKp(state.kpId, payload);
