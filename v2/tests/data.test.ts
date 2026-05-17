@@ -104,7 +104,7 @@ describe('Format rules (v0.8 structured)', () => {
         if (lead) return false;
         if (b.format === 'flat-list') return b.items.length === 0;
         if (b.format === 'accordion') return b.groups.length === 0;
-        if (b.format === 'compare') return b.cols.length === 0;
+        if (b.format === 'compare') return (b.cols ?? []).length === 0 && (b.headers ?? []).length === 0;
         if (b.format === 'quad') return b.cells.length === 0;
         return false;
       })

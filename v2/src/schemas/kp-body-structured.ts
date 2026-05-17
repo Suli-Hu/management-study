@@ -71,26 +71,46 @@ export const AccordionBody = z
   })
   .strict();
 
+/**
+ * Compare body v0.11.82 — 双形态过渡（single object with optional new fields）。
+ *
+ * 旧形态：cols[] 6 固定字段 (title/keyword/desc/type/theories/detail) 卡片版
+ * 新形态：headers[] + rows[label, cells[]] 纯表格版（任意行列数）
+ *
+ * Migration plan：
+ *   v0.11.82: cols 仍存在（default []，min 0），加 headers/rows optional
+ *             KpBody 仍是 discriminatedUnion（CompareBody 仍是 single object）
+ *   下次 ship：renderer 改 table 输出；删 cols 字段；headers/rows 改 required
+ */
+const LegacyCompareCol = z
+  .object({
+    title: z.string().min(1, 'col.title 不能为空'),
+    keyword: z.string().default('').describe('关键词标签，2-4 字'),
+    desc: z.string().default('').describe('一句话定义对象'),
+    type: z.string().default('').describe('类型 / 学派归属'),
+    theories: z.string().default('').describe('关联理论列表'),
+    detail: z.string().default('').describe('详细描述段落'),
+  })
+  .strict();
+
+const CompareRow = z
+  .object({
+    label: z.string().describe('行头 = 字段名'),
+    cells: z.array(z.string()).describe('单元格内容，长度 = headers.length'),
+  })
+  .strict();
+
 export const CompareBody = z
   .object({
     format: z.literal('compare'),
     lead: z.string().default('').describe('导语'),
-    cols: z
-      .array(
-        z
-          .object({
-            title: z.string().min(1, 'col.title 不能为空'),
-            keyword: z.string().default('').describe('关键词标签，2-4 字'),
-            desc: z.string().default('').describe('一句话定义对象'),
-            type: z.string().default('').describe('类型 / 学派归属'),
-            theories: z.string().default('').describe('关联理论列表'),
-            detail: z.string().default('').describe('详细描述段落'),
-          })
-          .strict(),
-      )
-      .min(2, 'compare 至少 2 列'),
+    cols: z.array(LegacyCompareCol).default([]).describe('legacy 卡片版字段（migration 后清空）'),
+    headers: z.array(z.string()).min(2, '至少 2 列').max(6, '最多 6 列').optional().describe('新形态列头'),
+    rows: z.array(CompareRow).max(20, '最多 20 行').optional().describe('新形态行'),
   })
   .strict();
+// v0.11.82 业务校验在 reader 层手动 enforce —— 不在 schema 加 refine
+// （refine 返 ZodEffects 会破坏 KpBody.discriminatedUnion）
 
 /**
  * 四象限轴 — 拆三字段（v0.8.4 breaking change）。
