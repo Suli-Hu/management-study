@@ -37,8 +37,32 @@ export function inlineMdDoubleStarToStrong(s: string): string {
   return out;
 }
 
-/** 正文 / 评价等：`**` → strong，再换行 → br */
+/**
+ * v0.11.76 新加：`~xx~` → `<span class="md-fine">xx</span>` 灰细字标记。
+ * 任意位置 inline markdown，取代之前位置敏感的「item name 末尾 (sub)」语法糖
+ * （后者仍保留作向后兼容，但新内容推荐用 ~xx~）。
+ * 顺序：先解 `**`（粗体）再解 `~`（细字），允许嵌套（**~xx~**）但不递归。
+ * 不成对 `~` 保持字面量。
+ */
+export function inlineMdTildeToFine(s: string): string {
+  if (!s.includes('~')) return s;
+  const parts = s.split('~');
+  if (parts.length < 3) return s;
+
+  let out = parts[0] ?? '';
+  for (let i = 1; i < parts.length; i += 2) {
+    if (i + 1 < parts.length) {
+      const inner = parts[i] ?? '';
+      out += `<span class="md-fine">${inner}</span>${parts[i + 1] ?? ''}`;
+    } else {
+      out += `~${parts[i] ?? ''}`;
+    }
+  }
+  return out;
+}
+
+/** 正文 / 评价等：`**` → strong，`~` → fine，再换行 → br */
 export function formatTrustedProseHtml(s: string | undefined | null): string {
   if (!s) return '';
-  return nlToBrInner(inlineMdDoubleStarToStrong(String(s)));
+  return nlToBrInner(inlineMdTildeToFine(inlineMdDoubleStarToStrong(String(s))));
 }
