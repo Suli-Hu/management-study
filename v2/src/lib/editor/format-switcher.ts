@@ -122,10 +122,13 @@ function bodyHasContent(body: import('~/schemas/kp-body-structured').KpBody): bo
     return body.items.some((it) => it.name.trim() || it.desc.trim());
   if (body.format === 'accordion')
     return body.groups.some((g) => g.title.trim() || g.items.some((it) => it.name.trim() || it.desc.trim()));
-  if (body.format === 'compare')
-    return body.cols.some(
-      (c) => c.title.trim() || c.keyword.trim() || c.desc.trim() || c.type.trim() || c.theories.trim() || c.detail.trim(),
-    );
+  if (body.format === 'compare') {
+    // v0.11.82: 检查 legacy cols + 新 headers/rows 任一有内容
+    if ((body.cols ?? []).some((c) => c.title.trim() || c.keyword.trim() || c.desc.trim() || c.type.trim() || c.theories.trim() || c.detail.trim())) {
+      return true;
+    }
+    return (body.headers ?? []).some((h) => h.trim()) || (body.rows ?? []).some((r) => r.label.trim() || r.cells.some((cell) => cell.trim()));
+  }
   if (body.format === 'quad')
     return (
       axisHasContent(body.yAxis) ||

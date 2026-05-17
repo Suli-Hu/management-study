@@ -90,13 +90,15 @@ describe('KpBody schema — 5 种 format 各自', () => {
     expect(r.success).toBe(true);
   });
 
-  test('CompareBody 拒绝 cols 少于 2', () => {
+  test('CompareBody 接受 cols 少于 2 (v0.11.82 双形态过渡：reader 层手动 enforce)', () => {
+    // v0.11.82：schema 接受任意 cols（包括 0/1 列），业务约束 ≥2 由 reader 层在
+    // compareBodyAsLegacy 等 helper 内手动 enforce。这样允许 cols=[] + headers/rows 新形态。
     const r = CompareBody.safeParse({
       format: 'compare',
       lead: '',
       cols: [{ title: 'X', keyword: '', desc: '', type: '', theories: '', detail: '' }],
     });
-    expect(r.success).toBe(false);
+    expect(r.success).toBe(true);
   });
 
   test('QuadBody happy（三段：低-增长率-高 + 两段：优势-劣势）', () => {

@@ -9,6 +9,15 @@
 import type { CompareBody } from '~/schemas/kp-body-structured';
 import { el, input, textarea, field, deleteX, addBtn } from '../dom-helpers';
 import type { FormModule } from './narrative';
+import { compareBodyAsLegacy } from '~/lib/kp-body-helpers';
+
+// v0.11.82: 内部 state 类型用 legacy cols shape（CompareBody 现在是双形态 union，
+// new shape 走 compareBodyAsLegacy 反向 reconstruct）。等 PR2 table editor ship 时重写。
+type LegacyShape = {
+  format: 'compare';
+  lead: string;
+  cols: Array<{ title: string; keyword: string; desc: string; type: string; theories: string; detail: string }>;
+};
 
 const COL_FIELDS: Array<{
   key: 'keyword' | 'desc' | 'type' | 'theories' | 'detail';
@@ -28,11 +37,13 @@ export function mountCompareForm(
   body: CompareBody,
   onChange: (body: CompareBody) => void,
 ): FormModule {
-  let current: CompareBody = {
+  // v0.11.82: body 是 union (legacy cols or new headers+rows)，统一转 legacy 内部处理
+  const legacyInit = compareBodyAsLegacy(body);
+  let current: LegacyShape = {
     format: 'compare',
-    lead: body.lead ?? '',
-    cols: body.cols.length >= 2
-      ? body.cols.map((c) => ({ ...c }))
+    lead: legacyInit.lead ?? '',
+    cols: legacyInit.cols.length >= 2
+      ? legacyInit.cols.map((c) => ({ ...c }))
       : [
           { title: '', keyword: '', desc: '', type: '', theories: '', detail: '' },
           { title: '', keyword: '', desc: '', type: '', theories: '', detail: '' },

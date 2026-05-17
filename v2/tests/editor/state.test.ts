@@ -49,6 +49,7 @@ describe('emptyKpBodyByFormat', () => {
     const body = emptyKpBodyByFormat('compare');
     expect(body.format).toBe('compare');
     if (body.format !== 'compare') throw new Error('type narrowing');
+    // v0.11.82: emptyKpBodyByFormat('compare') 仍生成 legacy cols shape
     expect(body.cols).toHaveLength(2);
   });
 

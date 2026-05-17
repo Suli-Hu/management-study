@@ -24,6 +24,7 @@ import type {
 } from '~/schemas/kp-body-structured';
 
 import { formatTrustedProseHtml } from './format-trusted-prose-html';
+import { compareBodyAsLegacy } from './kp-body-helpers';
 
 const FALLBACK_ACCENT = '#8a7a6a';
 
@@ -139,7 +140,9 @@ export function renderAccordionStructured(body: AccordionBody, accentHex: string
  *   - 行为由 /cmpc-flip.js 接管
  */
 export function renderCompareCardsStructured(body: CompareBody, accentHex: string): string {
-  const cardsHtml = body.cols
+  // v0.11.82: 双形态过渡 — 反向 reconstruct legacy cols 渲染（行为不变）
+  const compareBody = compareBodyAsLegacy(body);
+  const cardsHtml = compareBody.cols
     .map((c, ri) => {
       // 正面 secondary = type / theories（detail 移到背面）
       const frontSecondary = [c.type, c.theories].filter(Boolean);

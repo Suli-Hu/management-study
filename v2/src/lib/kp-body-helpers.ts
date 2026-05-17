@@ -26,6 +26,59 @@ import type {
   QuadAxis,
   KpEvaluationsLang,
 } from '~/schemas/kp-body-structured';
+
+/**
+ * v0.11.82 CompareBody 双形态过渡 helper：
+ *   - Legacy shape: { cols: [{ title, keyword, desc, type, theories, detail }] }
+ *   - New shape:    { headers: string[], rows: [{ label, cells }] }
+ * 把 new shape 反向 reconstruct 成 legacy cols 形态，让现有 renderer / form / search 不动。
+ * 等 wet-run migration 跑完 + table renderer ship 后删此 helper。
+ */
+type LegacyCompareCol = {
+  title: string;
+  keyword: string;
+  desc: string;
+  type: string;
+  theories: string;
+  detail: string;
+};
+type LegacyCompareBody = {
+  format: 'compare';
+  lead: string;
+  cols: LegacyCompareCol[];
+};
+
+const LEGACY_LABEL_TO_FIELD: Record<string, keyof Omit<LegacyCompareCol, 'title'>> = {
+  关键词: 'keyword',
+  描述: 'desc',
+  类型: 'type',
+  理论: 'theories',
+  详情: 'detail',
+};
+
+export function compareBodyAsLegacy(body: CompareBody): LegacyCompareBody {
+  // 优先 legacy cols（旧数据 / 未迁移）
+  if (body.cols && body.cols.length >= 2) {
+    return { format: 'compare', lead: body.lead, cols: body.cols };
+  }
+  // 新形态：从 headers + rows 反向 reconstruct
+  if (body.headers && body.headers.length >= 2) {
+    const cols: LegacyCompareCol[] = body.headers.map((title) => ({
+      title,
+      keyword: '', desc: '', type: '', theories: '', detail: '',
+    }));
+    for (const row of body.rows ?? []) {
+      const field = LEGACY_LABEL_TO_FIELD[row.label];
+      if (!field) continue; // 不在已知 5 字段的行 → 丢（PR2 table renderer 时正确处理）
+      for (let i = 0; i < cols.length; i++) {
+        cols[i]![field] = row.cells[i] ?? '';
+      }
+    }
+    return { format: 'compare', lead: body.lead, cols };
+  }
+  // 双形态都空 — 兜底空 array
+  return { format: 'compare', lead: body.lead, cols: body.cols ?? [] };
+}
 import type { ParsedBody, Format, Evaluations } from './body-parser';
 import { serializeBody } from './body-parser';
 
@@ -287,7 +340,8 @@ export function structuredToSearchText(body: KpBody): string {
       for (const it of g.items) parts.push(it.name, it.desc);
     }
   } else if (body.format === 'compare') {
-    for (const c of body.cols) {
+    const compareBody = compareBodyAsLegacy(body);
+    for (const c of compareBody.cols) {
       parts.push(c.title, c.keyword, c.desc, c.type, c.theories, c.detail);
     }
   } else if (body.format === 'quad') {
@@ -359,9 +413,10 @@ export function structuredToLegacyDsl(body: KpBody): string {
     });
   }
   if (body.format === 'compare') {
+    const compareBody = compareBodyAsLegacy(body);
     let s = body.lead;
-    if (s && body.cols.length > 0) s += '：';
-    const colsStr = body.cols
+    if (s && compareBody.cols.length > 0) s += '：';
+    const colsStr = compareBody.cols
       .map((c) => trimTrailing([c.title, c.keyword, c.desc, c.type, c.theories, c.detail]).join('|'))
       .join('||');
     return `${s}<compare>${colsStr}</compare>`;
