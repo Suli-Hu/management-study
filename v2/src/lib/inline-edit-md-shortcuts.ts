@@ -76,38 +76,48 @@ export function attachMdShortcuts(
 
     if (e.key === 'b' || e.key === 'B') {
       e.preventDefault();
-      document.execCommand('bold');
+      toggleWrap('strong');
       triggerChange();
       return;
     }
     if (e.key === 'l' || e.key === 'L') {
       e.preventDefault();
-      const sel = window.getSelection();
-      if (!sel || sel.rangeCount === 0) return;
-      const range = sel.getRangeAt(0);
-      if (range.collapsed) return;
-      const ancestor = range.commonAncestorContainer.parentElement;
-      const existingFine = ancestor?.closest?.('.md-fine');
-      if (existingFine) {
-        const parent = existingFine.parentNode;
-        while (existingFine.firstChild) {
-          parent?.insertBefore(existingFine.firstChild, existingFine);
-        }
-        existingFine.remove();
-      } else {
-        const span = document.createElement('span');
-        span.className = 'md-fine';
-        try {
-          range.surroundContents(span);
-        } catch {
-          const frag = range.extractContents();
-          span.appendChild(frag);
-          range.insertNode(span);
-        }
-      }
+      toggleWrap('span', 'md-fine');
       triggerChange();
     }
   };
+
+  /**
+   * 通用：选中文字若已在指定 tag/class 内 → unwrap；否则包一层。
+   * v0.11.79: 取代 execCommand('bold')，统一用 <strong>（execCommand 默认产 <b> 跟 SSR strong 字重不一致）。
+   */
+  function toggleWrap(tag: string, className?: string): void {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    const range = sel.getRangeAt(0);
+    if (range.collapsed) return;
+
+    const matchSelector = className ? `${tag}.${className}` : tag;
+    const ancestor = range.commonAncestorContainer.parentElement;
+    const existing = ancestor?.closest?.(matchSelector);
+    if (existing) {
+      const parent = existing.parentNode;
+      while (existing.firstChild) {
+        parent?.insertBefore(existing.firstChild, existing);
+      }
+      existing.remove();
+      return;
+    }
+    const wrap = document.createElement(tag);
+    if (className) wrap.className = className;
+    try {
+      range.surroundContents(wrap);
+    } catch {
+      const frag = range.extractContents();
+      wrap.appendChild(frag);
+      range.insertNode(wrap);
+    }
+  }
   rootEl.addEventListener('keydown', onKeydown);
 
   const onInput = () => triggerChange();
