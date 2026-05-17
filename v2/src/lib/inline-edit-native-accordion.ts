@@ -35,11 +35,16 @@ export function mountNativeAccordionEditor(
     fmt = bodyContainer.querySelector('.body-fmt-acc') as HTMLElement;
   }
 
-  // .body-lead — 若不存在创建
-  let leadEl = fmt.querySelector('.body-lead') as HTMLElement | null;
+  // v0.11.78: accordion 的 lead SSR 是 `.body-narrative`（用 renderParas 输出），
+  //           不是 `.body-lead`。用 :scope > 限定 fmt 直接 child 防匹配嵌套 group 内的
+  //           `.body-narrative`（虽然 group 内当前没用，但防御）。
+  let leadEl = fmt.querySelector(':scope > .body-narrative') as HTMLElement | null;
   if (!leadEl) {
     leadEl = document.createElement('div');
-    leadEl.className = 'body-lead';
+    leadEl.className = 'body-narrative';
+    const p = document.createElement('p');
+    p.className = 'narrative-p';
+    leadEl.appendChild(p);
     fmt.insertBefore(leadEl, fmt.firstChild);
   }
   setupContentEditable(leadEl, '总论 / 串场（可空）');
@@ -255,9 +260,13 @@ function buildEmptyAccordionShell(body: AccordionBody): string {
       `;
     })
     .join('');
+  // v0.11.78: lead 用 .body-narrative 与 SSR 一致（renderParas 输出）
+  const leadHtml = body.lead
+    ? `<div class="body-narrative"><p class="narrative-p">${escapeHtml(body.lead)}</p></div>`
+    : `<div class="body-narrative"><p class="narrative-p"></p></div>`;
   return `
     <div class="body-fmt body-fmt-acc" style="--accent:var(--text-3)">
-      <div class="body-lead">${escapeHtml(body.lead ?? '')}</div>
+      ${leadHtml}
       ${groupsHtml}
     </div>
   `;
