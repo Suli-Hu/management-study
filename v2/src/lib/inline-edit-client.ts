@@ -1,32 +1,41 @@
 /**
- * v0.11.71 KP 内联编辑 phase 2a — title.zh + 5 format body.zh + evaluations.zh
+ * v0.11.72 KP 内联编辑 phase 2b-core — title/body/eval 双语 + year
  *
- * 范围（用户拍板）：
- *   - title.zh（编辑 h2 → input）
- *   - body.zh 全 5 format（narrative / flat-list / accordion / compare / quad）
- *   - evaluations.zh（6 字段 meaning/limit/example/response/application/analogy）
+ * Phase 2a (v0.11.71) 仅 zh。Phase 2b-core 扩展：
+ *   - title.ja / body.ja / evaluations.ja（lang tab 切换）
+ *   - year（顶部 input）
  *
- * 留 phase 2b：ja 字段、schools/scholars/tags/year、format 切换
+ * Phase 2b-extras (待续 PR)：schools / scholars / tags / format 切换
  *
- * 约束（不变）：
- *   - desktop only (>=1024px)
- *   - canEdit + !locked_at
- *   - explicit「保存」按钮
- *   - 切 KP / 离页前 alert 确认 unsaved
- *   - /[discipline]/kp/:id/edit 全屏页保留 fallback（编辑 ja / 切 format 用）
+ * 设计要点：
+ *   - 编辑器顶部 mini lang tab（zh / ja），切换 mount target
+ *   - body.ja == null 时切到 ja → 自动 init 空 body matching zh.format
+ *   - PATCH partial：只送实际变化的字段（含语种粒度）
+ *   - 切 lang 时把当前 lang input 已通过 onChange sync 到 state，安全
  */
 
-import type { KpBody, KpEvaluationsLang, NarrativeBody, FlatListBody, AccordionBody, CompareBody, QuadBody } from '~/schemas/kp-body-structured';
+import type {
+  KpBody,
+  KpEvaluationsLang,
+  NarrativeBody,
+  FlatListBody,
+  AccordionBody,
+  CompareBody,
+  QuadBody,
+} from '~/schemas/kp-body-structured';
 import { mountNarrativeForm, type FormModule } from '~/lib/editor/forms/narrative';
 import { mountFlatListForm } from '~/lib/editor/forms/flat-list';
 import { mountAccordionForm } from '~/lib/editor/forms/accordion';
 import { mountCompareForm } from '~/lib/editor/forms/compare';
 import { mountQuadForm } from '~/lib/editor/forms/quad';
+import { emptyKpBodyByFormat } from '~/lib/editor/state';
 import { patchKp, type PatchPayload } from '~/lib/editor/api';
 
 // ============================================================
-// Types
+// Constants
 // ============================================================
+
+type Lang = 'zh' | 'ja';
 
 const EMPTY_EVAL: KpEvaluationsLang = {
   meaning: '', limit: '', example: '', response: '', application: '', analogy: '',
@@ -41,28 +50,43 @@ const EVAL_FIELDS: Array<{ key: keyof KpEvaluationsLang; label: string; hint: st
   { key: 'analogy', label: '喻 · 比喻', hint: '类比 / 记忆点' },
 ];
 
+// ============================================================
+// State
+// ============================================================
+
 interface InlineEditState {
   kpId: string;
+  activeLang: Lang;
+
   // DOM refs (locked at enterEditMode)
   titleEl: HTMLElement;
   bodyContainer: HTMLElement;
   evalContainer: HTMLElement;
+  editorHost: HTMLElement; // 内嵌在 bodyContainer 内，body form mount 在此
+  langTabsEl: HTMLElement | null;
+
   // Restore HTML on cancel
-  originalTitleHtml: string;
   originalBodyHtml: string;
   originalEvalHtml: string;
-  // Mutable current values
-  currentTitle: string;
-  currentBody: KpBody;
-  currentEval: KpEvaluationsLang;
-  // Baseline (for dirty check)
-  originalTitle: string;
-  originalBody: KpBody;
-  originalEval: KpEvaluationsLang;
+
+  // Current values（双语）
+  currentTitle: { zh: string; ja: string };
+  currentBody: { zh: KpBody; ja: KpBody | null };
+  currentEval: { zh: KpEvaluationsLang; ja: KpEvaluationsLang };
+  currentYear: string;
+
+  // Baseline for dirty check
+  originalTitle: { zh: string; ja: string };
+  originalBody: { zh: KpBody; ja: KpBody | null };
+  originalEval: { zh: KpEvaluationsLang; ja: KpEvaluationsLang };
+  originalYear: string;
+
   // Mounted children
   titleInput: HTMLInputElement | null;
+  yearInput: HTMLInputElement | null;
   formModule: FormModule | null;
   evalEditor: { destroy: () => void } | null;
+
   // Buttons
   saveBtn: HTMLButtonElement | null;
   cancelBtn: HTMLButtonElement | null;
@@ -71,7 +95,7 @@ interface InlineEditState {
 let active: InlineEditState | null = null;
 
 // ============================================================
-// Public API (exposed to split-pane.js)
+// Public API
 // ============================================================
 
 export function inlineEditHasDirty(): boolean {
@@ -88,9 +112,13 @@ function isDesktop(): boolean {
 }
 
 function isDirty(s: InlineEditState): boolean {
-  if (s.currentTitle !== s.originalTitle) return true;
-  if (JSON.stringify(s.currentBody) !== JSON.stringify(s.originalBody)) return true;
-  if (JSON.stringify(s.currentEval) !== JSON.stringify(s.originalEval)) return true;
+  if (s.currentTitle.zh !== s.originalTitle.zh) return true;
+  if (s.currentTitle.ja !== s.originalTitle.ja) return true;
+  if (s.currentYear !== s.originalYear) return true;
+  if (JSON.stringify(s.currentBody.zh) !== JSON.stringify(s.originalBody.zh)) return true;
+  if (JSON.stringify(s.currentBody.ja) !== JSON.stringify(s.originalBody.ja)) return true;
+  if (JSON.stringify(s.currentEval.zh) !== JSON.stringify(s.originalEval.zh)) return true;
+  if (JSON.stringify(s.currentEval.ja) !== JSON.stringify(s.originalEval.ja)) return true;
   return false;
 }
 
@@ -116,12 +144,11 @@ function findBodyContainer(): HTMLElement | null {
 }
 
 function findEvalContainer(bodyContainer: HTMLElement): HTMLElement | null {
-  // body 区域之后下一个 sibling 是 eval div（即便 content 为空 div 也在）
   return bodyContainer.nextElementSibling as HTMLElement | null;
 }
 
 // ============================================================
-// Form module dispatcher
+// Form dispatcher
 // ============================================================
 
 function mountFormByFormat(
@@ -224,23 +251,124 @@ function mountEvalEditor(
 }
 
 // ============================================================
+// Lang tab + year toolbar
+// ============================================================
+
+function mountTopBar(
+  bodyContainer: HTMLElement,
+  initialLang: Lang,
+  initialYear: string,
+  onLangChange: (lang: Lang) => void,
+  onYearChange: (year: string) => void,
+): { el: HTMLElement; yearInput: HTMLInputElement; destroy: () => void } {
+  const bar = document.createElement('div');
+  bar.className = 'kpe-inline-topbar';
+
+  // Lang tabs
+  const tabs = document.createElement('div');
+  tabs.className = 'kpe-inline-lang-tabs';
+  (['zh', 'ja'] as Lang[]).forEach((lang) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'kpe-inline-lang-btn';
+    btn.dataset.langBtn = lang;
+    btn.dataset.active = lang === initialLang ? 'true' : 'false';
+    btn.textContent = lang === 'zh' ? '中文' : '日本語';
+    btn.addEventListener('click', () => {
+      tabs.querySelectorAll<HTMLButtonElement>('[data-lang-btn]').forEach((b) => {
+        b.dataset.active = b.dataset.langBtn === lang ? 'true' : 'false';
+      });
+      onLangChange(lang);
+    });
+    tabs.appendChild(btn);
+  });
+  bar.appendChild(tabs);
+
+  // Year input
+  const yearWrap = document.createElement('label');
+  yearWrap.className = 'kpe-inline-year';
+  const yearLabel = document.createElement('span');
+  yearLabel.textContent = '年份';
+  yearLabel.className = 'kpe-inline-year-label';
+  yearWrap.appendChild(yearLabel);
+  const yearInput = document.createElement('input');
+  yearInput.type = 'text';
+  yearInput.value = initialYear;
+  yearInput.className = 'kpe-inline-year-input';
+  yearInput.placeholder = '如 1973';
+  yearInput.addEventListener('input', () => onYearChange(yearInput.value));
+  yearWrap.appendChild(yearInput);
+  bar.appendChild(yearWrap);
+
+  bodyContainer.parentElement?.insertBefore(bar, bodyContainer);
+
+  return {
+    el: bar,
+    yearInput,
+    destroy: () => bar.remove(),
+  };
+}
+
+// ============================================================
+// Body + Eval re-mount for lang switch
+// ============================================================
+
+/** 当前 lang 的 body — ja 若为 null 自动 init 空 body matching zh.format */
+function getCurrentLangBody(state: InlineEditState): KpBody {
+  if (state.activeLang === 'zh') return state.currentBody.zh;
+  if (state.currentBody.ja) return state.currentBody.ja;
+  // 自动 init 空 ja body matching zh format
+  const empty = emptyKpBodyByFormat(state.currentBody.zh.format);
+  state.currentBody = { ...state.currentBody, ja: empty };
+  return empty;
+}
+
+function remountBody(state: InlineEditState): void {
+  state.formModule?.destroy();
+  state.editorHost.innerHTML = '';
+  const body = getCurrentLangBody(state);
+  state.formModule = mountFormByFormat(state.editorHost, body, (newBody) => {
+    state.currentBody = { ...state.currentBody, [state.activeLang]: newBody };
+    updateSaveBtnState(state);
+  });
+}
+
+function remountEval(state: InlineEditState): void {
+  state.evalEditor?.destroy();
+  state.evalEditor = mountEvalEditor(state.evalContainer, state.currentEval[state.activeLang], (e) => {
+    state.currentEval = { ...state.currentEval, [state.activeLang]: e };
+    updateSaveBtnState(state);
+  });
+}
+
+function updateTitleInputForLang(state: InlineEditState): void {
+  if (!state.titleInput) return;
+  state.titleInput.value = state.currentTitle[state.activeLang];
+  state.titleInput.placeholder = state.activeLang === 'zh' ? '标题（中文必填）' : '标题（日本語）';
+}
+
+function switchLang(state: InlineEditState, newLang: Lang): void {
+  if (state.activeLang === newLang) return;
+  state.activeLang = newLang;
+  updateTitleInputForLang(state);
+  remountBody(state);
+  remountEval(state);
+}
+
+// ============================================================
 // Enter / exit
 // ============================================================
 
 function exitEditMode(state: InlineEditState, restoreHtml: boolean): void {
-  // Destroy mounted children
   state.formModule?.destroy();
   state.evalEditor?.destroy();
-  // Restore HTML on cancel; on save we let location.reload re-SSR everything
   if (restoreHtml) {
     state.bodyContainer.innerHTML = state.originalBodyHtml;
     state.evalContainer.innerHTML = state.originalEvalHtml;
-    // Title: 移除 input + h2 显示恢复
     state.titleInput?.remove();
     state.titleEl.style.display = '';
-    // Title innerHTML 不需要 restore（h2 一直在，只是被 hide）
   }
-  // Remove buttons + restore toggle
+  state.langTabsEl?.remove();
   state.saveBtn?.remove();
   state.cancelBtn?.remove();
   const toggle = document.querySelector<HTMLButtonElement>('[data-inline-edit-toggle]');
@@ -260,15 +388,21 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
   toggle.disabled = true;
   toggle.textContent = '载入中…';
 
-  // Fetch full KP data
-  let kp: { title: { zh: string; ja?: string }; body: { zh: KpBody; ja?: KpBody }; evaluations?: { zh?: KpEvaluationsLang } };
+  // Fetch full KP
+  type FetchedKp = {
+    year: string;
+    title: { zh: string; ja?: string };
+    body: { zh: KpBody; ja?: KpBody };
+    evaluations?: { zh?: KpEvaluationsLang; ja?: KpEvaluationsLang };
+  };
+  let kp: FetchedKp;
   try {
     const res = await fetch(`/api/kps/${encodeURIComponent(kpId)}`, {
       headers: { accept: 'application/json' },
       credentials: 'same-origin',
     });
     if (!res.ok) throw new Error(`fetch ${res.status}`);
-    const data = (await res.json()) as { ok: boolean; kp: typeof kp };
+    const data = (await res.json()) as { ok: boolean; kp: FetchedKp };
     kp = data.kp;
   } catch (e) {
     alert(`载入 KP 失败：${e}`);
@@ -277,7 +411,7 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
     return;
   }
 
-  // Race: 用户切走 KP 时静默 abort
+  // Race check
   const currentActiveKpId = new URLSearchParams(location.search).get('kp');
   if (currentActiveKpId && currentActiveKpId !== kpId) {
     toggle.disabled = false;
@@ -285,7 +419,6 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
     return;
   }
 
-  // Find DOM elements
   const titleEl = findTitleEl();
   const bodyContainer = findBodyContainer();
   if (!titleEl || !bodyContainer) {
@@ -302,55 +435,84 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
     return;
   }
 
-  const initialBody = kp.body.zh;
-  const initialEval: KpEvaluationsLang = kp.evaluations?.zh ?? { ...EMPTY_EVAL };
-  const initialTitle = kp.title.zh ?? '';
+  const initialTitle = { zh: kp.title.zh ?? '', ja: kp.title.ja ?? '' };
+  const initialBody = { zh: kp.body.zh, ja: kp.body.ja ?? null };
+  const initialEval = {
+    zh: kp.evaluations?.zh ?? { ...EMPTY_EVAL },
+    ja: kp.evaluations?.ja ?? { ...EMPTY_EVAL },
+  };
+  const initialYear = kp.year ?? '';
+
+  // Capture HTML BEFORE wiping
+  const capturedBodyHtml = bodyContainer.innerHTML;
+  const capturedEvalHtml = evalContainer.innerHTML;
+
+  // editorHost is a wrapper inside bodyContainer for form mounting
+  bodyContainer.innerHTML = '';
+  const editorHost = document.createElement('div');
+  editorHost.className = 'kp-editor-v08 kpe-inline-host';
+  bodyContainer.appendChild(editorHost);
 
   const state: InlineEditState = {
     kpId,
+    activeLang: 'zh',
     titleEl,
     bodyContainer,
     evalContainer,
-    originalTitleHtml: titleEl.innerHTML,
-    originalBodyHtml: bodyContainer.innerHTML,
-    originalEvalHtml: evalContainer.innerHTML,
-    currentTitle: initialTitle,
-    currentBody: initialBody,
-    currentEval: initialEval,
-    originalTitle: initialTitle,
-    originalBody: initialBody,
-    originalEval: initialEval,
+    editorHost,
+    langTabsEl: null,
+    originalBodyHtml: capturedBodyHtml,
+    originalEvalHtml: capturedEvalHtml,
+    currentTitle: { ...initialTitle },
+    currentBody: { ...initialBody },
+    currentEval: { zh: { ...initialEval.zh }, ja: { ...initialEval.ja } },
+    currentYear: initialYear,
+    originalTitle: { ...initialTitle },
+    originalBody: { zh: initialBody.zh, ja: initialBody.ja ? { ...initialBody.ja } : null },
+    originalEval: { zh: { ...initialEval.zh }, ja: { ...initialEval.ja } },
+    originalYear: initialYear,
     titleInput: null,
+    yearInput: null,
     formModule: null,
     evalEditor: null,
     saveBtn: null,
     cancelBtn: null,
   };
 
-  // 1. Mount title input
-  const titleMount = mountTitleEditor(titleEl, initialTitle, (v) => {
-    state.currentTitle = v;
+  // 1. Title editor
+  const titleMount = mountTitleEditor(titleEl, initialTitle.zh, (v) => {
+    state.currentTitle = { ...state.currentTitle, [state.activeLang]: v };
     updateSaveBtnState(state);
   });
   state.titleInput = titleMount.input;
 
-  // 2. Mount body form (switch by format)
-  bodyContainer.innerHTML = '';
-  const editorHost = document.createElement('div');
-  editorHost.className = 'kp-editor-v08 kpe-inline-host';
-  bodyContainer.appendChild(editorHost);
-  state.formModule = mountFormByFormat(editorHost, initialBody, (newBody) => {
-    state.currentBody = newBody;
+  // 2. Top bar (lang tabs + year)
+  const topBar = mountTopBar(
+    bodyContainer,
+    state.activeLang,
+    initialYear,
+    (newLang) => switchLang(state, newLang),
+    (newYear) => {
+      state.currentYear = newYear;
+      updateSaveBtnState(state);
+    },
+  );
+  state.langTabsEl = topBar.el;
+  state.yearInput = topBar.yearInput;
+
+  // 3. Mount body form (initial lang = zh)
+  state.formModule = mountFormByFormat(editorHost, state.currentBody.zh, (newBody) => {
+    state.currentBody = { ...state.currentBody, [state.activeLang]: newBody };
     updateSaveBtnState(state);
   });
 
-  // 3. Mount eval editor
-  state.evalEditor = mountEvalEditor(evalContainer, initialEval, (newEval) => {
-    state.currentEval = newEval;
+  // 4. Mount eval editor (initial lang = zh)
+  state.evalEditor = mountEvalEditor(evalContainer, state.currentEval.zh, (e) => {
+    state.currentEval = { ...state.currentEval, [state.activeLang]: e };
     updateSaveBtnState(state);
   });
 
-  // 4. Save / Cancel buttons next to toggle
+  // 5. Save / Cancel buttons next to toggle
   const saveBtn = document.createElement('button');
   saveBtn.type = 'button';
   saveBtn.className = 'kp-inline-edit-save';
@@ -368,7 +530,7 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
   toggle.parentElement?.insertBefore(cancelBtn, toggle);
   state.cancelBtn = cancelBtn;
 
-  // 5. Hide toggle
+  // 6. Hide toggle
   toggle.style.display = 'none';
   toggle.dataset.active = 'true';
   toggle.disabled = false;
@@ -389,17 +551,37 @@ async function handleSave(state: InlineEditState): Promise<void> {
   state.saveBtn.disabled = true;
   state.saveBtn.textContent = '保存中…';
 
-  // 拼 payload — 只送实际变化的字段
   const payload: PatchPayload = {};
-  if (state.currentTitle !== state.originalTitle) {
-    payload.title = { zh: state.currentTitle };
+
+  // Title — 只送变化语种
+  const titlePatch: { zh?: string; ja?: string } = {};
+  if (state.currentTitle.zh !== state.originalTitle.zh) titlePatch.zh = state.currentTitle.zh;
+  if (state.currentTitle.ja !== state.originalTitle.ja) titlePatch.ja = state.currentTitle.ja;
+  if (Object.keys(titlePatch).length > 0) payload.title = titlePatch;
+
+  // Body — 只送变化语种
+  const bodyPatch: { zh?: KpBody; ja?: KpBody } = {};
+  if (JSON.stringify(state.currentBody.zh) !== JSON.stringify(state.originalBody.zh)) {
+    bodyPatch.zh = state.currentBody.zh;
   }
-  if (JSON.stringify(state.currentBody) !== JSON.stringify(state.originalBody)) {
-    payload.body = { zh: state.currentBody };
+  if (JSON.stringify(state.currentBody.ja) !== JSON.stringify(state.originalBody.ja) && state.currentBody.ja) {
+    bodyPatch.ja = state.currentBody.ja;
   }
-  if (JSON.stringify(state.currentEval) !== JSON.stringify(state.originalEval)) {
-    // 直接送当前 6 字段；server hasEvaluationsContent 检测全空会自动写 NULL
-    payload.evaluations = { zh: state.currentEval };
+  if (Object.keys(bodyPatch).length > 0) payload.body = bodyPatch;
+
+  // Evaluations — 只送变化语种
+  const evalPatch: { zh?: KpEvaluationsLang; ja?: KpEvaluationsLang } = {};
+  if (JSON.stringify(state.currentEval.zh) !== JSON.stringify(state.originalEval.zh)) {
+    evalPatch.zh = state.currentEval.zh;
+  }
+  if (JSON.stringify(state.currentEval.ja) !== JSON.stringify(state.originalEval.ja)) {
+    evalPatch.ja = state.currentEval.ja;
+  }
+  if (Object.keys(evalPatch).length > 0) payload.evaluations = evalPatch;
+
+  // Year
+  if (state.currentYear !== state.originalYear) {
+    payload.year = state.currentYear;
   }
 
   const result = await patchKp(state.kpId, payload);
@@ -411,7 +593,6 @@ async function handleSave(state: InlineEditState): Promise<void> {
     return;
   }
 
-  // 成功 — reload 拿最新 SSR
   exitEditMode(state, /* restoreHtml */ false);
   location.reload();
 }

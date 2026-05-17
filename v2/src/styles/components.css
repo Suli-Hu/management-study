@@ -2073,6 +2073,65 @@ details.eval {
   font-size: 13px;
 }
 
+/* v0.11.72 phase 2b-core — lang tab + year toolbar */
+.kpe-inline-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+  margin: 6px 0 12px;
+  border-bottom: 1px solid var(--color-border, var(--border));
+}
+.kpe-inline-lang-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 2px;
+  background: var(--color-bg-soft, var(--bg-soft));
+  border-radius: 8px;
+}
+.kpe-inline-lang-btn {
+  height: 28px;
+  padding: 0 14px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary, var(--text-2));
+  border-radius: 6px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.kpe-inline-lang-btn[data-active="true"] {
+  background: var(--color-bg-elev, white);
+  color: var(--color-text-primary, var(--text));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+.kpe-inline-year {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.kpe-inline-year-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary, var(--text-2));
+}
+.kpe-inline-year-input {
+  width: 90px;
+  padding: 4px 8px;
+  border: 1px solid var(--color-border, var(--border));
+  border-radius: 6px;
+  background: var(--color-bg-elev, white);
+  font-size: 13px;
+  font-family: inherit;
+}
+.kpe-inline-year-input:focus {
+  outline: none;
+  border-color: var(--primary, #4f46e5);
+  box-shadow: 0 0 0 3px var(--primary-soft, rgba(79, 70, 229, 0.15));
+}
+
 /* ✎ 编辑按钮 disabled 态（locked KP）— 既适用全屏 .kp-edit-btn，也适用 split-pane .hero-icon-btn */
 .kp-edit-btn.is-disabled,
 .hero-icon-btn.is-disabled {
