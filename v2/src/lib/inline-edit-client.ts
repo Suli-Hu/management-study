@@ -108,6 +108,7 @@ interface InlineEditState {
 
   // Mounted children
   titleInput: HTMLInputElement | null;
+  titleWrap: HTMLElement | null;
   yearInput: HTMLInputElement | null;
   formSelect: HTMLSelectElement | null;
   formModule: FormModule | null;
@@ -229,21 +230,26 @@ function mountTitleEditor(
   titleEl: HTMLElement,
   initialTitle: string,
   onChange: (title: string) => void,
-): { input: HTMLInputElement; destroy: () => void } {
+): { input: HTMLInputElement; wrap: HTMLElement; destroy: () => void } {
+  // v0.11.74 包一层 .kp-editor-v08 让 input focus / placeholder 等吃 scoped 样式
+  const wrap = document.createElement('div');
+  wrap.className = 'kp-editor-v08';
   const input = document.createElement('input');
   input.type = 'text';
   input.value = initialTitle;
   input.className = 'kpe-inline-title-input';
   input.placeholder = '标题（必填）';
   input.addEventListener('input', () => onChange(input.value));
+  wrap.appendChild(input);
 
   titleEl.style.display = 'none';
-  titleEl.parentElement?.insertBefore(input, titleEl);
+  titleEl.parentElement?.insertBefore(wrap, titleEl);
 
   return {
     input,
+    wrap,
     destroy: () => {
-      input.remove();
+      wrap.remove();
       titleEl.style.display = '';
     },
   };
@@ -315,7 +321,8 @@ function mountTopBar(
   onYearChange: (year: string) => void,
 ): { el: HTMLElement; yearInput: HTMLInputElement; formatSelect: HTMLSelectElement; destroy: () => void } {
   const bar = document.createElement('div');
-  bar.className = 'kpe-inline-topbar';
+  // v0.11.74 加 kp-editor-v08 让 inline 内的 input/textarea 等吃 scoped 样式
+  bar.className = 'kp-editor-v08 kpe-inline-topbar';
 
   // Lang tabs
   const tabs = document.createElement('div');
@@ -400,7 +407,8 @@ function mountRelationsPanel(
   state: InlineEditState,
 ): { el: HTMLElement; destroy: () => void } {
   const panel = document.createElement('div');
-  panel.className = 'kpe-inline-relations';
+  // v0.11.74 必须含 kp-editor-v08 让 mountChipPicker 的 scoped CSS 生效（不然 dropdown 全展开）
+  panel.className = 'kp-editor-v08 kpe-inline-relations';
 
   const renderRow = (
     labelText: string,
@@ -541,7 +549,7 @@ function exitEditMode(state: InlineEditState, restoreHtml: boolean): void {
   if (restoreHtml) {
     state.bodyContainer.innerHTML = state.originalBodyHtml;
     state.evalContainer.innerHTML = state.originalEvalHtml;
-    state.titleInput?.remove();
+    state.titleWrap?.remove();
     state.titleEl.style.display = '';
   }
   state.topBarEl?.remove();
@@ -664,6 +672,7 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
     originalScholars: [...kp.scholars],
     originalTags: [...kp.tags],
     titleInput: null,
+    titleWrap: null,
     yearInput: null,
     formSelect: null,
     formModule: null,
@@ -678,6 +687,7 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
     updateSaveBtnState(state);
   });
   state.titleInput = titleMount.input;
+  state.titleWrap = titleMount.wrap;
 
   // 2. Top bar (lang tabs + format dropdown + year)
   const topBar = mountTopBar(
