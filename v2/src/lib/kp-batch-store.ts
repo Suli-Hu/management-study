@@ -493,16 +493,18 @@ async function processOne(
     return { id, ok: false, reason: 'kp_locked', current_version: currentVersion };
   }
 
-  // 5c. v0.11.64 ja 质量校验 — 命中机翻黑名单整条 skip
-  const jaTouched =
-    patch.title?.ja !== undefined ||
-    patch.body?.ja !== undefined ||
-    patch.evaluations?.ja !== undefined;
-  if (jaTouched) {
+  // 5c. v0.11.64+65 ja 质量校验 — 只对真正变化的 ja 字段校验（read-modify-write 不误触发）
+  const titleJaProvided = patch.title?.ja !== undefined;
+  const titleJaChanged = titleJaProvided && (patch.title?.ja ?? null) !== (current.title.ja ?? null);
+  const bodyJaProvided = patch.body?.ja !== undefined;
+  const bodyJaChanged = bodyJaProvided && JSON.stringify(patch.body!.ja) !== JSON.stringify(current.body.ja);
+  const evalJaProvided = patch.evaluations?.ja !== undefined;
+  const evalJaChanged = evalJaProvided && JSON.stringify(patch.evaluations!.ja) !== JSON.stringify(current.evaluations?.ja);
+  if (titleJaChanged || bodyJaChanged || evalJaChanged) {
     const violations = validateJaQuality({
-      title: patch.title?.ja,
-      body: patch.body?.ja,
-      evaluations: patch.evaluations?.ja,
+      title: titleJaChanged ? patch.title?.ja : undefined,
+      body: bodyJaChanged ? patch.body?.ja : undefined,
+      evaluations: evalJaChanged ? patch.evaluations?.ja : undefined,
     });
     const critical = violations.filter((v) => v.severity === 'critical');
     if (critical.length > 0) {
