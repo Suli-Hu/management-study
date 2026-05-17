@@ -20,7 +20,7 @@ import type { KpBody, KpEvaluationsLang } from '~/schemas/kp-body-structured';
 import { hasEvaluationsContent, structuredToSearchText } from './kp-body-helpers';
 import { deepStripStrong } from './sanitize-strong';
 import { assertTagsInLibrary } from './tag-library';
-import { validateJaQuality, violationsToDetail } from './ja-quality-check';
+// v0.11.66 ja 校验 import 已移除（server-side 校验 revert，质量回到 skill + daily loop）
 
 interface DerivedCols {
   body_zh_json: string;
@@ -431,21 +431,9 @@ export async function createKpRecord(
   const ftsTextJa = input.body.ja ? structuredToSearchText(input.body.ja) : '';
 
   // v0.11.61 ja 翻译追踪 — 新建时若已有 ja 内容（title.ja / body.ja / evaluations.ja），init 时戳 + zh hash
+  // v0.11.66 revert v0.11.64 server-side 校验（误伤 UI 编辑器场景）
   const jaProvided =
     input.title.ja !== undefined || input.body.ja !== undefined || input.evaluations?.ja !== undefined;
-
-  // v0.11.64 server-side ja 质量硬校验
-  if (jaProvided) {
-    const violations = validateJaQuality({
-      title: input.title.ja,
-      body: input.body.ja,
-      evaluations: input.evaluations?.ja,
-    });
-    const critical = violations.filter((v) => v.severity === 'critical');
-    if (critical.length > 0) {
-      return { ok: false, status: 422, reason: 'ja_quality_failed', detail: violationsToDetail(violations) };
-    }
-  }
 
   const initJaTranslatedAt = jaProvided ? now : null;
   const initJaZhHash = jaProvided
@@ -587,38 +575,15 @@ export async function patchKpRecord(
   const ftsTextZh = structuredToSearchText(mergedBody.zh);
   const ftsTextJa = mergedBody.ja ? structuredToSearchText(mergedBody.ja) : '';
 
-  // v0.11.65 ja 真正变化检测（v0.11.61 jaTouched 仅看字段存在，read-modify-write 误触发；
-  // 现改为 deep-equal 比对，只在 ja 实际改变时刷 ja_translated_at + 跑校验）
-  const titleJaProvided = input.title?.ja !== undefined;
-  const titleJaChanged = titleJaProvided && (input.title?.ja ?? null) !== (current.title.ja ?? null);
-
-  const bodyJaProvided = input.body?.ja !== undefined;
-  const currentBodyJaJson = currentStructured.body.ja ? JSON.stringify(currentStructured.body.ja) : null;
-  const inputBodyJaJson = bodyJaProvided ? JSON.stringify(input.body!.ja) : null;
-  const bodyJaChanged = bodyJaProvided && inputBodyJaJson !== currentBodyJaJson;
-
-  const evalJaProvided = input.evaluations?.ja !== undefined;
-  const currentEvalJaJson = currentStructured.evaluations.ja ? JSON.stringify(currentStructured.evaluations.ja) : null;
-  const inputEvalJaJson = evalJaProvided ? JSON.stringify(input.evaluations!.ja) : null;
-  const evalJaChanged = evalJaProvided && inputEvalJaJson !== currentEvalJaJson;
-
-  const jaActuallyChanged = titleJaChanged || bodyJaChanged || evalJaChanged;
-
-  // v0.11.64+65 server-side ja 质量硬校验 — 只对真正变化的 ja 字段校验
-  if (jaActuallyChanged) {
-    const violations = validateJaQuality({
-      title: titleJaChanged ? input.title?.ja : undefined,
-      body: bodyJaChanged ? input.body?.ja : undefined,
-      evaluations: evalJaChanged ? input.evaluations?.ja : undefined,
-    });
-    const critical = violations.filter((v) => v.severity === 'critical');
-    if (critical.length > 0) {
-      return { ok: false, status: 422, reason: 'ja_quality_failed', detail: violationsToDetail(violations) };
-    }
-  }
-
-  const nextJaTranslatedAt = jaActuallyChanged ? now : (current.ja_translated_at ?? null);
-  const nextJaZhHash = jaActuallyChanged
+  // v0.11.66 revert v0.11.64/65 server-side ja 校验 — UI 编辑器场景误伤合法操作。
+  // 质量保证回到「skill 5 阶段自律 + daily loop」模式，server 不再 block。
+  // ja_translated_at 仍按 v0.11.61 语义：input 显式包含 ja 字段时刷新时戳（hash 也写）。
+  const jaTouched =
+    input.title?.ja !== undefined ||
+    input.body?.ja !== undefined ||
+    input.evaluations?.ja !== undefined;
+  const nextJaTranslatedAt = jaTouched ? now : (current.ja_translated_at ?? null);
+  const nextJaZhHash = jaTouched
     ? await computeZhHash(cols.body_zh_json, mergedTitle.zh, cols.evaluations_zh_json)
     : (current.ja_zh_hash ?? null);
 
