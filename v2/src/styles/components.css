@@ -2020,6 +2020,59 @@ details.eval {
   padding: 0;
 }
 
+/* v0.11.71 phase 2a — title input + eval editor 内联样式 */
+.kpe-inline-title-input {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid var(--color-border, var(--border));
+  border-radius: 6px;
+  background: var(--color-bg-elev, white);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text-primary, var(--text));
+  line-height: 1.25;
+  font-family: inherit;
+}
+.kpe-inline-title-input:focus {
+  outline: none;
+  border-color: var(--primary, #4f46e5);
+  box-shadow: 0 0 0 3px var(--primary-soft, rgba(79, 70, 229, 0.15));
+}
+
+.kpe-inline-eval {
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid var(--color-border, var(--border));
+  border-radius: 8px;
+  background: var(--color-bg-soft, var(--bg-soft));
+}
+.kpe-inline-eval-heading {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-secondary, var(--text-2));
+  letter-spacing: 0.05em;
+}
+.kpe-inline-eval-row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 10px;
+  align-items: start;
+  margin-bottom: 8px;
+}
+.kpe-inline-eval-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary, var(--text-2));
+  padding-top: 9px;
+  text-align: right;
+}
+.kpe-inline-eval-textarea {
+  resize: vertical;
+  min-height: 56px;
+  font-size: 13px;
+}
+
 /* ✎ 编辑按钮 disabled 态（locked KP）— 既适用全屏 .kp-edit-btn，也适用 split-pane .hero-icon-btn */
 .kp-edit-btn.is-disabled,
 .hero-icon-btn.is-disabled {
