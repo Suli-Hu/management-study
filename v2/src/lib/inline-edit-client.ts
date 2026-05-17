@@ -1,79 +1,248 @@
 /**
- * v0.11.67 KP 内联编辑 PoC — 仅 narrative format
+ * v0.11.71 KP 内联编辑 phase 2a — title.zh + 5 format body.zh + evaluations.zh
  *
- * 作用：split-pane 右栏 head bar 加「编辑模式」toggle。点开 → 当前 KP body 区域
- * 从 SSR HTML 切成 mountNarrativeForm 编辑器。改 → 「保存」按钮 PATCH → 退出
- * 编辑态。仅 desktop (>=1024px) + narrative format + canEdit admin 才激活。
+ * 范围（用户拍板）：
+ *   - title.zh（编辑 h2 → input）
+ *   - body.zh 全 5 format（narrative / flat-list / accordion / compare / quad）
+ *   - evaluations.zh（6 字段 meaning/limit/example/response/application/analogy）
  *
- * 集成点：
- *   - [discipline]/[school]/index.astro head bar (desktop split-pane only)
- *   - [discipline]/scholars/[key]/index.astro head bar (desktop split-pane only)
- *   - public/split-pane.js KP swap 前 check dirty
+ * 留 phase 2b：ja 字段、schools/scholars/tags/year、format 切换
  *
- * 非目标 (PoC scope)：
- *   - flat-list / accordion / compare / quad format（提示走全屏）
- *   - title / evaluations / schools / scholars / format / tags 编辑（同上）
- *   - ja 字段编辑（PoC 只 zh）
- *   - autosave（explicit 保存按钮）
- *   - mobile（完全禁用）
+ * 约束（不变）：
+ *   - desktop only (>=1024px)
+ *   - canEdit + !locked_at
+ *   - explicit「保存」按钮
+ *   - 切 KP / 离页前 alert 确认 unsaved
+ *   - /[discipline]/kp/:id/edit 全屏页保留 fallback（编辑 ja / 切 format 用）
  */
 
-import type { KpBody, NarrativeBody } from '~/schemas/kp-body-structured';
+import type { KpBody, KpEvaluationsLang, NarrativeBody, FlatListBody, AccordionBody, CompareBody, QuadBody } from '~/schemas/kp-body-structured';
 import { mountNarrativeForm, type FormModule } from '~/lib/editor/forms/narrative';
-import { patchKp } from '~/lib/editor/api';
+import { mountFlatListForm } from '~/lib/editor/forms/flat-list';
+import { mountAccordionForm } from '~/lib/editor/forms/accordion';
+import { mountCompareForm } from '~/lib/editor/forms/compare';
+import { mountQuadForm } from '~/lib/editor/forms/quad';
+import { patchKp, type PatchPayload } from '~/lib/editor/api';
+
+// ============================================================
+// Types
+// ============================================================
+
+const EMPTY_EVAL: KpEvaluationsLang = {
+  meaning: '', limit: '', example: '', response: '', application: '', analogy: '',
+};
+
+const EVAL_FIELDS: Array<{ key: keyof KpEvaluationsLang; label: string; hint: string }> = [
+  { key: 'meaning', label: '义 · 意义', hint: 'KP 的学术 / 实务贡献' },
+  { key: 'limit', label: '限 · 限制', hint: '理论的不足 / 边界 / 被批判' },
+  { key: 'example', label: '例 · 案例', hint: '真实企业 / 事例' },
+  { key: 'response', label: '应 · 应对', hint: '基于 KP 的应对策略 / 处方' },
+  { key: 'application', label: '用 · 应用', hint: '实务应用场景' },
+  { key: 'analogy', label: '喻 · 比喻', hint: '类比 / 记忆点' },
+];
 
 interface InlineEditState {
   kpId: string;
-  /** body 容器 DOM 引用 — enterEditMode 时锁定，exitEditMode 直接用，不靠 selector 重查 */
-  container: HTMLElement;
+  // DOM refs (locked at enterEditMode)
+  titleEl: HTMLElement;
+  bodyContainer: HTMLElement;
+  evalContainer: HTMLElement;
+  // Restore HTML on cancel
+  originalTitleHtml: string;
   originalBodyHtml: string;
-  currentBody: NarrativeBody;
-  originalBody: NarrativeBody;
+  originalEvalHtml: string;
+  // Mutable current values
+  currentTitle: string;
+  currentBody: KpBody;
+  currentEval: KpEvaluationsLang;
+  // Baseline (for dirty check)
+  originalTitle: string;
+  originalBody: KpBody;
+  originalEval: KpEvaluationsLang;
+  // Mounted children
+  titleInput: HTMLInputElement | null;
   formModule: FormModule | null;
+  evalEditor: { destroy: () => void } | null;
+  // Buttons
   saveBtn: HTMLButtonElement | null;
   cancelBtn: HTMLButtonElement | null;
-  dirty: boolean;
 }
 
 let active: InlineEditState | null = null;
 
-/** 是否 PC 端 — mobile 完全禁用 */
-function isDesktop(): boolean {
-  return window.matchMedia('(min-width: 1024px)').matches;
-}
+// ============================================================
+// Public API (exposed to split-pane.js)
+// ============================================================
 
-/** 当前是否有未保存的编辑 — 给 split-pane.js 的 KP swap 拦截器调用 */
 export function inlineEditHasDirty(): boolean {
-  return active?.dirty ?? false;
+  return active ? isDirty(active) : false;
 }
 
-/** 强制退出编辑态（KP swap / 页面 unload 调用）— 不询问，直接 discard */
 export function inlineEditForceExit(): void {
   if (!active) return;
   exitEditMode(active, /* restoreHtml */ true);
 }
 
-/** 拿到 KP body 区域 DOM 容器（renderStructuredBody 出来的 .body-fmt 的 parent） */
-function findBodyContainer(): HTMLElement | null {
-  // school / scholar 页 partial / full 都用：<div class="mt-6" set:html={renderStructuredBody(...)} />
-  // renderStructuredBody 输出 <div class="body-fmt body-fmt-{narr|flat|acc|cmpc|quad}">...
+function isDesktop(): boolean {
+  return window.matchMedia('(min-width: 1024px)').matches;
+}
+
+function isDirty(s: InlineEditState): boolean {
+  if (s.currentTitle !== s.originalTitle) return true;
+  if (JSON.stringify(s.currentBody) !== JSON.stringify(s.originalBody)) return true;
+  if (JSON.stringify(s.currentEval) !== JSON.stringify(s.originalEval)) return true;
+  return false;
+}
+
+function updateSaveBtnState(s: InlineEditState): void {
+  if (s.saveBtn) s.saveBtn.disabled = !isDirty(s);
+}
+
+// ============================================================
+// DOM lookup
+// ============================================================
+
+function findTitleEl(): HTMLElement | null {
   const pane = document.getElementById('kp-detail-pane');
   if (!pane) return null;
-  // 用 base class .body-fmt 匹配（所有 format 都有），更稳
+  return pane.querySelector('header.kp-head-bar h2');
+}
+
+function findBodyContainer(): HTMLElement | null {
+  const pane = document.getElementById('kp-detail-pane');
+  if (!pane) return null;
   const fmtEl = pane.querySelector('.body-fmt');
   return fmtEl?.parentElement ?? null;
 }
 
-function exitEditMode(state: InlineEditState, restoreHtml: boolean): void {
-  state.formModule?.destroy();
-  // v0.11.70: 直接用 state.container 引用还原（enterEditMode 后 .body-fmt 已被 replace，
-  //           二次 findBodyContainer 会返 null 导致旧版本悄悄不还原 → 取消后空白）
-  if (restoreHtml) {
-    state.container.innerHTML = state.originalBodyHtml;
+function findEvalContainer(bodyContainer: HTMLElement): HTMLElement | null {
+  // body 区域之后下一个 sibling 是 eval div（即便 content 为空 div 也在）
+  return bodyContainer.nextElementSibling as HTMLElement | null;
+}
+
+// ============================================================
+// Form module dispatcher
+// ============================================================
+
+function mountFormByFormat(
+  host: HTMLElement,
+  body: KpBody,
+  onChange: (body: KpBody) => void,
+): FormModule {
+  switch (body.format) {
+    case 'narrative':
+      return mountNarrativeForm(host, body, onChange as (b: NarrativeBody) => void);
+    case 'flat-list':
+      return mountFlatListForm(host, body, onChange as (b: FlatListBody) => void);
+    case 'accordion':
+      return mountAccordionForm(host, body, onChange as (b: AccordionBody) => void);
+    case 'compare':
+      return mountCompareForm(host, body, onChange as (b: CompareBody) => void);
+    case 'quad':
+      return mountQuadForm(host, body, onChange as (b: QuadBody) => void);
   }
+}
+
+// ============================================================
+// Title editor
+// ============================================================
+
+function mountTitleEditor(
+  titleEl: HTMLElement,
+  initialTitle: string,
+  onChange: (title: string) => void,
+): { input: HTMLInputElement; destroy: () => void } {
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = initialTitle;
+  input.className = 'kpe-inline-title-input';
+  input.placeholder = '标题（必填）';
+  input.addEventListener('input', () => onChange(input.value));
+
+  titleEl.style.display = 'none';
+  titleEl.parentElement?.insertBefore(input, titleEl);
+
+  return {
+    input,
+    destroy: () => {
+      input.remove();
+      titleEl.style.display = '';
+    },
+  };
+}
+
+// ============================================================
+// Evaluations editor
+// ============================================================
+
+function mountEvalEditor(
+  host: HTMLElement,
+  initialEval: KpEvaluationsLang,
+  onChange: (evals: KpEvaluationsLang) => void,
+): { destroy: () => void } {
+  host.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.className = 'kp-editor-v08 kpe-inline-eval';
+
+  const heading = document.createElement('h4');
+  heading.textContent = '评价（6 字段）';
+  heading.className = 'kpe-inline-eval-heading';
+  wrap.appendChild(heading);
+
+  const current: KpEvaluationsLang = { ...initialEval };
+
+  EVAL_FIELDS.forEach((f) => {
+    const row = document.createElement('div');
+    row.className = 'kpe-inline-eval-row';
+
+    const labelEl = document.createElement('label');
+    labelEl.className = 'kpe-inline-eval-label';
+    labelEl.textContent = f.label;
+    row.appendChild(labelEl);
+
+    const ta = document.createElement('textarea');
+    ta.className = 'kpe-textarea kpe-inline-eval-textarea';
+    ta.rows = 2;
+    ta.placeholder = f.hint;
+    ta.value = current[f.key];
+    ta.addEventListener('input', () => {
+      current[f.key] = ta.value;
+      onChange({ ...current });
+    });
+    row.appendChild(ta);
+
+    wrap.appendChild(row);
+  });
+
+  host.appendChild(wrap);
+
+  return {
+    destroy: () => {
+      host.innerHTML = '';
+    },
+  };
+}
+
+// ============================================================
+// Enter / exit
+// ============================================================
+
+function exitEditMode(state: InlineEditState, restoreHtml: boolean): void {
+  // Destroy mounted children
+  state.formModule?.destroy();
+  state.evalEditor?.destroy();
+  // Restore HTML on cancel; on save we let location.reload re-SSR everything
+  if (restoreHtml) {
+    state.bodyContainer.innerHTML = state.originalBodyHtml;
+    state.evalContainer.innerHTML = state.originalEvalHtml;
+    // Title: 移除 input + h2 显示恢复
+    state.titleInput?.remove();
+    state.titleEl.style.display = '';
+    // Title innerHTML 不需要 restore（h2 一直在，只是被 hide）
+  }
+  // Remove buttons + restore toggle
   state.saveBtn?.remove();
   state.cancelBtn?.remove();
-  // 把 head bar 的 toggle 按钮还原（v0.11.69: 改成显示/隐藏而不是切 text）
   const toggle = document.querySelector<HTMLButtonElement>('[data-inline-edit-toggle]');
   if (toggle) {
     toggle.style.display = '';
@@ -91,15 +260,15 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
   toggle.disabled = true;
   toggle.textContent = '载入中…';
 
-  // 拿 KP 完整数据
-  let kp: { body: { zh: KpBody } };
+  // Fetch full KP data
+  let kp: { title: { zh: string; ja?: string }; body: { zh: KpBody; ja?: KpBody }; evaluations?: { zh?: KpEvaluationsLang } };
   try {
     const res = await fetch(`/api/kps/${encodeURIComponent(kpId)}`, {
       headers: { accept: 'application/json' },
       credentials: 'same-origin',
     });
     if (!res.ok) throw new Error(`fetch ${res.status}`);
-    const data = (await res.json()) as { ok: boolean; kp: { body: { zh: KpBody } } };
+    const data = (await res.json()) as { ok: boolean; kp: typeof kp };
     kp = data.kp;
   } catch (e) {
     alert(`载入 KP 失败：${e}`);
@@ -108,65 +277,86 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
     return;
   }
 
-  // v0.11.69 race condition 保护 — fetch 期间用户可能切走 KP（split-pane swap）
+  // Race: 用户切走 KP 时静默 abort
   const currentActiveKpId = new URLSearchParams(location.search).get('kp');
   if (currentActiveKpId && currentActiveKpId !== kpId) {
-    // 用户已切到别的 KP，放弃 enter edit mode（无 alert，免打扰）
     toggle.disabled = false;
     toggle.textContent = '编辑';
     return;
   }
 
-  if (kp.body.zh.format !== 'narrative') {
-    alert(
-      `此 KP body 格式为 ${kp.body.zh.format}，PoC 阶段仅支持 narrative 内联编辑。\n` +
-        `请使用全屏编辑器（点 ✎）`,
-    );
+  // Find DOM elements
+  const titleEl = findTitleEl();
+  const bodyContainer = findBodyContainer();
+  if (!titleEl || !bodyContainer) {
+    alert('找不到 KP 编辑区域 — 可能页面刚切换，请稍候重试');
+    toggle.disabled = false;
+    toggle.textContent = '编辑';
+    return;
+  }
+  const evalContainer = findEvalContainer(bodyContainer);
+  if (!evalContainer) {
+    alert('找不到评价区域容器');
     toggle.disabled = false;
     toggle.textContent = '编辑';
     return;
   }
 
-  const container = findBodyContainer();
-  if (!container) {
-    alert('找不到 KP body 容器 — 可能页面刚切换，请稍候重试');
-    toggle.disabled = false;
-    toggle.textContent = '编辑';
-    return;
-  }
-
-  const initialBody = kp.body.zh as NarrativeBody;
+  const initialBody = kp.body.zh;
+  const initialEval: KpEvaluationsLang = kp.evaluations?.zh ?? { ...EMPTY_EVAL };
+  const initialTitle = kp.title.zh ?? '';
 
   const state: InlineEditState = {
     kpId,
-    container,
-    originalBodyHtml: container.innerHTML,
+    titleEl,
+    bodyContainer,
+    evalContainer,
+    originalTitleHtml: titleEl.innerHTML,
+    originalBodyHtml: bodyContainer.innerHTML,
+    originalEvalHtml: evalContainer.innerHTML,
+    currentTitle: initialTitle,
     currentBody: initialBody,
+    currentEval: initialEval,
+    originalTitle: initialTitle,
     originalBody: initialBody,
+    originalEval: initialEval,
+    titleInput: null,
     formModule: null,
+    evalEditor: null,
     saveBtn: null,
     cancelBtn: null,
-    dirty: false,
   };
 
-  container.innerHTML = '';
+  // 1. Mount title input
+  const titleMount = mountTitleEditor(titleEl, initialTitle, (v) => {
+    state.currentTitle = v;
+    updateSaveBtnState(state);
+  });
+  state.titleInput = titleMount.input;
+
+  // 2. Mount body form (switch by format)
+  bodyContainer.innerHTML = '';
   const editorHost = document.createElement('div');
   editorHost.className = 'kp-editor-v08 kpe-inline-host';
-  container.appendChild(editorHost);
-
-  state.formModule = mountNarrativeForm(editorHost, initialBody, (newBody) => {
+  bodyContainer.appendChild(editorHost);
+  state.formModule = mountFormByFormat(editorHost, initialBody, (newBody) => {
     state.currentBody = newBody;
-    state.dirty = newBody.prose !== state.originalBody.prose;
-    if (state.saveBtn) state.saveBtn.disabled = !state.dirty;
+    updateSaveBtnState(state);
   });
 
-  // 加保存/取消按钮在 toggle 旁
+  // 3. Mount eval editor
+  state.evalEditor = mountEvalEditor(evalContainer, initialEval, (newEval) => {
+    state.currentEval = newEval;
+    updateSaveBtnState(state);
+  });
+
+  // 4. Save / Cancel buttons next to toggle
   const saveBtn = document.createElement('button');
   saveBtn.type = 'button';
   saveBtn.className = 'kp-inline-edit-save';
   saveBtn.textContent = '保存';
   saveBtn.disabled = true;
-  saveBtn.addEventListener('click', () => handleSave(state, toggle));
+  saveBtn.addEventListener('click', () => handleSave(state));
   toggle.parentElement?.insertBefore(saveBtn, toggle);
   state.saveBtn = saveBtn;
 
@@ -178,30 +368,41 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
   toggle.parentElement?.insertBefore(cancelBtn, toggle);
   state.cancelBtn = cancelBtn;
 
-  // v0.11.69: 编辑态隐藏 toggle（不切 text 为「退出」，UI 冗余去掉）
+  // 5. Hide toggle
   toggle.style.display = 'none';
   toggle.dataset.active = 'true';
   toggle.disabled = false;
-  toggle.textContent = '编辑'; // 恢复 text，下次 exit 切回 visible 时直接显示
+  toggle.textContent = '编辑';
 
   active = state;
 }
 
 function handleCancel(state: InlineEditState): void {
-  if (state.dirty) {
+  if (isDirty(state)) {
     if (!confirm('有未保存改动，确认放弃？')) return;
   }
   exitEditMode(state, /* restoreHtml */ true);
 }
 
-async function handleSave(state: InlineEditState, toggle: HTMLButtonElement): Promise<void> {
+async function handleSave(state: InlineEditState): Promise<void> {
   if (!state.saveBtn) return;
   state.saveBtn.disabled = true;
   state.saveBtn.textContent = '保存中…';
 
-  const result = await patchKp(state.kpId, {
-    body: { zh: state.currentBody },
-  });
+  // 拼 payload — 只送实际变化的字段
+  const payload: PatchPayload = {};
+  if (state.currentTitle !== state.originalTitle) {
+    payload.title = { zh: state.currentTitle };
+  }
+  if (JSON.stringify(state.currentBody) !== JSON.stringify(state.originalBody)) {
+    payload.body = { zh: state.currentBody };
+  }
+  if (JSON.stringify(state.currentEval) !== JSON.stringify(state.originalEval)) {
+    // 直接送当前 6 字段；server hasEvaluationsContent 检测全空会自动写 NULL
+    payload.evaluations = { zh: state.currentEval };
+  }
+
+  const result = await patchKp(state.kpId, payload);
 
   if (!result.ok) {
     state.saveBtn.disabled = false;
@@ -210,21 +411,15 @@ async function handleSave(state: InlineEditState, toggle: HTMLButtonElement): Pr
     return;
   }
 
-  // 成功 — 退出编辑态，让浏览器重新拉 partial 渲染最新 body
-  state.dirty = false;
+  // 成功 — reload 拿最新 SSR
   exitEditMode(state, /* restoreHtml */ false);
-
-  // 触发 split-pane partial fetch 刷新当前 KP 视图
-  const event = new CustomEvent('inline-edit-saved', { detail: { kpId: state.kpId } });
-  document.dispatchEvent(event);
-
-  // 简单 fallback：reload 整页（最稳但 cost split-pane 状态）
-  // 改良方案：让 split-pane.js 监听 inline-edit-saved 事件做 partial re-fetch
-  // PoC 阶段先 reload，后续优化
   location.reload();
 }
 
-/** 入口 — page script 调用一次。document-level click delegation。 */
+// ============================================================
+// Mount entry
+// ============================================================
+
 export function mountInlineEditClient(): void {
   if (!isDesktop()) return;
 
@@ -238,7 +433,6 @@ export function mountInlineEditClient(): void {
     const kpId = toggle.dataset.kpId;
     if (!kpId) return;
 
-    // v0.11.69: 编辑态时 toggle 被隐藏（display:none），用户点不到。这分支仍保留兜底。
     if (toggle.dataset.active === 'true') {
       if (active) handleCancel(active);
     } else {
@@ -246,16 +440,15 @@ export function mountInlineEditClient(): void {
     }
   });
 
-  // 离开页面前提醒未保存
   window.addEventListener('beforeunload', (e) => {
-    if (active?.dirty) {
+    if (active && isDirty(active)) {
       e.preventDefault();
       e.returnValue = '';
     }
   });
 }
 
-// 暴露给 split-pane.js 全局调用（KP swap 前 check）
+// Expose to split-pane.js
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (window as any).__inlineEditHasDirty = inlineEditHasDirty;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
