@@ -28,7 +28,7 @@ import {
   MIGRATION_GUIDE_URL,
 } from './kp-legacy-detector';
 import { deepStripStrong } from './sanitize-strong';
-import { validateJaQuality, violationsToDetail } from './ja-quality-check';
+// v0.11.66 ja 校验 import 已移除（server-side 校验 revert）
 
 // 禁止字段（PRD §3.2.5）— 出现在 patch 里立即返 forbidden_field
 // 注意：因为 zod schema strict() 已经会拒绝未知 key，这里再显式 check 是双保险，
@@ -493,24 +493,7 @@ async function processOne(
     return { id, ok: false, reason: 'kp_locked', current_version: currentVersion };
   }
 
-  // 5c. v0.11.64+65 ja 质量校验 — 只对真正变化的 ja 字段校验（read-modify-write 不误触发）
-  const titleJaProvided = patch.title?.ja !== undefined;
-  const titleJaChanged = titleJaProvided && (patch.title?.ja ?? null) !== (current.title.ja ?? null);
-  const bodyJaProvided = patch.body?.ja !== undefined;
-  const bodyJaChanged = bodyJaProvided && JSON.stringify(patch.body!.ja) !== JSON.stringify(current.body.ja);
-  const evalJaProvided = patch.evaluations?.ja !== undefined;
-  const evalJaChanged = evalJaProvided && JSON.stringify(patch.evaluations!.ja) !== JSON.stringify(current.evaluations?.ja);
-  if (titleJaChanged || bodyJaChanged || evalJaChanged) {
-    const violations = validateJaQuality({
-      title: titleJaChanged ? patch.title?.ja : undefined,
-      body: bodyJaChanged ? patch.body?.ja : undefined,
-      evaluations: evalJaChanged ? patch.evaluations?.ja : undefined,
-    });
-    const critical = violations.filter((v) => v.severity === 'critical');
-    if (critical.length > 0) {
-      return { id, ok: false, reason: 'ja_quality_failed', detail: violationsToDetail(violations) };
-    }
-  }
+  // 5c. v0.11.66 revert v0.11.64+65 server-side ja 校验（UI 误伤），质量回 skill + daily loop
 
   // 6. version 校验（乐观锁）
   const currentVersion = await getCurrentVersion(db, id);
