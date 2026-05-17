@@ -24,6 +24,8 @@ import { patchKp } from '~/lib/editor/api';
 
 interface InlineEditState {
   kpId: string;
+  /** body 容器 DOM 引用 — enterEditMode 时锁定，exitEditMode 直接用，不靠 selector 重查 */
+  container: HTMLElement;
   originalBodyHtml: string;
   currentBody: NarrativeBody;
   originalBody: NarrativeBody;
@@ -64,9 +66,10 @@ function findBodyContainer(): HTMLElement | null {
 
 function exitEditMode(state: InlineEditState, restoreHtml: boolean): void {
   state.formModule?.destroy();
-  const container = findBodyContainer();
-  if (container && restoreHtml) {
-    container.innerHTML = state.originalBodyHtml;
+  // v0.11.70: 直接用 state.container 引用还原（enterEditMode 后 .body-fmt 已被 replace，
+  //           二次 findBodyContainer 会返 null 导致旧版本悄悄不还原 → 取消后空白）
+  if (restoreHtml) {
+    state.container.innerHTML = state.originalBodyHtml;
   }
   state.saveBtn?.remove();
   state.cancelBtn?.remove();
@@ -136,6 +139,7 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
 
   const state: InlineEditState = {
     kpId,
+    container,
     originalBodyHtml: container.innerHTML,
     currentBody: initialBody,
     originalBody: initialBody,
