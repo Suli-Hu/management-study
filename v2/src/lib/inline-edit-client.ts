@@ -32,6 +32,22 @@ import { emptyKpBodyByFormat, extractLead, applyCarryLead, type Format } from '~
 import { mountChipPicker, type ChipPickerOption } from '~/lib/editor/dom-helpers';
 import { patchKp, type PatchPayload } from '~/lib/editor/api';
 import { mountNativeFlatListEditor } from '~/lib/inline-edit-native-flat-list';
+import { mountNativeNarrativeEditor } from '~/lib/inline-edit-native-narrative';
+import { mountNativeAccordionEditor } from '~/lib/inline-edit-native-accordion';
+
+type NativeMountFn = (
+  bodyContainer: HTMLElement,
+  body: KpBody,
+  onChange: (newBody: KpBody) => void,
+) => FormModule;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const NATIVE_MOUNTS: Partial<Record<KpBody['format'], NativeMountFn>> = {
+  'narrative': mountNativeNarrativeEditor as any,
+  'flat-list': mountNativeFlatListEditor as any,
+  'accordion': mountNativeAccordionEditor as any,
+  // compare / quad 留 PR2
+};
 
 // ============================================================
 // Constants
@@ -511,20 +527,19 @@ function remountBody(state: InlineEditState): void {
   state.formModule?.destroy();
   state.bodyContainer.innerHTML = '';
   const body = getCurrentLangBody(state);
-  // v0.11.75 PoC: flat-list 走 native（视觉 mirror 阅读态），其他 format 走老 form
-  if (body.format === 'flat-list') {
-    state.formModule = mountNativeFlatListEditor(state.bodyContainer, body, (newBody) => {
-      state.currentBody = { ...state.currentBody, [state.activeLang]: newBody };
-      updateSaveBtnState(state);
-    });
+  // v0.11.77: narrative / flat-list / accordion 走 native；compare / quad 仍走 form
+  const nativeMount = NATIVE_MOUNTS[body.format];
+  const handleChange = (newBody: KpBody) => {
+    state.currentBody = { ...state.currentBody, [state.activeLang]: newBody };
+    updateSaveBtnState(state);
+  };
+  if (nativeMount) {
+    state.formModule = nativeMount(state.bodyContainer, body, handleChange);
   } else {
     const host = document.createElement('div');
     host.className = 'kp-editor-v08 kpe-inline-host';
     state.bodyContainer.appendChild(host);
-    state.formModule = mountFormByFormat(host, body, (newBody) => {
-      state.currentBody = { ...state.currentBody, [state.activeLang]: newBody };
-      updateSaveBtnState(state);
-    });
+    state.formModule = mountFormByFormat(host, body, handleChange);
   }
 }
 
@@ -717,21 +732,22 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
   const relations = mountRelationsPanel(bodyContainer, state);
   state.relationsEl = relations.el;
 
-  // 3. Mount body — flat-list 走 native（augment SSR HTML 保留 markdown 渲染），其他走 form
-  if (state.currentBody.zh.format === 'flat-list') {
-    state.formModule = mountNativeFlatListEditor(bodyContainer, state.currentBody.zh, (newBody) => {
-      state.currentBody = { ...state.currentBody, [state.activeLang]: newBody };
-      updateSaveBtnState(state);
-    });
+  // 3. Mount body — narrative / flat-list / accordion 走 native（augment SSR HTML 保留 markdown
+  //    渲染），其他 format (compare / quad) 仍走 form
+  const initialFmt = state.currentBody.zh.format;
+  const nativeMount = NATIVE_MOUNTS[initialFmt];
+  const handleBodyChange = (newBody: KpBody) => {
+    state.currentBody = { ...state.currentBody, [state.activeLang]: newBody };
+    updateSaveBtnState(state);
+  };
+  if (nativeMount) {
+    state.formModule = nativeMount(bodyContainer, state.currentBody.zh, handleBodyChange);
   } else {
     bodyContainer.innerHTML = '';
     const host = document.createElement('div');
     host.className = 'kp-editor-v08 kpe-inline-host';
     bodyContainer.appendChild(host);
-    state.formModule = mountFormByFormat(host, state.currentBody.zh, (newBody) => {
-      state.currentBody = { ...state.currentBody, [state.activeLang]: newBody };
-      updateSaveBtnState(state);
-    });
+    state.formModule = mountFormByFormat(host, state.currentBody.zh, handleBodyChange);
   }
 
   // 4. Mount eval editor (initial lang = zh)
