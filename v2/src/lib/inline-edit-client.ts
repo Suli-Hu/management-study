@@ -51,14 +51,14 @@ export function inlineEditForceExit(): void {
   exitEditMode(active, /* restoreHtml */ true);
 }
 
-/** 拿到 KP body 区域 DOM 容器（SSR render 出来的 .body-fmt-* div 的 parent） */
+/** 拿到 KP body 区域 DOM 容器（renderStructuredBody 出来的 .body-fmt 的 parent） */
 function findBodyContainer(): HTMLElement | null {
-  // school / scholar 页 partial 内：<div class="mt-6" set:html={renderStructuredBody(...)} />
-  // SSR 出 .body-fmt-narrative / .body-fmt-flat-list ... 包裹整 body
+  // school / scholar 页 partial / full 都用：<div class="mt-6" set:html={renderStructuredBody(...)} />
+  // renderStructuredBody 输出 <div class="body-fmt body-fmt-{narr|flat|acc|cmpc|quad}">...
   const pane = document.getElementById('kp-detail-pane');
   if (!pane) return null;
-  // 找第一个 .body-fmt-* 元素的 parent (.mt-6 wrapper)
-  const fmtEl = pane.querySelector('[class*="body-fmt-"]');
+  // 用 base class .body-fmt 匹配（所有 format 都有），更稳
+  const fmtEl = pane.querySelector('.body-fmt');
   return fmtEl?.parentElement ?? null;
 }
 
@@ -70,10 +70,10 @@ function exitEditMode(state: InlineEditState, restoreHtml: boolean): void {
   }
   state.saveBtn?.remove();
   state.cancelBtn?.remove();
-  // 把 head bar 的 toggle 按钮恢复成「编辑」
+  // 把 head bar 的 toggle 按钮还原（v0.11.69: 改成显示/隐藏而不是切 text）
   const toggle = document.querySelector<HTMLButtonElement>('[data-inline-edit-toggle]');
   if (toggle) {
-    toggle.textContent = '编辑';
+    toggle.style.display = '';
     toggle.dataset.active = 'false';
   }
   active = null;
@@ -105,6 +105,15 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
     return;
   }
 
+  // v0.11.69 race condition 保护 — fetch 期间用户可能切走 KP（split-pane swap）
+  const currentActiveKpId = new URLSearchParams(location.search).get('kp');
+  if (currentActiveKpId && currentActiveKpId !== kpId) {
+    // 用户已切到别的 KP，放弃 enter edit mode（无 alert，免打扰）
+    toggle.disabled = false;
+    toggle.textContent = '编辑';
+    return;
+  }
+
   if (kp.body.zh.format !== 'narrative') {
     alert(
       `此 KP body 格式为 ${kp.body.zh.format}，PoC 阶段仅支持 narrative 内联编辑。\n` +
@@ -117,7 +126,7 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
 
   const container = findBodyContainer();
   if (!container) {
-    alert('找不到 KP body 容器');
+    alert('找不到 KP body 容器 — 可能页面刚切换，请稍候重试');
     toggle.disabled = false;
     toggle.textContent = '编辑';
     return;
@@ -165,9 +174,11 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
   toggle.parentElement?.insertBefore(cancelBtn, toggle);
   state.cancelBtn = cancelBtn;
 
-  toggle.textContent = '退出';
+  // v0.11.69: 编辑态隐藏 toggle（不切 text 为「退出」，UI 冗余去掉）
+  toggle.style.display = 'none';
   toggle.dataset.active = 'true';
   toggle.disabled = false;
+  toggle.textContent = '编辑'; // 恢复 text，下次 exit 切回 visible 时直接显示
 
   active = state;
 }
@@ -223,8 +234,8 @@ export function mountInlineEditClient(): void {
     const kpId = toggle.dataset.kpId;
     if (!kpId) return;
 
+    // v0.11.69: 编辑态时 toggle 被隐藏（display:none），用户点不到。这分支仍保留兜底。
     if (toggle.dataset.active === 'true') {
-      // 当前编辑态 → 退出（同 cancel 逻辑）
       if (active) handleCancel(active);
     } else {
       enterEditMode(kpId, toggle);
