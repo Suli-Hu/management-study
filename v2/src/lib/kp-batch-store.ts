@@ -28,6 +28,7 @@ import {
   MIGRATION_GUIDE_URL,
 } from './kp-legacy-detector';
 import { deepStripStrong } from './sanitize-strong';
+import { validateJaQuality, violationsToDetail } from './ja-quality-check';
 
 // 禁止字段（PRD §3.2.5）— 出现在 patch 里立即返 forbidden_field
 // 注意：因为 zod schema strict() 已经会拒绝未知 key，这里再显式 check 是双保险，
@@ -490,6 +491,23 @@ async function processOne(
   if (current.locked_at) {
     const currentVersion = await getCurrentVersion(db, id);
     return { id, ok: false, reason: 'kp_locked', current_version: currentVersion };
+  }
+
+  // 5c. v0.11.64 ja 质量校验 — 命中机翻黑名单整条 skip
+  const jaTouched =
+    patch.title?.ja !== undefined ||
+    patch.body?.ja !== undefined ||
+    patch.evaluations?.ja !== undefined;
+  if (jaTouched) {
+    const violations = validateJaQuality({
+      title: patch.title?.ja,
+      body: patch.body?.ja,
+      evaluations: patch.evaluations?.ja,
+    });
+    const critical = violations.filter((v) => v.severity === 'critical');
+    if (critical.length > 0) {
+      return { id, ok: false, reason: 'ja_quality_failed', detail: violationsToDetail(violations) };
+    }
   }
 
   // 6. version 校验（乐观锁）
