@@ -587,19 +587,29 @@ export async function patchKpRecord(
   const ftsTextZh = structuredToSearchText(mergedBody.zh);
   const ftsTextJa = mergedBody.ja ? structuredToSearchText(mergedBody.ja) : '';
 
-  // v0.11.61 ja 翻译追踪 — 如果 PATCH 触动了任一 ja 字段，记录 ja_translated_at + ja_zh_hash
-  // 让每日自动翻译 loop 用 hash 比对判定 zh 是否变化以决定是否重译。
-  const jaTouched =
-    input.title?.ja !== undefined ||
-    input.body?.ja !== undefined ||
-    input.evaluations?.ja !== undefined;
+  // v0.11.65 ja 真正变化检测（v0.11.61 jaTouched 仅看字段存在，read-modify-write 误触发；
+  // 现改为 deep-equal 比对，只在 ja 实际改变时刷 ja_translated_at + 跑校验）
+  const titleJaProvided = input.title?.ja !== undefined;
+  const titleJaChanged = titleJaProvided && (input.title?.ja ?? null) !== (current.title.ja ?? null);
 
-  // v0.11.64 server-side ja 质量硬校验 — 防止机翻 / 字典直译写入
-  if (jaTouched) {
+  const bodyJaProvided = input.body?.ja !== undefined;
+  const currentBodyJaJson = currentStructured.body.ja ? JSON.stringify(currentStructured.body.ja) : null;
+  const inputBodyJaJson = bodyJaProvided ? JSON.stringify(input.body!.ja) : null;
+  const bodyJaChanged = bodyJaProvided && inputBodyJaJson !== currentBodyJaJson;
+
+  const evalJaProvided = input.evaluations?.ja !== undefined;
+  const currentEvalJaJson = currentStructured.evaluations.ja ? JSON.stringify(currentStructured.evaluations.ja) : null;
+  const inputEvalJaJson = evalJaProvided ? JSON.stringify(input.evaluations!.ja) : null;
+  const evalJaChanged = evalJaProvided && inputEvalJaJson !== currentEvalJaJson;
+
+  const jaActuallyChanged = titleJaChanged || bodyJaChanged || evalJaChanged;
+
+  // v0.11.64+65 server-side ja 质量硬校验 — 只对真正变化的 ja 字段校验
+  if (jaActuallyChanged) {
     const violations = validateJaQuality({
-      title: input.title?.ja,
-      body: input.body?.ja,
-      evaluations: input.evaluations?.ja,
+      title: titleJaChanged ? input.title?.ja : undefined,
+      body: bodyJaChanged ? input.body?.ja : undefined,
+      evaluations: evalJaChanged ? input.evaluations?.ja : undefined,
     });
     const critical = violations.filter((v) => v.severity === 'critical');
     if (critical.length > 0) {
@@ -607,8 +617,8 @@ export async function patchKpRecord(
     }
   }
 
-  const nextJaTranslatedAt = jaTouched ? now : (current.ja_translated_at ?? null);
-  const nextJaZhHash = jaTouched
+  const nextJaTranslatedAt = jaActuallyChanged ? now : (current.ja_translated_at ?? null);
+  const nextJaZhHash = jaActuallyChanged
     ? await computeZhHash(cols.body_zh_json, mergedTitle.zh, cols.evaluations_zh_json)
     : (current.ja_zh_hash ?? null);
 
