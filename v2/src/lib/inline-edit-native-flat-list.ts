@@ -137,11 +137,13 @@ export function mountNativeFlatListEditor(
   }
 
   function parseToBody(): FlatListBody {
-    const lead = (leadEl?.textContent ?? '').trim();
+    const lead = leadEl ? serializeMd(leadEl) : '';
     const items: FlatListBody['items'] = [];
     itemsEl!.querySelectorAll<HTMLElement>('.body-card:not(.inline-edit-add-card)').forEach((card) => {
-      const name = (card.querySelector('.body-item-name')?.textContent ?? '').trim();
-      const desc = (card.querySelector('.body-item-desc')?.textContent ?? '').trim();
+      const nameEl = card.querySelector('.body-item-name');
+      const descEl = card.querySelector('.body-item-desc');
+      const name = nameEl ? serializeMd(nameEl) : '';
+      const desc = descEl ? serializeMd(descEl) : '';
       items.push({ name, desc });
     });
     return { format: 'flat-list', lead, items };
@@ -160,10 +162,57 @@ export function mountNativeFlatListEditor(
     if (!target?.closest?.('.inline-edit-editable')) return;
     e.preventDefault();
     const text = e.clipboardData?.getData('text/plain') ?? '';
-    // execCommand insertText 在 contenteditable 内有效
     document.execCommand('insertText', false, text);
   };
   fmt.addEventListener('paste', onPaste);
+
+  // v0.11.76 keyboard shortcuts — Cmd+B 加粗 / Cmd+L 灰细字
+  const onKeydown = (e: KeyboardEvent) => {
+    const target = e.target as HTMLElement | null;
+    if (!target?.closest?.('.inline-edit-editable')) return;
+    const mod = e.metaKey || e.ctrlKey;
+    if (!mod) return;
+
+    if (e.key === 'b' || e.key === 'B') {
+      e.preventDefault();
+      // execCommand bold 在 contenteditable 内插入 <b> / <strong>
+      document.execCommand('bold');
+      triggerChange();
+      return;
+    }
+    if (e.key === 'l' || e.key === 'L') {
+      e.preventDefault();
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0) return;
+      const range = sel.getRangeAt(0);
+      if (range.collapsed) return; // 没选中文字 → no-op
+      // 如果已在 .md-fine 内 → 取消标记
+      const ancestor = range.commonAncestorContainer.parentElement;
+      const existingFine = ancestor?.closest?.('.md-fine');
+      if (existingFine) {
+        // unwrap: 把 .md-fine 内容提到 parent，删 .md-fine 节点
+        const parent = existingFine.parentNode;
+        while (existingFine.firstChild) {
+          parent?.insertBefore(existingFine.firstChild, existingFine);
+        }
+        existingFine.remove();
+      } else {
+        // wrap: 选中文字包 <span class="md-fine">
+        const span = document.createElement('span');
+        span.className = 'md-fine';
+        try {
+          range.surroundContents(span);
+        } catch {
+          // 选区跨多节点 surroundContents 会抛 — fallback：extractContents 重新插入
+          const frag = range.extractContents();
+          span.appendChild(frag);
+          range.insertNode(span);
+        }
+      }
+      triggerChange();
+    }
+  };
+  fmt.addEventListener('keydown', onKeydown);
 
   // Initial trigger，避免 initial state.currentBody 没 sync
   triggerChange();
@@ -172,9 +221,39 @@ export function mountNativeFlatListEditor(
     destroy: () => {
       fmt!.removeEventListener('input', onInput);
       fmt!.removeEventListener('paste', onPaste);
-      // 由 caller restore HTML 或 reload，destroy 不做更多
+      fmt!.removeEventListener('keydown', onKeydown);
     },
   };
+}
+
+/**
+ * v0.11.76 contenteditable DOM → markdown string serializer
+ * <strong>/<b> → **xx**, <span.md-fine> → ~xx~, <br> → \n, 其他 → textContent
+ */
+function serializeMd(el: Element): string {
+  let out = '';
+  for (const node of Array.from(el.childNodes)) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      out += node.textContent ?? '';
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const e = node as Element;
+      const tag = e.tagName;
+      if (tag === 'STRONG' || tag === 'B') {
+        out += `**${serializeMd(e)}**`;
+      } else if (tag === 'SPAN' && e.classList.contains('md-fine')) {
+        out += `~${serializeMd(e)}~`;
+      } else if (tag === 'BR') {
+        out += '\n';
+      } else if (tag === 'DIV' || tag === 'P') {
+        // contenteditable 自动插入 div / p 作为换行 — 转换为 \n
+        if (out && !out.endsWith('\n')) out += '\n';
+        out += serializeMd(e);
+      } else {
+        out += serializeMd(e);
+      }
+    }
+  }
+  return out.trim();
 }
 
 function buildEmptyFlatListShell(body: FlatListBody): string {

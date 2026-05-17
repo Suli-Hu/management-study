@@ -2246,6 +2246,14 @@ details.eval {
   font-weight: 500;
 }
 
+/* v0.11.76 inline markdown `~xx~` → 灰细字（任意位置生效，取代位置敏感的末尾括号语法）
+   全局通用样式，render + inline edit 共享 */
+.md-fine {
+  color: var(--color-text-tertiary, oklch(0.45 0.005 80));
+  font-weight: 400;
+  font-size: 0.92em;
+}
+
 /* ✎ 编辑按钮 disabled 态（locked KP）— 既适用全屏 .kp-edit-btn，也适用 split-pane .hero-icon-btn */
 .kp-edit-btn.is-disabled,
 .hero-icon-btn.is-disabled {
