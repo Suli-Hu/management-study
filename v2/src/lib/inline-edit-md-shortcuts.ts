@@ -88,19 +88,26 @@ export function attachMdShortcuts(
   };
 
   /**
-   * 通用：选中文字若已在指定 tag/class 内 → unwrap；否则包一层。
-   * v0.11.79: 取代 execCommand('bold')，统一用 <strong>（execCommand 默认产 <b> 跟 SSR strong 字重不一致）。
+   * 通用：caret 或 selection 在指定 tag/class 内 → unwrap；选中文字不在内 → 包一层。
+   * v0.11.80: 修 caret-only (没拖选) 也能 unwrap — 之前要求 selection range 导致已有 strong
+   *           不能取消加粗（user click 进去按 Cmd+B 无反应）。
+   * v0.11.79: 取代 execCommand('bold')，统一用 <strong>（execCommand 默认产 <b> 字重不一致）。
    */
   function toggleWrap(tag: string, className?: string): void {
     const sel = window.getSelection();
     if (!sel || sel.rangeCount === 0) return;
     const range = sel.getRangeAt(0);
-    if (range.collapsed) return;
 
     const matchSelector = className ? `${tag}.${className}` : tag;
-    const ancestor = range.commonAncestorContainer.parentElement;
+    const node = range.commonAncestorContainer;
+    const ancestor =
+      node.nodeType === Node.ELEMENT_NODE
+        ? (node as Element)
+        : node.parentElement;
     const existing = ancestor?.closest?.(matchSelector);
+
     if (existing) {
+      // Caret 或 selection 在 existing 内 → unwrap
       const parent = existing.parentNode;
       while (existing.firstChild) {
         parent?.insertBefore(existing.firstChild, existing);
@@ -108,6 +115,9 @@ export function attachMdShortcuts(
       existing.remove();
       return;
     }
+
+    // 不在 existing 内 → wrap（需要 selection range）
+    if (range.collapsed) return;
     const wrap = document.createElement(tag);
     if (className) wrap.className = className;
     try {
