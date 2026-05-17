@@ -23,7 +23,7 @@ import type {
   KpEvaluationsLang,
 } from '~/schemas/kp-body-structured';
 
-import { formatTrustedProseHtml, inlineMdDoubleStarToStrong } from './format-trusted-prose-html';
+import { formatTrustedProseHtml } from './format-trusted-prose-html';
 
 const FALLBACK_ACCENT = '#8a7a6a';
 
@@ -52,18 +52,10 @@ function renderParas(text: string, wrapperStyle = ''): string {
   }</div>`;
 }
 
-/** v0.5.51 复用：section name 拆 sub */
-function splitSectionName(raw: string): { name: string; sub: string } {
-  const m = raw.match(/^(.*?)\s*[（(]([^）)]+)[）)]\s*$/);
-  if (m && m[1].trim()) return { name: m[1].trim(), sub: m[2].trim() };
-  return { name: raw, sub: '' };
-}
-
-/** flat-list / accordion 条目标题：与分组 title 相同「尾部括号」拆主副，副标题用 .acc-sub */
-function renderItemNameWithOptionalSub(raw: string): string {
-  const { name, sub } = splitSectionName(raw);
-  return `${formatTrustedProseHtml(name)}${sub ? `<span class="acc-sub">${formatTrustedProseHtml(sub)}</span>` : ''}`;
-}
+// v0.11.81 删 splitSectionName + renderItemNameWithOptionalSub：
+// 末尾 (sub) 位置敏感语法糖已弃用，全部用 ~xx~ inline markdown 替代
+// (migration script migrate-paren-sub-to-tilde.ts 已迁所有老数据)。
+// 直接用 formatTrustedProseHtml 解析 ** + ~ + \n→<br>。
 
 // ============================================================
 // 5 种 per-format renderer
@@ -80,7 +72,7 @@ export function renderFlatListStructured(body: FlatListBody, accentHex: string):
     <div class="body-card">
       <div class="body-num">${i + 1}</div>
       <div class="body-card-content">
-        ${it.name ? `<div class="body-item-name">${renderItemNameWithOptionalSub(it.name)}</div>` : ''}
+        ${it.name ? `<div class="body-item-name">${formatTrustedProseHtml(it.name)}</div>` : ''}
         <div class="body-item-desc">${formatTrustedProseHtml(it.desc)}</div>
       </div>
     </div>
@@ -93,7 +85,6 @@ export function renderFlatListStructured(body: FlatListBody, accentHex: string):
 export function renderAccordionStructured(body: AccordionBody, accentHex: string): string {
   const sectionsHtml = body.groups
     .map((g) => {
-      const { name, sub } = splitSectionName(g.title);
       const inner =
         g.items.length === 0
           ? `<div class="acc-prose"></div>`
@@ -103,7 +94,7 @@ export function renderAccordionStructured(body: AccordionBody, accentHex: string
           <li class="acc-li">
             <span class="acc-li-n">${i + 1}</span>
             <div class="acc-li-body">
-              ${it.name ? `<span class="acc-li-name">${renderItemNameWithOptionalSub(it.name)}</span>` : ''}
+              ${it.name ? `<span class="acc-li-name">${formatTrustedProseHtml(it.name)}</span>` : ''}
               ${it.desc ? `<div class="acc-li-desc">${formatTrustedProseHtml(it.desc)}</div>` : ''}
             </div>
           </li>
@@ -113,7 +104,7 @@ export function renderAccordionStructured(body: AccordionBody, accentHex: string
       return `
       <details class="acc-block" open>
         <summary class="acc-head">
-          <h3 class="acc-title">${inlineMdDoubleStarToStrong(name)}${sub ? `<span class="acc-sub">${inlineMdDoubleStarToStrong(sub)}</span>` : ''}</h3>
+          <h3 class="acc-title">${formatTrustedProseHtml(g.title)}</h3>
           <span class="acc-chev">▾</span>
         </summary>
         ${inner}
