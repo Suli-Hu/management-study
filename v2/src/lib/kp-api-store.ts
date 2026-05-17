@@ -20,6 +20,7 @@ import type { KpBody, KpEvaluationsLang } from '~/schemas/kp-body-structured';
 import { hasEvaluationsContent, structuredToSearchText } from './kp-body-helpers';
 import { deepStripStrong } from './sanitize-strong';
 import { assertTagsInLibrary } from './tag-library';
+import { validateJaQuality, violationsToDetail } from './ja-quality-check';
 
 interface DerivedCols {
   body_zh_json: string;
@@ -432,6 +433,20 @@ export async function createKpRecord(
   // v0.11.61 ja 翻译追踪 — 新建时若已有 ja 内容（title.ja / body.ja / evaluations.ja），init 时戳 + zh hash
   const jaProvided =
     input.title.ja !== undefined || input.body.ja !== undefined || input.evaluations?.ja !== undefined;
+
+  // v0.11.64 server-side ja 质量硬校验
+  if (jaProvided) {
+    const violations = validateJaQuality({
+      title: input.title.ja,
+      body: input.body.ja,
+      evaluations: input.evaluations?.ja,
+    });
+    const critical = violations.filter((v) => v.severity === 'critical');
+    if (critical.length > 0) {
+      return { ok: false, status: 422, reason: 'ja_quality_failed', detail: violationsToDetail(violations) };
+    }
+  }
+
   const initJaTranslatedAt = jaProvided ? now : null;
   const initJaZhHash = jaProvided
     ? await computeZhHash(cols.body_zh_json, input.title.zh, cols.evaluations_zh_json)
@@ -578,6 +593,20 @@ export async function patchKpRecord(
     input.title?.ja !== undefined ||
     input.body?.ja !== undefined ||
     input.evaluations?.ja !== undefined;
+
+  // v0.11.64 server-side ja 质量硬校验 — 防止机翻 / 字典直译写入
+  if (jaTouched) {
+    const violations = validateJaQuality({
+      title: input.title?.ja,
+      body: input.body?.ja,
+      evaluations: input.evaluations?.ja,
+    });
+    const critical = violations.filter((v) => v.severity === 'critical');
+    if (critical.length > 0) {
+      return { ok: false, status: 422, reason: 'ja_quality_failed', detail: violationsToDetail(violations) };
+    }
+  }
+
   const nextJaTranslatedAt = jaTouched ? now : (current.ja_translated_at ?? null);
   const nextJaZhHash = jaTouched
     ? await computeZhHash(cols.body_zh_json, mergedTitle.zh, cols.evaluations_zh_json)
