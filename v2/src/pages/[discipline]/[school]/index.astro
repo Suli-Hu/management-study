@@ -257,6 +257,16 @@ const canEdit = Astro.locals.canEdit(discipline);
                     <span class="kp-lock-text" aria-hidden="true">{selectedKp.locked_at ? '解锁' : '锁定'}</span>
                   </button>
                 )}
+                {canEdit && !selectedKp.locked_at && (
+                  <button
+                    type="button"
+                    data-inline-edit-toggle
+                    data-kp-id={selectedKp.id}
+                    data-active="false"
+                    class="kp-inline-edit-toggle shrink-0"
+                    title="内联编辑（仅 narrative format / PC）"
+                  >编辑</button>
+                )}
                 {canEdit && (selectedKp.locked_at ? (
                   <span class="hero-icon-btn shrink-0 is-disabled" aria-disabled="true" title="已锁定，无法编辑">✎</span>
                 ) : (
@@ -265,7 +275,7 @@ const canEdit = Astro.locals.canEdit(discipline);
                     data-edit-kp-link={selectedKp.id}
                     class="hero-icon-btn shrink-0"
                     aria-label={`编辑 ${selectedTitle}`}
-                    title="编辑"
+                    title="全屏编辑（所有 format）"
                   >✎</a>
                 ))}
               </div>
@@ -617,6 +627,9 @@ const canEdit = Astro.locals.canEdit(discipline);
   // @ts-nocheck — DOM 类型推断弱
   // KP 列表长按拖动重排（保留 v0.4.26 行为）
   import { mountDragReorder } from '~/lib/drag-reorder-client';
+  import { mountInlineEditClient } from '~/lib/inline-edit-client';
+
+  mountInlineEditClient();
 
   // ========== v0.5.52 tab nav 切换 ==========
   // 替代 v0.5.48 的概述/代表学者 collapse 机制 —— 现 3 段切 tab，默认 "concepts"
