@@ -139,52 +139,61 @@ export function renderAccordionStructured(body: AccordionBody, accentHex: string
  *   - 没填 detail 的列退化扁平卡片，无 affordance
  *   - 行为由 /cmpc-flip.js 接管
  */
+/**
+ * v0.11.83 — compare 卡片版 → 纯表格版（B3）
+ * 视觉变化：3D flip cards → HTML table。schema 双形态过渡仍 OK：
+ *   - 新 shape (headers + rows) → 直接渲染
+ *   - 旧 shape (cols) → 转成 headers + 5 行 (关键词/描述/类型/理论/详情) 渲染
+ */
 export function renderCompareCardsStructured(body: CompareBody, accentHex: string): string {
-  // v0.11.82: 双形态过渡 — 反向 reconstruct legacy cols 渲染（行为不变）
-  const compareBody = compareBodyAsLegacy(body);
-  const cardsHtml = compareBody.cols
-    .map((c, ri) => {
-      // 正面 secondary = type / theories（detail 移到背面）
-      const frontSecondary = [c.type, c.theories].filter(Boolean);
-      const metaHtml =
-        frontSecondary.length > 0
-          ? `<ul class="cmpc-meta">${frontSecondary.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>`
-          : '';
-      const hasDetail = Boolean(c.detail);
-      const frontInner = `
-        <div class="cmpc-face cmpc-front">
-          <span class="cmpc-num">${String(ri + 1).padStart(1, '0')}</span>
-          <div class="cmpc-face-body">
-            <div class="cmpc-name">${esc(c.title)}</div>
-            ${c.keyword ? `<div class="cmpc-headline">${esc(c.keyword)}</div>` : ''}
-            ${c.desc ? `<div class="cmpc-sub">${esc(c.desc)}</div>` : ''}
-            ${metaHtml}
-          </div>
-        </div>`;
-      const backInner = hasDetail
-        ? `
-        <div class="cmpc-face cmpc-back">
-          <div class="cmpc-face-body">
-            <div class="cmpc-detail">${formatTrustedProseHtml(c.detail)}</div>
-          </div>
-        </div>`
-        : '';
-      return `
-      <div class="cmpc-card${hasDetail ? ' is-flippable' : ''}"${hasDetail ? ' role="button" tabindex="0" aria-expanded="false" data-flippable aria-label="' + esc(c.title) + ' — 查看详情"' : ''}>
-        <div class="cmpc-card-inner">
-          ${frontInner}
-          ${backInner}
-        </div>
-      </div>
-    `;
-    })
+  let headers: string[];
+  let rows: Array<{ label: string; cells: string[] }>;
+  if (body.headers && body.headers.length >= 2) {
+    // 新形态 — wet-run 后所有 D1 数据应走此路径
+    headers = body.headers;
+    rows = body.rows ?? [];
+  } else {
+    // legacy fallback — 兼容尚未迁的旧数据 / 用户编辑后 form 写回的 cols
+    const legacy = compareBodyAsLegacy(body);
+    headers = legacy.cols.map((c) => c.title);
+    rows = [
+      { label: '关键词', cells: legacy.cols.map((c) => c.keyword) },
+      { label: '描述', cells: legacy.cols.map((c) => c.desc) },
+      { label: '类型', cells: legacy.cols.map((c) => c.type) },
+      { label: '理论', cells: legacy.cols.map((c) => c.theories) },
+      { label: '详情', cells: legacy.cols.map((c) => c.detail) },
+    ].filter((r) => r.cells.some((c) => c.trim()));
+  }
+
+  if (headers.length === 0) {
+    return `<div class="body-fmt body-fmt-cmpc" style="--accent:${accentHex}"><p class="cmpc-empty">（无对比内容）</p></div>`;
+  }
+
+  const headRow = `
+    <tr>
+      <th class="cmpc-th-corner" aria-hidden="true"></th>
+      ${headers.map((h) => `<th class="cmpc-th-col" scope="col">${formatTrustedProseHtml(h)}</th>`).join('')}
+    </tr>
+  `;
+  const bodyRows = rows
+    .map(
+      (r) => `
+    <tr>
+      <th class="cmpc-th-row" scope="row">${formatTrustedProseHtml(r.label)}</th>
+      ${r.cells.map((c) => `<td class="cmpc-td">${formatTrustedProseHtml(c)}</td>`).join('')}
+    </tr>
+  `,
+    )
     .join('');
 
-  // v0.8.30: auto-fit 自适应。KP 详情窄栏多列时自动换行；宽栏按数据列数撑开
-  // lead 置卡片下方：先对比、后总起/注脚式导语
   return `
     <div class="body-fmt body-fmt-cmpc" style="--accent:${accentHex}">
-      <div class="cmpc-grid">${cardsHtml}</div>
+      <div class="cmpc-table-wrap">
+        <table class="cmpc-table">
+          <thead>${headRow}</thead>
+          <tbody>${bodyRows}</tbody>
+        </table>
+      </div>
       ${body.lead ? renderParas(body.lead, 'margin-top:18px') : ''}
     </div>
   `;
