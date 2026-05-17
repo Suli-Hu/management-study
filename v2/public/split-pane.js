@@ -73,6 +73,11 @@
     }
 
     async function showKpInPane(kpId) {
+      // v0.11.67 inline edit 拦截 — 若当前有未保存改动，alert 确认
+      if (typeof window.__inlineEditHasDirty === 'function' && window.__inlineEditHasDirty()) {
+        if (!confirm('当前 KP 有未保存改动，切换会丢失。确认继续？')) return;
+        if (typeof window.__inlineEditForceExit === 'function') window.__inlineEditForceExit();
+      }
       // 立即视觉反馈（不等 fetch）
       if (!setActiveImmediate(kpId)) return;
 
