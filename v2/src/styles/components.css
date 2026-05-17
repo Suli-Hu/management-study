@@ -450,6 +450,76 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   margin-left: -14px;
   margin-right: -14px;
 }
+
+/* v0.11.83 — compare 纯表格版（B3） */
+.cmpc-table-wrap {
+  overflow-x: auto;
+  overflow-y: visible;
+  margin: 6px 0 8px;
+  -webkit-overflow-scrolling: touch;
+}
+.cmpc-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+  font-size: 14px;
+  background: var(--color-bg-elev, white);
+}
+.cmpc-table th,
+.cmpc-table td {
+  padding: 10px 12px;
+  border: 1px solid var(--color-border, oklch(0.92 0.003 80));
+  vertical-align: top;
+  min-width: 120px;
+  max-width: 320px;
+  word-wrap: break-word;
+  line-height: 1.6;
+}
+.cmpc-table thead .cmpc-th-col {
+  background: var(--color-bg-soft, oklch(0.965 0.003 80));
+  font-weight: 700;
+  text-align: left;
+}
+.cmpc-table .cmpc-th-corner {
+  background: transparent;
+  border-top: none;
+  border-left: none;
+  min-width: 60px;
+  width: 90px;
+}
+.cmpc-table tbody .cmpc-th-row {
+  background: var(--color-bg-soft, oklch(0.965 0.003 80));
+  font-weight: 600;
+  text-align: left;
+  width: 90px;
+  min-width: 90px;
+  white-space: nowrap;
+  color: var(--color-text-secondary, oklch(0.45 0.005 80));
+  font-size: 13px;
+}
+.cmpc-table tbody .cmpc-td {
+  max-height: 200px;
+  overflow-y: auto;
+}
+.cmpc-empty {
+  padding: 14px;
+  color: var(--color-text-tertiary, oklch(0.62 0.005 80));
+  font-style: italic;
+}
+
+/* mobile: 容器横滑 */
+@media (max-width: 1023px) {
+  .body-fmt-cmpc {
+    margin-left: -8px;
+    margin-right: -8px;
+  }
+  .cmpc-table th,
+  .cmpc-table td {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+}
+
 .cmpc-grid {
   display: grid; gap: 14px; margin: 6px 0 8px;
   /* v0.11.63: revert v0.11.62 — 用户选择 design A (同行 stretch 等高)；接受背面 detail 长撑 row 的留白 tradeoff */
