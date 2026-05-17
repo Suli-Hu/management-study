@@ -2174,6 +2174,78 @@ details.eval {
   /* host 直接吃 mountChipPicker 的内置 .kpe-chips-* 样式（已在 kp-edit.css） */
 }
 
+/* ============================================================
+ * v0.11.75 inline-edit phase 3 PoC — native flat-list editor
+ * 视觉 mirror 阅读态（contenteditable on SSR HTML）
+ * ============================================================ */
+.inline-edit-editable {
+  outline: none;
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+  min-height: 1.4em;
+}
+.inline-edit-editable:hover {
+  background: oklch(0 0 0 / 0.025);
+}
+.inline-edit-editable:focus {
+  background: var(--color-bg-elev, white);
+  box-shadow: 0 0 0 2px var(--primary-soft, rgba(79, 70, 229, 0.18));
+}
+.inline-edit-editable:empty::before {
+  content: attr(data-placeholder);
+  color: var(--color-text-quaternary, oklch(0.62 0.005 80));
+  pointer-events: none;
+}
+
+/* Card hover — 显示 × 删除按钮 */
+.inline-edit-card {
+  position: relative;
+}
+.inline-edit-del-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: oklch(0 0 0 / 0.05);
+  color: var(--color-text-tertiary, oklch(0.45 0.005 80));
+  font-size: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+.inline-edit-card:hover .inline-edit-del-btn {
+  opacity: 1;
+}
+.inline-edit-del-btn:hover {
+  background: oklch(0.65 0.18 25 / 0.15);
+  color: oklch(0.50 0.18 25);
+}
+
+/* + 添加条目 — 灰色虚线 card */
+.inline-edit-add-card {
+  border: 1px dashed var(--color-border, oklch(0.92 0.003 80));
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+.inline-edit-add-card:hover {
+  opacity: 1;
+  background: oklch(0 0 0 / 0.02);
+}
+.inline-edit-add-label {
+  color: var(--color-text-tertiary, oklch(0.45 0.005 80));
+  font-weight: 500;
+}
+
 /* ✎ 编辑按钮 disabled 态（locked KP）— 既适用全屏 .kp-edit-btn，也适用 split-pane .hero-icon-btn */
 .kp-edit-btn.is-disabled,
 .hero-icon-btn.is-disabled {

@@ -31,6 +31,7 @@ import { mountQuadForm } from '~/lib/editor/forms/quad';
 import { emptyKpBodyByFormat, extractLead, applyCarryLead, type Format } from '~/lib/editor/state';
 import { mountChipPicker, type ChipPickerOption } from '~/lib/editor/dom-helpers';
 import { patchKp, type PatchPayload } from '~/lib/editor/api';
+import { mountNativeFlatListEditor } from '~/lib/inline-edit-native-flat-list';
 
 // ============================================================
 // Constants
@@ -80,7 +81,6 @@ interface InlineEditState {
   titleEl: HTMLElement;
   bodyContainer: HTMLElement;
   evalContainer: HTMLElement;
-  editorHost: HTMLElement;
   topBarEl: HTMLElement | null;
   relationsEl: HTMLElement | null;
 
@@ -509,12 +509,23 @@ function getCurrentLangBody(state: InlineEditState): KpBody {
 
 function remountBody(state: InlineEditState): void {
   state.formModule?.destroy();
-  state.editorHost.innerHTML = '';
+  state.bodyContainer.innerHTML = '';
   const body = getCurrentLangBody(state);
-  state.formModule = mountFormByFormat(state.editorHost, body, (newBody) => {
-    state.currentBody = { ...state.currentBody, [state.activeLang]: newBody };
-    updateSaveBtnState(state);
-  });
+  // v0.11.75 PoC: flat-list 走 native（视觉 mirror 阅读态），其他 format 走老 form
+  if (body.format === 'flat-list') {
+    state.formModule = mountNativeFlatListEditor(state.bodyContainer, body, (newBody) => {
+      state.currentBody = { ...state.currentBody, [state.activeLang]: newBody };
+      updateSaveBtnState(state);
+    });
+  } else {
+    const host = document.createElement('div');
+    host.className = 'kp-editor-v08 kpe-inline-host';
+    state.bodyContainer.appendChild(host);
+    state.formModule = mountFormByFormat(host, body, (newBody) => {
+      state.currentBody = { ...state.currentBody, [state.activeLang]: newBody };
+      updateSaveBtnState(state);
+    });
+  }
 }
 
 function remountEval(state: InlineEditState): void {
@@ -638,11 +649,8 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
   const capturedBodyHtml = bodyContainer.innerHTML;
   const capturedEvalHtml = evalContainer.innerHTML;
 
-  // editorHost is a wrapper inside bodyContainer for form mounting
-  bodyContainer.innerHTML = '';
-  const editorHost = document.createElement('div');
-  editorHost.className = 'kp-editor-v08 kpe-inline-host';
-  bodyContainer.appendChild(editorHost);
+  // v0.11.75: 初次 mount 不 wipe bodyContainer — flat-list 保留 SSR `<strong>` 等 markdown 渲染
+  // (其他 format 走 form 时会自己重建 host)
 
   const state: InlineEditState = {
     kpId,
@@ -652,7 +660,6 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
     titleEl,
     bodyContainer,
     evalContainer,
-    editorHost,
     topBarEl: null,
     relationsEl: null,
     originalBodyHtml: capturedBodyHtml,
@@ -710,11 +717,22 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
   const relations = mountRelationsPanel(bodyContainer, state);
   state.relationsEl = relations.el;
 
-  // 3. Mount body form (initial lang = zh)
-  state.formModule = mountFormByFormat(editorHost, state.currentBody.zh, (newBody) => {
-    state.currentBody = { ...state.currentBody, [state.activeLang]: newBody };
-    updateSaveBtnState(state);
-  });
+  // 3. Mount body — flat-list 走 native（augment SSR HTML 保留 markdown 渲染），其他走 form
+  if (state.currentBody.zh.format === 'flat-list') {
+    state.formModule = mountNativeFlatListEditor(bodyContainer, state.currentBody.zh, (newBody) => {
+      state.currentBody = { ...state.currentBody, [state.activeLang]: newBody };
+      updateSaveBtnState(state);
+    });
+  } else {
+    bodyContainer.innerHTML = '';
+    const host = document.createElement('div');
+    host.className = 'kp-editor-v08 kpe-inline-host';
+    bodyContainer.appendChild(host);
+    state.formModule = mountFormByFormat(host, state.currentBody.zh, (newBody) => {
+      state.currentBody = { ...state.currentBody, [state.activeLang]: newBody };
+      updateSaveBtnState(state);
+    });
+  }
 
   // 4. Mount eval editor (initial lang = zh)
   state.evalEditor = mountEvalEditor(evalContainer, state.currentEval.zh, (e) => {
