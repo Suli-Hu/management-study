@@ -135,6 +135,8 @@ interface InlineEditState {
   // Buttons
   saveBtn: HTMLButtonElement | null;
   cancelBtn: HTMLButtonElement | null;
+  metaBtn: HTMLButtonElement | null;
+  metaPanelVisible: boolean;
 }
 
 let active: InlineEditState | null = null;
@@ -584,6 +586,7 @@ function exitEditMode(state: InlineEditState, restoreHtml: boolean): void {
   state.relationsEl?.remove();
   state.saveBtn?.remove();
   state.cancelBtn?.remove();
+  state.metaBtn?.remove();
   const toggle = document.querySelector<HTMLButtonElement>('[data-inline-edit-toggle]');
   if (toggle) {
     toggle.style.display = '';
@@ -703,6 +706,8 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
     evalEditor: null,
     saveBtn: null,
     cancelBtn: null,
+    metaBtn: null,
+    metaPanelVisible: false,
   };
 
   // 1. Title editor
@@ -734,6 +739,10 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
   const relations = mountRelationsPanel(bodyContainer, state);
   state.relationsEl = relations.el;
 
+  // v0.11.85: meta panel (topBar + relations) 默认折叠 — 视觉接近阅读态
+  state.topBarEl.style.display = 'none';
+  state.relationsEl.style.display = 'none';
+
   // 3. Mount body — narrative / flat-list / accordion 走 native（augment SSR HTML 保留 markdown
   //    渲染），其他 format (compare / quad) 仍走 form
   const initialFmt = state.currentBody.zh.format;
@@ -758,7 +767,22 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
     updateSaveBtnState(state);
   });
 
-  // 5. Save / Cancel buttons next to toggle
+  // 5a. Meta toggle button — 折叠 / 展开 lang+format+year + schools+scholars+tags 区
+  const metaBtn = document.createElement('button');
+  metaBtn.type = 'button';
+  metaBtn.className = 'kp-inline-edit-meta';
+  metaBtn.textContent = '⚙ 元数据';
+  metaBtn.setAttribute('aria-label', '展开 / 收起元数据编辑');
+  metaBtn.title = '元数据（语言 / 格式 / 年份 / 学派 / 学者 / 标签）';
+  metaBtn.addEventListener('click', () => {
+    state.metaPanelVisible = !state.metaPanelVisible;
+    if (state.topBarEl) state.topBarEl.style.display = state.metaPanelVisible ? '' : 'none';
+    if (state.relationsEl) state.relationsEl.style.display = state.metaPanelVisible ? '' : 'none';
+    metaBtn.dataset.active = state.metaPanelVisible ? 'true' : 'false';
+  });
+  state.metaBtn = metaBtn;
+
+  // 5b. Save / Cancel buttons next to toggle
   const saveBtn = document.createElement('button');
   saveBtn.type = 'button';
   saveBtn.className = 'kp-inline-edit-save';
@@ -775,6 +799,9 @@ async function enterEditMode(kpId: string, toggle: HTMLButtonElement): Promise<v
   cancelBtn.addEventListener('click', () => handleCancel(state));
   toggle.parentElement?.insertBefore(cancelBtn, toggle);
   state.cancelBtn = cancelBtn;
+
+  // Meta toggle button — 插在 save 之前
+  toggle.parentElement?.insertBefore(metaBtn, saveBtn);
 
   // 6. Hide toggle
   toggle.style.display = 'none';
