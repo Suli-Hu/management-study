@@ -520,6 +520,83 @@ details.acc-block:not([open]) > .acc-head { margin-bottom: 0; padding-bottom: 6p
   }
 }
 
+/* v0.11.84 inline edit native compare table — 增删行列按钮 + cell editable */
+.cmpc-table.inline-edit-active th,
+.cmpc-table.inline-edit-active td {
+  position: relative;
+  padding-right: 28px; /* 给 hover × 按钮留空间 */
+}
+.cmpc-table.inline-edit-active .cmpc-th-corner,
+.cmpc-table.inline-edit-active .inline-edit-add-col-th,
+.cmpc-table.inline-edit-active .inline-edit-add-row-cell {
+  padding-right: 12px;
+}
+
+.inline-edit-del-col,
+.inline-edit-del-row {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: oklch(0 0 0 / 0.05);
+  color: var(--color-text-tertiary, oklch(0.45 0.005 80));
+  font-size: 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+.cmpc-table.inline-edit-active th:hover .inline-edit-del-col,
+.cmpc-table.inline-edit-active th:hover .inline-edit-del-row {
+  opacity: 1;
+}
+.inline-edit-del-col:hover:not(:disabled),
+.inline-edit-del-row:hover:not(:disabled) {
+  background: oklch(0.65 0.18 25 / 0.15);
+  color: oklch(0.50 0.18 25);
+}
+.inline-edit-del-col:disabled,
+.inline-edit-del-row:disabled {
+  opacity: 0.3 !important;
+  cursor: not-allowed;
+}
+
+.inline-edit-add-col-th,
+.inline-edit-add-row-cell {
+  background: transparent !important;
+  border: 1px dashed var(--color-border, oklch(0.92 0.003 80)) !important;
+  text-align: center;
+  min-width: 60px;
+  width: 60px;
+}
+.inline-edit-add-row-cell {
+  width: auto !important;
+  padding: 6px !important;
+}
+.inline-edit-add-btn {
+  border: none;
+  background: transparent;
+  color: var(--color-text-tertiary, oklch(0.45 0.005 80));
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.inline-edit-add-btn:hover:not(:disabled) {
+  background: oklch(0 0 0 / 0.04);
+  color: var(--color-text-primary, oklch(0.20 0.005 80));
+}
+.inline-edit-add-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .cmpc-grid {
   display: grid; gap: 14px; margin: 6px 0 8px;
   /* v0.11.63: revert v0.11.62 — 用户选择 design A (同行 stretch 等高)；接受背面 detail 长撑 row 的留白 tradeoff */
