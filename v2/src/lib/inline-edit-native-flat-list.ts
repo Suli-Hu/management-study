@@ -19,6 +19,9 @@ import {
   createDeleteButton,
   escapeHtml,
 } from '~/lib/inline-edit-md-shortcuts';
+import { mountDragReorder } from '~/lib/drag-reorder-client';
+
+let _dragInstanceSeq = 0;
 
 export function mountNativeFlatListEditor(
   bodyContainer: HTMLElement,
@@ -68,6 +71,18 @@ export function mountNativeFlatListEditor(
         triggerChange();
       }, '删除条目');
       card.appendChild(del);
+    }
+    // v0.11.86: drag handle (hover 才显示，长按拖动改顺序)
+    if (!card.querySelector('.inline-edit-drag-handle')) {
+      const handle = document.createElement('span');
+      handle.className = 'inline-edit-drag-handle';
+      handle.textContent = '⋮⋮';
+      handle.setAttribute('aria-hidden', 'true');
+      handle.title = '长按拖动改顺序';
+      card.appendChild(handle);
+    }
+    if (!card.dataset.dragId) {
+      card.dataset.dragId = `c${++_dragInstanceSeq}`;
     }
     card.classList.add('inline-edit-card');
   }
@@ -133,10 +148,27 @@ export function mountNativeFlatListEditor(
   }
 
   const cleanup = attachMdShortcuts(fmt, triggerChange);
+
+  // v0.11.86 mount drag-reorder on items container
+  const dragGroup = `inline-flat-${++_dragInstanceSeq}`;
+  const drag = mountDragReorder(itemsEl, {
+    group: dragGroup,
+    dragHandleSelector: '.inline-edit-drag-handle',
+    skipSelector: 'input, textarea, button, [contenteditable="true"]',
+    getId: (el) => el.dataset.dragId ?? null,
+    onReorder: () => {
+      renumberCards();
+      triggerChange();
+    },
+  });
+
   triggerChange();
 
   return {
-    destroy: () => cleanup(),
+    destroy: () => {
+      drag.destroy();
+      cleanup();
+    },
   };
 }
 

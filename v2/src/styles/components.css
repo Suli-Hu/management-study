@@ -2376,6 +2376,41 @@ details.eval {
   color: oklch(0.50 0.18 25);
 }
 
+/* v0.11.86 拖动手柄 — flat-list / accordion 条目跳序 */
+.acc-head { position: relative; }
+.inline-edit-drag-handle {
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  color: var(--color-text-tertiary, oklch(0.45 0.005 80));
+  opacity: 0;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  transition: opacity 0.15s ease;
+  z-index: 2;
+}
+.inline-edit-card:hover .inline-edit-drag-handle {
+  opacity: 0.4;
+}
+.inline-edit-drag-handle:hover {
+  opacity: 1 !important;
+}
+.inline-edit-drag-handle:active {
+  cursor: grabbing;
+  opacity: 1 !important;
+}
+
 /* + 添加条目 — 灰色虚线 card */
 .inline-edit-add-card {
   border: 1px dashed var(--color-border, oklch(0.92 0.003 80));

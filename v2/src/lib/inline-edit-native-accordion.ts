@@ -23,6 +23,9 @@ import {
   createDeleteButton,
   escapeHtml,
 } from '~/lib/inline-edit-md-shortcuts';
+import { mountDragReorder } from '~/lib/drag-reorder-client';
+
+let _accDragSeq = 0;
 
 export function mountNativeAccordionEditor(
   bodyContainer: HTMLElement,
@@ -63,12 +66,25 @@ export function mountNativeAccordionEditor(
 
   function setupGroup(group: HTMLElement): void {
     group.classList.add('inline-edit-card');
+    if (!group.dataset.dragId) {
+      group.dataset.dragId = `g${++_accDragSeq}`;
+    }
     // .acc-title contenteditable
     const title = group.querySelector('.acc-title') as HTMLElement | null;
     if (title) setupContentEditable(title, '分组标题');
 
-    // 删除整 group 的 × 按钮 — 放 acc-head 内右上角
+    // v0.11.86 drag handle 拖整组 — 放 acc-head 内
     const head = group.querySelector('.acc-head') as HTMLElement | null;
+    if (head && !head.querySelector('.inline-edit-drag-handle')) {
+      const handle = document.createElement('span');
+      handle.className = 'inline-edit-drag-handle inline-edit-drag-handle-group';
+      handle.textContent = '⋮⋮';
+      handle.setAttribute('aria-hidden', 'true');
+      handle.title = '长按拖动改分组顺序';
+      head.insertBefore(handle, head.firstChild);
+    }
+
+    // 删除整 group 的 × 按钮 — 放 acc-head 内右上角
     if (head && !head.querySelector('.inline-edit-del-btn')) {
       const del = createDeleteButton(() => {
         if (group.parentElement && group.parentElement.querySelectorAll('details.acc-block:not(.inline-edit-add-card)').length <= 1) {
@@ -108,6 +124,9 @@ export function mountNativeAccordionEditor(
 
   function setupItem(li: HTMLElement): void {
     li.classList.add('inline-edit-card');
+    if (!li.dataset.dragId) {
+      li.dataset.dragId = `i${++_accDragSeq}`;
+    }
     const name = li.querySelector('.acc-li-name') as HTMLElement | null;
     if (name) setupContentEditable(name, '条目名');
     const desc = li.querySelector('.acc-li-desc') as HTMLElement | null;
@@ -119,6 +138,15 @@ export function mountNativeAccordionEditor(
         triggerChange();
       }, '删除条目');
       li.appendChild(del);
+    }
+    // v0.11.86 drag handle 拖条目
+    if (!li.querySelector('.inline-edit-drag-handle')) {
+      const handle = document.createElement('span');
+      handle.className = 'inline-edit-drag-handle';
+      handle.textContent = '⋮⋮';
+      handle.setAttribute('aria-hidden', 'true');
+      handle.title = '长按拖动改条目顺序（可跨组）';
+      li.insertBefore(handle, li.firstChild);
     }
   }
 
@@ -226,10 +254,45 @@ export function mountNativeAccordionEditor(
   }
 
   const cleanup = attachMdShortcuts(fmt, triggerChange);
+
+  // v0.11.86 drag-reorder
+  const instanceId = ++_accDragSeq;
+  const groupDrag = mountDragReorder(fmt, {
+    group: `inline-acc-groups-${instanceId}`,
+    dragHandleSelector: '.inline-edit-drag-handle-group',
+    skipSelector: 'input, textarea, button, [contenteditable="true"]',
+    getId: (el) => el.dataset.dragId ?? null,
+    onReorder: () => {
+      renumberItems();
+      triggerChange();
+    },
+  });
+
+  // items drag — multi-container（每个 group 的 .acc-numbered ol，同 group key 跨组拖）
+  const itemDrags: Array<{ destroy: () => void }> = [];
+  fmt.querySelectorAll<HTMLElement>('.acc-numbered').forEach((ol) => {
+    itemDrags.push(
+      mountDragReorder(ol, {
+        group: `inline-acc-items-${instanceId}`,
+        dragHandleSelector: '.inline-edit-drag-handle',
+        skipSelector: 'input, textarea, button, [contenteditable="true"], .inline-edit-drag-handle-group',
+        getId: (el) => el.dataset.dragId ?? null,
+        onReorder: () => {
+          renumberItems();
+          triggerChange();
+        },
+      }),
+    );
+  });
+
   triggerChange();
 
   return {
-    destroy: () => cleanup(),
+    destroy: () => {
+      groupDrag.destroy();
+      itemDrags.forEach((d) => d.destroy());
+      cleanup();
+    },
   };
 }
 
