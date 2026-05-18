@@ -34,6 +34,7 @@ import { patchKp, type PatchPayload } from '~/lib/editor/api';
 import { mountNativeFlatListEditor } from '~/lib/inline-edit-native-flat-list';
 import { mountNativeNarrativeEditor } from '~/lib/inline-edit-native-narrative';
 import { mountNativeAccordionEditor } from '~/lib/inline-edit-native-accordion';
+import { mountNativeCompareEditor } from '~/lib/inline-edit-native-compare';
 
 type NativeMountFn = (
   bodyContainer: HTMLElement,
@@ -46,7 +47,8 @@ const NATIVE_MOUNTS: Partial<Record<KpBody['format'], NativeMountFn>> = {
   'narrative': mountNativeNarrativeEditor as any,
   'flat-list': mountNativeFlatListEditor as any,
   'accordion': mountNativeAccordionEditor as any,
-  // compare / quad 留 PR2
+  'compare': mountNativeCompareEditor as any,
+  // quad 后续做
 };
 
 // ============================================================
